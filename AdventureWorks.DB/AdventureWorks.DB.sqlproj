@@ -1,0 +1,382 @@
+<?xml version="1.0" encoding="utf-8"?>
+<Project DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003" ToolsVersion="4.0">
+  <Import Project="$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props" Condition="Exists('$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props')" />
+  <PropertyGroup>
+    <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
+    <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
+    <Name>AdventureWorks.DB</Name>
+    <SchemaVersion>2.0</SchemaVersion>
+    <ProjectVersion>4.1</ProjectVersion>
+    <ProjectGuid>{5fc754e7-74bd-4aae-8b4e-cfc8cdda1035}</ProjectGuid>
+    <OutputType>Database</OutputType>
+    <RootPath>
+    </RootPath>
+    <RootNamespace>AdventureWorks.DB</RootNamespace>
+    <AssemblyName>AdventureWorks.DB</AssemblyName>
+    <ModelCollation>1033, CI</ModelCollation>
+    <DefaultFileStructure>BySchemaAndSchemaType</DefaultFileStructure>
+    <DeployToDatabase>True</DeployToDatabase>
+    <TargetFrameworkVersion>v4.5.2</TargetFrameworkVersion>
+    <TargetLanguage>CS</TargetLanguage>
+    <AppDesignerFolder>Properties</AppDesignerFolder>
+    <SqlServerVerification>False</SqlServerVerification>
+    <IncludeSchemaNameInFileName>True</IncludeSchemaNameInFileName>
+    <IsSqlChangeAutomationProject>True</IsSqlChangeAutomationProject>
+    <SqlChangeAutomationSchemaVersion>1.12</SqlChangeAutomationSchemaVersion>
+    <DeployOnceSubFolder>Migrations</DeployOnceSubFolder>
+    <DeployChangesSubFolder>Programmable Objects</DeployChangesSubFolder>
+    <DeployChangesImportSchemaFolders>True</DeployChangesImportSchemaFolders>
+    <PreDeploymentSubFolder>Pre-Deployment</PreDeploymentSubFolder>
+    <PostDeploymentSubFolder>Post-Deployment</PostDeploymentSubFolder>
+    <GenerateSqlPackage>True</GenerateSqlPackage>
+    <TargetDatabaseSet>True</TargetDatabaseSet>
+    <DSP>Microsoft.Data.Tools.Schema.Sql.Sql140DatabaseSchemaProvider</DSP>
+    <DeployChangesExecutionOrder>
+d1f940ee-e0d6-59f0-a77d-d9c0c212d3f4|Programmable Objects\dbo\Stored Procedures\uspPrintError.sql;
+b626f028-dc9b-54e7-9b36-6810092c3f64|Programmable Objects\dbo\Stored Procedures\uspLogError.sql;
+0551845c-d26b-5679-8de3-4c11cdff8d88|Programmable Objects\dbo\Stored Procedures\uspAddOrderTrackingEvent.sql;
+4822ab6f-2ad3-5aed-9b87-f1044f3af488|Programmable Objects\HumanResources\Views\vEmployeePersonTemporalInfo.sql;
+f26150c1-71e1-5229-a42d-b3be8d944758|Programmable Objects\HumanResources\Stored Procedures\sp_GetEmployee_Person_Info_AsOf.sql;
+1283ce97-371c-5833-9346-c7c25769f929|Programmable Objects\HumanResources\Stored Procedures\uspUpdateEmployeeHireInfo.sql;
+ecf74ec8-fdd4-520b-bf23-d875d9158861|Programmable Objects\HumanResources\Stored Procedures\uspUpdateEmployeeLogin.sql;
+2b483dab-b69f-56d7-88c8-640ee915791c|Programmable Objects\HumanResources\Stored Procedures\uspUpdateEmployeePersonalInfo.sql;
+e6ad65a8-bbd7-5b12-98f3-dcecc02c3798|Programmable Objects\Database Triggers\ddlDatabaseTriggerLog.sql;
+4d11aecf-ef90-5ef6-9cfc-ac5c8f70b426|Programmable Objects\dbo\Functions\ufnGetAccountingEndDate.sql;
+682e76da-8075-5bba-991a-d0d1d333f615|Programmable Objects\dbo\Functions\ufnGetAccountingStartDate.sql;
+3931ccd4-128e-5ab4-ae34-84d4c53fb396|Programmable Objects\dbo\Functions\ufnGetContactInformation.sql;
+dea856b5-e31e-51be-b0f9-216c7ba719a6|Programmable Objects\dbo\Functions\ufnGetDocumentStatusText.sql;
+76376036-c026-5b29-8171-1d35cc539c1c|Programmable Objects\dbo\Functions\ufnGetProductDealerPrice.sql;
+b579bae0-6e57-5fbb-92c0-e4a10fea4b48|Programmable Objects\dbo\Functions\ufnGetProductListPrice.sql;
+62618fe4-7636-5bf5-9324-6e07450e6404|Programmable Objects\dbo\Functions\ufnGetProductStandardCost.sql;
+b755071a-df3a-5cf4-b506-089a42149871|Programmable Objects\dbo\Functions\ufnGetPurchaseOrderStatusText.sql;
+09d6cc2f-777a-5c55-aea5-55ea274d0c7d|Programmable Objects\dbo\Functions\ufnGetSalesOrderStatusText.sql;
+1be4729d-096d-5734-82e8-5086d35097ee|Programmable Objects\dbo\Functions\ufnGetStock.sql;
+2520fa8c-0ba6-5eee-9edd-0c6bbbc4dd14|Programmable Objects\dbo\Functions\ufnToRawJsonArray.sql;
+8c66428f-ef94-512d-aa83-96b1af29e565|Programmable Objects\dbo\Stored Procedures\uspGetBillOfMaterials.sql;
+45dbb392-e422-5649-ba43-2820274af4b9|Programmable Objects\dbo\Stored Procedures\uspGetEmployeeManagers.sql;
+d177774a-9258-5dd0-a6f4-6f90bc1d2aea|Programmable Objects\dbo\Stored Procedures\uspGetManagerEmployees.sql;
+72d3c880-dbfa-5799-b2e0-5cda1eab3e35|Programmable Objects\dbo\Stored Procedures\uspGetOrderTrackingBySalesOrderID.sql;
+3bad9a00-2f0c-5d5c-a2bd-9e208b106726|Programmable Objects\dbo\Stored Procedures\uspGetOrderTrackingByTrackingNumber.sql;
+0dc9b6f7-8dc4-5741-983c-972d306604ba|Programmable Objects\dbo\Stored Procedures\uspGetWhereUsedProductID.sql;
+d88d2f97-d9f3-54ae-8ff7-59d654f46049|Programmable Objects\dbo\Stored Procedures\uspSearchCandidateResumes.sql;
+18d8876b-a32c-5c6b-ac6f-e2abcc606882|Programmable Objects\Demo\Stored Procedures\usp_DemoInitSeed.sql;
+b9df1e3f-1b21-58e5-9260-818ecadf1103|Programmable Objects\Demo\Stored Procedures\usp_DemoReset.sql;
+531d88c7-e7e0-5d04-aa73-87ee789320f9|Programmable Objects\HumanResources\Stored Procedures\sp_UpdateEmployee_Temporal.sql;
+3ab7ebec-9ebb-558c-a479-473da35883f8|Programmable Objects\HumanResources\Views\vEmployee.sql;
+fea3ba34-8cf1-5efe-b4b4-0af2aaa8ecee|Programmable Objects\HumanResources\Views\vEmployeeDepartment.sql;
+952475f9-5cec-5b57-a1b4-6f6486d122ea|Programmable Objects\HumanResources\Views\vEmployeeDepartmentHistory.sql;
+11bfe176-313c-5d0f-b940-526acdf12fd8|Programmable Objects\HumanResources\Views\vJobCandidate.sql;
+da12a878-7d51-5650-a715-42c6b40f64a0|Programmable Objects\HumanResources\Views\vJobCandidateEducation.sql;
+863b5062-dcc5-52f9-8d1f-5c05cc40f3a6|Programmable Objects\HumanResources\Views\vJobCandidateEmployment.sql;
+97977129-16bf-56ca-b407-6b23cb937047|Programmable Objects\Person\Stored Procedures\sp_DeletePerson_Temporal.sql;
+d685570c-4e78-57a9-86bb-fc58da4f20d2|Programmable Objects\Person\Stored Procedures\sp_UpdatePerson_Temporal.sql;
+e4964a55-f0ae-5511-9ff0-8657e4712963|Programmable Objects\Person\Views\vAdditionalContactInfo.sql;
+8fa82d9c-4937-5cff-807b-b43078c6c2ad|Programmable Objects\Person\Views\vStateProvinceCountryRegion.sql;
+14172dc3-00f7-58c7-a40a-1fb97de76170|Programmable Objects\Production\Views\vProductAndDescription.sql;
+6d585713-f0f1-5616-869e-ae195e240c2c|Programmable Objects\Production\Views\vProductModelCatalogDescription.sql;
+20980a07-37a8-5d1e-8dc6-771bf3a3c9d1|Programmable Objects\Production\Views\vProductModelInstructions.sql;
+397ded8a-ff91-5ebf-94a2-c424474a0ed9|Programmable Objects\Purchasing\Views\vVendorWithAddresses.sql;
+26cb2bdc-a3bb-5da8-b167-b6c4cb9a5962|Programmable Objects\Purchasing\Views\vVendorWithContacts.sql;
+337ff298-fd8b-52fe-be72-c1caa3bada43|Programmable Objects\Sales\Stored Procedures\usp_InsertSalesOrder_ondisk.sql;
+b2d2e727-5b73-55fd-844d-3a0ef3bed763|Programmable Objects\Sales\Stored Procedures\usp_UpdateSalesOrderShipInfo_ondisk.sql;
+37cae4c8-4d01-5055-afdd-cbff801a0d5d|Programmable Objects\Sales\Views\vIndividualCustomer.sql;
+326342f7-573c-5e94-a232-0831871f8d68|Programmable Objects\Sales\Views\vPersonDemographics.sql;
+2544df81-f519-5592-86d8-f86016bf41d9|Programmable Objects\Sales\Views\vSalesPerson.sql;
+af8dae55-97f6-55be-94d8-aff7b4f6a480|Programmable Objects\Sales\Views\vSalesPersonSalesByFiscalYears.sql;
+cf44c18e-ae2d-5875-94e0-a74f67833771|Programmable Objects\Sales\Views\vStoreWithAddresses.sql;
+8637dc2f-d115-5bc3-b077-08f2a7fb709d|Programmable Objects\Sales\Views\vStoreWithContacts.sql;
+9e8bf290-b3f3-581f-a633-ec39918f567a|Programmable Objects\Sales\Views\vStoreWithDemographics.sql;
+964a55ea-5642-42fa-a7d7-f4a342d188e9|Programmable Objects\Security\Functions\customerAccessPredicate.sql;
+b67f41ef-f618-4e60-afb8-d6c6e8415657|Programmable Objects\Sales\Functions\vSalesOrderDetail_extended_inmem.sql;
+74176769-d52c-48a0-8eee-6bca54ebd567|Programmable Objects\Sales\Functions\vSalesOrderHeader_extended_inmem.sql;
+add06c64-88b1-4181-82dd-e9689865d167|Programmable Objects\Sales\Stored Procedures\usp_InsertSalesOrder_inmem.sql;
+918aad9f-5afc-5c4e-963c-749e118aa685|Programmable Objects\Sales\Stored Procedures\usp_UpdateSalesOrderShipInfo_inmem.sql;
+9deb5dee-fb4b-5eff-bfa8-4117154234be|Programmable Objects\Sales\Stored Procedures\usp_UpdateSalesOrderShipInfo_native.sql;
+3b832b1b-d204-4e23-a614-5ed9f277e801|Programmable Objects\dbo\Functions\ufnGetAccountingEndDate_native.sql;
+dc2ffe87-aee7-4719-b794-a04ba0bc6557|Programmable Objects\dbo\Functions\ufnGetAccountingStartDate_native.sql;
+5f46b68e-5dbc-4ace-a69d-1c6d4cd26929|Programmable Objects\dbo\Functions\ufnGetDocumentStatusText_native.sql;
+268c859b-f5e2-42c8-8bce-f3e3a3c57d02|Programmable Objects\dbo\Functions\ufnGetPurchaseOrderStatusText_native.sql;
+ee30d3d2-5708-4312-b83f-4d60856b249e|Programmable Objects\dbo\Functions\ufnGetSalesOrderStatusText_native.sql;
+</DeployChangesExecutionOrder>
+    <DeployChangesInitialImportDone>True</DeployChangesInitialImportDone>
+    <SyncToOfflineSchemaModelBySchema>False</SyncToOfflineSchemaModelBySchema>
+    <BuildOptionSkipThreePartNameCheck>True</BuildOptionSkipThreePartNameCheck>
+    <DeploymentMode>DeployAndRebuildPatchOnBuild</DeploymentMode>
+    <BuildOptionSkipLocalSqlBackup>False</BuildOptionSkipLocalSqlBackup>
+    <BuildOptionBackupShadowDatabase>False</BuildOptionBackupShadowDatabase>
+  </PropertyGroup>
+  <!-- SQL CHANGE AUTOMATION OFFLINE SCHEMA MODEL OPTIONS -->
+  <PropertyGroup>
+    <SyncToOfflineSchemaModel>True</SyncToOfflineSchemaModel>
+    <!--
+    <SyncToOfflineSchemaModelBySchema>True</SyncToOfflineSchemaModelBySchema>
+    <SyncToOfflineSchemaModelObjectTypes>Table;Assembly;Contract;Default;EventNotification;FullTextCatalog;FullTextStoplist;MessageType;PartitionFunction;PartitionScheme;Queue;ServiceBinding;Role;Route;Rule;Schema;SearchPropertyList;Service;Sequence;Synonym;User;UserDefinedType;XmlSchemaCollection</SyncToOfflineSchemaModelObjectTypes>
+    <SchemaModelSubFolder>Schema-Model</SchemaModelSubFolder>
+    -->
+  </PropertyGroup>
+  <!-- SQL CHANGE AUTOMATION PROGRAMMABLE OBJECT OPTIONS -->
+  <PropertyGroup>
+    <DeployChangesForProgrammableObjects>True</DeployChangesForProgrammableObjects>
+    <!--
+    <DeployChangesForProgrammableObjects>True</DeployChangesForProgrammableObjects>
+    <DeployChangesInitialImportDone>False</DeployChangesInitialImportDone>
+    <DeployChangesImportObjectTypes>StoredProcedure;Function;View;DdlTrigger</DeployChangesImportObjectTypes>
+    <DeployChangesSubFolder>Deploy-Changes</DeployChangesSubFolder>
+    -->
+  </PropertyGroup>
+  <!-- SQL CHANGE AUTOMATION SCRIPT GENERATION OPTIONS -->
+  <PropertyGroup>
+    <!-- These properties might be set by the Developer -->
+    <!--
+    <SyncOptionIncludeDependentObjects>False</SyncOptionIncludeDependentObjects>
+    <SyncOptionIncludeExistenceChecks>False</SyncOptionIncludeExistenceChecks>
+    <SyncOptionUseDropCreateInsteadOfAlter>False</SyncOptionUseDropCreateInsteadOfAlter>
+    <SyncOptionDisableDdlTriggers>False</SyncOptionDisableDdlTriggers>
+    <SyncOptionCaseSensitiveObjectDefinition>False</SyncOptionCaseSensitiveObjectDefinition>
+
+    <SyncOptionIgnoreExtendedProperties>False</SyncOptionIgnoreExtendedProperties>
+    <SyncOptionIgnoreCommentsInBodies>False</SyncOptionIgnoreCommentsInBodies>
+    <SyncOptionIgnoreAnsiOptions>False</SyncOptionIgnoreAnsiOptions>
+    <SyncOptionIgnoreCollations>True</SyncOptionIgnoreCollations>
+    <SyncOptionIgnoreColumnsOrder>True</SyncOptionIgnoreColumnsOrder>
+    <SyncOptionIgnoreWhiteSpace>True</SyncOptionIgnoreWhiteSpace>
+    <SyncOptionIgnoreSynonymDatabaseAndServerName>True</SyncOptionIgnoreSynonymDatabaseAndServerName>
+    <SyncOptionIgnoretSQLt>True</SyncOptionIgnoretSQLt>
+    <SyncOptionIgnoreDmlTriggers>False</SyncOptionIgnoreDmlTriggers>
+    <SyncOptionIgnoreInsteadOfTriggers>False</SyncOptionIgnoreInsteadOfTriggers>
+    <SyncOptionIgnoreBindings>False</SyncOptionIgnoreBindings>
+    <SyncOptionIgnoreQueueEventNotifications>False</SyncOptionIgnoreQueueEventNotifications>
+    <SyncOptionIgnoreSquareBrackets>False</SyncOptionIgnoreSquareBrackets>
+    <SyncOptionIgnoreWithElementOrder>True</SyncOptionIgnoreWithElementOrder>
+    <SyncOptionIgnoreWithEncryption>False</SyncOptionIgnoreWithEncryption>
+    -->
+    <!-- These properties might be set by the DBA -->
+    <!--
+    <SyncOptionIgnoreDataspaces>True</SyncOptionIgnoreDataspaces>
+    <SyncOptionIgnoreConstraintNotForReplicationAttribute>True</SyncOptionIgnoreConstraintNotForReplicationAttribute>
+    <SyncOptionIgnoreFillFactor>True</SyncOptionIgnoreFillFactor>
+    <SyncOptionIgnoreIndexLockAttributes>False</SyncOptionIgnoreIndexLockAttributes>
+    <SyncOptionIgnoreStatistics>True</SyncOptionIgnoreStatistics>
+    <SyncOptionIgnoreDataCompression>True</SyncOptionIgnoreDataCompression>
+    <SyncOptionIgnoreFullTextIndexing>False</SyncOptionIgnoreFullTextIndexing>
+    <SyncOptionIgnoreReplicationTriggers>True</SyncOptionIgnoreReplicationTriggers>
+    <SyncOptionIgnoreSchemaObjectAuthorization>False</SyncOptionIgnoreSchemaObjectAuthorization>
+    <SyncOptionIgnoreStatisticsNorecompute>False</SyncOptionIgnoreStatisticsNorecompute>
+    <SyncOptionConsiderNextFilegroupInPartitionSchemes>False</SyncOptionConsiderNextFilegroupInPartitionSchemes>
+    -->
+    <!-- Shared Developer/DBA options -->
+    <!--
+    <SyncOptionIgnoreIndexes>False</SyncOptionIgnoreIndexes>
+    <SyncOptionIgnorePermissions>False</SyncOptionIgnorePermissions>
+    <SyncOptionIgnoreConstraintWithNoCheckAttribute>True</SyncOptionIgnoreConstraintWithNoCheckAttribute>
+    <SyncOptionIgnoreNocheckAndWithNocheckAttributes>False</SyncOptionIgnoreNocheckAndWithNocheckAttributes>
+    <SyncOptionIgnoreIdentitySeedAndIncrement>False</SyncOptionIgnoreIdentitySeedAndIncrement>
+    <SyncOptionIgnoreUserProperties>True</SyncOptionIgnoreUserProperties>
+    <SyncOptionIgnoreUsersPermissionsAndRoleMemberships>False</SyncOptionIgnoreUsersPermissionsAndRoleMemberships>
+    <SyncOptionAddWithEncryption>False</SyncOptionAddWithEncryption>
+    <SyncOptionDecryptEncryptedObjects>True</SyncOptionDecryptEncryptedObjects>
+    <SyncOptionUseCompatibilityLevel>False</SyncOptionUseCompatibilityLevel>
+    -->
+    <!-- Data comparison/sync options -->
+    <!--
+    <SyncDataOptionDropKeysIndexesAndConstraints>False</SyncDataOptionDropKeysIndexesAndConstraints>
+    <SyncDataOptionDisableForeignKeys>False</SyncDataOptionDisableForeignKeys>
+    <SyncDataOptionIncludeTimestampColumns>False</SyncDataOptionIncludeTimestampColumns>
+    <SyncDataOptionCaseSensitiveObjectDefinition>True</SyncDataOptionCaseSensitiveObjectDefinition>
+    <SyncDataOptionForceBinaryCollation>True</SyncDataOptionForceBinaryCollation>
+    <SyncDataOptionTrimTrailingSpaces>False</SyncDataOptionTrimTrailingSpaces>
+    <SyncDataOptionDisableDmlTriggers>False</SyncDataOptionDisableDmlTriggers>
+    <SyncDataOptionDisableDdlTriggers>True</SyncDataOptionDisableDdlTriggers>
+    <SyncDataOptionDontIncludeCommentsInScript>False</SyncDataOptionDontIncludeCommentsInScript>
+    <SyncDataOptionReseedIdentityColumns>False</SyncDataOptionReseedIdentityColumns>
+    <SyncDataOptionSkipIntegrityChecksForForeignKeys>False</SyncDataOptionSkipIntegrityChecksForForeignKeys>
+    <SyncDataOptionTransportClrDataTypesAsBinary>False</SyncDataOptionTransportClrDataTypesAsBinary>
+    <SyncDataOptionCompressTemporaryFiles>False</SyncDataOptionCompressTemporaryFiles>
+    <SyncDataOptionTreatEmptyStringAsNull>False</SyncDataOptionTreatEmptyStringAsNull>
+    <SyncDataOptionUseChecksumComparison>False</SyncDataOptionUseChecksumComparison>
+    <SyncDataOptionUseMaxPrecisionForFloatComparison>False</SyncDataOptionUseMaxPrecisionForFloatComparison>
+    -->
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
+    <OutputPath>bin\Release\</OutputPath>
+    <BuildScriptName>$(MSBuildProjectName).sql</BuildScriptName>
+    <TreatWarningsAsErrors>False</TreatWarningsAsErrors>
+    <DebugType>pdbonly</DebugType>
+    <Optimize>true</Optimize>
+    <DefineDebug>false</DefineDebug>
+    <DefineTrace>true</DefineTrace>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
+    <OutputPath>bin\Debug\</OutputPath>
+    <BuildScriptName>$(MSBuildProjectName).sql</BuildScriptName>
+    <TreatWarningsAsErrors>false</TreatWarningsAsErrors>
+    <DebugSymbols>true</DebugSymbols>
+    <DebugType>full</DebugType>
+    <Optimize>false</Optimize>
+    <DefineDebug>true</DefineDebug>
+    <DefineTrace>true</DefineTrace>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+  </PropertyGroup>
+  <!--Import the settings-->
+  <PropertyGroup>
+    <AppDataPath>$(LOCALAPPDATA)</AppDataPath>
+  </PropertyGroup>
+  <PropertyGroup Condition="$(AppDataPath)==''">
+    <AppDataPath>$(APPDATA)</AppDataPath>
+  </PropertyGroup>
+  <Import Condition="Exists('$(SqlChangeAutomationTargetsPath)')" Project="$(SqlChangeAutomationTargetsPath)" />
+  <Import Condition="!Exists('$(SqlChangeAutomationTargetsPath)')" Project="$(MSBuildExtensionsPath)\SqlChangeAutomation\SqlChangeAutomation.Data.Schema.Ssdt.targets" />
+  <ItemGroup>
+    <Folder Include="Properties\" />
+    <Folder Include="Pre-Deployment\" />
+    <Folder Include="Post-Deployment\" />
+    <Folder Include="Migrations\" />
+    <Folder Include="Migrations\1.0.0-Baseline\" />
+    <Folder Include="Programmable Objects\" />
+    <Folder Include="Programmable Objects\Database Triggers\" />
+    <Folder Include="Programmable Objects\dbo\" />
+    <Folder Include="Programmable Objects\dbo\Functions\" />
+    <Folder Include="Programmable Objects\dbo\Stored Procedures\" />
+    <Folder Include="Programmable Objects\Demo\" />
+    <Folder Include="Programmable Objects\Demo\Stored Procedures\" />
+    <Folder Include="Programmable Objects\HumanResources\" />
+    <Folder Include="Programmable Objects\HumanResources\Stored Procedures\" />
+    <Folder Include="Programmable Objects\HumanResources\Views\" />
+    <Folder Include="Programmable Objects\Person\" />
+    <Folder Include="Programmable Objects\Person\Stored Procedures\" />
+    <Folder Include="Programmable Objects\Person\Views\" />
+    <Folder Include="Programmable Objects\Production\" />
+    <Folder Include="Programmable Objects\Production\Views\" />
+    <Folder Include="Programmable Objects\Purchasing\" />
+    <Folder Include="Programmable Objects\Purchasing\Views\" />
+    <Folder Include="Programmable Objects\Sales\" />
+    <Folder Include="Programmable Objects\Sales\Stored Procedures\" />
+    <Folder Include="Programmable Objects\Sales\Views\" />
+    <Folder Include="Migrations\1.1.0-Changes\" />
+    <Folder Include="Programmable Objects\Security" />
+    <Folder Include="Programmable Objects\Security\Functions" />
+    <Folder Include="Programmable Objects\Sales\Functions" />
+    <Folder Include="Programmable Objects\dbo\Dependent Objects" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Pre-Deployment\01_Create_Database.sql" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Post-Deployment\01_Finalize_Deployment.sql" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Migrations\1.0.0-Baseline\00004_20190508_1945_BASELINE_Objects_PBI-437.sql" />
+    <None Include="Programmable Objects\Database Triggers\ddlDatabaseTriggerLog.sql" />
+    <None Include="Programmable Objects\dbo\Functions\ufnGetAccountingEndDate.sql" />
+    <None Include="Programmable Objects\dbo\Functions\ufnGetAccountingStartDate.sql" />
+    <None Include="Programmable Objects\dbo\Functions\ufnGetContactInformation.sql" />
+    <None Include="Programmable Objects\dbo\Functions\ufnGetDocumentStatusText.sql" />
+    <None Include="Programmable Objects\dbo\Functions\ufnGetProductDealerPrice.sql" />
+    <None Include="Programmable Objects\dbo\Functions\ufnGetProductListPrice.sql" />
+    <None Include="Programmable Objects\dbo\Functions\ufnGetProductStandardCost.sql" />
+    <None Include="Programmable Objects\dbo\Functions\ufnGetPurchaseOrderStatusText.sql" />
+    <None Include="Programmable Objects\dbo\Functions\ufnGetSalesOrderStatusText.sql" />
+    <None Include="Programmable Objects\dbo\Functions\ufnGetStock.sql" />
+    <None Include="Programmable Objects\dbo\Functions\ufnToRawJsonArray.sql" />
+    <None Include="Programmable Objects\dbo\Stored Procedures\uspAddOrderTrackingEvent.sql" />
+    <None Include="Programmable Objects\dbo\Stored Procedures\uspGetBillOfMaterials.sql" />
+    <None Include="Programmable Objects\dbo\Stored Procedures\uspGetEmployeeManagers.sql" />
+    <None Include="Programmable Objects\dbo\Stored Procedures\uspGetManagerEmployees.sql" />
+    <None Include="Programmable Objects\dbo\Stored Procedures\uspGetOrderTrackingBySalesOrderID.sql" />
+    <None Include="Programmable Objects\dbo\Stored Procedures\uspGetOrderTrackingByTrackingNumber.sql" />
+    <None Include="Programmable Objects\dbo\Stored Procedures\uspGetWhereUsedProductID.sql" />
+    <None Include="Programmable Objects\dbo\Stored Procedures\uspLogError.sql" />
+    <None Include="Programmable Objects\dbo\Stored Procedures\uspPrintError.sql" />
+    <None Include="Programmable Objects\dbo\Stored Procedures\uspSearchCandidateResumes.sql" />
+    <None Include="Programmable Objects\Demo\Stored Procedures\usp_DemoInitSeed.sql" />
+    <None Include="Programmable Objects\Demo\Stored Procedures\usp_DemoReset.sql" />
+    <None Include="Programmable Objects\HumanResources\Stored Procedures\sp_GetEmployee_Person_Info_AsOf.sql" />
+    <None Include="Programmable Objects\HumanResources\Stored Procedures\sp_UpdateEmployee_Temporal.sql" />
+    <None Include="Programmable Objects\HumanResources\Stored Procedures\uspUpdateEmployeeHireInfo.sql" />
+    <None Include="Programmable Objects\HumanResources\Stored Procedures\uspUpdateEmployeeLogin.sql" />
+    <None Include="Programmable Objects\HumanResources\Stored Procedures\uspUpdateEmployeePersonalInfo.sql" />
+    <None Include="Programmable Objects\HumanResources\Views\vEmployee.sql" />
+    <None Include="Programmable Objects\HumanResources\Views\vEmployeeDepartment.sql" />
+    <None Include="Programmable Objects\HumanResources\Views\vEmployeeDepartmentHistory.sql" />
+    <None Include="Programmable Objects\HumanResources\Views\vEmployeePersonTemporalInfo.sql" />
+    <None Include="Programmable Objects\HumanResources\Views\vJobCandidate.sql" />
+    <None Include="Programmable Objects\HumanResources\Views\vJobCandidateEducation.sql" />
+    <None Include="Programmable Objects\HumanResources\Views\vJobCandidateEmployment.sql" />
+    <None Include="Programmable Objects\Person\Stored Procedures\sp_DeletePerson_Temporal.sql" />
+    <None Include="Programmable Objects\Person\Stored Procedures\sp_UpdatePerson_Temporal.sql" />
+    <None Include="Programmable Objects\Person\Views\vAdditionalContactInfo.sql" />
+    <None Include="Programmable Objects\Person\Views\vStateProvinceCountryRegion.sql" />
+    <None Include="Programmable Objects\Production\Views\vProductAndDescription.sql" />
+    <None Include="Programmable Objects\Production\Views\vProductModelCatalogDescription.sql" />
+    <None Include="Programmable Objects\Production\Views\vProductModelInstructions.sql" />
+    <None Include="Programmable Objects\Purchasing\Views\vVendorWithAddresses.sql" />
+    <None Include="Programmable Objects\Purchasing\Views\vVendorWithContacts.sql" />
+    <None Include="Programmable Objects\Sales\Stored Procedures\usp_InsertSalesOrder_ondisk.sql" />
+    <None Include="Programmable Objects\Sales\Stored Procedures\usp_UpdateSalesOrderShipInfo_inmem.sql" />
+    <None Include="Programmable Objects\Sales\Stored Procedures\usp_UpdateSalesOrderShipInfo_ondisk.sql" />
+    <None Include="Programmable Objects\Sales\Views\vIndividualCustomer.sql" />
+    <None Include="Programmable Objects\Sales\Views\vPersonDemographics.sql" />
+    <None Include="Programmable Objects\Sales\Views\vSalesPerson.sql" />
+    <None Include="Programmable Objects\Sales\Views\vSalesPersonSalesByFiscalYears.sql" />
+    <None Include="Programmable Objects\Sales\Views\vStoreWithAddresses.sql" />
+    <None Include="Programmable Objects\Sales\Views\vStoreWithContacts.sql" />
+    <None Include="Programmable Objects\Sales\Views\vStoreWithDemographics.sql" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Programmable Objects\Sales\Stored Procedures\usp_InsertSalesOrder_inmem.sql" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Programmable Objects\Sales\Stored Procedures\usp_UpdateSalesOrderShipInfo_native.sql" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Programmable Objects\Security\Functions\customerAccessPredicate.sql" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Programmable Objects\dbo\Functions\ufnGetAccountingEndDate_native.sql" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Programmable Objects\dbo\Functions\ufnGetSalesOrderStatusText_native.sql" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Programmable Objects\dbo\Functions\ufnGetAccountingStartDate_native.sql" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Programmable Objects\dbo\Functions\ufnGetDocumentStatusText_native.sql" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Programmable Objects\dbo\Functions\ufnGetPurchaseOrderStatusText_native.sql" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Programmable Objects\Sales\Functions\vSalesOrderDetail_extended_inmem.sql" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Programmable Objects\Sales\Functions\vSalesOrderHeader_extended_inmem.sql" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Programmable Objects\dbo\Dependent Objects\ufnLeadingZeros.sql" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Programmable Objects\dbo\Functions\ufnLeadingZeros_native.sql" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Migrations\1.0.0-Baseline\00001_20190508_1930_BASELINE_FullTextIndexes_PBI-437.sql" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Migrations\1.0.0-Baseline\00002_20190508_1935_BASELINE_DatabasePrincipals_PBI-437.sql" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Migrations\1.0.0-Baseline\00003_20190508_1940_BASELINE_Schemas_PBI-437.sql" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Migrations\1.0.0-Baseline\00006_20190508_1955_BASELINE_GrantPermissions_PBI-437.sql" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Migrations\1.0.0-Baseline\00005_20190508_1945_BASELINE_ExtendedProperties_PBI-437.sql" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Migrations\1.1.0-Changes\00007_20190508_2005_ALTER_Indexes_PBI-437.sql" />
+  </ItemGroup>
+</Project>
