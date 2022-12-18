@@ -16,7 +16,7 @@
     <ModelCollation>1033, CI</ModelCollation>
     <DefaultFileStructure>BySchemaAndSchemaType</DefaultFileStructure>
     <DeployToDatabase>True</DeployToDatabase>
-    <TargetFrameworkVersion>v4.5.2</TargetFrameworkVersion>
+    <TargetFrameworkVersion>v4.8</TargetFrameworkVersion>
     <TargetLanguage>CS</TargetLanguage>
     <AppDesignerFolder>Properties</AppDesignerFolder>
     <SqlServerVerification>False</SqlServerVerification>
@@ -30,7 +30,7 @@
     <PostDeploymentSubFolder>Post-Deployment</PostDeploymentSubFolder>
     <GenerateSqlPackage>True</GenerateSqlPackage>
     <TargetDatabaseSet>True</TargetDatabaseSet>
-    <DSP>Microsoft.Data.Tools.Schema.Sql.Sql140DatabaseSchemaProvider</DSP>
+    <DSP>Microsoft.Data.Tools.Schema.Sql.Sql150DatabaseSchemaProvider</DSP>
     <DeployChangesExecutionOrder>
 d1f940ee-e0d6-59f0-a77d-d9c0c212d3f4|Programmable Objects\dbo\Stored Procedures\uspPrintError.sql;
 b626f028-dc9b-54e7-9b36-6810092c3f64|Programmable Objects\dbo\Stored Procedures\uspLogError.sql;
@@ -101,10 +101,12 @@ ee30d3d2-5708-4312-b83f-4d60856b249e|Programmable Objects\dbo\Functions\ufnGetSa
     <DeployChangesInitialImportDone>True</DeployChangesInitialImportDone>
     <SyncToOfflineSchemaModelBySchema>False</SyncToOfflineSchemaModelBySchema>
     <BuildOptionSkipThreePartNameCheck>True</BuildOptionSkipThreePartNameCheck>
-    <DeploymentMode>DeployAndRebuildPatchOnBuild</DeploymentMode>
+    <DeploymentMode>DeployOnBuild</DeploymentMode>
     <BuildOptionSkipLocalSqlBackup>False</BuildOptionSkipLocalSqlBackup>
     <BuildOptionBackupShadowDatabase>False</BuildOptionBackupShadowDatabase>
     <TargetDatabase>AdventureWorks.Database</TargetDatabase>
+    <GenerateCreateScript>True</GenerateCreateScript>
+    <TargetFrameworkProfile />
   </PropertyGroup>
   <!-- SQL CHANGE AUTOMATION OFFLINE SCHEMA MODEL OPTIONS -->
   <PropertyGroup>

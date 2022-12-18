@@ -1,12 +1,8 @@
-﻿using System;
-using System.IO;
-using System.Reflection;
-using AdventureWorks.API.Controllers;
+﻿using AdventureWorks.API.Controllers;
 using AdventureWorks.Application.Infrastructure.AutoMapper;
 using AdventureWorks.Application.Interfaces;
 using AdventureWorks.Infrastructure.DbContexts;
 using AdventureWorks.Infrastructure.Repositories;
-using AutoMapper;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Mvc;
@@ -14,7 +10,7 @@ using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
-using Swashbuckle.AspNetCore.Swagger;
+using System.Reflection;
 
 namespace AdventureWorks.API
 {
@@ -43,7 +39,30 @@ namespace AdventureWorks.API
 
             services.AddScoped<IProductRepository, ProductRepository>();
 
-            services.AddMvc().SetCompatibilityVersion(CompatibilityVersion.Version_2_2);
+            services.AddControllers(options =>
+            {
+                //options.Filters.Add(typeof(ValidatorActionFilter));
+                options.ReturnHttpNotAcceptable = true;
+            })
+                .AddJsonOptions(options => options.JsonSerializerOptions.WriteIndented = true)
+                .AddXmlSerializerFormatters()
+                .AddXmlDataContractSerializerFormatters()
+                //.AddFluentValidation(s =>
+                //{
+                //    s.RegisterValidatorsFromAssemblyContaining<FluentValidator<AuthorCreateDto>>();
+                //    s.DisableDataAnnotationsValidation = true;
+                //})
+                ;
+
+            services.AddCors(options =>
+            {
+                options.AddPolicy("PubsCorsPolicy",
+                    builder => builder
+                    .SetIsOriginAllowed((host) => true)
+                    .AllowAnyMethod()
+                    .AllowAnyHeader()
+                    .AllowCredentials());
+            });
 
             services.AddScoped<ILogger, Logger<ProductsController>>();
 
@@ -52,17 +71,17 @@ namespace AdventureWorks.API
                 options.SuppressModelStateInvalidFilter = true;
             });
 
-            services.AddSwaggerGen(options =>
-            {
-                options.SwaggerDoc("v1", new Info { Title = "AdventureWorks API", Version = "v1" });
+            //services.AddSwaggerGen(options =>
+            //{
+            //    options.SwaggerDoc("v1", new Info { Title = "AdventureWorks API", Version = "v1" });
 
-                // Get xml comments path
-                var xmlFile = $"{Assembly.GetExecutingAssembly().GetName().Name}.xml";
-                var xmlPath = Path.Combine(AppContext.BaseDirectory, xmlFile);
+            //    // Get xml comments path
+            //    var xmlFile = $"{Assembly.GetExecutingAssembly().GetName().Name}.xml";
+            //    var xmlPath = Path.Combine(AppContext.BaseDirectory, xmlFile);
 
-                // Set xml path
-                options.IncludeXmlComments(xmlPath);
-            });
+            //    // Set xml path
+            //    options.IncludeXmlComments(xmlPath);
+            //});
 
         }
 
@@ -71,7 +90,6 @@ namespace AdventureWorks.API
             if (env.IsDevelopment())
             {
                 app.UseDeveloperExceptionPage();
-                app.UseDatabaseErrorPage();
             }
             else
             {
@@ -88,7 +106,14 @@ namespace AdventureWorks.API
                 options.SwaggerEndpoint("/swagger/v1/swagger.json", "AdventureWorks API V1");
             });
 
-            app.UseMvc();
+            app.UseRouting();
+
+            app.UseAuthorization();
+
+            app.UseEndpoints(endpoints =>
+            {
+                endpoints.MapControllers();
+            });
         }
     }
 }
