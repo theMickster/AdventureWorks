@@ -2,10 +2,7 @@
 using AdventureWorks.Core.Entities;
 using AutoMapper;
 using Microsoft.AspNetCore.Mvc;
-using System.Collections.Generic;
 using System.Net;
-using System.Threading.Tasks;
-using Microsoft.Extensions.Logging;
 
 namespace AdventureWorks.API.Controllers
 {

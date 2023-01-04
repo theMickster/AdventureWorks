@@ -1,7 +1,7 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
-# Visual Studio Version 16
-VisualStudioVersion = 16.0.29215.179
+# Visual Studio Version 17
+VisualStudioVersion = 17.4.33205.214
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{00D1A9C2-B5F0-4AF3-8072-F6C62B433612}") = "AdventureWorks.Database", "src\AdventureWorks.DB\AdventureWorks.Database.sqlproj", "{5FC754E7-74BD-4AAE-8B4E-CFC8CDDA1035}"
 EndProject
@@ -30,10 +30,8 @@ Global
 	EndGlobalSection
 	GlobalSection(ProjectConfigurationPlatforms) = postSolution
 		{5FC754E7-74BD-4AAE-8B4E-CFC8CDDA1035}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{5FC754E7-74BD-4AAE-8B4E-CFC8CDDA1035}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{5FC754E7-74BD-4AAE-8B4E-CFC8CDDA1035}.Debug|Any CPU.Deploy.0 = Debug|Any CPU
 		{5FC754E7-74BD-4AAE-8B4E-CFC8CDDA1035}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{5FC754E7-74BD-4AAE-8B4E-CFC8CDDA1035}.Release|Any CPU.Build.0 = Release|Any CPU
 		{5FC754E7-74BD-4AAE-8B4E-CFC8CDDA1035}.Release|Any CPU.Deploy.0 = Release|Any CPU
 		{8F714748-3CFE-424A-BA83-757E1AB8F331}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
 		{8F714748-3CFE-424A-BA83-757E1AB8F331}.Debug|Any CPU.Build.0 = Debug|Any CPU
