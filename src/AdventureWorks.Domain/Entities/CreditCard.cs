@@ -1,10 +1,9 @@
 ﻿using System;
 using System.Collections.Generic;
-using AdventureWorks.Core.Interfaces;
 
-namespace AdventureWorks.Core.Entities
+namespace AdventureWorks.Domain.Entities
 {
-    public class CreditCard : BaseEntity, IAggregateRoot
+    public class CreditCard : BaseEntity
     {
         public int CreditCardId { get; set; }
         public string CardType { get; set; }

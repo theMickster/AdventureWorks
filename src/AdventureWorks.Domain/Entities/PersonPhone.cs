@@ -1,9 +1,8 @@
 ﻿using System;
-using AdventureWorks.Core.Interfaces;
 
-namespace AdventureWorks.Core.Entities
+namespace AdventureWorks.Domain.Entities
 {
-    public class PersonPhone : BaseEntity, IAggregateRoot
+    public class PersonPhone : BaseEntity
     {
         public int BusinessEntityId { get; set; }
         public string PhoneNumber { get; set; }

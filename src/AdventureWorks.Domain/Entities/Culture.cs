@@ -1,10 +1,9 @@
 ﻿using System;
 using System.Collections.Generic;
-using AdventureWorks.Core.Interfaces;
 
-namespace AdventureWorks.Core.Entities
+namespace AdventureWorks.Domain.Entities
 {
-    public class Culture : BaseEntity, IAggregateRoot
+    public class Culture : BaseEntity
     {
         public string CultureId { get; set; }
         public string Name { get; set; }

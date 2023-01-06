@@ -1,9 +1,8 @@
 ﻿using System;
-using AdventureWorks.Core.Interfaces;
 
-namespace AdventureWorks.Core.Entities
+namespace AdventureWorks.Domain.Entities
 {
-    public class ProductModelProductDescriptionCulture : BaseEntity, IAggregateRoot
+    public class ProductModelProductDescriptionCulture : BaseEntity
     {
         public int ProductModelId { get; set; }
         public int ProductDescriptionId { get; set; }

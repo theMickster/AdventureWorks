@@ -1,9 +1,8 @@
 ﻿using System;
-using AdventureWorks.Core.Interfaces;
 
-namespace AdventureWorks.Core.Entities
+namespace AdventureWorks.Domain.Entities
 {
-    public class ProductCostHistory : BaseEntity, IAggregateRoot
+    public class ProductCostHistory : BaseEntity
     {
         public int ProductId { get; set; }
         public DateTime StartDate { get; set; }

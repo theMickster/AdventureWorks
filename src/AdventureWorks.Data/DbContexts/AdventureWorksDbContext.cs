@@ -1,5 +1,5 @@
 ﻿using AdventureWorks.Application.Interfaces;
-using AdventureWorks.Core.Entities;
+using AdventureWorks.Domain.Entities;
 using AdventureWorks.Infrastructure.Configurations;
 using Microsoft.EntityFrameworkCore;
 

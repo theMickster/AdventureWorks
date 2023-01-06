@@ -1,10 +1,9 @@
 ﻿using System;
 using System.Collections.Generic;
-using AdventureWorks.Core.Interfaces;
 
-namespace AdventureWorks.Core.Entities
+namespace AdventureWorks.Domain.Entities
 {
-    public class CurrencyRate : BaseEntity, IAggregateRoot
+    public class CurrencyRate : BaseEntity
     {
         public int CurrencyRateId { get; set; }
         public DateTime CurrencyRateDate { get; set; }

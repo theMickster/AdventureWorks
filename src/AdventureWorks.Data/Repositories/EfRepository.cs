@@ -1,12 +1,11 @@
-﻿using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
-using AdventureWorks.Application;
+﻿using AdventureWorks.Application;
 using AdventureWorks.Application.Interfaces;
-using AdventureWorks.Core.Entities;
-using AdventureWorks.Core.Interfaces;
 using AdventureWorks.Infrastructure.DbContexts;
 using Microsoft.EntityFrameworkCore;
+using System.Collections.Generic;
+using System.Linq;
+using System.Threading.Tasks;
+using AdventureWorks.Domain.Entities;
 
 namespace AdventureWorks.Infrastructure.Repositories
 {
@@ -15,7 +14,7 @@ namespace AdventureWorks.Infrastructure.Repositories
     /// https://blogs.msdn.microsoft.com/pfxteam/2012/04/13/should-i-expose-synchronous-wrappers-for-asynchronous-methods/
     /// </summary>
     /// <typeparam name="T"></typeparam>
-    public class EfRepository<T> : IAsyncRepository<T> where T : BaseEntity, IAggregateRoot
+    public class EfRepository<T> : IAsyncRepository<T> where T : BaseEntity
     {
         protected readonly AdventureWorksDbContext _dbContext;
 

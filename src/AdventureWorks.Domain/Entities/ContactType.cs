@@ -1,10 +1,9 @@
 ﻿using System;
 using System.Collections.Generic;
-using AdventureWorks.Core.Interfaces;
 
-namespace AdventureWorks.Core.Entities
+namespace AdventureWorks.Domain.Entities
 {
-    public class ContactType : BaseEntity, IAggregateRoot
+    public class ContactType : BaseEntity
     {
 
         public int ContactTypeId { get; set; }

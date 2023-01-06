@@ -1,9 +1,8 @@
 ﻿using System;
-using AdventureWorks.Core.Interfaces;
 
-namespace AdventureWorks.Core.Entities
+namespace AdventureWorks.Domain.Entities
 {
-    public class CountryRegionCurrency : BaseEntity, IAggregateRoot
+    public class CountryRegionCurrency : BaseEntity
     {
         public string CountryRegionCode { get; set; }
         public string CurrencyCode { get; set; }

@@ -1,9 +1,8 @@
 ﻿using System;
-using AdventureWorks.Core.Interfaces;
 
-namespace AdventureWorks.Core.Entities
+namespace AdventureWorks.Domain.Entities
 {
-    public class ProductInventory : BaseEntity, IAggregateRoot
+    public class ProductInventory : BaseEntity
     {
         public int ProductId { get; set; }
         public short LocationId { get; set; }

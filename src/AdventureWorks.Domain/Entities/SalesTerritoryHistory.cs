@@ -1,9 +1,8 @@
 ﻿using System;
-using AdventureWorks.Core.Interfaces;
 
-namespace AdventureWorks.Core.Entities
+namespace AdventureWorks.Domain.Entities
 {
-    public class SalesTerritoryHistory : BaseEntity, IAggregateRoot
+    public class SalesTerritoryHistory : BaseEntity
     {
         public int BusinessEntityId { get; set; }
         public int TerritoryId { get; set; }

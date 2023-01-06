@@ -1,10 +1,9 @@
 ﻿using System;
 using System.Collections.Generic;
-using AdventureWorks.Core.Interfaces;
 
-namespace AdventureWorks.Core.Entities
+namespace AdventureWorks.Domain.Entities
 {
-    public class Shift : BaseEntity, IAggregateRoot
+    public class Shift : BaseEntity
     {
 
         public byte ShiftId { get; set; }

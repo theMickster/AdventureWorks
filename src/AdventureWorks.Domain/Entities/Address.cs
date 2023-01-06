@@ -1,10 +1,9 @@
 ﻿using System;
 using System.Collections.Generic;
-using AdventureWorks.Core.Interfaces;
 
-namespace AdventureWorks.Core.Entities
+namespace AdventureWorks.Domain.Entities
 {
-    public class Address : BaseEntity, IAggregateRoot
+    public class Address : BaseEntity
     {
 
         public int AddressId { get; set; }

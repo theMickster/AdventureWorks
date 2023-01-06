@@ -1,9 +1,8 @@
 ﻿using System;
-using AdventureWorks.Core.Interfaces;
 
-namespace AdventureWorks.Core.Entities
+namespace AdventureWorks.Domain.Entities
 {
-    public class ShoppingCartItem : BaseEntity, IAggregateRoot
+    public class ShoppingCartItem : BaseEntity
     {
         public int ShoppingCartItemId { get; set; }
         public string ShoppingCartId { get; set; }

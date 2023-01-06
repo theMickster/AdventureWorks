@@ -1,9 +1,8 @@
 ﻿using System;
-using AdventureWorks.Core.Interfaces;
 
-namespace AdventureWorks.Core.Entities
+namespace AdventureWorks.Domain.Entities
 {
-    public class JobCandidate : BaseEntity, IAggregateRoot
+    public class JobCandidate : BaseEntity
     {
         public int JobCandidateId { get; set; }
         public int? BusinessEntityId { get; set; }

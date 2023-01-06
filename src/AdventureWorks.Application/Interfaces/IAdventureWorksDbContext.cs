@@ -1,4 +1,4 @@
-﻿using AdventureWorks.Core.Entities;
+﻿using AdventureWorks.Domain.Entities;
 using Microsoft.EntityFrameworkCore;
 
 namespace AdventureWorks.Application.Interfaces

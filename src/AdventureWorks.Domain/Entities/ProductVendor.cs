@@ -1,9 +1,8 @@
 ﻿using System;
-using AdventureWorks.Core.Interfaces;
 
-namespace AdventureWorks.Core.Entities
+namespace AdventureWorks.Domain.Entities
 {
-    public class ProductVendor : BaseEntity, IAggregateRoot
+    public class ProductVendor : BaseEntity
     {
         public int ProductId { get; set; }
         public int BusinessEntityId { get; set; }

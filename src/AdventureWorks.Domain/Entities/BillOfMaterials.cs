@@ -1,9 +1,8 @@
 ﻿using System;
-using AdventureWorks.Core.Interfaces;
 
-namespace AdventureWorks.Core.Entities
+namespace AdventureWorks.Domain.Entities
 {
-    public class BillOfMaterials : BaseEntity, IAggregateRoot
+    public class BillOfMaterials : BaseEntity
     {
         public int BillOfMaterialsId { get; set; }
         public int? ProductAssemblyId { get; set; }

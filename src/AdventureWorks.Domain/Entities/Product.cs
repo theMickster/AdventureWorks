@@ -1,10 +1,9 @@
 ﻿using System;
 using System.Collections.Generic;
-using AdventureWorks.Core.Interfaces;
 
-namespace AdventureWorks.Core.Entities
+namespace AdventureWorks.Domain.Entities
 {
-    public class Product : BaseEntity, IAggregateRoot
+    public class Product : BaseEntity
     {
 
         public int ProductId { get; set; }

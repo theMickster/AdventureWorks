@@ -1,9 +1,8 @@
 ﻿using System;
-using AdventureWorks.Core.Interfaces;
 
-namespace AdventureWorks.Core.Entities
+namespace AdventureWorks.Domain.Entities
 {
-    public class ErrorLog : BaseEntity, IAggregateRoot
+    public class ErrorLog : BaseEntity
     {
         public int ErrorLogId { get; set; }
         public DateTime ErrorTime { get; set; }

@@ -1,9 +1,8 @@
 ﻿using System;
-using AdventureWorks.Core.Interfaces;
 
-namespace AdventureWorks.Core.Entities
+namespace AdventureWorks.Domain.Entities
 {
-    public class PurchaseOrderDetail : BaseEntity, IAggregateRoot
+    public class PurchaseOrderDetail : BaseEntity
     {
         public int PurchaseOrderId { get; set; }
         public int PurchaseOrderDetailId { get; set; }

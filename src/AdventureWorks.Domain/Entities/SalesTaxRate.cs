@@ -1,9 +1,8 @@
 ﻿using System;
-using AdventureWorks.Core.Interfaces;
 
-namespace AdventureWorks.Core.Entities
+namespace AdventureWorks.Domain.Entities
 {
-    public class SalesTaxRate : BaseEntity, IAggregateRoot
+    public class SalesTaxRate : BaseEntity
     {
         public int SalesTaxRateId { get; set; }
         public int StateProvinceId { get; set; }

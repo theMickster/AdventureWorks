@@ -1,7 +1,7 @@
 ﻿using System.Collections.Generic;
 using System.Threading.Tasks;
 using AdventureWorks.Application.Interfaces;
-using AdventureWorks.Core.Entities;
+using AdventureWorks.Domain.Entities;
 using AdventureWorks.Infrastructure.DbContexts;
 using Microsoft.EntityFrameworkCore;
 

@@ -1,9 +1,8 @@
 ﻿using System;
-using AdventureWorks.Core.Interfaces;
 
-namespace AdventureWorks.Core.Entities
+namespace AdventureWorks.Domain.Entities
 {
-    public class TransactionHistoryArchive : BaseEntity, IAggregateRoot
+    public class TransactionHistoryArchive : BaseEntity
     {
         public int TransactionId { get; set; }
         public int ProductId { get; set; }

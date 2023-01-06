@@ -1,4 +1,4 @@
-﻿namespace AdventureWorks.Core.Entities
+﻿namespace AdventureWorks.Domain.Entities
 {
     public class BaseEntity
     {

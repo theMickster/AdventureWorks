@@ -1,10 +1,9 @@
 ﻿using System;
 using System.Collections.Generic;
-using AdventureWorks.Core.Interfaces;
 
-namespace AdventureWorks.Core.Entities
+namespace AdventureWorks.Domain.Entities
 {
-    public class Department : BaseEntity, IAggregateRoot
+    public class Department : BaseEntity
     {
 
         public short DepartmentId { get; set; }

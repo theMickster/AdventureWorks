@@ -1,9 +1,8 @@
 ﻿using System;
-using AdventureWorks.Core.Interfaces;
 
-namespace AdventureWorks.Core.Entities
+namespace AdventureWorks.Domain.Entities
 {
-    public class SalesOrderHeaderSalesReason : BaseEntity, IAggregateRoot
+    public class SalesOrderHeaderSalesReason : BaseEntity
     {
         public int SalesOrderId { get; set; }
         public int SalesReasonId { get; set; }

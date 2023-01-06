@@ -1,10 +1,9 @@
 ﻿using System;
 using System.Collections.Generic;
-using AdventureWorks.Core.Interfaces;
 
-namespace AdventureWorks.Core.Entities
+namespace AdventureWorks.Domain.Entities
 {
-    public class Illustration : BaseEntity, IAggregateRoot
+    public class Illustration : BaseEntity
     {
 
         public int IllustrationId { get; set; }

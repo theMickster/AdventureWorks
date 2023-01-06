@@ -1,9 +1,8 @@
 ﻿using System;
-using AdventureWorks.Core.Interfaces;
 
-namespace AdventureWorks.Core.Entities
+namespace AdventureWorks.Domain.Entities
 {
-    public class SalesPersonQuotaHistory : BaseEntity, IAggregateRoot
+    public class SalesPersonQuotaHistory : BaseEntity
     {
         public int BusinessEntityId { get; set; }
         public DateTime QuotaDate { get; set; }

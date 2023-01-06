@@ -1,9 +1,8 @@
 ﻿using System;
-using AdventureWorks.Core.Interfaces;
 
-namespace AdventureWorks.Core.Entities
+namespace AdventureWorks.Domain.Entities
 {
-    public class EmployeeDepartmentHistory : BaseEntity, IAggregateRoot
+    public class EmployeeDepartmentHistory : BaseEntity
     {
         public int BusinessEntityId { get; set; }
         public short DepartmentId { get; set; }

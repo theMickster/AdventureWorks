@@ -1,9 +1,8 @@
 ﻿using System;
-using AdventureWorks.Core.Interfaces;
 
-namespace AdventureWorks.Core.Entities
+namespace AdventureWorks.Domain.Entities
 {
-    public class ProductReview : BaseEntity, IAggregateRoot
+    public class ProductReview : BaseEntity
     {
         public int ProductReviewId { get; set; }
         public int ProductId { get; set; }

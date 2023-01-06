@@ -1,8 +1,8 @@
 ﻿using AdventureWorks.Application.Interfaces;
-using AdventureWorks.Core.Entities;
 using AutoMapper;
 using Microsoft.AspNetCore.Mvc;
 using System.Net;
+using AdventureWorks.Domain.Entities;
 
 namespace AdventureWorks.API.Controllers
 {

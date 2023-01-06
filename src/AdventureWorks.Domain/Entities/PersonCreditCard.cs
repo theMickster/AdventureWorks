@@ -1,9 +1,8 @@
 ﻿using System;
-using AdventureWorks.Core.Interfaces;
 
-namespace AdventureWorks.Core.Entities
+namespace AdventureWorks.Domain.Entities
 {
-    public class PersonCreditCard : BaseEntity, IAggregateRoot
+    public class PersonCreditCard : BaseEntity
     {
         public int BusinessEntityId { get; set; }
         public int CreditCardId { get; set; }

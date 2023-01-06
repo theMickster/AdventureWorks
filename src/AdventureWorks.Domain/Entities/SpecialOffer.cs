@@ -1,10 +1,9 @@
 ﻿using System;
 using System.Collections.Generic;
-using AdventureWorks.Core.Interfaces;
 
-namespace AdventureWorks.Core.Entities
+namespace AdventureWorks.Domain.Entities
 {
-    public class SpecialOffer : BaseEntity, IAggregateRoot
+    public class SpecialOffer : BaseEntity
     {
 
         public int SpecialOfferId { get; set; }

@@ -1,10 +1,9 @@
 ﻿using System;
 using System.Collections.Generic;
-using AdventureWorks.Core.Interfaces;
 
-namespace AdventureWorks.Core.Entities
+namespace AdventureWorks.Domain.Entities
 {
-    public class ScrapReason : BaseEntity, IAggregateRoot
+    public class ScrapReason : BaseEntity
     {
 
         public short ScrapReasonId { get; set; }

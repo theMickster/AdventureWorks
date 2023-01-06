@@ -3,16 +3,21 @@ using Swashbuckle.AspNetCore.SwaggerUI;
 using Microsoft.OpenApi.Models;
 using System.Text;
 using System.Reflection;
+using AdventureWorks.Application.Exceptions;
+using AdventureWorks.Application.Infrastructure.AutoMapper;
+using AdventureWorks.Application.Interfaces;
+using AdventureWorks.Infrastructure.DbContexts;
+using AdventureWorks.Infrastructure.Repositories;
 using Microsoft.AspNetCore.Mvc.Controllers;
+using Microsoft.EntityFrameworkCore;
 
 [assembly: InternalsVisibleTo("AdventureWorks.Test.UnitTests")]
 namespace AdventureWorks.API.libs;
 
-internal static class RegisterDependentServices
+internal static class RegisterServices
 {
-
     [SuppressMessage("Minor Code Smell", "S1075:URIs should not be hardcoded", Justification = "Because we said so.")]
-    internal static WebApplicationBuilder RegisterServices(this WebApplicationBuilder builder)
+    internal static WebApplicationBuilder RegisterAspDotNetServices(this WebApplicationBuilder builder)
     {
         // ******* Access the configuration manager *******
         var config = builder.Configuration;
@@ -77,9 +82,39 @@ internal static class RegisterDependentServices
             c.DocInclusionPredicate((name, api) => true);
         });
 
+        builder.Services.AddAutoMapper(new[] { typeof(AutoMapperProfile).GetTypeInfo().Assembly });
+
         return builder;
     }
 
+    internal static WebApplicationBuilder RegisterAdventureWorksDbContexts(this WebApplicationBuilder builder)
+    {
+        builder.Services.AddDbContext<AdventureWorksDbContext>(options =>
+            options.UseSqlServer(builder.Configuration.GetConnectionString("AdventureWorksDatabase")));
+
+        builder.Services.AddScoped<IAdventureWorksDbContext>(
+            provider => provider.GetService<AdventureWorksDbContext>() ?? 
+                        throw new ConfigurationException("The AdventureWorksDbContext is not properly registered in the correct order."));
+
+        return builder;
+    }
+
+    internal static WebApplicationBuilder RegisterAdventureWorksServices(this WebApplicationBuilder builder)
+    {
+
+
+        return builder;
+    }
+    internal static WebApplicationBuilder RegisterAdventureWorksRepositories(this WebApplicationBuilder builder)
+    {
+        builder.Services.AddScoped(typeof(IAsyncRepository<>), typeof(EfRepository<>));
+
+
+        builder.Services.AddScoped<IProductRepository, ProductRepository>();
+
+
+        return builder;
+    }
 
     #region Private Methods 
 

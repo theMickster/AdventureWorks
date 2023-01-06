@@ -5,8 +5,12 @@
 	</PropertyGroup>
 
 	<ItemGroup>
-		<Folder Include="Exceptions\" />
-		<Folder Include="ViewModels\" />
+	  <Compile Remove="Exceptions\**" />
+	  <Compile Remove="ViewModels\**" />
+	  <EmbeddedResource Remove="Exceptions\**" />
+	  <EmbeddedResource Remove="ViewModels\**" />
+	  <None Remove="Exceptions\**" />
+	  <None Remove="ViewModels\**" />
 	</ItemGroup>
 
 	<ItemGroup>

@@ -1,10 +1,9 @@
 ﻿using System;
 using System.Collections.Generic;
-using AdventureWorks.Core.Interfaces;
 
-namespace AdventureWorks.Core.Entities
+namespace AdventureWorks.Domain.Entities
 {
-    public class PurchaseOrderHeader : BaseEntity, IAggregateRoot
+    public class PurchaseOrderHeader : BaseEntity
     {
 
         public int PurchaseOrderId { get; set; }

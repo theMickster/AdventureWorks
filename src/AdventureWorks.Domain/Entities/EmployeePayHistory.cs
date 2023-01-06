@@ -1,9 +1,8 @@
 ﻿using System;
-using AdventureWorks.Core.Interfaces;
 
-namespace AdventureWorks.Core.Entities
+namespace AdventureWorks.Domain.Entities
 {
-    public class EmployeePayHistory : BaseEntity, IAggregateRoot
+    public class EmployeePayHistory : BaseEntity
     {
         public int BusinessEntityId { get; set; }
         public DateTime RateChangeDate { get; set; }

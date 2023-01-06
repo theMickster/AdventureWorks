@@ -1,10 +1,9 @@
 ﻿using System;
 using System.Collections.Generic;
-using AdventureWorks.Core.Interfaces;
 
-namespace AdventureWorks.Core.Entities
+namespace AdventureWorks.Domain.Entities
 {
-    public class Currency : BaseEntity, IAggregateRoot
+    public class Currency : BaseEntity
     {
 
         public string CurrencyCode { get; set; }

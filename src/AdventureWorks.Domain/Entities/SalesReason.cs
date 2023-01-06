@@ -1,10 +1,9 @@
 ﻿using System;
 using System.Collections.Generic;
-using AdventureWorks.Core.Interfaces;
 
-namespace AdventureWorks.Core.Entities
+namespace AdventureWorks.Domain.Entities
 {
-    public class SalesReason : BaseEntity, IAggregateRoot
+    public class SalesReason : BaseEntity
     {
 
         public int SalesReasonId { get; set; }

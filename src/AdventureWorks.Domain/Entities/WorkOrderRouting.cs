@@ -1,9 +1,8 @@
 ﻿using System;
-using AdventureWorks.Core.Interfaces;
 
-namespace AdventureWorks.Core.Entities
+namespace AdventureWorks.Domain.Entities
 {
-    public class WorkOrderRouting : BaseEntity, IAggregateRoot
+    public class WorkOrderRouting : BaseEntity
     {
         public int WorkOrderId { get; set; }
         public int ProductId { get; set; }
