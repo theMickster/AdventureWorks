@@ -2,15 +2,14 @@
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
 
-namespace AdventureWorks.Infrastructure.Configurations
-{
-    public class ProductDescriptionConfiguration : IEntityTypeConfiguration<ProductDescription>
-    {
-        public void Configure(EntityTypeBuilder<ProductDescription> builder)
-        {
-            builder.ToTable("ProductDescription", "Production");
+namespace AdventureWorks.Infrastructure.Configurations;
 
-            builder.HasKey(a => a.ProductDescriptionId);
-        }
+public class ProductDescriptionConfiguration : IEntityTypeConfiguration<ProductDescription>
+{
+    public void Configure(EntityTypeBuilder<ProductDescription> builder)
+    {
+        builder.ToTable("ProductDescription", "Production");
+
+        builder.HasKey(a => a.ProductDescriptionId);
     }
 }

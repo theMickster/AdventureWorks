@@ -2,14 +2,13 @@
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
 
-namespace AdventureWorks.Infrastructure.Configurations
+namespace AdventureWorks.Infrastructure.Configurations;
+
+public class DepartmentConfiguration : IEntityTypeConfiguration<Department>
 {
-    public class DepartmentConfiguration : IEntityTypeConfiguration<Department>
+    public void Configure(EntityTypeBuilder<Department> builder)
     {
-        public void Configure(EntityTypeBuilder<Department> builder)
-        {
-            builder.ToTable("Department", "HumanResources");
-            builder.HasKey(a => a.DepartmentId);
-        }
+        builder.ToTable("Department", "HumanResources");
+        builder.HasKey(a => a.DepartmentId);
     }
 }

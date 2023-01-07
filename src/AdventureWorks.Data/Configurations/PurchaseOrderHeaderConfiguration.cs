@@ -2,27 +2,26 @@
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
 
-namespace AdventureWorks.Infrastructure.Configurations
+namespace AdventureWorks.Infrastructure.Configurations;
+
+public class PurchaseOrderHeaderConfiguration : IEntityTypeConfiguration<PurchaseOrderHeader>
 {
-    public class PurchaseOrderHeaderConfiguration : IEntityTypeConfiguration<PurchaseOrderHeader>
+    public void Configure(EntityTypeBuilder<PurchaseOrderHeader> builder)
     {
-        public void Configure(EntityTypeBuilder<PurchaseOrderHeader> builder)
-        {
-            builder.ToTable("PurchaseOrderHeader", "Purchasing");
+        builder.ToTable("PurchaseOrderHeader", "Purchasing");
 
-            builder.HasKey(a => a.PurchaseOrderId);
+        builder.HasKey(a => a.PurchaseOrderId);
 
-            builder.HasOne(a => a.Employee)
-                .WithMany(b=>b.PurchaseOrderHeaders)
-                .HasForeignKey(a => a.EmployeeId);
+        builder.HasOne(a => a.Employee)
+            .WithMany(b=>b.PurchaseOrderHeaders)
+            .HasForeignKey(a => a.EmployeeId);
 
-            builder.HasOne(a => a.Vendor)
-                .WithMany(b=>b.PurchaseOrderHeaders)
-                .HasForeignKey(a => a.VendorId);
+        builder.HasOne(a => a.Vendor)
+            .WithMany(b=>b.PurchaseOrderHeaders)
+            .HasForeignKey(a => a.VendorId);
 
-            builder.HasOne(a => a.ShipMethod)
-                .WithMany(b=>b.PurchaseOrderHeaders)
-                .HasForeignKey(a => a.ShipMethodId);
-        }
+        builder.HasOne(a => a.ShipMethod)
+            .WithMany(b=>b.PurchaseOrderHeaders)
+            .HasForeignKey(a => a.ShipMethodId);
     }
 }

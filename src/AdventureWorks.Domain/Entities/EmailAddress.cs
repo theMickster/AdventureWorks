@@ -1,15 +1,14 @@
 ﻿using System;
 
-namespace AdventureWorks.Domain.Entities
-{
-    public class EmailAddress : BaseEntity
-    {
-        public int BusinessEntityId { get; set; }
-        public int EmailAddressId { get; set; }
-        public string EmailAddressName { get; set; }
-        public Guid Rowguid { get; set; }
-        public DateTime ModifiedDate { get; set; }
+namespace AdventureWorks.Domain.Entities;
 
-        public virtual Person BusinessEntity { get; set; }
-    }
+public class EmailAddress : BaseEntity
+{
+    public int BusinessEntityId { get; set; }
+    public int EmailAddressId { get; set; }
+    public string EmailAddressName { get; set; }
+    public Guid Rowguid { get; set; }
+    public DateTime ModifiedDate { get; set; }
+
+    public virtual Person BusinessEntity { get; set; }
 }

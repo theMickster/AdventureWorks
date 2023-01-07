@@ -1,10 +1,9 @@
 ﻿using AdventureWorks.Domain.Entities;
 using Microsoft.EntityFrameworkCore;
 
-namespace AdventureWorks.Application.Interfaces
+namespace AdventureWorks.Application.Interfaces;
+
+public interface IAdventureWorksDbContext
 {
-    public interface IAdventureWorksDbContext
-    {
-        DbSet<Product> Products { get; set; }
-    }
+    DbSet<Product> Products { get; set; }
 }

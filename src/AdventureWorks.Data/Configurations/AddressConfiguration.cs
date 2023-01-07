@@ -2,19 +2,18 @@
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
 
-namespace AdventureWorks.Infrastructure.Configurations
+namespace AdventureWorks.Infrastructure.Configurations;
+
+public class AddressConfiguration : IEntityTypeConfiguration<AddressEntity>
 {
-    public class AddressConfiguration : IEntityTypeConfiguration<Address>
+    public void Configure(EntityTypeBuilder<AddressEntity> builder)
     {
-        public void Configure(EntityTypeBuilder<Address> builder)
-        {
-            builder.ToTable("Address", "Person");
+        builder.ToTable("Address", "Person");
 
-            builder.HasKey(a => a.AddressId);
+        builder.HasKey(a => a.AddressId);
 
-            builder.HasOne(a => a.StateProvince)
-                .WithMany()
-                .HasForeignKey(a => a.StateProvinceId);
-        }
+        builder.HasOne(a => a.StateProvince)
+            .WithMany()
+            .HasForeignKey(a => a.StateProvinceId);
     }
 }

@@ -1,9 +1,8 @@
 ﻿using AutoMapper;
 
-namespace AdventureWorks.Application.Interfaces.Mapping
+namespace AdventureWorks.Application.Interfaces.Mapping;
+
+public interface IHaveCustomMapping
 {
-    public interface IHaveCustomMapping
-    {
-        void CreateMappings(Profile configuration);
-    }
+    void CreateMappings(Profile configuration);
 }

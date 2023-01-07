@@ -2,16 +2,15 @@
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
 
-namespace AdventureWorks.Infrastructure.Configurations
+namespace AdventureWorks.Infrastructure.Configurations;
+
+public class PhoneNumberTypeConfiguration : IEntityTypeConfiguration<PhoneNumberType>
 {
-    public class PhoneNumberTypeConfiguration : IEntityTypeConfiguration<PhoneNumberType>
+    public void Configure(EntityTypeBuilder<PhoneNumberType> builder)
     {
-        public void Configure(EntityTypeBuilder<PhoneNumberType> builder)
-        {
-            builder.ToTable("PhoneNumberType", "Person");
+        builder.ToTable("PhoneNumberType", "Person");
 
-            builder.HasKey(a => a.PhoneNumberTypeId);
+        builder.HasKey(a => a.PhoneNumberTypeId);
 
-        }
     }
 }

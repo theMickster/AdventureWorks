@@ -1,22 +1,21 @@
 ﻿using System;
 using System.Collections.Generic;
 
-namespace AdventureWorks.Domain.Entities
-{ 
-    public class Vendor : BaseEntity
-    {
+namespace AdventureWorks.Domain.Entities;
 
-        public int BusinessEntityId { get; set; }
-        public string AccountNumber { get; set; }
-        public string Name { get; set; }
-        public byte CreditRating { get; set; }
-        public bool PreferredVendorStatus { get; set; }
-        public bool ActiveFlag { get; set; }
-        public string PurchasingWebServiceUrl { get; set; }
-        public DateTime ModifiedDate { get; set; }
+public class Vendor : BaseEntity
+{
 
-        public ICollection<ProductVendor> ProductVendors { get; set; }
-        public ICollection<PurchaseOrderHeader> PurchaseOrderHeaders { get; set; }
-        public BusinessEntity BusinessEntity { get; set; }
-    }
+    public int BusinessEntityId { get; set; }
+    public string AccountNumber { get; set; }
+    public string Name { get; set; }
+    public byte CreditRating { get; set; }
+    public bool PreferredVendorStatus { get; set; }
+    public bool ActiveFlag { get; set; }
+    public string PurchasingWebServiceUrl { get; set; }
+    public DateTime ModifiedDate { get; set; }
+
+    public ICollection<ProductVendor> ProductVendors { get; set; }
+    public ICollection<PurchaseOrderHeader> PurchaseOrderHeaders { get; set; }
+    public BusinessEntity BusinessEntity { get; set; }
 }

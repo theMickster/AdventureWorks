@@ -1,15 +1,14 @@
 ﻿using System;
 using System.Collections.Generic;
 
-namespace AdventureWorks.Domain.Entities
+namespace AdventureWorks.Domain.Entities;
+
+public class Illustration : BaseEntity
 {
-    public class Illustration : BaseEntity
-    {
 
-        public int IllustrationId { get; set; }
-        public string Diagram { get; set; }
-        public DateTime ModifiedDate { get; set; }
+    public int IllustrationId { get; set; }
+    public string Diagram { get; set; }
+    public DateTime ModifiedDate { get; set; }
 
-        public virtual ICollection<ProductModelIllustration> ProductModelIllustration { get; set; }
-    }
+    public virtual ICollection<ProductModelIllustration> ProductModelIllustration { get; set; }
 }

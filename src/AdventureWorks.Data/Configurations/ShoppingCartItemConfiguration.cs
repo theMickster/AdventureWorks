@@ -2,19 +2,18 @@
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
 
-namespace AdventureWorks.Infrastructure.Configurations
+namespace AdventureWorks.Infrastructure.Configurations;
+
+public class ShoppingCartItemConfiguration : IEntityTypeConfiguration<ShoppingCartItem>
 {
-    public class ShoppingCartItemConfiguration : IEntityTypeConfiguration<ShoppingCartItem>
+    public void Configure(EntityTypeBuilder<ShoppingCartItem> builder)
     {
-        public void Configure(EntityTypeBuilder<ShoppingCartItem> builder)
-        {
-            builder.ToTable("ShoppingCartItem", "Sales");
+        builder.ToTable("ShoppingCartItem", "Sales");
 
-            builder.HasKey(a => a.ShoppingCartItemId);
+        builder.HasKey(a => a.ShoppingCartItemId);
 
-            builder.HasOne(a => a.Product)
-                .WithMany(b => b.ShoppingCartItems)
-                .HasForeignKey(a => a.ProductId);
-        }
+        builder.HasOne(a => a.Product)
+            .WithMany(b => b.ShoppingCartItems)
+            .HasForeignKey(a => a.ProductId);
     }
 }

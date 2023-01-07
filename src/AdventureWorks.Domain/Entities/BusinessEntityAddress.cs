@@ -1,17 +1,16 @@
 ﻿using System;
 
-namespace AdventureWorks.Domain.Entities
-{
-    public class BusinessEntityAddress : BaseEntity
-    {
-        public int BusinessEntityId { get; set; }
-        public int AddressId { get; set; }
-        public int AddressTypeId { get; set; }
-        public Guid Rowguid { get; set; }
-        public DateTime ModifiedDate { get; set; }
+namespace AdventureWorks.Domain.Entities;
 
-        public virtual Address Address { get; set; }
-        public virtual AddressType AddressType { get; set; }
-        public virtual BusinessEntity BusinessEntity { get; set; }
-    }
+public class BusinessEntityAddress : BaseEntity
+{
+    public int BusinessEntityId { get; set; }
+    public int AddressId { get; set; }
+    public int AddressTypeId { get; set; }
+    public Guid Rowguid { get; set; }
+    public DateTime ModifiedDate { get; set; }
+
+    public virtual AddressEntity AddressEntity { get; set; }
+    public virtual AddressType AddressType { get; set; }
+    public virtual BusinessEntity BusinessEntity { get; set; }
 }

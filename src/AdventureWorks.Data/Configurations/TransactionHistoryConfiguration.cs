@@ -2,19 +2,18 @@
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
 
-namespace AdventureWorks.Infrastructure.Configurations
+namespace AdventureWorks.Infrastructure.Configurations;
+
+public class TransactionHistoryConfiguration : IEntityTypeConfiguration<TransactionHistory>
 {
-    public class TransactionHistoryConfiguration : IEntityTypeConfiguration<TransactionHistory>
+    public void Configure(EntityTypeBuilder<TransactionHistory> builder)
     {
-        public void Configure(EntityTypeBuilder<TransactionHistory> builder)
-        {
-            builder.ToTable("TransactionHistory", "Production");
+        builder.ToTable("TransactionHistory", "Production");
 
-            builder.HasKey(a => a.TransactionId);
+        builder.HasKey(a => a.TransactionId);
 
-            builder.HasOne(a => a.Product)
-                .WithMany(b=>b.TransactionHistory)
-                .HasForeignKey(a => a.ProductId);
-        }
+        builder.HasOne(a => a.Product)
+            .WithMany(b=>b.TransactionHistory)
+            .HasForeignKey(a => a.ProductId);
     }
 }

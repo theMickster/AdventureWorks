@@ -10,6 +10,7 @@ using AdventureWorks.Infrastructure.DbContexts;
 using AdventureWorks.Infrastructure.Repositories;
 using Microsoft.AspNetCore.Mvc.Controllers;
 using Microsoft.EntityFrameworkCore;
+using AdventureWorks.Domain.Profiles;
 
 [assembly: InternalsVisibleTo("AdventureWorks.Test.UnitTests")]
 namespace AdventureWorks.API.libs;
@@ -82,7 +83,12 @@ internal static class RegisterServices
             c.DocInclusionPredicate((name, api) => true);
         });
 
-        builder.Services.AddAutoMapper(new[] { typeof(AutoMapperProfile).GetTypeInfo().Assembly });
+        builder.Services.AddAutoMapper(
+            new[]
+            {
+                typeof(AutoMapperProfile).GetTypeInfo().Assembly,
+                typeof(AddressEntityToAddressModelProfile).GetTypeInfo().Assembly
+            });
 
         return builder;
     }
