@@ -1,6 +1,4 @@
-﻿using System.Collections.Generic;
-using System.Threading.Tasks;
-using AdventureWorks.Domain.Entities;
+﻿using AdventureWorks.Domain.Entities;
 
 namespace AdventureWorks.Application.Interfaces.Repositories;
 

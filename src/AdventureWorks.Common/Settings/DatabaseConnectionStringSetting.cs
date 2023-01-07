@@ -1,6 +1,4 @@
-﻿using System;
-
-namespace AdventureWorks.Common.Settings;
+﻿namespace AdventureWorks.Common.Settings;
 
 public class DatabaseConnectionString
 {

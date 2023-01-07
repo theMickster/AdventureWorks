@@ -1,7 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-
-namespace AdventureWorks.Domain.Entities;
+﻿namespace AdventureWorks.Domain.Entities;
 
 public class SalesTerritory : BaseEntity
 {

@@ -1,6 +1,4 @@
-﻿using System.Collections.Generic;
-
-namespace AdventureWorks.Common.Settings;
+﻿namespace AdventureWorks.Common.Settings;
 public class EntityFrameworkCoreSettings
 {
     public const string SettingsRootName = "EntityFrameworkCoreSettings";
