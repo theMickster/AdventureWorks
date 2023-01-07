@@ -13,7 +13,7 @@ public class AddressConfiguration : IEntityTypeConfiguration<AddressEntity>
         builder.HasKey(a => a.AddressId);
 
         builder.HasOne(a => a.StateProvince)
-            .WithMany()
+            .WithMany(b => b.Addresses)
             .HasForeignKey(a => a.StateProvinceId);
     }
 }

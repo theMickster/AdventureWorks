@@ -35,12 +35,12 @@ public sealed class AddressEntityToAddressModelProfileTests : UnitTestBase
             AddressLine2 = "Apt 1",
             City = "Denver",
             StateProvinceId = 26,
-            StateProvince = new StateProvince
+            StateProvince = new StateProvinceEntity
             {
                 StateProvinceId = 26, 
                 StateProvinceCode = "CO",
                 CountryRegionCode = "USA",
-                CountryRegionCodeNavigation = new CountryRegion {CountryRegionCode = "USA", Name = "United States"}
+                CountryRegion = new CountryRegionEntity {CountryRegionCode = "USA", Name = "United States"}
             },
             PostalCode = "80232",
             ModifiedDate = modified

@@ -16,8 +16,8 @@ public class SalesPersonConfiguration : IEntityTypeConfiguration<SalesPerson>
             .WithMany(b=>b.SalesPersons)
             .HasForeignKey(a => a.BusinessEntityId);
 
-        builder.HasOne(a => a.Territory)
-            .WithMany(b=>b.SalesTerritorySalesPersons)
+        builder.HasOne(a => a.TerritoryEntity)
+            .WithMany(b=>b.SalesPeople)
             .HasForeignKey(a => a.TerritoryId);
     }
 }

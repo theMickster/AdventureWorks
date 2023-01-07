@@ -4,9 +4,9 @@ using Microsoft.EntityFrameworkCore.Metadata.Builders;
 
 namespace AdventureWorks.Infrastructure.Configurations;
 
-public class SalesTaxRateConfiguration : IEntityTypeConfiguration<SalesTaxRate>
+public class SalesTaxRateConfiguration : IEntityTypeConfiguration<SalesTaxRateEntity>
 {
-    public void Configure(EntityTypeBuilder<SalesTaxRate> builder)
+    public void Configure(EntityTypeBuilder<SalesTaxRateEntity> builder)
     {
         builder.ToTable("SalesTaxRate", "Sales");
 

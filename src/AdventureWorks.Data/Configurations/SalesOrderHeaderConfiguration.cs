@@ -12,7 +12,7 @@ public class SalesOrderHeaderConfiguration : IEntityTypeConfiguration<SalesOrder
 
         builder.HasKey(a => a.SalesOrderId);
 
-        builder.HasOne(a => a.Customer)
+        builder.HasOne(a => a.CustomerEntity)
             .WithMany(b => b.SalesOrderHeaders)
             .HasForeignKey(a => a.CustomerId);
 
@@ -20,7 +20,7 @@ public class SalesOrderHeaderConfiguration : IEntityTypeConfiguration<SalesOrder
             .WithMany(b=>b.SalesOrderHeaders)
             .HasForeignKey(a => a.SalesPersonId);
 
-        builder.HasOne(a => a.Territory)
+        builder.HasOne(a => a.TerritoryEntity)
             .WithMany(b=> b.SalesOrderHeaders)
             .HasForeignKey(a => a.TerritoryId);
 

@@ -4,9 +4,9 @@ using Microsoft.EntityFrameworkCore.Metadata.Builders;
 
 namespace AdventureWorks.Infrastructure.Configurations;
 
-public class CustomerConfiguration : IEntityTypeConfiguration<Customer>
+public class CustomerConfiguration : IEntityTypeConfiguration<CustomerEntity>
 {
-    public void Configure(EntityTypeBuilder<Customer> builder)
+    public void Configure(EntityTypeBuilder<CustomerEntity> builder)
     {
         builder.ToTable("Customer", "Sales");
 
@@ -16,11 +16,11 @@ public class CustomerConfiguration : IEntityTypeConfiguration<Customer>
             .WithMany(b=>b.Customers)
             .HasForeignKey(a => a.PersonId);
 
-        builder.HasOne(a => a.Territory)
+        builder.HasOne(a => a.TerritoryEntity)
             .WithMany(b=>b.Customers)
             .HasForeignKey(a => a.TerritoryId);
 
-        builder.HasOne(a => a.Store)
+        builder.HasOne(a => a.StoreEntity)
             .WithMany(b=>b.Customers)
             .HasForeignKey(a => a.StoreId);
     }

@@ -7,5 +7,5 @@ public interface IReadAddressService
     /// Retrieve a address using its identifier.
     /// </summary>
     /// <returns>A <see cref="AddressModel"/> </returns>
-    Task<AddressModel> GetByIdAsync(int addressId);
+    Task<AddressModel?> GetByIdAsync(int addressId);
 }

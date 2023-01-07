@@ -50,7 +50,7 @@ internal static class SetupMiddlewarePipeline
 
         app.UseHealthChecks("/health");
 
-        //app.UseApplicationHealthChecks();
+        app.UseApplicationHealthChecks();
 
         return app;
     }

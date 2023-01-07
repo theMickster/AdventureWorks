@@ -6,7 +6,7 @@ public sealed class AddressEntity : BaseEntity
 
     public string AddressLine1 { get; set; }
 
-    public string AddressLine2 { get; set; }
+    public string? AddressLine2 { get; set; }
 
     public string City { get; set; }
 
@@ -22,6 +22,6 @@ public sealed class AddressEntity : BaseEntity
 
     public ICollection<SalesOrderHeader> SalesOrderHeaderShipToAddress { get; set; }
 
-    public StateProvince StateProvince { get; set; }
+    public StateProvinceEntity StateProvince { get; set; }
 
 }

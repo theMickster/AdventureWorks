@@ -29,6 +29,8 @@ builder.Configuration
 builder.Configuration
     .LoadApplicationConfiguration();
 
+builder.RegisterConfigurations();
+
 builder.Services.AddDefaultHealthCheck();
 
 builder.Services.AddCors(options =>
@@ -53,8 +55,6 @@ builder.Services.Configure<ApiBehaviorOptions>(options =>
 {
     options.SuppressModelStateInvalidFilter = true;
 });
-
-builder.RegisterConfigurations();
 
 var app = builder.Build();
 

@@ -23,6 +23,6 @@ public sealed class AddressEntityToAddressModelProfile : Profile
 
             .ForPath(m => m.CountryRegionName,
                 options
-                    => options.MapFrom(e => e.StateProvince.CountryRegionCodeNavigation.Name));
+                    => options.MapFrom(e => e.StateProvince.CountryRegion.Name));
     }
 }

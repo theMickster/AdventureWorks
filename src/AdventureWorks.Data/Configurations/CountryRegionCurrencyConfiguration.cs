@@ -12,7 +12,7 @@ public class CountryRegionCurrencyConfiguration : IEntityTypeConfiguration<Count
 
         builder.HasKey(a => new {a.CountryRegionCode, a.CurrencyCode});
 
-        builder.HasOne(a => a.CountryRegionCodeNavigation)
+        builder.HasOne(a => a.CountryRegionEntityCodeNavigation)
             .WithMany()
             .HasForeignKey(a => a.CountryRegionCode);
 

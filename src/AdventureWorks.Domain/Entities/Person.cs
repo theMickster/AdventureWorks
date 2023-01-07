@@ -18,7 +18,7 @@ public class Person : BaseEntity
     public DateTime ModifiedDate { get; set; }
 
     public ICollection<BusinessEntityContact> BusinessEntityContacts { get; set; }
-    public ICollection<Customer> Customers { get; set; }
+    public ICollection<CustomerEntity> Customers { get; set; }
     public ICollection<EmailAddress> EmailAddresses { get; set; }
     public ICollection<PersonCreditCard> PersonCreditCards { get; set; }
     public ICollection<PersonPhone> PersonPhones { get; set; }

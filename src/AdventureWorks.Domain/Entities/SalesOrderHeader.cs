@@ -35,9 +35,9 @@ public class SalesOrderHeader : BaseEntity
     public AddressEntity BillToAddressEntity { get; set; }
     public CreditCard CreditCard { get; set; }
     public CurrencyRate CurrencyRate { get; set; }
-    public Customer Customer { get; set; }
+    public CustomerEntity CustomerEntity { get; set; }
     public SalesPerson SalesPerson { get; set; }
     public ShipMethod ShipMethod { get; set; }
     public AddressEntity ShipToAddressEntity { get; set; }
-    public SalesTerritory Territory { get; set; }
+    public SalesTerritoryEntity TerritoryEntity { get; set; }
 }

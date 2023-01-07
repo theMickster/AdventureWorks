@@ -8,7 +8,7 @@ public class BusinessEntity : BaseEntity
 
     public ICollection<Person> Persons { get; set; }
     public ICollection<Vendor> Vendors { get; set; }
-    public ICollection<Store> Stores { get; set; }
+    public ICollection<StoreEntity> Stores { get; set; }
     public ICollection<BusinessEntityAddress> BusinessEntityAddresses { get; set; }
     public ICollection<BusinessEntityContact> BusinessEntityContacts { get; set; }
 }

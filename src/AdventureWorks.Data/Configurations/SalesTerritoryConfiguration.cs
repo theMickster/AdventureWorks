@@ -4,15 +4,15 @@ using Microsoft.EntityFrameworkCore.Metadata.Builders;
 
 namespace AdventureWorks.Infrastructure.Configurations;
 
-public class SalesTerritoryConfiguration : IEntityTypeConfiguration<SalesTerritory>
+public class SalesTerritoryConfiguration : IEntityTypeConfiguration<SalesTerritoryEntity>
 {
-    public void Configure(EntityTypeBuilder<SalesTerritory> builder)
+    public void Configure(EntityTypeBuilder<SalesTerritoryEntity> builder)
     {
         builder.ToTable("SalesTerritory", "Sales");
 
         builder.HasKey(a => a.TerritoryId);
 
-        builder.HasOne(a => a.CountryRegionCodeNavigation)
+        builder.HasOne(a => a.CountryRegion)
             .WithMany()
             .HasForeignKey(a => a.CountryRegionCode);
     }

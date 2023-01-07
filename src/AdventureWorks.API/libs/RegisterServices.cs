@@ -12,6 +12,9 @@ using Microsoft.EntityFrameworkCore;
 using AdventureWorks.Domain.Profiles;
 using AdventureWorks.Application.Interfaces.DbContext;
 using AdventureWorks.Application.Interfaces.Repositories;
+using AdventureWorks.Common.Settings;
+using AdventureWorks.Application.Interfaces.Services.Address;
+using AdventureWorks.Application.Services.Address;
 
 [assembly: InternalsVisibleTo("AdventureWorks.Test.UnitTests")]
 namespace AdventureWorks.API.libs;
@@ -97,7 +100,7 @@ internal static class RegisterServices
     internal static WebApplicationBuilder RegisterAdventureWorksDbContexts(this WebApplicationBuilder builder)
     {
         builder.Services.AddDbContext<AdventureWorksDbContext>(options =>
-            options.UseSqlServer(builder.Configuration.GetConnectionString("AdventureWorksDatabase")));
+            options.UseSqlServer(builder.Configuration.GetConnectionString("DefaultConnection")));
 
         builder.Services.AddScoped<IAdventureWorksDbContext>(
             provider => provider.GetService<AdventureWorksDbContext>() ?? 
@@ -108,7 +111,7 @@ internal static class RegisterServices
 
     internal static WebApplicationBuilder RegisterAdventureWorksServices(this WebApplicationBuilder builder)
     {
-
+        builder.Services.AddScoped<IReadAddressService, ReadAddressService>();
 
         return builder;
     }
@@ -118,7 +121,7 @@ internal static class RegisterServices
 
 
         builder.Services.AddScoped<IProductRepository, ProductRepository>();
-
+        builder.Services.AddScoped<IAddressRepository, AddressRepository>();
 
         return builder;
     }
