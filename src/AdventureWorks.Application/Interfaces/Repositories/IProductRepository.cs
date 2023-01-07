@@ -2,7 +2,7 @@
 using System.Threading.Tasks;
 using AdventureWorks.Domain.Entities;
 
-namespace AdventureWorks.Application.Interfaces;
+namespace AdventureWorks.Application.Interfaces.Repositories;
 
 public interface IProductRepository : IAsyncRepository<Product>
 {

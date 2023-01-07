@@ -1,4 +1,4 @@
-﻿using AdventureWorks.Application.Interfaces;
+﻿using AdventureWorks.Application.Interfaces.DbContext;
 using AdventureWorks.Domain.Entities;
 using AdventureWorks.Infrastructure.Configurations;
 using Microsoft.EntityFrameworkCore;

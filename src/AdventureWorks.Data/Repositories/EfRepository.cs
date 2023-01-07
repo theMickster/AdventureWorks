@@ -1,11 +1,11 @@
 ﻿using AdventureWorks.Application;
-using AdventureWorks.Application.Interfaces;
 using AdventureWorks.Infrastructure.DbContexts;
 using Microsoft.EntityFrameworkCore;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using AdventureWorks.Domain.Entities;
+using AdventureWorks.Application.Interfaces.Repositories;
 
 namespace AdventureWorks.Infrastructure.Repositories;
 

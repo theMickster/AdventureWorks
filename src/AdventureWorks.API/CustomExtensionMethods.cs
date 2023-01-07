@@ -1,4 +1,4 @@
-﻿using AdventureWorks.Application.Interfaces;
+﻿using AdventureWorks.Application.Interfaces.DbContext;
 using AdventureWorks.Infrastructure.DbContexts;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Diagnostics;

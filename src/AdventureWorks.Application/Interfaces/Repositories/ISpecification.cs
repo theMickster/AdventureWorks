@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using System.Linq.Expressions;
 
-namespace AdventureWorks.Application.Interfaces;
+namespace AdventureWorks.Application.Interfaces.Repositories;
 
 public interface ISpecification<T>
 {

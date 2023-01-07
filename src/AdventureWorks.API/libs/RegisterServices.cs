@@ -5,12 +5,13 @@ using System.Text;
 using System.Reflection;
 using AdventureWorks.Application.Exceptions;
 using AdventureWorks.Application.Infrastructure.AutoMapper;
-using AdventureWorks.Application.Interfaces;
 using AdventureWorks.Infrastructure.DbContexts;
 using AdventureWorks.Infrastructure.Repositories;
 using Microsoft.AspNetCore.Mvc.Controllers;
 using Microsoft.EntityFrameworkCore;
 using AdventureWorks.Domain.Profiles;
+using AdventureWorks.Application.Interfaces.DbContext;
+using AdventureWorks.Application.Interfaces.Repositories;
 
 [assembly: InternalsVisibleTo("AdventureWorks.Test.UnitTests")]
 namespace AdventureWorks.API.libs;

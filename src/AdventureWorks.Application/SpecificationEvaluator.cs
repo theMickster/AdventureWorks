@@ -1,5 +1,5 @@
 ﻿using System.Linq;
-using AdventureWorks.Application.Interfaces;
+using AdventureWorks.Application.Interfaces.Repositories;
 using AdventureWorks.Domain.Entities;
 using Microsoft.EntityFrameworkCore;
 
