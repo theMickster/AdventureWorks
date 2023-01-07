@@ -55,10 +55,11 @@ public sealed class AddressEntityToAddressModelProfileTests : UnitTestBase
             result.AddressLine1.Should().Be("1234 Hello World");
             result.AddressLine2.Should().Be("Apt 1");
             result.City.Should().Be("Denver");
-            result.StateProvinceId.Should().Be(26);
-            result.StateProvinceCode.Should().Be("CO");
-            result.CountryRegionCode.Should().Be("USA");
-            result.CountryRegionName.Should().Be("United States");
+            result.StateProvince.Id.Should().Be(26);
+            result.StateProvince.StateProvinceCode.Should().Be("CO");
+            result.StateProvince.CountryRegionCode.Should().Be("USA");
+            result.CountryRegion.CountryRegionCode.Should().Be("USA");
+            result.CountryRegion.CountryRegionName.Should().Be("United States");
             result.PostalCode.Should().Be("80232");
             result.ModifiedDate.Should().Be(modified);
         }

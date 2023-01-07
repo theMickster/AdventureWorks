@@ -6,14 +6,20 @@ using AdventureWorks.Application.Interfaces.Repositories;
 
 namespace AdventureWorks.API.Controllers;
 
+/// <summary>
+/// Retrieve all products
+/// </summary>
 [Route("api/v1/[controller]")]
 [ApiController]
-public class ProductsController : ControllerBase
+public sealed class ProductsController : ControllerBase
 {
     private readonly IProductRepository _productRepository;
     private readonly IMapper _mapper;
     private readonly ILogger _logger;
 
+    /// <summary>
+    /// Retrieve all products
+    /// </summary>
     public ProductsController(IProductRepository productRepository, ILogger<ProductsController> logger, IMapper mapper)
     {
         _productRepository = productRepository;
@@ -21,8 +27,10 @@ public class ProductsController : ControllerBase
         _logger = logger;
     }
 
-    //GET api/v1/[controller]/
-    [Route("")]
+    /// <summary>
+    /// Retrieve all products
+    /// </summary>
+    /// <returns></returns>
     [HttpGet]
     [ProducesResponseType(typeof(List<Product>), (int) HttpStatusCode.OK)]
     public async Task<ActionResult<List<Product>>> GetAllProductAsync()

@@ -12,36 +12,6 @@ internal static class RegisterConfigurationSettings
                 SecretHelper.GetSecret("mick-favorite-comedy-movie")
         );
 
-        builder.Services.Configure<EntityFrameworkCoreSettings>(
-            o => builder.Configuration.GetSection(EntityFrameworkCoreSettings.SettingsRootName).Bind(o));
-
-        builder.Services.PostConfigure<EntityFrameworkCoreSettings>(
-            o =>
-            {
-                o.DatabaseConnectionStrings = GetDatabaseConnectionStrings(builder.Configuration);
-            });
-
         return builder;
     }
-
-    #region Private Methods
-
-    private static List<DatabaseConnectionString> GetDatabaseConnectionStrings(IConfiguration configuration)
-    {
-        return new List<DatabaseConnectionString>
-        {
-            new()
-            {
-                ConnectionStringName = "DefaultConnection",
-                ConnectionString = configuration.GetConnectionString("DefaultConnection")
-            },
-            new ()
-            {
-                ConnectionStringName = "SqlAzureConnection",
-                ConnectionString = configuration.GetConnectionString("SqlAzureConnection")
-            }
-        };
-    }
-
-    #endregion Private Methods
 }

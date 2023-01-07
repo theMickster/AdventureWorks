@@ -10,13 +10,9 @@ public sealed class AddressModel
     
     public string City { get; set; }
 
-    public int StateProvinceId { get; set; }
+    public StateProvinceModel StateProvince { get; set; }
 
-    public string StateProvinceCode { get; set; }
-
-    public string CountryRegionCode { get; set; }
-
-    public string CountryRegionName { get; set; }
+    public CountryRegionModel CountryRegion { get; set; }
 
     public string PostalCode { get; set; }
 

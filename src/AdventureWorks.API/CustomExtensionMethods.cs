@@ -5,7 +5,7 @@ using Microsoft.EntityFrameworkCore.Diagnostics;
 
 namespace AdventureWorks.API;
 
-public static class CustomExtensionMethods
+internal static class CustomExtensionMethods
 {
     public static IServiceCollection AddCustomDbContext(this IServiceCollection services,
         IConfiguration configuration)

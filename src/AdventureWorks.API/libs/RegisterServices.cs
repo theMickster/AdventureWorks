@@ -15,6 +15,8 @@ using AdventureWorks.Application.Interfaces.Repositories;
 using AdventureWorks.Common.Settings;
 using AdventureWorks.Application.Interfaces.Services.Address;
 using AdventureWorks.Application.Services.Address;
+using AdventureWorks.Common.Constants;
+using Microsoft.Extensions.DependencyInjection;
 
 [assembly: InternalsVisibleTo("AdventureWorks.Test.UnitTests")]
 namespace AdventureWorks.API.libs;
@@ -99,8 +101,20 @@ internal static class RegisterServices
 
     internal static WebApplicationBuilder RegisterAdventureWorksDbContexts(this WebApplicationBuilder builder)
     {
+        var connectionStrings = GetDatabaseConnectionStrings(builder.Configuration);
+
+        builder.Services.AddOptions<EntityFrameworkCoreSettings>()
+            .Bind(builder.Configuration.GetSection(EntityFrameworkCoreSettings.SettingsRootName));
+
+        builder.Services.PostConfigure<EntityFrameworkCoreSettings>(o =>
+        {
+            o.DatabaseConnectionStrings = connectionStrings;
+        });
+
+        var currentConnectionString = GetSqlConnectionString(builder.Configuration, connectionStrings );
+
         builder.Services.AddDbContext<AdventureWorksDbContext>(options =>
-            options.UseSqlServer(builder.Configuration.GetConnectionString("DefaultConnection")));
+            options.UseSqlServer(currentConnectionString));
 
         builder.Services.AddScoped<IAdventureWorksDbContext>(
             provider => provider.GetService<AdventureWorksDbContext>() ?? 
@@ -115,6 +129,7 @@ internal static class RegisterServices
 
         return builder;
     }
+
     internal static WebApplicationBuilder RegisterAdventureWorksRepositories(this WebApplicationBuilder builder)
     {
         builder.Services.AddScoped(typeof(IAsyncRepository<>), typeof(EfRepository<>));
@@ -169,5 +184,68 @@ internal static class RegisterServices
         };
     }
 
-    #endregion Private Methods 
+    private static List<DatabaseConnectionString> GetDatabaseConnectionStrings(IConfiguration configuration)
+    {
+        var defaultConnectionString = 
+            configuration.GetConnectionString(ConfigurationConstants.SqlConnectionDefaultConnectionName);
+
+        var sqlAzureConnectionString = 
+            configuration.GetConnectionString(ConfigurationConstants.SqlConnectionSqlAzureConnectionName);
+
+        if (string.IsNullOrWhiteSpace(defaultConnectionString))
+        {
+            throw new ConfigurationException(
+                $"The required Configuration value for {ConfigurationConstants.SqlConnectionDefaultConnectionName} is missing." +
+                "Please verify database configuration.");
+        }
+        
+        var connectionStrings = new List<DatabaseConnectionString>
+        {
+            new()
+            {
+                ConnectionStringName = ConfigurationConstants.SqlConnectionDefaultConnectionName,
+                ConnectionString = defaultConnectionString
+            }
+        };
+
+        if (!string.IsNullOrWhiteSpace(sqlAzureConnectionString))
+        {
+            connectionStrings.Add(new DatabaseConnectionString
+            {
+                ConnectionStringName = ConfigurationConstants.SqlConnectionSqlAzureConnectionName,
+                ConnectionString = sqlAzureConnectionString
+            });
+        }
+
+        return connectionStrings;
+    }
+
+    private static string GetSqlConnectionString(IConfiguration configuration, IEnumerable<DatabaseConnectionString> connectionStrings)
+    {
+        var settings = configuration.GetSection(EntityFrameworkCoreSettings.SettingsRootName);
+
+        if (settings == null)
+        {
+            throw new ConfigurationException(
+                $"The required Configuration settings keys for the Entity Framework Core Settings are missing." +
+                "Please verify configuration.");
+        }
+
+        var connectionStringName = settings[ConfigurationConstants.CurrentConnectionStringNameKey] ?? 
+                                   ConfigurationConstants.SqlConnectionDefaultConnectionName;
+
+        var currentConnectionString = connectionStrings.FirstOrDefault(x =>
+            x.ConnectionStringName == connectionStringName);
+
+        if (currentConnectionString == null)
+        {
+            throw new ConfigurationException(
+                $"The required Configuration settings keys for the Entity Framework Core Settings are missing." +
+                "Please verify configuration.");
+        }
+
+        return currentConnectionString.ConnectionString;
+    }
+
+    #endregion Private Methods
 }
