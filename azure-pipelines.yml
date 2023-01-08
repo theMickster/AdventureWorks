@@ -11,7 +11,8 @@ pool:
 
 variables:
   solution: 'AdventureWorks.sln'
-  unitTestProjectName: 'AdventureWorks.Data.Tests'
+  projectName: 'AdventureWorks.API.csproj'
+  unitTestProjectName: 'AdventureWorks.UnitTests'
   buildPlatform: 'Any CPU'
   buildConfiguration: 'Release'
 
@@ -19,49 +20,41 @@ jobs:
 - job: BuildAdventureWorksApi
   displayName: 'Build Adventure Works API'
 
-
   steps:  
   - script: set
     displayName: print all variables
 
-
   - task: NuGetToolInstaller@1
     displayName: 'Use NuGet'
-
 
   - task: NuGetCommand@2
     displayName: 'Restore NuGet Packages'
     inputs:
       restoreSolution: '$(solution)'
 
-  # - task: VSBuild@1
-  #   displayName: 'Build Adventure Works Solution (Visual Studio)'
-  #   inputs:
-  #     solution: '$(solution)'
-  #     msbuildArgs: '/p:TargetFramework="net6.0" /p:DeployOnBuild=true /p:WebPublishMethod=Package /p:PackageAsSingleFile=true /p:SkipInvalidConfigurations=true /p:PackageLocation="$(build.artifactStagingDirectory)"'
-  #     platform: '$(buildPlatform)'
-  #     configuration: '$(buildConfiguration)'
-
   - task: DotNetCoreCLI@2
     displayName: 'Build Adventure Works Solution (dotnet build)'
     inputs:
       command: 'build'
       projects: 'AdventureWorks.sln'
-      arguments: '/p:TargetFramework="net6.0" /p:DeployOnBuild=true /p:WebPublishMethod=Package /p:PackageAsSingleFile=true /p:SkipInvalidConfigurations=true /p:PackageLocation="$(build.artifactStagingDirectory)"'
+      arguments: '--configuration $(buildConfiguration) --framework  "net6.0" /p:EnvironmentName=Production /p:PackageLocation="$(build.artifactStagingDirectory)"'
 
   - task: DotNetCoreCLI@2
     displayName: 'Execute Adventure Works Unit Tests'
     inputs:
       command: 'test'
-      projects: '''**/tests/AdventureWorks.UnitTests.csproj'''
+      projects: '''**/tests/$(unitTestProjectName).csproj'''
       testRunTitle: 'AdventureWorks UnitTests - $(Build.BuildNumber)'
       publishTestResults: true
       arguments: '--configuration $(buildConfiguration) --collect "Code coverage"'
 
-      
-  - task: PublishPipelineArtifact@1
+  - task: DotNetCoreCLI@2
     displayName: 'Publish Adventure Works API Artifacts'
     inputs:
-      targetPath: '$(Build.ArtifactStagingDirectory)' 
-      artifactName: 'adventureWorksApi'      
+      command: publish
+      publishWebProjects: True
+      projects: '$(projectName)'
+      arguments: '--configuration $(BuildConfiguration) --output $(Build.ArtifactStagingDirectory)'
+      zipAfterPublish: True      
+   
 
