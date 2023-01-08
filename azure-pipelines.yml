@@ -11,24 +11,44 @@ pool:
 
 variables:
   solution: 'AdventureWorks.sln'
+  unitTestProjectName: 'AdventureWorks.Data.Tests.dll'
   buildPlatform: 'Any CPU'
   buildConfiguration: 'Release'
 
-steps:
-- task: NuGetToolInstaller@1
+jobs:
+- job: BuildAdventureWorksApi
+  displayName: 'Build Adventure Works API'
 
-- task: NuGetCommand@2
-  inputs:
-    restoreSolution: '$(solution)'
 
-- task: VSBuild@1
-  inputs:
-    solution: '$(solution)'
-    msbuildArgs: '/p:TargetFramework="net6.0" /p:DeployOnBuild=true /p:WebPublishMethod=Package /p:PackageAsSingleFile=true /p:SkipInvalidConfigurations=true /p:PackageLocation="$(build.artifactStagingDirectory)"'
-    platform: '$(buildPlatform)'
-    configuration: '$(buildConfiguration)'
+  steps:  
+  - script: set
+    displayName: print all variables
 
-- task: VSTest@2
-  inputs:
-    platform: '$(buildPlatform)'
-    configuration: '$(buildConfiguration)'
+
+  - task: NuGetToolInstaller@1
+    displayName: 'Use NuGet'
+
+
+  - task: NuGetCommand@2
+    displayName: 'Restore NuGet Packages'
+    inputs:
+      restoreSolution: '$(solution)'
+
+
+  - task: VSBuild@1
+    displayName: 'Build Adventure Works Solution'
+    inputs:
+      solution: '$(solution)'
+      msbuildArgs: '/p:TargetFramework="net6.0" /p:DeployOnBuild=true /p:WebPublishMethod=Package /p:PackageAsSingleFile=true /p:SkipInvalidConfigurations=true /p:PackageLocation="$(build.artifactStagingDirectory)"'
+      platform: '$(buildPlatform)'
+      configuration: '$(buildConfiguration)'
+
+
+  - task: VSTest@2
+    displayName: 'Execute Adventure Works Unit Tests'
+    inputs:
+      testSelector: 'testAssemblies'
+      testRunTitle: 'AdventureWorks_UnitTests'
+      testAssemblyVer2: '**\'
+      platform: '$(buildPlatform)'
+      configuration: '$(buildConfiguration)'
