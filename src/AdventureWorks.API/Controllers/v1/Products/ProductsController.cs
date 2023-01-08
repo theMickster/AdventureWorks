@@ -4,7 +4,7 @@ using System.Net;
 using AdventureWorks.Domain.Entities;
 using AdventureWorks.Application.Interfaces.Repositories;
 
-namespace AdventureWorks.API.Controllers;
+namespace AdventureWorks.API.Controllers.v1.Products;
 
 /// <summary>
 /// Retrieve all products
@@ -32,7 +32,7 @@ public sealed class ProductsController : ControllerBase
     /// </summary>
     /// <returns></returns>
     [HttpGet]
-    [ProducesResponseType(typeof(List<Product>), (int) HttpStatusCode.OK)]
+    [ProducesResponseType(typeof(List<Product>), (int)HttpStatusCode.OK)]
     public async Task<ActionResult<List<Product>>> GetAllProductAsync()
     {
         return await _productRepository.GetAllProductsAsync();
