@@ -49,6 +49,6 @@ jobs:
     inputs:
       testSelector: 'testAssemblies'
       testRunTitle: 'AdventureWorks_UnitTests'
-      testAssemblyVer2: '**\'
+      testAssemblyVer2: '**\$(unitTestProjectName)'
       platform: '$(buildPlatform)'
       configuration: '$(buildConfiguration)'
