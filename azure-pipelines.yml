@@ -52,3 +52,17 @@ jobs:
       testAssemblyVer2: '**\$(unitTestProjectName)'
       platform: '$(buildPlatform)'
       configuration: '$(buildConfiguration)'
+
+  - task: PublishTestResults@2
+    displayName: 'Publish Adventure Works Unit Tests Results'
+    inputs:
+      testResultsFormat: 'XUnit'
+      testResultsFiles: '**/*.xml'
+      testRunTitle: 'Adventure Works Unit Tests - $(Build.BuildNumber)'
+      
+  - task: PublishPipelineArtifact@1
+    displayName: 'Publish Adventure Works API Artifacts'
+    inputs:
+      targetPath: '$(Build.ArtifactStagingDirectory)' 
+      artifactName: 'adventureWorksApi'      
+
