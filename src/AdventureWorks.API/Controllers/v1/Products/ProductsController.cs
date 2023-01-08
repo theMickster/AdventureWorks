@@ -27,6 +27,7 @@ public sealed class ProductsController : ControllerBase
         _logger = logger;
     }
 
+    /*
     /// <summary>
     /// Retrieve all products
     /// </summary>
@@ -37,5 +38,5 @@ public sealed class ProductsController : ControllerBase
     {
         return await _productRepository.GetAllProductsAsync();
     }
-
+    */
 }

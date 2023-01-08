@@ -9,8 +9,8 @@ namespace AdventureWorks.API.Controllers.v1.KeyVaultExample;
 /// </summary>
 [ApiController]
 [ApiVersion("1.0")]
-[ApiExplorerSettings(GroupName = "Kek Vault Examples")]
-[Route("api/v{version:apiVersion}/KeyVaultExample", Name = "KeyVaultExample")]
+[ApiExplorerSettings(GroupName = "Azure Key Vault Examples")]
+[Route("api/v{version:apiVersion}/keyVaultExample", Name = "KeyVaultExample")]
 public sealed class KeyVaultExampleController : ControllerBase
 {
     private readonly IOptionsSnapshot<AkvExampleSettings> _akvExampleConfiguration;
