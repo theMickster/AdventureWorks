@@ -11,8 +11,8 @@ pool:
 
 variables:
   solution: 'AdventureWorks.sln'
-  projectName: 'AdventureWorks.API.csproj'
-  unitTestProjectName: 'AdventureWorks.UnitTests'
+  projectName: '**/src/AdventureWorks.API/AdventureWorks.API.csproj'
+  unitTestProjectName: '**/tests/AdventureWorks.UnitTests/AdventureWorks.UnitTests.csproj'
   buildPlatform: 'Any CPU'
   buildConfiguration: 'Release'
 
@@ -22,17 +22,20 @@ jobs:
 
   steps:  
   - script: set
-    displayName: print all variables
+    displayName: 'Print All Build Pipleline Variables'
 
   - task: NuGetToolInstaller@1
-    displayName: 'Use NuGet'
+    displayName: 'NuGet tool installer'
 
   - task: NuGetCommand@2
+    name: 'NuGetRestore'
     displayName: 'Restore NuGet Packages'
     inputs:
+      command: 'restore'
       restoreSolution: '$(solution)'
 
   - task: DotNetCoreCLI@2
+    name: 'BuildSolution'
     displayName: 'Build Adventure Works Solution (dotnet build)'
     inputs:
       command: 'build'
@@ -40,15 +43,17 @@ jobs:
       arguments: '--configuration $(buildConfiguration) --framework  "net6.0" /p:EnvironmentName=Production /p:PackageLocation="$(build.artifactStagingDirectory)"'
 
   - task: DotNetCoreCLI@2
+    name: 'ExecuteUnitTests'
     displayName: 'Execute Adventure Works Unit Tests'
     inputs:
       command: 'test'
-      projects: '''**/tests/$(unitTestProjectName).csproj'''
+      projects: '$(solution)'
       testRunTitle: 'AdventureWorks UnitTests - $(Build.BuildNumber)'
       publishTestResults: true
       arguments: '--configuration $(buildConfiguration) --collect "Code coverage"'
 
   - task: DotNetCoreCLI@2
+    name: 'Publish'
     displayName: 'Publish Adventure Works API Artifacts'
     inputs:
       command: publish
@@ -57,4 +62,10 @@ jobs:
       arguments: '--configuration $(BuildConfiguration) --output $(Build.ArtifactStagingDirectory)'
       zipAfterPublish: false  
    
-
+  - task: PublishBuildArtifacts@1
+    name: 'PublishBuildArtifacts'
+    displayName: 'Publish AdventureWorks Build Artifacts'
+    inputs:
+      PathtoPublish: '$(Build.ArtifactStagingDirectory)'
+      ArtifactName: 'AzureTestProject'
+      publishLocation: 'Container'
