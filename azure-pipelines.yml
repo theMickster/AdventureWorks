@@ -11,7 +11,7 @@ pool:
 
 variables:
   solution: 'AdventureWorks.sln'
-  unitTestProjectName: 'AdventureWorks.Data.Tests.dll'
+  unitTestProjectName: 'AdventureWorks.Data.Tests'
   buildPlatform: 'Any CPU'
   buildConfiguration: 'Release'
 
@@ -34,31 +34,30 @@ jobs:
     inputs:
       restoreSolution: '$(solution)'
 
+  # - task: VSBuild@1
+  #   displayName: 'Build Adventure Works Solution (Visual Studio)'
+  #   inputs:
+  #     solution: '$(solution)'
+  #     msbuildArgs: '/p:TargetFramework="net6.0" /p:DeployOnBuild=true /p:WebPublishMethod=Package /p:PackageAsSingleFile=true /p:SkipInvalidConfigurations=true /p:PackageLocation="$(build.artifactStagingDirectory)"'
+  #     platform: '$(buildPlatform)'
+  #     configuration: '$(buildConfiguration)'
 
-  - task: VSBuild@1
-    displayName: 'Build Adventure Works Solution'
+  - task: DotNetCoreCLI@2
+    displayName: 'Build Adventure Works Solution (dotnet build)'
     inputs:
-      solution: '$(solution)'
-      msbuildArgs: '/p:TargetFramework="net6.0" /p:DeployOnBuild=true /p:WebPublishMethod=Package /p:PackageAsSingleFile=true /p:SkipInvalidConfigurations=true /p:PackageLocation="$(build.artifactStagingDirectory)"'
-      platform: '$(buildPlatform)'
-      configuration: '$(buildConfiguration)'
+      command: 'build'
+      projects: 'AdventureWorks.sln'
+      arguments: '/p:TargetFramework="net6.0" /p:DeployOnBuild=true /p:WebPublishMethod=Package /p:PackageAsSingleFile=true /p:SkipInvalidConfigurations=true /p:PackageLocation="$(build.artifactStagingDirectory)"'
 
-
-  - task: VSTest@2
+  - task: DotNetCoreCLI@2
     displayName: 'Execute Adventure Works Unit Tests'
     inputs:
-      testSelector: 'testAssemblies'
-      testRunTitle: 'AdventureWorks_UnitTests'
-      testAssemblyVer2: '**\$(unitTestProjectName)'
-      platform: '$(buildPlatform)'
-      configuration: '$(buildConfiguration)'
+      command: 'test'
+      projects: '''**/tests/AdventureWorks.UnitTests.csproj'''
+      testRunTitle: 'AdventureWorks UnitTests - $(Build.BuildNumber)'
+      publishTestResults: true
+      arguments: '--configuration $(buildConfiguration) --collect "Code coverage"'
 
-  - task: PublishTestResults@2
-    displayName: 'Publish Adventure Works Unit Tests Results'
-    inputs:
-      testResultsFormat: 'XUnit'
-      testResultsFiles: '**/*.xml'
-      testRunTitle: 'Adventure Works Unit Tests - $(Build.BuildNumber)'
       
   - task: PublishPipelineArtifact@1
     displayName: 'Publish Adventure Works API Artifacts'
