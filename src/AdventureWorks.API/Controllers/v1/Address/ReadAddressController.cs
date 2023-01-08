@@ -24,10 +24,10 @@ public sealed class ReadAddressController : ControllerBase
     /// <remarks></remarks>
     public ReadAddressController( 
         ILogger<ReadAddressController> logger,
-        IReadAddressService _readAddressService)
+        IReadAddressService readAddressService)
     {
         _logger = logger;
-        this._readAddressService = _readAddressService;
+        _readAddressService = readAddressService;
     }
 
     /// <summary>

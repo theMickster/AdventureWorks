@@ -28,7 +28,7 @@ public sealed class KeyVaultExampleController : ControllerBase
     [HttpGet]
     public IActionResult Get()
     {
-        var myFavoriteComedicMovie = _akvExampleConfiguration?.Value.MyFavoriteComedicMovie ?? string.Empty;
+        var myFavoriteComedicMovie = _akvExampleConfiguration?.Value?.MyFavoriteComedicMovie ?? string.Empty;
 
         if (string.IsNullOrWhiteSpace(myFavoriteComedicMovie))
         {

@@ -60,3 +60,13 @@ var app = builder.Build();
 
 app.SetupMiddleware()
     .Run();
+
+
+/// <summary>
+/// The entry point for the API.
+/// </summary>
+/// <remarks>
+/// Declared this way to bypass the unit test code coverage analysis
+/// </remarks>
+[ExcludeFromCodeCoverage]
+public partial class Program { }

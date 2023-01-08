@@ -3,6 +3,7 @@ using AdventureWorks.UnitTests.Setup;
 
 namespace AdventureWorks.UnitTests.Common.Helpers;
 
+[ExcludeFromCodeCoverage]
 public sealed class SecretHelperTests : UnitTestBase
 {
     public SecretHelperTests()

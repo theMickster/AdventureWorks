@@ -3,6 +3,7 @@ using AdventureWorks.UnitTests.Setup;
 
 namespace AdventureWorks.UnitTests.Common.Extensions;
 
+[ExcludeFromCodeCoverage]
 public sealed class CustomAttributeDataExtensionsTests : UnitTestBase
 {
     [Fact]
