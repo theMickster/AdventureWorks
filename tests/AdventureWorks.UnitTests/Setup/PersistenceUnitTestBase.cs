@@ -7,7 +7,8 @@ using Polly;
 namespace AdventureWorks.UnitTests.Setup;
 
 [ExcludeFromCodeCoverage]
-internal abstract class PersistenceUnitTestBase : UnitTestBase
+[SuppressMessage("Simplification", "CLASS0001:Seal class", Justification = "Not valid here...")]
+public abstract class PersistenceUnitTestBase : UnitTestBase
 {
     protected AdventureWorksDbContext DbContext;
 
