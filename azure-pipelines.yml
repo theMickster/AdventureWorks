@@ -52,9 +52,9 @@ jobs:
     displayName: 'Publish Adventure Works API Artifacts'
     inputs:
       command: publish
-      publishWebProjects: True
+      publishWebProjects: false
       projects: '$(projectName)'
       arguments: '--configuration $(BuildConfiguration) --output $(Build.ArtifactStagingDirectory)'
-      zipAfterPublish: True      
+      zipAfterPublish: false  
    
 
