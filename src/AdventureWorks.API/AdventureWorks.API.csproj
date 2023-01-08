@@ -8,6 +8,7 @@
 		<DockerfileContext>..\..</DockerfileContext>
 		<GenerateDocumentationFile>False</GenerateDocumentationFile>
 		<UserSecretsId>238eeec8-d5b9-4ad2-b75b-178e833ce96d</UserSecretsId>
+		<OpenApiGenerateDocuments>false</OpenApiGenerateDocuments>
 	</PropertyGroup>
 
 	<ItemGroup>
