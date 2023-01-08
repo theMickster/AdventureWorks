@@ -1,3 +1,5 @@
+
+[assembly: InternalsVisibleTo("AdventureWorks.Test.UnitTests")]
 namespace AdventureWorks.API.libs;
 
 [ExcludeFromCodeCoverage]

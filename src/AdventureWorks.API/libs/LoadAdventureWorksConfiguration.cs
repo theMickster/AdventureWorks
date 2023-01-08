@@ -2,6 +2,7 @@
 using AdventureWorks.Application.Exceptions;
 using AdventureWorks.Common.Helpers;
 
+[assembly: InternalsVisibleTo("AdventureWorks.Test.UnitTests")]
 namespace AdventureWorks.API.libs;
 
 internal static class LoadAdventureWorksConfiguration

@@ -4,7 +4,7 @@ public class DatabaseConnectionString
 {
     private string _connectionString = "Server=.; Database=HelloWorld; Application Name=TestTestTest;";
 
-    public string ConnectionStringName { get; set; }
+    public string? ConnectionStringName { get; set; }
 
     public string ConnectionString
     {

@@ -1,6 +1,7 @@
 ﻿using AdventureWorks.Common.Helpers;
 using AdventureWorks.Common.Settings;
 
+[assembly: InternalsVisibleTo("AdventureWorks.Test.UnitTests")]
 namespace AdventureWorks.API.libs;
 
 internal static class RegisterConfigurationSettings

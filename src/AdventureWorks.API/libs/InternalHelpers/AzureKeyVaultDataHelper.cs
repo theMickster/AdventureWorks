@@ -3,6 +3,7 @@ using AdventureWorks.Common.Constants;
 using Azure.Identity;
 using Azure.Security.KeyVault.Secrets;
 
+[assembly: InternalsVisibleTo("AdventureWorks.Test.UnitTests")]
 namespace AdventureWorks.API.libs.InternalHelpers;
 
 internal static class AzureKeyVaultDataHelper
