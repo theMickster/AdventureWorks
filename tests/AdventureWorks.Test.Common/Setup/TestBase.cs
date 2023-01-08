@@ -45,7 +45,7 @@ public abstract class TestBase : IDisposable
     /// <summary>
     /// Used to create objects before a test is executed.
     /// </summary>
-    public virtual void Setup()
+    protected virtual void Setup()
     {
 
     }

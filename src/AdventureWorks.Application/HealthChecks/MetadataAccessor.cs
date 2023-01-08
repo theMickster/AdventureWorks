@@ -9,7 +9,7 @@ namespace AdventureWorks.Application.HealthChecks;
 /// </summary>
 public static class MetadataAccessor
 {
-    private static AssemblyVersionMetadata _assemblyVersionMetadata;
+    private static AssemblyVersionMetadata _assemblyVersionMetadata = null!;
 
     /// <summary>
     /// Gets semantic Version, etc from Assembly Metadata
@@ -27,8 +27,7 @@ public static class MetadataAccessor
 
             var assembly = Assembly.GetEntryAssembly();
 
-            return MetadataFromAssembly(assembly);
-
+            return assembly != null ? MetadataFromAssembly(assembly) : null!;
         }
     }
 
@@ -41,20 +40,22 @@ public static class MetadataAccessor
     {
         _assemblyVersionMetadata = new AssemblyVersionMetadata();
 
-        if (assembly != null)
+        if (assembly == null)
         {
-            foreach (var attribute in assembly.GetCustomAttributesData())
+            return _assemblyVersionMetadata;
+        }
+
+        foreach (var attribute in assembly.GetCustomAttributesData())
+        {
+            if (!attribute.TryParse(out var value))
             {
-                if (!attribute.TryParse(out var value))
-                {
-                    value = string.Empty;
-                }
-
-                var name = attribute.AttributeType.Name;
-
-                System.Diagnostics.Trace.WriteLine($"{name}, {value}");
-                _assemblyVersionMetadata.PropertySet(name, value);
+                value = string.Empty;
             }
+
+            var name = attribute.AttributeType.Name;
+
+            System.Diagnostics.Trace.WriteLine($"{name}, {value}");
+            _assemblyVersionMetadata.PropertySet(name, value);
         }
 
         return _assemblyVersionMetadata;
@@ -69,16 +70,21 @@ public static class MetadataAccessor
     {
         var dict = new Dictionary<string, object>();
 
-        if (atype != null)
+        if (atype == null)
         {
-            var t = atype.GetType();
+            return dict;
+        }
 
-            PropertyInfo[] props = t.GetProperties(BindingFlags.Public | BindingFlags.Instance);
+        var t = atype.GetType();
 
-            foreach (PropertyInfo prp in props)
+        var props = t.GetProperties(BindingFlags.Public | BindingFlags.Instance);
+
+        foreach (var prp in props)
+        {
+            var value = prp.GetValue(atype, Array.Empty<object>());
+
+            if (value != null)
             {
-                object value = prp.GetValue(atype, Array.Empty<object>());
-
                 dict.Add(prp.Name, value);
             }
         }

@@ -5,7 +5,7 @@ VisualStudioVersion = 17.4.33205.214
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "AdventureWorks.Domain", "src\AdventureWorks.Domain\AdventureWorks.Domain.csproj", "{8F714748-3CFE-424A-BA83-757E1AB8F331}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "AdventureWorks.Infrastructure", "src\AdventureWorks.Data\AdventureWorks.Infrastructure.csproj", "{6347BD06-ECA3-45C5-A8A8-B4D8F07A83C0}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "AdventureWorks.Infrastructure.Persistence", "src\AdventureWorks.Data\AdventureWorks.Infrastructure.Persistence.csproj", "{6347BD06-ECA3-45C5-A8A8-B4D8F07A83C0}"
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "AdventureWorks.Common", "src\AdventureWorks.Common\AdventureWorks.Common.csproj", "{973E6F75-89A6-42A7-A623-A7950C7C3F78}"
 EndProject

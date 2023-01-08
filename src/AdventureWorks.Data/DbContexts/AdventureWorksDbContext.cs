@@ -4,7 +4,7 @@ using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Logging.Abstractions;
 
-namespace AdventureWorks.Infrastructure.DbContexts;
+namespace AdventureWorks.Infrastructure.Persistence.DbContexts;
 
 public class AdventureWorksDbContext : DbContext, IAdventureWorksDbContext
 {

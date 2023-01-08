@@ -1,13 +1,13 @@
-﻿using AdventureWorks.Application;
-using AdventureWorks.Infrastructure.DbContexts;
-using Microsoft.EntityFrameworkCore;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
-using AdventureWorks.Domain.Entities;
+using AdventureWorks.Application;
 using AdventureWorks.Application.Interfaces.Repositories;
+using AdventureWorks.Domain.Entities;
+using AdventureWorks.Infrastructure.Persistence.DbContexts;
+using Microsoft.EntityFrameworkCore;
 
-namespace AdventureWorks.Infrastructure.Repositories;
+namespace AdventureWorks.Infrastructure.Persistence.Repositories;
 
 /// <summary>
 /// "There's some repetition here - couldn't we have some the sync methods call the async?"

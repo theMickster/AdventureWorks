@@ -53,7 +53,7 @@
 	  <ProjectReference Include="..\..\src\AdventureWorks.API\AdventureWorks.API.csproj" />
 	  <ProjectReference Include="..\..\src\AdventureWorks.Application\AdventureWorks.Application.csproj" />
 	  <ProjectReference Include="..\..\src\AdventureWorks.Common\AdventureWorks.Common.csproj" />
-	  <ProjectReference Include="..\..\src\AdventureWorks.Data\AdventureWorks.Infrastructure.csproj" />
+	  <ProjectReference Include="..\..\src\AdventureWorks.Data\AdventureWorks.Infrastructure.Persistence.csproj" />
 	  <ProjectReference Include="..\..\src\AdventureWorks.Domain\AdventureWorks.Domain.csproj" />
 	  <ProjectReference Include="..\AdventureWorks.Test.Common\AdventureWorks.Test.Common.csproj" />
 	</ItemGroup>

@@ -2,7 +2,7 @@
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
 
-namespace AdventureWorks.Infrastructure.Configurations;
+namespace AdventureWorks.Infrastructure.Persistence.Configurations;
 
 public class PersonConfiguration : IEntityTypeConfiguration<Person>
 {
