@@ -1,20 +1,19 @@
-﻿using AdventureWorks.Core.Entities;
+﻿using AdventureWorks.Domain.Entities;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
 
-namespace AdventureWorks.Infrastructure.Configurations
+namespace AdventureWorks.Infrastructure.Configurations;
+
+public class SalesTaxRateConfiguration : IEntityTypeConfiguration<SalesTaxRateEntity>
 {
-    public class SalesTaxRateConfiguration : IEntityTypeConfiguration<SalesTaxRate>
+    public void Configure(EntityTypeBuilder<SalesTaxRateEntity> builder)
     {
-        public void Configure(EntityTypeBuilder<SalesTaxRate> builder)
-        {
-            builder.ToTable("SalesTaxRate", "Sales");
+        builder.ToTable("SalesTaxRate", "Sales");
 
-            builder.HasKey(a => a.SalesTaxRateId);
+        builder.HasKey(a => a.SalesTaxRateId);
 
-            builder.HasOne(a => a.StateProvince)
-                .WithMany()
-                .HasForeignKey(a => a.StateProvinceId);
-        }
+        builder.HasOne(a => a.StateProvince)
+            .WithMany()
+            .HasForeignKey(a => a.StateProvinceId);
     }
 }

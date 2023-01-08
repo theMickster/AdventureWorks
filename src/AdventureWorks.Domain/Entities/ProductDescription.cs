@@ -1,16 +1,11 @@
-﻿using System;
-using System.Collections.Generic;
-using AdventureWorks.Core.Interfaces;
+﻿namespace AdventureWorks.Domain.Entities;
 
-namespace AdventureWorks.Core.Entities
+public class ProductDescription : BaseEntity
 {
-    public class ProductDescription : BaseEntity, IAggregateRoot
-    {
-        public int ProductDescriptionId { get; set; }
-        public string Description { get; set; }
-        public Guid Rowguid { get; set; }
-        public DateTime ModifiedDate { get; set; }
+    public int ProductDescriptionId { get; set; }
+    public string Description { get; set; }
+    public Guid Rowguid { get; set; }
+    public DateTime ModifiedDate { get; set; }
 
-        public virtual ICollection<ProductModelProductDescriptionCulture> ProductModelProductDescriptionCulture { get; set; }
-    }
+    public virtual ICollection<ProductModelProductDescriptionCulture> ProductModelProductDescriptionCulture { get; set; }
 }

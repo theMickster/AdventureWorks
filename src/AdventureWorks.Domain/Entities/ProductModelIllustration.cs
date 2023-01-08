@@ -1,15 +1,11 @@
-﻿using System;
-using AdventureWorks.Core.Interfaces;
+﻿namespace AdventureWorks.Domain.Entities;
 
-namespace AdventureWorks.Core.Entities
+public class ProductModelIllustration : BaseEntity
 {
-    public class ProductModelIllustration : BaseEntity, IAggregateRoot
-    {
-        public int ProductModelId { get; set; }
-        public int IllustrationId { get; set; }
-        public DateTime ModifiedDate { get; set; }
+    public int ProductModelId { get; set; }
+    public int IllustrationId { get; set; }
+    public DateTime ModifiedDate { get; set; }
 
-        public virtual Illustration Illustration { get; set; }
-        public virtual ProductModel ProductModel { get; set; }
-    }
+    public virtual Illustration Illustration { get; set; }
+    public virtual ProductModel ProductModel { get; set; }
 }

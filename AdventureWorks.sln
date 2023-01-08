@@ -3,19 +3,15 @@ Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio Version 17
 VisualStudioVersion = 17.4.33205.214
 MinimumVisualStudioVersion = 10.0.40219.1
-Project("{00D1A9C2-B5F0-4AF3-8072-F6C62B433612}") = "AdventureWorks.Database", "src\AdventureWorks.DB\AdventureWorks.Database.sqlproj", "{5FC754E7-74BD-4AAE-8B4E-CFC8CDDA1035}"
-EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "AdventureWorks.Core", "src\AdventureWorks.Domain\AdventureWorks.Core.csproj", "{8F714748-3CFE-424A-BA83-757E1AB8F331}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "AdventureWorks.Domain", "src\AdventureWorks.Domain\AdventureWorks.Domain.csproj", "{8F714748-3CFE-424A-BA83-757E1AB8F331}"
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "AdventureWorks.Infrastructure", "src\AdventureWorks.Data\AdventureWorks.Infrastructure.csproj", "{6347BD06-ECA3-45C5-A8A8-B4D8F07A83C0}"
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "AdventureWorks.Common", "src\AdventureWorks.Common\AdventureWorks.Common.csproj", "{973E6F75-89A6-42A7-A623-A7950C7C3F78}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "AdventureWorks.Data.Tests", "tests\AdventureWorks.Data.Tests\AdventureWorks.Data.Tests.csproj", "{1D1AF2CB-BD7A-46CC-A3D3-86454DC4C2EF}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "AdventureWorks.UnitTests", "tests\AdventureWorks.Data.Tests\AdventureWorks.UnitTests.csproj", "{1D1AF2CB-BD7A-46CC-A3D3-86454DC4C2EF}"
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "tests", "tests", "{70B5052F-3FC3-4026-8F65-C77FD0E46686}"
-EndProject
-Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "database", "database", "{99573B73-DD92-4175-B1A6-87116965042F}"
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "src", "src", "{51631969-0DD2-459F-8A10-6D85C97ADA1B}"
 EndProject
@@ -23,16 +19,14 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "AdventureWorks.Application"
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "AdventureWorks.API", "src\AdventureWorks.API\AdventureWorks.API.csproj", "{D939DB96-0454-4515-8A3E-D2B14262E37C}"
 EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "AdventureWorks.Test.Common", "tests\AdventureWorks.Test.Common\AdventureWorks.Test.Common.csproj", "{1EE21C60-1B98-4EAE-ABC5-00BADD571C02}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
 		Release|Any CPU = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(ProjectConfigurationPlatforms) = postSolution
-		{5FC754E7-74BD-4AAE-8B4E-CFC8CDDA1035}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{5FC754E7-74BD-4AAE-8B4E-CFC8CDDA1035}.Debug|Any CPU.Deploy.0 = Debug|Any CPU
-		{5FC754E7-74BD-4AAE-8B4E-CFC8CDDA1035}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{5FC754E7-74BD-4AAE-8B4E-CFC8CDDA1035}.Release|Any CPU.Deploy.0 = Release|Any CPU
 		{8F714748-3CFE-424A-BA83-757E1AB8F331}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
 		{8F714748-3CFE-424A-BA83-757E1AB8F331}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{8F714748-3CFE-424A-BA83-757E1AB8F331}.Release|Any CPU.ActiveCfg = Release|Any CPU
@@ -57,19 +51,22 @@ Global
 		{D939DB96-0454-4515-8A3E-D2B14262E37C}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{D939DB96-0454-4515-8A3E-D2B14262E37C}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{D939DB96-0454-4515-8A3E-D2B14262E37C}.Release|Any CPU.Build.0 = Release|Any CPU
+		{1EE21C60-1B98-4EAE-ABC5-00BADD571C02}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{1EE21C60-1B98-4EAE-ABC5-00BADD571C02}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{1EE21C60-1B98-4EAE-ABC5-00BADD571C02}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{1EE21C60-1B98-4EAE-ABC5-00BADD571C02}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
 	EndGlobalSection
 	GlobalSection(NestedProjects) = preSolution
-		{5FC754E7-74BD-4AAE-8B4E-CFC8CDDA1035} = {99573B73-DD92-4175-B1A6-87116965042F}
 		{8F714748-3CFE-424A-BA83-757E1AB8F331} = {51631969-0DD2-459F-8A10-6D85C97ADA1B}
 		{6347BD06-ECA3-45C5-A8A8-B4D8F07A83C0} = {51631969-0DD2-459F-8A10-6D85C97ADA1B}
 		{973E6F75-89A6-42A7-A623-A7950C7C3F78} = {51631969-0DD2-459F-8A10-6D85C97ADA1B}
 		{1D1AF2CB-BD7A-46CC-A3D3-86454DC4C2EF} = {70B5052F-3FC3-4026-8F65-C77FD0E46686}
-		{99573B73-DD92-4175-B1A6-87116965042F} = {51631969-0DD2-459F-8A10-6D85C97ADA1B}
 		{1721A57A-96F9-4705-82E1-9C01BE18E827} = {51631969-0DD2-459F-8A10-6D85C97ADA1B}
 		{D939DB96-0454-4515-8A3E-D2B14262E37C} = {51631969-0DD2-459F-8A10-6D85C97ADA1B}
+		{1EE21C60-1B98-4EAE-ABC5-00BADD571C02} = {70B5052F-3FC3-4026-8F65-C77FD0E46686}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {6F6161B3-F0B5-4234-A940-CED59C8D7749}

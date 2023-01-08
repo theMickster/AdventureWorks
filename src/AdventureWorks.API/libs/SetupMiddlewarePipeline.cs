@@ -4,6 +4,7 @@ using System.Text;
 [assembly: InternalsVisibleTo("Authenticator.Test.UnitTests")]
 namespace AdventureWorks.API.libs;
 
+[ExcludeFromCodeCoverage]
 internal static class SetupMiddlewarePipeline
 {
     private static readonly string _swaggerNonceString = Guid.NewGuid().ToString("n");
@@ -50,7 +51,7 @@ internal static class SetupMiddlewarePipeline
 
         app.UseHealthChecks("/health");
 
-        //app.UseApplicationHealthChecks();
+        app.UseApplicationHealthChecks();
 
         return app;
     }

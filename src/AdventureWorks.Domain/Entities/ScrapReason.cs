@@ -1,16 +1,11 @@
-﻿using System;
-using System.Collections.Generic;
-using AdventureWorks.Core.Interfaces;
+﻿namespace AdventureWorks.Domain.Entities;
 
-namespace AdventureWorks.Core.Entities
+public class ScrapReason : BaseEntity
 {
-    public class ScrapReason : BaseEntity, IAggregateRoot
-    {
 
-        public short ScrapReasonId { get; set; }
-        public string Name { get; set; }
-        public DateTime ModifiedDate { get; set; }
+    public short ScrapReasonId { get; set; }
+    public string Name { get; set; }
+    public DateTime ModifiedDate { get; set; }
 
-        public ICollection<WorkOrder> WorkOrders { get; set; }
-    }
+    public ICollection<WorkOrder> WorkOrders { get; set; }
 }

@@ -1,10 +1,4 @@
 ﻿using AdventureWorks.API.libs;
-using AdventureWorks.Application.Infrastructure.AutoMapper;
-using System.Reflection;
-using AdventureWorks.Application.Interfaces;
-using AdventureWorks.Infrastructure.DbContexts;
-using AdventureWorks.Infrastructure.Repositories;
-using Microsoft.EntityFrameworkCore;
 using Microsoft.AspNetCore.Mvc;
 
 var builder = WebApplication.CreateBuilder(args);
@@ -16,7 +10,6 @@ builder.Configuration
     .AddJsonFile($"appsettings.{environment.EnvironmentName}.json", false, true)
     .AddEnvironmentVariables()
     .AddInMemoryCollection();
-
 
 builder.Services.AddOptions();
 
@@ -33,10 +26,16 @@ builder.Configuration
     .AddUserSecrets<Program>()
     .Build();
 
+builder.Configuration
+    .LoadApplicationConfiguration();
+
+builder.RegisterConfigurations();
+
+builder.Services.AddDefaultHealthCheck();
 
 builder.Services.AddCors(options =>
 {
-    options.AddPolicy("PubsCorsPolicy",
+    options.AddPolicy("AdventureWorksCorsPolicy",
         builder => builder
             .SetIsOriginAllowed((host) => true)
             .AllowAnyMethod()
@@ -44,28 +43,30 @@ builder.Services.AddCors(options =>
             .AllowCredentials());
 });
 
-builder.RegisterServices();
+builder.RegisterAspDotNetServices();
 
-builder.Services.AddAutoMapper(new Assembly[] { typeof(AutoMapperProfile).GetTypeInfo().Assembly });
+builder.RegisterAdventureWorksDbContexts();
 
+builder.RegisterAdventureWorksServices();
 
-builder.Services.AddDbContext<AdventureWorksDbContext>(options =>
-    options.UseSqlServer(builder.Configuration.GetConnectionString("AdventureWorksDatabase")));
-
-builder.Services.AddScoped(typeof(IAsyncRepository<>), typeof(EfRepository<>));
-
-builder.Services.AddScoped<IAdventureWorksDbContext>(provider => provider.GetService<AdventureWorksDbContext>());
-
-builder.Services.AddScoped<IProductRepository, ProductRepository>();
+builder.RegisterAdventureWorksRepositories();
 
 builder.Services.Configure<ApiBehaviorOptions>(options =>
 {
     options.SuppressModelStateInvalidFilter = true;
 });
 
-
-
 var app = builder.Build();
 
 app.SetupMiddleware()
     .Run();
+
+
+/// <summary>
+/// The entry point for the API.
+/// </summary>
+/// <remarks>
+/// Declared this way to bypass the unit test code coverage analysis
+/// </remarks>
+[ExcludeFromCodeCoverage]
+public partial class Program { }

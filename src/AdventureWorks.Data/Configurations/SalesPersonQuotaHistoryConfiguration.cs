@@ -1,20 +1,19 @@
-﻿using AdventureWorks.Core.Entities;
+﻿using AdventureWorks.Domain.Entities;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
 
-namespace AdventureWorks.Infrastructure.Configurations
+namespace AdventureWorks.Infrastructure.Configurations;
+
+public class SalesPersonQuotaHistoryConfiguration : IEntityTypeConfiguration<SalesPersonQuotaHistory>
 {
-    public class SalesPersonQuotaHistoryConfiguration : IEntityTypeConfiguration<SalesPersonQuotaHistory>
+    public void Configure(EntityTypeBuilder<SalesPersonQuotaHistory> builder)
     {
-        public void Configure(EntityTypeBuilder<SalesPersonQuotaHistory> builder)
-        {
-            builder.ToTable("SalesPersonQuotaHistory", "Sales");
+        builder.ToTable("SalesPersonQuotaHistory", "Sales");
 
-            builder.HasKey(a => new {a.BusinessEntityId, a.QuotaDate});
+        builder.HasKey(a => new {a.BusinessEntityId, a.QuotaDate});
 
-            builder.HasOne(a => a.BusinessEntity)
-                .WithMany()
-                .HasForeignKey(a => a.BusinessEntityId);
-        }
+        builder.HasOne(a => a.BusinessEntity)
+            .WithMany()
+            .HasForeignKey(a => a.BusinessEntityId);
     }
 }

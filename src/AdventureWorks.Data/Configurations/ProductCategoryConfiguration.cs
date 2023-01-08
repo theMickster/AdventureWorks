@@ -1,17 +1,16 @@
-﻿using AdventureWorks.Core.Entities;
+﻿using AdventureWorks.Domain.Entities;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
 
-namespace AdventureWorks.Infrastructure.Configurations
+namespace AdventureWorks.Infrastructure.Configurations;
+
+public class ProductCategoryConfiguration : IEntityTypeConfiguration<ProductCategory>
 {
-    public class ProductCategoryConfiguration : IEntityTypeConfiguration<ProductCategory>
+    public void Configure(EntityTypeBuilder<ProductCategory> builder)
     {
-        public void Configure(EntityTypeBuilder<ProductCategory> builder)
-        {
-            builder.ToTable("ProductCategory", "Production");
+        builder.ToTable("ProductCategory", "Production");
 
-            builder.HasKey(a => a.ProductCategoryId);
+        builder.HasKey(a => a.ProductCategoryId);
 
-        }
     }
 }

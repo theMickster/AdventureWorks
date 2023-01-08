@@ -1,0 +1,24 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+
+	<PropertyGroup>
+		<TargetFrameworks>net6.0</TargetFrameworks>
+		<Nullable>enable</Nullable>
+		<ImplicitUsings>enable</ImplicitUsings>
+	</PropertyGroup>
+
+	<ItemGroup>
+	  <Compile Remove="Exceptions\**" />
+	  <Compile Remove="ViewModels\**" />
+	  <EmbeddedResource Remove="Exceptions\**" />
+	  <EmbeddedResource Remove="ViewModels\**" />
+	  <None Remove="Exceptions\**" />
+	  <None Remove="ViewModels\**" />
+	</ItemGroup>
+
+	<ItemGroup>
+		<PackageReference Include="AutoMapper" Version="12.0.0" />
+		<PackageReference Include="Microsoft.EntityFrameworkCore.Abstractions" Version="7.0.1" />
+		
+	</ItemGroup>
+
+</Project>

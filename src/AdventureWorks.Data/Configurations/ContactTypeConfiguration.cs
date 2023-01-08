@@ -1,15 +1,14 @@
-﻿using AdventureWorks.Core.Entities;
+﻿using AdventureWorks.Domain.Entities;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
 
-namespace AdventureWorks.Infrastructure.Configurations
+namespace AdventureWorks.Infrastructure.Configurations;
+
+public class ContactTypeConfiguration : IEntityTypeConfiguration<ContactType>
 {
-    public class ContactTypeConfiguration : IEntityTypeConfiguration<ContactType>
+    public void Configure(EntityTypeBuilder<ContactType> builder)
     {
-        public void Configure(EntityTypeBuilder<ContactType> builder)
-        {
-            builder.ToTable("ContactType", "Person");
-            builder.HasKey(a => a.ContactTypeId);
-        }
+        builder.ToTable("ContactType", "Person");
+        builder.HasKey(a => a.ContactTypeId);
     }
 }

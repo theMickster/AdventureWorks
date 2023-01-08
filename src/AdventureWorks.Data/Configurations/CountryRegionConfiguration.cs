@@ -1,15 +1,16 @@
-﻿using AdventureWorks.Core.Entities;
+﻿using AdventureWorks.Domain.Entities;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
 
-namespace AdventureWorks.Infrastructure.Configurations
+namespace AdventureWorks.Infrastructure.Configurations;
+
+public class CountryRegionConfiguration : IEntityTypeConfiguration<CountryRegionEntity>
 {
-    public class CountryRegionConfiguration : IEntityTypeConfiguration<CountryRegion>
+    public void Configure(EntityTypeBuilder<CountryRegionEntity> builder)
     {
-        public void Configure(EntityTypeBuilder<CountryRegion> builder)
-        {
-            builder.ToTable("CountryRegion", "Person");
-            builder.HasKey(a => a.CountryRegionCode);
-        }
+        builder.ToTable("CountryRegion", "Person");
+
+        builder.HasKey(a => a.CountryRegionCode);
+
     }
 }

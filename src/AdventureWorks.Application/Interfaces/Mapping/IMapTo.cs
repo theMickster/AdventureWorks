@@ -1,6 +1,5 @@
-﻿namespace AdventureWorks.Application.Interfaces.Mapping
+﻿namespace AdventureWorks.Application.Interfaces.Mapping;
+
+public interface IMapTo<TEntity>
 {
-    public interface IMapTo<TEntity>
-    {
-    }
 }

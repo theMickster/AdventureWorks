@@ -1,15 +1,11 @@
-﻿using System;
-using AdventureWorks.Core.Interfaces;
+﻿namespace AdventureWorks.Domain.Entities;
 
-namespace AdventureWorks.Core.Entities
+public class CountryRegionCurrency : BaseEntity
 {
-    public class CountryRegionCurrency : BaseEntity, IAggregateRoot
-    {
-        public string CountryRegionCode { get; set; }
-        public string CurrencyCode { get; set; }
-        public DateTime ModifiedDate { get; set; }
+    public string CountryRegionCode { get; set; }
+    public string CurrencyCode { get; set; }
+    public DateTime ModifiedDate { get; set; }
 
-        public virtual CountryRegion CountryRegionCodeNavigation { get; set; }
-        public virtual Currency CurrencyCodeNavigation { get; set; }
-    }
+    public virtual CountryRegionEntity CountryRegionEntityCodeNavigation { get; set; }
+    public virtual Currency CurrencyCodeNavigation { get; set; }
 }

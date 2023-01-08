@@ -1,24 +1,23 @@
-﻿using AdventureWorks.Core.Entities;
+﻿using AdventureWorks.Domain.Entities;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
 
-namespace AdventureWorks.Infrastructure.Configurations
+namespace AdventureWorks.Infrastructure.Configurations;
+
+public class StateProvinceConfiguration : IEntityTypeConfiguration<StateProvinceEntity>
 {
-    public class StateProvinceConfiguration : IEntityTypeConfiguration<StateProvince>
+    public void Configure(EntityTypeBuilder<StateProvinceEntity> builder)
     {
-        public void Configure(EntityTypeBuilder<StateProvince> builder)
-        {
-            builder.ToTable("StateProvince", "Person");
+        builder.ToTable("StateProvince", "Person");
 
-            builder.HasKey(a => a.StateProvinceId);
+        builder.HasKey(a => a.StateProvinceId);
 
-            builder.HasOne(a => a.CountryRegionCodeNavigation)
-                .WithMany()
-                .HasForeignKey(a => a.CountryRegionCode);
+        builder.HasOne(a => a.CountryRegion)
+            .WithMany(b => b.StateProvinces)
+            .HasForeignKey(a => a.CountryRegionCode);
 
-            builder.HasOne(a => a.Territory)
-                .WithMany()
-                .HasForeignKey(a => a.TerritoryId);
-        }
+        builder.HasOne(a => a.SalesTerritory)
+            .WithMany(b => b.StateProvinces)
+            .HasForeignKey(a => a.TerritoryId);
     }
 }

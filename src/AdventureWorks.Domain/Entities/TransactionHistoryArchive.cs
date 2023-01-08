@@ -1,18 +1,14 @@
-﻿using System;
-using AdventureWorks.Core.Interfaces;
+﻿namespace AdventureWorks.Domain.Entities;
 
-namespace AdventureWorks.Core.Entities
+public class TransactionHistoryArchive : BaseEntity
 {
-    public class TransactionHistoryArchive : BaseEntity, IAggregateRoot
-    {
-        public int TransactionId { get; set; }
-        public int ProductId { get; set; }
-        public int ReferenceOrderId { get; set; }
-        public int ReferenceOrderLineId { get; set; }
-        public DateTime TransactionDate { get; set; }
-        public string TransactionType { get; set; }
-        public int Quantity { get; set; }
-        public decimal ActualCost { get; set; }
-        public DateTime ModifiedDate { get; set; }
-    }
+    public int TransactionId { get; set; }
+    public int ProductId { get; set; }
+    public int ReferenceOrderId { get; set; }
+    public int ReferenceOrderLineId { get; set; }
+    public DateTime TransactionDate { get; set; }
+    public string TransactionType { get; set; }
+    public int Quantity { get; set; }
+    public decimal ActualCost { get; set; }
+    public DateTime ModifiedDate { get; set; }
 }
