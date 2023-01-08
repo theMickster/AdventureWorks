@@ -5,8 +5,9 @@ namespace AdventureWorks.Application.Infrastructure.AutoMapper;
 
 public sealed class Map
 {
-    public Type Source { get; set; }
-    public Type Destination { get; set; }
+    public Type Source { get; set; } = null!;
+
+    public Type Destination { get; set; } = null!;
 }
 
 public static class MapperProfileHelper
@@ -42,7 +43,7 @@ public static class MapperProfileHelper
                 typeof(IHaveCustomMapping).IsAssignableFrom(type) &&
                 !type.IsAbstract &&
                 !type.IsInterface
-            select (IHaveCustomMapping)Activator.CreateInstance(type)).ToList();
+            select Activator.CreateInstance(type) as IHaveCustomMapping).ToList();
 
         return mapsFrom;
     }

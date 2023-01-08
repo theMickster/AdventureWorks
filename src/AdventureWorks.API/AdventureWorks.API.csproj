@@ -42,7 +42,7 @@
 
 	<ItemGroup>
 		<ProjectReference Include="..\AdventureWorks.Application\AdventureWorks.Application.csproj" />
-		<ProjectReference Include="..\AdventureWorks.Data\AdventureWorks.Infrastructure.csproj" />
+		<ProjectReference Include="..\AdventureWorks.Infrastructure.Persistence\AdventureWorks.Infrastructure.Persistence.csproj" />
 	</ItemGroup>
 
 </Project>

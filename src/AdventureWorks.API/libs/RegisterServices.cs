@@ -7,8 +7,6 @@ using AdventureWorks.Application.Services.Address;
 using AdventureWorks.Common.Constants;
 using AdventureWorks.Common.Settings;
 using AdventureWorks.Domain.Profiles;
-using AdventureWorks.Infrastructure.DbContexts;
-using AdventureWorks.Infrastructure.Repositories;
 using Microsoft.AspNetCore.Mvc.Controllers;
 using Microsoft.AspNetCore.Mvc.Versioning;
 using Microsoft.EntityFrameworkCore;
@@ -16,6 +14,8 @@ using Microsoft.OpenApi.Models;
 using Swashbuckle.AspNetCore.SwaggerUI;
 using System.Reflection;
 using System.Text;
+using AdventureWorks.Infrastructure.Persistence.DbContexts;
+using AdventureWorks.Infrastructure.Persistence.Repositories;
 
 [assembly: InternalsVisibleTo("AdventureWorks.Test.UnitTests")]
 namespace AdventureWorks.API.libs;
