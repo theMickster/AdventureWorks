@@ -69,7 +69,8 @@ stages:
         projects: '$(projectName)'
         arguments: '--configuration $(BuildConfiguration) --output $(Build.ArtifactStagingDirectory) --framework  "net6.0"'
 
-
+    - task: PublishBuildArtifacts@1
+      displayName: 'Publish AdventureWorks Build Artifacts'
     # - task: PublishBuildArtifacts@1
     #   name: 'PublishBuildArtifacts'
     #   displayName: 'Publish AdventureWorks Build Artifacts'
