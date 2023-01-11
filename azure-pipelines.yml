@@ -81,7 +81,7 @@ stages:
 - stage: 'DeployToDevSlot'
   displayName: 'Deploy Adventure Works Api to Dev Slot'
   dependsOn: 'BuildApplication'
-  condition: and(succeeded('Build'), eq(variables['build.sourceBranch'], 'refs/heads/develop'))
+  condition: and(succeeded('BuildApplication'), eq(variables['build.sourceBranch'], 'refs/heads/develop'))
   jobs:
   - job: DeployAdventureWorksApi
     displayName: 'Deploy Adventure Works API to Dev Slot'
