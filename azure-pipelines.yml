@@ -68,15 +68,12 @@ stages:
         publishWebProjects: true
         projects: '$(projectName)'
         arguments: '--configuration $(BuildConfiguration) --output $(Build.ArtifactStagingDirectory) --framework  "net6.0"'
-
+        
     - task: PublishBuildArtifacts@1
+      name: 'PublishBuildArtifacts'
       displayName: 'Publish AdventureWorks Build Artifacts'
-    # - task: PublishBuildArtifacts@1
-    #   name: 'PublishBuildArtifacts'
-    #   displayName: 'Publish AdventureWorks Build Artifacts'
-    #   inputs:
-    #     PathtoPublish: '$(Build.ArtifactStagingDirectory)'
-    #     ArtifactName: 'AdventureWorks'        
+      inputs:         
+         ArtifactName: 'AdventureWorks'        
 
 - stage: 'DeployToDevSlot'
   displayName: 'Deploy Adventure Works Api to Dev Slot'
@@ -86,6 +83,16 @@ stages:
   - job: DeployAdventureWorksApi
     displayName: 'Deploy Adventure Works API to Dev Slot'
     steps:  
+     
+    - task: DownloadBuildArtifacts@1
+      displayName: 'Download Build Artifacts Prior to Deployment'
+      inputs:
+        buildType: 'current'
+        downloadType: 'single'
+        artifactName: 'AdventureWorks'
+        downloadPath: '$(System.ArtifactsDirectory)'
+        cleanDestinationFolder: true
+
     - task: AzureRmWebAppDeployment@4
       displayName: 'Deploy Adventure Works Api to Dev Slot'
       inputs:
