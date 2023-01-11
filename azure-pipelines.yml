@@ -80,31 +80,35 @@ stages:
   dependsOn: 'BuildApplication'
   condition: and(succeeded('BuildApplication'), eq(variables['build.sourceBranch'], 'refs/heads/develop'))
   jobs:
-  - job: DeployAdventureWorksApi
+  - deployment: DeployAdventureWorksApi
     displayName: 'Deploy Adventure Works API to Dev Slot'
-    steps:  
+    environment: 'AdventureWorks-API-Dev'
+    strategy:
+      runOnce:
+        deploy:    
+          steps:  
 
-    - script: set
-      displayName: 'Print All YAML Release Pipleline Variables'
+          - script: set
+            displayName: 'Print All YAML Release Pipleline Variables'
 
-    - task: DownloadBuildArtifacts@1
-      displayName: 'Download Build Artifacts Prior to Deployment'
-      inputs:
-        buildType: 'current'
-        downloadType: 'single'
-        artifactName: 'AdventureWorks'
-        downloadPath: '$(System.ArtifactsDirectory)'
-        cleanDestinationFolder: true
+          - task: DownloadBuildArtifacts@1
+            displayName: 'Download Build Artifacts Prior to Deployment'
+            inputs:
+              buildType: 'current'
+              downloadType: 'single'
+              artifactName: 'AdventureWorks'
+              downloadPath: '$(System.ArtifactsDirectory)'
+              cleanDestinationFolder: true
 
-    - task: AzureRmWebAppDeployment@4
-      displayName: 'Deploy Adventure Works Api to Dev Slot'
-      inputs:
-        ConnectionType: 'AzureRM'
-        azureSubscription: $(azureSubscriptionConnectionName)
-        appType: 'webApp'
-        WebAppName: $(webApplicationName)
-        deployToSlotOrASE: true
-        ResourceGroupName: $(azureAppResourceGroup)
-        SlotName: $(devDeploymentSlot)
-        package: '$(System.ArtifactsDirectory)\**\*.zip'
+          - task: AzureRmWebAppDeployment@4
+            displayName: 'Deploy Adventure Works Api to Dev Slot'
+            inputs:
+              ConnectionType: 'AzureRM'
+              azureSubscription: $(azureSubscriptionConnectionName)
+              appType: 'webApp'
+              WebAppName: $(webApplicationName)
+              deployToSlotOrASE: true
+              ResourceGroupName: $(azureAppResourceGroup)
+              SlotName: $(devDeploymentSlot)
+              package: '$(System.ArtifactsDirectory)\**\*.zip'
         
