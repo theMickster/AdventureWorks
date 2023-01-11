@@ -98,7 +98,6 @@ stages:
               downloadType: 'single'
               artifactName: 'AdventureWorks'
               downloadPath: '$(System.ArtifactsDirectory)'
-              cleanDestinationFolder: true
 
           - task: AzureRmWebAppDeployment@4
             displayName: 'Deploy Adventure Works Api to Dev Slot'
@@ -110,5 +109,32 @@ stages:
               deployToSlotOrASE: true
               ResourceGroupName: $(azureAppResourceGroup)
               SlotName: $(devDeploymentSlot)
+              package: '$(System.ArtifactsDirectory)\**\*.zip'
+
+- stage: 'DeployToProdSlot'
+  displayName: 'Deploy Adventure Works Api to Production Slot'
+  dependsOn: 
+    - 'BuildApplication'
+    - 'DeployToDevSlot'
+  jobs:
+  - deployment: DeployAdventureWorksApi
+    displayName: 'Deploy Adventure Works API to Production'
+    environment: 'AdventureWorks-API-Production'
+    strategy:
+      runOnce:
+        deploy:    
+          steps:  
+
+          - script: set
+            displayName: 'Print All YAML Release Pipleline Variables'
+
+          - task: AzureRmWebAppDeployment@4
+            displayName: 'Deploy Adventure Works Api to Production'
+            inputs:
+              ConnectionType: 'AzureRM'
+              azureSubscription: $(azureSubscriptionConnectionName)
+              appType: 'webApp'
+              WebAppName: $(webApplicationName)
+              ResourceGroupName: $(azureAppResourceGroup)
               package: '$(System.ArtifactsDirectory)\**\*.zip'
         
