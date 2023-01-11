@@ -30,7 +30,7 @@ stages:
 
     steps:  
     - script: set
-      displayName: 'Print All Build Pipleline Variables'
+      displayName: 'Print All YAML Build Pipleline Variables'
 
     - task: NuGetToolInstaller@1
       displayName: 'NuGet tool installer'
@@ -83,7 +83,10 @@ stages:
   - job: DeployAdventureWorksApi
     displayName: 'Deploy Adventure Works API to Dev Slot'
     steps:  
-     
+
+    - script: set
+      displayName: 'Print All YAML Release Pipleline Variables'
+
     - task: DownloadBuildArtifacts@1
       displayName: 'Download Build Artifacts Prior to Deployment'
       inputs:
@@ -103,5 +106,5 @@ stages:
         deployToSlotOrASE: true
         ResourceGroupName: $(azureAppResourceGroup)
         SlotName: $(devDeploymentSlot)
-        package: '$(System.DefaultWorkingDirectory)/**/*.zip'
+        package: '$(System.ArtifactsDirectory)\**\*.zip'
         
