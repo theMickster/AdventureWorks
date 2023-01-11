@@ -87,7 +87,6 @@ stages:
       runOnce:
         deploy:    
           steps:  
-
           - script: set
             displayName: 'Print All YAML Release Pipleline Variables'
 
@@ -123,11 +122,18 @@ stages:
     strategy:
       runOnce:
         deploy:    
-          steps:  
-
+          steps: 
           - script: set
             displayName: 'Print All YAML Release Pipleline Variables'
 
+          - task: DownloadBuildArtifacts@1
+            displayName: 'Download Build Artifacts Prior to Deployment'
+            inputs:
+              buildType: 'current'
+              downloadType: 'single'
+              artifactName: 'AdventureWorks'
+              downloadPath: '$(System.ArtifactsDirectory)'
+              
           - task: AzureRmWebAppDeployment@4
             displayName: 'Deploy Adventure Works Api to Production'
             inputs:
