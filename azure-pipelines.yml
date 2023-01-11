@@ -15,57 +15,86 @@ variables:
   unitTestProjectName: '**/tests/AdventureWorks.UnitTests/AdventureWorks.UnitTests.csproj'
   buildPlatform: 'Any CPU'
   buildConfiguration: 'Release'
+  azureSubscriptionConnectionName: 'Mick (Outlook) Azure Connection'
+  azureAppResourceGroup: 'AdventureWorks-West-US-3'
+  devDeploymentSlot: 'dev-test'
+  webApplicationName: 'mick-adventureworks-api'
 
-jobs:
-- job: BuildAdventureWorksApi
-  displayName: 'Build Adventure Works API'
+stages:
+- stage: 'BuildApplication'
+  displayName: 'Build Adventure Works App'
 
-  steps:  
-  - script: set
-    displayName: 'Print All Build Pipleline Variables'
+  jobs:
+  - job: BuildAdventureWorksApi
+    displayName: 'Build Adventure Works API'
 
-  - task: NuGetToolInstaller@1
-    displayName: 'NuGet tool installer'
+    steps:  
+    - script: set
+      displayName: 'Print All Build Pipleline Variables'
 
-  - task: NuGetCommand@2
-    name: 'NuGetRestore'
-    displayName: 'Restore NuGet Packages'
-    inputs:
-      command: 'restore'
-      restoreSolution: '$(solution)'
+    - task: NuGetToolInstaller@1
+      displayName: 'NuGet tool installer'
 
-  - task: DotNetCoreCLI@2
-    name: 'BuildSolution'
-    displayName: 'Build Adventure Works Solution (dotnet build)'
-    inputs:
-      command: 'build'
-      projects: 'AdventureWorks.sln'
-      arguments: '--configuration $(buildConfiguration) --framework  "net6.0" /p:EnvironmentName=Production /p:PackageLocation="$(build.artifactStagingDirectory)"'
+    - task: NuGetCommand@2
+      name: 'NuGetRestore'
+      displayName: 'Restore NuGet Packages'
+      inputs:
+        command: 'restore'
+        restoreSolution: '$(solution)'
 
-  - task: DotNetCoreCLI@2
-    name: 'ExecuteUnitTests'
-    displayName: 'Execute Adventure Works Unit Tests'
-    inputs:
-      command: 'test'
-      projects: '$(solution)'
-      testRunTitle: 'AdventureWorks UnitTests - $(Build.BuildNumber)'
-      publishTestResults: true
-      arguments: '--configuration $(buildConfiguration) --collect "Code coverage"'
+    - task: DotNetCoreCLI@2
+      name: 'BuildSolution'
+      displayName: 'Build Adventure Works Solution (dotnet build)'
+      inputs:
+        command: 'build'
+        projects: 'AdventureWorks.sln'
+        arguments: '--configuration $(buildConfiguration) --framework  "net6.0" /p:EnvironmentName=Production /p:PackageLocation="$(build.artifactStagingDirectory)"'
 
-  - task: DotNetCoreCLI@2
-    name: 'Publish'
-    displayName: 'Publish Adventure Works API Artifacts'
-    inputs:
-      command: publish
-      publishWebProjects: false
-      projects: '$(projectName)'
-      arguments: '--configuration $(BuildConfiguration) --output $(Build.ArtifactStagingDirectory) --framework  "net6.0"'
-      zipAfterPublish: false  
-   
-  - task: PublishBuildArtifacts@1
-    name: 'PublishBuildArtifacts'
-    displayName: 'Publish AdventureWorks Build Artifacts'
-    inputs:
-      PathtoPublish: '$(Build.ArtifactStagingDirectory)'
-      ArtifactName: 'AzureTestProject'
-      publishLocation: 'Container'
+    - task: DotNetCoreCLI@2
+      name: 'ExecuteUnitTests'
+      displayName: 'Execute Adventure Works Unit Tests'
+      inputs:
+        command: 'test'
+        projects: '$(solution)'
+        testRunTitle: 'AdventureWorks UnitTests - $(Build.BuildNumber)'
+        publishTestResults: true
+        arguments: '--configuration $(buildConfiguration) --collect "Code coverage"'
+
+    - task: DotNetCoreCLI@2
+      name: 'Publish'
+      displayName: 'Publish Adventure Works API Artifacts'
+      inputs:
+        command: publish
+        publishWebProjects: true
+        projects: '$(projectName)'
+        arguments: '--configuration $(BuildConfiguration) --output $(Build.ArtifactStagingDirectory) --framework  "net6.0"'
+    
+    - task: PublishBuildArtifacts@1
+      name: 'PublishBuildArtifacts'
+      displayName: 'Publish AdventureWorks Build Artifacts'
+      inputs:
+        PathtoPublish: '$(Build.ArtifactStagingDirectory)'
+        ArtifactName: 'AzureTestProject'
+        publishLocation: 'Container'
+        
+
+- stage: 'DeployToDevSlot'
+  displayName: 'Deploy Adventure Works Api to Dev Slot'
+  dependsOn: 'BuildApplication'
+  condition: and(succeeded('Build'), eq(variables['build.sourceBranch'], 'refs/heads/develop'))
+  jobs:
+  - job: DeployAdventureWorksApi
+    displayName: 'Deploy Adventure Works API to Dev Slot'
+    steps:  
+    - task: AzureRmWebAppDeployment@4
+      displayName: 'Deploy Adventure Works Api to Dev Slot'
+      inputs:
+        ConnectionType: 'AzureRM'
+        azureSubscription: $(azureSubscriptionConnectionName)
+        appType: 'webApp'
+        WebAppName: $(webApplicationName)
+        deployToSlotOrASE: true
+        ResourceGroupName: $(azureAppResourceGroup)
+        SlotName: $(devDeploymentSlot)
+        packageForLinux: '$(System.DefaultWorkingDirectory)/**/*.zip'
+        
