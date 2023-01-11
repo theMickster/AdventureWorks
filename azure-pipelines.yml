@@ -96,5 +96,5 @@ stages:
         deployToSlotOrASE: true
         ResourceGroupName: $(azureAppResourceGroup)
         SlotName: $(devDeploymentSlot)
-        packageForLinux: '$(System.DefaultWorkingDirectory)/**/*.zip'
+        package: '$(System.DefaultWorkingDirectory)\AdventureWorks.API.zip'
         
