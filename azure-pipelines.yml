@@ -17,8 +17,8 @@ variables:
   buildConfiguration: 'Release'
   azureSubscriptionConnectionName: 'Mick (Outlook) Azure Connection'
   azureAppResourceGroup: 'AdventureWorks-West-US-3'
-  devDeploymentSlot: 'dev-test'
-  webApplicationName: 'mick-adventureworks-api'
+  webApplicationNameProd: 'mick-adventureworks-api'
+  webApplicationNameDev: 'mick-adventureworks-api'
 
 stages:
 - stage: 'BuildApplication'
@@ -99,19 +99,17 @@ stages:
               downloadPath: '$(System.ArtifactsDirectory)'
 
           - task: AzureRmWebAppDeployment@4
-            displayName: 'Deploy Adventure Works Api to Dev Slot'
+            displayName: 'Deploy Adventure Works Api to Dev'
             inputs:
               ConnectionType: 'AzureRM'
               azureSubscription: $(azureSubscriptionConnectionName)
               appType: 'webApp'
-              WebAppName: $(webApplicationName)
-              deployToSlotOrASE: true
+              WebAppName: $(webApplicationNameDev)
               ResourceGroupName: $(azureAppResourceGroup)
-              SlotName: $(devDeploymentSlot)
               package: '$(System.ArtifactsDirectory)\**\*.zip'
 
 - stage: 'DeployToProdSlot'
-  displayName: 'Deploy Adventure Works Api to Production Slot'
+  displayName: 'Deploy Adventure Works Api to Production'
   dependsOn: 
     - 'BuildApplication'
     - 'DeployToDevSlot'
@@ -140,7 +138,7 @@ stages:
               ConnectionType: 'AzureRM'
               azureSubscription: $(azureSubscriptionConnectionName)
               appType: 'webApp'
-              WebAppName: $(webApplicationName)
+              WebAppName: $(webApplicationNameProd)
               ResourceGroupName: $(azureAppResourceGroup)
               package: '$(System.ArtifactsDirectory)\**\*.zip'
         
