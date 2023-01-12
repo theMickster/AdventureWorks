@@ -18,7 +18,7 @@ variables:
   azureSubscriptionConnectionName: 'Mick (Outlook) Azure Connection'
   azureAppResourceGroup: 'AdventureWorks-West-US-3'
   webApplicationNameProd: 'mick-adventureworks-api'
-  webApplicationNameDev: 'mick-adventureworks-api'
+  webApplicationNameDev: 'mick-adventureworks-api-dev'
 
 stages:
 - stage: 'BuildApplication'
@@ -75,13 +75,13 @@ stages:
       inputs:         
          ArtifactName: 'AdventureWorks'        
 
-- stage: 'DeployToDevSlot'
-  displayName: 'Deploy Adventure Works Api to Dev Slot'
+- stage: 'DeployToDev'
+  displayName: 'Deploy Adventure Works Api to Development'
   dependsOn: 'BuildApplication'
   condition: and(succeeded('BuildApplication'), eq(variables['build.sourceBranch'], 'refs/heads/develop'))
   jobs:
   - deployment: DeployAdventureWorksApi
-    displayName: 'Deploy Adventure Works API to Dev Slot'
+    displayName: 'Deploy Adventure Works Api to Development'
     environment: 'AdventureWorks-API-Dev'
     strategy:
       runOnce:
@@ -99,7 +99,7 @@ stages:
               downloadPath: '$(System.ArtifactsDirectory)'
 
           - task: AzureRmWebAppDeployment@4
-            displayName: 'Deploy Adventure Works Api to Dev'
+            displayName: 'Deploy Adventure Works Api'
             inputs:
               ConnectionType: 'AzureRM'
               azureSubscription: $(azureSubscriptionConnectionName)
@@ -108,11 +108,11 @@ stages:
               ResourceGroupName: $(azureAppResourceGroup)
               package: '$(System.ArtifactsDirectory)\**\*.zip'
 
-- stage: 'DeployToProdSlot'
+- stage: 'DeployToProd'
   displayName: 'Deploy Adventure Works Api to Production'
   dependsOn: 
     - 'BuildApplication'
-    - 'DeployToDevSlot'
+    - 'DeployToDev'
   jobs:
   - deployment: DeployAdventureWorksApi
     displayName: 'Deploy Adventure Works API to Production'
@@ -133,7 +133,7 @@ stages:
               downloadPath: '$(System.ArtifactsDirectory)'
               
           - task: AzureRmWebAppDeployment@4
-            displayName: 'Deploy Adventure Works Api to Production'
+            displayName: 'Deploy Adventure Works Api'
             inputs:
               ConnectionType: 'AzureRM'
               azureSubscription: $(azureSubscriptionConnectionName)
