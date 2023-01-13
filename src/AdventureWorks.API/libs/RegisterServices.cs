@@ -125,6 +125,7 @@ internal static class RegisterServices
     internal static WebApplicationBuilder RegisterAdventureWorksServices(this WebApplicationBuilder builder)
     {
         builder.Services.AddScoped<IReadAddressService, ReadAddressService>();
+        builder.Services.AddScoped<ICreateAddressService, CreateAddressService>();
 
         return builder;
     }
