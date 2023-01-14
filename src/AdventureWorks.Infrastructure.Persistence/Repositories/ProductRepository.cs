@@ -15,7 +15,7 @@ public class ProductRepository : EfRepository<Product>, IProductRepository
 
     public Task<Product> GetByIdWithItemsAsync(int id)
     {
-        return _dbContext.Products
+        return DbContext.Products
             .Include(p => p.ProductModel)
             .Include(p=> p.ProductSubcategory)
             .FirstOrDefaultAsync(x => x.ProductId == id);
@@ -23,6 +23,6 @@ public class ProductRepository : EfRepository<Product>, IProductRepository
 
     public async Task<List<Product>> GetAllProductsAsync()
     {
-        return await _dbContext.Products.ToListAsync();
+        return await DbContext.Products.ToListAsync();
     }
 }
