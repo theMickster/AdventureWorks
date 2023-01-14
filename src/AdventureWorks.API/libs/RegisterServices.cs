@@ -14,8 +14,10 @@ using Microsoft.OpenApi.Models;
 using Swashbuckle.AspNetCore.SwaggerUI;
 using System.Reflection;
 using System.Text;
+using AdventureWorks.Application.Validators;
 using AdventureWorks.Infrastructure.Persistence.DbContexts;
 using AdventureWorks.Infrastructure.Persistence.Repositories;
+using FluentValidation;
 
 [assembly: InternalsVisibleTo("AdventureWorks.Test.UnitTests")]
 namespace AdventureWorks.API.libs;
@@ -95,6 +97,8 @@ internal static class RegisterServices
                 typeof(AddressEntityToAddressModelProfile).GetTypeInfo().Assembly
             });
 
+        builder.Services.AddValidatorsFromAssemblyContaining<CreateAddressValidator>();
+
         return builder;
     }
 
@@ -137,6 +141,7 @@ internal static class RegisterServices
 
         builder.Services.AddScoped<IProductRepository, ProductRepository>();
         builder.Services.AddScoped<IAddressRepository, AddressRepository>();
+        builder.Services.AddScoped<IStateProvinceRepository, StateProvinceRepository>();
 
         return builder;
     }

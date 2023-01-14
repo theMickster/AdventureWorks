@@ -15,7 +15,7 @@ public sealed class AddressRepository : EfRepository<AddressEntity>, IAddressRep
 
     public async Task<AddressEntity> GetAddressByIdAsync(int addressId)
     {
-        return await _dbContext.Addresses
+        return await DbContext.Addresses
             
             .Include( a => a.StateProvince)
             .ThenInclude(b => b.CountryRegion)

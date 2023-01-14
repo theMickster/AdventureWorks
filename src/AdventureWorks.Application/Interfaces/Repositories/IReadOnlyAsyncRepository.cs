@@ -1,0 +1,15 @@
+﻿using AdventureWorks.Domain.Entities;
+
+namespace AdventureWorks.Application.Interfaces.Repositories;
+
+public interface IReadOnlyAsyncRepository<T> where T : BaseEntity
+{
+    Task<T> GetByIdAsync(int id);
+
+    Task<IReadOnlyList<T>> ListAllAsync();
+
+    Task<int> CountAsync(ISpecification<T> spec);
+
+    Task<IReadOnlyList<T>> ListAsync(ISpecification<T> spec);
+
+}
