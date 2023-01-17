@@ -1,5 +1,7 @@
 ﻿using AdventureWorks.Application.Interfaces.Repositories;
+using AdventureWorks.Application.Interfaces.Services.Address;
 using AdventureWorks.Application.Services.Address;
+using AdventureWorks.Common.Attributes;
 using AdventureWorks.Domain.Entities;
 using AdventureWorks.Domain.Models;
 using AdventureWorks.Domain.Profiles;
@@ -28,6 +30,19 @@ namespace AdventureWorks.UnitTests.Application.Services.Address
             _sut = new CreateAddressService(_mapper, _mockAddressRepository.Object, _mockValidator.Object);
         }
 
+        [Fact]
+        public void Type_has_correct_structure()
+        {
+            using (new AssertionScope())
+            {
+                typeof(CreateAddressService)
+                    .Should().Implement<ICreateAddressService>();
+
+                typeof(CreateAddressService)
+                    .IsDefined(typeof(ServiceLifetimeScopedAttribute), false)
+                    .Should().BeTrue();
+            }
+        }
 
         [Fact]
         public void constructor_throws_correct_exceptions()

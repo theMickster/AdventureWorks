@@ -1,4 +1,5 @@
 ﻿using AdventureWorks.Application.Interfaces.Repositories;
+using AdventureWorks.Common.Attributes;
 using AdventureWorks.Domain.Entities;
 using AdventureWorks.Infrastructure.Persistence.Repositories;
 using AdventureWorks.UnitTests.Setup;
@@ -41,6 +42,20 @@ public sealed class AddressRepositoryTests : PersistenceUnitTestBase
         );
 
         DbContext.SaveChanges();
+    }
+
+    [Fact]
+    public void Type_has_correct_structure()
+    {
+        using (new AssertionScope())
+        {
+            typeof(AddressRepository)
+                .Should().Implement<IAddressRepository>();
+
+            typeof(AddressRepository)
+                .IsDefined(typeof(ServiceLifetimeScopedAttribute), false)
+                .Should().BeTrue();
+        }
     }
 
     [Theory]

@@ -1,5 +1,6 @@
 ﻿using AdventureWorks.Application.Interfaces.Repositories;
 using AdventureWorks.Application.Interfaces.Services.Address;
+using AdventureWorks.Common.Attributes;
 using AdventureWorks.Domain.Entities;
 using AdventureWorks.Domain.Models;
 using AutoMapper;
@@ -8,6 +9,7 @@ using FluentValidation.Results;
 
 namespace AdventureWorks.Application.Services.Address;
 
+[ServiceLifetimeScoped]
 public sealed class CreateAddressService : ICreateAddressService
 {
     private readonly IMapper _mapper;

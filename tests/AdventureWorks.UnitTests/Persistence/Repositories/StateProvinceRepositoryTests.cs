@@ -1,4 +1,6 @@
-﻿using AdventureWorks.Domain.Entities;
+﻿using AdventureWorks.Application.Interfaces.Repositories;
+using AdventureWorks.Common.Attributes;
+using AdventureWorks.Domain.Entities;
 using AdventureWorks.Infrastructure.Persistence.Repositories;
 using AdventureWorks.UnitTests.Setup;
 
@@ -22,6 +24,20 @@ namespace AdventureWorks.UnitTests.Persistence.Repositories
             });
 
             DbContext.SaveChanges();
+        }
+
+        [Fact]
+        public void Type_has_correct_structure()
+        {
+            using (new AssertionScope())
+            {
+                typeof(StateProvinceRepository)
+                    .Should().Implement<IStateProvinceRepository>();
+
+                typeof(StateProvinceRepository)
+                    .IsDefined(typeof(ServiceLifetimeScopedAttribute), false)
+                    .Should().BeTrue();
+            }
         }
 
         [Fact]

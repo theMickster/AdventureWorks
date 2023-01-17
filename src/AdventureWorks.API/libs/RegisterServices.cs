@@ -15,6 +15,7 @@ using Swashbuckle.AspNetCore.SwaggerUI;
 using System.Reflection;
 using System.Text;
 using AdventureWorks.Application.Validators;
+using AdventureWorks.Common.Attributes;
 using AdventureWorks.Infrastructure.Persistence.DbContexts;
 using AdventureWorks.Infrastructure.Persistence.Repositories;
 using FluentValidation;
@@ -125,23 +126,42 @@ internal static class RegisterServices
 
         return builder;
     }
-
-    internal static WebApplicationBuilder RegisterAdventureWorksServices(this WebApplicationBuilder builder)
+    
+    internal static WebApplicationBuilder RegisterServicesViaReflection(this WebApplicationBuilder builder)
     {
-        builder.Services.AddScoped<IReadAddressService, ReadAddressService>();
-        builder.Services.AddScoped<ICreateAddressService, CreateAddressService>();
+        var scoped = typeof(ServiceLifetimeScopedAttribute);
+        var transient = typeof(ServiceLifetimeTransientAttribute);
+        var singleton = typeof(ServiceLifetimeSingletonAttribute);
 
-        return builder;
-    }
+        var appServices = AppDomain.CurrentDomain.GetAssemblies()
+            .Where(a => a.ManifestModule.Name.StartsWith("AdventureWorks."))
+            
+            .SelectMany(t => t.GetTypes())
+            .Where(x => (x.IsDefined(scoped, false) ||
+                         x.IsDefined(transient, false) ||
+                         x.IsDefined(singleton, false)) && !x.IsInterface)
+            .Select(y => new { InterfaceName = y.GetInterface($"I{y.Name}"), Service = y })
+            .Where(z => z.InterfaceName != null)
+            .ToList();
 
-    internal static WebApplicationBuilder RegisterAdventureWorksRepositories(this WebApplicationBuilder builder)
-    {
-        builder.Services.AddScoped(typeof(IAsyncRepository<>), typeof(EfRepository<>));
+        appServices.ForEach(t =>
+        {
+            if (t.Service.IsDefined(scoped, false))
+            {
+                builder.Services.AddScoped(t.InterfaceName!, t.Service);
+            }
 
+            if (t.Service.IsDefined(transient, false))
+            {
+                builder.Services.AddTransient(t.InterfaceName!, t.Service);
+            }
 
-        builder.Services.AddScoped<IProductRepository, ProductRepository>();
-        builder.Services.AddScoped<IAddressRepository, AddressRepository>();
-        builder.Services.AddScoped<IStateProvinceRepository, StateProvinceRepository>();
+            if (t.Service.IsDefined(singleton, false))
+            {
+                builder.Services.AddSingleton(t.InterfaceName!, t.Service);
+            }
+        });
+
 
         return builder;
     }
