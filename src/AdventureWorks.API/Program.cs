@@ -47,9 +47,7 @@ builder.RegisterAspDotNetServices();
 
 builder.RegisterAdventureWorksDbContexts();
 
-builder.RegisterAdventureWorksServices();
-
-builder.RegisterAdventureWorksRepositories();
+builder.RegisterServicesViaReflection();
 
 builder.Services.Configure<ApiBehaviorOptions>(options =>
 {

@@ -1,5 +1,7 @@
 ﻿using AdventureWorks.Application.Interfaces.Repositories;
+using AdventureWorks.Application.Interfaces.Services.Address;
 using AdventureWorks.Application.Services.Address;
+using AdventureWorks.Common.Attributes;
 using AdventureWorks.Domain.Entities;
 using AdventureWorks.Domain.Profiles;
 using AdventureWorks.UnitTests.Setup;
@@ -22,6 +24,20 @@ public sealed class ReadAddressServiceTests : UnitTestBase
         _mapper = mappingConfig.CreateMapper();
 
         _sut = new ReadAddressService(_mapper, _mockAddressRepository.Object);
+    }
+
+    [Fact]
+    public void Type_has_correct_structure()
+    {
+        using (new AssertionScope())
+        {
+            typeof(ReadAddressService)
+                .Should().Implement<IReadAddressService>();
+
+            typeof(ReadAddressService)
+                .IsDefined(typeof(ServiceLifetimeScopedAttribute), false)
+                .Should().BeTrue();
+        }
     }
 
     [Fact]

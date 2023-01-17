@@ -1,10 +1,12 @@
 ﻿using AdventureWorks.Application.Interfaces.Repositories;
 using AdventureWorks.Application.Interfaces.Services.Address;
+using AdventureWorks.Common.Attributes;
 using AdventureWorks.Domain.Models;
 using AutoMapper;
 
 namespace AdventureWorks.Application.Services.Address;
 
+[ServiceLifetimeScoped]
 public sealed class ReadAddressService : IReadAddressService
 {
     private readonly IMapper _mapper;
