@@ -2,7 +2,6 @@
 using AdventureWorks.Common.Attributes;
 using AdventureWorks.Domain.Entities;
 using AdventureWorks.Infrastructure.Persistence.Repositories;
-using AdventureWorks.UnitTests.Setup;
 
 namespace AdventureWorks.UnitTests.Persistence.Repositories;
 

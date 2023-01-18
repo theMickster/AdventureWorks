@@ -14,11 +14,11 @@ using Microsoft.OpenApi.Models;
 using Swashbuckle.AspNetCore.SwaggerUI;
 using System.Reflection;
 using System.Text;
-using AdventureWorks.Application.Validators;
-using AdventureWorks.Common.Attributes;
 using AdventureWorks.Infrastructure.Persistence.DbContexts;
 using AdventureWorks.Infrastructure.Persistence.Repositories;
 using FluentValidation;
+using AdventureWorks.Application.Validators.Address;
+using AdventureWorks.Common.Attributes;
 
 [assembly: InternalsVisibleTo("AdventureWorks.Test.UnitTests")]
 namespace AdventureWorks.API.libs;
@@ -126,7 +126,7 @@ internal static class RegisterServices
 
         return builder;
     }
-    
+
     internal static WebApplicationBuilder RegisterServicesViaReflection(this WebApplicationBuilder builder)
     {
         var scoped = typeof(ServiceLifetimeScopedAttribute);
@@ -135,7 +135,7 @@ internal static class RegisterServices
 
         var appServices = AppDomain.CurrentDomain.GetAssemblies()
             .Where(a => a.ManifestModule.Name.StartsWith("AdventureWorks."))
-            
+
             .SelectMany(t => t.GetTypes())
             .Where(x => (x.IsDefined(scoped, false) ||
                          x.IsDefined(transient, false) ||
@@ -161,12 +161,10 @@ internal static class RegisterServices
                 builder.Services.AddSingleton(t.InterfaceName!, t.Service);
             }
         });
-
-
         return builder;
     }
 
-    #region Private Methods 
+    #region Private Methods
 
     private static OpenApiInfo MakeOpenApiInfo(string title, string version, string description, Uri releaseNotes)
     {
@@ -174,7 +172,8 @@ internal static class RegisterServices
         {
             Title = title,
             Version = version,
-            Contact = new OpenApiContact { Email = "bug.bashing.anonymous@outlook.com", Name = "Bug Bashing Anonymous" },
+            Contact = new OpenApiContact
+                { Email = "bug.bashing.anonymous@outlook.com", Name = "Bug Bashing Anonymous" },
             Description = description
         };
 

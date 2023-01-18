@@ -1,6 +1,5 @@
 ﻿using AdventureWorks.API.Controllers.v1.Address;
 using AdventureWorks.Application.Interfaces.Services.Address;
-using AdventureWorks.UnitTests.Setup;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
 using System.Net;

@@ -1,5 +1,4 @@
 ﻿using AdventureWorks.Common.Helpers;
-using AdventureWorks.UnitTests.Setup;
 
 namespace AdventureWorks.UnitTests.Common.Helpers;
 

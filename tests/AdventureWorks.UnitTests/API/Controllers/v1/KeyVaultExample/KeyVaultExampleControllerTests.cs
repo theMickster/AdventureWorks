@@ -1,6 +1,5 @@
 ﻿using AdventureWorks.API.Controllers.v1.KeyVaultExample;
 using AdventureWorks.Common.Settings;
-using AdventureWorks.UnitTests.Setup;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Options;
 using System.Net;

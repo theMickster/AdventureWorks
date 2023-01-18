@@ -1,6 +1,5 @@
 ﻿using AdventureWorks.API.Controllers.v1.Address;
 using AdventureWorks.Application.Interfaces.Services.Address;
-using AdventureWorks.UnitTests.Setup;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
 using System.Net;
@@ -26,11 +25,11 @@ public sealed class CreateAddressControllerTests : UnitTestBase
     {
         using (new AssertionScope())
         {
-            _ = ((Action)(() => new CreateAddressController(null, _mockCreateAddressService.Object)))
+            _ = ((Action)(() => _ = new CreateAddressController(null!, _mockCreateAddressService.Object)))
                 .Should().Throw<ArgumentNullException>("because we expect a null argument exception.")
                 .And.ParamName.Should().Be("logger");
 
-            _ = ((Action)(() => new CreateAddressController(_mockLogger.Object, null)))
+            _ = ((Action)(() => _ = new CreateAddressController(_mockLogger.Object, null!)))
                 .Should().Throw<ArgumentNullException>("because we expect a null argument exception.")
                 .And.ParamName.Should().Be("createAddressService");
         }

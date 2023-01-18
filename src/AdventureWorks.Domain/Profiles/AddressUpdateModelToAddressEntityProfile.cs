@@ -4,21 +4,20 @@ using AutoMapper;
 
 namespace AdventureWorks.Domain.Profiles;
 
-public sealed class AddressCreateModelToAddressEntity : Profile
+public sealed class AddressUpdateModelToAddressEntityProfile : Profile
 {
-    public AddressCreateModelToAddressEntity()
+    public AddressUpdateModelToAddressEntityProfile()
     {
-
-        CreateMap<AddressCreateModel, AddressEntity>()
+        CreateMap<AddressUpdateModel, AddressEntity>()
 
             .ForPath(m => m.StateProvinceId,
                 options
                     => options.MapFrom(e => e.StateProvince.Id))
-        
-            .ForMember(x => x.ModifiedDate, 
-                o => o.Ignore())
 
-            .ForMember(x => x.AddressId,
+            .ForPath(x => x.AddressId,
+                options => options.MapFrom(e => e.Id))
+
+            .ForMember(x => x.ModifiedDate,
                 o => o.Ignore())
 
             .ForMember(x => x.Rowguid,

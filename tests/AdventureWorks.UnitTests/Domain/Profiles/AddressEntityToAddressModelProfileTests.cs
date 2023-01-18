@@ -1,7 +1,6 @@
 ﻿using AdventureWorks.Domain.Entities;
 using AdventureWorks.Domain.Models;
 using AdventureWorks.Domain.Profiles;
-using AdventureWorks.UnitTests.Setup;
 using AutoMapper;
 
 namespace AdventureWorks.UnitTests.Domain.Profiles;
