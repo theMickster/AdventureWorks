@@ -1,12 +1,13 @@
 using AdventureWorks.Application.Exceptions;
 using AdventureWorks.Application.Infrastructure.AutoMapper;
 using AdventureWorks.Application.Interfaces.DbContext;
-using AdventureWorks.Application.Interfaces.Repositories;
-using AdventureWorks.Application.Interfaces.Services.Address;
-using AdventureWorks.Application.Services.Address;
+using AdventureWorks.Application.Validators.Address;
+using AdventureWorks.Common.Attributes;
 using AdventureWorks.Common.Constants;
 using AdventureWorks.Common.Settings;
 using AdventureWorks.Domain.Profiles;
+using AdventureWorks.Infrastructure.Persistence.DbContexts;
+using FluentValidation;
 using Microsoft.AspNetCore.Mvc.Controllers;
 using Microsoft.AspNetCore.Mvc.Versioning;
 using Microsoft.EntityFrameworkCore;
@@ -14,11 +15,6 @@ using Microsoft.OpenApi.Models;
 using Swashbuckle.AspNetCore.SwaggerUI;
 using System.Reflection;
 using System.Text;
-using AdventureWorks.Infrastructure.Persistence.DbContexts;
-using AdventureWorks.Infrastructure.Persistence.Repositories;
-using FluentValidation;
-using AdventureWorks.Application.Validators.Address;
-using AdventureWorks.Common.Attributes;
 
 [assembly: InternalsVisibleTo("AdventureWorks.Test.UnitTests")]
 namespace AdventureWorks.API.libs;
