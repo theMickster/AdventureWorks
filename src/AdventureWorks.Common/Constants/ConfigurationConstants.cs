@@ -1,6 +1,4 @@
-﻿using System.Data;
-
-namespace AdventureWorks.Common.Constants;
+﻿namespace AdventureWorks.Common.Constants;
 
 public static class ConfigurationConstants
 {

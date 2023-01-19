@@ -3,6 +3,7 @@ using AdventureWorks.Application.Interfaces.Services.Address;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
 using System.Net;
+using System.Text.Json;
 using AdventureWorks.Domain.Models;
 using FluentValidation.Results;
 
@@ -63,19 +64,19 @@ public sealed class CreateAddressControllerTests : UnitTestBase
         _mockCreateAddressService
             .Setup(x => x.CreateAsync(It.IsAny<AddressCreateModel>()))
             .ReturnsAsync((new AddressModel(),
-                new List<ValidationFailure> { new() { PropertyName = "Id", ErrorCode = "00010", ErrorMessage = "Hello Validation Error"} }));
+                new List<ValidationFailure> { new() { PropertyName = "Id", ErrorCode = "00010", ErrorMessage = "Hello Validation Error" } }));
 
         var result = await _sut.PostAsync(input).ConfigureAwait(false);
 
-        var objectResult = result as ObjectResult;
+        var objectResult = result as BadRequestObjectResult;
 
         using (new AssertionScope())
         {
             objectResult.Should().NotBeNull();
             objectResult!.StatusCode.Should().Be((int)HttpStatusCode.BadRequest);
+            objectResult!.Value!.ToString().Should().NotBeNullOrWhiteSpace();
         }
     }
-
 
     [Fact]
     public async Task PostAsync_invalid_input_returns_createdAsync()

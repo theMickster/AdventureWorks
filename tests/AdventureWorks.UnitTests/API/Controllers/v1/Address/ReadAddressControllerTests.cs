@@ -20,6 +20,21 @@ public sealed class ReadAddressControllerTests : UnitTestBase
     }
 
     [Fact]
+    public void Controller_throws_correct_exceptions()
+    {
+        using (new AssertionScope())
+        {
+            _ = ((Action)(() => _ = new ReadAddressController(null!, _mockReadAddressService.Object)))
+                .Should().Throw<ArgumentNullException>("because we expect a null argument exception.")
+                .And.ParamName.Should().Be("logger");
+
+            _ = ((Action)(() => _ = new ReadAddressController(_mockLogger.Object, null!)))
+                .Should().Throw<ArgumentNullException>("because we expect a null argument exception.")
+                .And.ParamName.Should().Be("readAddressService");
+        }
+    }
+
+    [Fact]
     public async Task getById_returns_ok_Async()
     {
         const int id = 7;
