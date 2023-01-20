@@ -1,9 +1,10 @@
-﻿using AdventureWorks.API.Controllers.v1.Address;
+﻿using System.Collections;
+using AdventureWorks.API.Controllers.v1.Address;
 using AdventureWorks.Application.Interfaces.Services.Address;
-using AdventureWorks.UnitTests.Setup;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
 using System.Net;
+using System.Text.Json;
 using AdventureWorks.Domain.Models;
 using FluentValidation.Results;
 
@@ -26,11 +27,11 @@ public sealed class CreateAddressControllerTests : UnitTestBase
     {
         using (new AssertionScope())
         {
-            _ = ((Action)(() => new CreateAddressController(null, _mockCreateAddressService.Object)))
+            _ = ((Action)(() => _ = new CreateAddressController(null!, _mockCreateAddressService.Object)))
                 .Should().Throw<ArgumentNullException>("because we expect a null argument exception.")
                 .And.ParamName.Should().Be("logger");
 
-            _ = ((Action)(() => new CreateAddressController(_mockLogger.Object, null)))
+            _ = ((Action)(() => _ = new CreateAddressController(_mockLogger.Object, null!)))
                 .Should().Throw<ArgumentNullException>("because we expect a null argument exception.")
                 .And.ParamName.Should().Be("createAddressService");
         }
@@ -64,22 +65,26 @@ public sealed class CreateAddressControllerTests : UnitTestBase
         _mockCreateAddressService
             .Setup(x => x.CreateAsync(It.IsAny<AddressCreateModel>()))
             .ReturnsAsync((new AddressModel(),
-                new List<ValidationFailure> { new() { PropertyName = "Id", ErrorCode = "00010", ErrorMessage = "Hello Validation Error"} }));
+                new List<ValidationFailure> { new() { PropertyName = "Id", ErrorCode = "00010", ErrorMessage = "Hello Validation Error" } }));
 
         var result = await _sut.PostAsync(input).ConfigureAwait(false);
 
-        var objectResult = result as ObjectResult;
+        var objectResult = result as BadRequestObjectResult;
+        var outputModel = objectResult!.Value! as IEnumerable;
 
         using (new AssertionScope())
         {
             objectResult.Should().NotBeNull();
             objectResult!.StatusCode.Should().Be((int)HttpStatusCode.BadRequest);
+            objectResult!.Value!.ToString().Should().NotBeNullOrWhiteSpace();
+
+            outputModel.Should().NotBeNull();
+            outputModel?.Cast<string>().Select(x => x).FirstOrDefault().Should().Be("Hello Validation Error");
         }
     }
 
-
     [Fact]
-    public async Task PostAsync_invalid_input_returns_createdAsync()
+    public async Task PostAsync_valid_input_returns_createdAsync()
     {
         var addressModel = new AddressModel()
         {

@@ -26,8 +26,8 @@ public sealed class ReadAddressController : ControllerBase
         ILogger<ReadAddressController> logger,
         IReadAddressService readAddressService)
     {
-        _logger = logger;
-        _readAddressService = readAddressService;
+        _logger = logger ?? throw new ArgumentNullException(nameof(logger));
+        _readAddressService = readAddressService ?? throw new ArgumentNullException(nameof(readAddressService));
     }
 
     /// <summary>

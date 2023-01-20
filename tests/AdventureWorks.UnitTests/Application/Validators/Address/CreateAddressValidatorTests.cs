@@ -1,14 +1,14 @@
 ﻿using AdventureWorks.Application.Interfaces.Repositories;
-using AdventureWorks.Application.Validators;
+using AdventureWorks.Application.Validators.Address;
 using AdventureWorks.Domain.Entities;
 using AdventureWorks.Domain.Models;
 using AdventureWorks.Test.Common.Utilities;
 using FluentValidation.TestHelper;
 
-namespace AdventureWorks.UnitTests.Application.Validators;
+namespace AdventureWorks.UnitTests.Application.Validators.Address;
 
 [ExcludeFromCodeCoverage]
-public sealed class CreateAddressValidatorTests
+public sealed class CreateAddressValidatorTests : UnitTestBase
 {
     private readonly Mock<IStateProvinceRepository> _mockStateProvinceRepository = new();
     private readonly CreateAddressValidator _sut;
@@ -30,7 +30,6 @@ public sealed class CreateAddressValidatorTests
         CreateAddressValidator.PostalCodeLength.Should().Be("Postal Code cannot be greater than 15 characters");
         CreateAddressValidator.StateProvinceIdExists.Should().Be("StateProvince Id must exist prior to use");
         CreateAddressValidator.StateProvinceExists.Should().Be("StateProvince is required");
-
     }
 
     [Fact]
@@ -39,14 +38,14 @@ public sealed class CreateAddressValidatorTests
         const int stateId = 7;
 
         _mockStateProvinceRepository.Setup(x => x.GetByIdAsync(stateId))
-            .ReturnsAsync(new StateProvinceEntity { StateProvinceId = stateId, Name = "Colorado"});
+            .ReturnsAsync(new StateProvinceEntity { StateProvinceId = stateId, Name = "Colorado" });
 
         var validAddress = new AddressCreateModel
         {
             AddressLine1 = StringGenerator.GetRandomString(60),
             AddressLine2 = StringGenerator.GetRandomString(60),
             City = StringGenerator.GetRandomString(30),
-            StateProvince = new StateProvinceModel{ Id = stateId },
+            StateProvince = new StateProvinceModel { Id = stateId },
             PostalCode = StringGenerator.GetRandomString(15)
         };
 
@@ -64,7 +63,7 @@ public sealed class CreateAddressValidatorTests
     {
         _mockStateProvinceRepository
             .Setup(x => x.GetByIdAsync(It.IsAny<int>()))!
-            .ReturnsAsync( (StateProvinceEntity)null!);
+            .ReturnsAsync((StateProvinceEntity)null!);
 
         using (new AssertionScope())
         {
@@ -109,13 +108,13 @@ public sealed class CreateAddressValidatorTests
         using (new AssertionScope())
         {
             var validationResult = await _sut.TestValidateAsync(new AddressCreateModel()
+            {
+                StateProvince = new StateProvinceModel()
                 {
-                    StateProvince = new StateProvinceModel()
-                    {
-                        Id = 1548,
-                        StateProvinceCode = "ABCDEFG"
-                    }
-                })
+                    Id = 1548,
+                    StateProvinceCode = "ABCDEFG"
+                }
+            })
                 .ConfigureAwait(false);
 
             validationResult.ShouldHaveValidationErrorFor(a => a.StateProvince)

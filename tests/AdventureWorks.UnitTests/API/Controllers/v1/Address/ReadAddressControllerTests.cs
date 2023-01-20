@@ -1,6 +1,5 @@
 ﻿using AdventureWorks.API.Controllers.v1.Address;
 using AdventureWorks.Application.Interfaces.Services.Address;
-using AdventureWorks.UnitTests.Setup;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
 using System.Net;
@@ -18,6 +17,21 @@ public sealed class ReadAddressControllerTests : UnitTestBase
     public ReadAddressControllerTests()
     {
         _sut = new ReadAddressController(_mockLogger.Object, _mockReadAddressService.Object);
+    }
+
+    [Fact]
+    public void Controller_throws_correct_exceptions()
+    {
+        using (new AssertionScope())
+        {
+            _ = ((Action)(() => _ = new ReadAddressController(null!, _mockReadAddressService.Object)))
+                .Should().Throw<ArgumentNullException>("because we expect a null argument exception.")
+                .And.ParamName.Should().Be("logger");
+
+            _ = ((Action)(() => _ = new ReadAddressController(_mockLogger.Object, null!)))
+                .Should().Throw<ArgumentNullException>("because we expect a null argument exception.")
+                .And.ParamName.Should().Be("readAddressService");
+        }
     }
 
     [Fact]

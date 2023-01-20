@@ -14,29 +14,24 @@ namespace AdventureWorks.API.Controllers.v1.Products;
 public sealed class ProductsController : ControllerBase
 {
     private readonly IProductRepository _productRepository;
-    private readonly IMapper _mapper;
     private readonly ILogger _logger;
 
     /// <summary>
     /// Retrieve all products
     /// </summary>
-    public ProductsController(IProductRepository productRepository, ILogger<ProductsController> logger, IMapper mapper)
+    public ProductsController(ILogger<ProductsController> logger, IProductRepository productRepository)
     {
-        _productRepository = productRepository;
-        _mapper = mapper;
-        _logger = logger;
+        _logger = logger ?? throw new ArgumentNullException(nameof(logger));
+        _productRepository = productRepository ?? throw new ArgumentNullException(nameof(productRepository)) ;
     }
 
-    /*
     /// <summary>
     /// Retrieve all products
     /// </summary>
     /// <returns></returns>
     [HttpGet]
-    [ProducesResponseType(typeof(List<Product>), (int)HttpStatusCode.OK)]
-    public async Task<ActionResult<List<Product>>> GetAllProductAsync()
+    public Task<ActionResult<List<Product>>> GetAllProductAsync()
     {
-        return await _productRepository.GetAllProductsAsync();
+        throw new NotImplementedException("Endpoint is not implemented.");
     }
-    */
 }

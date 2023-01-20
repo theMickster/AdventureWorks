@@ -4,7 +4,6 @@ using AdventureWorks.Application.Services.Address;
 using AdventureWorks.Common.Attributes;
 using AdventureWorks.Domain.Entities;
 using AdventureWorks.Domain.Profiles;
-using AdventureWorks.UnitTests.Setup;
 using AutoMapper;
 
 namespace AdventureWorks.UnitTests.Application.Services.Address;

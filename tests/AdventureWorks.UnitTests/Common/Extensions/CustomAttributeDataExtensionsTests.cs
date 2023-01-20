@@ -1,5 +1,4 @@
 ﻿using AdventureWorks.Common.Extensions;
-using AdventureWorks.UnitTests.Setup;
 
 namespace AdventureWorks.UnitTests.Common.Extensions;
 

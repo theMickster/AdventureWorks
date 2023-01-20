@@ -1,18 +1,17 @@
-﻿using System.Data;
-using AdventureWorks.Application.Interfaces.Repositories;
+﻿using AdventureWorks.Application.Interfaces.Repositories;
 using AdventureWorks.Domain.Models;
 using FluentValidation;
-using System.Net;
 
-namespace AdventureWorks.Application.Validators;
+namespace AdventureWorks.Application.Validators.Address;
 
-public sealed class CreateAddressValidator : AbstractValidator<AddressCreateModel>
+public class AddressBaseModelValidator<T> : AbstractValidator<T> where T : AddressBaseModel
 {
-    private readonly IStateProvinceRepository _stateProvinceRepository;
+    protected readonly IStateProvinceRepository StateProvinceRepository;
 
-    public CreateAddressValidator(IStateProvinceRepository stateProvinceRepository)
+    public AddressBaseModelValidator(IStateProvinceRepository stateProvinceRepository)
     {
-        _stateProvinceRepository = stateProvinceRepository;
+        StateProvinceRepository = stateProvinceRepository ?? throw new ArgumentNullException(nameof(stateProvinceRepository));
+
         RuleFor(a => a.AddressLine1)
             .NotEmpty()
             .WithErrorCode("Rule-01").WithMessage(MessageAddressLine1Empty)
@@ -36,8 +35,8 @@ public sealed class CreateAddressValidator : AbstractValidator<AddressCreateMode
             .WithErrorCode("Rule-06").WithMessage(PostalCodeLength);
 
         RuleFor(address => address)
-            .MustAsync( async (address, cancellation) 
-                => await StateProvinceMustExistAsync(address.StateProvince.Id).ConfigureAwait(false) )
+            .MustAsync(async (address, cancellation)
+                => await StateProvinceMustExistAsync(address.StateProvince.Id).ConfigureAwait(false))
             .When(x => x?.StateProvince != null)
             .WithMessage(StateProvinceIdExists)
             .WithErrorCode("Rule-07")
@@ -68,9 +67,9 @@ public sealed class CreateAddressValidator : AbstractValidator<AddressCreateMode
 
     public static string StateProvinceExists => "StateProvince is required";
 
-    private async Task<bool> StateProvinceMustExistAsync(int stateProvinceId)
+    protected async Task<bool> StateProvinceMustExistAsync(int stateProvinceId)
     {
-        var result = await _stateProvinceRepository.GetByIdAsync(stateProvinceId).ConfigureAwait(false);
+        var result = await StateProvinceRepository.GetByIdAsync(stateProvinceId).ConfigureAwait(false);
 
         // ReSharper disable once ConditionIsAlwaysTrueOrFalseAccordingToNullableAPIContract
         return result != null && result.StateProvinceId != int.MinValue;

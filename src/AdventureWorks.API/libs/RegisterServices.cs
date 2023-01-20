@@ -1,12 +1,13 @@
 using AdventureWorks.Application.Exceptions;
 using AdventureWorks.Application.Infrastructure.AutoMapper;
 using AdventureWorks.Application.Interfaces.DbContext;
-using AdventureWorks.Application.Interfaces.Repositories;
-using AdventureWorks.Application.Interfaces.Services.Address;
-using AdventureWorks.Application.Services.Address;
+using AdventureWorks.Application.Validators.Address;
+using AdventureWorks.Common.Attributes;
 using AdventureWorks.Common.Constants;
 using AdventureWorks.Common.Settings;
 using AdventureWorks.Domain.Profiles;
+using AdventureWorks.Infrastructure.Persistence.DbContexts;
+using FluentValidation;
 using Microsoft.AspNetCore.Mvc.Controllers;
 using Microsoft.AspNetCore.Mvc.Versioning;
 using Microsoft.EntityFrameworkCore;
@@ -14,11 +15,6 @@ using Microsoft.OpenApi.Models;
 using Swashbuckle.AspNetCore.SwaggerUI;
 using System.Reflection;
 using System.Text;
-using AdventureWorks.Application.Validators;
-using AdventureWorks.Common.Attributes;
-using AdventureWorks.Infrastructure.Persistence.DbContexts;
-using AdventureWorks.Infrastructure.Persistence.Repositories;
-using FluentValidation;
 
 [assembly: InternalsVisibleTo("AdventureWorks.Test.UnitTests")]
 namespace AdventureWorks.API.libs;
@@ -126,7 +122,7 @@ internal static class RegisterServices
 
         return builder;
     }
-    
+
     internal static WebApplicationBuilder RegisterServicesViaReflection(this WebApplicationBuilder builder)
     {
         var scoped = typeof(ServiceLifetimeScopedAttribute);
@@ -135,7 +131,7 @@ internal static class RegisterServices
 
         var appServices = AppDomain.CurrentDomain.GetAssemblies()
             .Where(a => a.ManifestModule.Name.StartsWith("AdventureWorks."))
-            
+
             .SelectMany(t => t.GetTypes())
             .Where(x => (x.IsDefined(scoped, false) ||
                          x.IsDefined(transient, false) ||
@@ -161,12 +157,10 @@ internal static class RegisterServices
                 builder.Services.AddSingleton(t.InterfaceName!, t.Service);
             }
         });
-
-
         return builder;
     }
 
-    #region Private Methods 
+    #region Private Methods
 
     private static OpenApiInfo MakeOpenApiInfo(string title, string version, string description, Uri releaseNotes)
     {
@@ -174,7 +168,8 @@ internal static class RegisterServices
         {
             Title = title,
             Version = version,
-            Contact = new OpenApiContact { Email = "bug.bashing.anonymous@outlook.com", Name = "Bug Bashing Anonymous" },
+            Contact = new OpenApiContact
+                { Email = "bug.bashing.anonymous@outlook.com", Name = "Bug Bashing Anonymous" },
             Description = description
         };
 
