@@ -1,4 +1,5 @@
-﻿using AdventureWorks.API.Controllers.v1.Address;
+﻿using System.Collections;
+using AdventureWorks.API.Controllers.v1.Address;
 using AdventureWorks.Application.Interfaces.Services.Address;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
@@ -69,17 +70,21 @@ public sealed class CreateAddressControllerTests : UnitTestBase
         var result = await _sut.PostAsync(input).ConfigureAwait(false);
 
         var objectResult = result as BadRequestObjectResult;
+        var outputModel = objectResult!.Value! as IEnumerable;
 
         using (new AssertionScope())
         {
             objectResult.Should().NotBeNull();
             objectResult!.StatusCode.Should().Be((int)HttpStatusCode.BadRequest);
             objectResult!.Value!.ToString().Should().NotBeNullOrWhiteSpace();
+
+            outputModel.Should().NotBeNull();
+            outputModel?.Cast<string>().Select(x => x).FirstOrDefault().Should().Be("Hello Validation Error");
         }
     }
 
     [Fact]
-    public async Task PostAsync_invalid_input_returns_createdAsync()
+    public async Task PostAsync_valid_input_returns_createdAsync()
     {
         var addressModel = new AddressModel()
         {
