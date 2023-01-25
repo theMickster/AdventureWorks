@@ -25,11 +25,11 @@ public sealed class AddressEntityToAddressModelProfile : Profile
                 options
                     => options.MapFrom(e => e.StateProvince.CountryRegionCode))
 
-            .ForPath(m => m.CountryRegion.CountryRegionCode,
+            .ForPath(m => m.CountryRegion.Code,
                 options
                     => options.MapFrom(e => e.StateProvince.CountryRegionCode))
 
-            .ForPath(m => m.CountryRegion.CountryRegionName,
+            .ForPath(m => m.CountryRegion.Name,
                 options
                     => options.MapFrom(e => e.StateProvince.CountryRegion.Name));
 

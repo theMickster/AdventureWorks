@@ -57,8 +57,8 @@ public sealed class AddressEntityToAddressModelProfileTests : UnitTestBase
             result.StateProvince.Id.Should().Be(26);
             result.StateProvince.StateProvinceCode.Should().Be("CO");
             result.StateProvince.CountryRegionCode.Should().Be("USA");
-            result.CountryRegion.CountryRegionCode.Should().Be("USA");
-            result.CountryRegion.CountryRegionName.Should().Be("United States");
+            result.CountryRegion.Code.Should().Be("USA");
+            result.CountryRegion.Name.Should().Be("United States");
             result.PostalCode.Should().Be("80232");
             result.ModifiedDate.Should().Be(modified);
         }
