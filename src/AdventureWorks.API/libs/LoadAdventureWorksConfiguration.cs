@@ -5,6 +5,7 @@ using AdventureWorks.Common.Helpers;
 [assembly: InternalsVisibleTo("AdventureWorks.Test.UnitTests")]
 namespace AdventureWorks.API.libs;
 
+[ExcludeFromCodeCoverage]
 internal static class LoadAdventureWorksConfiguration
 {
     internal static void LoadApplicationConfiguration(this IConfiguration configuration)

@@ -82,7 +82,7 @@ public sealed class ReadCountryRegionServiceTests : UnitTestBase
         using (new AssertionScope())
         {
             result.Should().NotBeNull();
-            result.Code.Should().Be("UK");
+            result!.Code.Should().Be("UK");
         }
     }
 

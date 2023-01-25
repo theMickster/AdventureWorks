@@ -22,7 +22,7 @@ public sealed class ReadCountryRegionService : IReadCountryRegionService
     /// Retrieve a country region using its identifier.
     /// </summary>
     /// <returns>A <see cref="CountryRegionModel"/> </returns>
-    public async Task<CountryRegionModel> GetByIdAsync(string countryCode)
+    public async Task<CountryRegionModel?> GetByIdAsync(string countryCode)
     {
         var entity = await _countryRegionRepository.GetByIdAsync(countryCode).ConfigureAwait(false);
 
