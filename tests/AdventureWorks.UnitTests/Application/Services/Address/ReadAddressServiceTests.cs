@@ -115,7 +115,7 @@ public sealed class ReadAddressServiceTests : UnitTestBase
             result.StateProvince.Id.Should().Be(18);
             result.ModifiedDate.Should().Be(dateModified);
             result.ModifiedDate.Year.Should().Be(dateModified.Year);
-            result.CountryRegion.CountryRegionName.Should().Be("United States");
+            result.CountryRegion.Name.Should().Be("United States");
         }
     }
 }

@@ -13,7 +13,7 @@ namespace AdventureWorks.API.Controllers.v1.Address;
 [ApiVersion("1.0")]
 [ApiExplorerSettings(GroupName = "Address")]
 [Produces("application/json")]
-[Route("api/v{version:apiVersion}/address", Name = "UpdateAddressControllerV1")]
+[Route("api/v{version:apiVersion}/addresses", Name = "UpdateAddressControllerV1")]
 public sealed class UpdateAddressController : ControllerBase
 {
     private readonly ILogger<UpdateAddressController> _logger;
@@ -42,7 +42,7 @@ public sealed class UpdateAddressController : ControllerBase
             return BadRequest("The address input model cannot be null.");
         }
 
-        if (addressId == null || addressId < 0)
+        if (addressId < 0)
         {
             return BadRequest("The address id must be a positive integer.");
         }

@@ -44,8 +44,8 @@ internal static class SetupMiddlewarePipeline
 
         app.UseSwaggerUI(options =>
         {
-            options.DocumentTitle = "Authenticator API";
-            options.SwaggerEndpoint("/swagger/v1/swagger.json", "Authenticator API 1.0");
+            options.DocumentTitle = "Adventure Works API";
+            options.SwaggerEndpoint("/swagger/v1/swagger.json", "Adventure Works API 1.0");
             RewriteSwaggerIndexHtml(options, _swaggerNonceString);
         });
 

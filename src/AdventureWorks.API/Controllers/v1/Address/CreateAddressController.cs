@@ -13,7 +13,7 @@ namespace AdventureWorks.API.Controllers.v1.Address;
 [ApiVersion("1.0")]
 [ApiExplorerSettings(GroupName = "Address")]
 [Produces("application/json")]
-[Route("api/v{version:apiVersion}/address", Name = "CreateAddressControllerV1")]
+[Route("api/v{version:apiVersion}/addresses", Name = "CreateAddressControllerV1")]
 public sealed class CreateAddressController : ControllerBase
 {
     private readonly ILogger<CreateAddressController> _logger;
