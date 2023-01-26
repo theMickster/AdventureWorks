@@ -4,7 +4,7 @@ namespace AdventureWorks.Application.Interfaces.Repositories;
 
 public interface IReadOnlyAsyncRepository<T> where T : BaseEntity
 {
-    Task<T> GetByIdAsync(int id);
+    public Task<T> GetByIdAsync(int id);
 
     Task<IReadOnlyList<T>> ListAllAsync();
 

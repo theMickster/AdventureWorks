@@ -1,4 +1,6 @@
-﻿namespace AdventureWorks.Domain.Models;
+﻿using AdventureWorks.Domain.Models.Slim;
+
+namespace AdventureWorks.Domain.Models;
 
 public abstract class AddressBaseModel
 {
@@ -8,7 +10,7 @@ public abstract class AddressBaseModel
 
     public string City { get; set; }
 
-    public StateProvinceModel StateProvince { get; set; }
+    public GenericSlimModel AddressStateProvince { get; set; }
 
     public string PostalCode { get; set; }
 

@@ -2,6 +2,7 @@
 using AdventureWorks.Application.Validators.Address;
 using AdventureWorks.Domain.Entities;
 using AdventureWorks.Domain.Models;
+using AdventureWorks.Domain.Models.Slim;
 using AdventureWorks.Test.Common.Utilities;
 using FluentValidation.TestHelper;
 
@@ -28,8 +29,8 @@ public sealed class CreateAddressValidatorTests : UnitTestBase
         CreateAddressValidator.MessageCityLength.Should().Be("City cannot be greater than 30 characters");
         CreateAddressValidator.PostalCodeEmpty.Should().Be("Postal Code cannot be null, empty, or whitespace");
         CreateAddressValidator.PostalCodeLength.Should().Be("Postal Code cannot be greater than 15 characters");
-        CreateAddressValidator.StateProvinceIdExists.Should().Be("StateProvince Id must exist prior to use");
-        CreateAddressValidator.StateProvinceExists.Should().Be("StateProvince is required");
+        CreateAddressValidator.StateProvinceIdExists.Should().Be("AddressStateProvince Id must exist prior to use");
+        CreateAddressValidator.StateProvinceExists.Should().Be("AddressStateProvince is required");
     }
 
     [Fact]
@@ -45,7 +46,7 @@ public sealed class CreateAddressValidatorTests : UnitTestBase
             AddressLine1 = StringGenerator.GetRandomString(60),
             AddressLine2 = StringGenerator.GetRandomString(60),
             City = StringGenerator.GetRandomString(30),
-            StateProvince = new StateProvinceModel { Id = stateId },
+            AddressStateProvince = new GenericSlimModel { Id = stateId },
             PostalCode = StringGenerator.GetRandomString(15)
         };
 
@@ -92,7 +93,7 @@ public sealed class CreateAddressValidatorTests : UnitTestBase
             validationResult.ShouldHaveValidationErrorFor(a => a.AddressLine1)
                 .WithErrorCode("Rule-02");
 
-            validationResult.ShouldHaveValidationErrorFor(a => a.StateProvince)
+            validationResult.ShouldHaveValidationErrorFor(a => a.AddressStateProvince)
                 .WithErrorCode("Rule-08");
         }
     }
@@ -109,15 +110,15 @@ public sealed class CreateAddressValidatorTests : UnitTestBase
         {
             var validationResult = await _sut.TestValidateAsync(new AddressCreateModel()
             {
-                StateProvince = new StateProvinceModel()
+                AddressStateProvince = new GenericSlimModel()
                 {
                     Id = 1548,
-                    StateProvinceCode = "ABCDEFG"
+                    Code = "ABCDEFG"
                 }
             })
                 .ConfigureAwait(false);
 
-            validationResult.ShouldHaveValidationErrorFor(a => a.StateProvince)
+            validationResult.ShouldHaveValidationErrorFor(a => a.AddressStateProvince)
                 .WithErrorCode("Rule-07");
         }
     }

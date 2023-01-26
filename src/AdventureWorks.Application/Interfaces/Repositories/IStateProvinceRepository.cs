@@ -4,5 +4,4 @@ namespace AdventureWorks.Application.Interfaces.Repositories;
 
 public interface IStateProvinceRepository : IReadOnlyAsyncRepository<StateProvinceEntity>
 {
-
 }

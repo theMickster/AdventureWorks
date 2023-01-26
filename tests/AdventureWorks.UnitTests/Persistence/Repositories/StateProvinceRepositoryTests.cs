@@ -16,10 +16,22 @@ public sealed class StateProvinceRepositoryTests : PersistenceUnitTestBase
 
         DbContext.StateProvinces.AddRange(new List<StateProvinceEntity>
         {
-            new() { StateProvinceId = 10, StateProvinceCode = "CO", Name = "Colorado", CountryRegionCode = "US" }
-            ,new() { StateProvinceId = 58, StateProvinceCode = "OR", Name = "Oregon", CountryRegionCode = "US" }
-            ,new() { StateProvinceId = 79, StateProvinceCode = "WA", Name = "Washington", CountryRegionCode = "US" }
-            ,new() { StateProvinceId = 85, StateProvinceCode = "BB", Name = "Brandenburg", CountryRegionCode = "DE" }
+            new() { StateProvinceId = 10, StateProvinceCode = "CO", Name = "Colorado", CountryRegionCode = "US", TerritoryId = 1 }
+            ,new() { StateProvinceId = 58, StateProvinceCode = "OR", Name = "Oregon", CountryRegionCode = "US", TerritoryId = 1 }
+            ,new() { StateProvinceId = 79, StateProvinceCode = "WA", Name = "Washington", CountryRegionCode = "US", TerritoryId = 1 }
+            ,new() { StateProvinceId = 85, StateProvinceCode = "BB", Name = "Brandenburg", CountryRegionCode = "DE", TerritoryId = 8 }
+        });
+
+        DbContext.CountryRegions.AddRange( new List<CountryRegionEntity>()
+        {
+            new(){CountryRegionCode = "US", Name = "United States"}
+            ,new(){CountryRegionCode = "DE", Name = "Germany"}
+        });
+
+        DbContext.SalesTerritories.AddRange(new List<SalesTerritoryEntity>()
+        {
+            new(){TerritoryId = 1, Name = "Northwest"}
+            ,new(){TerritoryId = 8, Name = "Germany"}
         });
 
         DbContext.SaveChanges();
@@ -50,6 +62,11 @@ public sealed class StateProvinceRepositoryTests : PersistenceUnitTestBase
             result.Count(x => x.StateProvinceId == 10 && x.StateProvinceCode == "CO").Should().Be(1);
             result.Count(x => x.StateProvinceId == 58 && x.StateProvinceCode == "OR").Should().Be(1);
             result.Count(x => x.StateProvinceId == 79 && x.StateProvinceCode == "WA").Should().Be(1);
+
+            result[0].SalesTerritory.Should().NotBeNull();
+            result[0].CountryRegion.Should().NotBeNull();
+            result[1].SalesTerritory.Should().NotBeNull();
+            result[1].CountryRegion.Should().NotBeNull();
         }
     }
 
@@ -65,6 +82,9 @@ public sealed class StateProvinceRepositoryTests : PersistenceUnitTestBase
         {
             result.Should().NotBeNull();
             result!.StateProvinceId.Should().Be(id);
+
+            result!.SalesTerritory.Should().NotBeNull();
+            result!.CountryRegion.Should().NotBeNull();
         }
     }
 }

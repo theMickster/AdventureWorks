@@ -8,7 +8,7 @@ public class StateProvinceConfiguration : IEntityTypeConfiguration<StateProvince
 {
     public void Configure(EntityTypeBuilder<StateProvinceEntity> builder)
     {
-        builder.ToTable("StateProvince", "Person");
+        builder.ToTable("AddressStateProvince", "Person");
 
         builder.HasKey(a => a.StateProvinceId);
 

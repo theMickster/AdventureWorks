@@ -6,6 +6,7 @@ using Microsoft.Extensions.Logging;
 using System.Net;
 using System.Text.Json;
 using AdventureWorks.Domain.Models;
+using AdventureWorks.Domain.Models.Slim;
 using FluentValidation.Results;
 
 namespace AdventureWorks.UnitTests.API.Controllers.v1.Address;
@@ -59,7 +60,7 @@ public sealed class CreateAddressControllerTests : UnitTestBase
         {
             AddressLine1 = "hello World",
             PostalCode = "123",
-            StateProvince = new StateProvinceModel { Id = 15 }
+            AddressStateProvince = new GenericSlimModel { Id = 15 }
         };
 
         _mockCreateAddressService
@@ -97,7 +98,7 @@ public sealed class CreateAddressControllerTests : UnitTestBase
         {
             AddressLine1 = "hello World",
             PostalCode = "123",
-            StateProvince = new StateProvinceModel{Id = 15}
+            AddressStateProvince = new GenericSlimModel { Id = 15}
         };
 
         _mockCreateAddressService

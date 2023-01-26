@@ -11,5 +11,7 @@ public interface IAdventureWorksDbContext
 
     DbSet<CountryRegionEntity> CountryRegions { get; set; }
 
+    DbSet<SalesTerritoryEntity> SalesTerritories { get; set; }
+
     DbSet<StateProvinceEntity> StateProvinces { get; set; }
 }
