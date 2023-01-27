@@ -4,9 +4,9 @@ using AutoMapper;
 
 namespace AdventureWorks.Domain.Profiles;
 
-public sealed class StateProvinceEntityToStateProvinceModelProfile : Profile
+public sealed class StateProvinceEntityToModelProfile : Profile
 {
-    public StateProvinceEntityToStateProvinceModelProfile()
+    public StateProvinceEntityToModelProfile()
     {
         CreateMap<StateProvinceEntity, StateProvinceModel>()
             .ForPath(c => c.Id,

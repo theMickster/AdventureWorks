@@ -9,6 +9,8 @@ public interface IAdventureWorksDbContext
 
     DbSet<AddressEntity> Addresses { get; set; }
 
+    DbSet<AddressTypeEntity> AddressTypes { get; set; }
+
     DbSet<CountryRegionEntity> CountryRegions { get; set; }
 
     DbSet<SalesTerritoryEntity> SalesTerritories { get; set; }

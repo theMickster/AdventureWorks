@@ -19,7 +19,7 @@ public sealed class ReadStateProvinceServiceTests : UnitTestBase
     public ReadStateProvinceServiceTests()
     {
         var mappingConfig = new MapperConfiguration(config =>
-            config.AddMaps(typeof(StateProvinceEntityToStateProvinceModelProfile).Assembly)
+            config.AddMaps(typeof(StateProvinceEntityToModelProfile).Assembly)
         );
         _mapper = mappingConfig.CreateMapper();
 

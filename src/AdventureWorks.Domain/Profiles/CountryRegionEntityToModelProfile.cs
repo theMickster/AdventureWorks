@@ -4,9 +4,9 @@ using AutoMapper;
 
 namespace AdventureWorks.Domain.Profiles;
 
-public sealed class CountryRegionEntityToCountryRegionModelProfile : Profile
+public sealed class CountryRegionEntityToModelProfile : Profile
 {
-    public CountryRegionEntityToCountryRegionModelProfile()
+    public CountryRegionEntityToModelProfile()
     {
         CreateMap<CountryRegionEntity, CountryRegionModel>()
             .ForPath(c => c.Code,

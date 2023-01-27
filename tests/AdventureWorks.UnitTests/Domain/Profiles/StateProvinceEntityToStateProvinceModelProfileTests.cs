@@ -13,7 +13,7 @@ public sealed class StateProvinceEntityToStateProvinceModelProfileTests : UnitTe
     public StateProvinceEntityToStateProvinceModelProfileTests()
     {
         var mappingConfig = new MapperConfiguration(config =>
-            config.AddMaps(typeof(StateProvinceEntityToStateProvinceModelProfile).Assembly));
+            config.AddMaps(typeof(StateProvinceEntityToModelProfile).Assembly));
 
         _mapper = mappingConfig.CreateMapper();
     }

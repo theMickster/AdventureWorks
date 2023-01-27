@@ -26,6 +26,8 @@ public class AdventureWorksDbContext : DbContext, IAdventureWorksDbContext
 
     public DbSet<AddressEntity> Addresses { get; set; }
 
+    public DbSet<AddressTypeEntity> AddressTypes { get; set; }
+
     public DbSet<CountryRegionEntity> CountryRegions { get; set; }
 
     public DbSet<SalesTerritoryEntity> SalesTerritories { get; set; }
