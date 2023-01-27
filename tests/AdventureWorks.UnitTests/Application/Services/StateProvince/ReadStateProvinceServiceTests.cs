@@ -5,6 +5,7 @@ using AdventureWorks.Common.Attributes;
 using AdventureWorks.Domain.Entities;
 using AdventureWorks.Domain.Profiles;
 using AutoMapper;
+using Moq;
 
 namespace AdventureWorks.UnitTests.Application.Services.StateProvince;
 
@@ -59,5 +60,62 @@ public sealed class ReadStateProvinceServiceTests : UnitTestBase
         }
     }
 
+    [Fact]
+    public async Task GetByIdAsync_returns_null_Async()
+    {
+        _mockStateProvinceRepository.Setup(x => x.GetByIdAsync(It.IsAny<int>()))
+            .ReturnsAsync((StateProvinceEntity)null!);
 
+        var result = await _sut.GetByIdAsync(12).ConfigureAwait(false);
+
+        result.Should().BeNull();
+    }
+    
+    [Fact]
+    public async Task GetByIdAsync_returns_correctly_Async()
+    {
+        _mockStateProvinceRepository.Setup(x => x.GetByIdAsync(It.IsAny<int>()))
+            .ReturnsAsync(new StateProvinceEntity
+                { StateProvinceId = 1, Name = "A State", CountryRegionCode = "UK", TerritoryId = 7, IsOnlyStateProvinceFlag = false});
+
+        var result = await _sut.GetByIdAsync(15).ConfigureAwait(false);
+
+        using (new AssertionScope())
+        {
+            result.Should().NotBeNull();
+            result!.Name.Should().Be("A State");
+        }
+    }
+
+    [Fact]
+    public async Task GetListAsync_returns_empty_listAsync()
+    {
+        _mockStateProvinceRepository.Setup(x => x.ListAllAsync())
+            .ReturnsAsync((IReadOnlyList<StateProvinceEntity>)null!);
+
+        var result = await _sut.GetListAsync().ConfigureAwait(false);
+        result.Should().BeEmpty();
+
+        _mockStateProvinceRepository.Reset();
+
+        _mockStateProvinceRepository.Setup(x => x.ListAllAsync())
+            .ReturnsAsync(new List<StateProvinceEntity>());
+
+        result = await _sut.GetListAsync().ConfigureAwait(false);
+        result.Should().BeEmpty();
+    }
+
+    [Fact]
+    public async Task GetListAsync_returns_valid_listAsync()
+    {
+        _mockStateProvinceRepository.Setup(x => x.ListAllAsync())
+            .ReturnsAsync(new List<StateProvinceEntity>()
+            {
+                new (){ StateProvinceId = 1, Name = "France", CountryRegionCode = "FR", TerritoryId = 7, IsOnlyStateProvinceFlag = false}
+                ,new() { StateProvinceId = 2, Name = "Japan", CountryRegionCode = "JP", TerritoryId = 8, IsOnlyStateProvinceFlag = true}
+            });
+
+        var result = await _sut.GetListAsync().ConfigureAwait(false);
+        result.Count.Should().Be(2);
+    }
 }

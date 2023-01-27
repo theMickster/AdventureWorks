@@ -1,6 +1,7 @@
 ﻿using AdventureWorks.Application.Interfaces.Repositories;
 using AdventureWorks.Application.Interfaces.Services.StateProvince;
 using AdventureWorks.Common.Attributes;
+using AdventureWorks.Domain.Entities;
 using AdventureWorks.Domain.Models;
 using AutoMapper;
 
@@ -44,6 +45,6 @@ public sealed class ReadStateProvinceService : IReadStateProvinceService
             return new List<StateProvinceModel>();
         }
 
-        return _mapper.Map<List<StateProvinceModel>>(entities);
+        return _mapper.Map<List<StateProvinceEntity>,List<StateProvinceModel> >(entities.ToList());
     }
 }

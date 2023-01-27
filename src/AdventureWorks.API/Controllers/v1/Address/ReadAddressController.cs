@@ -35,7 +35,7 @@ public sealed class ReadAddressController : ControllerBase
     /// </summary>
     /// <param name="addressId">the unique identifier</param>
     /// <returns></returns>
-    [HttpGet("{addressId}", Name="GetAddressById")]
+    [HttpGet("{addressId:int}", Name="GetAddressById")]
     [Produces(typeof(AddressModel))]
     public async Task<IActionResult> GetByIdAsync(int addressId)
     {
