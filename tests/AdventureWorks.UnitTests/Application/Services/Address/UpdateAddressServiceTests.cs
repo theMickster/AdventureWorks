@@ -4,6 +4,7 @@ using AdventureWorks.Application.Services.Address;
 using AdventureWorks.Common.Attributes;
 using AdventureWorks.Domain.Entities;
 using AdventureWorks.Domain.Models;
+using AdventureWorks.Domain.Models.Slim;
 using AdventureWorks.Domain.Profiles;
 using AutoMapper;
 using FluentValidation;
@@ -83,7 +84,7 @@ public sealed class UpdateAddressServiceTests : UnitTestBase
             AddressLine2 = "hello world2",
             City = "Denver",
             PostalCode = "80256",
-            StateProvince = new StateProvinceModel { Id = 12 }
+            AddressStateProvince = new GenericSlimModel { Id = 12 }
         };
 
         _mockValidator.Setup(x => x.ValidateAsync(It.IsAny<AddressUpdateModel>(),

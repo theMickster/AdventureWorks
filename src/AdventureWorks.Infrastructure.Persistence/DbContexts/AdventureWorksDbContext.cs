@@ -28,7 +28,10 @@ public class AdventureWorksDbContext : DbContext, IAdventureWorksDbContext
 
     public DbSet<CountryRegionEntity> CountryRegions { get; set; }
 
+    public DbSet<SalesTerritoryEntity> SalesTerritories { get; set; }
+
     public DbSet<StateProvinceEntity> StateProvinces { get; set; }
+
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {

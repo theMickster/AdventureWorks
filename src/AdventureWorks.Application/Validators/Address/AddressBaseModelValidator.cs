@@ -36,17 +36,17 @@ public class AddressBaseModelValidator<T> : AbstractValidator<T> where T : Addre
 
         RuleFor(address => address)
             .MustAsync(async (address, cancellation)
-                => await StateProvinceMustExistAsync(address.StateProvince.Id).ConfigureAwait(false))
-            .When(x => x?.StateProvince != null)
+                => await StateProvinceMustExistAsync(address.AddressStateProvince.Id).ConfigureAwait(false))
+            .When(x => x?.AddressStateProvince != null)
             .WithMessage(StateProvinceIdExists)
             .WithErrorCode("Rule-07")
-            .OverridePropertyName("StateProvince");
+            .OverridePropertyName("AddressStateProvince");
 
-        RuleFor(x => x.StateProvince)
+        RuleFor(x => x.AddressStateProvince)
             .NotNull()
             .WithMessage(StateProvinceExists)
             .WithErrorCode("Rule-08")
-            .OverridePropertyName("StateProvince");
+            .OverridePropertyName("AddressStateProvince");
     }
 
     public static string MessageAddressLine1Empty => "Address Line 1 cannot be null, empty, or whitespace";
@@ -63,9 +63,9 @@ public class AddressBaseModelValidator<T> : AbstractValidator<T> where T : Addre
 
     public static string PostalCodeLength => "Postal Code cannot be greater than 15 characters";
 
-    public static string StateProvinceIdExists => "StateProvince Id must exist prior to use";
+    public static string StateProvinceIdExists => "AddressStateProvince Id must exist prior to use";
 
-    public static string StateProvinceExists => "StateProvince is required";
+    public static string StateProvinceExists => "AddressStateProvince is required";
 
     protected async Task<bool> StateProvinceMustExistAsync(int stateProvinceId)
     {
