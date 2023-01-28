@@ -7,12 +7,12 @@ using AutoMapper;
 namespace AdventureWorks.Application.Services.SalesTerritory;
 
 [ServiceLifetimeScoped]
-public sealed class ReadSalesTerritoryServiceService : IReadSalesTerritoryService
+public sealed class ReadSalesTerritoryService : IReadSalesTerritoryService
 {
     private readonly IMapper _mapper;
     private readonly ISalesTerritoryRepository _repository;
 
-    public ReadSalesTerritoryServiceService (
+    public ReadSalesTerritoryService (
         IMapper mapper,
         ISalesTerritoryRepository salesTerritoryRepository)
     {

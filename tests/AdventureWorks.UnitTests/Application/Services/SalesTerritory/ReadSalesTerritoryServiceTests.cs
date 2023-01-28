@@ -13,7 +13,7 @@ public sealed class ReadSalesTerritoryServiceTests : UnitTestBase
 {
     private readonly IMapper _mapper;
     private readonly Mock<ISalesTerritoryRepository> _mockRepository = new();
-    private ReadSalesTerritoryServiceService _sut;
+    private ReadSalesTerritoryService _sut;
 
     public ReadSalesTerritoryServiceTests()
     {
@@ -22,7 +22,7 @@ public sealed class ReadSalesTerritoryServiceTests : UnitTestBase
         );
         _mapper = mappingConfig.CreateMapper();
 
-        _sut = new ReadSalesTerritoryServiceService(_mapper, _mockRepository.Object);
+        _sut = new ReadSalesTerritoryService(_mapper, _mockRepository.Object);
     }
 
     [Fact]
@@ -30,10 +30,10 @@ public sealed class ReadSalesTerritoryServiceTests : UnitTestBase
     {
         using (new AssertionScope())
         {
-            typeof(ReadSalesTerritoryServiceService)
+            typeof(ReadSalesTerritoryService)
                 .Should().Implement<IReadSalesTerritoryService>();
 
-            typeof(ReadSalesTerritoryServiceService)
+            typeof(ReadSalesTerritoryService)
                 .IsDefined(typeof(ServiceLifetimeScopedAttribute), false)
                 .Should().BeTrue();
         }
@@ -44,13 +44,13 @@ public sealed class ReadSalesTerritoryServiceTests : UnitTestBase
     {
         using (new AssertionScope())
         {
-            _ = ((Action)(() => _sut = new ReadSalesTerritoryServiceService(
+            _ = ((Action)(() => _sut = new ReadSalesTerritoryService(
                     null!,
                     _mockRepository.Object)))
                 .Should().Throw<ArgumentNullException>("because we expect a null argument exception.")
                 .And.ParamName.Should().Be("mapper");
 
-            _ = ((Action)(() => _sut = new ReadSalesTerritoryServiceService(
+            _ = ((Action)(() => _sut = new ReadSalesTerritoryService(
                     _mapper,
                     null!)))
                 .Should().Throw<ArgumentNullException>("because we expect a null argument exception.")

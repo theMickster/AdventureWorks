@@ -1,5 +1,4 @@
 using AdventureWorks.Application.Exceptions;
-using AdventureWorks.Application.Infrastructure.AutoMapper;
 using AdventureWorks.Application.Interfaces.DbContext;
 using AdventureWorks.Application.Validators.Address;
 using AdventureWorks.Common.Attributes;
@@ -90,7 +89,6 @@ internal static class RegisterServices
         builder.Services.AddAutoMapper(
             new[]
             {
-                typeof(AutoMapperProfile).GetTypeInfo().Assembly,
                 typeof(AddressEntityToAddressModelProfile).GetTypeInfo().Assembly
             });
 
