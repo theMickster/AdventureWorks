@@ -9,6 +9,6 @@ public class BusinessEntityAddress : BaseEntity
     public DateTime ModifiedDate { get; set; }
 
     public virtual AddressEntity AddressEntity { get; set; }
-    public virtual AddressType AddressType { get; set; }
+    public virtual AddressTypeEntity AddressTypeEntity { get; set; }
     public virtual BusinessEntity BusinessEntity { get; set; }
 }

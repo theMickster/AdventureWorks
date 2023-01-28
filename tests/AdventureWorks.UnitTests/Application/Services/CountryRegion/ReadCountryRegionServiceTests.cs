@@ -19,7 +19,7 @@ public sealed class ReadCountryRegionServiceTests : UnitTestBase
     public ReadCountryRegionServiceTests()
     {
         var mappingConfig = new MapperConfiguration(config =>
-            config.AddMaps(typeof(CountryRegionEntityToCountryRegionModelProfile).Assembly)
+            config.AddMaps(typeof(CountryRegionEntityToModelProfile).Assembly)
         );
         _mapper = mappingConfig.CreateMapper();
 

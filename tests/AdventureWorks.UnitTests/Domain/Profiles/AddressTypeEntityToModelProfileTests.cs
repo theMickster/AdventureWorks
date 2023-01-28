@@ -6,14 +6,14 @@ using AutoMapper;
 namespace AdventureWorks.UnitTests.Domain.Profiles;
 
 [ExcludeFromCodeCoverage]
-public sealed class CountryRegionEntityToCountryRegionModelProfileTests : UnitTestBase
+public sealed class AddressTypeEntityToModelProfileTests: UnitTestBase
 {
     private readonly IMapper _mapper;
 
-    public CountryRegionEntityToCountryRegionModelProfileTests()
+    public AddressTypeEntityToModelProfileTests()
     {
         var mappingConfig = new MapperConfiguration(config =>
-            config.AddMaps(typeof(CountryRegionEntityToModelProfile).Assembly));
+            config.AddMaps(typeof(AddressTypeEntityToModelProfile).Assembly));
 
         _mapper = mappingConfig.CreateMapper();
     }
@@ -24,21 +24,19 @@ public sealed class CountryRegionEntityToCountryRegionModelProfileTests : UnitTe
     [Fact]
     public void Map_entities_to_model_succeeds()
     {
-        var entity = new CountryRegionEntity
+        var entity = new AddressTypeEntity
         {
-            CountryRegionCode = "USA",
-            Name = "United States of America",
-            ModifiedDate = DateTime.UtcNow,
-            StateProvinces = new List<StateProvinceEntity>()
+            AddressTypeId = 25,
+            Name = "Home"
         };
 
-        var result = _mapper.Map<CountryRegionModel>(entity);
+        var result = _mapper.Map<AddressTypeModel>(entity);
 
         using (new AssertionScope())
         {
             result.Should().NotBeNull();
-            result.Code.Should().Be("USA");
-            result.Name.Should().Be("United States of America");
+            result.Id.Should().Be(25);
+            result.Name.Should().Be("Home");
         }
     }
 }

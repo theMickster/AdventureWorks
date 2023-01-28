@@ -1,11 +1,14 @@
 ﻿namespace AdventureWorks.Domain.Entities;
 
-public class AddressType : BaseEntity
+public sealed class AddressTypeEntity : BaseEntity
 {
     public int AddressTypeId { get; set; }
+
     public string Name { get; set; }
+
     public Guid Rowguid { get; set; }
+
     public DateTime ModifiedDate { get; set; }
 
-    public virtual ICollection<BusinessEntityAddress> BusinessEntityAddress { get; set; }
+    public ICollection<BusinessEntityAddress> BusinessEntityAddress { get; set; }
 }

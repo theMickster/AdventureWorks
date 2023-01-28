@@ -20,7 +20,7 @@ public class BusinessEntityAddressConfiguration : IEntityTypeConfiguration<Busin
             .WithMany()
             .HasForeignKey(a => a.AddressId);
 
-        builder.HasOne(a => a.AddressType)
+        builder.HasOne(a => a.AddressTypeEntity)
             .WithMany()
             .HasForeignKey(a => a.AddressTypeId);
 
