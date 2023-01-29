@@ -69,7 +69,7 @@ END
 
 ```sql
 UPDATE  ap
-SET		ap.UserName = TRIM(LOWER(p.FirstName)) + '.' + TRIM(LOWER(p.LastName))
+SET	ap.UserName = TRIM(LOWER(p.FirstName)) + '.' + TRIM(LOWER(p.LastName))
 FROM    Person.AccountInformation ap
 		INNER JOIN Person.Person p ON p.BusinessEntityID = ap.BusinessEntityID
 ```
@@ -80,8 +80,8 @@ FROM    Person.AccountInformation ap
 
 ```sql
 DECLARE @TempId INTEGER = 1
-		,@BusinessEntityID INTEGER = 0
-		,@NewGuid UNIQUEIDENTIFIER 
+	,@BusinessEntityID INTEGER = 0
+	,@NewGuid UNIQUEIDENTIFIER 
 
 DECLARE @tempPeople TABLE (TempId INTEGER IDENTITY(1,1) NOT NULL PRIMARY KEY, BusinessEntityID INTEGER UNIQUE);
 
@@ -129,7 +129,7 @@ As an example, you could set each person's account to "HelloWorld!" + their Busi
 
 ```sql
 SELECT	TRIM(CAST(ap.SaltGuid AS VARCHAR(40))) + 'HelloWorld!' + TRIM(CAST(ap.BusinessEntityID AS VARCHAR(40)))
-		,(SELECT HASHBYTES('SHA2_512',TRIM(CAST(ap.SaltGuid AS VARCHAR(40))) + 'HelloWorld!' + TRIM(CAST(ap.BusinessEntityID AS VARCHAR(40)))))
+	,(SELECT HASHBYTES('SHA2_512',TRIM(CAST(ap.SaltGuid AS VARCHAR(40))) + 'HelloWorld!' + TRIM(CAST(ap.BusinessEntityID AS VARCHAR(40)))))
 FROM	Person.AccountInformation ap
 ```
 
@@ -137,12 +137,21 @@ FROM	Person.AccountInformation ap
 
 ```sql 
 UPDATE	ap
-SET		AccountPasswordHash = (SELECT HASHBYTES('SHA2_512',TRIM(CAST(ap.SaltGuid AS VARCHAR(40))) + 'HelloWorld!' + TRIM(CAST(ap.BusinessEntityID AS VARCHAR(40)))))
+SET	AccountPasswordHash = (SELECT HASHBYTES('SHA2_512',TRIM(CAST(ap.SaltGuid AS VARCHAR(40))) + 'HelloWorld!' + TRIM(CAST(ap.BusinessEntityID AS VARCHAR(40)))))
 FROM	Person.AccountInformation ap
 ```
 
 ### View new table after updates
 
 ```sql 
-SELECT * FROM Person.AccountInformation 
+SELECT  pp.BusinessEntityID
+        ,pp.FirstName
+        ,pp.LastName
+		,pai.UserName
+		,pai.SaltGuid
+		,pai.AccountPasswordHash
+FROM    Person.Person AS pp
+        INNER JOIN Person.AccountInformation AS pai ON pp.BusinessEntityID = pai.BusinessEntityID
+ORDER BY pp.BusinessEntityID ASC
+
 ```
