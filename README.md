@@ -12,6 +12,12 @@ You will need the following tools:
 * [Visual Studio Code or Visual Studio 2022](https://www.visualstudio.com/downloads/)
 * [SQL Server Management Studio](https://docs.microsoft.com/en-us/sql/ssms/download-sql-server-management-studio-ssms)
 
+## Database Enhancements 
+
+Please read the following wikis to understand the changes to the default AdventureWorks database.
+
+1. [Enhance the Account Information](/docs/EnhanceAccountInformation.md)
+
 ## License
 
 This project is licensed under the MIT License.
