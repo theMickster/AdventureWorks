@@ -112,7 +112,7 @@ END
 
 In a separate query window, you may track progress using the following:
 ```sql
-SELECT COUNT(*) FROM Person.AccountInformationNew WITH(NOLOCK) WHERE saltguid = '00000000-0000-0000-0000-000000000000'
+SELECT COUNT(*) FROM Person.AccountInformation WITH(NOLOCK) WHERE saltguid = '00000000-0000-0000-0000-000000000000'
 ```
 
 ## View new table after updates
