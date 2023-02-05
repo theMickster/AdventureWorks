@@ -155,3 +155,38 @@ FROM    Person.Person AS pp
 ORDER BY pp.BusinessEntityID ASC
 
 ```
+
+## Update username field to prevent duplicates
+
+```sql
+SELECT	BusinessEntityID
+INTO	#TempPeopleToUpdate
+FROM	Person.AccountInformation
+WHERE	UserName IN (SELECT a.UserName
+					FROM Person.AccountInformation a
+					GROUP BY a.UserName
+					HAVING COUNT(*) > 1)
+
+UPDATE	a
+SET		a.UserName = a.UserName + '.'+ CAST(a.BusinessEntityID AS VARCHAR(10))
+FROM	Person.AccountInformation a
+		INNER JOIN #TempPeopleToUpdate temp ON a.BusinessEntityID = temp.BusinessEntityID
+
+```
+
+### View results after update 
+
+```sql
+SELECT a.UserName
+FROM Person.AccountInformation a
+GROUP BY a.UserName
+HAVING COUNT(*) > 1
+```
+
+### Add new unique constraint to username field
+
+```sql
+ALTER TABLE Person.AccountInformation 
+	ADD CONSTRAINT UQ_Person_AccountInformaton_Username UNIQUE NONCLUSTERED (UserName);
+
+```
