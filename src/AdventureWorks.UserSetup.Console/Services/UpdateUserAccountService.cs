@@ -18,6 +18,7 @@ internal class UpdateUserAccountService
         var accounts =
             await _dbContext.UserAccounts
                 .Where(x => string.IsNullOrWhiteSpace(x.PasswordHash))
+                .Take(5000)
                 .OrderBy(x => x.Id)
                 .ToListAsync();
 
@@ -36,27 +37,9 @@ internal class UpdateUserAccountService
             userAccount.PasswordHash = hash;
             _dbContext.UpdateUserAccountsAsync(userAccount);
         });
+        
 
-        var doubleCheckAccounts = 
-            await _dbContext.UserAccounts
-                .Where(x => id.Contains( x.Id ))
-                .ToListAsync();
-
-        var allPasswordAreCorrect = true;
-
-        doubleCheckAccounts.ForEach(userAccount =>
-        {
-            var password = $"{passwordPrefix}{userAccount.Id}!";
-            var hash = BC.HashPassword(password);
-
-            if (!BC.Verify(password, hash))
-            {
-                allPasswordAreCorrect = false;
-            }
-
-        });
-
-        return allPasswordAreCorrect;
+        return true;
     }
 
 }
