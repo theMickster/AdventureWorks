@@ -93,7 +93,7 @@ FROM	Person.UserAccount a
 
 ```sql
 SELECT a.UserName
-FROM Person.AccountInformation a
+FROM Person.UserAccount a
 GROUP BY a.UserName
 HAVING COUNT(*) > 1
 ```
