@@ -18,7 +18,7 @@ internal class UpdateUserAccountService
         var accounts =
             await _dbContext.UserAccounts
                 .Where(x => string.IsNullOrWhiteSpace(x.PasswordHash))
-                .Take(5000)
+                .Take(10000)
                 .OrderBy(x => x.Id)
                 .ToListAsync();
 

@@ -20,7 +20,7 @@ var optionsBuilder = new DbContextOptionsBuilder<AdventureWorksUserSetupContext>
 optionsBuilder.UseSqlServer(defaultConnectionString);
 var dbContext = new AdventureWorksUserSetupContext(optionsBuilder.Options);
 var updateService = new UpdateUserAccountService(dbContext);
-var password = "HelloWorld";
+var password = "___";
 
 var success = await updateService.UpdateUserAccountPasswords(password).ConfigureAwait(false);
 
