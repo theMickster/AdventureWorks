@@ -47,7 +47,7 @@ public sealed class ReadUserLoginService : IReadUserLoginService
         if (userEntity == null)
         {
             var validationFailure = new ValidationFailure{ ErrorCode = "Auth-Error-001", ErrorMessage = "Username does not exist" };
-            _logger.LogInformation( $"{validationFailure.ErrorMessage} - {validationFailure.ErrorMessage}" );
+            _logger.LogInformation( $"{validationFailure.ErrorCode} - {validationFailure.ErrorMessage}" );
             validationFailures.Add(validationFailure);
 
             return (null, string.Empty, validationFailures);
@@ -56,7 +56,7 @@ public sealed class ReadUserLoginService : IReadUserLoginService
         if (!BC.Verify(password, userEntity.PasswordHash))
         {
             var validationFailure = new ValidationFailure { ErrorCode = "Auth-Error-002", ErrorMessage = "Password does not match" };
-            _logger.LogInformation($"{validationFailure.ErrorMessage} - {validationFailure.ErrorMessage}");
+            _logger.LogInformation($"{validationFailure.ErrorCode} - {validationFailure.ErrorMessage}");
             validationFailures.Add(validationFailure);
 
             return (null, string.Empty, validationFailures);

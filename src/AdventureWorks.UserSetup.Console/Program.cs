@@ -35,7 +35,7 @@ else
     Console.WriteLine("Adventure Works User Account update was not successful. Sad Panda");
 }
 */
-password = "HellWorld";
+password = "HelloWorld";
 Console.WriteLine(BC.HashPassword(password));
 
 Console.ForegroundColor = ConsoleColor.White;
