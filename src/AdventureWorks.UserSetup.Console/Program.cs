@@ -21,7 +21,7 @@ optionsBuilder.UseSqlServer(defaultConnectionString);
 var dbContext = new AdventureWorksUserSetupContext(optionsBuilder.Options);
 var updateService = new UpdateUserAccountService(dbContext);
 var password = "___";
-
+/*
 var success = await updateService.UpdateUserAccountPasswords(password).ConfigureAwait(false);
 
 if (success)
@@ -34,5 +34,9 @@ else
     Console.ForegroundColor = ConsoleColor.Red;
     Console.WriteLine("Adventure Works User Account update was not successful. Sad Panda");
 }
+*/
+password = "HellWorld";
+Console.WriteLine(BC.HashPassword(password));
+
 Console.ForegroundColor = ConsoleColor.White;
 

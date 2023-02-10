@@ -1,5 +1,6 @@
 ﻿using AdventureWorks.Application.Interfaces.DbContext;
 using AdventureWorks.Domain.Entities;
+using AdventureWorks.Domain.Entities.AccountInfo;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Logging.Abstractions;
@@ -28,11 +29,17 @@ public class AdventureWorksDbContext : DbContext, IAdventureWorksDbContext
 
     public DbSet<AddressTypeEntity> AddressTypes { get; set; }
 
+    public DbSet<BusinessEntity> BusinessEntities { get; set; }
+
     public DbSet<CountryRegionEntity> CountryRegions { get; set; }
+
+    public DbSet<Person> Persons { get; set; }
 
     public DbSet<SalesTerritoryEntity> SalesTerritories { get; set; }
 
     public DbSet<StateProvinceEntity> StateProvinces { get; set; }
+
+    public DbSet<UserAccountEntity> UserAccounts { get; set; }
 
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)
