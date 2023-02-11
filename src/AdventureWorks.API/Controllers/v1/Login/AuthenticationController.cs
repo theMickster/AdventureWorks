@@ -1,5 +1,6 @@
 ﻿using AdventureWorks.Application.Interfaces.Services.Login;
 using AdventureWorks.Domain.Models.AccountInfo;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
 namespace AdventureWorks.API.Controllers.v1.Login;
@@ -8,6 +9,7 @@ namespace AdventureWorks.API.Controllers.v1.Login;
 /// The controller that coordinates user authentication.
 /// </summary>
 /// <remarks></remarks>
+[Authorize]
 [ApiController]
 [ApiVersion("1.0")]
 [ApiExplorerSettings(GroupName = "Authentication")]
@@ -31,6 +33,7 @@ public sealed class AuthenticationController : ControllerBase
         _userLoginService = userLoginService ?? throw new ArgumentNullException(nameof(userLoginService));
     }
 
+    [AllowAnonymous]
     [HttpPost]
     [SuppressMessage("ReSharper", "InvertIf")]
     public async Task<IActionResult> AuthenticateUser(AuthenticationRequestModel? model)
