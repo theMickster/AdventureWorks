@@ -9,8 +9,11 @@ namespace AdventureWorks.API.Controllers.v1.Products;
 /// <summary>
 /// Retrieve all products
 /// </summary>
-[Route("api/v1/[controller]")]
 [ApiController]
+[ApiVersion("1.0")]
+[ApiExplorerSettings(GroupName = "Products")]
+[Produces("application/json")]
+[Route("api/v{version:apiVersion}/products", Name = "ProductsControllerV1")]
 public sealed class ProductsController : ControllerBase
 {
     private readonly IProductRepository _productRepository;
