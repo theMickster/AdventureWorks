@@ -1,7 +1,7 @@
 ﻿using AdventureWorks.Application.Interfaces.Services.Login;
 using AdventureWorks.Common.Attributes;
 using AdventureWorks.Common.Settings;
-using AdventureWorks.Domain.Models;
+using AdventureWorks.Domain.Models.AccountInfo;
 using Microsoft.Extensions.Options;
 using Microsoft.IdentityModel.Tokens;
 using System.Globalization;
@@ -26,7 +26,7 @@ public sealed class TokenService : ITokenService
     /// </summary>
     /// <param name="userAccount">the AdventureWorks user requesting the token</param>
     /// <returns>a valid AdventureWorks API token</returns>
-    public string GenerateUserToken(UserAccountModel userAccount)
+    public UserAccountTokenModel GenerateUserToken(UserAccountModel userAccount)
     {
         var tokenExpiration = DateTime.UtcNow.AddSeconds(_tokenSettings.Value.TokenExpirationInSeconds);
         var secretKey = Encoding.UTF8.GetBytes(_tokenSettings.Value.Key);
@@ -42,7 +42,7 @@ public sealed class TokenService : ITokenService
             new Claim("UserName", userAccount.UserName)
         };
 
-        var tokenDescriptor = new SecurityTokenDescriptor()
+        var tokenDescriptor = new SecurityTokenDescriptor
         {
             Subject = new ClaimsIdentity(claims),
             Expires = tokenExpiration,
@@ -53,6 +53,15 @@ public sealed class TokenService : ITokenService
 
         var token = tokenHandler.CreateToken(tokenDescriptor);
 
-        return tokenHandler.WriteToken(token);
+        var model = new UserAccountTokenModel
+        {
+            Id = Guid.NewGuid(),
+            Token = tokenHandler.WriteToken(token),
+            TokenExpiration = tokenExpiration,
+            RefreshToken = string.Empty,
+            RefreshTokenExpiration = DateTime.MinValue
+        };
+
+        return model;
     }
 }

@@ -9,13 +9,13 @@ public sealed class UserAccountConfiguration : IEntityTypeConfiguration<UserAcco
 {
     public void Configure(EntityTypeBuilder<UserAccountEntity> builder)
     {
-        builder.ToTable("Address", "AccountInformation");
+        builder.ToTable("UserAccount", "Person");
 
         builder.HasKey(a => a.BusinessEntityId);
 
         builder.Property(b => b.RecordId).HasColumnName("rowguid");
 
-        builder.Property(b => b.PasswordHash).HasColumnName("AccountPasswordHash");
+        builder.Property(b => b.PasswordHash).HasColumnName("PasswordHash");
 
         builder.HasOne(a => a.BusinessEntity)
             .WithMany(b => b.UserAccounts)

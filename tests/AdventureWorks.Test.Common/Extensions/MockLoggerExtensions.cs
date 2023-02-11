@@ -52,7 +52,7 @@ public static class MockLoggerExtensions
     {
         times ??= Times.Once();
 
-        Func<object, Type, bool> state = (v, t) => v.ToString().EndsWith(expectedMessage);
+        Func<object, Type, bool> state = (v, t) => v != null && v.ToString()!.EndsWith(expectedMessage);
 
         logger.Verify(
             x => x.Log(
@@ -79,7 +79,7 @@ public static class MockLoggerExtensions
     {
         times ??= Times.Once();
 
-        Func<object, Type, bool> state = (v, t) => v.ToString().StartsWith(expectedMessage);
+        Func<object, Type, bool> state = (v, t) => v != null && v.ToString()!.StartsWith(expectedMessage);
 
         logger.Verify(
             x => x.Log(
@@ -106,7 +106,7 @@ public static class MockLoggerExtensions
     {
         times ??= Times.Once();
 
-        Func<object, Type, bool> state = (v, t) => v.ToString().Contains(expectedMessage);
+        Func<object, Type, bool> state = (v, t) => v != null && v.ToString()!.Contains(expectedMessage);
 
         logger.Verify(
             x => x.Log(

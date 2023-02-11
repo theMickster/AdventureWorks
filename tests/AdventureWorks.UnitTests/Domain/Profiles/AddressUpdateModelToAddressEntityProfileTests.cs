@@ -26,7 +26,7 @@ public sealed class AddressUpdateModelToAddressEntityProfileTests
     [Fact]
     public void Map_model_to_entity_succeeds()
     {
-        var model = new AddressUpdateModel()
+        var model = new AddressUpdateModel
         {
             Id = 797,
             AddressLine1 = "4561 S. Main",

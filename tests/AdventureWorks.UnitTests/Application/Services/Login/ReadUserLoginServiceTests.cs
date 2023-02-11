@@ -3,7 +3,7 @@ using AdventureWorks.Application.Interfaces.Services.Login;
 using AdventureWorks.Application.Services.Login;
 using AdventureWorks.Common.Attributes;
 using AdventureWorks.Domain.Entities.AccountInfo;
-using AdventureWorks.Domain.Models;
+using AdventureWorks.Domain.Models.AccountInfo;
 using AdventureWorks.Domain.Profiles;
 using AdventureWorks.Test.Common.Extensions;
 using AutoMapper;
@@ -95,7 +95,7 @@ public sealed class ReadUserLoginServiceTests : UnitTestBase
         using (new AssertionScope())
         {
             user.Should().BeNull();
-            token.Should().BeEmpty();
+            token.Should().BeNull();
             validationFailures.Count(x => x.ErrorCode == "Auth-Error-001").Should().Be(1);
             validationFailures.Count(x => x.ErrorCode == "Auth-Error-002").Should().Be(0);
 
@@ -110,7 +110,7 @@ public sealed class ReadUserLoginServiceTests : UnitTestBase
         const string username = "john.elway";
 
         _mockUserAccountRepository.Setup(x => x.GetByUserNameAsync(username))
-            .ReturnsAsync(new UserAccountEntity()
+            .ReturnsAsync(new UserAccountEntity
             {
                 BusinessEntityId = 1,
                 UserName = username,
@@ -122,7 +122,7 @@ public sealed class ReadUserLoginServiceTests : UnitTestBase
         using (new AssertionScope())
         {
             user.Should().BeNull();
-            token.Should().BeEmpty();
+            token.Should().BeNull();
             validationFailures.Count(x => x.ErrorCode == "Auth-Error-001").Should().Be(0);
             validationFailures.Count(x => x.ErrorCode == "Auth-Error-002").Should().Be(1);
 
@@ -137,10 +137,17 @@ public sealed class ReadUserLoginServiceTests : UnitTestBase
         const string passwordHash = "$2a$11$WzjLdJ.9Mg4Gk96gcSsYeu7tUqRtX5P02OV1Pe5A//UWRF52WoWYe";
         const string password = "HelloWorld";
         const string username = "john.elway";
-        const string token = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiJBZHZlbnR1cmVXb3Jrc0FQSSIsImp0aSI6IjJlNTBiODM3LTYyNjAtNDljMy1hNTMxLTgzOTUzY2U1NzcyMiIsImlhdCI6MTY3NjA1NjcyNCwiZXhwIjoxNjc2MDYyNzI0LCJnaXZlbl9uYW1lIjoiSm9obiIsImZhbWlseV9uYW1lIjoiRWx3YXkiLCJVc2VySWQiOiIxIiwiVXNlck5hbWUiOiJqb2huLmVsd2F5IiwibmJmIjoxNjc2MDU2NzI0LCJpc3MiOiJodHRwczovL2xvY2FsaG9zdC8iLCJhdWQiOiJodHRwczovL2xvY2FsaG9zdC8ifQ.gl90yhJtcPtfTrYtgIX7nWCKpaOMUyU2Ajbc7B8FNKQ";
+        var tokenModel = new UserAccountTokenModel()
+        {
+            Id = new Guid(),
+            Token = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiJBZHZlbnR1cmVXb3Jrc0FQSSIsImp0aSI6IjJlNTBiODM3LTYyNjAtNDljMy1hNTMxLTgzOTUzY2U1NzcyMiIsImlhdCI6MTY3NjA1NjcyNCwiZXhwIjoxNjc2MDYyNzI0LCJnaXZlbl9uYW1lIjoiSm9obiIsImZhbWlseV9uYW1lIjoiRWx3YXkiLCJVc2VySWQiOiIxIiwiVXNlck5hbWUiOiJqb2huLmVsd2F5IiwibmJmIjoxNjc2MDU2NzI0LCJpc3MiOiJodHRwczovL2xvY2FsaG9zdC8iLCJhdWQiOiJodHRwczovL2xvY2FsaG9zdC8ifQ.gl90yhJtcPtfTrYtgIX7nWCKpaOMUyU2Ajbc7B8FNKQ",
+            TokenExpiration = DateTime.UtcNow.AddSeconds(120),
+            RefreshToken = string.Empty,
+            RefreshTokenExpiration = DateTime.MinValue
+        };
 
         _mockUserAccountRepository.Setup(x => x.GetByUserNameAsync(username))
-            .ReturnsAsync(new UserAccountEntity()
+            .ReturnsAsync(new UserAccountEntity
             {
                 BusinessEntityId = 1,
                 UserName = username,
@@ -148,7 +155,7 @@ public sealed class ReadUserLoginServiceTests : UnitTestBase
             });
 
         _mockTokenService.Setup(x => x.GenerateUserToken(It.IsAny<UserAccountModel>()))
-            .Returns(token);
+            .Returns(tokenModel);
 
         var (user, outputToken, validationFailures) = await _sut.AuthenticateUserAsync(username, password).ConfigureAwait(false);
 
@@ -156,7 +163,7 @@ public sealed class ReadUserLoginServiceTests : UnitTestBase
         {
             user.Should().NotBeNull();
             user!.UserName.Should().Be(username);
-            outputToken.Should().NotBeNullOrWhiteSpace();
+            outputToken.Should().NotBeNull();
             validationFailures.Count.Should().Be(0);
         }
     }

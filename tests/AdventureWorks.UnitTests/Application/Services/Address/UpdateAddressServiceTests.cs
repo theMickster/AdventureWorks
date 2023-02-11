@@ -77,7 +77,7 @@ public sealed class UpdateAddressServiceTests : UnitTestBase
     [SuppressMessage("Async", "AsyncifyInvocation:Use Task Async", Justification = "Because I Said so....")]
     public async Task UpdateAsync_returns_successAsync()
     {
-        var inputModel = new AddressUpdateModel()
+        var inputModel = new AddressUpdateModel
         {
             Id = 12,
             AddressLine1 = "hello world",

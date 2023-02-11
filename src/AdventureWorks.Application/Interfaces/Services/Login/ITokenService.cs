@@ -1,4 +1,4 @@
-﻿using AdventureWorks.Domain.Models;
+﻿using AdventureWorks.Domain.Models.AccountInfo;
 
 namespace AdventureWorks.Application.Interfaces.Services.Login;
 
@@ -8,6 +8,6 @@ public interface ITokenService
     /// Creates a JWT security token for the given <see cref="UserAccountModel"/>
     /// </summary>
     /// <param name="userAccount">the AdventureWorks user requesting the token</param>
-    /// <returns>a valid AdventureWorks API token</returns>
-    string GenerateUserToken(UserAccountModel userAccount);
+    /// <returns>a valid AdventureWorks API token model</returns>
+    UserAccountTokenModel GenerateUserToken(UserAccountModel userAccount);
 }

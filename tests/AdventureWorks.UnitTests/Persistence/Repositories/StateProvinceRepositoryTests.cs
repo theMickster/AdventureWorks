@@ -22,13 +22,13 @@ public sealed class StateProvinceRepositoryTests : PersistenceUnitTestBase
             ,new() { StateProvinceId = 85, StateProvinceCode = "BB", Name = "Brandenburg", CountryRegionCode = "DE", TerritoryId = 8 }
         });
 
-        DbContext.CountryRegions.AddRange( new List<CountryRegionEntity>()
+        DbContext.CountryRegions.AddRange( new List<CountryRegionEntity>
         {
             new(){CountryRegionCode = "US", Name = "United States"}
             ,new(){CountryRegionCode = "DE", Name = "Germany"}
         });
 
-        DbContext.SalesTerritories.AddRange(new List<SalesTerritoryEntity>()
+        DbContext.SalesTerritories.AddRange(new List<SalesTerritoryEntity>
         {
             new(){TerritoryId = 1, Name = "Northwest"}
             ,new(){TerritoryId = 8, Name = "Germany"}

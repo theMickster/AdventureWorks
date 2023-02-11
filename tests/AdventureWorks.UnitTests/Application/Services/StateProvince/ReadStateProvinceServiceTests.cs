@@ -109,7 +109,7 @@ public sealed class ReadStateProvinceServiceTests : UnitTestBase
     public async Task GetListAsync_returns_valid_listAsync()
     {
         _mockStateProvinceRepository.Setup(x => x.ListAllAsync())
-            .ReturnsAsync(new List<StateProvinceEntity>()
+            .ReturnsAsync(new List<StateProvinceEntity>
             {
                 new (){ StateProvinceId = 1, Name = "France", CountryRegionCode = "FR", TerritoryId = 7, IsOnlyStateProvinceFlag = false}
                 ,new() { StateProvinceId = 2, Name = "Japan", CountryRegionCode = "JP", TerritoryId = 8, IsOnlyStateProvinceFlag = true}

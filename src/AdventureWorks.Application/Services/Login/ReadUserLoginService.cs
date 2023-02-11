@@ -1,7 +1,7 @@
 ﻿using AdventureWorks.Application.Interfaces.Repositories;
 using AdventureWorks.Application.Interfaces.Services.Login;
 using AdventureWorks.Common.Attributes;
-using AdventureWorks.Domain.Models;
+using AdventureWorks.Domain.Models.AccountInfo;
 using AutoMapper;
 using FluentValidation.Results;
 using Microsoft.Extensions.Logging;
@@ -37,7 +37,7 @@ public sealed class ReadUserLoginService : IReadUserLoginService
     /// <param name="password"></param>
     /// <returns>a tuple that includes the user model, security token, and validation failure list </returns>
     [SuppressMessage("ReSharper", "ConditionIsAlwaysTrueOrFalseAccordingToNullableAPIContract")]
-    public async Task<(UserAccountModel?, string, List<ValidationFailure>)> AuthenticateUserAsync(string username, string password)
+    public async Task<(UserAccountModel?, UserAccountTokenModel?, List<ValidationFailure>)> AuthenticateUserAsync(string username, string password)
     {
         var validationFailures = new List<ValidationFailure>();
 
@@ -50,7 +50,7 @@ public sealed class ReadUserLoginService : IReadUserLoginService
             _logger.LogInformation( $"{validationFailure.ErrorCode} - {validationFailure.ErrorMessage}" );
             validationFailures.Add(validationFailure);
 
-            return (null, string.Empty, validationFailures);
+            return (null, null, validationFailures);
         }
 
         if (!BC.Verify(password, userEntity.PasswordHash))
@@ -59,7 +59,7 @@ public sealed class ReadUserLoginService : IReadUserLoginService
             _logger.LogInformation($"{validationFailure.ErrorCode} - {validationFailure.ErrorMessage}");
             validationFailures.Add(validationFailure);
 
-            return (null, string.Empty, validationFailures);
+            return (null, null, validationFailures);
         }
 
         var model = _mapper.Map<UserAccountModel>(userEntity);

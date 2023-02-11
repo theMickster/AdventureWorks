@@ -1,5 +1,5 @@
 ﻿using AdventureWorks.Domain.Entities.AccountInfo;
-using AdventureWorks.Domain.Models;
+using AdventureWorks.Domain.Models.AccountInfo;
 using AutoMapper;
 
 namespace AdventureWorks.Domain.Profiles;

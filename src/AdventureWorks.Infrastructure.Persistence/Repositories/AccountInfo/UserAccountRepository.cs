@@ -31,8 +31,11 @@ public sealed class UserAccountRepository : IUserAccountRepository
 
     public async Task<UserAccountEntity> GetByUserNameAsync(string username)
     {
+        username = username.ToLower().Trim();
+
         var results = await _dbContext.Set<UserAccountEntity>()
-            .Where(x => x.UserName.ToLowerInvariant().Trim() == username.ToLowerInvariant().Trim())
+            .Include(x => x.Person)
+            .Where(x => x.UserName.ToLower().Trim() == username)
             .ToListAsync()
             .ConfigureAwait(false);
 

@@ -1,4 +1,4 @@
-﻿using AdventureWorks.Domain.Models;
+﻿using AdventureWorks.Domain.Models.AccountInfo;
 using FluentValidation.Results;
 
 namespace AdventureWorks.Application.Interfaces.Services.Login;
@@ -11,5 +11,5 @@ public interface IReadUserLoginService
     /// <param name="username"></param>
     /// <param name="password"></param>
     /// <returns>a tuple that includes the user model, security token, and validation failure list </returns>
-    Task<(UserAccountModel?, string, List<ValidationFailure>)> AuthenticateUserAsync(string username, string password);
+    Task<(UserAccountModel?, UserAccountTokenModel?, List<ValidationFailure>)> AuthenticateUserAsync(string username, string password);
 }
