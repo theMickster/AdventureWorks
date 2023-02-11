@@ -109,7 +109,7 @@ public sealed class ReadCountryRegionServiceTests : UnitTestBase
     public async Task GetListAsync_returns_valid_listAsync()
     {
         _mockCountryRegionRepository.Setup(x => x.ListAllAsync())
-            .ReturnsAsync(new List<CountryRegionEntity>()
+            .ReturnsAsync(new List<CountryRegionEntity>
             {
                 new (){Name = "France", CountryRegionCode = "FR"}
                 ,new() {Name = "Japan", CountryRegionCode = "JP"}

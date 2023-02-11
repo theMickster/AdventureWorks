@@ -14,14 +14,14 @@ public sealed class SalesTerritoryRepositoryTests : PersistenceUnitTestBase
     {
         _sut = new SalesTerritoryRepository(DbContext);
 
-        DbContext.CountryRegions.AddRange(new List<CountryRegionEntity>()
+        DbContext.CountryRegions.AddRange(new List<CountryRegionEntity>
         {
             new(){CountryRegionCode = "US", Name = "United States"}
             ,new(){CountryRegionCode = "DE", Name = "Germany"}
             ,new(){CountryRegionCode = "MX", Name = "Mexico"}
         });
 
-        DbContext.SalesTerritories.AddRange(new List<SalesTerritoryEntity>()
+        DbContext.SalesTerritories.AddRange(new List<SalesTerritoryEntity>
         {
             new(){ TerritoryId = 1, Name = "Northwest", CountryRegionCode = "US" }
             ,new(){ TerritoryId = 2, Name = "Northeast", CountryRegionCode = "US" }

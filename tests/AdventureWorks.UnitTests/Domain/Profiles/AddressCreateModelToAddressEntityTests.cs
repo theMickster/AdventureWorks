@@ -25,7 +25,7 @@ public sealed class AddressCreateModelToAddressEntityTests : UnitTestBase
     [Fact]
     public void Map_model_to_entity_succeeds()
     {
-        var model = new AddressCreateModel()
+        var model = new AddressCreateModel
         {
             AddressLine1 = "4561 S. Main",
             AddressLine2 = "Apt 2821",

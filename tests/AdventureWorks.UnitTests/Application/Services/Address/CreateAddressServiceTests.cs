@@ -75,7 +75,7 @@ public sealed class CreateAddressServiceTests : UnitTestBase
     [Fact]
     public async Task CreateAsync_returns_successAsync()
     {
-        var inputModel = new AddressCreateModel()
+        var inputModel = new AddressCreateModel
         {
             AddressLine1 = "hello world",
             AddressLine2 = "hello world2",
@@ -89,7 +89,7 @@ public sealed class CreateAddressServiceTests : UnitTestBase
             .ReturnsAsync(new ValidationResult{Errors = new List<ValidationFailure>()});
 
         _mockAddressRepository.Setup(x => x.AddAsync(It.IsAny<AddressEntity>()))
-            .ReturnsAsync(new AddressEntity()
+            .ReturnsAsync(new AddressEntity
             {
                 AddressId = 8768,
                 AddressLine1 = "hello world",
@@ -120,7 +120,7 @@ public sealed class CreateAddressServiceTests : UnitTestBase
     [Fact]
     public async Task CreateAsync_returns_correct_validation_errorsAsync()
     {
-        var inputModel = new AddressCreateModel()
+        var inputModel = new AddressCreateModel
         {
             AddressLine1 = "hello world"
         };

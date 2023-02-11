@@ -1,0 +1,233 @@
+﻿using AdventureWorks.API.Controllers.v1.Login;
+using AdventureWorks.Application.Interfaces.Services.Login;
+using AdventureWorks.Test.Common.Extensions;
+using Microsoft.AspNetCore.Mvc;
+using Microsoft.Extensions.Logging;
+using System.Net;
+using AdventureWorks.Domain.Models.AccountInfo;
+using FluentValidation.Results;
+using AdventureWorks.Domain.Models;
+
+namespace AdventureWorks.UnitTests.API.Controllers.v1.Login;
+
+[ExcludeFromCodeCoverage]
+public sealed class AuthenticationControllerTests : UnitTestBase
+{
+    private readonly Mock<ILogger<AuthenticationController>> _mockLogger = new();
+    private readonly Mock<IReadUserLoginService> _mockUserLoginService = new();
+    private AuthenticationController _sut;
+
+    public AuthenticationControllerTests()
+    {
+        _sut = new AuthenticationController(_mockLogger.Object, _mockUserLoginService.Object);
+    }
+
+    [Fact]
+    public void Constructor_throws_correct_exceptions()
+    {
+        using (new AssertionScope())
+        {
+            _ = ((Action)(() => _sut = new AuthenticationController(null!, _mockUserLoginService.Object)))
+                .Should().Throw<ArgumentNullException>("because we expect a null argument exception.")
+                .And.ParamName.Should().Be("logger");
+
+            _ = ((Action)(() => _sut = new AuthenticationController(_mockLogger.Object, null!)))
+                .Should().Throw<ArgumentNullException>("because we expect a null argument exception.")
+                .And.ParamName.Should().Be("userLoginService");
+        }
+    }
+
+    [Fact]
+    public async Task AuthenticateUser_fails_when_model_is_nullAsync()
+    {
+        const string message = "Invalid authentication request.";
+        var result = await _sut.AuthenticateUser(null).ConfigureAwait(false);
+
+        var objectResult = result as ObjectResult;
+
+        using (new AssertionScope())
+        {
+            objectResult.Should().NotBeNull();
+            objectResult!.StatusCode.Should().Be((int)HttpStatusCode.BadRequest);
+            objectResult!.Value.Should().Be(message);
+
+            _mockLogger.VerifyLoggingMessageContains(message, null, LogLevel.Information);
+        }
+    }
+
+    [Fact]
+    public async Task AuthenticateUser_fails_when_username_is_nullAsync()
+    {
+        const string message = "Invalid authentication request; Username and Password are required.";
+        var model = new AuthenticationRequestModel { Username = null, Password = "hello" };
+        var result = await _sut.AuthenticateUser(model).ConfigureAwait(false);
+
+        var objectResult = result as ObjectResult;
+
+        using (new AssertionScope())
+        {
+            objectResult.Should().NotBeNull();
+            objectResult!.StatusCode.Should().Be((int)HttpStatusCode.BadRequest);
+            objectResult!.Value.Should().Be(message);
+
+            model.Password.Should().Be("hello");
+            model.Username?.Should().BeNull();
+
+            _mockLogger.VerifyLoggingMessageContains(message, null, LogLevel.Information);
+        }
+    }
+
+    [Fact]
+    public async Task AuthenticateUser_fails_when_username_is_emptyAsync()
+    {
+        const string message = "Invalid authentication request; Username and Password are required.";
+        var model = new AuthenticationRequestModel { Username = "   ", Password = "hello" };
+        var result = await _sut.AuthenticateUser(model).ConfigureAwait(false);
+
+        var objectResult = result as ObjectResult;
+
+        using (new AssertionScope())
+        {
+            objectResult.Should().NotBeNull();
+            objectResult!.StatusCode.Should().Be((int)HttpStatusCode.BadRequest);
+            objectResult!.Value.Should().Be(message);
+
+            model.Password.Should().Be("hello");
+            model.Username.Trim().Should().BeEmpty();
+
+            _mockLogger.VerifyLoggingMessageContains(message, null, LogLevel.Information);
+        }
+    }
+
+    [Fact]
+    public async Task AuthenticateUser_fails_when_password_is_nullAsync()
+    {
+        const string message = "Invalid authentication request; Username and Password are required.";
+        var model = new AuthenticationRequestModel { Username = "hello.world", Password = null };
+        var result = await _sut.AuthenticateUser(model).ConfigureAwait(false);
+
+        var objectResult = result as ObjectResult;
+
+        using (new AssertionScope())
+        {
+            objectResult.Should().NotBeNull();
+            objectResult!.StatusCode.Should().Be((int)HttpStatusCode.BadRequest);
+            objectResult!.Value.Should().Be(message);
+
+            model.Username.Should().Be("hello.world");
+            model.Password?.Should().BeNull();
+
+            _mockLogger.VerifyLoggingMessageContains(message, null, LogLevel.Information);
+        }
+    }
+
+    [Fact]
+    public async Task AuthenticateUser_fails_when_password_is_emptyAsync()
+    {
+        const string message = "Invalid authentication request; Username and Password are required.";
+        var model = new AuthenticationRequestModel { Username = "hello.world", Password = "" };
+        var result = await _sut.AuthenticateUser(model).ConfigureAwait(false);
+
+        var objectResult = result as ObjectResult;
+
+        using (new AssertionScope())
+        {
+            objectResult.Should().NotBeNull();
+            objectResult!.StatusCode.Should().Be((int)HttpStatusCode.BadRequest);
+            objectResult!.Value.Should().Be(message);
+
+            model.Username.Should().Be("hello.world");
+            model.Password.Should().BeEmpty();
+
+            _mockLogger.VerifyLoggingMessageContains(message, null, LogLevel.Information);
+        }
+    }
+
+    [Theory]
+    [MemberData(nameof(AuthenticateUserData))]
+    public async Task AuthenticateUser_fails_when_authenticationService_fails_01Async(
+        UserAccountModel? user, 
+        UserAccountTokenModel? tokenModel, 
+        List<ValidationFailure> errors,
+        string expectedLoggedMessage
+        )
+    {
+        _mockUserLoginService.Setup(x => x.AuthenticateUserAsync(It.IsAny<string>(), It.IsAny<string>()))
+            .ReturnsAsync((user, tokenModel, errors));
+
+        const string message = "Unable to complete authentication request.";
+        var model = new AuthenticationRequestModel { Username = "hello.world", Password = "hello" };
+        var result = await _sut.AuthenticateUser(model).ConfigureAwait(false);
+
+        var objectResult = result as ObjectResult;
+
+        using (new AssertionScope())
+        {
+            objectResult.Should().NotBeNull();
+            objectResult!.StatusCode.Should().Be((int)HttpStatusCode.BadRequest);
+            objectResult!.Value.Should().Be(message);
+
+            _mockLogger.VerifyLoggingMessageContains(expectedLoggedMessage, null, LogLevel.Information);
+        }
+    }
+
+    [Fact]
+    public async Task AuthenticateUser_succeedsAsync()
+    {
+        var user = new UserAccountModel()
+        {
+            Id = 1,
+            FirstName = "Joe",
+            LastName = "Montanta",
+            UserName = "joe.montanta"
+        };
+
+        var tokenModel = new UserAccountTokenModel()
+        {
+            Id = new Guid(),
+            Token = "token",
+            TokenExpiration = DateTime.UtcNow.AddSeconds(120),
+            RefreshToken = "refreshToken",
+            RefreshTokenExpiration = DateTime.UtcNow.AddSeconds(180)
+        };
+
+        _mockUserLoginService.Setup(x => x.AuthenticateUserAsync(It.IsAny<string>(), It.IsAny<string>()))
+            .ReturnsAsync((user, tokenModel, new List<ValidationFailure>()));
+
+        
+        var model = new AuthenticationRequestModel { Username = "hello.world", Password = "hello" };
+        var result = await _sut.AuthenticateUser(model).ConfigureAwait(false);
+
+        var objectResult = result as ObjectResult;
+
+        var outputModel = objectResult!.Value! as AuthenticationResponseModel;
+
+        using (new AssertionScope())
+        {
+            objectResult.Should().NotBeNull();
+            objectResult!.StatusCode.Should().Be((int)HttpStatusCode.OK);
+
+            outputModel.Should().NotBeNull();
+            outputModel!.Token.Should().NotBeNull();
+            outputModel!.Username.Should().Be("joe.montanta");
+            outputModel!.FullName.Should().Be("Montanta, Joe");
+            outputModel!.Token.Token.Should().Be("token");
+            outputModel!.Token.RefreshToken.Should().Be("refreshToken");
+            outputModel!.Token.TokenExpiration.Should().BeAfter(DateTime.Now);
+            outputModel!.Token.RefreshTokenExpiration.Should().BeAfter(DateTime.Now);
+        }
+    }
+
+
+    #region Xunit Theory Test Data
+
+    public static IEnumerable<object?[]> AuthenticateUserData =>
+        new List<object?[]>
+        {
+            new object?[] { new UserAccountModel(), new UserAccountTokenModel(), new List<ValidationFailure>(){new (){ErrorCode = "1", ErrorMessage = "A"}}, "User Authentication Attempt Failed" }
+            ,new object?[] { null, new UserAccountTokenModel(), new List<ValidationFailure>(), "Unable to complete authentication request" }
+            ,new object?[] { new UserAccountModel(), null, new List<ValidationFailure>(), "Unable to complete authentication request" }
+        };
+
+    #endregion Xunit Theory Test Data
+}

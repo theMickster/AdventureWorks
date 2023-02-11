@@ -109,7 +109,7 @@ public sealed class UpdateAddressControllerTests : UnitTestBase
     [Fact]
     public async Task PostAsync_valid_input_returns_createdAsync()
     {
-        var addressModel = new AddressModel()
+        var addressModel = new AddressModel
         {
             Id = 1,
             AddressLine1 = "hello World",

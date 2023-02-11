@@ -30,7 +30,7 @@ public sealed class AddressRepositoryTests : PersistenceUnitTestBase
                     StateProvinceId = 39, 
                     Name = "Arizona", 
                     CountryRegionCode = "US",
-                    CountryRegion = new CountryRegionEntity()
+                    CountryRegion = new CountryRegionEntity
                     {
                         CountryRegionCode = "US",
                         Name = "United States of America",

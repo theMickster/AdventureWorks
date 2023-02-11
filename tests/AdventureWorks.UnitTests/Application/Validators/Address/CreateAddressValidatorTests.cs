@@ -108,9 +108,9 @@ public sealed class CreateAddressValidatorTests : UnitTestBase
 
         using (new AssertionScope())
         {
-            var validationResult = await _sut.TestValidateAsync(new AddressCreateModel()
-            {
-                AddressStateProvince = new GenericSlimModel()
+            var validationResult = await _sut.TestValidateAsync(new AddressCreateModel
+                {
+                AddressStateProvince = new GenericSlimModel
                 {
                     Id = 1548,
                     Code = "ABCDEFG"

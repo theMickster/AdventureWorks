@@ -36,7 +36,7 @@ public class DefaultHealthCheck : IHealthCheck
 
         var (healthStatus, dictionary2) = _statusFunc();
 
-        var dictionary3 = new Dictionary<string, object>()
+        var dictionary3 = new Dictionary<string, object>
         {
             {
                 "Info",

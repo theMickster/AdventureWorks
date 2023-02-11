@@ -29,7 +29,7 @@ public sealed class SalesTerritoryEntityToModelProfileTests : UnitTestBase
             TerritoryId = 25,
             Name = "Central",
             CountryRegionCode = "USA",
-            CountryRegion = new CountryRegionEntity(){CountryRegionCode = "USA", Name = "United States of America"},
+            CountryRegion = new CountryRegionEntity {CountryRegionCode = "USA", Name = "United States of America"},
             Group = "HelloWorld",
             SalesYtd = 12345.99m,
             SalesLastYear = 54321.97m,

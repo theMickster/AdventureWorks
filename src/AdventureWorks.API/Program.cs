@@ -26,10 +26,9 @@ builder.Configuration
     .AddUserSecrets<Program>()
     .Build();
 
-builder.Configuration
-    .LoadApplicationConfiguration();
+builder.Configuration.RegisterApplicationConfiguration();
 
-builder.RegisterConfigurations();
+builder.RegisterCommonSettings();
 
 builder.Services.AddDefaultHealthCheck();
 
@@ -42,6 +41,8 @@ builder.Services.AddCors(options =>
             .AllowAnyHeader()
             .AllowCredentials());
 });
+
+builder.RegisterApiAuthentication();
 
 builder.RegisterAspDotNetServices();
 

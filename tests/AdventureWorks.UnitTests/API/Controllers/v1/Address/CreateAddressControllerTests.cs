@@ -56,7 +56,7 @@ public sealed class CreateAddressControllerTests : UnitTestBase
     [Fact]
     public async Task PostAsync_invalid_input_returns_bad_requestAsync()
     {
-        var input = new AddressCreateModel()
+        var input = new AddressCreateModel
         {
             AddressLine1 = "hello World",
             PostalCode = "123",
@@ -87,14 +87,14 @@ public sealed class CreateAddressControllerTests : UnitTestBase
     [Fact]
     public async Task PostAsync_valid_input_returns_createdAsync()
     {
-        var addressModel = new AddressModel()
+        var addressModel = new AddressModel
         {
             Id = 1,
             AddressLine1 = "hello World",
             PostalCode = "123"
         };
 
-        var input = new AddressCreateModel()
+        var input = new AddressCreateModel
         {
             AddressLine1 = "hello World",
             PostalCode = "123",
