@@ -9,7 +9,7 @@ public sealed class UserAccountConfiguration : IEntityTypeConfiguration<UserAcco
 {
     public void Configure(EntityTypeBuilder<UserAccountEntity> builder)
     {
-        builder.ToTable("UserAccount", "Person");
+        builder.ToTable("UserAccount", "Shield");
 
         builder.HasKey(a => a.BusinessEntityId);
 
