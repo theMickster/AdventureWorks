@@ -14,9 +14,10 @@ You will need the following tools:
 
 ## Database Enhancements 
 
-Please read the following wikis to understand the changes to the default AdventureWorks database.
+Please visit and read the following ReadMe to understand the changes to the default AdventureWorks database.
 
-1. [Enhance the Account Information](/docs/EnhanceAccountInformation.md)
+
+- [Enhancement ReadMe](/docs/README.md)
 
 ## License
 
