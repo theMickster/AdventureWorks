@@ -1,9 +1,9 @@
 ﻿using AdventureWorks.Domain.Entities;
-using AdventureWorks.Domain.Entities.AccountInfo;
-using AdventureWorks.Domain.Models.AccountInfo;
 using AdventureWorks.Domain.Profiles;
 using AutoMapper;
 using System.Text;
+using AdventureWorks.Domain.Entities.Shield;
+using AdventureWorks.Domain.Models.Shield;
 
 namespace AdventureWorks.UnitTests.Domain.Profiles;
 

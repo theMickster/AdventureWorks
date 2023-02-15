@@ -1,5 +1,5 @@
-﻿using AdventureWorks.Domain.Entities.AccountInfo;
-using AdventureWorks.Domain.Models.AccountInfo;
+﻿using AdventureWorks.Domain.Entities.Shield;
+using AdventureWorks.Domain.Models.Shield;
 using AutoMapper;
 
 namespace AdventureWorks.Domain.Profiles;

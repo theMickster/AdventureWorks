@@ -1,12 +1,12 @@
 ﻿using AdventureWorks.Application.Interfaces.Repositories;
 using AdventureWorks.Common.Attributes;
-using AdventureWorks.Domain.Entities.AccountInfo;
 using AdventureWorks.Infrastructure.Persistence.DbContexts;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Logging;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using AdventureWorks.Domain.Entities.Shield;
 
 namespace AdventureWorks.Infrastructure.Persistence.Repositories.AccountInfo;
 

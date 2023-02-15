@@ -1,4 +1,4 @@
-﻿using AdventureWorks.Domain.Entities.AccountInfo;
+﻿using AdventureWorks.Domain.Entities.Shield;
 
 namespace AdventureWorks.Domain.Entities;
 

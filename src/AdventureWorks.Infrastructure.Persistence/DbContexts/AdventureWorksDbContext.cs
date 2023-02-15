@@ -1,6 +1,6 @@
 ﻿using AdventureWorks.Application.Interfaces.DbContext;
 using AdventureWorks.Domain.Entities;
-using AdventureWorks.Domain.Entities.AccountInfo;
+using AdventureWorks.Domain.Entities.Shield;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Logging.Abstractions;

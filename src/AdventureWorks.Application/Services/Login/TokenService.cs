@@ -1,13 +1,13 @@
 ﻿using AdventureWorks.Application.Interfaces.Services.Login;
 using AdventureWorks.Common.Attributes;
 using AdventureWorks.Common.Settings;
-using AdventureWorks.Domain.Models.AccountInfo;
 using Microsoft.Extensions.Options;
 using Microsoft.IdentityModel.Tokens;
 using System.Globalization;
 using System.IdentityModel.Tokens.Jwt;
 using System.Security.Claims;
 using System.Text;
+using AdventureWorks.Domain.Models.Shield;
 
 namespace AdventureWorks.Application.Services.Login;
 

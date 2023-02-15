@@ -4,9 +4,9 @@ using AdventureWorks.Test.Common.Extensions;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
 using System.Net;
-using AdventureWorks.Domain.Models.AccountInfo;
 using FluentValidation.Results;
 using AdventureWorks.Domain.Models;
+using AdventureWorks.Domain.Models.Shield;
 
 namespace AdventureWorks.UnitTests.API.Controllers.v1.Login;
 

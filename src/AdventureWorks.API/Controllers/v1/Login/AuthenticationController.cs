@@ -1,5 +1,5 @@
 ﻿using AdventureWorks.Application.Interfaces.Services.Login;
-using AdventureWorks.Domain.Models.AccountInfo;
+using AdventureWorks.Domain.Models.Shield;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 

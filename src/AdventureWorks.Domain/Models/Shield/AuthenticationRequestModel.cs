@@ -1,4 +1,4 @@
-﻿namespace AdventureWorks.Domain.Models.AccountInfo;
+﻿namespace AdventureWorks.Domain.Models.Shield;
 
 public sealed class AuthenticationRequestModel
 {

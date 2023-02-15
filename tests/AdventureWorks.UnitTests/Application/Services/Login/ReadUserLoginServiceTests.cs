@@ -2,8 +2,8 @@
 using AdventureWorks.Application.Interfaces.Services.Login;
 using AdventureWorks.Application.Services.Login;
 using AdventureWorks.Common.Attributes;
-using AdventureWorks.Domain.Entities.AccountInfo;
-using AdventureWorks.Domain.Models.AccountInfo;
+using AdventureWorks.Domain.Entities.Shield;
+using AdventureWorks.Domain.Models.Shield;
 using AdventureWorks.Domain.Profiles;
 using AdventureWorks.Test.Common.Extensions;
 using AutoMapper;

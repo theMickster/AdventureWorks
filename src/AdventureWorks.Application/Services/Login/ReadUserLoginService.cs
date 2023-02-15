@@ -1,11 +1,11 @@
 ﻿using AdventureWorks.Application.Interfaces.Repositories;
 using AdventureWorks.Application.Interfaces.Services.Login;
 using AdventureWorks.Common.Attributes;
-using AdventureWorks.Domain.Models.AccountInfo;
 using AutoMapper;
 using FluentValidation.Results;
 using Microsoft.Extensions.Logging;
 using System.Diagnostics.CodeAnalysis;
+using AdventureWorks.Domain.Models.Shield;
 
 namespace AdventureWorks.Application.Services.Login;
 

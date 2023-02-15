@@ -1,4 +1,4 @@
-﻿namespace AdventureWorks.Domain.Entities.AccountInfo;
+﻿namespace AdventureWorks.Domain.Entities.Shield;
 
 public sealed class UserAccountEntity : BaseEntity
 {

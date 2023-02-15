@@ -1,7 +1,7 @@
 ﻿using AdventureWorks.Application.Interfaces.Repositories;
 using AdventureWorks.Common.Attributes;
 using AdventureWorks.Domain.Entities;
-using AdventureWorks.Domain.Entities.AccountInfo;
+using AdventureWorks.Domain.Entities.Shield;
 using AdventureWorks.Infrastructure.Persistence.Repositories.AccountInfo;
 using Microsoft.Extensions.Logging;
 

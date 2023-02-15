@@ -2,9 +2,9 @@
 using AdventureWorks.Application.Services.Login;
 using AdventureWorks.Common.Attributes;
 using AdventureWorks.Common.Settings;
-using AdventureWorks.Domain.Models.AccountInfo;
 using Microsoft.Extensions.Options;
 using System.IdentityModel.Tokens.Jwt;
+using AdventureWorks.Domain.Models.Shield;
 
 namespace AdventureWorks.UnitTests.Application.Services.Login;
 
