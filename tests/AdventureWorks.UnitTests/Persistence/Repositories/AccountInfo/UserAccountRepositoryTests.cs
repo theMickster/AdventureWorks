@@ -53,43 +53,59 @@ public sealed class UserAccountRepositoryTests : PersistenceUnitTestBase
                 BusinessEntityId = 1, 
                 UserName = "john.elway",
                 RecordId = new Guid("7a80b0a7-1122-49e3-875b-95cc9fcae017"),
-                PasswordHash = "$2a$11$TsEBk0KOhuIXQZe0KHcSdu05/5oj3iWPRS9TZ8M2TTDFAjRwmk8eK"
+                PasswordHash = "$2a$11$TsEBk0KOhuIXQZe0KHcSdu05/5oj3iWPRS9TZ8M2TTDFAjRwmk8eK",
+                PrimaryEmailAddressId = 1
             },
             new()
             {
                 BusinessEntityId = 2, 
                 UserName = "terrell.davis",
                 RecordId = new Guid("87c347f0-e6d1-46bc-b510-ff2f9be50d82"),
-                PasswordHash = "$2a$11$TsEBk0KOhuIXQZe0KHcSdu05/5oj3iWPRS9TZ8M2TTDFAjRwmk8eK"
+                PasswordHash = "$2a$11$TsEBk0KOhuIXQZe0KHcSdu05/5oj3iWPRS9TZ8M2TTDFAjRwmk8eK",
+                PrimaryEmailAddressId = 2
             },
             new()
             {
                 BusinessEntityId = 3, 
                 UserName = "shannon.sharpe",
                 RecordId = new Guid("94159810-21c3-4666-ba28-04911f05215e"),
-                PasswordHash = "$2a$11$TsEBk0KOhuIXQZe0KHcSdu05/5oj3iWPRS9TZ8M2TTDFAjRwmk8eK"
+                PasswordHash = "$2a$11$TsEBk0KOhuIXQZe0KHcSdu05/5oj3iWPRS9TZ8M2TTDFAjRwmk8eK",
+                PrimaryEmailAddressId = 3
             },
             new()
             {
                 BusinessEntityId = 5,
                 UserName = "Duplicate.User",
                 RecordId = new Guid("86272e78-b76f-40ea-a706-a3d03d2c691c"),
-                PasswordHash = "$2a$11$TsEBk0KOhuIXQZe0KHcSdu05/5oj3iWPRS9TZ8M2TTDFAjRwmk8eK"
+                PasswordHash = "$2a$11$TsEBk0KOhuIXQZe0KHcSdu05/5oj3iWPRS9TZ8M2TTDFAjRwmk8eK",
+                PrimaryEmailAddressId = 5
             },
             new()
             {
                 BusinessEntityId = 4,
                 UserName = "emmitt.smith",
                 RecordId = new Guid("1bfe2f92-cf14-4258-a634-14ed56dbad69"),
-                PasswordHash = "$2a$11$TsEBk0KOhuIXQZe0KHcSdu05/5oj3iWPRS9TZ8M2TTDFAjRwmk8eK"
+                PasswordHash = "$2a$11$TsEBk0KOhuIXQZe0KHcSdu05/5oj3iWPRS9TZ8M2TTDFAjRwmk8eK",
+                PrimaryEmailAddressId = 4
             },
             new()
             {
             BusinessEntityId = 6,
             UserName = "Duplicate.User",
             RecordId = new Guid("86272e78-b76f-40ea-a706-a3d03d2c691c"),
-            PasswordHash = "$2a$11$TsEBk0KOhuIXQZe0KHcSdu05/5oj3iWPRS9TZ8M2TTDFAjRwmk8eK"
+            PasswordHash = "$2a$11$TsEBk0KOhuIXQZe0KHcSdu05/5oj3iWPRS9TZ8M2TTDFAjRwmk8eK",
+            PrimaryEmailAddressId = 6
         },
+        });
+
+        DbContext.EmailAddresses.AddRange(new List<EmailAddress>()
+        {
+            new() { BusinessEntityId = 1, EmailAddressId = 1, EmailAddressName = "john.elway@example.com"},
+            new() { BusinessEntityId = 2, EmailAddressId = 2, EmailAddressName = "terrell.davis@example.com"},
+            new() { BusinessEntityId = 3, EmailAddressId = 3, EmailAddressName = "shannon.sharpe@example.com"},
+            new() { BusinessEntityId = 4, EmailAddressId = 4, EmailAddressName = "emmitt.smith@example.com"},
+            new() { BusinessEntityId = 5, EmailAddressId = 5, EmailAddressName = "Duplicate.User@example.com"},
+            new() { BusinessEntityId = 6, EmailAddressId = 6, EmailAddressName = "Duplicate.User@example.com"},
         });
 
         DbContext.BusinessEntities.AddRange(new List<BusinessEntity>
@@ -133,6 +149,10 @@ public sealed class UserAccountRepositoryTests : PersistenceUnitTestBase
             orderedAccounts[0].Person!.FirstName.Should().Be("John");
             orderedAccounts[1].Person!.LastName.Should().Be("Davis");
             orderedAccounts[2].Person!.FirstName.Should().Be("Shannon");
+
+            orderedAccounts[1].EmailAddress!.EmailAddressName.Should().Be("terrell.davis@example.com");
+            orderedAccounts[2].EmailAddress!.EmailAddressName.Should().Be("shannon.sharpe@example.com");
+            orderedAccounts[3].EmailAddress!.EmailAddressName.Should().Be("emmitt.smith@example.com");
         }
     }
 

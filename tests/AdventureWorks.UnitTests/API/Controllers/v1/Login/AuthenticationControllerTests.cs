@@ -179,7 +179,8 @@ public sealed class AuthenticationControllerTests : UnitTestBase
             Id = 1,
             FirstName = "Joe",
             LastName = "Montanta",
-            UserName = "joe.montanta"
+            UserName = "joe.montanta",
+            PrimaryEmailAddress = "joe.montanta@example.com"
         };
 
         var tokenModel = new UserAccountTokenModel()
@@ -211,6 +212,7 @@ public sealed class AuthenticationControllerTests : UnitTestBase
             outputModel!.Token.Should().NotBeNull();
             outputModel!.Username.Should().Be("joe.montanta");
             outputModel!.FullName.Should().Be("Montanta, Joe");
+            outputModel!.EmailAddress.Should().Be("joe.montanta@example.com");
             outputModel!.Token.Token.Should().Be("token");
             outputModel!.Token.RefreshToken.Should().Be("refreshToken");
             outputModel!.Token.TokenExpiration.Should().BeAfter(DateTime.Now);

@@ -24,5 +24,9 @@ public sealed class UserAccountConfiguration : IEntityTypeConfiguration<UserAcco
         builder.HasOne(a => a.Person)
             .WithOne(b => b.UserAccountEntity)
             .HasForeignKey<Person>(c => c.BusinessEntityId);
+
+        builder.HasOne(a => a.EmailAddress)
+            .WithOne()
+            .HasForeignKey<EmailAddress>(c => c.EmailAddressId);
     }
 }

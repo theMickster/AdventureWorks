@@ -25,6 +25,9 @@ public sealed class UserAccountEntityToModelProfile : Profile
                 o => o.MapFrom(y => y.Person.LastName))
 
             .ForPath(x => x.PasswordHash,
-                o => o.MapFrom(y => y.PasswordHash));
+                o => o.MapFrom(y => y.PasswordHash))
+            
+            .ForPath(x => x.PrimaryEmailAddress,
+                o => o.MapFrom(y => y.EmailAddress.EmailAddressName));
     }
 }

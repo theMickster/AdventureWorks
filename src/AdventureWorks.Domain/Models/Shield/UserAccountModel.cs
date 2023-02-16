@@ -14,6 +14,8 @@ public sealed class UserAccountModel
 
     public string PasswordHash { get; set; }
 
+    public string PrimaryEmailAddress { get; set; }
+
     public string FullName
     {
         get

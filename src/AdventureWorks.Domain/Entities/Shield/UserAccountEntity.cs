@@ -12,8 +12,12 @@ public sealed class UserAccountEntity : BaseEntity
 
     public string PasswordHash { get; set; }
 
+    public int PrimaryEmailAddressId { get; set; }
+
     public BusinessEntity BusinessEntity { get; set; }
 
     public Person Person { get; set; }
+
+    public EmailAddress EmailAddress { get; set; }
 
 }

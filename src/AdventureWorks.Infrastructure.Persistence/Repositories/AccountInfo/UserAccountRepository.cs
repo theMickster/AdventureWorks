@@ -35,6 +35,7 @@ public sealed class UserAccountRepository : IUserAccountRepository
 
         var results = await _dbContext.Set<UserAccountEntity>()
             .Include(x => x.Person)
+            .Include(x => x.EmailAddress)
             .Where(x => x.UserName.ToLower().Trim() == username)
             .ToListAsync()
             .ConfigureAwait(false);
@@ -58,6 +59,7 @@ public sealed class UserAccountRepository : IUserAccountRepository
     {
         return await _dbContext.Set<UserAccountEntity>()
             .Include(x => x.Person)
+            .Include(x => x.EmailAddress)
             .ToListAsync()
             .ConfigureAwait(false);
     }

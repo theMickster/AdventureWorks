@@ -10,6 +10,8 @@ public class EmailAddressConfiguration : IEntityTypeConfiguration<EmailAddress>
     {
         builder.ToTable("EmailAddress", "Person");
 
+        builder.Property(x => x.EmailAddressName).HasColumnName("EmailAddress");
+
         builder.HasKey(a => new { a.BusinessEntityId, a.EmailAddressId });
 
         builder.HasOne(a => a.BusinessEntity)

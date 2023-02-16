@@ -6,6 +6,8 @@ public sealed class AuthenticationResponseModel
 
     public string FullName { get; set; } = string.Empty;
 
+    public string EmailAddress { get; set; } = string.Empty;
+
     public UserAccountTokenModel Token { get; set; }
 
 }

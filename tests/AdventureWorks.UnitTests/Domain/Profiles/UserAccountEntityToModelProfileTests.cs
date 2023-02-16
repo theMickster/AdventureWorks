@@ -44,7 +44,9 @@ public sealed class UserAccountEntityToModelProfileTests : UnitTestBase
                 LastName = "Mantle",
                 Title = "Mr.",
                 PersonType = "C"
-            }
+            },
+            PrimaryEmailAddressId = 7,
+            EmailAddress = new EmailAddress() {BusinessEntityId = 725, EmailAddressId = 7, EmailAddressName = "mickey.mantle@example.com" }
         };
 
         var result = _mapper.Map<UserAccountModel>(entity);
@@ -59,6 +61,7 @@ public sealed class UserAccountEntityToModelProfileTests : UnitTestBase
             result.LastName.Should().Be("Mantle");
             result.PasswordHash.Should().NotBeNullOrEmpty();
             result.FullName.Should().Be("Mantle, Mickey Charles");
+            result.PrimaryEmailAddress.Should().Be("mickey.mantle@example.com");
         }
     }
 
@@ -82,7 +85,9 @@ public sealed class UserAccountEntityToModelProfileTests : UnitTestBase
                 LastName = "Mantle",
                 Title = "Mr.",
                 PersonType = "C"
-            }
+            },
+            PrimaryEmailAddressId = 7,
+            EmailAddress = new EmailAddress() { BusinessEntityId = 725, EmailAddressId = 7, EmailAddressName = "mickey.mantle@example.com" }
         };
 
         var result = _mapper.Map<UserAccountModel>(entity);
@@ -119,7 +124,9 @@ public sealed class UserAccountEntityToModelProfileTests : UnitTestBase
                 BusinessEntityId = 725,
                 Title = "Mr.",
                 PersonType = "C"
-            }
+            },
+            PrimaryEmailAddressId = 7,
+            EmailAddress = new EmailAddress() { BusinessEntityId = 725, EmailAddressId = 7, EmailAddressName = "mickey.mantle@example.com" }
         };
 
         var result = _mapper.Map<UserAccountModel>(entity);
