@@ -855,3 +855,33 @@ WHERE	NOT EXISTS (SELECT	1
 					WHERE	sr.RoleId = xref.RoleId)
 
 ```
+
+## Add Foreign Keys
+
+```sql
+
+ALTER TABLE Shield.SecurityGroupSecurityFunction 
+	WITH CHECK ADD CONSTRAINT FK_SecurityGroupSecurityFunction_GroupId FOREIGN KEY (GroupId)
+	REFERENCES Shield.SecurityGroup (GroupId)
+
+ALTER TABLE Shield.SecurityGroupSecurityFunction 
+	WITH CHECK ADD CONSTRAINT FK_SecurityGroupSecurityFunction_FunctionId FOREIGN KEY (FunctionId)
+	REFERENCES Shield.SecurityFunction (FunctionId)
+
+ALTER TABLE Shield.SecurityGroupSecurityRole 
+	WITH CHECK ADD CONSTRAINT FK_SecurityGroupSecurityRole_GroupId FOREIGN KEY (GroupId)
+	REFERENCES Shield.SecurityGroup (GroupId)
+
+ALTER TABLE Shield.SecurityGroupSecurityRole 
+	WITH CHECK ADD CONSTRAINT FK_SecurityGroupSecurityRole_RoleId FOREIGN KEY (RoleId)
+	REFERENCES Shield.SecurityRole (RoleId)
+
+ALTER TABLE Shield.SecurityGroupUserAccount 
+	WITH CHECK ADD CONSTRAINT FK_SecurityGroupUserAccount_BusinessEntityID FOREIGN KEY (BusinessEntityID)
+	REFERENCES Person.Person (BusinessEntityID)
+
+ALTER TABLE Shield.SecurityGroupUserAccount 
+	WITH CHECK ADD CONSTRAINT FK_SecurityGroupUserAccount_GroupId FOREIGN KEY (GroupId)
+	REFERENCES Shield.SecurityGroup (GroupId)
+	
+```
