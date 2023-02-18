@@ -39,6 +39,18 @@ public class AdventureWorksDbContext : DbContext, IAdventureWorksDbContext
 
     public DbSet<SalesTerritoryEntity> SalesTerritories { get; set; }
 
+    public DbSet<SecurityFunctionEntity> SecurityFunctions { get; set; }
+
+    public DbSet<SecurityGroupEntity> SecurityGroups { get; set; }
+
+    public DbSet<SecurityGroupSecurityFunctionEntity> SecurityGroupSecurityFunctions { get; set; }
+
+    public DbSet<SecurityGroupSecurityRoleEntity> SecurityGroupSecurityRoles { get; set; }
+
+    public DbSet<SecurityGroupUserAccountEntity> SecurityGroupUserAccounts { get; set; }
+
+    public DbSet<SecurityRoleEntity> SecurityRoles { get; set; }
+
     public DbSet<StateProvinceEntity> StateProvinces { get; set; }
 
     public DbSet<UserAccountEntity> UserAccounts { get; set; }

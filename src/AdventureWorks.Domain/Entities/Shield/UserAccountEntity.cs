@@ -20,4 +20,6 @@ public sealed class UserAccountEntity : BaseEntity
 
     public EmailAddress EmailAddress { get; set; }
 
+    public ICollection<SecurityGroupUserAccountEntity> SecurityGroupUserAccountEntities { get; set; }
+
 }

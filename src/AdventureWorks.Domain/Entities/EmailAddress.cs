@@ -1,4 +1,6 @@
-﻿namespace AdventureWorks.Domain.Entities;
+﻿using AdventureWorks.Domain.Entities.Shield;
+
+namespace AdventureWorks.Domain.Entities;
 
 public class EmailAddress : BaseEntity
 {

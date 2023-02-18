@@ -21,5 +21,5 @@ public class BusinessEntity : BaseEntity
     public ICollection<BusinessEntityContact> BusinessEntityContacts { get; set; }
 
     public ICollection<UserAccountEntity> UserAccounts { get; set; }
-
+    
 }

@@ -3,7 +3,7 @@ using AdventureWorks.Domain.Entities.Shield;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
 
-namespace AdventureWorks.Infrastructure.Persistence.Configurations;
+namespace AdventureWorks.Infrastructure.Persistence.Configurations.Shield;
 
 public sealed class UserAccountConfiguration : IEntityTypeConfiguration<UserAccountEntity>
 {
@@ -26,7 +26,9 @@ public sealed class UserAccountConfiguration : IEntityTypeConfiguration<UserAcco
             .HasForeignKey<Person>(c => c.BusinessEntityId);
 
         builder.HasOne(a => a.EmailAddress)
-            .WithOne()
-            .HasForeignKey<EmailAddress>(c => c.EmailAddressId);
+            .WithMany()
+            .HasForeignKey(x => x.PrimaryEmailAddressId)
+            .HasPrincipalKey(y => y.EmailAddressId);
+
     }
 }

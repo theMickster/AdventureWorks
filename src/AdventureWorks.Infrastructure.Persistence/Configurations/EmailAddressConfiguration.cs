@@ -12,11 +12,10 @@ public class EmailAddressConfiguration : IEntityTypeConfiguration<EmailAddress>
 
         builder.Property(x => x.EmailAddressName).HasColumnName("EmailAddress");
 
-        builder.HasKey(a => new { a.BusinessEntityId, a.EmailAddressId });
+        builder.HasKey(a => a.EmailAddressId);
 
         builder.HasOne(a => a.BusinessEntity)
             .WithMany(b=>b.EmailAddresses)
             .HasForeignKey(a => a.BusinessEntityId);
-
     }
 }
