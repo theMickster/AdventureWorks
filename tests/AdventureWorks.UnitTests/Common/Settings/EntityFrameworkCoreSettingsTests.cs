@@ -9,7 +9,7 @@ public sealed class EntityFrameworkCoreSettingsTests : UnitTestBase
     public void Property_gets_and_sets_succeeds()
     {
         EntityFrameworkCoreSettings.SettingsRootName.Should().Be("EntityFrameworkCoreSettings");
-        var settings = new EntityFrameworkCoreSettings()
+        var settings = new EntityFrameworkCoreSettings
         {
             CommandLogLevel = "Debug",
             CommandTimeout = 120,

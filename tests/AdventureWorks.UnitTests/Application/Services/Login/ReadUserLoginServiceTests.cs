@@ -137,7 +137,7 @@ public sealed class ReadUserLoginServiceTests : UnitTestBase
         const string passwordHash = "$2a$11$WzjLdJ.9Mg4Gk96gcSsYeu7tUqRtX5P02OV1Pe5A//UWRF52WoWYe";
         const string password = "HelloWorld";
         const string username = "john.elway";
-        var tokenModel = new UserAccountTokenModel()
+        var tokenModel = new UserAccountTokenModel
         {
             Id = new Guid(),
             Token = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiJBZHZlbnR1cmVXb3Jrc0FQSSIsImp0aSI6IjJlNTBiODM3LTYyNjAtNDljMy1hNTMxLTgzOTUzY2U1NzcyMiIsImlhdCI6MTY3NjA1NjcyNCwiZXhwIjoxNjc2MDYyNzI0LCJnaXZlbl9uYW1lIjoiSm9obiIsImZhbWlseV9uYW1lIjoiRWx3YXkiLCJVc2VySWQiOiIxIiwiVXNlck5hbWUiOiJqb2huLmVsd2F5IiwibmJmIjoxNjc2MDU2NzI0LCJpc3MiOiJodHRwczovL2xvY2FsaG9zdC8iLCJhdWQiOiJodHRwczovL2xvY2FsaG9zdC8ifQ.gl90yhJtcPtfTrYtgIX7nWCKpaOMUyU2Ajbc7B8FNKQ",

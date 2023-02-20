@@ -174,7 +174,7 @@ public sealed class AuthenticationControllerTests : UnitTestBase
     [Fact]
     public async Task AuthenticateUser_succeedsAsync()
     {
-        var user = new UserAccountModel()
+        var user = new UserAccountModel
         {
             Id = 1,
             FirstName = "Joe",
@@ -183,7 +183,7 @@ public sealed class AuthenticationControllerTests : UnitTestBase
             PrimaryEmailAddress = "joe.montanta@example.com"
         };
 
-        var tokenModel = new UserAccountTokenModel()
+        var tokenModel = new UserAccountTokenModel
         {
             Id = new Guid(),
             Token = "token",
@@ -226,7 +226,7 @@ public sealed class AuthenticationControllerTests : UnitTestBase
     public static IEnumerable<object?[]> AuthenticateUserData =>
         new List<object?[]>
         {
-            new object?[] { new UserAccountModel(), new UserAccountTokenModel(), new List<ValidationFailure>(){new (){ErrorCode = "1", ErrorMessage = "A"}}, "User Authentication Attempt Failed" }
+            new object?[] { new UserAccountModel(), new UserAccountTokenModel(), new List<ValidationFailure> {new (){ErrorCode = "1", ErrorMessage = "A"}}, "User Authentication Attempt Failed" }
             ,new object?[] { null, new UserAccountTokenModel(), new List<ValidationFailure>(), "Unable to complete authentication request" }
             ,new object?[] { new UserAccountModel(), null, new List<ValidationFailure>(), "Unable to complete authentication request" }
         };

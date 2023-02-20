@@ -98,7 +98,7 @@ public sealed class UserAccountRepositoryTests : PersistenceUnitTestBase
         },
         });
 
-        DbContext.EmailAddresses.AddRange(new List<EmailAddress>()
+        DbContext.EmailAddresses.AddRange(new List<EmailAddress>
         {
             new() { BusinessEntityId = 1, EmailAddressId = 1, EmailAddressName = "john.elway@example.com"},
             new() { BusinessEntityId = 2, EmailAddressId = 2, EmailAddressName = "terrell.davis@example.com"},

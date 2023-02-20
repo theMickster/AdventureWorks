@@ -46,7 +46,7 @@ public sealed class UserAccountEntityToModelProfileTests : UnitTestBase
                 PersonType = "C"
             },
             PrimaryEmailAddressId = 7,
-            EmailAddress = new EmailAddress() {BusinessEntityId = 725, EmailAddressId = 7, EmailAddressName = "mickey.mantle@example.com" }
+            EmailAddress = new EmailAddress {BusinessEntityId = 725, EmailAddressId = 7, EmailAddressName = "mickey.mantle@example.com" }
         };
 
         var result = _mapper.Map<UserAccountModel>(entity);
@@ -87,7 +87,7 @@ public sealed class UserAccountEntityToModelProfileTests : UnitTestBase
                 PersonType = "C"
             },
             PrimaryEmailAddressId = 7,
-            EmailAddress = new EmailAddress() { BusinessEntityId = 725, EmailAddressId = 7, EmailAddressName = "mickey.mantle@example.com" }
+            EmailAddress = new EmailAddress { BusinessEntityId = 725, EmailAddressId = 7, EmailAddressName = "mickey.mantle@example.com" }
         };
 
         var result = _mapper.Map<UserAccountModel>(entity);
@@ -126,7 +126,7 @@ public sealed class UserAccountEntityToModelProfileTests : UnitTestBase
                 PersonType = "C"
             },
             PrimaryEmailAddressId = 7,
-            EmailAddress = new EmailAddress() { BusinessEntityId = 725, EmailAddressId = 7, EmailAddressName = "mickey.mantle@example.com" }
+            EmailAddress = new EmailAddress { BusinessEntityId = 725, EmailAddressId = 7, EmailAddressName = "mickey.mantle@example.com" }
         };
 
         var result = _mapper.Map<UserAccountModel>(entity);

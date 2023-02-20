@@ -41,7 +41,7 @@ Console.WriteLine("Hello from the AdventureWorks Testing Console App");
             Console.WriteLine("Verifying:: AdventureWorksDbContext ........ ");
             Console.WriteLine("****************************************************************");
 
-            var (rtSuccess, errorList) = new VerifyDbContext(serviceProvider).VerifyAllTheThings();
+            var (rtSuccess, errorList) = await new VerifyDbContext(serviceProvider).VerifyAllTheThings().ConfigureAwait(false);
 
 //        }
 //    }
