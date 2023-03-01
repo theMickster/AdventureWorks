@@ -1,5 +1,5 @@
-﻿using AdventureWorks.Domain.Entities.AccountInfo;
-using AdventureWorks.Domain.Models.AccountInfo;
+﻿using AdventureWorks.Domain.Entities.Shield;
+using AdventureWorks.Domain.Models.Shield;
 using AutoMapper;
 
 namespace AdventureWorks.Domain.Profiles;
@@ -25,6 +25,15 @@ public sealed class UserAccountEntityToModelProfile : Profile
                 o => o.MapFrom(y => y.Person.LastName))
 
             .ForPath(x => x.PasswordHash,
-                o => o.MapFrom(y => y.PasswordHash));
+                o => o.MapFrom(y => y.PasswordHash))
+            
+            .ForPath(x => x.PrimaryEmailAddress,
+                o => o.MapFrom(y => y.EmailAddress.EmailAddressName))
+            
+            .ForPath(x => x.SecurityRoles, o=> o.Ignore())
+
+            .ForPath(x => x.SecurityFunctions, o => o.Ignore())
+
+            .ForPath(x => x.SecurityGroups, o => o.Ignore());
     }
 }

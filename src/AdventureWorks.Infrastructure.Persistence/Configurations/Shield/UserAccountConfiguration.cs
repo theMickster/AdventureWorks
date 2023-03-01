@@ -1,9 +1,9 @@
 ﻿using AdventureWorks.Domain.Entities;
-using AdventureWorks.Domain.Entities.AccountInfo;
+using AdventureWorks.Domain.Entities.Shield;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
 
-namespace AdventureWorks.Infrastructure.Persistence.Configurations;
+namespace AdventureWorks.Infrastructure.Persistence.Configurations.Shield;
 
 public sealed class UserAccountConfiguration : IEntityTypeConfiguration<UserAccountEntity>
 {
@@ -24,5 +24,11 @@ public sealed class UserAccountConfiguration : IEntityTypeConfiguration<UserAcco
         builder.HasOne(a => a.Person)
             .WithOne(b => b.UserAccountEntity)
             .HasForeignKey<Person>(c => c.BusinessEntityId);
+
+        builder.HasOne(a => a.EmailAddress)
+            .WithMany()
+            .HasForeignKey(x => x.PrimaryEmailAddressId)
+            .HasPrincipalKey(y => y.EmailAddressId);
+
     }
 }

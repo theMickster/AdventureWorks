@@ -1,6 +1,6 @@
 ﻿namespace AdventureWorks.Domain.Models.Slim;
 
-public sealed class GenericSlimModel
+public class GenericSlimModel
 {
     public int Id { get; set; }
 

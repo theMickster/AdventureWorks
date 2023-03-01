@@ -1,12 +1,12 @@
 ﻿using AdventureWorks.Application.Interfaces.Repositories;
 using AdventureWorks.Common.Attributes;
-using AdventureWorks.Domain.Entities.AccountInfo;
 using AdventureWorks.Infrastructure.Persistence.DbContexts;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Logging;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using AdventureWorks.Domain.Entities.Shield;
 
 namespace AdventureWorks.Infrastructure.Persistence.Repositories.AccountInfo;
 
@@ -35,6 +35,7 @@ public sealed class UserAccountRepository : IUserAccountRepository
 
         var results = await _dbContext.Set<UserAccountEntity>()
             .Include(x => x.Person)
+            .Include(x => x.EmailAddress)
             .Where(x => x.UserName.ToLower().Trim() == username)
             .ToListAsync()
             .ConfigureAwait(false);
@@ -58,6 +59,7 @@ public sealed class UserAccountRepository : IUserAccountRepository
     {
         return await _dbContext.Set<UserAccountEntity>()
             .Include(x => x.Person)
+            .Include(x => x.EmailAddress)
             .ToListAsync()
             .ConfigureAwait(false);
     }

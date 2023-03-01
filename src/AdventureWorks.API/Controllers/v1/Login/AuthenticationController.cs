@@ -1,5 +1,5 @@
 ﻿using AdventureWorks.Application.Interfaces.Services.Login;
-using AdventureWorks.Domain.Models.AccountInfo;
+using AdventureWorks.Domain.Models.Shield;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
@@ -84,6 +84,10 @@ public sealed class AuthenticationController : ControllerBase
             Token = token,
             Username = userAccount.UserName,
             FullName = userAccount.FullName,
+            EmailAddress = userAccount.PrimaryEmailAddress,
+            SecurityFunctions = userAccount.SecurityFunctions,
+            SecurityGroups = userAccount.SecurityGroups,
+            SecurityRoles = userAccount.SecurityRoles
         };
 
         return Ok(responseModel);

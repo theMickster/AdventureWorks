@@ -1,4 +1,4 @@
-﻿using AdventureWorks.Domain.Models.AccountInfo;
+﻿using AdventureWorks.Domain.Models.Shield;
 
 namespace AdventureWorks.Application.Interfaces.Services.Login;
 

@@ -4,9 +4,9 @@ using AdventureWorks.Test.Common.Extensions;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
 using System.Net;
-using AdventureWorks.Domain.Models.AccountInfo;
 using FluentValidation.Results;
 using AdventureWorks.Domain.Models;
+using AdventureWorks.Domain.Models.Shield;
 
 namespace AdventureWorks.UnitTests.API.Controllers.v1.Login;
 
@@ -174,15 +174,31 @@ public sealed class AuthenticationControllerTests : UnitTestBase
     [Fact]
     public async Task AuthenticateUser_succeedsAsync()
     {
-        var user = new UserAccountModel()
+        var user = new UserAccountModel
         {
             Id = 1,
             FirstName = "Joe",
             LastName = "Montanta",
-            UserName = "joe.montanta"
+            UserName = "joe.montanta",
+            PrimaryEmailAddress = "joe.montanta@example.com",
+            SecurityRoles = new List<SecurityRoleSlimModel>
+            {
+                new(){Id = 1, Name = "Help Desk Administrator"},
+                new(){Id = 2, Name = "Adventure Works Employee"},
+                new(){Id = 3, Name = "Adventure Works IT Employee"}
+            },
+            SecurityFunctions = new List<SecurityFunctionSlimModel>
+            {
+                new(){Id = 10, Name = "Reset User Passwords"}
+            },
+            SecurityGroups = new List<SecurityGroupSlimModel>
+            {
+                new(){Id = 1, Name = "A Group 001"},
+                new(){Id = 2, Name = "A Group 002"}
+            }
         };
 
-        var tokenModel = new UserAccountTokenModel()
+        var tokenModel = new UserAccountTokenModel
         {
             Id = new Guid(),
             Token = "token",
@@ -211,10 +227,15 @@ public sealed class AuthenticationControllerTests : UnitTestBase
             outputModel!.Token.Should().NotBeNull();
             outputModel!.Username.Should().Be("joe.montanta");
             outputModel!.FullName.Should().Be("Montanta, Joe");
+            outputModel!.EmailAddress.Should().Be("joe.montanta@example.com");
             outputModel!.Token.Token.Should().Be("token");
             outputModel!.Token.RefreshToken.Should().Be("refreshToken");
             outputModel!.Token.TokenExpiration.Should().BeAfter(DateTime.Now);
             outputModel!.Token.RefreshTokenExpiration.Should().BeAfter(DateTime.Now);
+
+            outputModel!.SecurityFunctions.Count.Should().Be(1);
+            outputModel!.SecurityGroups.Count.Should().Be(2);
+            outputModel!.SecurityRoles.Count.Should().Be(3);
         }
     }
 
@@ -224,7 +245,7 @@ public sealed class AuthenticationControllerTests : UnitTestBase
     public static IEnumerable<object?[]> AuthenticateUserData =>
         new List<object?[]>
         {
-            new object?[] { new UserAccountModel(), new UserAccountTokenModel(), new List<ValidationFailure>(){new (){ErrorCode = "1", ErrorMessage = "A"}}, "User Authentication Attempt Failed" }
+            new object?[] { new UserAccountModel(), new UserAccountTokenModel(), new List<ValidationFailure> {new (){ErrorCode = "1", ErrorMessage = "A"}}, "User Authentication Attempt Failed" }
             ,new object?[] { null, new UserAccountTokenModel(), new List<ValidationFailure>(), "Unable to complete authentication request" }
             ,new object?[] { new UserAccountModel(), null, new List<ValidationFailure>(), "Unable to complete authentication request" }
         };

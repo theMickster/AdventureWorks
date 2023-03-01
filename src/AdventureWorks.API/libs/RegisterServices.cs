@@ -1,3 +1,4 @@
+using System.Diagnostics;
 using AdventureWorks.Application.Exceptions;
 using AdventureWorks.Application.Interfaces.DbContext;
 using AdventureWorks.Application.Validators.Address;
@@ -138,7 +139,11 @@ internal static class RegisterServices
         var currentConnectionString = GetSqlConnectionString(builder.Configuration, connectionStrings );
 
         builder.Services.AddDbContext<AdventureWorksDbContext>(options =>
-            options.UseSqlServer(currentConnectionString));
+            {
+                options.UseSqlServer(currentConnectionString);
+                options.LogTo(message => Debug.WriteLine(message));
+            }
+        ); 
 
         builder.Services.AddScoped<IAdventureWorksDbContext>(
             provider => provider.GetService<AdventureWorksDbContext>() ?? 

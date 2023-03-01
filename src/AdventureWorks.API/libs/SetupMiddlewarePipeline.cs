@@ -19,9 +19,7 @@ internal static class SetupMiddlewarePipeline
         {
             app.UseDeveloperExceptionPage();
         }
-
-        app.UseAuthentication();
-
+        
         app.ConfigureApplicatonHeaders(isDevelopment, _swaggerNonceString);
 
         app.UseCors();
@@ -32,13 +30,13 @@ internal static class SetupMiddlewarePipeline
 
         app.UseRouting();
 
+        app.UseAuthentication();
+
         app.UseAuthorization();
 
         app.UseEndpoints(endpoints => { endpoints.MapControllers(); });
 
         app.MapControllers();
-
-        app.MapGet("/", () => $"hello world from {Environment.MachineName}");
 
         app.UseSwagger();
 

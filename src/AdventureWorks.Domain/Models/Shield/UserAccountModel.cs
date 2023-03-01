@@ -1,4 +1,4 @@
-﻿namespace AdventureWorks.Domain.Models.AccountInfo;
+﻿namespace AdventureWorks.Domain.Models.Shield;
 
 public sealed class UserAccountModel
 {
@@ -14,6 +14,8 @@ public sealed class UserAccountModel
 
     public string PasswordHash { get; set; }
 
+    public string PrimaryEmailAddress { get; set; }
+
     public string FullName
     {
         get
@@ -28,4 +30,10 @@ public sealed class UserAccountModel
                 : LastName + ", " + FirstName + " " + MiddleName;
         }
     }
+
+    public IReadOnlyList<SecurityRoleSlimModel> SecurityRoles { get; set; }
+
+    public IReadOnlyList<SecurityFunctionSlimModel> SecurityFunctions { get; set; }
+
+    public IReadOnlyList<SecurityGroupSlimModel> SecurityGroups { get; set; }
 }
