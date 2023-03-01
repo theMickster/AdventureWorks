@@ -1,4 +1,5 @@
 ﻿using AdventureWorks.Application.Interfaces.Repositories;
+using AdventureWorks.Application.Interfaces.Repositories.AccountInfo;
 using AdventureWorks.Application.Interfaces.Services.Login;
 using AdventureWorks.Application.Services.Login;
 using AdventureWorks.Common.Attributes;
@@ -16,6 +17,7 @@ public sealed class ReadUserLoginServiceTests : UnitTestBase
 {
     private readonly Mock<ILogger<ReadUserLoginService>> _mockLogger = new();
     private readonly Mock<IUserAccountRepository> _mockUserAccountRepository = new();
+    private readonly Mock<IReadUserAuthorizationRepository> _mockReadUserAuthorizationRepository = new();
     private readonly Mock<ITokenService> _mockTokenService = new();
     private readonly IMapper _mapper;
     private ReadUserLoginService _sut;
@@ -27,7 +29,7 @@ public sealed class ReadUserLoginServiceTests : UnitTestBase
         );
         _mapper = mappingConfig.CreateMapper();
 
-        _sut = new ReadUserLoginService(_mockLogger.Object, _mockUserAccountRepository.Object, _mockTokenService.Object, _mapper);
+        _sut = new ReadUserLoginService(_mockLogger.Object, _mockUserAccountRepository.Object, _mockReadUserAuthorizationRepository.Object, _mockTokenService.Object, _mapper);
     }
     
     [Fact]
@@ -51,7 +53,8 @@ public sealed class ReadUserLoginServiceTests : UnitTestBase
         {
             _ = ((Action)(() => _sut = new ReadUserLoginService(
                     null!,
-                    _mockUserAccountRepository.Object, 
+                    _mockUserAccountRepository.Object,
+                    _mockReadUserAuthorizationRepository.Object,
                     _mockTokenService.Object, 
                     _mapper)))
                 .Should().Throw<ArgumentNullException>("because we expect a null argument exception.")
@@ -59,15 +62,28 @@ public sealed class ReadUserLoginServiceTests : UnitTestBase
 
             _ = ((Action)(() => _sut = new ReadUserLoginService(
                     _mockLogger.Object,
-                    null!, 
+                    null!,
+                    _mockReadUserAuthorizationRepository.Object,
                     _mockTokenService.Object, 
                     _mapper)))
                 .Should().Throw<ArgumentNullException>("because we expect a null argument exception.")
                 .And.ParamName.Should().Be("userAccountRepository");
 
+
             _ = ((Action)(() => _sut = new ReadUserLoginService(
                     _mockLogger.Object,
                     _mockUserAccountRepository.Object,
+                    null!,
+                    _mockTokenService.Object,
+                    _mapper)))
+                .Should().Throw<ArgumentNullException>("because we expect a null argument exception.")
+                .And.ParamName.Should().Be("readUserAuthorizationRepository");
+
+
+            _ = ((Action)(() => _sut = new ReadUserLoginService(
+                    _mockLogger.Object,
+                    _mockUserAccountRepository.Object,
+                    _mockReadUserAuthorizationRepository.Object,
                     null!,
                     _mapper)))
                 .Should().Throw<ArgumentNullException>("because we expect a null argument exception.")
@@ -76,6 +92,7 @@ public sealed class ReadUserLoginServiceTests : UnitTestBase
             _ = ((Action)(() => _sut = new ReadUserLoginService(
                     _mockLogger.Object,
                     _mockUserAccountRepository.Object,
+                    _mockReadUserAuthorizationRepository.Object,
                     _mockTokenService.Object,
                     null!)))
                 .Should().Throw<ArgumentNullException>("because we expect a null argument exception.")
@@ -132,6 +149,39 @@ public sealed class ReadUserLoginServiceTests : UnitTestBase
     }
 
     [Fact]
+    public async Task AuthenticateUserAsync_returns_correctly_when_user_authorization_entity_is_not_foundAsync()
+    {
+        const string passwordHash = "$2a$11$WzjLdJ.9Mg4Gk96gcSsYeu7tUqRtX5P02OV1Pe5A//UWRF52WoWYe";
+        const string password = "HelloWorld";
+        const string username = "john.elway";
+
+        _mockUserAccountRepository.Setup(x => x.GetByUserNameAsync(username))
+            .ReturnsAsync(new UserAccountEntity
+            {
+                BusinessEntityId = 1,
+                UserName = username,
+                PasswordHash = passwordHash
+            });
+
+        _mockReadUserAuthorizationRepository.Setup(x => x.GetByUserIdAsync(It.IsAny<int>()))
+            .ReturnsAsync( (UserAuthorizationEntity)null!);
+
+        var (user, token, validationFailures) = await _sut.AuthenticateUserAsync(username, password).ConfigureAwait(false);
+
+        using (new AssertionScope())
+        {
+            user.Should().BeNull();
+            token.Should().BeNull();
+            validationFailures.Count(x => x.ErrorCode == "Auth-Error-001").Should().Be(0);
+            validationFailures.Count(x => x.ErrorCode == "Auth-Error-002").Should().Be(0);
+            validationFailures.Count(x => x.ErrorCode == "Auth-Error-003").Should().Be(1);
+
+            _mockLogger.VerifyLoggingMessageContains("Auth-Error-003", null, LogLevel.Information);
+            _mockLogger.VerifyLoggingMessageContains("Unable to construct authorization entity as user permission mappings do not exist", null, LogLevel.Information);
+        }
+    }
+    
+    [Fact]
     public async Task AuthenticateUserAsync_succeeds_when_all_is_goodAsync()
     {
         const string passwordHash = "$2a$11$WzjLdJ.9Mg4Gk96gcSsYeu7tUqRtX5P02OV1Pe5A//UWRF52WoWYe";
@@ -157,6 +207,30 @@ public sealed class ReadUserLoginServiceTests : UnitTestBase
         _mockTokenService.Setup(x => x.GenerateUserToken(It.IsAny<UserAccountModel>()))
             .Returns(tokenModel);
 
+        _mockReadUserAuthorizationRepository.Setup(x => x.GetByUserIdAsync(1))
+            .ReturnsAsync(new UserAuthorizationEntity
+            {
+                BusinessEntityId = 1,
+                SecurityFunctions = new List<SecurityFunctionEntity>
+                {
+                    new() {Id = 1, Name = "Super Cool Function"},
+                    new() {Id = 2, Name = "Kinda Cool Function"},
+                    new() {Id = 3, Name = "Not Cool Function"}
+                }.AsReadOnly(),
+                SecurityRoles = new List<SecurityRoleEntity>
+                {
+                    new() {Id = 10, Name = "Regular Employee"},
+                    new() {Id = 11, Name = "IT Teammate"}
+                }.AsReadOnly(),
+                SecurityGroups = new List<SecurityGroupEntity>
+                {
+                    new() {Id = 101, Name = "Adventure Works Employees"},
+                    new() {Id = 102, Name = "Red Team Go"},
+                    new() {Id = 103, Name = "Weekend Tier 3 Team"},
+                    new() {Id = 104, Name = "Denver IT 04 Team"}
+                }.AsReadOnly()
+            });
+
         var (user, outputToken, validationFailures) = await _sut.AuthenticateUserAsync(username, password).ConfigureAwait(false);
 
         using (new AssertionScope())
@@ -165,6 +239,14 @@ public sealed class ReadUserLoginServiceTests : UnitTestBase
             user!.UserName.Should().Be(username);
             outputToken.Should().NotBeNull();
             validationFailures.Count.Should().Be(0);
+
+            user!.SecurityFunctions.Count.Should().Be(3);
+            user!.SecurityRoles.Count.Should().Be(2);
+            user!.SecurityGroups.Count.Should().Be(4);
+            
+            user!.SecurityFunctions.Count(x => x.Id == 3).Should().Be(1);
+            user!.SecurityRoles.Count(x => x.Id == 11).Should().Be(1);
+            user!.SecurityGroups.Count(x => x.Id == 104).Should().Be(1);
         }
     }
 }

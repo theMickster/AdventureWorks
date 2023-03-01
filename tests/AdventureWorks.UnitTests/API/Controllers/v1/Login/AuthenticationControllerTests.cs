@@ -180,7 +180,22 @@ public sealed class AuthenticationControllerTests : UnitTestBase
             FirstName = "Joe",
             LastName = "Montanta",
             UserName = "joe.montanta",
-            PrimaryEmailAddress = "joe.montanta@example.com"
+            PrimaryEmailAddress = "joe.montanta@example.com",
+            SecurityRoles = new List<SecurityRoleSlimModel>
+            {
+                new(){Id = 1, Name = "Help Desk Administrator"},
+                new(){Id = 2, Name = "Adventure Works Employee"},
+                new(){Id = 3, Name = "Adventure Works IT Employee"}
+            },
+            SecurityFunctions = new List<SecurityFunctionSlimModel>
+            {
+                new(){Id = 10, Name = "Reset User Passwords"}
+            },
+            SecurityGroups = new List<SecurityGroupSlimModel>
+            {
+                new(){Id = 1, Name = "A Group 001"},
+                new(){Id = 2, Name = "A Group 002"}
+            }
         };
 
         var tokenModel = new UserAccountTokenModel
@@ -217,6 +232,10 @@ public sealed class AuthenticationControllerTests : UnitTestBase
             outputModel!.Token.RefreshToken.Should().Be("refreshToken");
             outputModel!.Token.TokenExpiration.Should().BeAfter(DateTime.Now);
             outputModel!.Token.RefreshTokenExpiration.Should().BeAfter(DateTime.Now);
+
+            outputModel!.SecurityFunctions.Count.Should().Be(1);
+            outputModel!.SecurityGroups.Count.Should().Be(2);
+            outputModel!.SecurityRoles.Count.Should().Be(3);
         }
     }
 

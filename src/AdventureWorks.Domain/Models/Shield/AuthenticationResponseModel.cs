@@ -10,4 +10,9 @@ public sealed class AuthenticationResponseModel
 
     public UserAccountTokenModel Token { get; set; }
 
+    public IReadOnlyList<SecurityFunctionSlimModel> SecurityFunctions { get; set; }
+
+    public IReadOnlyList<SecurityGroupSlimModel> SecurityGroups { get; set; }
+
+    public IReadOnlyList<SecurityRoleSlimModel> SecurityRoles { get; set; }
 }

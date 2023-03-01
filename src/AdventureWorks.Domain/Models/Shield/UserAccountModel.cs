@@ -30,4 +30,10 @@ public sealed class UserAccountModel
                 : LastName + ", " + FirstName + " " + MiddleName;
         }
     }
+
+    public IReadOnlyList<SecurityRoleSlimModel> SecurityRoles { get; set; }
+
+    public IReadOnlyList<SecurityFunctionSlimModel> SecurityFunctions { get; set; }
+
+    public IReadOnlyList<SecurityGroupSlimModel> SecurityGroups { get; set; }
 }

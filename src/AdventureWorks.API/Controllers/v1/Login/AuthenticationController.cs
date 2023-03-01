@@ -84,7 +84,10 @@ public sealed class AuthenticationController : ControllerBase
             Token = token,
             Username = userAccount.UserName,
             FullName = userAccount.FullName,
-            EmailAddress = userAccount.PrimaryEmailAddress
+            EmailAddress = userAccount.PrimaryEmailAddress,
+            SecurityFunctions = userAccount.SecurityFunctions,
+            SecurityGroups = userAccount.SecurityGroups,
+            SecurityRoles = userAccount.SecurityRoles
         };
 
         return Ok(responseModel);

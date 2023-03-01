@@ -103,7 +103,7 @@ internal sealed class VerifyDbContext
         //}
 
 
-        const int userId = 1000004;
+        const int userId = 1000001;
 
         var result = await _readUserAuthorizationRepository.GetByUserIdAsync(userId).ConfigureAwait(false);
 

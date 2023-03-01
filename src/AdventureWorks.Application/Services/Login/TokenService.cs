@@ -31,16 +31,26 @@ public sealed class TokenService : ITokenService
         var tokenExpiration = DateTime.UtcNow.AddSeconds(_tokenSettings.Value.TokenExpirationInSeconds);
         var secretKey = Encoding.UTF8.GetBytes(_tokenSettings.Value.Key);
         var tokenHandler = new JwtSecurityTokenHandler();
-        var claims = new[] {
-            new Claim(JwtRegisteredClaimNames.Sub, _tokenSettings.Value.Subject),
-            new Claim(JwtRegisteredClaimNames.Jti, Guid.NewGuid().ToString()),
-            new Claim(JwtRegisteredClaimNames.Iat, DateTime.UtcNow.ToString(CultureInfo.InvariantCulture)),
-            new Claim(JwtRegisteredClaimNames.Exp, tokenExpiration.ToString(CultureInfo.InvariantCulture)),
-            new Claim(JwtRegisteredClaimNames.GivenName, userAccount.FirstName),
-            new Claim(JwtRegisteredClaimNames.FamilyName, userAccount.LastName),
-            new Claim("UserId", userAccount.Id.ToString()),
-            new Claim("UserName", userAccount.UserName)
+        var claims = new List<Claim> {
+            new(JwtRegisteredClaimNames.Sub, _tokenSettings.Value.Subject),
+            new(JwtRegisteredClaimNames.Jti, Guid.NewGuid().ToString()),
+            new(JwtRegisteredClaimNames.Iat, DateTime.UtcNow.ToString(CultureInfo.InvariantCulture)),
+            new(JwtRegisteredClaimNames.Exp, tokenExpiration.ToString(CultureInfo.InvariantCulture)),
+            new(JwtRegisteredClaimNames.GivenName, userAccount.FirstName),
+            new(JwtRegisteredClaimNames.FamilyName, userAccount.LastName),
+            new("UserId", userAccount.Id.ToString()),
+            new("UserName", userAccount.UserName)
         };
+
+        if (userAccount.SecurityRoles != null && userAccount.SecurityRoles.Any())
+        {
+            claims.AddRange(userAccount.SecurityRoles.Select(x => new Claim(ClaimTypes.Role, x.Name)));
+        }
+
+        if (userAccount.SecurityFunctions != null && userAccount.SecurityFunctions.Any())
+        {
+            claims.AddRange(userAccount.SecurityFunctions.Select(x => new Claim("SecurityFunction", x.Name)));
+        }
 
         var tokenDescriptor = new SecurityTokenDescriptor
         {

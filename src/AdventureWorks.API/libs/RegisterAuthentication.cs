@@ -58,7 +58,6 @@ internal static class RegisterAuthentication
                 IssuerSigningKey = new SymmetricSecurityKey(secretKey),
                 ValidateIssuer = true,
                 ValidateAudience = true,
-                ValidateLifetime = false,
                 ValidateIssuerSigningKey = true
             };
         });
