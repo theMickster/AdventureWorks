@@ -1,4 +1,4 @@
-﻿using AdventureWorks.Domain.Entities.Shield;
+﻿using AdventureWorks.Domain.Entities.Person;
 
 namespace AdventureWorks.Domain.Entities;
 
@@ -14,5 +14,5 @@ public class EmailAddress : BaseEntity
     
     public DateTime ModifiedDate { get; set; }
 
-    public virtual Person BusinessEntity { get; set; }
+    public virtual PersonEntity BusinessEntity { get; set; }
 }

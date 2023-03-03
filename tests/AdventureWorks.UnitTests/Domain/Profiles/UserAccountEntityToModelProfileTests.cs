@@ -2,6 +2,7 @@
 using AdventureWorks.Domain.Profiles;
 using AutoMapper;
 using System.Text;
+using AdventureWorks.Domain.Entities.Person;
 using AdventureWorks.Domain.Entities.Shield;
 using AdventureWorks.Domain.Models.Shield;
 
@@ -36,14 +37,14 @@ public sealed class UserAccountEntityToModelProfileTests : UnitTestBase
             RecordId = new Guid("d683f2f4-647c-4ef3-b7ca-baf428657973"),
             UserName = "mickey.mantle",
             PasswordHash = "$2a$11$TsEBk0KOhuIXQZe0KHcSdu05/5oj3iWPRS9TZ8M2TTDFAjRwmk8eK",
-            Person = new Person
+            Person = new PersonEntity
             {
                 BusinessEntityId = 725,
                 FirstName = "Mickey",
                 MiddleName = "Charles",
                 LastName = "Mantle",
                 Title = "Mr.",
-                PersonType = "C"
+                PersonTypeId = 2
             },
             PrimaryEmailAddressId = 7,
             EmailAddress = new EmailAddress {BusinessEntityId = 725, EmailAddressId = 7, EmailAddressName = "mickey.mantle@example.com" }
@@ -78,13 +79,13 @@ public sealed class UserAccountEntityToModelProfileTests : UnitTestBase
             RecordId = new Guid("d683f2f4-647c-4ef3-b7ca-baf428657973"),
             UserName = "mickey.mantle",
             PasswordHash = "$2a$11$TsEBk0KOhuIXQZe0KHcSdu05/5oj3iWPRS9TZ8M2TTDFAjRwmk8eK",
-            Person = new Person
+            Person = new PersonEntity
             {
                 BusinessEntityId = 725,
                 FirstName = "Mickey",
                 LastName = "Mantle",
                 Title = "Mr.",
-                PersonType = "C"
+                PersonTypeId = 2
             },
             PrimaryEmailAddressId = 7,
             EmailAddress = new EmailAddress { BusinessEntityId = 725, EmailAddressId = 7, EmailAddressName = "mickey.mantle@example.com" }
@@ -119,11 +120,11 @@ public sealed class UserAccountEntityToModelProfileTests : UnitTestBase
             RecordId = new Guid("d683f2f4-647c-4ef3-b7ca-baf428657973"),
             UserName = "mickey.mantle",
             PasswordHash = "$2a$11$TsEBk0KOhuIXQZe0KHcSdu05/5oj3iWPRS9TZ8M2TTDFAjRwmk8eK",
-            Person = new Person
+            Person = new PersonEntity
             {
                 BusinessEntityId = 725,
                 Title = "Mr.",
-                PersonType = "C"
+                PersonTypeId = 2
             },
             PrimaryEmailAddressId = 7,
             EmailAddress = new EmailAddress { BusinessEntityId = 725, EmailAddressId = 7, EmailAddressName = "mickey.mantle@example.com" }

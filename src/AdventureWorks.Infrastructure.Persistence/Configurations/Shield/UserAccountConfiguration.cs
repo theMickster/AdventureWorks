@@ -1,4 +1,4 @@
-﻿using AdventureWorks.Domain.Entities;
+﻿using AdventureWorks.Domain.Entities.Person;
 using AdventureWorks.Domain.Entities.Shield;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
@@ -23,7 +23,7 @@ public sealed class UserAccountConfiguration : IEntityTypeConfiguration<UserAcco
 
         builder.HasOne(a => a.Person)
             .WithOne(b => b.UserAccountEntity)
-            .HasForeignKey<Person>(c => c.BusinessEntityId);
+            .HasForeignKey<PersonEntity>(c => c.BusinessEntityId);
 
         builder.HasOne(a => a.EmailAddress)
             .WithMany()

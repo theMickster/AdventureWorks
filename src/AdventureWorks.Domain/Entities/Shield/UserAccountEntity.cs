@@ -1,4 +1,6 @@
-﻿namespace AdventureWorks.Domain.Entities.Shield;
+﻿using AdventureWorks.Domain.Entities.Person;
+
+namespace AdventureWorks.Domain.Entities.Shield;
 
 public sealed class UserAccountEntity : BaseEntity
 {
@@ -16,7 +18,7 @@ public sealed class UserAccountEntity : BaseEntity
 
     public BusinessEntity BusinessEntity { get; set; }
 
-    public Person Person { get; set; }
+    public PersonEntity Person { get; set; }
 
     public EmailAddress EmailAddress { get; set; }
 

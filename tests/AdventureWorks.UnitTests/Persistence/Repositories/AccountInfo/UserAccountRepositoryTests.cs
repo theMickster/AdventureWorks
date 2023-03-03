@@ -1,6 +1,7 @@
 ﻿using AdventureWorks.Application.Interfaces.Repositories;
 using AdventureWorks.Common.Attributes;
 using AdventureWorks.Domain.Entities;
+using AdventureWorks.Domain.Entities.Person;
 using AdventureWorks.Domain.Entities.Shield;
 using AdventureWorks.Infrastructure.Persistence.Repositories.AccountInfo;
 using Microsoft.Extensions.Logging;
@@ -17,7 +18,7 @@ public sealed class UserAccountRepositoryTests : PersistenceUnitTestBase
     {
         _sut = new UserAccountRepository(DbContext, _mockLogger.Object);
 
-        DbContext.Persons.AddRange(new List<Person>
+        DbContext.Persons.AddRange(new List<PersonEntity>
         {
             new()
             {
