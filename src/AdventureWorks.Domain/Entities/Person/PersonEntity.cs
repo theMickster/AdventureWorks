@@ -46,4 +46,6 @@ public sealed class PersonEntity : BaseEntity
     public BusinessEntity BusinessEntity { get; set; }
 
     public UserAccountEntity UserAccountEntity { get; set; }
+
+    public PersonTypeEntity PersonType { get; set; }
 }

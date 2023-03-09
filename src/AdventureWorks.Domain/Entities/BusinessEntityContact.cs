@@ -16,7 +16,7 @@ public class BusinessEntityContact : BaseEntity
 
     public virtual BusinessEntity BusinessEntity { get; set; }
 
-    public virtual ContactType ContactType { get; set; }
+    public virtual ContactTypeEntity ContactTypeEntity { get; set; }
 
     public virtual PersonEntity Person { get; set; }
 }

@@ -2,7 +2,7 @@
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
 
-namespace AdventureWorks.Infrastructure.Persistence.Configurations;
+namespace AdventureWorks.Infrastructure.Persistence.Configurations.Person;
 
 public class PersonConfiguration : IEntityTypeConfiguration<PersonEntity>
 {
@@ -11,7 +11,7 @@ public class PersonConfiguration : IEntityTypeConfiguration<PersonEntity>
         builder.ToTable("Person", "Person");
 
         builder.HasKey(a => a.BusinessEntityId);
-        
+
         builder.HasOne(a => a.BusinessEntity)
             .WithMany(b => b.Persons)
             .HasForeignKey(a => a.BusinessEntityId);
