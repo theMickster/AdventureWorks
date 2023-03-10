@@ -18,10 +18,9 @@ public class DefaultHealthCheck : IHealthCheck
     /// constructor to use when you want to add code to perform a health check.
     /// </summary>
     /// <param name="statusFunc"></param>
-    public DefaultHealthCheck(
-        Func<(HealthStatus status, Dictionary<string, object> deps)> statusFunc)
+    public DefaultHealthCheck(Func<(HealthStatus status, Dictionary<string, object> deps)> statusFunc)
     {
-        this._statusFunc = statusFunc ?? throw new ArgumentNullException(nameof(statusFunc));
+        _statusFunc = statusFunc ?? throw new ArgumentNullException(nameof(statusFunc));
     }
 
     /// <summary>Default Implementation</summary>

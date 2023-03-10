@@ -13,6 +13,10 @@ builder.Configuration
 
 builder.Services.AddOptions();
 
+builder.Services.AddHttpContextAccessor();
+
+builder.AddHttpRequestSender();
+
 builder.Services.AddMemoryCache();
 
 builder.Services.AddHsts(options =>
@@ -27,6 +31,8 @@ builder.Configuration
     .Build();
 
 builder.Configuration.RegisterApplicationConfiguration();
+
+builder.Services.AddAdventureWorksLogging(builder.Configuration);
 
 builder.RegisterCommonSettings();
 
