@@ -20,7 +20,7 @@ public class BusinessEntityContactConfiguration : IEntityTypeConfiguration<Busin
             .WithMany(b=>b.BusinessEntityContacts)
             .HasForeignKey(a => a.PersonId);
 
-        builder.HasOne(a => a.ContactType)
+        builder.HasOne(a => a.ContactTypeEntity)
             .WithMany(b=>b.BusinessEntityContacts)
             .HasForeignKey(a => a.ContactTypeId);
 

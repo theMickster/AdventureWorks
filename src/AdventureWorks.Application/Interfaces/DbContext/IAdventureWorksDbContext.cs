@@ -1,4 +1,5 @@
 ﻿using AdventureWorks.Domain.Entities;
+using AdventureWorks.Domain.Entities.Person;
 using AdventureWorks.Domain.Entities.Shield;
 using Microsoft.EntityFrameworkCore;
 
@@ -18,7 +19,7 @@ public interface IAdventureWorksDbContext
 
     DbSet<EmailAddress> EmailAddresses { get; set; }
 
-    DbSet<Person> Persons { get; set; }
+    DbSet<PersonEntity> Persons { get; set; }
 
     DbSet<SalesTerritoryEntity> SalesTerritories { get; set; }
     

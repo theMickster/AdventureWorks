@@ -1,4 +1,5 @@
-﻿using AdventureWorks.Domain.Entities.Shield;
+﻿using AdventureWorks.Domain.Entities.Person;
+using AdventureWorks.Domain.Entities.Shield;
 
 namespace AdventureWorks.Domain.Entities;
 
@@ -10,7 +11,7 @@ public class BusinessEntity : BaseEntity
     
     public DateTime ModifiedDate { get; set; }
 
-    public ICollection<Person> Persons { get; set; }
+    public ICollection<PersonEntity> Persons { get; set; }
     
     public ICollection<Vendor> Vendors { get; set; }
     

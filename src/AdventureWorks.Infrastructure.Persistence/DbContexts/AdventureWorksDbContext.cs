@@ -1,5 +1,6 @@
 ﻿using AdventureWorks.Application.Interfaces.DbContext;
 using AdventureWorks.Domain.Entities;
+using AdventureWorks.Domain.Entities.Person;
 using AdventureWorks.Domain.Entities.Shield;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Logging;
@@ -31,11 +32,15 @@ public class AdventureWorksDbContext : DbContext, IAdventureWorksDbContext
 
     public DbSet<BusinessEntity> BusinessEntities { get; set; }
 
+    public DbSet<ContactTypeEntity> ContactTypes { get; set; }
+
     public DbSet<CountryRegionEntity> CountryRegions { get; set; }
 
     public DbSet<EmailAddress> EmailAddresses { get; set; }
 
-    public DbSet<Person> Persons { get; set; }
+    public DbSet<PersonEntity> Persons { get; set; }
+
+    public DbSet<PersonTypeEntity> PersonTypes { get; set; }
 
     public DbSet<SalesTerritoryEntity> SalesTerritories { get; set; }
 

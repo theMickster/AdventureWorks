@@ -1,4 +1,6 @@
-﻿namespace AdventureWorks.Domain.Entities;
+﻿using AdventureWorks.Domain.Entities.Person;
+
+namespace AdventureWorks.Domain.Entities;
 
 public sealed class CustomerEntity : BaseEntity
 {
@@ -18,7 +20,7 @@ public sealed class CustomerEntity : BaseEntity
 
     public ICollection<SalesOrderHeader> SalesOrderHeaders { get; set; }
     
-    public Person Person { get; set; }
+    public PersonEntity Person { get; set; }
     
     public StoreEntity StoreEntity { get; set; }
     
