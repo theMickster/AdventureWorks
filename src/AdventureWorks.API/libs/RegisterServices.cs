@@ -1,4 +1,3 @@
-using System.Diagnostics;
 using AdventureWorks.Application.Exceptions;
 using AdventureWorks.Application.Interfaces.DbContext;
 using AdventureWorks.Application.Validators.Address;
@@ -10,12 +9,13 @@ using AdventureWorks.Infrastructure.Persistence.DbContexts;
 using FluentValidation;
 using Microsoft.AspNetCore.Mvc.Controllers;
 using Microsoft.AspNetCore.Mvc.Versioning;
-using Microsoft.CodeAnalysis.Options;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.OpenApi.Models;
-using Swashbuckle.AspNetCore.SwaggerUI;
+using System.Diagnostics;
+using System.Net.Http.Headers;
 using System.Reflection;
-using System.Text;
+using AdventureWorks.Application.Http;
+using AdventureWorks.Application.Interfaces.Http;
 
 [assembly: InternalsVisibleTo("AdventureWorks.Test.UnitTests")]
 namespace AdventureWorks.API.libs;
@@ -189,6 +189,26 @@ internal static class RegisterServices
         return builder;
     }
 
+    internal static WebApplicationBuilder AddHttpRequestSender(this WebApplicationBuilder builder)
+    {
+        builder.Services
+            .AddHttpClient<IHttpRequestSender, HttpRequestSender>("Authenticator",
+                (serviceProvider, httpClient) =>
+                {
+                    httpClient.Timeout = TimeSpan.FromSeconds(15);
+
+                    httpClient.DefaultRequestHeaders.UserAgent.TryParseAdd("Authenticator Agent");
+
+                    httpClient.DefaultRequestHeaders
+                        .Accept
+                        .Add(new MediaTypeWithQualityHeaderValue("application/json"));
+
+                })
+            .SetHandlerLifetime(TimeSpan.FromMinutes(3));
+
+        return builder;
+    }
+
     #region Private Methods
 
     private static OpenApiInfo MakeOpenApiInfo(string title, string version, string description, Uri releaseNotes)
@@ -209,30 +229,7 @@ internal static class RegisterServices
 
         return oai;
     }
-
-    /// <summary>
-    /// Re-write the swagger index page adding a nonce
-    /// </summary>
-    /// <param name="options"></param>
-    /// <param name="nonceString"></param>
-    private static void RewriteSwaggerIndexHtml(SwaggerUIOptions options, string nonceString)
-    {
-        var originalIndexStreamFactory = options.IndexStream;
-
-        options.IndexStream = () =>
-        {
-            using var originalStream = originalIndexStreamFactory();
-            using var originalStreamReader = new StreamReader(originalStream);
-            var originalIndexHtmlContents = originalStreamReader.ReadToEnd();
-
-            var nonceEnabledIndexHtmlContents = originalIndexHtmlContents
-                .Replace("<script>", $"<script nonce=\"{nonceString}\">", StringComparison.OrdinalIgnoreCase)
-                .Replace("<style>", $"<style nonce=\"{nonceString}\">", StringComparison.OrdinalIgnoreCase);
-
-            return new MemoryStream(Encoding.UTF8.GetBytes(nonceEnabledIndexHtmlContents));
-        };
-    }
-
+    
     private static List<DatabaseConnectionString> GetDatabaseConnectionStrings(IConfiguration configuration)
     {
         var defaultConnectionString = 

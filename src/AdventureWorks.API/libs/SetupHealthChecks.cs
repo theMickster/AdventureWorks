@@ -14,10 +14,7 @@ internal static class SetupHealthChecks
     /// </summary>
     /// <param name="services"><see cref="T:Microsoft.Extensions.DependencyInjection.IServiceCollection" /></param>
     /// <returns><see cref="T:Microsoft.Extensions.DependencyInjection.IHealthChecksBuilder" /></returns>
-    public static
-#nullable disable
-    IHealthChecksBuilder AddDefaultHealthCheck(
-      this IServiceCollection services)
+    public static IHealthChecksBuilder AddDefaultHealthCheck(this IServiceCollection services)
     {
         return services.AddHealthChecks().AddCheck<DefaultHealthCheck>("default");
     }
@@ -40,8 +37,7 @@ internal static class SetupHealthChecks
     /// </summary>
     /// <param name="application"><see cref="T:Microsoft.AspNetCore.Builder.IApplicationBuilder" /></param>
     /// <returns><see cref="T:Microsoft.AspNetCore.Builder.IApplicationBuilder" /></returns>
-    public static IApplicationBuilder UseApplicationHealthChecks(
-      this IApplicationBuilder application)
+    public static IApplicationBuilder UseApplicationHealthChecks(this IApplicationBuilder application)
     {
         application.UseEndpoints(ep =>
         {
