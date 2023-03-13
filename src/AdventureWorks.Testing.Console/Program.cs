@@ -46,6 +46,15 @@ Console.WriteLine("Hello from the AdventureWorks Testing Console App");
 //        }
 //    }
 //);
+
+Console.ForegroundColor = ConsoleColor.Magenta;
+Console.WriteLine("****************************************************************");
+Console.WriteLine("Verifying:: AdventureWorksDbContext ........ ");
+Console.WriteLine("****************************************************************");
+
+var (storeSuccess, storeErrorList) = await new VerifyStoreRepository(serviceProvider).VerifyAllTheThings().ConfigureAwait(false);
+
+
 Console.ForegroundColor = ConsoleColor.White;
 
 

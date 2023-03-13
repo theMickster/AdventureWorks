@@ -1,4 +1,5 @@
 ﻿using AdventureWorks.Domain.Entities.Person;
+using AdventureWorks.Domain.Entities.Sales;
 using AdventureWorks.Domain.Entities.Shield;
 
 namespace AdventureWorks.Domain.Entities;
@@ -17,7 +18,7 @@ public class BusinessEntity : BaseEntity
     
     public ICollection<StoreEntity> Stores { get; set; }
     
-    public ICollection<BusinessEntityAddress> BusinessEntityAddresses { get; set; }
+    public ICollection<BusinessEntityAddressEntity> BusinessEntityAddresses { get; set; }
     
     public ICollection<BusinessEntityContact> BusinessEntityContacts { get; set; }
 

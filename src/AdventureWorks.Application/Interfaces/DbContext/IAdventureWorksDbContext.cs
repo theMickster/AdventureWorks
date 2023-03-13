@@ -1,5 +1,6 @@
 ﻿using AdventureWorks.Domain.Entities;
 using AdventureWorks.Domain.Entities.Person;
+using AdventureWorks.Domain.Entities.Sales;
 using AdventureWorks.Domain.Entities.Shield;
 using Microsoft.EntityFrameworkCore;
 
@@ -38,4 +39,6 @@ public interface IAdventureWorksDbContext
     DbSet<StateProvinceEntity> StateProvinces { get; set; }
     
     DbSet<UserAccountEntity> UserAccounts { get; set; }
+
+    DbSet<StoreEntity> Stores { get; set; }
 }
