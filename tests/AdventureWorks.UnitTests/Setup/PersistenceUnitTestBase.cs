@@ -1,12 +1,10 @@
-﻿using System.Security.Cryptography;
-using AdventureWorks.Domain.Entities;
+﻿using AdventureWorks.Domain.Entities;
 using AdventureWorks.Domain.Entities.Person;
 using AdventureWorks.Domain.Entities.Sales;
 using AdventureWorks.Domain.Entities.Shield;
 using AdventureWorks.Infrastructure.Persistence.DbContexts;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Diagnostics;
-using Polly;
 
 namespace AdventureWorks.UnitTests.Setup;
 
@@ -15,10 +13,10 @@ namespace AdventureWorks.UnitTests.Setup;
 public abstract class PersistenceUnitTestBase : UnitTestBase
 {
     protected AdventureWorksDbContext DbContext;
-    private const int _standardCreatedBy = -101;
-    private const int _standardModifiedBy = -107;
-    private DateTime _standardCreatedDate = new DateTime(2011, 11, 11);
-    private DateTime _standardModifiedDate = new DateTime(2021, 11, 11);
+    protected const int StandardCreatedBy = -101;
+    protected const int StandardModifiedBy = -107;
+    protected readonly DateTime StandardCreatedDate = new(2011, 11, 11);
+    protected readonly DateTime StandardModifiedDate = new (2021, 11, 11);
 
     protected PersistenceUnitTestBase()
     {
@@ -51,7 +49,7 @@ public abstract class PersistenceUnitTestBase : UnitTestBase
                 UserName = "john.elway",
                 RecordId = new Guid("7a80b0a7-1122-49e3-875b-95cc9fcae017"),
                 PasswordHash = "$2a$11$TsEBk0KOhuIXQZe0KHcSdu05/5oj3iWPRS9TZ8M2TTDFAjRwmk8eK",
-                PrimaryEmailAddressId = 1,ModifiedDate = _standardModifiedDate
+                PrimaryEmailAddressId = 1,ModifiedDate = StandardModifiedDate
             },
             new()
             {
@@ -59,7 +57,7 @@ public abstract class PersistenceUnitTestBase : UnitTestBase
                 UserName = "terrell.davis",
                 RecordId = new Guid("87c347f0-e6d1-46bc-b510-ff2f9be50d82"),
                 PasswordHash = "$2a$11$TsEBk0KOhuIXQZe0KHcSdu05/5oj3iWPRS9TZ8M2TTDFAjRwmk8eK",
-                PrimaryEmailAddressId = 2,ModifiedDate = _standardModifiedDate
+                PrimaryEmailAddressId = 2,ModifiedDate = StandardModifiedDate
             },
             new()
             {
@@ -67,7 +65,7 @@ public abstract class PersistenceUnitTestBase : UnitTestBase
                 UserName = "shannon.sharpe",
                 RecordId = new Guid("94159810-21c3-4666-ba28-04911f05215e"),
                 PasswordHash = "$2a$11$TsEBk0KOhuIXQZe0KHcSdu05/5oj3iWPRS9TZ8M2TTDFAjRwmk8eK",
-                PrimaryEmailAddressId = 3,ModifiedDate = _standardModifiedDate
+                PrimaryEmailAddressId = 3,ModifiedDate = StandardModifiedDate
             },
             new()
             {
@@ -75,7 +73,7 @@ public abstract class PersistenceUnitTestBase : UnitTestBase
                 UserName = "emmitt.smith",
                 RecordId = new Guid("1bfe2f92-cf14-4258-a634-14ed56dbad69"),
                 PasswordHash = "$2a$11$TsEBk0KOhuIXQZe0KHcSdu05/5oj3iWPRS9TZ8M2TTDFAjRwmk8eK",
-                PrimaryEmailAddressId = 4,ModifiedDate = _standardModifiedDate
+                PrimaryEmailAddressId = 4,ModifiedDate = StandardModifiedDate
             },
             new()
             {
@@ -83,7 +81,7 @@ public abstract class PersistenceUnitTestBase : UnitTestBase
                 UserName = "Duplicate.User",
                 RecordId = new Guid("86272e78-b76f-40ea-a706-a3d03d2c691c"),
                 PasswordHash = "$2a$11$TsEBk0KOhuIXQZe0KHcSdu05/5oj3iWPRS9TZ8M2TTDFAjRwmk8eK",
-                PrimaryEmailAddressId = 5,ModifiedDate = _standardModifiedDate
+                PrimaryEmailAddressId = 5,ModifiedDate = StandardModifiedDate
             },
             new()
             {
@@ -91,7 +89,7 @@ public abstract class PersistenceUnitTestBase : UnitTestBase
                 UserName = "Duplicate.User",
                 RecordId = new Guid("86272e78-b76f-40ea-a706-a3d03d2c691c"),
                 PasswordHash = "$2a$11$TsEBk0KOhuIXQZe0KHcSdu05/5oj3iWPRS9TZ8M2TTDFAjRwmk8eK",
-                PrimaryEmailAddressId = 6,ModifiedDate = _standardModifiedDate
+                PrimaryEmailAddressId = 6,ModifiedDate = StandardModifiedDate
             },
             new()
             {
@@ -99,7 +97,7 @@ public abstract class PersistenceUnitTestBase : UnitTestBase
                 UserName = "rod.smith",
                 RecordId = new Guid("671d24b5-32d7-4ed5-8d37-e9380f1209b1"),
                 PasswordHash = "$2a$11$TsEBk0KOhuIXQZe0KHcSdu05/5oj3iWPRS9TZ8M2TTDFAjRwmk8eK",
-                PrimaryEmailAddressId = 7,ModifiedDate = _standardModifiedDate
+                PrimaryEmailAddressId = 7,ModifiedDate = StandardModifiedDate
             },
             new()
             {
@@ -107,7 +105,7 @@ public abstract class PersistenceUnitTestBase : UnitTestBase
                 UserName = "randy.gradishar",
                 RecordId = new Guid("9a22ce11-322f-477d-b62e-296d2f8794e0"),
                 PasswordHash = "$2a$11$TsEBk0KOhuIXQZe0KHcSdu05/5oj3iWPRS9TZ8M2TTDFAjRwmk8eK",
-                PrimaryEmailAddressId = 8,ModifiedDate = _standardModifiedDate
+                PrimaryEmailAddressId = 8,ModifiedDate = StandardModifiedDate
             },
             new()
             {
@@ -115,7 +113,7 @@ public abstract class PersistenceUnitTestBase : UnitTestBase
                 UserName = "floyd.little",
                 RecordId = new Guid("c379c89c-3000-49a6-be25-10ce21a1db62"),
                 PasswordHash = "$2a$11$TsEBk0KOhuIXQZe0KHcSdu05/5oj3iWPRS9TZ8M2TTDFAjRwmk8eK",
-                PrimaryEmailAddressId = 9,ModifiedDate = _standardModifiedDate
+                PrimaryEmailAddressId = 9,ModifiedDate = StandardModifiedDate
             },
             new()
             {
@@ -123,7 +121,7 @@ public abstract class PersistenceUnitTestBase : UnitTestBase
                 UserName = "steve.atwater",
                 RecordId = new Guid("4a861fc4-409e-48f2-a211-5d6cd9833ed0"),
                 PasswordHash = "$2a$11$TsEBk0KOhuIXQZe0KHcSdu05/5oj3iWPRS9TZ8M2TTDFAjRwmk8eK",
-                PrimaryEmailAddressId = 10,ModifiedDate = _standardModifiedDate
+                PrimaryEmailAddressId = 10,ModifiedDate = StandardModifiedDate
             },
             new()
             {
@@ -131,7 +129,7 @@ public abstract class PersistenceUnitTestBase : UnitTestBase
                 UserName = "ed.mccaffrey",
                 RecordId = new Guid("ee0e2b2a-48d2-4d5f-863e-ab3bb5ad3547"),
                 PasswordHash = "$2a$11$TsEBk0KOhuIXQZe0KHcSdu05/5oj3iWPRS9TZ8M2TTDFAjRwmk8eK",
-                PrimaryEmailAddressId = 11,ModifiedDate = _standardModifiedDate
+                PrimaryEmailAddressId = 11,ModifiedDate = StandardModifiedDate
             },
             new()
             {
@@ -139,7 +137,7 @@ public abstract class PersistenceUnitTestBase : UnitTestBase
                 UserName = "bill.romanowski",
                 RecordId = new Guid("207a0b49-4e9b-4868-9831-7083399f1fd5"),
                 PasswordHash = "$2a$11$TsEBk0KOhuIXQZe0KHcSdu05/5oj3iWPRS9TZ8M2TTDFAjRwmk8eK",
-                PrimaryEmailAddressId = 12,ModifiedDate = _standardModifiedDate
+                PrimaryEmailAddressId = 12,ModifiedDate = StandardModifiedDate
             },
         });
 
@@ -198,50 +196,50 @@ public abstract class PersistenceUnitTestBase : UnitTestBase
     {
         DbContext.BusinessEntities.AddRange(new List<BusinessEntity>
         {
-            new(){BusinessEntityId = 1, Rowguid = new Guid("7a80b0a7-1122-49e3-875b-95cc9fcae017"),ModifiedDate = _standardModifiedDate},
-            new(){BusinessEntityId = 2, Rowguid = new Guid("87c347f0-e6d1-46bc-b510-ff2f9be50d82"),ModifiedDate = _standardModifiedDate},
-            new(){BusinessEntityId = 3, Rowguid = new Guid("94159810-21c3-4666-ba28-04911f05215e"),ModifiedDate = _standardModifiedDate},
-            new(){BusinessEntityId = 4, Rowguid = new Guid("1bfe2f92-cf14-4258-a634-14ed56dbad69"),ModifiedDate = _standardModifiedDate},
-            new(){BusinessEntityId = 5, Rowguid = new Guid("86272e78-b76f-40ea-a706-a3d03d2c691c"),ModifiedDate = _standardModifiedDate},
-            new(){BusinessEntityId = 6, Rowguid = new Guid("86272e78-b76f-40ea-a706-a3d03d2c691c"),ModifiedDate = _standardModifiedDate},
-            new(){BusinessEntityId = 7, Rowguid = new Guid("671d24b5-32d7-4ed5-8d37-e9380f1209b1"),ModifiedDate = _standardModifiedDate},
-            new(){BusinessEntityId = 8, Rowguid = new Guid("9a22ce11-322f-477d-b62e-296d2f8794e0"),ModifiedDate = _standardModifiedDate},
-            new(){BusinessEntityId = 9, Rowguid = new Guid("c379c89c-3000-49a6-be25-10ce21a1db62"),ModifiedDate = _standardModifiedDate},
-            new(){BusinessEntityId = 10, Rowguid = new Guid("4a861fc4-409e-48f2-a211-5d6cd9833ed0"),ModifiedDate = _standardModifiedDate},
-            new(){BusinessEntityId = 11, Rowguid = new Guid("ee0e2b2a-48d2-4d5f-863e-ab3bb5ad3547"),ModifiedDate = _standardModifiedDate},
-            new(){BusinessEntityId = 12, Rowguid = new Guid("207a0b49-4e9b-4868-9831-7083399f1fd5"),ModifiedDate = _standardModifiedDate}
+            new(){BusinessEntityId = 1, Rowguid = new Guid("7a80b0a7-1122-49e3-875b-95cc9fcae017"),ModifiedDate = StandardModifiedDate},
+            new(){BusinessEntityId = 2, Rowguid = new Guid("87c347f0-e6d1-46bc-b510-ff2f9be50d82"),ModifiedDate = StandardModifiedDate},
+            new(){BusinessEntityId = 3, Rowguid = new Guid("94159810-21c3-4666-ba28-04911f05215e"),ModifiedDate = StandardModifiedDate},
+            new(){BusinessEntityId = 4, Rowguid = new Guid("1bfe2f92-cf14-4258-a634-14ed56dbad69"),ModifiedDate = StandardModifiedDate},
+            new(){BusinessEntityId = 5, Rowguid = new Guid("86272e78-b76f-40ea-a706-a3d03d2c691c"),ModifiedDate = StandardModifiedDate},
+            new(){BusinessEntityId = 6, Rowguid = new Guid("86272e78-b76f-40ea-a706-a3d03d2c691c"),ModifiedDate = StandardModifiedDate},
+            new(){BusinessEntityId = 7, Rowguid = new Guid("671d24b5-32d7-4ed5-8d37-e9380f1209b1"),ModifiedDate = StandardModifiedDate},
+            new(){BusinessEntityId = 8, Rowguid = new Guid("9a22ce11-322f-477d-b62e-296d2f8794e0"),ModifiedDate = StandardModifiedDate},
+            new(){BusinessEntityId = 9, Rowguid = new Guid("c379c89c-3000-49a6-be25-10ce21a1db62"),ModifiedDate = StandardModifiedDate},
+            new(){BusinessEntityId = 10, Rowguid = new Guid("4a861fc4-409e-48f2-a211-5d6cd9833ed0"),ModifiedDate = StandardModifiedDate},
+            new(){BusinessEntityId = 11, Rowguid = new Guid("ee0e2b2a-48d2-4d5f-863e-ab3bb5ad3547"),ModifiedDate = StandardModifiedDate},
+            new(){BusinessEntityId = 12, Rowguid = new Guid("207a0b49-4e9b-4868-9831-7083399f1fd5"),ModifiedDate = StandardModifiedDate}
         });
 
         DbContext.Persons.AddRange(new List<PersonEntity>
         {
-            new (){BusinessEntityId = 1, FirstName = "John", LastName = "Elway", Rowguid = new Guid("7a80b0a7-1122-49e3-875b-95cc9fcae017"), ModifiedDate = _standardModifiedDate},
-            new (){BusinessEntityId = 2, FirstName = "Terrell", LastName = "Davis", Rowguid = new Guid("87c347f0-e6d1-46bc-b510-ff2f9be50d82"), ModifiedDate = _standardModifiedDate},
-            new (){BusinessEntityId = 3, FirstName = "Shannon", LastName = "Sharpe", Rowguid = new Guid("94159810-21c3-4666-ba28-04911f05215e"), ModifiedDate = _standardModifiedDate},
-            new (){BusinessEntityId = 4, FirstName = "Emmitt", LastName = "Smith", Rowguid = new Guid("1bfe2f92-cf14-4258-a634-14ed56dbad69"), ModifiedDate = _standardModifiedDate},
-            new (){BusinessEntityId = 5, FirstName = "Duplicate", LastName = "User", Rowguid = new Guid("86272e78-b76f-40ea-a706-a3d03d2c691c"), ModifiedDate = _standardModifiedDate},
-            new (){BusinessEntityId = 6, FirstName = "Duplicate", LastName = "User", Rowguid = new Guid("86272e78-b76f-40ea-a706-a3d03d2c691c"), ModifiedDate = _standardModifiedDate},
-            new (){BusinessEntityId = 7, FirstName = "Rod", LastName = "Smith", Rowguid = new Guid("671d24b5-32d7-4ed5-8d37-e9380f1209b1"), ModifiedDate = _standardModifiedDate},
-            new (){BusinessEntityId = 8, FirstName = "Randy", LastName = "Gradishar", Rowguid = new Guid("9a22ce11-322f-477d-b62e-296d2f8794e0"), ModifiedDate = _standardModifiedDate},
-            new (){BusinessEntityId = 9, FirstName = "Floyd", LastName = "Little", Rowguid = new Guid("c379c89c-3000-49a6-be25-10ce21a1db62"), ModifiedDate = _standardModifiedDate},
-            new (){BusinessEntityId = 10, FirstName = "Steve", LastName = "Atwater", Rowguid = new Guid("4a861fc4-409e-48f2-a211-5d6cd9833ed0"), ModifiedDate = _standardModifiedDate},
-            new (){BusinessEntityId = 11, FirstName = "Ed", LastName = "McCaffrey", Rowguid = new Guid("ee0e2b2a-48d2-4d5f-863e-ab3bb5ad3547"), ModifiedDate = _standardModifiedDate},
-            new (){BusinessEntityId = 12, FirstName = "Bill", LastName = "Romanowski", Rowguid = new Guid("207a0b49-4e9b-4868-9831-7083399f1fd5"), ModifiedDate = _standardModifiedDate}
+            new (){BusinessEntityId = 1, FirstName = "John", LastName = "Elway", Rowguid = new Guid("7a80b0a7-1122-49e3-875b-95cc9fcae017"), ModifiedDate = StandardModifiedDate},
+            new (){BusinessEntityId = 2, FirstName = "Terrell", LastName = "Davis", Rowguid = new Guid("87c347f0-e6d1-46bc-b510-ff2f9be50d82"), ModifiedDate = StandardModifiedDate},
+            new (){BusinessEntityId = 3, FirstName = "Shannon", LastName = "Sharpe", Rowguid = new Guid("94159810-21c3-4666-ba28-04911f05215e"), ModifiedDate = StandardModifiedDate},
+            new (){BusinessEntityId = 4, FirstName = "Emmitt", LastName = "Smith", Rowguid = new Guid("1bfe2f92-cf14-4258-a634-14ed56dbad69"), ModifiedDate = StandardModifiedDate},
+            new (){BusinessEntityId = 5, FirstName = "Duplicate", LastName = "User", Rowguid = new Guid("86272e78-b76f-40ea-a706-a3d03d2c691c"), ModifiedDate = StandardModifiedDate},
+            new (){BusinessEntityId = 6, FirstName = "Duplicate", LastName = "User", Rowguid = new Guid("86272e78-b76f-40ea-a706-a3d03d2c691c"), ModifiedDate = StandardModifiedDate},
+            new (){BusinessEntityId = 7, FirstName = "Rod", LastName = "Smith", Rowguid = new Guid("671d24b5-32d7-4ed5-8d37-e9380f1209b1"), ModifiedDate = StandardModifiedDate},
+            new (){BusinessEntityId = 8, FirstName = "Randy", LastName = "Gradishar", Rowguid = new Guid("9a22ce11-322f-477d-b62e-296d2f8794e0"), ModifiedDate = StandardModifiedDate},
+            new (){BusinessEntityId = 9, FirstName = "Floyd", LastName = "Little", Rowguid = new Guid("c379c89c-3000-49a6-be25-10ce21a1db62"), ModifiedDate = StandardModifiedDate},
+            new (){BusinessEntityId = 10, FirstName = "Steve", LastName = "Atwater", Rowguid = new Guid("4a861fc4-409e-48f2-a211-5d6cd9833ed0"), ModifiedDate = StandardModifiedDate},
+            new (){BusinessEntityId = 11, FirstName = "Ed", LastName = "McCaffrey", Rowguid = new Guid("ee0e2b2a-48d2-4d5f-863e-ab3bb5ad3547"), ModifiedDate = StandardModifiedDate},
+            new (){BusinessEntityId = 12, FirstName = "Bill", LastName = "Romanowski", Rowguid = new Guid("207a0b49-4e9b-4868-9831-7083399f1fd5"), ModifiedDate = StandardModifiedDate}
         });
         
         DbContext.EmailAddresses.AddRange(new List<EmailAddress>
         {
-            new(){BusinessEntityId = 1, EmailAddressId = 1, EmailAddressName = "john.elway@adventure-works.com",ModifiedDate = _standardModifiedDate},
-            new(){BusinessEntityId = 2, EmailAddressId = 2, EmailAddressName = "terrell.davis@adventure-works.com",ModifiedDate = _standardModifiedDate},
-            new(){BusinessEntityId = 3, EmailAddressId = 3, EmailAddressName = "shannon.sharpe@adventure-works.com",ModifiedDate = _standardModifiedDate},
-            new(){BusinessEntityId = 4, EmailAddressId = 4, EmailAddressName = "emmitt.smith@adventure-works.com",ModifiedDate = _standardModifiedDate},
-            new(){BusinessEntityId = 5, EmailAddressId = 5, EmailAddressName = "Duplicate.User@adventure-works.com",ModifiedDate = _standardModifiedDate},
-            new(){BusinessEntityId = 6, EmailAddressId = 6, EmailAddressName = "Duplicate.User@adventure-works.com",ModifiedDate = _standardModifiedDate},
-            new(){BusinessEntityId = 7, EmailAddressId = 7, EmailAddressName = "rod.smith@adventure-works.com",ModifiedDate = _standardModifiedDate},
-            new(){BusinessEntityId = 8, EmailAddressId = 8, EmailAddressName = "randy.gradishar@adventure-works.com",ModifiedDate = _standardModifiedDate},
-            new(){BusinessEntityId = 9, EmailAddressId = 9, EmailAddressName = "floyd.little@adventure-works.com",ModifiedDate = _standardModifiedDate},
-            new(){BusinessEntityId = 10, EmailAddressId = 10, EmailAddressName = "steve.atwater@adventure-works.com",ModifiedDate = _standardModifiedDate},
-            new(){BusinessEntityId = 11, EmailAddressId = 11, EmailAddressName = "ed.mccaffrey@adventure-works.com",ModifiedDate = _standardModifiedDate},
-            new(){BusinessEntityId = 12, EmailAddressId = 12, EmailAddressName = "bill.romanowski@adventure-works.com",ModifiedDate = _standardModifiedDate},
+            new(){BusinessEntityId = 1, EmailAddressId = 1, EmailAddressName = "john.elway@adventure-works.com",ModifiedDate = StandardModifiedDate},
+            new(){BusinessEntityId = 2, EmailAddressId = 2, EmailAddressName = "terrell.davis@adventure-works.com",ModifiedDate = StandardModifiedDate},
+            new(){BusinessEntityId = 3, EmailAddressId = 3, EmailAddressName = "shannon.sharpe@adventure-works.com",ModifiedDate = StandardModifiedDate},
+            new(){BusinessEntityId = 4, EmailAddressId = 4, EmailAddressName = "emmitt.smith@adventure-works.com",ModifiedDate = StandardModifiedDate},
+            new(){BusinessEntityId = 5, EmailAddressId = 5, EmailAddressName = "Duplicate.User@adventure-works.com",ModifiedDate = StandardModifiedDate},
+            new(){BusinessEntityId = 6, EmailAddressId = 6, EmailAddressName = "Duplicate.User@adventure-works.com",ModifiedDate = StandardModifiedDate},
+            new(){BusinessEntityId = 7, EmailAddressId = 7, EmailAddressName = "rod.smith@adventure-works.com",ModifiedDate = StandardModifiedDate},
+            new(){BusinessEntityId = 8, EmailAddressId = 8, EmailAddressName = "randy.gradishar@adventure-works.com",ModifiedDate = StandardModifiedDate},
+            new(){BusinessEntityId = 9, EmailAddressId = 9, EmailAddressName = "floyd.little@adventure-works.com",ModifiedDate = StandardModifiedDate},
+            new(){BusinessEntityId = 10, EmailAddressId = 10, EmailAddressName = "steve.atwater@adventure-works.com",ModifiedDate = StandardModifiedDate},
+            new(){BusinessEntityId = 11, EmailAddressId = 11, EmailAddressName = "ed.mccaffrey@adventure-works.com",ModifiedDate = StandardModifiedDate},
+            new(){BusinessEntityId = 12, EmailAddressId = 12, EmailAddressName = "bill.romanowski@adventure-works.com",ModifiedDate = StandardModifiedDate},
         });
 
         DbContext.SaveChanges();
@@ -249,7 +247,7 @@ public abstract class PersistenceUnitTestBase : UnitTestBase
 
     protected void LoadMockStores()
     {
-        var usa = new CountryRegionEntity { CountryRegionCode = "US",Name = "United States of America",ModifiedDate = _standardModifiedDate };
+        var usa = new CountryRegionEntity { CountryRegionCode = "US",Name = "United States of America",ModifiedDate = StandardModifiedDate };
         var colorado = new StateProvinceEntity {StateProvinceId = 10,Name = "Colorado",CountryRegionCode = "US",CountryRegion = usa};
 
         DbContext.AddressTypes.AddRange(new List<AddressTypeEntity>
@@ -265,29 +263,29 @@ public abstract class PersistenceUnitTestBase : UnitTestBase
         
         DbContext.BusinessEntities.AddRange(new List<BusinessEntity>
         {
-            new(){BusinessEntityId = 1111, Rowguid = new Guid("d8f72edf-2334-4a59-abe7-a4f8cea37fb1"), ModifiedDate = _standardModifiedDate},
-            new(){BusinessEntityId = 1112, Rowguid = new Guid("f250a70a-39dd-4c7d-8031-51231e71b18f"), ModifiedDate = _standardModifiedDate},
-            new(){BusinessEntityId = 1113, Rowguid = new Guid("603782eb-457e-4824-9eee-781106958687"), ModifiedDate = _standardModifiedDate},
-            new(){BusinessEntityId = 1114, Rowguid = new Guid("454cd60c-ff39-4354-8b64-082e774785f8"), ModifiedDate = _standardModifiedDate},
-            new(){BusinessEntityId = 1115, Rowguid = new Guid("41cbd4ac-5c45-431e-999b-cae35ea49325"), ModifiedDate = _standardModifiedDate},
+            new(){BusinessEntityId = 1111, Rowguid = new Guid("d8f72edf-2334-4a59-abe7-a4f8cea37fb1"), ModifiedDate = StandardModifiedDate},
+            new(){BusinessEntityId = 1112, Rowguid = new Guid("f250a70a-39dd-4c7d-8031-51231e71b18f"), ModifiedDate = StandardModifiedDate},
+            new(){BusinessEntityId = 1113, Rowguid = new Guid("603782eb-457e-4824-9eee-781106958687"), ModifiedDate = StandardModifiedDate},
+            new(){BusinessEntityId = 1114, Rowguid = new Guid("454cd60c-ff39-4354-8b64-082e774785f8"), ModifiedDate = StandardModifiedDate},
+            new(){BusinessEntityId = 1115, Rowguid = new Guid("41cbd4ac-5c45-431e-999b-cae35ea49325"), ModifiedDate = StandardModifiedDate},
         });
         
         DbContext.Stores.AddRange(new List<StoreEntity>
         {
-            new(){BusinessEntityId = 1111, Name = "Pro Sporting Goods", SalesPersonId = 7777, Rowguid = new Guid("a04ceec6-13da-49b7-8b1a-f3af8ba2c3b9"), ModifiedDate = _standardModifiedDate},
-            new(){BusinessEntityId = 1112, Name = "Topnotch Bikes", SalesPersonId = 7778, Rowguid = new Guid("93ca5ff6-7543-45c1-937c-5a06396d6f32"), ModifiedDate = _standardModifiedDate},
-            new(){BusinessEntityId = 1113, Name = "Golf and Cycle Store", SalesPersonId = 7779, Rowguid = new Guid("71272fd6-88ef-464a-9aaa-b3a6df4ad480"), ModifiedDate = _standardModifiedDate},
-            new(){BusinessEntityId = 1114, Name = "Colorado Ski, Golf, and Bike", SalesPersonId = 7780, Rowguid = new Guid("f28aabed-af5a-4bee-ae43-19ecd8995573"), ModifiedDate = _standardModifiedDate},
-            new(){BusinessEntityId = 1115, Name = "Epic Mountain Gear", SalesPersonId = 7781, Rowguid = new Guid("669b1923-c251-465e-bda5-f5378cb3961a"), ModifiedDate = _standardModifiedDate},
+            new(){BusinessEntityId = 1111, Name = "Pro Sporting Goods", SalesPersonId = 7777, Rowguid = new Guid("a04ceec6-13da-49b7-8b1a-f3af8ba2c3b9"), ModifiedDate = StandardModifiedDate},
+            new(){BusinessEntityId = 1112, Name = "Topnotch Bikes", SalesPersonId = 7778, Rowguid = new Guid("93ca5ff6-7543-45c1-937c-5a06396d6f32"), ModifiedDate = StandardModifiedDate},
+            new(){BusinessEntityId = 1113, Name = "Golf and Cycle Store", SalesPersonId = 7779, Rowguid = new Guid("71272fd6-88ef-464a-9aaa-b3a6df4ad480"), ModifiedDate = StandardModifiedDate},
+            new(){BusinessEntityId = 1114, Name = "Colorado Ski, Golf, and Bike", SalesPersonId = 7780, Rowguid = new Guid("f28aabed-af5a-4bee-ae43-19ecd8995573"), ModifiedDate = StandardModifiedDate},
+            new(){BusinessEntityId = 1115, Name = "Epic Mountain Gear", SalesPersonId = 7781, Rowguid = new Guid("669b1923-c251-465e-bda5-f5378cb3961a"), ModifiedDate = StandardModifiedDate},
         });
 
         DbContext.SalesPersons.AddRange(new List<SalesPerson>
         {
-            new(){BusinessEntityId = 7777, TerritoryId = 4, Rowguid = new Guid("1e28194c-6f14-4dc9-b4ff-e715ebd606ef"), ModifiedDate = _standardModifiedDate},
-            new(){BusinessEntityId = 7778, TerritoryId = 4, Rowguid = new Guid("2126a5df-a5ba-4261-878d-c85b9ea39aa9"), ModifiedDate = _standardModifiedDate},
-            new(){BusinessEntityId = 7779, TerritoryId = 4, Rowguid = new Guid("9ef29acb-622e-4b58-9825-987bb22c5b23"), ModifiedDate = _standardModifiedDate},
-            new(){BusinessEntityId = 7780, TerritoryId = 4, Rowguid = new Guid("3c11ef02-88d6-4303-8729-bff99da0c720"), ModifiedDate = _standardModifiedDate},
-            new(){BusinessEntityId = 7781, TerritoryId = 4, Rowguid = new Guid("b9b61d15-e466-46c6-9795-6aa07457190e"), ModifiedDate = _standardModifiedDate},
+            new(){BusinessEntityId = 7777, TerritoryId = 4, Rowguid = new Guid("1e28194c-6f14-4dc9-b4ff-e715ebd606ef"), ModifiedDate = StandardModifiedDate},
+            new(){BusinessEntityId = 7778, TerritoryId = 4, Rowguid = new Guid("2126a5df-a5ba-4261-878d-c85b9ea39aa9"), ModifiedDate = StandardModifiedDate},
+            new(){BusinessEntityId = 7779, TerritoryId = 4, Rowguid = new Guid("9ef29acb-622e-4b58-9825-987bb22c5b23"), ModifiedDate = StandardModifiedDate},
+            new(){BusinessEntityId = 7780, TerritoryId = 4, Rowguid = new Guid("3c11ef02-88d6-4303-8729-bff99da0c720"), ModifiedDate = StandardModifiedDate},
+            new(){BusinessEntityId = 7781, TerritoryId = 4, Rowguid = new Guid("b9b61d15-e466-46c6-9795-6aa07457190e"), ModifiedDate = StandardModifiedDate},
         });
 
         DbContext.Addresses.AddRange( new List<AddressEntity>{
@@ -299,7 +297,7 @@ public abstract class PersistenceUnitTestBase : UnitTestBase
                 StateProvinceId = 10,
                 Rowguid = new Guid("8f83c8eb-ee79-46ba-8e2c-6645794674b4"),
                 PostalCode = "80015",
-                ModifiedDate = _standardModifiedDate,
+                ModifiedDate = StandardModifiedDate,
                 StateProvince = colorado
             },
             new()
@@ -310,7 +308,7 @@ public abstract class PersistenceUnitTestBase : UnitTestBase
                 StateProvinceId = 10,
                 Rowguid = new Guid("28238dcb-1842-4a64-9224-6b13cbbb0ab4"),
                 PostalCode = "80016",
-                ModifiedDate = _standardModifiedDate,
+                ModifiedDate = StandardModifiedDate,
                 StateProvince = colorado
             },
             new()
@@ -321,7 +319,7 @@ public abstract class PersistenceUnitTestBase : UnitTestBase
                 StateProvinceId = 10,
                 Rowguid = new Guid("6934f6ca-6382-48cc-98e7-4a1575c7c62c"),
                 PostalCode = "80012",
-                ModifiedDate = _standardModifiedDate,
+                ModifiedDate = StandardModifiedDate,
                 StateProvince = colorado
             },
             new()
@@ -332,7 +330,7 @@ public abstract class PersistenceUnitTestBase : UnitTestBase
                 StateProvinceId = 10,
                 Rowguid = new Guid("214d2137-4254-4a50-b8ef-7dae4893bd7b"),
                 PostalCode = "80012",
-                ModifiedDate = _standardModifiedDate,
+                ModifiedDate = StandardModifiedDate,
                 StateProvince = colorado
             },
             new()
@@ -343,7 +341,7 @@ public abstract class PersistenceUnitTestBase : UnitTestBase
                 StateProvinceId = 10,
                 Rowguid = new Guid("da409df8-2b7a-465b-be4f-f489f8b87d41"),
                 PostalCode = "80011",
-                ModifiedDate = _standardModifiedDate,
+                ModifiedDate = StandardModifiedDate,
                 StateProvince = colorado
             },
             new()
@@ -354,7 +352,7 @@ public abstract class PersistenceUnitTestBase : UnitTestBase
                 StateProvinceId = 10,
                 Rowguid = new Guid("54999039-5cbe-43b8-9e4a-8e6529a6a280"),
                 PostalCode = "80010",
-                ModifiedDate = _standardModifiedDate,
+                ModifiedDate = StandardModifiedDate,
                 StateProvince = colorado
             },
             new()
@@ -365,20 +363,20 @@ public abstract class PersistenceUnitTestBase : UnitTestBase
                 StateProvinceId = 10,
                 Rowguid = new Guid("9a540808-7509-40bd-befb-e5f20f38af49"),
                 PostalCode = "80010",
-                ModifiedDate = _standardModifiedDate,
+                ModifiedDate = StandardModifiedDate,
                 StateProvince = colorado
             },
         });
 
         DbContext.BusinessEntityAddresses.AddRange(new List<BusinessEntityAddressEntity>
         {
-            new(){BusinessEntityId = 1111, AddressId = 553, AddressTypeId = 4, Rowguid = new Guid("d8f72edf-2334-4a59-abe7-a4f8cea37fb1"), ModifiedDate = _standardModifiedDate},
-            new(){BusinessEntityId = 1111, AddressId = 554, AddressTypeId = 3, Rowguid = new Guid("c8679617-b372-4d53-803b-cced0afdf8f3"), ModifiedDate = _standardModifiedDate},
-            new(){BusinessEntityId = 1111, AddressId = 555, AddressTypeId = 5, Rowguid = new Guid("7a4aea59-2b12-41a3-893c-8469c04fc581"), ModifiedDate = _standardModifiedDate},
-            new(){BusinessEntityId = 1112, AddressId = 556, AddressTypeId = 4, Rowguid = new Guid("f250a70a-39dd-4c7d-8031-51231e71b18f"), ModifiedDate = _standardModifiedDate},
-            new(){BusinessEntityId = 1113, AddressId = 557, AddressTypeId = 3, Rowguid = new Guid("603782eb-457e-4824-9eee-781106958687"), ModifiedDate = _standardModifiedDate},
-            new(){BusinessEntityId = 1114, AddressId = 558, AddressTypeId = 2, Rowguid = new Guid("454cd60c-ff39-4354-8b64-082e774785f8"), ModifiedDate = _standardModifiedDate},
-            new(){BusinessEntityId = 1115, AddressId = 559, AddressTypeId = 3, Rowguid = new Guid("41cbd4ac-5c45-431e-999b-cae35ea49325"), ModifiedDate = _standardModifiedDate},
+            new(){BusinessEntityId = 1111, AddressId = 553, AddressTypeId = 4, Rowguid = new Guid("d8f72edf-2334-4a59-abe7-a4f8cea37fb1"), ModifiedDate = StandardModifiedDate},
+            new(){BusinessEntityId = 1111, AddressId = 554, AddressTypeId = 3, Rowguid = new Guid("c8679617-b372-4d53-803b-cced0afdf8f3"), ModifiedDate = StandardModifiedDate},
+            new(){BusinessEntityId = 1111, AddressId = 555, AddressTypeId = 5, Rowguid = new Guid("7a4aea59-2b12-41a3-893c-8469c04fc581"), ModifiedDate = StandardModifiedDate},
+            new(){BusinessEntityId = 1112, AddressId = 556, AddressTypeId = 4, Rowguid = new Guid("f250a70a-39dd-4c7d-8031-51231e71b18f"), ModifiedDate = StandardModifiedDate},
+            new(){BusinessEntityId = 1113, AddressId = 557, AddressTypeId = 3, Rowguid = new Guid("603782eb-457e-4824-9eee-781106958687"), ModifiedDate = StandardModifiedDate},
+            new(){BusinessEntityId = 1114, AddressId = 558, AddressTypeId = 2, Rowguid = new Guid("454cd60c-ff39-4354-8b64-082e774785f8"), ModifiedDate = StandardModifiedDate},
+            new(){BusinessEntityId = 1115, AddressId = 559, AddressTypeId = 3, Rowguid = new Guid("41cbd4ac-5c45-431e-999b-cae35ea49325"), ModifiedDate = StandardModifiedDate},
         });
 
         DbContext.SaveChanges();
