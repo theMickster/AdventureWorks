@@ -14,9 +14,9 @@ public class BusinessEntityContact : BaseEntity
 
     public DateTime ModifiedDate { get; set; }
 
-    public virtual BusinessEntity BusinessEntity { get; set; }
+    public BusinessEntity BusinessEntity { get; set; }
 
-    public virtual ContactTypeEntity ContactTypeEntity { get; set; }
+    public ContactTypeEntity ContactTypeEntity { get; set; }
 
-    public virtual PersonEntity Person { get; set; }
+    public PersonEntity Person { get; set; }
 }

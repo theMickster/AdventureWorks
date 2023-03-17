@@ -15,7 +15,7 @@ public sealed class BusinessEntityRepositoryTests : PersistenceUnitTestBase
     }
     
     [Fact]
-    public async Task Create_Read_Update_Delete_workflow_succeeds()
+    public async Task Create_Read_Update_Delete_workflow_succeedsAsync()
     {
         var newEntity = new BusinessEntity { BusinessEntityId = -15, Rowguid = new Guid("489eed0a-6ca5-4dc2-9fc9-215a04c375b1"), ModifiedDate = StandardCreatedDate };
 

@@ -31,11 +31,11 @@ public sealed class StoreRepositoryTests : PersistenceUnitTestBase
     }
 
     [Fact]
-    public async Task GetStoreById_single_address_succeeds()
+    public async Task GetStoreById_single_address_succeedsAsync()
     {
         const int storeId = 1112;
 
-        var result = await _sut.GetStoreById(storeId).ConfigureAwait(false);
+        var result = await _sut.GetStoreByIdAsync(storeId).ConfigureAwait(false);
 
         using (new AssertionScope())
         {
@@ -51,10 +51,10 @@ public sealed class StoreRepositoryTests : PersistenceUnitTestBase
     }
 
     [Fact]
-    public async Task GetStoreById_multiple_addresses_succeeds()
+    public async Task GetStoreById_multiple_addresses_succeedsAsync()
     {
         const int storeId = 1111;
-        var result = await _sut.GetStoreById(storeId).ConfigureAwait(false);
+        var result = await _sut.GetStoreByIdAsync(storeId).ConfigureAwait(false);
 
         using (new AssertionScope())
         {
@@ -70,7 +70,7 @@ public sealed class StoreRepositoryTests : PersistenceUnitTestBase
     }
 
     [Fact]
-    public async Task Create_Read_Update_Delete_workflow_succeeds()
+    public async Task Create_Read_Update_Delete_workflow_succeedsAsync()
     {
         var newEntity = new StoreEntity
         {

@@ -1,5 +1,4 @@
 ﻿using AdventureWorks.Domain.Entities.Shield;
-using Microsoft.VisualBasic.CompilerServices;
 
 namespace AdventureWorks.Domain.Entities.Person;
 

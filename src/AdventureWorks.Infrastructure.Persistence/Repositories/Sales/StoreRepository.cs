@@ -20,7 +20,7 @@ public sealed class StoreRepository : EfRepository<StoreEntity>, IStoreRepositor
     /// </summary>
     /// <param name="storeId">the unique address identifier</param>
     /// <returns></returns>
-    public async Task<StoreEntity> GetStoreById(int storeId)
+    public async Task<StoreEntity> GetStoreByIdAsync(int storeId)
     {
         return await DbContext.Stores
             .Include(x => x.StoreBusinessEntity)
@@ -29,6 +29,8 @@ public sealed class StoreRepository : EfRepository<StoreEntity>, IStoreRepositor
             .Include(x => x.StoreBusinessEntity)
             .ThenInclude(y => y.BusinessEntityAddresses)
             .ThenInclude(z => z.Address)
+            .ThenInclude(ab => ab.StateProvince)
+            .ThenInclude(abc => abc.CountryRegion)
             .FirstOrDefaultAsync(x => x.BusinessEntityId == storeId);
     }
 }

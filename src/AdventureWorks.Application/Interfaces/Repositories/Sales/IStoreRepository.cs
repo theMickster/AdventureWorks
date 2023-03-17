@@ -10,6 +10,6 @@ public interface IStoreRepository : IAsyncRepository<StoreEntity>
     /// </summary>
     /// <param name="storeId">the unique address identifier</param>
     /// <returns></returns>
-    Task<StoreEntity> GetStoreById(int storeId);
+    Task<StoreEntity> GetStoreByIdAsync(int storeId);
 
 }
