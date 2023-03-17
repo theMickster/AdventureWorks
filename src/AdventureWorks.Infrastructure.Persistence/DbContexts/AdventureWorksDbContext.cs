@@ -33,6 +33,8 @@ public class AdventureWorksDbContext : DbContext, IAdventureWorksDbContext
 
     public DbSet<BusinessEntity> BusinessEntities { get; set; }
 
+    public DbSet<BusinessEntityAddressEntity> BusinessEntityAddresses { get; set; }
+
     public DbSet<ContactTypeEntity> ContactTypes { get; set; }
 
     public DbSet<CountryRegionEntity> CountryRegions { get; set; }
@@ -42,6 +44,8 @@ public class AdventureWorksDbContext : DbContext, IAdventureWorksDbContext
     public DbSet<PersonEntity> Persons { get; set; }
 
     public DbSet<PersonTypeEntity> PersonTypes { get; set; }
+
+    public DbSet<SalesPerson> SalesPersons { get; set; }
 
     public DbSet<SalesTerritoryEntity> SalesTerritories { get; set; }
 

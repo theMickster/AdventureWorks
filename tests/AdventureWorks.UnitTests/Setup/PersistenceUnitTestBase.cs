@@ -1,6 +1,7 @@
 ﻿using System.Security.Cryptography;
 using AdventureWorks.Domain.Entities;
 using AdventureWorks.Domain.Entities.Person;
+using AdventureWorks.Domain.Entities.Sales;
 using AdventureWorks.Domain.Entities.Shield;
 using AdventureWorks.Infrastructure.Persistence.DbContexts;
 using Microsoft.EntityFrameworkCore;
@@ -241,6 +242,143 @@ public abstract class PersistenceUnitTestBase : UnitTestBase
             new(){BusinessEntityId = 10, EmailAddressId = 10, EmailAddressName = "steve.atwater@adventure-works.com",ModifiedDate = _standardModifiedDate},
             new(){BusinessEntityId = 11, EmailAddressId = 11, EmailAddressName = "ed.mccaffrey@adventure-works.com",ModifiedDate = _standardModifiedDate},
             new(){BusinessEntityId = 12, EmailAddressId = 12, EmailAddressName = "bill.romanowski@adventure-works.com",ModifiedDate = _standardModifiedDate},
+        });
+
+        DbContext.SaveChanges();
+    }
+
+    protected void LoadMockStores()
+    {
+        var usa = new CountryRegionEntity { CountryRegionCode = "US",Name = "United States of America",ModifiedDate = _standardModifiedDate };
+        var colorado = new StateProvinceEntity {StateProvinceId = 10,Name = "Colorado",CountryRegionCode = "US",CountryRegion = usa};
+
+        DbContext.AddressTypes.AddRange(new List<AddressTypeEntity>
+        {
+            new() { AddressTypeId = 1, Name = "Home" },
+            new() { AddressTypeId = 2, Name = "Billing" },
+            new() { AddressTypeId = 3, Name = "Main Office" },
+            new() { AddressTypeId = 4, Name = "Primary" },
+            new() { AddressTypeId = 5, Name = "Secondary" },
+            new() { AddressTypeId = 6, Name = "Tertiary" },
+            new() { AddressTypeId = 7, Name = "Shipping" }
+        });
+        
+        DbContext.BusinessEntities.AddRange(new List<BusinessEntity>
+        {
+            new(){BusinessEntityId = 1111, Rowguid = new Guid("d8f72edf-2334-4a59-abe7-a4f8cea37fb1"), ModifiedDate = _standardModifiedDate},
+            new(){BusinessEntityId = 1112, Rowguid = new Guid("f250a70a-39dd-4c7d-8031-51231e71b18f"), ModifiedDate = _standardModifiedDate},
+            new(){BusinessEntityId = 1113, Rowguid = new Guid("603782eb-457e-4824-9eee-781106958687"), ModifiedDate = _standardModifiedDate},
+            new(){BusinessEntityId = 1114, Rowguid = new Guid("454cd60c-ff39-4354-8b64-082e774785f8"), ModifiedDate = _standardModifiedDate},
+            new(){BusinessEntityId = 1115, Rowguid = new Guid("41cbd4ac-5c45-431e-999b-cae35ea49325"), ModifiedDate = _standardModifiedDate},
+        });
+        
+        DbContext.Stores.AddRange(new List<StoreEntity>
+        {
+            new(){BusinessEntityId = 1111, Name = "Pro Sporting Goods", SalesPersonId = 7777, Rowguid = new Guid("a04ceec6-13da-49b7-8b1a-f3af8ba2c3b9"), ModifiedDate = _standardModifiedDate},
+            new(){BusinessEntityId = 1112, Name = "Topnotch Bikes", SalesPersonId = 7778, Rowguid = new Guid("93ca5ff6-7543-45c1-937c-5a06396d6f32"), ModifiedDate = _standardModifiedDate},
+            new(){BusinessEntityId = 1113, Name = "Golf and Cycle Store", SalesPersonId = 7779, Rowguid = new Guid("71272fd6-88ef-464a-9aaa-b3a6df4ad480"), ModifiedDate = _standardModifiedDate},
+            new(){BusinessEntityId = 1114, Name = "Colorado Ski, Golf, and Bike", SalesPersonId = 7780, Rowguid = new Guid("f28aabed-af5a-4bee-ae43-19ecd8995573"), ModifiedDate = _standardModifiedDate},
+            new(){BusinessEntityId = 1115, Name = "Epic Mountain Gear", SalesPersonId = 7781, Rowguid = new Guid("669b1923-c251-465e-bda5-f5378cb3961a"), ModifiedDate = _standardModifiedDate},
+        });
+
+        DbContext.SalesPersons.AddRange(new List<SalesPerson>
+        {
+            new(){BusinessEntityId = 7777, TerritoryId = 4, Rowguid = new Guid("1e28194c-6f14-4dc9-b4ff-e715ebd606ef"), ModifiedDate = _standardModifiedDate},
+            new(){BusinessEntityId = 7778, TerritoryId = 4, Rowguid = new Guid("2126a5df-a5ba-4261-878d-c85b9ea39aa9"), ModifiedDate = _standardModifiedDate},
+            new(){BusinessEntityId = 7779, TerritoryId = 4, Rowguid = new Guid("9ef29acb-622e-4b58-9825-987bb22c5b23"), ModifiedDate = _standardModifiedDate},
+            new(){BusinessEntityId = 7780, TerritoryId = 4, Rowguid = new Guid("3c11ef02-88d6-4303-8729-bff99da0c720"), ModifiedDate = _standardModifiedDate},
+            new(){BusinessEntityId = 7781, TerritoryId = 4, Rowguid = new Guid("b9b61d15-e466-46c6-9795-6aa07457190e"), ModifiedDate = _standardModifiedDate},
+        });
+
+        DbContext.Addresses.AddRange( new List<AddressEntity>{
+            new()
+            {
+                AddressId = 553,
+                AddressLine1 = "1234 Broadway Ave",
+                City = "Aurora",
+                StateProvinceId = 10,
+                Rowguid = new Guid("8f83c8eb-ee79-46ba-8e2c-6645794674b4"),
+                PostalCode = "80015",
+                ModifiedDate = _standardModifiedDate,
+                StateProvince = colorado
+            },
+            new()
+            {
+                AddressId = 554,
+                AddressLine1 = "456 Union Ave",
+                City = "Aurora",
+                StateProvinceId = 10,
+                Rowguid = new Guid("28238dcb-1842-4a64-9224-6b13cbbb0ab4"),
+                PostalCode = "80016",
+                ModifiedDate = _standardModifiedDate,
+                StateProvince = colorado
+            },
+            new()
+            {
+                AddressId = 555,
+                AddressLine1 = "487 Wheeling Ave",
+                City = "Aurora",
+                StateProvinceId = 10,
+                Rowguid = new Guid("6934f6ca-6382-48cc-98e7-4a1575c7c62c"),
+                PostalCode = "80012",
+                ModifiedDate = _standardModifiedDate,
+                StateProvince = colorado
+            },
+            new()
+            {
+                AddressId = 556,
+                AddressLine1 = "942 Mississippi Ave",
+                City = "Aurora",
+                StateProvinceId = 10,
+                Rowguid = new Guid("214d2137-4254-4a50-b8ef-7dae4893bd7b"),
+                PostalCode = "80012",
+                ModifiedDate = _standardModifiedDate,
+                StateProvince = colorado
+            },
+            new()
+            {
+                AddressId = 557,
+                AddressLine1 = "154 Evans St.",
+                City = "Aurora",
+                StateProvinceId = 10,
+                Rowguid = new Guid("da409df8-2b7a-465b-be4f-f489f8b87d41"),
+                PostalCode = "80011",
+                ModifiedDate = _standardModifiedDate,
+                StateProvince = colorado
+            },
+            new()
+            {
+                AddressId = 558,
+                AddressLine1 = "348 St. Thomas Lane",
+                City = "Aurora",
+                StateProvinceId = 10,
+                Rowguid = new Guid("54999039-5cbe-43b8-9e4a-8e6529a6a280"),
+                PostalCode = "80010",
+                ModifiedDate = _standardModifiedDate,
+                StateProvince = colorado
+            },
+            new()
+            {
+                AddressId = 559,
+                AddressLine1 = "414 South Tejon Parkway",
+                City = "Aurora",
+                StateProvinceId = 10,
+                Rowguid = new Guid("9a540808-7509-40bd-befb-e5f20f38af49"),
+                PostalCode = "80010",
+                ModifiedDate = _standardModifiedDate,
+                StateProvince = colorado
+            },
+        });
+
+        DbContext.BusinessEntityAddresses.AddRange(new List<BusinessEntityAddressEntity>
+        {
+            new(){BusinessEntityId = 1111, AddressId = 553, AddressTypeId = 4, Rowguid = new Guid("d8f72edf-2334-4a59-abe7-a4f8cea37fb1"), ModifiedDate = _standardModifiedDate},
+            new(){BusinessEntityId = 1111, AddressId = 554, AddressTypeId = 3, Rowguid = new Guid("c8679617-b372-4d53-803b-cced0afdf8f3"), ModifiedDate = _standardModifiedDate},
+            new(){BusinessEntityId = 1111, AddressId = 555, AddressTypeId = 5, Rowguid = new Guid("7a4aea59-2b12-41a3-893c-8469c04fc581"), ModifiedDate = _standardModifiedDate},
+            new(){BusinessEntityId = 1112, AddressId = 556, AddressTypeId = 4, Rowguid = new Guid("f250a70a-39dd-4c7d-8031-51231e71b18f"), ModifiedDate = _standardModifiedDate},
+            new(){BusinessEntityId = 1113, AddressId = 557, AddressTypeId = 3, Rowguid = new Guid("603782eb-457e-4824-9eee-781106958687"), ModifiedDate = _standardModifiedDate},
+            new(){BusinessEntityId = 1114, AddressId = 558, AddressTypeId = 2, Rowguid = new Guid("454cd60c-ff39-4354-8b64-082e774785f8"), ModifiedDate = _standardModifiedDate},
+            new(){BusinessEntityId = 1115, AddressId = 559, AddressTypeId = 3, Rowguid = new Guid("41cbd4ac-5c45-431e-999b-cae35ea49325"), ModifiedDate = _standardModifiedDate},
         });
 
         DbContext.SaveChanges();

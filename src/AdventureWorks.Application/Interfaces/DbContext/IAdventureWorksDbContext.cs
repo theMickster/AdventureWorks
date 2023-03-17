@@ -16,11 +16,15 @@ public interface IAdventureWorksDbContext
 
     DbSet<BusinessEntity> BusinessEntities { get; set; }
 
+    DbSet<BusinessEntityAddressEntity> BusinessEntityAddresses { get; set; }
+
     DbSet<CountryRegionEntity> CountryRegions { get; set; }
 
     DbSet<EmailAddress> EmailAddresses { get; set; }
 
     DbSet<PersonEntity> Persons { get; set; }
+
+    DbSet<SalesPerson> SalesPersons { get; set; }
 
     DbSet<SalesTerritoryEntity> SalesTerritories { get; set; }
     

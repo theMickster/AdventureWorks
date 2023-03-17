@@ -9,7 +9,7 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "ConsoleApps", "ConsoleApps"
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "src", "src", "{4F574E3E-B545-4423-9D0A-2B2A6F5E1E26}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "AdventureWorks.Testing.Console", "src\AdventureWorks.Testing.Console\AdventureWorks.Testing.Console.csproj", "{DBF17EED-479C-4137-A58E-0BB3A9F425EA}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "AdventureWorks.Testing.Console", "src\AdventureWorks.Testing.Console\AdventureWorks.Testing.Console.csproj", "{DBF17EED-479C-4137-A58E-0BB3A9F425EA}"
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "AdventureWorks.Application", "src\AdventureWorks.Application\AdventureWorks.Application.csproj", "{AF766912-3970-47F9-8681-83B597828359}"
 EndProject
