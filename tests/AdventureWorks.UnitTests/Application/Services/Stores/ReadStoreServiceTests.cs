@@ -1,8 +1,10 @@
-﻿using AdventureWorks.Application.Interfaces.Repositories.Sales;
+﻿using AdventureWorks.Application.Interfaces.Repositories.Person;
+using AdventureWorks.Application.Interfaces.Repositories.Sales;
 using AdventureWorks.Application.Interfaces.Services.Stores;
 using AdventureWorks.Application.Services.Stores;
 using AdventureWorks.Common.Attributes;
 using AdventureWorks.Domain.Entities;
+using AdventureWorks.Domain.Entities.Person;
 using AdventureWorks.Domain.Entities.Sales;
 using AdventureWorks.Domain.Profiles.Sales;
 using AutoMapper;
@@ -14,6 +16,7 @@ public sealed class ReadStoreServiceTests : UnitTestBase
 {
     private readonly IMapper _mapper;
     private readonly Mock<IStoreRepository> _mockStoreRepository = new();
+    private readonly Mock<IBusinessEntityContactEntityRepository> _mockContactEntityRepository = new();
     private ReadStoreService _sut;
 
     public ReadStoreServiceTests()
@@ -23,7 +26,7 @@ public sealed class ReadStoreServiceTests : UnitTestBase
         );
         _mapper = mappingConfig.CreateMapper();
 
-        _sut = new ReadStoreService(_mapper, _mockStoreRepository.Object);
+        _sut = new ReadStoreService(_mapper, _mockStoreRepository.Object, _mockContactEntityRepository.Object);
     }
 
     [Fact]
@@ -47,15 +50,24 @@ public sealed class ReadStoreServiceTests : UnitTestBase
         {
             _ = ((Action)(() => _sut = new ReadStoreService(
                     null!,
-                    _mockStoreRepository.Object)))
+                    _mockStoreRepository.Object,
+                    _mockContactEntityRepository.Object)))
                 .Should().Throw<ArgumentNullException>("because we expect a null argument exception.")
                 .And.ParamName.Should().Be("mapper");
 
             _ = ((Action)(() => _sut = new ReadStoreService(
                     _mapper,
-                    null!)))
+                    null!,
+                    _mockContactEntityRepository.Object)))
                 .Should().Throw<ArgumentNullException>("because we expect a null argument exception.")
                 .And.ParamName.Should().Be("storeRepository");
+
+            _ = ((Action)(() => _sut = new ReadStoreService(
+                    _mapper,
+                    _mockStoreRepository.Object,
+                    null!)))
+                .Should().Throw<ArgumentNullException>("because we expect a null argument exception.")
+                .And.ParamName.Should().Be("businessEntityContactEntityRepository");
         }
     }
 
@@ -128,8 +140,27 @@ public sealed class ReadStoreServiceTests : UnitTestBase
             }
         };
 
+        var storeContacts = new List<BusinessEntityContactEntity>
+        {
+            new()
+            {
+                BusinessEntityId = storeId, ContactTypeId = 11,
+                ContactType = new ContactTypeEntity { ContactTypeId = 11, Name = "Owner" }, PersonId = 987,
+                Person = new PersonEntity { BusinessEntityId = 987, FirstName = "Steve", LastName = "Jones" }
+            },
+            new()
+            {
+                BusinessEntityId = storeId, ContactTypeId = 12,
+                ContactType = new ContactTypeEntity { ContactTypeId = 12, Name = "Store Contact" }, PersonId = 988,
+                Person = new PersonEntity { BusinessEntityId = 988, FirstName = "Peter", LastName = "Jones" }
+            },
+        };
+
         _mockStoreRepository.Setup(x => x.GetStoreByIdAsync(storeId))
             .ReturnsAsync(entity);
+
+        _mockContactEntityRepository.Setup(x => x.GetContactsByIdAsync(storeId))
+            .ReturnsAsync(storeContacts);
 
         var result = await _sut.GetByIdAsync(storeId).ConfigureAwait(false);
 
@@ -139,6 +170,11 @@ public sealed class ReadStoreServiceTests : UnitTestBase
             result!.Id.Should().Be(storeId);
             result.StoreAddresses.Should().HaveCount(2);
             result.ModifiedDate.Should().Be(dateModified);
+
+            result.StoreContacts.Should().HaveCount(2);
+
+            result.StoreContacts.Count(x => x.FirstName == "Steve").Should().Be(1);
+            result.StoreContacts.Count(x => x.LastName == "Jones").Should().Be(2);
         }
     }
 }

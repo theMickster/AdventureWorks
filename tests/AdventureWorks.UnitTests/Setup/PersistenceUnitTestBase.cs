@@ -397,13 +397,13 @@ public abstract class PersistenceUnitTestBase : UnitTestBase
             new (){BusinessEntityId = 3, FirstName = "Shannon", LastName = "Sharpe", Rowguid = new Guid("94159810-21c3-4666-ba28-04911f05215e"), ModifiedDate = StandardModifiedDate, PersonTypeId = 3},
             new (){BusinessEntityId = 4, FirstName = "Emmitt", LastName = "Smith", Rowguid = new Guid("1bfe2f92-cf14-4258-a634-14ed56dbad69"), ModifiedDate = StandardModifiedDate, PersonTypeId = 3},
             new (){BusinessEntityId = 5, FirstName = "Duplicate", LastName = "User", Rowguid = new Guid("86272e78-b76f-40ea-a706-a3d03d2c691c"), ModifiedDate = StandardModifiedDate, PersonTypeId = 3},
-            new (){BusinessEntityId = 6, FirstName = "Duplicate", LastName = "User", Rowguid = new Guid("86272e78-b76f-40ea-a706-a3d03d2c691c"), ModifiedDate = StandardModifiedDate},
-            new (){BusinessEntityId = 7, FirstName = "Rod", LastName = "Smith", Rowguid = new Guid("671d24b5-32d7-4ed5-8d37-e9380f1209b1"), ModifiedDate = StandardModifiedDate},
-            new (){BusinessEntityId = 8, FirstName = "Randy", LastName = "Gradishar", Rowguid = new Guid("9a22ce11-322f-477d-b62e-296d2f8794e0"), ModifiedDate = StandardModifiedDate},
-            new (){BusinessEntityId = 9, FirstName = "Floyd", LastName = "Little", Rowguid = new Guid("c379c89c-3000-49a6-be25-10ce21a1db62"), ModifiedDate = StandardModifiedDate},
-            new (){BusinessEntityId = 10, FirstName = "Steve", LastName = "Atwater", Rowguid = new Guid("4a861fc4-409e-48f2-a211-5d6cd9833ed0"), ModifiedDate = StandardModifiedDate},
-            new (){BusinessEntityId = 11, FirstName = "Ed", LastName = "McCaffrey", Rowguid = new Guid("ee0e2b2a-48d2-4d5f-863e-ab3bb5ad3547"), ModifiedDate = StandardModifiedDate},
-            new (){BusinessEntityId = 12, FirstName = "Bill", LastName = "Romanowski", Rowguid = new Guid("207a0b49-4e9b-4868-9831-7083399f1fd5"), ModifiedDate = StandardModifiedDate}
+            new (){BusinessEntityId = 6, FirstName = "Duplicate", LastName = "User", Rowguid = new Guid("86272e78-b76f-40ea-a706-a3d03d2c691c"), ModifiedDate = StandardModifiedDate, PersonTypeId = 1},
+            new (){BusinessEntityId = 7, FirstName = "Rod", LastName = "Smith", Rowguid = new Guid("671d24b5-32d7-4ed5-8d37-e9380f1209b1"), ModifiedDate = StandardModifiedDate, PersonTypeId = 1},
+            new (){BusinessEntityId = 8, FirstName = "Randy", LastName = "Gradishar", Rowguid = new Guid("9a22ce11-322f-477d-b62e-296d2f8794e0"), ModifiedDate = StandardModifiedDate, PersonTypeId = 1},
+            new (){BusinessEntityId = 9, FirstName = "Floyd", LastName = "Little", Rowguid = new Guid("c379c89c-3000-49a6-be25-10ce21a1db62"), ModifiedDate = StandardModifiedDate, PersonTypeId = 1},
+            new (){BusinessEntityId = 10, FirstName = "Steve", LastName = "Atwater", Rowguid = new Guid("4a861fc4-409e-48f2-a211-5d6cd9833ed0"), ModifiedDate = StandardModifiedDate, PersonTypeId = 1},
+            new (){BusinessEntityId = 11, FirstName = "Ed", LastName = "McCaffrey", Rowguid = new Guid("ee0e2b2a-48d2-4d5f-863e-ab3bb5ad3547"), ModifiedDate = StandardModifiedDate, PersonTypeId = 1},
+            new (){BusinessEntityId = 12, FirstName = "Bill", LastName = "Romanowski", Rowguid = new Guid("207a0b49-4e9b-4868-9831-7083399f1fd5"), ModifiedDate = StandardModifiedDate, PersonTypeId = 4}
         });
 
         DbContext.ContactTypes.AddRange(new List<ContactTypeEntity>
@@ -427,11 +427,14 @@ public abstract class PersistenceUnitTestBase : UnitTestBase
 
         DbContext.BusinessEntityContacts.AddRange(new List<BusinessEntityContactEntity>
         {
+            new(){BusinessEntityId = 1112, ContactTypeId = 11, PersonId = 12},
+
             new(){BusinessEntityId = 1111, ContactTypeId = 1, PersonId = 1},
             new(){BusinessEntityId = 1111, ContactTypeId = 11, PersonId = 2},
             new(){BusinessEntityId = 1111, ContactTypeId = 17, PersonId = 3},
             new(){BusinessEntityId = 1111, ContactTypeId = 18, PersonId = 4},
-            new(){BusinessEntityId = 1111, ContactTypeId = 19, PersonId = 5},
+            new(){BusinessEntityId = 1111, ContactTypeId = 19, PersonId = 7},
+
         });
 
         DbContext.SaveChanges();

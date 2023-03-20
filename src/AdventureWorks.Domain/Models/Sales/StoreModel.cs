@@ -8,4 +8,5 @@ public sealed class StoreModel : StoreBaseModel
 
     public List<BusinessEntityAddressModel> StoreAddresses { get; set; }
 
+    public List<StoreContactModel> StoreContacts { get; set; }
 }

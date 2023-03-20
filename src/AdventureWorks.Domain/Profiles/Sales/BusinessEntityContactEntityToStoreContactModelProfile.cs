@@ -9,7 +9,9 @@ public sealed class BusinessEntityContactEntityToStoreContactModelProfile : Prof
     public BusinessEntityContactEntityToStoreContactModelProfile()
     {
         CreateMap<BusinessEntityContactEntity, StoreContactModel>()
-            .ForMember(x => x.Id, o => o.MapFrom(y => y.BusinessEntityId))
+            .ForMember(x => x.Id, o => o.MapFrom(y => y.PersonId))
+
+            .ForMember(x => x.StoreId, o => o.MapFrom(y => y.BusinessEntityId))
 
             .ForMember(x => x.ContactTypeId, o => o.MapFrom(y => y.ContactTypeId))
 

@@ -59,7 +59,8 @@ public sealed class BusinessEntityContactEntityToStoreContactModelProfileTests :
         using (new AssertionScope())
         {
             result.Should().NotBeNull();
-            result.Id.Should().Be(id);
+            result.Id.Should().Be(personId);
+            result.StoreId.Should().Be(id);
             result.ContactTypeId.Should().Be(entity.ContactTypeId);
             result.ContactTypeName.Should().Be("Owner");
             result.Title.Should().Be(entity.Person.Title);
@@ -97,7 +98,8 @@ public sealed class BusinessEntityContactEntityToStoreContactModelProfileTests :
         using (new AssertionScope())
         {
             result.Should().NotBeNull();
-            result.Id.Should().Be(id);
+            result.Id.Should().Be(personId);
+            result.StoreId.Should().Be(id);
             result.ContactTypeId.Should().Be(entity.ContactTypeId);
             result.ContactTypeName.Should().BeNull();
             result.Title.Should().BeNull();

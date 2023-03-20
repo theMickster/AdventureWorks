@@ -17,4 +17,6 @@ public sealed class StoreContactModel
     public int ContactTypeId { get; set; }
 
     public string ContactTypeName { get; set; }
+
+    public int StoreId { get; set; }
 }
