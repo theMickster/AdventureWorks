@@ -13,7 +13,7 @@ public class SalesPersonConfiguration : IEntityTypeConfiguration<SalesPerson>
         builder.HasKey(a => a.BusinessEntityId);
 
         builder.HasOne(a => a.BusinessEntity)
-            .WithMany(b=>b.SalesPersons)
+            .WithMany(b=> b.SalesPersons)
             .HasForeignKey(a => a.BusinessEntityId);
 
         builder.HasOne(a => a.TerritoryEntity)

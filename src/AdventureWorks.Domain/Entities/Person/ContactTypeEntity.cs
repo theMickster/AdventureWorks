@@ -8,6 +8,6 @@ public sealed class ContactTypeEntity : BaseEntity
 
     public DateTime ModifiedDate { get; set; }
 
-    public ICollection<BusinessEntityContact> BusinessEntityContacts { get; set; }
+    public ICollection<BusinessEntityContactEntity> BusinessEntityContacts { get; set; }
 
 }

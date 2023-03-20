@@ -1,4 +1,5 @@
 ﻿using AdventureWorks.Domain.Entities.Person;
+using AdventureWorks.Domain.Entities.Sales;
 
 namespace AdventureWorks.Domain.Entities;
 

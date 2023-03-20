@@ -16,7 +16,7 @@ public sealed class AddressTypeRepositoryTests : PersistenceUnitTestBase
 
         DbContext.AddressTypes.AddRange(new List<AddressTypeEntity>
             {
-                new AddressTypeEntity { AddressTypeId = 1, Name = "Home" },
+                new() { AddressTypeId = 1, Name = "Home" },
                 new() { AddressTypeId = 2, Name = "Billing" }
             }
         );

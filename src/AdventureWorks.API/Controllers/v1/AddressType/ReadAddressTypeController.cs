@@ -1,5 +1,6 @@
 ﻿using AdventureWorks.Application.Interfaces.Services.AddressType;
 using AdventureWorks.Domain.Models;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
 namespace AdventureWorks.API.Controllers.v1.AddressType;
@@ -9,6 +10,7 @@ namespace AdventureWorks.API.Controllers.v1.AddressType;
 /// </summary>
 /// <remarks></remarks>
 [ApiController]
+[Authorize]
 [ApiVersion("1.0")]
 [ApiExplorerSettings(GroupName = "Address Type")]
 [Produces("application/json")]

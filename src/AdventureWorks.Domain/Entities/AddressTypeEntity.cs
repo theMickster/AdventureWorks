@@ -10,5 +10,5 @@ public sealed class AddressTypeEntity : BaseEntity
 
     public DateTime ModifiedDate { get; set; }
 
-    public ICollection<BusinessEntityAddress> BusinessEntityAddress { get; set; }
+    public ICollection<BusinessEntityAddressEntity> BusinessEntityAddresses { get; set; }
 }

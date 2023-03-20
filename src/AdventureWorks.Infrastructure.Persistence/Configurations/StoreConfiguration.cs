@@ -1,4 +1,4 @@
-﻿using AdventureWorks.Domain.Entities;
+﻿using AdventureWorks.Domain.Entities.Sales;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
 
@@ -12,11 +12,11 @@ public class StoreConfiguration : IEntityTypeConfiguration<StoreEntity>
 
         builder.HasKey(a => a.BusinessEntityId);
 
-        builder.HasOne(a => a.BusinessEntity)
+        builder.HasOne(a => a.StoreBusinessEntity)
             .WithMany(b => b.Stores)
             .HasForeignKey(a => a.BusinessEntityId);
 
-        builder.HasOne(a => a.SalesPerson)
+        builder.HasOne(a => a.PrimarySalesPerson)
             .WithMany()
             .HasForeignKey(a => a.SalesPersonId);
     }

@@ -4,9 +4,9 @@ using Microsoft.EntityFrameworkCore.Metadata.Builders;
 
 namespace AdventureWorks.Infrastructure.Persistence.Configurations;
 
-public class BusinessEntityAddressConfiguration : IEntityTypeConfiguration<BusinessEntityAddress>
+public class BusinessEntityAddressConfiguration : IEntityTypeConfiguration<BusinessEntityAddressEntity>
 {
-    public void Configure(EntityTypeBuilder<BusinessEntityAddress> builder)
+    public void Configure(EntityTypeBuilder<BusinessEntityAddressEntity> builder)
     {
         builder.ToTable("BusinessEntityAddress", "Person");
 
@@ -16,12 +16,12 @@ public class BusinessEntityAddressConfiguration : IEntityTypeConfiguration<Busin
             .WithMany(b => b.BusinessEntityAddresses)
             .HasForeignKey(a => a.BusinessEntityId);
 
-        builder.HasOne(a => a.AddressEntity)
+        builder.HasOne(a => a.Address)
             .WithMany()
             .HasForeignKey(a => a.AddressId);
 
-        builder.HasOne(a => a.AddressTypeEntity)
-            .WithMany()
+        builder.HasOne(a => a.AddressType)
+            .WithMany(b => b.BusinessEntityAddresses)
             .HasForeignKey(a => a.AddressTypeId);
 
     }

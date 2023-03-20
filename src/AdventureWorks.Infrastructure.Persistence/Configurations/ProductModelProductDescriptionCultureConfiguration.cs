@@ -20,8 +20,5 @@ public class ProductModelProductDescriptionCultureConfiguration : IEntityTypeCon
             .WithMany()
             .HasForeignKey(a => a.ProductDescriptionId);
 
-        builder.HasOne(a => a.Culture)
-            .WithMany()
-            .HasForeignKey(a => a.CultureId);
     }
 }
