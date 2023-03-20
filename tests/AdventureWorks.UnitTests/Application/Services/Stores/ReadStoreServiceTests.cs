@@ -63,7 +63,7 @@ public sealed class ReadStoreServiceTests : UnitTestBase
     public async Task GetByIdAsync_returns_null_Async()
     {
         _mockStoreRepository.Setup(x => x.GetStoreByIdAsync(It.IsAny<int>()))
-            .ReturnsAsync((StoreEntity)null);
+            .ReturnsAsync((StoreEntity)null!);
 
         var result = await _sut.GetByIdAsync(22).ConfigureAwait(false);
 

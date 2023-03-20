@@ -1,8 +1,6 @@
-﻿using AdventureWorks.Domain.Entities.Person;
+﻿namespace AdventureWorks.Domain.Entities.Person;
 
-namespace AdventureWorks.Domain.Entities;
-
-public class BusinessEntityContact : BaseEntity
+public sealed class BusinessEntityContactEntity : BaseEntity
 {
     public int BusinessEntityId { get; set; }
 
@@ -16,7 +14,7 @@ public class BusinessEntityContact : BaseEntity
 
     public BusinessEntity BusinessEntity { get; set; }
 
-    public ContactTypeEntity ContactTypeEntity { get; set; }
+    public ContactTypeEntity ContactType { get; set; }
 
     public PersonEntity Person { get; set; }
 }

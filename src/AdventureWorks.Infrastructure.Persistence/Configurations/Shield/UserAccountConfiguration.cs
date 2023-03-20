@@ -22,7 +22,7 @@ public sealed class UserAccountConfiguration : IEntityTypeConfiguration<UserAcco
             .HasForeignKey(a => a.BusinessEntityId);
 
         builder.HasOne(a => a.Person)
-            .WithOne(b => b.UserAccountEntity)
+            .WithOne(b => b.UserAccount)
             .HasForeignKey<PersonEntity>(c => c.BusinessEntityId);
 
         builder.HasOne(a => a.EmailAddress)

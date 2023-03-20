@@ -20,7 +20,7 @@ public class BusinessEntity : BaseEntity
     
     public ICollection<BusinessEntityAddressEntity> BusinessEntityAddresses { get; set; }
     
-    public ICollection<BusinessEntityContact> BusinessEntityContacts { get; set; }
+    public ICollection<BusinessEntityContactEntity> BusinessEntityContacts { get; set; }
 
     public ICollection<UserAccountEntity> UserAccounts { get; set; }
     

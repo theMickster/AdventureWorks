@@ -16,6 +16,8 @@ public interface IAdventureWorksDbContext
 
     DbSet<BusinessEntity> BusinessEntities { get; set; }
 
+    DbSet<BusinessEntityContactEntity> BusinessEntityContacts { get; set; }
+
     DbSet<BusinessEntityAddressEntity> BusinessEntityAddresses { get; set; }
 
     DbSet<CountryRegionEntity> CountryRegions { get; set; }

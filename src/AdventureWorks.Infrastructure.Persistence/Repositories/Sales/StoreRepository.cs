@@ -18,7 +18,7 @@ public sealed class StoreRepository : EfRepository<StoreEntity>, IStoreRepositor
     /// <summary>
     /// Retrieve a store by id along with its related entities
     /// </summary>
-    /// <param name="storeId">the unique address identifier</param>
+    /// <param name="storeId">the unique store identifier</param>
     /// <returns></returns>
     public async Task<StoreEntity> GetStoreByIdAsync(int storeId)
     {

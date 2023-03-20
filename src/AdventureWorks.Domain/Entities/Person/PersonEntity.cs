@@ -30,7 +30,7 @@ public sealed class PersonEntity : BaseEntity
 
     public DateTime ModifiedDate { get; set; }
 
-    public ICollection<BusinessEntityContact> BusinessEntityContacts { get; set; }
+    public ICollection<BusinessEntityContactEntity> BusinessEntityContacts { get; set; }
 
     public ICollection<CustomerEntity> Customers { get; set; }
 
@@ -44,7 +44,7 @@ public sealed class PersonEntity : BaseEntity
 
     public BusinessEntity BusinessEntity { get; set; }
 
-    public UserAccountEntity UserAccountEntity { get; set; }
+    public UserAccountEntity UserAccount { get; set; }
 
     public PersonTypeEntity PersonType { get; set; }
 }

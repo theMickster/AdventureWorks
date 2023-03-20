@@ -35,6 +35,8 @@ public class AdventureWorksDbContext : DbContext, IAdventureWorksDbContext
 
     public DbSet<BusinessEntityAddressEntity> BusinessEntityAddresses { get; set; }
 
+    public DbSet<BusinessEntityContactEntity> BusinessEntityContacts { get; set; }
+
     public DbSet<ContactTypeEntity> ContactTypes { get; set; }
 
     public DbSet<CountryRegionEntity> CountryRegions { get; set; }
