@@ -5,7 +5,7 @@ using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.IdentityModel.Tokens;
 using System.Text;
 
-[assembly: InternalsVisibleTo("AdventureWorks.Test.UnitTests")]
+[assembly: InternalsVisibleTo("AdventureWorks.UnitTests")]
 namespace AdventureWorks.API.libs;
 
 /// <summary>

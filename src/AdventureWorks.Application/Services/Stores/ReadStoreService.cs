@@ -2,6 +2,7 @@
 using AdventureWorks.Application.Interfaces.Repositories.Sales;
 using AdventureWorks.Application.Interfaces.Services.Stores;
 using AdventureWorks.Common.Attributes;
+using AdventureWorks.Common.Filtering;
 using AdventureWorks.Domain.Models.Sales;
 using AutoMapper;
 
@@ -46,5 +47,26 @@ public sealed class ReadStoreService : IReadStoreService
         storeModel.StoreContacts = contactModels;
 
         return storeModel;
+    }
+
+    /// <summary>
+    /// Retrieves a paginated list of stores
+    /// </summary>
+    /// <param name="parameters">the input paging parameters</param>
+    /// <returns>a <seealso cref="StoreSearchResultModel"/> object</returns>
+    public async Task<StoreSearchResultModel> GetStores(StoreParameter parameters)
+    {
+        var (storeEntities, totalRecords) = await _storeRepository.GetStores(parameters).ConfigureAwait(false);
+        var stores = _mapper.Map<List<StoreModel>>(storeEntities);
+
+        var result = new StoreSearchResultModel
+        {
+            Results = stores,
+            PageNumber = parameters.PageNumber,
+            PageSize = parameters.PageSize,
+            TotalRecords = totalRecords
+        };
+
+        return result;
     }
 }

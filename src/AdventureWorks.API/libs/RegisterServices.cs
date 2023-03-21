@@ -16,8 +16,9 @@ using System.Net.Http.Headers;
 using System.Reflection;
 using AdventureWorks.Application.Http;
 using AdventureWorks.Application.Interfaces.Http;
+using AdventureWorks.API.libs.InternalHelpers;
 
-[assembly: InternalsVisibleTo("AdventureWorks.Test.UnitTests")]
+[assembly: InternalsVisibleTo("AdventureWorks.UnitTests")]
 namespace AdventureWorks.API.libs;
 
 internal static class RegisterServices
@@ -60,7 +61,7 @@ internal static class RegisterServices
                                 "v1",
                                 "API",
                                 new Uri("http://hello-world.info")));
-
+            
             options.AddSecurityDefinition("Bearer", new OpenApiSecurityScheme
             {
                 In = ParameterLocation.Header,

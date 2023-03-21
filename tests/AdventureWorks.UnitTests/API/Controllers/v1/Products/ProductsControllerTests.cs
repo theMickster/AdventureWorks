@@ -31,10 +31,4 @@ public sealed class ProductsControllerTests: UnitTestBase
         }
     }
 
-    [Fact]
-    public void GetAllProductAsync_throws_not_implemented_exception()
-    {
-        _ = ((Action)(() => _ = _sut.GetAllProductAsync()))
-            .Should().Throw<NotImplementedException>("because we expect a not implemented exception.");
-    }
 }

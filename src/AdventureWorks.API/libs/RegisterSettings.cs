@@ -2,7 +2,7 @@
 using AdventureWorks.Common.Helpers;
 using AdventureWorks.Common.Settings;
 
-[assembly: InternalsVisibleTo("AdventureWorks.Test.UnitTests")]
+[assembly: InternalsVisibleTo("AdventureWorks.UnitTests")]
 namespace AdventureWorks.API.libs;
 
 internal static class RegisterSettings

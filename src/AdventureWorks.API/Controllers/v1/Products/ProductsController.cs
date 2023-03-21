@@ -1,8 +1,5 @@
-﻿using AutoMapper;
+﻿using AdventureWorks.Application.Interfaces.Repositories;
 using Microsoft.AspNetCore.Mvc;
-using System.Net;
-using AdventureWorks.Domain.Entities;
-using AdventureWorks.Application.Interfaces.Repositories;
 
 namespace AdventureWorks.API.Controllers.v1.Products;
 
@@ -28,13 +25,13 @@ public sealed class ProductsController : ControllerBase
         _productRepository = productRepository ?? throw new ArgumentNullException(nameof(productRepository)) ;
     }
 
-    /// <summary>
-    /// Retrieve all products
-    /// </summary>
-    /// <returns></returns>
-    [HttpGet]
-    public Task<ActionResult<List<Product>>> GetAllProductAsync()
-    {
-        throw new NotImplementedException("Endpoint is not implemented.");
-    }
+    ///// <summary>
+    ///// Retrieve all products
+    ///// </summary>
+    ///// <returns></returns>
+    //[HttpGet]
+    //public Task<ActionResult<List<Product>>> GetAllProductAsync()
+    //{
+    //    throw new NotImplementedException("Endpoint is not implemented.");
+    //}
 }

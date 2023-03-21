@@ -1,5 +1,6 @@
 ﻿using AdventureWorks.Application.Interfaces.Services.Stores;
-using AdventureWorks.Domain.Models;
+using AdventureWorks.Common.Filtering;
+using AdventureWorks.Domain.Models.Sales;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
@@ -38,7 +39,7 @@ public sealed class ReadStoreController : ControllerBase
     /// <param name="storeId">the unique identifier</param>
     /// <returns></returns>
     [HttpGet("{storeId:int}", Name = "GetStoreById")]
-    [Produces(typeof(AddressModel))]
+    [Produces(typeof(StoreModel))]
     public async Task<IActionResult> GetByIdAsync(int storeId)
     {
         if (storeId <= 0)
@@ -54,5 +55,25 @@ public sealed class ReadStoreController : ControllerBase
         }
 
         return Ok(address);
+    }
+
+    /// <summary>
+    /// Retrieves a paged list of stores
+    /// </summary>
+    /// <param name="parameters">store pagination query string</param>
+    /// <returns></returns>
+    [HttpGet]
+    [Produces(typeof(List<StoreModel>))]
+    public async Task<IActionResult> GetStoreListAsync([FromQuery] StoreParameter parameters)
+    {
+
+        var storeList = new List<StoreModel>()
+        {
+            new (){Id = 1, Name = "Test01"},
+            new (){Id = 1, Name = "Test02"}
+        };
+
+
+        return Ok(storeList);
     }
 }
