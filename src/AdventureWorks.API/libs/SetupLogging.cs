@@ -8,6 +8,7 @@ namespace AdventureWorks.API.libs;
 /// <summary>
 /// Intended for use during .NET Core API startup to add logging 
 /// </summary>
+[ExcludeFromCodeCoverage]
 internal static class SetupLogging
 {
     internal static IServiceCollection AddAdventureWorksLogging(

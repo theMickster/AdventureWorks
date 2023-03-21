@@ -41,7 +41,7 @@ public sealed class StoreRepository : EfRepository<StoreEntity>, IStoreRepositor
     /// Retrieves a paginated list of stores and the total count of stores in the database.
     /// </summary>
     /// <param name="parameters">the input paging parameters</param>
-    public async Task<(IReadOnlyList<StoreEntity>, int)> GetStores(StoreParameter parameters)
+    public async Task<(IReadOnlyList<StoreEntity>, int)> GetStoresAsync(StoreParameter parameters)
     {
         var totalCount = await DbContext.Stores.CountAsync();
 

@@ -16,5 +16,5 @@ public interface IReadStoreService
     /// </summary>
     /// <param name="parameters">the input paging parameters</param>
     /// <returns>a <seealso cref="StoreSearchResultModel"/> object</returns>
-    Task<StoreSearchResultModel> GetStores(StoreParameter parameters);
+    Task<StoreSearchResultModel> GetStoresAsync(StoreParameter parameters);
 }

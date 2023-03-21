@@ -5,6 +5,7 @@ using AdventureWorks.Common.Settings;
 [assembly: InternalsVisibleTo("AdventureWorks.UnitTests")]
 namespace AdventureWorks.API.libs;
 
+[ExcludeFromCodeCoverage]
 internal static class RegisterSettings
 {
     internal static WebApplicationBuilder RegisterCommonSettings(this WebApplicationBuilder builder)

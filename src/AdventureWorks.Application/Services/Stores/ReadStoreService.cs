@@ -54,9 +54,9 @@ public sealed class ReadStoreService : IReadStoreService
     /// </summary>
     /// <param name="parameters">the input paging parameters</param>
     /// <returns>a <seealso cref="StoreSearchResultModel"/> object</returns>
-    public async Task<StoreSearchResultModel> GetStores(StoreParameter parameters)
+    public async Task<StoreSearchResultModel> GetStoresAsync(StoreParameter parameters)
     {
-        var (storeEntities, totalRecords) = await _storeRepository.GetStores(parameters).ConfigureAwait(false);
+        var (storeEntities, totalRecords) = await _storeRepository.GetStoresAsync(parameters).ConfigureAwait(false);
         var stores = _mapper.Map<List<StoreModel>>(storeEntities);
 
         var result = new StoreSearchResultModel

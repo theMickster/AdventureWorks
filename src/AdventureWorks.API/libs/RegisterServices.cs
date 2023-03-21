@@ -1,5 +1,7 @@
 using AdventureWorks.Application.Exceptions;
+using AdventureWorks.Application.Http;
 using AdventureWorks.Application.Interfaces.DbContext;
+using AdventureWorks.Application.Interfaces.Http;
 using AdventureWorks.Application.Validators.Address;
 using AdventureWorks.Common.Attributes;
 using AdventureWorks.Common.Constants;
@@ -14,13 +16,11 @@ using Microsoft.OpenApi.Models;
 using System.Diagnostics;
 using System.Net.Http.Headers;
 using System.Reflection;
-using AdventureWorks.Application.Http;
-using AdventureWorks.Application.Interfaces.Http;
-using AdventureWorks.API.libs.InternalHelpers;
 
 [assembly: InternalsVisibleTo("AdventureWorks.UnitTests")]
 namespace AdventureWorks.API.libs;
 
+[ExcludeFromCodeCoverage]
 internal static class RegisterServices
 {
     [SuppressMessage("Minor Code Smell", "S1075:URIs should not be hardcoded", Justification = "Because we said so.")]

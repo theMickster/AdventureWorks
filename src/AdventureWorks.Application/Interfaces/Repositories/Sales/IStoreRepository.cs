@@ -16,5 +16,5 @@ public interface IStoreRepository : IAsyncRepository<StoreEntity>
     /// Retrieves a paginated list of stores and the total count of stores in the database.
     /// </summary>
     /// <param name="parameters">the input paging parameters</param>
-    Task< (IReadOnlyList<StoreEntity>, int)> GetStores(StoreParameter parameters);
+    Task< (IReadOnlyList<StoreEntity>, int)> GetStoresAsync(StoreParameter parameters);
 }
