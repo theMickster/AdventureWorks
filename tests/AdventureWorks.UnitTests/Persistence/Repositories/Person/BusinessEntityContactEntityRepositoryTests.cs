@@ -59,7 +59,7 @@ public sealed class BusinessEntityContactEntityRepositoryTests : PersistenceUnit
     }
 
     [Fact]
-    public async Task GetContactsByStoreIdsAsync_succeeds()
+    public async Task GetContactsByStoreIdsAsync_succeedsAsync()
     {
         var storeIds = new List<int>{1111, 1112, 1114};
 

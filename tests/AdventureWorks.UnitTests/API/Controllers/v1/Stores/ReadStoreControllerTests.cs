@@ -4,6 +4,8 @@ using AdventureWorks.Domain.Models.Sales;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
 using System.Net;
+using AdventureWorks.Common.Filtering;
+using AdventureWorks.Test.Common.Extensions;
 
 namespace AdventureWorks.UnitTests.API.Controllers.v1.Stores;
 
@@ -91,6 +93,67 @@ public sealed class ReadStoreControllerTests : UnitTestBase
 
             outputModel.Should().NotBeNull();
             outputModel!.Should().Be("A valid store id must be specified.");
+        }
+    }
+
+    [Fact]
+    public async Task GetStoreListAsync_returns_ok_Async()
+    {
+        _mockReadStoreService.Setup(x => x.GetStoresAsync(It.IsAny<StoreParameter>()))
+            .ReturnsAsync(new StoreSearchResultModel { Results = new List<StoreModel> {new()} });
+
+        var result = await _sut.GetStoreListAsync(new StoreParameter()).ConfigureAwait(false);
+        var objectResult = result as ObjectResult;
+
+        using (new AssertionScope())
+        {
+            objectResult.Should().NotBeNull();
+
+            objectResult!.StatusCode.Should().Be((int)HttpStatusCode.OK);
+        }
+    }
+
+    [Fact]
+    public async Task GetStoreListAsync_null_results_bad_request_Async()
+    {
+        _mockReadStoreService.Setup(x => x.GetStoresAsync(It.IsAny<StoreParameter>()))
+            .ReturnsAsync(new StoreSearchResultModel { Results = null });
+
+        var result = await _sut.GetStoreListAsync(new StoreParameter()).ConfigureAwait(false);
+        var objectResult = result as BadRequestObjectResult;
+        var outputModel = objectResult!.Value! as string;
+
+        using (new AssertionScope())
+        {
+            objectResult.Should().NotBeNull();
+            objectResult!.StatusCode.Should().Be((int)HttpStatusCode.BadRequest);
+
+            outputModel.Should().NotBeNull();
+            outputModel!.Should().Be("Unable to locate results based upon input query parameters.");
+
+            _mockLogger.VerifyLoggingMessageContains("Unable to locate results based upon input query parameters", null, LogLevel.Error);
+        }
+    }
+
+    [Fact]
+    public async Task GetStoreListAsync_empty_results_bad_request_Async()
+    {
+        _mockReadStoreService.Setup(x => x.GetStoresAsync(It.IsAny<StoreParameter>()))
+            .ReturnsAsync(new StoreSearchResultModel { Results = new List<StoreModel>() });
+
+        var result = await _sut.GetStoreListAsync(new StoreParameter()).ConfigureAwait(false);
+        var objectResult = result as BadRequestObjectResult;
+        var outputModel = objectResult!.Value! as string;
+
+        using (new AssertionScope())
+        {
+            objectResult.Should().NotBeNull();
+            objectResult!.StatusCode.Should().Be((int)HttpStatusCode.BadRequest);
+
+            outputModel.Should().NotBeNull();
+            outputModel!.Should().Be("Unable to locate results based upon input query parameters.");
+
+            _mockLogger.VerifyLoggingMessageContains("Unable to locate results based upon input query parameters", null, LogLevel.Error);
         }
     }
 }
