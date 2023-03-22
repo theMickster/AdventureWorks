@@ -59,10 +59,14 @@ public sealed class StoreRepository : EfRepository<StoreEntity>, IStoreRepositor
         switch (parameters.OrderBy)
         {
             case SortedResultConstants.BusinessEntityId:
-                storeQuery = storeQuery.OrderBy(x => x.BusinessEntityId);
+                storeQuery = parameters.SortOrder == SortedResultConstants.Ascending ? 
+                    storeQuery.OrderBy(x => x.BusinessEntityId) : 
+                    storeQuery.OrderByDescending(x => x.BusinessEntityId);
                 break;
             case SortedResultConstants.Name:
-                storeQuery = storeQuery.OrderBy(x => x.Name);
+                storeQuery = parameters.SortOrder == SortedResultConstants.Ascending ?
+                    storeQuery.OrderBy(x => x.Name) :
+                    storeQuery.OrderByDescending(x => x.Name);
                 break;
         }
 

@@ -2,6 +2,7 @@
 
 public static class SortedResultConstants
 {
+
     public const string Ascending = "Ascending";
 
     public const string Descending = "Descending";

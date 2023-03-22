@@ -388,7 +388,9 @@ public abstract class PersistenceUnitTestBase : UnitTestBase
         DbContext.BusinessEntities.AddRange(new List<BusinessEntity>
         {
             new(){BusinessEntityId = 1111, Rowguid = new Guid("d8f72edf-2334-4a59-abe7-a4f8cea37fb1"), ModifiedDate = StandardModifiedDate},
-            new(){BusinessEntityId = 1112, Rowguid = new Guid("f250a70a-39dd-4c7d-8031-51231e71b18f"), ModifiedDate = StandardModifiedDate}
+            new(){BusinessEntityId = 1112, Rowguid = new Guid("f250a70a-39dd-4c7d-8031-51231e71b18f"), ModifiedDate = StandardModifiedDate},
+            new(){BusinessEntityId = 1113, Rowguid = new Guid("f250a70a-39dd-4c7d-8031-51231e71b18f"), ModifiedDate = StandardModifiedDate},
+            new(){BusinessEntityId = 1114, Rowguid = new Guid("f250a70a-39dd-4c7d-8031-51231e71b18f"), ModifiedDate = StandardModifiedDate}
         });
 
         DbContext.Persons.AddRange(new List<PersonEntity>
@@ -429,13 +431,15 @@ public abstract class PersistenceUnitTestBase : UnitTestBase
         DbContext.BusinessEntityContacts.AddRange(new List<BusinessEntityContactEntity>
         {
             new(){BusinessEntityId = 1112, ContactTypeId = 11, PersonId = 12},
-
             new(){BusinessEntityId = 1111, ContactTypeId = 1, PersonId = 1},
             new(){BusinessEntityId = 1111, ContactTypeId = 11, PersonId = 2},
             new(){BusinessEntityId = 1111, ContactTypeId = 17, PersonId = 3},
             new(){BusinessEntityId = 1111, ContactTypeId = 18, PersonId = 4},
             new(){BusinessEntityId = 1111, ContactTypeId = 19, PersonId = 7},
-
+            new(){BusinessEntityId = 1113, ContactTypeId = 1, PersonId = 8},
+            new(){BusinessEntityId = 1113, ContactTypeId = 11, PersonId = 9},
+            new(){BusinessEntityId = 1114, ContactTypeId = 1, PersonId = 10},
+            new(){BusinessEntityId = 1114, ContactTypeId = 11, PersonId = 11}
         });
 
         DbContext.SaveChanges();

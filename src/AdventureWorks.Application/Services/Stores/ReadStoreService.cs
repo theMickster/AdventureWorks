@@ -56,16 +56,32 @@ public sealed class ReadStoreService : IReadStoreService
     /// <returns>a <seealso cref="StoreSearchResultModel"/> object</returns>
     public async Task<StoreSearchResultModel> GetStoresAsync(StoreParameter parameters)
     {
-        var (storeEntities, totalRecords) = await _storeRepository.GetStoresAsync(parameters).ConfigureAwait(false);
-        var stores = _mapper.Map<List<StoreModel>>(storeEntities);
-
         var result = new StoreSearchResultModel
         {
-            Results = stores,
             PageNumber = parameters.PageNumber,
             PageSize = parameters.PageSize,
-            TotalRecords = totalRecords
+            TotalRecords = 0
         };
+
+        var (storeEntities, totalRecords) = await _storeRepository.GetStoresAsync(parameters).ConfigureAwait(false);
+
+        if (storeEntities == null || !storeEntities.Any())
+        {
+            return result;
+        }
+
+        var contactModels = _mapper.Map<List<StoreContactModel>>(await _businessEntityContactEntityRepository
+                .GetContactsByStoreIdsAsync(storeEntities.Select(x => x.BusinessEntityId).ToList()).ConfigureAwait(false));
+
+        var stores = _mapper.Map<List<StoreModel>>(storeEntities);
+
+        stores.ForEach(y =>
+        {
+            y.StoreContacts = contactModels.Where(x => x.StoreId == y.Id).ToList();
+        });
+
+        result.Results = stores;
+        result.TotalRecords = totalRecords;
 
         return result;
     }

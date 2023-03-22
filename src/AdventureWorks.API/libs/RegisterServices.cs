@@ -142,7 +142,7 @@ internal static class RegisterServices
         builder.Services.AddDbContext<AdventureWorksDbContext>(options =>
             {
                 options.UseSqlServer(currentConnectionString);
-                options.LogTo(message => Debug.WriteLine(message));
+                //options.LogTo(message => Debug.WriteLine(message));
             }
         ); 
 

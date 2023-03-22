@@ -1,8 +1,11 @@
 ﻿using AdventureWorks.Application.Interfaces.Services.Stores;
+using AdventureWorks.Common.Constants;
 using AdventureWorks.Common.Filtering;
 using AdventureWorks.Domain.Models.Sales;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using System.Globalization;
+using System.Text.Json;
 
 namespace AdventureWorks.API.Controllers.v1.Stores;
 
@@ -39,7 +42,9 @@ public sealed class ReadStoreController : ControllerBase
     /// <param name="storeId">the unique identifier</param>
     /// <returns></returns>
     [HttpGet("{storeId:int}", Name = "GetStoreById")]
-    [Produces(typeof(StoreModel))]
+    [ProducesResponseType(StatusCodes.Status200OK, Type = typeof(StoreModel))]
+    [ProducesResponseType(StatusCodes.Status404NotFound)]
+    [ProducesResponseType(StatusCodes.Status400BadRequest)]
     public async Task<IActionResult> GetByIdAsync(int storeId)
     {
         if (storeId <= 0)
@@ -63,17 +68,30 @@ public sealed class ReadStoreController : ControllerBase
     /// <param name="parameters">store pagination query string</param>
     /// <returns></returns>
     [HttpGet]
-    [Produces(typeof(List<StoreModel>))]
+    [ProducesResponseType(StatusCodes.Status200OK, Type = typeof(StoreSearchResultModel))]
+    [ProducesResponseType(StatusCodes.Status400BadRequest)]
     public async Task<IActionResult> GetStoreListAsync([FromQuery] StoreParameter parameters)
     {
+        var searchResult = await _readStoreService.GetStoresAsync(parameters).ConfigureAwait(false);
 
-        var storeList = new List<StoreModel>()
+        if (searchResult.Results == null || !searchResult.Results.Any())
         {
-            new (){Id = 1, Name = "Test01"},
-            new (){Id = 1, Name = "Test02"}
-        };
+            var logErrorParams = new
+            {
+                Status = AppLoggingConstants.StatusBadRequest,
+                Operation = "StoreListAsync",
+                DateTime = DateTime.UtcNow.ToString(CultureInfo.InvariantCulture),
+                Message = "Unable to locate results based upon input query parameters.",
+                ErrCode = AppLoggingConstants.HttpGetRequestErrorCode,
+                ServiceId = "AdventureWorksApi",
+                AdditionalInfo = parameters
+            };
 
+            _logger.LogError(JsonSerializer.Serialize(logErrorParams));
 
-        return Ok(storeList);
+            return BadRequest(logErrorParams.Message);
+        }
+
+        return Ok(searchResult);
     }
 }
