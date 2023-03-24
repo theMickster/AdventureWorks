@@ -8,6 +8,7 @@ using Microsoft.EntityFrameworkCore;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using System.Xml.XPath;
 
 namespace AdventureWorks.Infrastructure.Persistence.Repositories.Sales;
 
@@ -76,4 +77,62 @@ public sealed class StoreRepository : EfRepository<StoreEntity>, IStoreRepositor
 
         return (results.AsReadOnly(), totalCount);
     }
+
+    /// <summary>
+    /// Retrieves a paged list of stores that is filtered using the <paramref name="storeSearchModel"/> input parameter.
+    /// </summary>
+    /// <param name="parameters"></param>
+    /// <param name="storeSearchModel"></param>
+    /// <returns></returns>
+    public async Task<(IReadOnlyList<StoreEntity>, int)> SearchStoresAsync(
+        StoreParameter parameters,
+        StoreSearchModel storeSearchModel)
+    {
+        var storeQuery = DbContext.Stores
+            .Include(x => x.StoreBusinessEntity)
+            .ThenInclude(y => y.BusinessEntityAddresses)
+            .ThenInclude(y => y.AddressType)
+            .Include(x => x.StoreBusinessEntity)
+            .ThenInclude(y => y.BusinessEntityAddresses)
+            .ThenInclude(z => z.Address)
+            .ThenInclude(ab => ab.StateProvince)
+            .ThenInclude(abc => abc.CountryRegion)
+            .AsQueryable();
+
+        if (storeSearchModel != null)
+        {
+            if (storeSearchModel.Id != null)
+            {
+                storeQuery = storeQuery.Where( y => y.BusinessEntityId == storeSearchModel.Id );
+            }
+
+            if (!string.IsNullOrWhiteSpace(storeSearchModel.Name))
+            {
+                storeQuery = storeQuery.Where(y => y.Name.ToLower().Contains(storeSearchModel.Name.Trim().ToLower()));
+            }
+        }
+
+        switch (parameters.OrderBy)
+        {
+            case SortedResultConstants.BusinessEntityId:
+                storeQuery = parameters.SortOrder == SortedResultConstants.Ascending ?
+                    storeQuery.OrderBy(x => x.BusinessEntityId) :
+                    storeQuery.OrderByDescending(x => x.BusinessEntityId);
+                break;
+            case SortedResultConstants.Name:
+                storeQuery = parameters.SortOrder == SortedResultConstants.Ascending ?
+                    storeQuery.OrderBy(x => x.Name) :
+                    storeQuery.OrderByDescending(x => x.Name);
+                break;
+        }
+
+        var totalCount = storeQuery.Count();
+
+        storeQuery = storeQuery.Skip(parameters.GetRecordsToSkip()).Take(parameters.PageSize);
+
+        var results = await storeQuery.ToListAsync();
+
+        return (results.AsReadOnly(), totalCount);
+    }
 }
+

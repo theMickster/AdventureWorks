@@ -17,4 +17,12 @@ public interface IReadStoreService
     /// <param name="parameters">the input paging parameters</param>
     /// <returns>a <seealso cref="StoreSearchResultModel"/> object</returns>
     Task<StoreSearchResultModel> GetStoresAsync(StoreParameter parameters);
+
+    /// <summary>
+    /// Retrieves a paged list of stores that is filtered using the <paramref name="storeSearchModel"/> input parameter.
+    /// </summary>
+    /// <param name="parameters">the input paging parameters</param>
+    /// <param name="storeSearchModel">the input search parameters</param>
+    /// <returns>a <seealso cref="StoreSearchResultModel"/> object</returns>
+    Task<StoreSearchResultModel> SearchStoresAsync(StoreParameter parameters, StoreSearchModel storeSearchModel);
 }

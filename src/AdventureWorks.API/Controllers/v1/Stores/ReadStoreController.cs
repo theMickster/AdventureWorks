@@ -94,4 +94,39 @@ public sealed class ReadStoreController : ControllerBase
 
         return Ok(searchResult);
     }
+
+    /// <summary>
+    /// Retrieves a paged list of stores
+    /// </summary>
+    /// <param name="parameters">store pagination query string</param>
+    /// <param name="storeSearchModel">the store search input model</param>
+    /// <returns></returns>
+    [HttpPost]
+    [Route("search", Name = "SearchStoresAsync")]
+    [ProducesResponseType(StatusCodes.Status200OK, Type = typeof(StoreSearchResultModel))]
+    [ProducesResponseType(StatusCodes.Status400BadRequest)]
+    public async Task<IActionResult> SearchStoresAsync([FromQuery] StoreParameter parameters, [FromBody] StoreSearchModel storeSearchModel)
+    {
+        var searchResult = await _readStoreService.SearchStoresAsync(parameters, storeSearchModel).ConfigureAwait(false);
+
+        if (searchResult.Results == null || !searchResult.Results.Any())
+        {
+            var logErrorParams = new
+            {
+                Status = AppLoggingConstants.StatusBadRequest,
+                Operation = "StoreSearchAsync",
+                DateTime = DateTime.UtcNow.ToString(CultureInfo.InvariantCulture),
+                Message = "Unable to locate results based upon client input parameters.",
+                ErrCode = AppLoggingConstants.HttpGetRequestErrorCode,
+                ServiceId = "AdventureWorksApi",
+                AdditionalInfo = parameters
+            };
+
+            _logger.LogError(JsonSerializer.Serialize(logErrorParams));
+
+            return BadRequest(logErrorParams.Message);
+        }
+
+        return Ok(searchResult);
+    }
 }
