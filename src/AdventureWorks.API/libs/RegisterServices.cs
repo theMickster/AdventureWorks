@@ -1,5 +1,7 @@
 using AdventureWorks.Application.Exceptions;
+using AdventureWorks.Application.Http;
 using AdventureWorks.Application.Interfaces.DbContext;
+using AdventureWorks.Application.Interfaces.Http;
 using AdventureWorks.Application.Validators.Address;
 using AdventureWorks.Common.Attributes;
 using AdventureWorks.Common.Constants;
@@ -14,12 +16,11 @@ using Microsoft.OpenApi.Models;
 using System.Diagnostics;
 using System.Net.Http.Headers;
 using System.Reflection;
-using AdventureWorks.Application.Http;
-using AdventureWorks.Application.Interfaces.Http;
 
-[assembly: InternalsVisibleTo("AdventureWorks.Test.UnitTests")]
+[assembly: InternalsVisibleTo("AdventureWorks.UnitTests")]
 namespace AdventureWorks.API.libs;
 
+[ExcludeFromCodeCoverage]
 internal static class RegisterServices
 {
     [SuppressMessage("Minor Code Smell", "S1075:URIs should not be hardcoded", Justification = "Because we said so.")]
@@ -60,7 +61,7 @@ internal static class RegisterServices
                                 "v1",
                                 "API",
                                 new Uri("http://hello-world.info")));
-
+            
             options.AddSecurityDefinition("Bearer", new OpenApiSecurityScheme
             {
                 In = ParameterLocation.Header,
@@ -141,7 +142,7 @@ internal static class RegisterServices
         builder.Services.AddDbContext<AdventureWorksDbContext>(options =>
             {
                 options.UseSqlServer(currentConnectionString);
-                options.LogTo(message => Debug.WriteLine(message));
+                //options.LogTo(message => Debug.WriteLine(message));
             }
         ); 
 

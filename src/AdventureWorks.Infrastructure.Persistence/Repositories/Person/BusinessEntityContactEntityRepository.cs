@@ -31,4 +31,19 @@ public sealed class BusinessEntityContactEntityRepository : EfRepository<Busines
             .Where(x => x.BusinessEntityId == businessEntityId)
             .ToListAsync();
     }
+
+    /// <summary>
+    /// Retrieves the list of business contacts for a list of store (business entity) ids
+    /// </summary>
+    /// <param name="businessEntityIds">the list of business entity (store) identifiers</param>
+    /// <returns></returns>
+    public async Task<List<BusinessEntityContactEntity>> GetContactsByStoreIdsAsync(List<int> businessEntityIds)
+    {
+        return await DbContext.BusinessEntityContacts
+            .Include(x => x.ContactType)
+            .Include(x => x.Person)
+            .ThenInclude(x => x.PersonType)
+            .Where(x => businessEntityIds.Contains(x.BusinessEntityId))
+            .ToListAsync();
+    }
 }

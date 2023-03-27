@@ -1,7 +1,7 @@
 ﻿using Swashbuckle.AspNetCore.SwaggerUI;
 using System.Text;
 
-[assembly: InternalsVisibleTo("Authenticator.Test.UnitTests")]
+[assembly: InternalsVisibleTo("AdventureWorks.UnitTests")]
 namespace AdventureWorks.API.libs;
 
 [ExcludeFromCodeCoverage]

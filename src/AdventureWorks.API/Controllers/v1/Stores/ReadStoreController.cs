@@ -1,7 +1,11 @@
 ﻿using AdventureWorks.Application.Interfaces.Services.Stores;
-using AdventureWorks.Domain.Models;
+using AdventureWorks.Common.Constants;
+using AdventureWorks.Common.Filtering;
+using AdventureWorks.Domain.Models.Sales;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using System.Globalization;
+using System.Text.Json;
 
 namespace AdventureWorks.API.Controllers.v1.Stores;
 
@@ -38,7 +42,9 @@ public sealed class ReadStoreController : ControllerBase
     /// <param name="storeId">the unique identifier</param>
     /// <returns></returns>
     [HttpGet("{storeId:int}", Name = "GetStoreById")]
-    [Produces(typeof(AddressModel))]
+    [ProducesResponseType(StatusCodes.Status200OK, Type = typeof(StoreModel))]
+    [ProducesResponseType(StatusCodes.Status404NotFound)]
+    [ProducesResponseType(StatusCodes.Status400BadRequest)]
     public async Task<IActionResult> GetByIdAsync(int storeId)
     {
         if (storeId <= 0)
@@ -54,5 +60,73 @@ public sealed class ReadStoreController : ControllerBase
         }
 
         return Ok(address);
+    }
+
+    /// <summary>
+    /// Retrieves a paged list of stores
+    /// </summary>
+    /// <param name="parameters">store pagination query string</param>
+    /// <returns></returns>
+    [HttpGet]
+    [ProducesResponseType(StatusCodes.Status200OK, Type = typeof(StoreSearchResultModel))]
+    [ProducesResponseType(StatusCodes.Status400BadRequest)]
+    public async Task<IActionResult> GetStoreListAsync([FromQuery] StoreParameter parameters)
+    {
+        var searchResult = await _readStoreService.GetStoresAsync(parameters).ConfigureAwait(false);
+
+        if (searchResult.Results == null || !searchResult.Results.Any())
+        {
+            var logErrorParams = new
+            {
+                Status = AppLoggingConstants.StatusBadRequest,
+                Operation = "StoreListAsync",
+                DateTime = DateTime.UtcNow.ToString(CultureInfo.InvariantCulture),
+                Message = "Unable to locate results based upon input query parameters.",
+                ErrCode = AppLoggingConstants.HttpGetRequestErrorCode,
+                ServiceId = "AdventureWorksApi",
+                AdditionalInfo = parameters
+            };
+
+            _logger.LogError(JsonSerializer.Serialize(logErrorParams));
+
+            return BadRequest(logErrorParams.Message);
+        }
+
+        return Ok(searchResult);
+    }
+
+    /// <summary>
+    /// Retrieves a paged list of stores
+    /// </summary>
+    /// <param name="parameters">store pagination query string</param>
+    /// <param name="storeSearchModel">the store search input model</param>
+    /// <returns></returns>
+    [HttpPost]
+    [Route("search", Name = "SearchStoresAsync")]
+    [ProducesResponseType(StatusCodes.Status200OK, Type = typeof(StoreSearchResultModel))]
+    [ProducesResponseType(StatusCodes.Status400BadRequest)]
+    public async Task<IActionResult> SearchStoresAsync([FromQuery] StoreParameter parameters, [FromBody] StoreSearchModel storeSearchModel)
+    {
+        var searchResult = await _readStoreService.SearchStoresAsync(parameters, storeSearchModel).ConfigureAwait(false);
+
+        if (searchResult.Results == null || !searchResult.Results.Any())
+        {
+            var logErrorParams = new
+            {
+                Status = AppLoggingConstants.StatusBadRequest,
+                Operation = "StoreSearchAsync",
+                DateTime = DateTime.UtcNow.ToString(CultureInfo.InvariantCulture),
+                Message = "Unable to locate results based upon client input parameters.",
+                ErrCode = AppLoggingConstants.HttpGetRequestErrorCode,
+                ServiceId = "AdventureWorksApi",
+                AdditionalInfo = parameters
+            };
+
+            _logger.LogError(JsonSerializer.Serialize(logErrorParams));
+
+            return BadRequest(logErrorParams.Message);
+        }
+
+        return Ok(searchResult);
     }
 }

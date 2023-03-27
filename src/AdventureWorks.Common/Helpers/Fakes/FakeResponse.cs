@@ -1,4 +1,5 @@
 ﻿using Azure;
+using System.Diagnostics.CodeAnalysis;
 
 namespace AdventureWorks.Common.Helpers.Fakes;
 
@@ -6,6 +7,7 @@ namespace AdventureWorks.Common.Helpers.Fakes;
 /// Fake Response
 /// </summary>
 /// <typeparam name="T"></typeparam>
+[ExcludeFromCodeCoverage]
 public class FakeResponse<T> : Response<T>
 {
     private readonly T _value;

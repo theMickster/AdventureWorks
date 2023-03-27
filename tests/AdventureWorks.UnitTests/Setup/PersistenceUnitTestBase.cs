@@ -277,6 +277,7 @@ public abstract class PersistenceUnitTestBase : UnitTestBase
             new(){BusinessEntityId = 1113, Name = "Golf and Cycle Store", SalesPersonId = 7779, Rowguid = new Guid("71272fd6-88ef-464a-9aaa-b3a6df4ad480"), ModifiedDate = StandardModifiedDate},
             new(){BusinessEntityId = 1114, Name = "Colorado Ski, Golf, and Bike", SalesPersonId = 7780, Rowguid = new Guid("f28aabed-af5a-4bee-ae43-19ecd8995573"), ModifiedDate = StandardModifiedDate},
             new(){BusinessEntityId = 1115, Name = "Epic Mountain Gear", SalesPersonId = 7781, Rowguid = new Guid("669b1923-c251-465e-bda5-f5378cb3961a"), ModifiedDate = StandardModifiedDate},
+
         });
 
         DbContext.SalesPersons.AddRange(new List<SalesPerson>
@@ -387,7 +388,9 @@ public abstract class PersistenceUnitTestBase : UnitTestBase
         DbContext.BusinessEntities.AddRange(new List<BusinessEntity>
         {
             new(){BusinessEntityId = 1111, Rowguid = new Guid("d8f72edf-2334-4a59-abe7-a4f8cea37fb1"), ModifiedDate = StandardModifiedDate},
-            new(){BusinessEntityId = 1112, Rowguid = new Guid("f250a70a-39dd-4c7d-8031-51231e71b18f"), ModifiedDate = StandardModifiedDate}
+            new(){BusinessEntityId = 1112, Rowguid = new Guid("f250a70a-39dd-4c7d-8031-51231e71b18f"), ModifiedDate = StandardModifiedDate},
+            new(){BusinessEntityId = 1113, Rowguid = new Guid("f250a70a-39dd-4c7d-8031-51231e71b18f"), ModifiedDate = StandardModifiedDate},
+            new(){BusinessEntityId = 1114, Rowguid = new Guid("f250a70a-39dd-4c7d-8031-51231e71b18f"), ModifiedDate = StandardModifiedDate}
         });
 
         DbContext.Persons.AddRange(new List<PersonEntity>
@@ -428,13 +431,15 @@ public abstract class PersistenceUnitTestBase : UnitTestBase
         DbContext.BusinessEntityContacts.AddRange(new List<BusinessEntityContactEntity>
         {
             new(){BusinessEntityId = 1112, ContactTypeId = 11, PersonId = 12},
-
             new(){BusinessEntityId = 1111, ContactTypeId = 1, PersonId = 1},
             new(){BusinessEntityId = 1111, ContactTypeId = 11, PersonId = 2},
             new(){BusinessEntityId = 1111, ContactTypeId = 17, PersonId = 3},
             new(){BusinessEntityId = 1111, ContactTypeId = 18, PersonId = 4},
             new(){BusinessEntityId = 1111, ContactTypeId = 19, PersonId = 7},
-
+            new(){BusinessEntityId = 1113, ContactTypeId = 1, PersonId = 8},
+            new(){BusinessEntityId = 1113, ContactTypeId = 11, PersonId = 9},
+            new(){BusinessEntityId = 1114, ContactTypeId = 1, PersonId = 10},
+            new(){BusinessEntityId = 1114, ContactTypeId = 11, PersonId = 11}
         });
 
         DbContext.SaveChanges();

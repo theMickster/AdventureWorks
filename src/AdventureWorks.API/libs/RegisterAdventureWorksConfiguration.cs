@@ -2,7 +2,7 @@
 using AdventureWorks.Application.Exceptions;
 using AdventureWorks.Common.Helpers;
 
-[assembly: InternalsVisibleTo("AdventureWorks.Test.UnitTests")]
+[assembly: InternalsVisibleTo("AdventureWorks.UnitTests")]
 namespace AdventureWorks.API.libs;
 
 [ExcludeFromCodeCoverage]

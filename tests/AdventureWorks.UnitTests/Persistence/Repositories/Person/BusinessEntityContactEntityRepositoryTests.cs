@@ -57,5 +57,21 @@ public sealed class BusinessEntityContactEntityRepositoryTests : PersistenceUnit
         }
 
     }
+
+    [Fact]
+    public async Task GetContactsByStoreIdsAsync_succeedsAsync()
+    {
+        var storeIds = new List<int>{1111, 1112, 1114};
+
+        var results = await _sut.GetContactsByStoreIdsAsync(storeIds).ConfigureAwait(false);
+
+        using (new AssertionScope())
+        {
+            results.Should().HaveCount(8);
+
+            results.Count(x => x.BusinessEntityId == 1113).Should().Be(0);
+        }
+
+    }
 }
 
