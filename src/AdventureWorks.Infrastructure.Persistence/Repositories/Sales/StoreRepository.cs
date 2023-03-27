@@ -112,19 +112,16 @@ public sealed class StoreRepository : EfRepository<StoreEntity>, IStoreRepositor
             }
         }
 
-        switch (parameters.OrderBy)
+        storeQuery = parameters.OrderBy switch
         {
-            case SortedResultConstants.BusinessEntityId:
-                storeQuery = parameters.SortOrder == SortedResultConstants.Ascending ?
-                    storeQuery.OrderBy(x => x.BusinessEntityId) :
-                    storeQuery.OrderByDescending(x => x.BusinessEntityId);
-                break;
-            case SortedResultConstants.Name:
-                storeQuery = parameters.SortOrder == SortedResultConstants.Ascending ?
-                    storeQuery.OrderBy(x => x.Name) :
-                    storeQuery.OrderByDescending(x => x.Name);
-                break;
-        }
+            SortedResultConstants.BusinessEntityId => parameters.SortOrder == SortedResultConstants.Ascending
+                ? storeQuery.OrderBy(x => x.BusinessEntityId)
+                : storeQuery.OrderByDescending(x => x.BusinessEntityId),
+            SortedResultConstants.Name => parameters.SortOrder == SortedResultConstants.Ascending
+                ? storeQuery.OrderBy(x => x.Name)
+                : storeQuery.OrderByDescending(x => x.Name),
+            _ => storeQuery
+        };
 
         var totalCount = storeQuery.Count();
 

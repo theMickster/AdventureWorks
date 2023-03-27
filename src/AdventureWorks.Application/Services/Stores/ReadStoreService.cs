@@ -108,7 +108,7 @@ public sealed class ReadStoreService : IReadStoreService
         result.Results = stores;
         result.TotalRecords = totalRecords;
 
-        return new StoreSearchResultModel();
+        return result;
     }
 
 

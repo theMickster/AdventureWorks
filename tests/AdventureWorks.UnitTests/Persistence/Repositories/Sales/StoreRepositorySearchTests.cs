@@ -109,6 +109,43 @@ public sealed class StoreRepositorySearchTests : PersistenceUnitTestBase
             firstDescRecord.Name.Should().Be("Year-Round Sports");
             lastDescRecord.Name.Should().Be("Utilitarian Sporting Goods");
         }
+    }
 
+    [Theory]
+    [InlineData(330, "ascending")]
+    [InlineData(428, "desc")]
+    public async Task SearchStoresAsync_by_id_succeedsAsync(int storeId, string sortOrder)
+    {
+        var queryParams = new StoreParameter { OrderBy = "id", SortOrder = sortOrder };
+        var searchParams = new StoreSearchModel { Id = storeId };
+
+        var (ascResults, totalCount) = await _sut.SearchStoresAsync(queryParams, searchParams).ConfigureAwait(false);
+        var firstRecord = ascResults.First();
+
+        using (new AssertionScope())
+        {
+            totalCount.Should().Be(1);
+            firstRecord!.Should().NotBeNull();
+            firstRecord!.BusinessEntityId.Should().Be(storeId);
+        }
+    }
+
+    [Theory]
+    [InlineData("bike SHOP", "ascending", 904, 13)]
+    [InlineData("exercisE", "desc", 828, 3)]
+    public async Task SearchStoresAsync_by_name_succeedsAsync(string storeName, string sortOrder, int firstStoreId, int totalCount)
+    {
+        var queryParams = new StoreParameter { OrderBy = "Name", SortOrder = sortOrder };
+        var searchParams = new StoreSearchModel { Name = storeName };
+
+        var (ascResults, totalCountOutput) = await _sut.SearchStoresAsync(queryParams, searchParams).ConfigureAwait(false);
+        var firstRecord = ascResults.First();
+
+        using (new AssertionScope())
+        {
+            totalCountOutput.Should().Be(totalCount);
+            firstRecord!.Should().NotBeNull();
+            firstRecord!.BusinessEntityId.Should().Be(firstStoreId);
+        }
     }
 }

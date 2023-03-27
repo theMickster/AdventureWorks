@@ -16,7 +16,7 @@ public abstract class QueryStringParamsBase
     /// <summary>
     /// The minimum page number that a may be requested in a list endpoint
     /// </summary>
-    protected int MinPageNumber { get; private set; } = 1;
+    protected int MinPageNumber { get; private init; } = 1;
 
     /// <summary>
     /// The page number requested 
@@ -25,7 +25,7 @@ public abstract class QueryStringParamsBase
     public int PageNumber
     {
         get => MinPageNumber;
-        set => MinPageNumber = value <= 0 ? 1 : value;
+        init => MinPageNumber = value <= 0 ? 1 : value;
     }
 
     /// <summary>
@@ -41,7 +41,7 @@ public abstract class QueryStringParamsBase
     public int PageSize
     {
         get => _take;
-        set => _take = value > MaxTake ? MaxTake : value;
+        init => _take = value > MaxTake ? MaxTake : value;
     }
 
     /// <summary>
@@ -50,7 +50,7 @@ public abstract class QueryStringParamsBase
     public string SortOrder
     {
         get => _sortOrder;
-        set => _sortOrder = value == null ? SortedResultConstants.Ascending : value.Trim().ToLower()
+        init => _sortOrder = value == null ? SortedResultConstants.Ascending : value.Trim().ToLower()
             switch
             {
                 "asc" => SortedResultConstants.Ascending,

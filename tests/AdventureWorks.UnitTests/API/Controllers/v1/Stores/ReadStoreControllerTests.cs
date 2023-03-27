@@ -156,4 +156,65 @@ public sealed class ReadStoreControllerTests : UnitTestBase
             _mockLogger.VerifyLoggingMessageContains("Unable to locate results based upon input query parameters", null, LogLevel.Error);
         }
     }
+
+    [Fact]
+    public async Task SearchStoresAsync_returns_ok_Async()
+    {
+        _mockReadStoreService.Setup(x => x.SearchStoresAsync(It.IsAny<StoreParameter>(), It.IsAny<StoreSearchModel>()))
+            .ReturnsAsync(new StoreSearchResultModel { Results = new List<StoreModel> { new() } });
+
+        var result = await _sut.SearchStoresAsync(new StoreParameter(), new StoreSearchModel()).ConfigureAwait(false);
+        var objectResult = result as ObjectResult;
+
+        using (new AssertionScope())
+        {
+            objectResult.Should().NotBeNull();
+
+            objectResult!.StatusCode.Should().Be((int)HttpStatusCode.OK);
+        }
+    }
+
+    [Fact]
+    public async Task SearchStoresAsync_null_results_bad_request_Async()
+    {
+        _mockReadStoreService.Setup(x => x.SearchStoresAsync(It.IsAny<StoreParameter>(), It.IsAny<StoreSearchModel>()))
+            .ReturnsAsync(new StoreSearchResultModel { Results = null });
+
+        var result = await _sut.SearchStoresAsync(new StoreParameter(), new StoreSearchModel()).ConfigureAwait(false);
+        var objectResult = result as BadRequestObjectResult;
+        var outputModel = objectResult!.Value! as string;
+
+        using (new AssertionScope())
+        {
+            objectResult.Should().NotBeNull();
+            objectResult!.StatusCode.Should().Be((int)HttpStatusCode.BadRequest);
+
+            outputModel.Should().NotBeNull();
+            outputModel!.Should().Be("Unable to locate results based upon client input parameters.");
+
+            _mockLogger.VerifyLoggingMessageContains("Unable to locate results based upon client input parameters", null, LogLevel.Error);
+        }
+    }
+
+    [Fact]
+    public async Task SearchStoresAsync_empty_results_bad_request_Async()
+    {
+        _mockReadStoreService.Setup(x => x.SearchStoresAsync(It.IsAny<StoreParameter>(), It.IsAny<StoreSearchModel>()))
+            .ReturnsAsync(new StoreSearchResultModel { Results = new List<StoreModel>() });
+
+        var result = await _sut.SearchStoresAsync(new StoreParameter(), new StoreSearchModel()).ConfigureAwait(false);
+        var objectResult = result as BadRequestObjectResult;
+        var outputModel = objectResult!.Value! as string;
+
+        using (new AssertionScope())
+        {
+            objectResult.Should().NotBeNull();
+            objectResult!.StatusCode.Should().Be((int)HttpStatusCode.BadRequest);
+
+            outputModel.Should().NotBeNull();
+            outputModel!.Should().Be("Unable to locate results based upon client input parameters.");
+
+            _mockLogger.VerifyLoggingMessageContains("Unable to locate results based upon client input parameters", null, LogLevel.Error);
+        }
+    }
 }

@@ -185,7 +185,76 @@ public sealed class ReadStoreServiceTests : UnitTestBase
             store02!.StoreAddresses.Should().HaveCount(4);
         }
     }
-    
+
+    [Fact]
+    public async Task SearchStoresAsync_returns_correct_null_resultAsync()
+    {
+        _mockStoreRepository.Setup(x => x.SearchStoresAsync(It.IsAny<StoreParameter>(), It.IsAny<StoreSearchModel>()))
+            .ReturnsAsync((null!, 0));
+
+        var result = await _sut.SearchStoresAsync(new StoreParameter(), new StoreSearchModel()).ConfigureAwait(false);
+
+        using (new AssertionScope())
+        {
+            result.Results?.Should().BeNull();
+
+            result.TotalRecords.Should().Be(0);
+            result.TotalPages.Should().Be(0);
+        }
+    }
+
+    [Fact]
+    public async Task SearchStoresAsync_returns_correct_empty_resultAsync()
+    {
+        var readOnlyList = new List<StoreEntity>().AsReadOnly();
+        _mockStoreRepository.Setup(x => x.SearchStoresAsync(It.IsAny<StoreParameter>(), It.IsAny<StoreSearchModel>()))
+            .ReturnsAsync((readOnlyList, 0));
+
+        var result = await _sut.SearchStoresAsync(new StoreParameter(), new StoreSearchModel()).ConfigureAwait(false);
+
+        using (new AssertionScope())
+        {
+            result.Results?.Should().BeNull();
+
+            result.TotalRecords.Should().Be(0);
+            result.TotalPages.Should().Be(0);
+        }
+    }
+
+    [Fact]
+    public async Task SearchStoresAsync_returns_valid_paged_model_Async()
+    {
+        _mockStoreRepository.Setup(x => x.SearchStoresAsync(It.IsAny<StoreParameter>(), It.IsAny<StoreSearchModel>()))
+            .ReturnsAsync((GetMockStores().Where(x => x.BusinessEntityId == 2535).ToList(), 1));
+
+        _mockContactEntityRepository.Setup(x => x.GetContactsByStoreIdsAsync(It.IsAny<List<int>>()))
+            .ReturnsAsync(GetMockContactEntities().ToList());
+
+        var queryParam = new StoreParameter { PageNumber = 1, OrderBy = "Name", PageSize = 10, SortOrder = "ASC" };
+        var searchParam = new StoreSearchModel { Id = 2535 };
+
+        var pagedResult = await _sut.SearchStoresAsync(queryParam, searchParam).ConfigureAwait(false);
+
+        using (new AssertionScope())
+        {
+            pagedResult.Should().NotBeNull();
+
+            pagedResult.PageNumber.Should().Be(1);
+            pagedResult.PageSize.Should().Be(10);
+            pagedResult.HasPreviousPage.Should().BeFalse();
+            pagedResult.HasNextPage.Should().BeFalse();
+            pagedResult.TotalPages.Should().Be(1);
+            pagedResult.TotalRecords.Should().Be(1);
+
+            pagedResult.Results.Should().HaveCount(1);
+            
+            var store02 = pagedResult.Results.FirstOrDefault(x => x.Id == 2535);
+            
+            store02!.StoreContacts.Should().HaveCount(3);
+            store02!.StoreAddresses.Should().HaveCount(4);
+        }
+    }
+
     #region Private Methods
 
     private IEnumerable<StoreEntity> GetMockStores()
