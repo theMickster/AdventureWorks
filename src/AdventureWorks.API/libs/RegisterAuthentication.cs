@@ -60,6 +60,20 @@ internal static class RegisterAuthentication
                 ValidateAudience = true,
                 ValidateIssuerSigningKey = true
             };
+            o.Events = new JwtBearerEvents
+            {
+                OnAuthenticationFailed = context =>
+                {
+                    if (context.Exception.GetType() == typeof(SecurityTokenExpiredException))
+                    {
+                        var authenticationException = context.Exception as SecurityTokenExpiredException;
+                        var expiredDateTime = $"{authenticationException?.Expires.ToString("yyyy-MM-dd hh:mm:ss tt")} UTC";
+                        context.Response.Headers.Add("x-token-is-expired", "true");
+                        context.Response.Headers.Add("x-token-expired-datetime", expiredDateTime);
+                    }
+                    return Task.CompletedTask;
+                }
+            };
         });
 
         return builder;
