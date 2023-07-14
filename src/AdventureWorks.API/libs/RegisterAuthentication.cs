@@ -72,8 +72,22 @@ internal static class RegisterAuthentication
                         context.Response.Headers.Add("x-token-expired-datetime", expiredDateTime);
                     }
                     return Task.CompletedTask;
+                },
+                OnMessageReceived = context =>
+                {
+                    if (context.Request.Cookies.ContainsKey("X-Access-Token"))
+                    {
+                        context.Token = context.Request.Cookies["X-Access-Token"];
+                    }
+
+                    return Task.CompletedTask;
                 }
             };
+        }).AddCookie(options =>
+        {
+            options.Cookie.SameSite = SameSiteMode.Strict;
+            options.Cookie.SecurePolicy = CookieSecurePolicy.Always;
+            options.Cookie.IsEssential = true;
         });
 
         return builder;
