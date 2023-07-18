@@ -59,7 +59,10 @@ public sealed class AuthenticationController : ControllerBase
             return BadRequest(message);
         }
 
-        var (userAccount, token, errors ) = await _userLoginService.AuthenticateUserAsync(model.Username, model.Password);
+        var ipAddress = HttpContext.Connection.RemoteIpAddress?.MapToIPv4().ToString() ?? "127.0.0.1";
+        ipAddress = ipAddress == "0.0.0.1" ? "127.0.0.1" : ipAddress;
+
+        var (userAccount, token, errors ) = await _userLoginService.AuthenticateUserAsync(model.Username, model.Password, ipAddress);
 
         if (errors.Any() || token is null || userAccount is null)
         {

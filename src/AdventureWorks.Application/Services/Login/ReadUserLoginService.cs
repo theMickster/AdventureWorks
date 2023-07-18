@@ -39,9 +39,10 @@ public sealed class ReadUserLoginService : IReadUserLoginService
     /// </summary>
     /// <param name="username"></param>
     /// <param name="password"></param>
+    /// <param name="ipAddress"></param>
     /// <returns>a tuple that includes the user model, security token, and validation failure list </returns>
     [SuppressMessage("ReSharper", "ConditionIsAlwaysTrueOrFalseAccordingToNullableAPIContract")]
-    public async Task<(UserAccountModel?, UserAccountTokenModel?, List<ValidationFailure>)> AuthenticateUserAsync(string username, string password)
+    public async Task<(UserAccountModel?, UserAccountTokenModel?, List<ValidationFailure>)> AuthenticateUserAsync(string username, string password, string ipAddress)
     {
         var validationFailures = new List<ValidationFailure>();
 
@@ -90,7 +91,7 @@ public sealed class ReadUserLoginService : IReadUserLoginService
             _mapper.Map<IReadOnlyList<SecurityGroupEntity>, IReadOnlyList<SecurityGroupSlimModel>>
                 (userAuthEntity.SecurityGroups);
 
-        var token = _tokenService.GenerateUserToken(model);
+        var token = await _tokenService.GenerateUserTokenAsync(model, ipAddress).ConfigureAwait(false);
 
         return (model, token, validationFailures);
     }

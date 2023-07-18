@@ -10,6 +10,7 @@ public interface IReadUserLoginService
     /// </summary>
     /// <param name="username"></param>
     /// <param name="password"></param>
+    /// <param name="ipAddress"></param>
     /// <returns>a tuple that includes the user model, security token, and validation failure list </returns>
-    Task<(UserAccountModel?, UserAccountTokenModel?, List<ValidationFailure>)> AuthenticateUserAsync(string username, string password);
+    Task<(UserAccountModel?, UserAccountTokenModel?, List<ValidationFailure>)> AuthenticateUserAsync(string username, string password, string ipAddress);
 }

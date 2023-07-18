@@ -204,7 +204,7 @@ public sealed class ReadUserLoginServiceTests : UnitTestBase
                 PasswordHash = passwordHash
             });
 
-        _mockTokenService.Setup(x => x.GenerateUserToken(It.IsAny<UserAccountModel>()))
+        _mockTokenService.Setup(x => x.GenerateUserTokenAsync(It.IsAny<UserAccountModel>()))
             .Returns(tokenModel);
 
         _mockReadUserAuthorizationRepository.Setup(x => x.GetByUserIdAsync(1))

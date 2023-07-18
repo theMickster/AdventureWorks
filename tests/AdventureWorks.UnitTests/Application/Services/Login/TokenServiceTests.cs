@@ -67,7 +67,7 @@ public sealed class TokenServiceTests : UnitTestBase
             MiddleName = "Albert"
         };
 
-        var result = _sut.GenerateUserToken(model);
+        var result = _sut.GenerateUserTokenAsync(model);
         var handler = new JwtSecurityTokenHandler();
         var token = handler.ReadJwtToken(result.Token);
 
@@ -114,7 +114,7 @@ public sealed class TokenServiceTests : UnitTestBase
             }
         };
 
-        var result = _sut.GenerateUserToken(model);
+        var result = _sut.GenerateUserTokenAsync(model);
         var handler = new JwtSecurityTokenHandler();
         var token = handler.ReadJwtToken(result.Token);
 
