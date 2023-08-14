@@ -67,8 +67,19 @@ public sealed class TokenService : ITokenService
         };
 
         var token = tokenHandler.CreateToken(tokenDescriptor);
+        var existingRefreshToken = await _userRefreshTokenRepository.GetMostRecentRefreshTokenByUserIdAsync(userAccount.Id);
+        string refreshToken;
+        DateTime refreshTokenExpiresOn;
 
-        var refreshToken = await CreateUserRefreshTokenAsync(userAccount.Id, ipAddress);
+        if (existingRefreshToken == null)
+        {
+            (refreshToken, refreshTokenExpiresOn) = await CreateUserRefreshTokenAsync(userAccount.Id, ipAddress);
+        }
+        else
+        {
+            refreshToken = existingRefreshToken.RefreshToken;
+            refreshTokenExpiresOn = existingRefreshToken.ExpiresOn;
+        }
 
         var model = new UserAccountTokenModel
         {
@@ -76,13 +87,13 @@ public sealed class TokenService : ITokenService
             Token = tokenHandler.WriteToken(token),
             TokenExpiration = tokenExpiration,
             RefreshToken = refreshToken,
-            RefreshTokenExpiration = DateTime.MinValue
+            RefreshTokenExpiration = refreshTokenExpiresOn
         };
 
         return model;
     }
 
-    private async Task<string> CreateUserRefreshTokenAsync(int userId, string ipAddress)
+    private async Task<(string, DateTime)> CreateUserRefreshTokenAsync(int userId, string ipAddress)
     {
         var token = Guid.NewGuid().ToString("N");
         await Task.Delay(50);
@@ -105,6 +116,6 @@ public sealed class TokenService : ITokenService
 
         var entity = await _userRefreshTokenRepository.AddAsync(userRefreshToken);
 
-        return entity == null ? throw new InvalidOperationException("Unable to create user refresh token") : token;
+        return entity == null ? throw new InvalidOperationException("Unable to create user refresh token") : (userRefreshToken.RefreshToken, userRefreshToken.ExpiresOn);
     }
 }

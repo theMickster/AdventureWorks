@@ -107,7 +107,7 @@ public sealed class ReadUserLoginServiceTests : UnitTestBase
         _mockUserAccountRepository.Setup(x => x.GetByUserNameAsync("rod.smith"))
             .ReturnsAsync((UserAccountEntity)null!);
 
-        var (user, token, validationFailures) = await _sut.AuthenticateUserAsync("rod.smith", "aPassword").ConfigureAwait(false);
+        var (user, token, validationFailures) = await _sut.AuthenticateUserAsync("rod.smith", "aPassword", "192.168.100.69").ConfigureAwait(false);
 
         using (new AssertionScope())
         {
@@ -134,7 +134,7 @@ public sealed class ReadUserLoginServiceTests : UnitTestBase
                 PasswordHash = "$2a$11$TsEBk0KOhuIXQZe0KHcSdu05/5oj3iWPRS9TZ8M2TTDFAjRwmk8eK"
             });
 
-        var (user, token, validationFailures) = await _sut.AuthenticateUserAsync(username, password).ConfigureAwait(false);
+        var (user, token, validationFailures) = await _sut.AuthenticateUserAsync(username, password, "192.168.100.69").ConfigureAwait(false);
 
         using (new AssertionScope())
         {
@@ -166,7 +166,7 @@ public sealed class ReadUserLoginServiceTests : UnitTestBase
         _mockReadUserAuthorizationRepository.Setup(x => x.GetByUserIdAsync(It.IsAny<int>()))
             .ReturnsAsync( (UserAuthorizationEntity)null!);
 
-        var (user, token, validationFailures) = await _sut.AuthenticateUserAsync(username, password).ConfigureAwait(false);
+        var (user, token, validationFailures) = await _sut.AuthenticateUserAsync(username, password, "192.168.100.69").ConfigureAwait(false);
 
         using (new AssertionScope())
         {
@@ -204,8 +204,8 @@ public sealed class ReadUserLoginServiceTests : UnitTestBase
                 PasswordHash = passwordHash
             });
 
-        _mockTokenService.Setup(x => x.GenerateUserTokenAsync(It.IsAny<UserAccountModel>()))
-            .Returns(tokenModel);
+        _mockTokenService.Setup(x => x.GenerateUserTokenAsync(It.IsAny<UserAccountModel>(), It.IsAny<string>()))
+            .ReturnsAsync(tokenModel);
 
         _mockReadUserAuthorizationRepository.Setup(x => x.GetByUserIdAsync(1))
             .ReturnsAsync(new UserAuthorizationEntity
@@ -231,7 +231,7 @@ public sealed class ReadUserLoginServiceTests : UnitTestBase
                 }.AsReadOnly()
             });
 
-        var (user, outputToken, validationFailures) = await _sut.AuthenticateUserAsync(username, password).ConfigureAwait(false);
+        var (user, outputToken, validationFailures) = await _sut.AuthenticateUserAsync(username, password, "192.168.100.69").ConfigureAwait(false);
 
         using (new AssertionScope())
         {

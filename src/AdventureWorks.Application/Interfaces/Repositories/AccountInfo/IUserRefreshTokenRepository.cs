@@ -11,4 +11,11 @@ public interface IUserRefreshTokenRepository : IAsyncRepository<UserRefreshToken
     /// <param name="refreshToken">the user token to be verified.</param>
     /// <returns></returns>
     Task<IReadOnlyList<UserRefreshTokenEntity>> GetRefreshTokenListByUserIdAsync(int userId, string refreshToken);
+
+    /// <summary>
+    /// Retrieve the most recent, non-expired refresh token for a given user.
+    /// </summary>
+    /// <param name="userId">the unique user identifier; the business entity id.</param>
+    /// <returns></returns>
+    Task<UserRefreshTokenEntity?> GetMostRecentRefreshTokenByUserIdAsync(int userId);
 }

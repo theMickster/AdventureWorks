@@ -1,7 +1,9 @@
 ﻿using AdventureWorks.Application.Interfaces.Services.Login;
+using AdventureWorks.Common.Settings;
 using AdventureWorks.Domain.Models.Shield;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.Extensions.Options;
 
 namespace AdventureWorks.API.Controllers.v1.Login;
 
@@ -19,6 +21,7 @@ public sealed class AuthenticationController : ControllerBase
 {
     private readonly ILogger<AuthenticationController> _logger;
     private readonly IReadUserLoginService _userLoginService;
+    private readonly IOptionsSnapshot<TokenSettings> _tokenSettings;
 
     /// <summary>
     /// The controller that coordinates user authentication.
@@ -26,11 +29,13 @@ public sealed class AuthenticationController : ControllerBase
     /// <remarks></remarks>
     public AuthenticationController(
         ILogger<AuthenticationController> logger,
-        IReadUserLoginService userLoginService
+        IReadUserLoginService userLoginService,
+        IOptionsSnapshot<TokenSettings> tokenSettings
         )
     {
         _logger = logger ?? throw new ArgumentNullException(nameof(logger));
         _userLoginService = userLoginService ?? throw new ArgumentNullException(nameof(userLoginService));
+        _tokenSettings = tokenSettings ?? throw new ArgumentNullException(nameof(tokenSettings));
     }
 
     [AllowAnonymous]
@@ -92,8 +97,22 @@ public sealed class AuthenticationController : ControllerBase
             SecurityGroups = userAccount.SecurityGroups,
             SecurityRoles = userAccount.SecurityRoles
         };
+        AppendCookies(responseModel);
 
         return Ok(responseModel);
     }
 
+    private void AppendCookies(AuthenticationResponseModel model)
+    {
+        var cookieOptions = new CookieOptions
+        {
+            HttpOnly = true,
+            SameSite = SameSiteMode.Strict,
+            Expires = DateTime.UtcNow.AddDays(_tokenSettings.Value.RefreshTokenExpirationInDays)
+        };
+
+        Response.Cookies.Append("X-Refresh-Token", model.Token.RefreshToken, cookieOptions);
+        Response.Cookies.Append("X-Access-Token", model.Token.Token, cookieOptions);
+        Response.Cookies.Append("X-Username", model.Username, cookieOptions);
+    }
 }

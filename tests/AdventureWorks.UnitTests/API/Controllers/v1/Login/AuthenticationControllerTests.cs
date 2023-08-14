@@ -4,9 +4,12 @@ using AdventureWorks.Test.Common.Extensions;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
 using System.Net;
+using AdventureWorks.Common.Settings;
 using FluentValidation.Results;
 using AdventureWorks.Domain.Models;
 using AdventureWorks.Domain.Models.Shield;
+using Microsoft.AspNetCore.Http;
+using Microsoft.Extensions.Options;
 
 namespace AdventureWorks.UnitTests.API.Controllers.v1.Login;
 
@@ -15,11 +18,32 @@ public sealed class AuthenticationControllerTests : UnitTestBase
 {
     private readonly Mock<ILogger<AuthenticationController>> _mockLogger = new();
     private readonly Mock<IReadUserLoginService> _mockUserLoginService = new();
+    private readonly Mock<IOptionsSnapshot<TokenSettings>> _mockOptionsSnapshotConfig = new();
     private AuthenticationController _sut;
 
     public AuthenticationControllerTests()
     {
-        _sut = new AuthenticationController(_mockLogger.Object, _mockUserLoginService.Object);
+        _mockOptionsSnapshotConfig.Setup(i => i.Value)
+            .Returns(new TokenSettings
+            {
+                Subject = "AdventureWorksAPI",
+                Key = "HelloWorldThisIsASubParSecretKey",
+                Issuer = "https://localhost/",
+                Audience = "https://localhost/",
+                TokenExpirationInSeconds = 6000,
+                RefreshTokenExpirationInDays = 2
+            });
+
+        _sut = new AuthenticationController(_mockLogger.Object, _mockUserLoginService.Object, _mockOptionsSnapshotConfig.Object)
+        {
+            ControllerContext = new ControllerContext
+            {
+                HttpContext = new DefaultHttpContext()
+                {
+                    Connection = { Id = "abc", RemoteIpAddress = new IPAddress(16885952) }
+                }
+            }
+        };
     }
 
     [Fact]
@@ -27,13 +51,17 @@ public sealed class AuthenticationControllerTests : UnitTestBase
     {
         using (new AssertionScope())
         {
-            _ = ((Action)(() => _sut = new AuthenticationController(null!, _mockUserLoginService.Object)))
+            _ = ((Action)(() => _sut = new AuthenticationController(null!, _mockUserLoginService.Object, _mockOptionsSnapshotConfig.Object)))
                 .Should().Throw<ArgumentNullException>("because we expect a null argument exception.")
                 .And.ParamName.Should().Be("logger");
 
-            _ = ((Action)(() => _sut = new AuthenticationController(_mockLogger.Object, null!)))
+            _ = ((Action)(() => _sut = new AuthenticationController(_mockLogger.Object, null!, _mockOptionsSnapshotConfig.Object)))
                 .Should().Throw<ArgumentNullException>("because we expect a null argument exception.")
                 .And.ParamName.Should().Be("userLoginService");
+
+            _ = ((Action)(() => _sut = new AuthenticationController(_mockLogger.Object, _mockUserLoginService.Object, null!)))
+                .Should().Throw<ArgumentNullException>("because we expect a null argument exception.")
+                .And.ParamName.Should().Be("tokenSettings");
         }
     }
 
@@ -152,7 +180,7 @@ public sealed class AuthenticationControllerTests : UnitTestBase
         string expectedLoggedMessage
         )
     {
-        _mockUserLoginService.Setup(x => x.AuthenticateUserAsync(It.IsAny<string>(), It.IsAny<string>()))
+        _mockUserLoginService.Setup(x => x.AuthenticateUserAsync(It.IsAny<string>(), It.IsAny<string>(), It.IsAny<string>()))
             .ReturnsAsync((user, tokenModel, errors));
 
         const string message = "Unable to complete authentication request.";
@@ -207,9 +235,8 @@ public sealed class AuthenticationControllerTests : UnitTestBase
             RefreshTokenExpiration = DateTime.UtcNow.AddSeconds(180)
         };
 
-        _mockUserLoginService.Setup(x => x.AuthenticateUserAsync(It.IsAny<string>(), It.IsAny<string>()))
+        _mockUserLoginService.Setup(x => x.AuthenticateUserAsync(It.IsAny<string>(), It.IsAny<string>(), It.IsAny<string>()))
             .ReturnsAsync((user, tokenModel, new List<ValidationFailure>()));
-
         
         var model = new AuthenticationRequestModel { Username = "hello.world", Password = "hello" };
         var result = await _sut.AuthenticateUser(model).ConfigureAwait(false);

@@ -1,4 +1,5 @@
-﻿using AdventureWorks.Application.Interfaces.Repositories.AccountInfo;
+﻿#nullable enable
+using AdventureWorks.Application.Interfaces.Repositories.AccountInfo;
 using AdventureWorks.Common.Attributes;
 using AdventureWorks.Domain.Entities.Shield;
 using AdventureWorks.Infrastructure.Persistence.DbContexts;
@@ -28,5 +29,16 @@ public sealed class UserRefreshTokenRepository : EfRepository<UserRefreshTokenEn
                                                       && x.RefreshToken.ToLower().Trim() ==
                                                       refreshToken.ToLower().Trim())
             .ToListAsync()).AsReadOnly();
+    }
+
+    /// <summary>
+    /// Retrieve the most recent, non-expired refresh token for a given user.
+    /// </summary>
+    /// <param name="userId">the unique user identifier; the business entity id.</param>
+    /// <returns></returns>
+    public async Task<UserRefreshTokenEntity?> GetMostRecentRefreshTokenByUserIdAsync(int userId)
+    {
+        return await DbContext.UserRefreshTokens
+                .FirstOrDefaultAsync(x => x.BusinessEntityId == userId && !x.IsExpired);
     }
 }

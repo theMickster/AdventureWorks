@@ -14,7 +14,7 @@ public sealed class UserRefreshTokenEntity : BaseAuditableEntity
 
     public DateTime ExpiresOn { get; set; }
 
-    public bool IsExpired { get; private set; }
+    public bool IsExpired { get; set; }
 
     public BusinessEntity BusinessEntity { get; set; }
 
