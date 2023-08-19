@@ -102,6 +102,34 @@ public sealed class AuthenticationController : ControllerBase
         return Ok(responseModel);
     }
 
+    [AllowAnonymous]
+    [HttpPost("refreshToken")]
+    public async Task<IActionResult> RefreshUserToken()
+    {
+        Request.Cookies.TryGetValue("X-Refresh-Token", out var refreshToken);
+        Request.Cookies.TryGetValue("X-Username", out var username);
+        
+        if (username == null || string.IsNullOrWhiteSpace(username))
+        {
+            const string message = "Invalid refresh token request; Username not found but is required.";
+            _logger.LogInformation(message);
+            return BadRequest(message);
+        }
+
+        if (refreshToken == null || string.IsNullOrWhiteSpace(refreshToken))
+        {
+            const string message = "Invalid refresh token request; Refresh Token not found but is required.";
+            _logger.LogInformation(message);
+            return BadRequest(message);
+        }
+
+
+
+
+        return Ok();
+    }
+
+
     private void AppendCookies(AuthenticationResponseModel model)
     {
         var cookieOptions = new CookieOptions

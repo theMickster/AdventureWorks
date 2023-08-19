@@ -8,9 +8,11 @@ using System.Diagnostics.CodeAnalysis;
 using AdventureWorks.Application.Interfaces.Repositories.AccountInfo;
 using AdventureWorks.Domain.Entities.Shield;
 using AdventureWorks.Domain.Models.Shield;
+
 namespace AdventureWorks.Application.Services.Login;
 
 [ServiceLifetimeScoped]
+[SuppressMessage("ReSharper", "ConditionIsAlwaysTrueOrFalseAccordingToNullableAPIContract")]
 public sealed class ReadUserLoginService : IReadUserLoginService
 {
     private readonly ILogger<ReadUserLoginService> _logger;
@@ -41,19 +43,18 @@ public sealed class ReadUserLoginService : IReadUserLoginService
     /// <param name="password"></param>
     /// <param name="ipAddress"></param>
     /// <returns>a tuple that includes the user model, security token, and validation failure list </returns>
-    [SuppressMessage("ReSharper", "ConditionIsAlwaysTrueOrFalseAccordingToNullableAPIContract")]
     public async Task<(UserAccountModel?, UserAccountTokenModel?, List<ValidationFailure>)> AuthenticateUserAsync(string username, string password, string ipAddress)
     {
         var validationFailures = new List<ValidationFailure>();
 
-        var userEntity = await _userAccountRepository.GetByUserNameAsync(username)
-                .ConfigureAwait(false);
+        var (userEntity, userEntityFailure) = await GetUserAccountEntityAsync(username);
 
         if (userEntity == null)
         {
-            var validationFailure = new ValidationFailure{ ErrorCode = "Auth-Error-001", ErrorMessage = "Username does not exist" };
-            _logger.LogInformation( $"{validationFailure.ErrorCode} - {validationFailure.ErrorMessage}" );
-            validationFailures.Add(validationFailure);
+            if (userEntityFailure != null)
+            {
+                validationFailures.Add(userEntityFailure);
+            }
 
             return (null, null, validationFailures);
         }
@@ -94,6 +95,47 @@ public sealed class ReadUserLoginService : IReadUserLoginService
         var token = await _tokenService.GenerateUserTokenAsync(model, ipAddress).ConfigureAwait(false);
 
         return (model, token, validationFailures);
+    }
+
+    /// <summary>
+    /// Retrieves the user account by user id.
+    /// </summary>
+    /// <param name="username"></param>
+    /// <returns></returns>
+    public async Task<(UserAccountModel?, List<ValidationFailure>)> GetUserAsync(string username)
+    {
+        var validationFailures = new List<ValidationFailure>();
+
+        var (userEntity, userEntityFailure) = await GetUserAccountEntityAsync(username);
+
+        if (userEntity == null)
+        {
+            if (userEntityFailure != null)
+            {
+                validationFailures.Add(userEntityFailure);
+            }
+
+            return (null, validationFailures);
+        }
+
+        var model = _mapper.Map<UserAccountModel>(userEntity);
+
+        return (model, validationFailures);
+    }
+
+    private async Task<(UserAccountEntity?, ValidationFailure?)> GetUserAccountEntityAsync(string username)
+    {
+        var userEntity = await _userAccountRepository.GetByUserNameAsync(username)
+            .ConfigureAwait(false);
+
+        if (userEntity != null)
+        {
+            return (userEntity, null);
+        }
+
+        var validationFailure = new ValidationFailure { ErrorCode = "Auth-Error-001", ErrorMessage = "Username does not exist" };
+        _logger.LogInformation($"{validationFailure.ErrorCode} - {validationFailure.ErrorMessage}");
+        return (null, validationFailure);
     }
 
 }
