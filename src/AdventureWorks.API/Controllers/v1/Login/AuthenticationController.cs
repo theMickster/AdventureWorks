@@ -64,8 +64,7 @@ public sealed class AuthenticationController : ControllerBase
             return BadRequest(message);
         }
 
-        var ipAddress = HttpContext.Connection.RemoteIpAddress?.MapToIPv4().ToString() ?? "127.0.0.1";
-        ipAddress = ipAddress == "0.0.0.1" ? "127.0.0.1" : ipAddress;
+        var ipAddress = GetRequestIpAddress();
 
         var (userAccount, token, errors ) = await _userLoginService.AuthenticateUserAsync(model.Username, model.Password, ipAddress);
 
@@ -97,6 +96,7 @@ public sealed class AuthenticationController : ControllerBase
             SecurityGroups = userAccount.SecurityGroups,
             SecurityRoles = userAccount.SecurityRoles
         };
+
         AppendCookies(responseModel);
 
         return Ok(responseModel);
@@ -122,13 +122,51 @@ public sealed class AuthenticationController : ControllerBase
             _logger.LogInformation(message);
             return BadRequest(message);
         }
+        
+        var ipAddress = GetRequestIpAddress();
 
+        var (userAccount, token, errors) = await _userLoginService.RefreshTokenAsync(refreshToken, username, ipAddress);
 
+        if (errors.Any() || token is null || userAccount is null)
+        {
+            const string message = "Unable to complete authentication request.";
 
+            if (errors.Any())
+            {
+                errors.ForEach(y =>
+                    _logger.LogInformation(
+                        $"User Authentication Attempt Failed - Token Refresh. Error Code:{y.ErrorCode} Error Message: {y.ErrorMessage}"));
+            }
+            else
+            {
+                _logger.LogInformation(message);
+            }
 
-        return Ok();
+            return BadRequest(message);
+        }
+
+        var responseModel = new AuthenticationResponseModel
+        {
+            Token = token,
+            Username = userAccount.UserName,
+            FullName = userAccount.FullName,
+            EmailAddress = userAccount.PrimaryEmailAddress,
+            SecurityFunctions = userAccount.SecurityFunctions,
+            SecurityGroups = userAccount.SecurityGroups,
+            SecurityRoles = userAccount.SecurityRoles
+        };
+
+        AppendCookies(responseModel);
+
+        return Ok(responseModel);
     }
 
+    private string GetRequestIpAddress()
+    {
+        var ipAddress = HttpContext.Connection.RemoteIpAddress?.MapToIPv4().ToString() ?? "127.0.0.1";
+        ipAddress = ipAddress == "0.0.0.1" ? "127.0.0.1" : ipAddress;
+        return ipAddress;
+    }
 
     private void AppendCookies(AuthenticationResponseModel model)
     {

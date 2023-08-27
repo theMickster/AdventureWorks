@@ -1,15 +1,14 @@
 ﻿using AdventureWorks.API.Controllers.v1.Login;
 using AdventureWorks.Application.Interfaces.Services.Login;
+using AdventureWorks.Common.Settings;
+using AdventureWorks.Domain.Models.Shield;
 using AdventureWorks.Test.Common.Extensions;
+using FluentValidation.Results;
+using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
-using System.Net;
-using AdventureWorks.Common.Settings;
-using FluentValidation.Results;
-using AdventureWorks.Domain.Models;
-using AdventureWorks.Domain.Models.Shield;
-using Microsoft.AspNetCore.Http;
 using Microsoft.Extensions.Options;
+using System.Net;
 
 namespace AdventureWorks.UnitTests.API.Controllers.v1.Login;
 
@@ -266,6 +265,161 @@ public sealed class AuthenticationControllerTests : UnitTestBase
         }
     }
 
+    [Fact]
+    public async Task RefreshUserToken_fails_when_username_cookie_missingAsync()
+    {
+        const string message = "Invalid refresh token request; Username not found but is required.";
+
+        var cookies = new FakeCookieCollection
+        {
+            { "X-Refresh-Token", "d48401b993ba45c684281294162f6dee" }
+        };
+        _sut.ControllerContext.HttpContext.Request.Cookies = cookies;
+
+        var result = await _sut.RefreshUserToken().ConfigureAwait(false);
+
+        var objectResult = result as ObjectResult;
+
+        using (new AssertionScope())
+        {
+            objectResult.Should().NotBeNull();
+            objectResult!.StatusCode.Should().Be((int)HttpStatusCode.BadRequest);
+            objectResult!.Value.Should().Be(message);
+            
+            _mockLogger.VerifyLoggingMessageContains(message, null, LogLevel.Information);
+        }
+    }
+
+    [Fact]
+    public async Task RefreshUserToken_fails_when_refreshtoken_cookie_missingAsync()
+    {
+        const string message = "Invalid refresh token request; Refresh Token not found but is required.";
+        var cookies = new FakeCookieCollection
+        {
+            { "X-Username", "joe.montanta" }
+        };
+        _sut.ControllerContext.HttpContext.Request.Cookies = cookies;
+
+        var result = await _sut.RefreshUserToken().ConfigureAwait(false);
+
+        var objectResult = result as ObjectResult;
+
+        using (new AssertionScope())
+        {
+            objectResult.Should().NotBeNull();
+            objectResult!.StatusCode.Should().Be((int)HttpStatusCode.BadRequest);
+            objectResult!.Value.Should().Be(message);
+
+            _mockLogger.VerifyLoggingMessageContains(message, null, LogLevel.Information);
+        }
+    }
+
+
+    [Theory]
+    [MemberData(nameof(AuthenticateUserData))]
+    public async Task RefreshUserToken_fails_when_authenticationService_fails_01Async(
+        UserAccountModel? user,
+        UserAccountTokenModel? tokenModel,
+        List<ValidationFailure> errors,
+        string expectedLoggedMessage
+    )
+    {
+        var cookies = new FakeCookieCollection
+        {
+            { "X-Username", "joe.montanta" },
+            { "X-Refresh-Token", "d48401b993ba45c684281294162f6dee" }
+        };
+        _sut.ControllerContext.HttpContext.Request.Cookies = cookies;
+
+        _mockUserLoginService.Setup(x => x.RefreshTokenAsync(It.IsAny<string>(), It.IsAny<string>(), It.IsAny<string>()))
+            .ReturnsAsync((user, tokenModel, errors));
+
+        const string message = "Unable to complete authentication request.";
+        var result = await _sut.RefreshUserToken().ConfigureAwait(false);
+
+        var objectResult = result as ObjectResult;
+
+        using (new AssertionScope())
+        {
+            objectResult.Should().NotBeNull();
+            objectResult!.StatusCode.Should().Be((int)HttpStatusCode.BadRequest);
+            objectResult!.Value.Should().Be(message);
+
+            _mockLogger.VerifyLoggingMessageContains(expectedLoggedMessage, null, LogLevel.Information);
+        }
+    }
+
+    [Fact]
+    public async Task RefreshUserToken_succeedsAsync()
+    {
+        var cookies = new FakeCookieCollection
+        {
+            { "X-Username", "joe.montanta" },
+            { "X-Refresh-Token", "d48401b993ba45c684281294162f6dee" }
+        };
+        _sut.ControllerContext.HttpContext.Request.Cookies = cookies;
+
+        var user = new UserAccountModel
+        {
+            Id = 1,
+            FirstName = "Joe",
+            LastName = "Montanta",
+            UserName = "joe.montanta",
+            PrimaryEmailAddress = "joe.montanta@example.com",
+            SecurityRoles = new List<SecurityRoleSlimModel>
+            {
+                new(){Id = 1, Name = "Help Desk Administrator"},
+                new(){Id = 2, Name = "Adventure Works Employee"},
+                new(){Id = 3, Name = "Adventure Works IT Employee"}
+            },
+            SecurityFunctions = new List<SecurityFunctionSlimModel>
+            {
+                new(){Id = 10, Name = "Reset User Passwords"}
+            },
+            SecurityGroups = new List<SecurityGroupSlimModel>
+            {
+                new(){Id = 1, Name = "A Group 001"},
+                new(){Id = 2, Name = "A Group 002"}
+            }
+        };
+
+        var tokenModel = new UserAccountTokenModel
+        {
+            Id = new Guid(),
+            Token = "token",
+            TokenExpiration = DateTime.UtcNow.AddSeconds(120),
+            RefreshToken = "d48401b993ba45c684281294162f6dee",
+            RefreshTokenExpiration = DateTime.UtcNow.AddSeconds(180)
+        };
+
+        _mockUserLoginService.Setup(x => x.RefreshTokenAsync(It.IsAny<string>(), It.IsAny<string>(), It.IsAny<string>()))
+            .ReturnsAsync((user, tokenModel, new List<ValidationFailure>()));
+
+        var result = await _sut.RefreshUserToken().ConfigureAwait(false);
+        var objectResult = result as ObjectResult;
+        var outputModel = objectResult!.Value! as AuthenticationResponseModel;
+
+        using (new AssertionScope())
+        {
+            objectResult.Should().NotBeNull();
+            objectResult!.StatusCode.Should().Be((int)HttpStatusCode.OK);
+
+            outputModel.Should().NotBeNull();
+            outputModel!.Token.Should().NotBeNull();
+            outputModel!.Username.Should().Be("joe.montanta");
+            outputModel!.FullName.Should().Be("Montanta, Joe");
+            outputModel!.EmailAddress.Should().Be("joe.montanta@example.com");
+            outputModel!.Token.Token.Should().Be("token");
+            outputModel!.Token.RefreshToken.Should().Be("d48401b993ba45c684281294162f6dee");
+            outputModel!.Token.TokenExpiration.Should().BeAfter(DateTime.Now);
+            outputModel!.Token.RefreshTokenExpiration.Should().BeAfter(DateTime.Now);
+
+            outputModel!.SecurityFunctions.Count.Should().Be(1);
+            outputModel!.SecurityGroups.Count.Should().Be(2);
+            outputModel!.SecurityRoles.Count.Should().Be(3);
+        }
+
+    }
 
     #region Xunit Theory Test Data
 
@@ -278,4 +432,9 @@ public sealed class AuthenticationControllerTests : UnitTestBase
         };
 
     #endregion Xunit Theory Test Data
+
+    public class FakeCookieCollection : Dictionary<string, string>, IRequestCookieCollection
+    {
+        public new ICollection<string> Keys => ((Dictionary<string, string>)this).Keys;
+    }
 }

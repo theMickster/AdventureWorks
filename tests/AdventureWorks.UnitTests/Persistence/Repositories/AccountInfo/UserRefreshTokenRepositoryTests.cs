@@ -22,7 +22,7 @@ public sealed class UserRefreshTokenRepositoryTests : PersistenceUnitTestBase
                 RefreshToken = "7883FE9B029641C28BC119672547F8371F235969226C4F4EA128C6FE8F073D46",
                 CreatedBy = 1, CreatedOn = StandardCreatedDate, ModifiedBy = 1, ModifiedOn = StandardModifiedDate,
                 RecordId = new Guid("14fff880-0315-4af6-9cc4-a0530298c4cf"),
-                ExpiresOn = DateTime.UtcNow.AddDays(-5), IsExpired = true
+                ExpiresOn = DateTime.UtcNow.AddDays(-5), IsExpired = true, IsRevoked = false
             },
             new()
             {
@@ -30,7 +30,7 @@ public sealed class UserRefreshTokenRepositoryTests : PersistenceUnitTestBase
                 RefreshToken = "F63F83B76CD1430DB1C3DFBF19A66275454D8356210D4B2793526DE911710A7E",
                 CreatedBy = 1, CreatedOn = StandardCreatedDate, ModifiedBy = 1, ModifiedOn = StandardModifiedDate,
                 RecordId = new Guid("ebd0e1c5-5027-4c85-9719-c5c70366eac0"), 
-                ExpiresOn = DateTime.UtcNow.AddDays(5), IsExpired = false
+                ExpiresOn = DateTime.UtcNow.AddDays(5), IsExpired = false, IsRevoked = false
             },
             new()
             {
@@ -38,7 +38,7 @@ public sealed class UserRefreshTokenRepositoryTests : PersistenceUnitTestBase
                 RefreshToken = "D4EFB99864D65B7CB19F43D9C7662DCC658412C0744B389412182C73CF488",
                 CreatedBy = 1, CreatedOn = StandardCreatedDate, ModifiedBy = 1, ModifiedOn = StandardModifiedDate,
                 RecordId = new Guid("57a468b2-c0ed-471a-af72-dd21ae8b1d9e"),
-                ExpiresOn = DateTime.UtcNow.AddDays(2), IsExpired = false
+                ExpiresOn = DateTime.UtcNow.AddDays(2), IsExpired = false, IsRevoked = true, RevokedOn = StandardModifiedDate
             },
         });
         DbContext.SaveChanges();
@@ -89,5 +89,24 @@ public sealed class UserRefreshTokenRepositoryTests : PersistenceUnitTestBase
                 result?.Should().BeNull();
             }
         }
+    }
+
+    [Fact]
+    public async Task RevokeRefreshTokenAsync_succeeds()
+    {
+        var token = DbContext.UserRefreshTokens.First(x => x.UserRefreshTokenId == 2);
+
+        using (new AssertionScope())
+        {
+            token.IsRevoked.Should().BeFalse();
+            token.RevokedOn.Should().BeNull();
+
+            await _sut.RevokeRefreshTokenAsync(token).ConfigureAwait(false);
+
+
+            token.IsRevoked.Should().BeTrue();
+            token.RevokedOn.Should().NotBeNull();
+        }
+
     }
 }

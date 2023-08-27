@@ -6,6 +6,7 @@ using AdventureWorks.Common.Attributes;
 using AdventureWorks.Domain.Entities.Shield;
 using AdventureWorks.Domain.Models.Shield;
 using AdventureWorks.Domain.Profiles;
+using AdventureWorks.Infrastructure.Persistence.Repositories.AccountInfo;
 using AdventureWorks.Test.Common.Extensions;
 using AutoMapper;
 using Microsoft.Extensions.Logging;
@@ -19,6 +20,7 @@ public sealed class ReadUserLoginServiceTests : UnitTestBase
     private readonly Mock<IUserAccountRepository> _mockUserAccountRepository = new();
     private readonly Mock<IReadUserAuthorizationRepository> _mockReadUserAuthorizationRepository = new();
     private readonly Mock<ITokenService> _mockTokenService = new();
+    private readonly Mock<IUserRefreshTokenRepository> _mockUserRefreshTokenRepository = new();
     private readonly IMapper _mapper;
     private ReadUserLoginService _sut;
 
@@ -29,7 +31,13 @@ public sealed class ReadUserLoginServiceTests : UnitTestBase
         );
         _mapper = mappingConfig.CreateMapper();
 
-        _sut = new ReadUserLoginService(_mockLogger.Object, _mockUserAccountRepository.Object, _mockReadUserAuthorizationRepository.Object, _mockTokenService.Object, _mapper);
+        _sut = new ReadUserLoginService(
+            _mockLogger.Object, 
+            _mockUserAccountRepository.Object, 
+            _mockReadUserAuthorizationRepository.Object, 
+            _mockTokenService.Object, 
+            _mapper,
+            _mockUserRefreshTokenRepository.Object);
     }
     
     [Fact]
@@ -56,7 +64,8 @@ public sealed class ReadUserLoginServiceTests : UnitTestBase
                     _mockUserAccountRepository.Object,
                     _mockReadUserAuthorizationRepository.Object,
                     _mockTokenService.Object, 
-                    _mapper)))
+                    _mapper,
+                    _mockUserRefreshTokenRepository.Object)))
                 .Should().Throw<ArgumentNullException>("because we expect a null argument exception.")
                 .And.ParamName.Should().Be("logger");
 
@@ -65,7 +74,8 @@ public sealed class ReadUserLoginServiceTests : UnitTestBase
                     null!,
                     _mockReadUserAuthorizationRepository.Object,
                     _mockTokenService.Object, 
-                    _mapper)))
+                    _mapper,
+                    _mockUserRefreshTokenRepository.Object)))
                 .Should().Throw<ArgumentNullException>("because we expect a null argument exception.")
                 .And.ParamName.Should().Be("userAccountRepository");
 
@@ -75,7 +85,8 @@ public sealed class ReadUserLoginServiceTests : UnitTestBase
                     _mockUserAccountRepository.Object,
                     null!,
                     _mockTokenService.Object,
-                    _mapper)))
+                    _mapper,
+                    _mockUserRefreshTokenRepository.Object)))
                 .Should().Throw<ArgumentNullException>("because we expect a null argument exception.")
                 .And.ParamName.Should().Be("readUserAuthorizationRepository");
 
@@ -85,7 +96,8 @@ public sealed class ReadUserLoginServiceTests : UnitTestBase
                     _mockUserAccountRepository.Object,
                     _mockReadUserAuthorizationRepository.Object,
                     null!,
-                    _mapper)))
+                    _mapper,
+                    _mockUserRefreshTokenRepository.Object)))
                 .Should().Throw<ArgumentNullException>("because we expect a null argument exception.")
                 .And.ParamName.Should().Be("tokenService");
 
@@ -94,10 +106,20 @@ public sealed class ReadUserLoginServiceTests : UnitTestBase
                     _mockUserAccountRepository.Object,
                     _mockReadUserAuthorizationRepository.Object,
                     _mockTokenService.Object,
-                    null!)))
+                    null!,
+                    _mockUserRefreshTokenRepository.Object)))
                 .Should().Throw<ArgumentNullException>("because we expect a null argument exception.")
                 .And.ParamName.Should().Be("mapper");
-
+            
+            _ = ((Action)(() => _sut = new ReadUserLoginService(
+                    _mockLogger.Object,
+                    _mockUserAccountRepository.Object,
+                    _mockReadUserAuthorizationRepository.Object,
+                    _mockTokenService.Object,
+                    _mapper,
+                    null!)))
+                .Should().Throw<ArgumentNullException>("because we expect a null argument exception.")
+                .And.ParamName.Should().Be("userRefreshTokenRepository");
         }
     }
 
@@ -184,25 +206,251 @@ public sealed class ReadUserLoginServiceTests : UnitTestBase
     [Fact]
     public async Task AuthenticateUserAsync_succeeds_when_all_is_goodAsync()
     {
-        const string passwordHash = "$2a$11$WzjLdJ.9Mg4Gk96gcSsYeu7tUqRtX5P02OV1Pe5A//UWRF52WoWYe";
-        const string password = "HelloWorld";
-        const string username = "john.elway";
-        var tokenModel = new UserAccountTokenModel
+        var (username, password, refreshToken) = SetupAuthHappyPath();
+
+        var (user, outputToken, validationFailures) = await _sut.AuthenticateUserAsync(username, password, "192.168.100.69").ConfigureAwait(false);
+
+        using (new AssertionScope())
         {
-            Id = new Guid(),
-            Token = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiJBZHZlbnR1cmVXb3Jrc0FQSSIsImp0aSI6IjJlNTBiODM3LTYyNjAtNDljMy1hNTMxLTgzOTUzY2U1NzcyMiIsImlhdCI6MTY3NjA1NjcyNCwiZXhwIjoxNjc2MDYyNzI0LCJnaXZlbl9uYW1lIjoiSm9obiIsImZhbWlseV9uYW1lIjoiRWx3YXkiLCJVc2VySWQiOiIxIiwiVXNlck5hbWUiOiJqb2huLmVsd2F5IiwibmJmIjoxNjc2MDU2NzI0LCJpc3MiOiJodHRwczovL2xvY2FsaG9zdC8iLCJhdWQiOiJodHRwczovL2xvY2FsaG9zdC8ifQ.gl90yhJtcPtfTrYtgIX7nWCKpaOMUyU2Ajbc7B8FNKQ",
-            TokenExpiration = DateTime.UtcNow.AddSeconds(120),
-            RefreshToken = string.Empty,
-            RefreshTokenExpiration = DateTime.MinValue
-        };
+            user.Should().NotBeNull();
+            user!.UserName.Should().Be(username);
+            outputToken.Should().NotBeNull();
+            validationFailures.Count.Should().Be(0);
+
+            user!.SecurityFunctions.Count.Should().Be(3);
+            user!.SecurityRoles.Count.Should().Be(2);
+            user!.SecurityGroups.Count.Should().Be(4);
+            
+            user!.SecurityFunctions.Count(x => x.Id == 3).Should().Be(1);
+            user!.SecurityRoles.Count(x => x.Id == 11).Should().Be(1);
+            user!.SecurityGroups.Count(x => x.Id == 104).Should().Be(1);
+        }
+    }
+
+    [Fact]
+    public async Task RefreshTokenAsync_returns_correctly_when_username_mismatchedAsync()
+    {
+        _mockUserAccountRepository.Setup(x => x.GetByUserNameAsync("rod.smith"))
+            .ReturnsAsync((UserAccountEntity)null!);
+
+        var (user, token, validationFailures) = await _sut.RefreshTokenAsync("aRefreshTokenGoesHere", "rod.smith", "192.168.100.69").ConfigureAwait(false);
+
+        using (new AssertionScope())
+        {
+            user.Should().BeNull();
+            token.Should().BeNull();
+            validationFailures.Count(x => x.ErrorCode == "Auth-Error-001").Should().Be(1);
+            validationFailures.Count(x => x.ErrorCode == "Auth-Error-002").Should().Be(0);
+
+            _mockLogger.VerifyLoggingMessageIs("Auth-Error-001 - Username does not exist", null, LogLevel.Information);
+        }
+    }
+
+    [Fact]
+    public async Task RefreshTokenAsync_returns_correctly_when_refresh_token_not_foundAsync()
+    {
+        const string username = "john.elway";
 
         _mockUserAccountRepository.Setup(x => x.GetByUserNameAsync(username))
             .ReturnsAsync(new UserAccountEntity
             {
                 BusinessEntityId = 1,
                 UserName = username,
-                PasswordHash = passwordHash
+                PasswordHash = "$2a$11$t5"
             });
+
+        _mockUserRefreshTokenRepository
+            .Setup(x => x.GetRefreshTokenListByUserIdAsync(It.IsAny<int>(), It.IsAny<string>()))
+            .ReturnsAsync(new List<UserRefreshTokenEntity>());
+
+        var (user, token, validationFailures) = await _sut.RefreshTokenAsync("aRefreshTokenGoesHere", "john.elway", "192.168.100.69").ConfigureAwait(false);
+
+        using (new AssertionScope())
+        {
+            user.Should().BeNull();
+            token.Should().BeNull();
+            validationFailures.Count(x => x.ErrorCode == "Auth-Error-004").Should().Be(1);
+
+            _mockLogger.VerifyLoggingMessageIs("Auth-Error-004 - Unable to create new auth token! The refresh token does not exist for the given user.", null, LogLevel.Information);
+        }
+    }
+
+    [Fact]
+    [SuppressMessage("Async", "AsyncifyInvocation:Use Task Async", Justification = "...")]
+    public async Task RefreshTokenAsync_returns_correctly_when_multiple_refresh_tokens_foundAsync()
+    {
+        const string username = "john.elway";
+
+        _mockUserAccountRepository.Setup(x => x.GetByUserNameAsync(username))
+            .ReturnsAsync(new UserAccountEntity
+            {
+                BusinessEntityId = 1,
+                UserName = username,
+                PasswordHash = "$2a$11$t5"
+            });
+
+        _mockUserRefreshTokenRepository
+            .Setup(x => x.GetRefreshTokenListByUserIdAsync(It.IsAny<int>(), It.IsAny<string>()))
+            .ReturnsAsync(new List<UserRefreshTokenEntity> {new() {BusinessEntityId = 1}, new (){BusinessEntityId = 1}});
+
+        _mockUserRefreshTokenRepository.Setup(x => x.RevokeRefreshTokenAsync(It.IsAny<UserRefreshTokenEntity>()))
+            .Returns(Task.CompletedTask)
+            .Verifiable();
+
+        var (user, token, validationFailures) = await _sut.RefreshTokenAsync("aRefreshTokenGoesHere", "john.elway", "192.168.100.69").ConfigureAwait(false);
+
+        using (new AssertionScope())
+        {
+            user.Should().BeNull();
+            token.Should().BeNull();
+            validationFailures.Count(x => x.ErrorCode == "Auth-Error-005").Should().Be(1);
+
+            _mockLogger.VerifyLoggingMessageIs("Auth-Error-005 - Unable to create new auth token! The system does not support duplicate refresh token entries for the same user.", null, LogLevel.Information);
+
+            _mockUserRefreshTokenRepository.Verify( x => x.RevokeRefreshTokenAsync(It.IsAny<UserRefreshTokenEntity>()), Times.Exactly(2));
+        }
+    }
+    
+    [Fact]
+    public async Task RefreshTokenAsync_returns_correctly_when_refresh_token_is_expiredAsync()
+    {
+        const string username = "john.elway";
+
+        _mockUserAccountRepository.Setup(x => x.GetByUserNameAsync(username))
+            .ReturnsAsync(new UserAccountEntity
+            {
+                BusinessEntityId = 1,
+                UserName = username,
+                PasswordHash = "$2a$11$t5"
+            });
+
+        _mockUserRefreshTokenRepository
+            .Setup(x => x.GetRefreshTokenListByUserIdAsync(It.IsAny<int>(), It.IsAny<string>()))
+            .ReturnsAsync(new List<UserRefreshTokenEntity> { new() { BusinessEntityId = 1,IsExpired = true} });
+
+        var (user, token, validationFailures) = await _sut.RefreshTokenAsync("aRefreshTokenGoesHere", "john.elway", "192.168.100.69").ConfigureAwait(false);
+
+        using (new AssertionScope())
+        {
+            user.Should().BeNull();
+            token.Should().BeNull();
+            validationFailures.Count(x => x.ErrorCode == "Auth-Error-006").Should().Be(1);
+
+            _mockLogger.VerifyLoggingMessageIs("Auth-Error-006 - Unable to create new auth token! The supplied refresh token is expired!", null, LogLevel.Information);
+        }
+    }
+    
+    [Fact]
+    public async Task RefreshTokenAsync_returns_correctly_when_refresh_token_is_revokedAsync()
+    {
+        const string username = "john.elway";
+
+        _mockUserAccountRepository.Setup(x => x.GetByUserNameAsync(username))
+            .ReturnsAsync(new UserAccountEntity
+            {
+                BusinessEntityId = 1,
+                UserName = username,
+                PasswordHash = "$2a$11$t5"
+            });
+
+        _mockUserRefreshTokenRepository
+            .Setup(x => x.GetRefreshTokenListByUserIdAsync(It.IsAny<int>(), It.IsAny<string>()))
+            .ReturnsAsync(new List<UserRefreshTokenEntity> { new() { BusinessEntityId = 1, IsExpired = false, IsRevoked = true} });
+
+        var (user, token, validationFailures) = await _sut.RefreshTokenAsync("aRefreshTokenGoesHere", "john.elway", "192.168.100.69").ConfigureAwait(false);
+
+        using (new AssertionScope())
+        {
+            user.Should().BeNull();
+            token.Should().BeNull();
+            validationFailures.Count(x => x.ErrorCode == "Auth-Error-007").Should().Be(1);
+
+            _mockLogger.VerifyLoggingMessageIs("Auth-Error-007 - Unable to create new auth token! The supplied refresh token is revoked!", null, LogLevel.Information);
+        }
+    }
+
+    [Fact]
+    public async Task RefreshTokenAsync_returns_correctly_when_user_authorization_entity_is_not_foundAsync()
+    {
+        const string username = "john.elway";
+
+        _mockUserAccountRepository.Setup(x => x.GetByUserNameAsync(username))
+            .ReturnsAsync(new UserAccountEntity
+            {
+                BusinessEntityId = 1,
+                UserName = username,
+                PasswordHash = "$2a$11$t5"
+            });
+
+        _mockUserRefreshTokenRepository
+            .Setup(x => x.GetRefreshTokenListByUserIdAsync(It.IsAny<int>(), It.IsAny<string>()))
+            .ReturnsAsync(new List<UserRefreshTokenEntity> { new() { BusinessEntityId = 1, IsExpired = false, IsRevoked = false} });
+
+        _mockReadUserAuthorizationRepository.Setup(x => x.GetByUserIdAsync(It.IsAny<int>()))
+            .ReturnsAsync((UserAuthorizationEntity)null!);
+
+        var (user, token, validationFailures) = await _sut.RefreshTokenAsync("aRefreshTokenGoesHere", "john.elway", "192.168.100.69").ConfigureAwait(false);
+
+        using (new AssertionScope())
+        {
+            user.Should().BeNull();
+            token.Should().BeNull();
+            validationFailures.Count(x => x.ErrorCode == "Auth-Error-003").Should().Be(1);
+
+            _mockLogger.VerifyLoggingMessageContains("Auth-Error-003", null, LogLevel.Information);
+            _mockLogger.VerifyLoggingMessageContains("Unable to construct authorization entity as user permission mappings do not exist", null, LogLevel.Information);
+        }
+    }
+
+    [Fact]
+    public async Task RefreshTokenAsync_succeeds_when_all_is_goodAsync()
+    {
+        var (username, password, refreshToken) = SetupAuthHappyPath();
+
+        var (user, outputToken, validationFailures) = await _sut.RefreshTokenAsync(refreshToken, username, "192.168.100.69").ConfigureAwait(false);
+
+        using (new AssertionScope())
+        {
+            user.Should().NotBeNull();
+            user!.UserName.Should().Be(username);
+            outputToken.Should().NotBeNull();
+            validationFailures.Count.Should().Be(0);
+
+            user!.SecurityFunctions.Count.Should().Be(3);
+            user!.SecurityRoles.Count.Should().Be(2);
+            user!.SecurityGroups.Count.Should().Be(4);
+
+            user!.SecurityFunctions.Count(x => x.Id == 3).Should().Be(1);
+            user!.SecurityRoles.Count(x => x.Id == 11).Should().Be(1);
+            user!.SecurityGroups.Count(x => x.Id == 104).Should().Be(1);
+        }
+    }
+
+    private (string, string, string) SetupAuthHappyPath()
+    {
+        const string passwordHash = "$2a$11$WzjLdJ.9Mg4Gk96gcSsYeu7tUqRtX5P02OV1Pe5A//UWRF52WoWYe";
+        const string password = "HelloWorld";
+        const string username = "john.elway";
+        const string refreshToken = "3d664dabe0d14d7291053530dc6379f0ac37a8ebc2ad467abc988a23a09ee717";
+
+        var tokenModel = new UserAccountTokenModel
+        {
+            Id = new Guid(),
+            Token = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiJBZHZlbnR1cmVXb3Jrc0FQSSIsImp0aSI6IjJlNTBiODM3LTYyNjAtNDljMy1hNTMxLTgzOTUzY2U1NzcyMiIsImlhdCI6MTY3NjA1NjcyNCwiZXhwIjoxNjc2MDYyNzI0LCJnaXZlbl9uYW1lIjoiSm9obiIsImZhbWlseV9uYW1lIjoiRWx3YXkiLCJVc2VySWQiOiIxIiwiVXNlck5hbWUiOiJqb2huLmVsd2F5IiwibmJmIjoxNjc2MDU2NzI0LCJpc3MiOiJodHRwczovL2xvY2FsaG9zdC8iLCJhdWQiOiJodHRwczovL2xvY2FsaG9zdC8ifQ.gl90yhJtcPtfTrYtgIX7nWCKpaOMUyU2Ajbc7B8FNKQ",
+            TokenExpiration = DateTime.UtcNow.AddSeconds(120),
+            RefreshToken = refreshToken,
+            RefreshTokenExpiration = DateTime.UtcNow.AddHours(24)
+        };
+
+        var userAccountEntity = new UserAccountEntity
+        {
+            BusinessEntityId = 1,
+            UserName = username,
+            PasswordHash = passwordHash
+        };
+
+        _mockUserAccountRepository.Setup(x => x.GetByUserNameAsync(username))
+            .ReturnsAsync(userAccountEntity);
 
         _mockTokenService.Setup(x => x.GenerateUserTokenAsync(It.IsAny<UserAccountModel>(), It.IsAny<string>()))
             .ReturnsAsync(tokenModel);
@@ -231,22 +479,25 @@ public sealed class ReadUserLoginServiceTests : UnitTestBase
                 }.AsReadOnly()
             });
 
-        var (user, outputToken, validationFailures) = await _sut.AuthenticateUserAsync(username, password, "192.168.100.69").ConfigureAwait(false);
+        _mockUserRefreshTokenRepository
+            .Setup(x => x.GetRefreshTokenListByUserIdAsync(It.IsAny<int>(), It.IsAny<string>()))
+            .ReturnsAsync(new List<UserRefreshTokenEntity>
+            {
+                new()
+                {
+                    RecordId = new Guid("fba3d756-8613-423c-bb01-e7b03d196852"),
+                    UserRefreshTokenId = 1,
+                    BusinessEntityId =  1,
+                    IsExpired = false,
+                    IpAddress = "192.168.100.69",
+                    ExpiresOn = DateTime.UtcNow.AddHours(24),
+                    RefreshToken = refreshToken,
+                    UserAccountEntity = userAccountEntity,
+                    IsRevoked = false
+                }
+            });
 
-        using (new AssertionScope())
-        {
-            user.Should().NotBeNull();
-            user!.UserName.Should().Be(username);
-            outputToken.Should().NotBeNull();
-            validationFailures.Count.Should().Be(0);
-
-            user!.SecurityFunctions.Count.Should().Be(3);
-            user!.SecurityRoles.Count.Should().Be(2);
-            user!.SecurityGroups.Count.Should().Be(4);
-            
-            user!.SecurityFunctions.Count(x => x.Id == 3).Should().Be(1);
-            user!.SecurityRoles.Count(x => x.Id == 11).Should().Be(1);
-            user!.SecurityGroups.Count(x => x.Id == 104).Should().Be(1);
-        }
+        return (username, password, refreshToken);
     }
+
 }

@@ -1,5 +1,6 @@
 ﻿using AdventureWorks.Domain.Models.Shield;
 using FluentValidation.Results;
+using System.Net;
 
 namespace AdventureWorks.Application.Interfaces.Services.Login;
 
@@ -13,4 +14,13 @@ public interface IReadUserLoginService
     /// <param name="ipAddress"></param>
     /// <returns>a tuple that includes the user model, security token, and validation failure list </returns>
     Task<(UserAccountModel?, UserAccountTokenModel?, List<ValidationFailure>)> AuthenticateUserAsync(string username, string password, string ipAddress);
+
+    /// <summary>
+    /// Generate a user's JWT security token from a refresh token
+    /// </summary>
+    /// <param name="refreshToken"></param>
+    /// <param name="username"></param>
+    /// <param name="ipAddress"></param>
+    /// <returns>a tuple that includes the user model, security token, and validation failure list </returns>
+    Task<(UserAccountModel?, UserAccountTokenModel?, List<ValidationFailure>)> RefreshTokenAsync(string refreshToken, string username, string ipAddress);
 }

@@ -16,6 +16,10 @@ public sealed class UserRefreshTokenEntity : BaseAuditableEntity
 
     public bool IsExpired { get; set; }
 
+    public bool IsRevoked { get; set; }
+
+    public DateTime? RevokedOn { get; set; }
+
     public BusinessEntity BusinessEntity { get; set; }
 
     public UserAccountEntity UserAccountEntity { get; set; }

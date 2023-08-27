@@ -1,4 +1,5 @@
 ﻿#nullable enable
+using System;
 using AdventureWorks.Application.Interfaces.Repositories.AccountInfo;
 using AdventureWorks.Common.Attributes;
 using AdventureWorks.Domain.Entities.Shield;
@@ -40,5 +41,17 @@ public sealed class UserRefreshTokenRepository : EfRepository<UserRefreshTokenEn
     {
         return await DbContext.UserRefreshTokens
                 .FirstOrDefaultAsync(x => x.BusinessEntityId == userId && !x.IsExpired);
+    }
+
+    /// <summary>
+    /// Revoke a user token.
+    /// </summary>
+    /// <param name="token"></param>
+    /// <returns></returns>
+    public async Task RevokeRefreshTokenAsync(UserRefreshTokenEntity token)
+    {
+        token.IsRevoked = true;
+        token.RevokedOn = DateTime.UtcNow;
+        await UpdateAsync(token);
     }
 }

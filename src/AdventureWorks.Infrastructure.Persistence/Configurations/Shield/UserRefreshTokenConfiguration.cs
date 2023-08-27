@@ -18,6 +18,8 @@ public sealed class UserRefreshTokenConfiguration : IEntityTypeConfiguration<Use
         builder.Property(b => b.RefreshToken).HasColumnName("RefreshToken");
         builder.Property(b => b.IsExpired).HasColumnName("IsExpired")
             .HasComputedColumnSql("IsExpired");
+        builder.Property(b => b.IsRevoked).HasColumnName("IsRevoked");
+        builder.Property(b => b.RevokedOn).HasColumnName("RevokedOn");
 
         builder.HasOne(a => a.BusinessEntity)
             .WithMany()

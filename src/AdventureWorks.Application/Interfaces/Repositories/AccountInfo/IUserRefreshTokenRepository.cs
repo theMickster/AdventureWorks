@@ -18,4 +18,11 @@ public interface IUserRefreshTokenRepository : IAsyncRepository<UserRefreshToken
     /// <param name="userId">the unique user identifier; the business entity id.</param>
     /// <returns></returns>
     Task<UserRefreshTokenEntity?> GetMostRecentRefreshTokenByUserIdAsync(int userId);
+
+    /// <summary>
+    /// Revoke a user token.
+    /// </summary>
+    /// <param name="token"></param>
+    /// <returns></returns>
+    Task RevokeRefreshTokenAsync(UserRefreshTokenEntity token);
 }
