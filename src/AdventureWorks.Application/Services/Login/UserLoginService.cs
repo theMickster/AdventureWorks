@@ -13,17 +13,17 @@ namespace AdventureWorks.Application.Services.Login;
 
 [ServiceLifetimeScoped]
 [SuppressMessage("ReSharper", "ConditionIsAlwaysTrueOrFalseAccordingToNullableAPIContract")]
-public sealed class ReadUserLoginService : IReadUserLoginService
+public sealed class UserLoginService : IUserLoginService
 {
-    private readonly ILogger<ReadUserLoginService> _logger;
+    private readonly ILogger<UserLoginService> _logger;
     private readonly IUserAccountRepository _userAccountRepository;
     private readonly IReadUserAuthorizationRepository _readUserAuthorizationRepository;
     private readonly ITokenService _tokenService;
     private readonly IMapper _mapper;
     private readonly IUserRefreshTokenRepository _userRefreshTokenRepository;
 
-    public ReadUserLoginService(
-        ILogger<ReadUserLoginService> logger,
+    public UserLoginService(
+        ILogger<UserLoginService> logger,
         IUserAccountRepository userAccountRepository,
         IReadUserAuthorizationRepository readUserAuthorizationRepository,
         ITokenService tokenService,

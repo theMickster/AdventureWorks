@@ -16,7 +16,7 @@ namespace AdventureWorks.UnitTests.API.Controllers.v1.Login;
 public sealed class AuthenticationControllerTests : UnitTestBase
 {
     private readonly Mock<ILogger<AuthenticationController>> _mockLogger = new();
-    private readonly Mock<IReadUserLoginService> _mockUserLoginService = new();
+    private readonly Mock<IUserLoginService> _mockUserLoginService = new();
     private readonly Mock<IOptionsSnapshot<TokenSettings>> _mockOptionsSnapshotConfig = new();
     private AuthenticationController _sut;
 

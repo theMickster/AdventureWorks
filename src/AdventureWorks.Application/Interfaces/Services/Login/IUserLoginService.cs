@@ -4,7 +4,7 @@ using System.Net;
 
 namespace AdventureWorks.Application.Interfaces.Services.Login;
 
-public interface IReadUserLoginService
+public interface IUserLoginService
 {
     /// <summary>
     /// Authenticate an AdventureWorks user and, if the request is valid, the generate a JWT security token

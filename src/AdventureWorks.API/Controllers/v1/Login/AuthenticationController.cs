@@ -20,7 +20,7 @@ namespace AdventureWorks.API.Controllers.v1.Login;
 public sealed class AuthenticationController : ControllerBase
 {
     private readonly ILogger<AuthenticationController> _logger;
-    private readonly IReadUserLoginService _userLoginService;
+    private readonly IUserLoginService _userLoginService;
     private readonly IOptionsSnapshot<TokenSettings> _tokenSettings;
 
     /// <summary>
@@ -29,7 +29,7 @@ public sealed class AuthenticationController : ControllerBase
     /// <remarks></remarks>
     public AuthenticationController(
         ILogger<AuthenticationController> logger,
-        IReadUserLoginService userLoginService,
+        IUserLoginService userLoginService,
         IOptionsSnapshot<TokenSettings> tokenSettings
         )
     {

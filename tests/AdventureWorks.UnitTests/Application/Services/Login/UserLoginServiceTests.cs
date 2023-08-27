@@ -14,24 +14,24 @@ using Microsoft.Extensions.Logging;
 namespace AdventureWorks.UnitTests.Application.Services.Login;
 
 [ExcludeFromCodeCoverage]
-public sealed class ReadUserLoginServiceTests : UnitTestBase
+public sealed class UserLoginServiceTests : UnitTestBase
 {
-    private readonly Mock<ILogger<ReadUserLoginService>> _mockLogger = new();
+    private readonly Mock<ILogger<UserLoginService>> _mockLogger = new();
     private readonly Mock<IUserAccountRepository> _mockUserAccountRepository = new();
     private readonly Mock<IReadUserAuthorizationRepository> _mockReadUserAuthorizationRepository = new();
     private readonly Mock<ITokenService> _mockTokenService = new();
     private readonly Mock<IUserRefreshTokenRepository> _mockUserRefreshTokenRepository = new();
     private readonly IMapper _mapper;
-    private ReadUserLoginService _sut;
+    private UserLoginService _sut;
 
-    public ReadUserLoginServiceTests()
+    public UserLoginServiceTests()
     {
         var mappingConfig = new MapperConfiguration(config =>
             config.AddMaps(typeof(UserAccountEntityToModelProfile).Assembly)
         );
         _mapper = mappingConfig.CreateMapper();
 
-        _sut = new ReadUserLoginService(
+        _sut = new UserLoginService(
             _mockLogger.Object, 
             _mockUserAccountRepository.Object, 
             _mockReadUserAuthorizationRepository.Object, 
@@ -45,10 +45,10 @@ public sealed class ReadUserLoginServiceTests : UnitTestBase
     {
         using (new AssertionScope())
         {
-            typeof(ReadUserLoginService)
-                .Should().Implement<IReadUserLoginService>();
+            typeof(UserLoginService)
+                .Should().Implement<IUserLoginService>();
 
-            typeof(ReadUserLoginService)
+            typeof(UserLoginService)
                 .IsDefined(typeof(ServiceLifetimeScopedAttribute), false)
                 .Should().BeTrue();
         }
@@ -59,7 +59,7 @@ public sealed class ReadUserLoginServiceTests : UnitTestBase
     {
         using (new AssertionScope())
         {
-            _ = ((Action)(() => _sut = new ReadUserLoginService(
+            _ = ((Action)(() => _sut = new UserLoginService(
                     null!,
                     _mockUserAccountRepository.Object,
                     _mockReadUserAuthorizationRepository.Object,
@@ -69,7 +69,7 @@ public sealed class ReadUserLoginServiceTests : UnitTestBase
                 .Should().Throw<ArgumentNullException>("because we expect a null argument exception.")
                 .And.ParamName.Should().Be("logger");
 
-            _ = ((Action)(() => _sut = new ReadUserLoginService(
+            _ = ((Action)(() => _sut = new UserLoginService(
                     _mockLogger.Object,
                     null!,
                     _mockReadUserAuthorizationRepository.Object,
@@ -80,7 +80,7 @@ public sealed class ReadUserLoginServiceTests : UnitTestBase
                 .And.ParamName.Should().Be("userAccountRepository");
 
 
-            _ = ((Action)(() => _sut = new ReadUserLoginService(
+            _ = ((Action)(() => _sut = new UserLoginService(
                     _mockLogger.Object,
                     _mockUserAccountRepository.Object,
                     null!,
@@ -91,7 +91,7 @@ public sealed class ReadUserLoginServiceTests : UnitTestBase
                 .And.ParamName.Should().Be("readUserAuthorizationRepository");
 
 
-            _ = ((Action)(() => _sut = new ReadUserLoginService(
+            _ = ((Action)(() => _sut = new UserLoginService(
                     _mockLogger.Object,
                     _mockUserAccountRepository.Object,
                     _mockReadUserAuthorizationRepository.Object,
@@ -101,7 +101,7 @@ public sealed class ReadUserLoginServiceTests : UnitTestBase
                 .Should().Throw<ArgumentNullException>("because we expect a null argument exception.")
                 .And.ParamName.Should().Be("tokenService");
 
-            _ = ((Action)(() => _sut = new ReadUserLoginService(
+            _ = ((Action)(() => _sut = new UserLoginService(
                     _mockLogger.Object,
                     _mockUserAccountRepository.Object,
                     _mockReadUserAuthorizationRepository.Object,
@@ -111,7 +111,7 @@ public sealed class ReadUserLoginServiceTests : UnitTestBase
                 .Should().Throw<ArgumentNullException>("because we expect a null argument exception.")
                 .And.ParamName.Should().Be("mapper");
             
-            _ = ((Action)(() => _sut = new ReadUserLoginService(
+            _ = ((Action)(() => _sut = new UserLoginService(
                     _mockLogger.Object,
                     _mockUserAccountRepository.Object,
                     _mockReadUserAuthorizationRepository.Object,
