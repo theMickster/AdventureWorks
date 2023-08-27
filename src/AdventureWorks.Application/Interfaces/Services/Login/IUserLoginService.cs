@@ -23,4 +23,11 @@ public interface IUserLoginService
     /// <param name="ipAddress"></param>
     /// <returns>a tuple that includes the user model, security token, and validation failure list </returns>
     Task<(UserAccountModel?, UserAccountTokenModel?, List<ValidationFailure>)> RefreshTokenAsync(string refreshToken, string username, string ipAddress);
+
+    /// <summary>
+    /// Revokes a refresh token
+    /// </summary>
+    /// <param name="refreshToken">the refresh token to revoke</param>
+    /// <returns>a tuple that includes the result (as a boolean) and validation failure list </returns>
+    Task<(bool, List<ValidationFailure>)> RevokeRefreshTokenAsync(string refreshToken);
 }

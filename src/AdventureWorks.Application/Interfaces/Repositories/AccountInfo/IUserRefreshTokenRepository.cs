@@ -25,4 +25,12 @@ public interface IUserRefreshTokenRepository : IAsyncRepository<UserRefreshToken
     /// <param name="token"></param>
     /// <returns></returns>
     Task RevokeRefreshTokenAsync(UserRefreshTokenEntity token);
+
+    /// <summary>
+    /// Revoke all instances of a given token (string). 
+    /// </summary>
+    /// <remarks>The user associated with the token is irrelevant</remarks>
+    /// <param name="refreshToken"></param>
+    /// <returns></returns>
+    Task<int> RevokeRefreshTokenAsync(string refreshToken);
 }

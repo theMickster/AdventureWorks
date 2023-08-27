@@ -194,6 +194,17 @@ public sealed class UserLoginService : IUserLoginService
         return (model, token, validationFailures);
     }
 
+
+    /// <summary>
+    /// Revokes a refresh token
+    /// </summary>
+    /// <param name="refreshToken">the refresh token to revoke</param>
+    /// <returns>a tuple that includes the result (as a boolean) and validation failure list </returns>
+    public Task<(bool, List<ValidationFailure>)> RevokeRefreshTokenAsync(string refreshToken)
+    {
+        throw new NotImplementedException();
+    }
+
     private async Task<(UserAccountEntity?, ValidationFailure?)> GetUserAccountEntityAsync(string username)
     {
         var userEntity = await _userAccountRepository.GetByUserNameAsync(username)

@@ -50,6 +50,35 @@ public sealed class UserRefreshTokenRepository : EfRepository<UserRefreshTokenEn
     /// <returns></returns>
     public async Task RevokeRefreshTokenAsync(UserRefreshTokenEntity token)
     {
+        await RevokeAndUpdateToken(token).ConfigureAwait(false);
+    }
+
+    /// <summary>
+    /// Revoke all instances of a given token (string). 
+    /// </summary>
+    /// <remarks>The user associated with the token is irrelevant</remarks>
+    /// <param name="refreshToken"></param>
+    /// <returns></returns>
+    public async Task<int> RevokeRefreshTokenAsync(string refreshToken)
+    {
+        var tokensToRevoke = await DbContext.UserRefreshTokens
+            .Where(x => x.RefreshToken.ToLower().Trim() == refreshToken.ToLower().Trim()).ToListAsync();
+
+        if (tokensToRevoke.Count == 0)
+        {
+            return 0;
+        }
+
+        foreach (var token in tokensToRevoke)
+        {
+            await RevokeAndUpdateToken(token).ConfigureAwait(false);
+        }
+
+        return tokensToRevoke.Count;
+    }
+
+    private async Task RevokeAndUpdateToken(UserRefreshTokenEntity token)
+    {
         token.IsRevoked = true;
         token.RevokedOn = DateTime.UtcNow;
         await UpdateAsync(token);

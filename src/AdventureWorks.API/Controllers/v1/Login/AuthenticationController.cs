@@ -161,6 +161,40 @@ public sealed class AuthenticationController : ControllerBase
         return Ok(responseModel);
     }
 
+    [AllowAnonymous]
+    [HttpPost("revokeToken")]
+    public async Task<IActionResult> RevokeUserToken(RevokeTokenRequestModel? model)
+    {
+        if (model == null)
+        {
+            const string message = "Invalid revoke token request.";
+            _logger.LogInformation(message);
+            return BadRequest(message);
+        }
+
+        var (result, errors) = await _userLoginService.RevokeRefreshTokenAsync(model.RefreshToken).ConfigureAwait(false);
+
+        if (!result)
+        {
+            const string message = "Unable to complete authentication request.";
+
+            if (errors.Any())
+            {
+                errors.ForEach(y =>
+                    _logger.LogInformation(
+                        $"User Authentication Attempt Failed - Unable to Revoke Refresh Token. Error Code:{y.ErrorCode} Error Message: {y.ErrorMessage}"));
+            }
+            else
+            {
+                _logger.LogInformation(message);
+            }
+
+            return BadRequest(message);
+        }
+
+        return Ok();
+    }
+
     private string GetRequestIpAddress()
     {
         var ipAddress = HttpContext.Connection.RemoteIpAddress?.MapToIPv4().ToString() ?? "127.0.0.1";
