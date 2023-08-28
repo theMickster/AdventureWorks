@@ -433,7 +433,7 @@ public sealed class AuthenticationControllerTests : UnitTestBase
 
     #endregion Xunit Theory Test Data
 
-    public class FakeCookieCollection : Dictionary<string, string>, IRequestCookieCollection
+    public sealed class FakeCookieCollection : Dictionary<string, string>, IRequestCookieCollection
     {
         public new ICollection<string> Keys => ((Dictionary<string, string>)this).Keys;
     }

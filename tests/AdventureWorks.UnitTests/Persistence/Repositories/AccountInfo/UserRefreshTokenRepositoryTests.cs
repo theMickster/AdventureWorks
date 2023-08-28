@@ -92,7 +92,7 @@ public sealed class UserRefreshTokenRepositoryTests : PersistenceUnitTestBase
     }
 
     [Fact]
-    public async Task RevokeRefreshTokenAsync_succeeds()
+    public async Task RevokeRefreshTokenAsync_succeedsAsync()
     {
         var token = DbContext.UserRefreshTokens.First(x => x.UserRefreshTokenId == 2);
 

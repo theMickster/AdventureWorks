@@ -71,7 +71,7 @@ public sealed class TokenService : ITokenService
         string refreshToken;
         DateTime refreshTokenExpiresOn;
 
-        if (existingRefreshToken == null)
+        if (existingRefreshToken == null || existingRefreshToken.IsRevoked || existingRefreshToken.IsExpired)
         {
             (refreshToken, refreshTokenExpiresOn) = await CreateUserRefreshTokenAsync(userAccount.Id, ipAddress);
         }
