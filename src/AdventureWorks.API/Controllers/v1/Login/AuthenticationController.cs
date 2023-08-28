@@ -208,7 +208,8 @@ public sealed class AuthenticationController : ControllerBase
         {
             HttpOnly = true,
             SameSite = SameSiteMode.Strict,
-            Expires = DateTime.UtcNow.AddDays(_tokenSettings.Value.RefreshTokenExpirationInDays)
+            Expires = DateTime.UtcNow.AddDays(_tokenSettings.Value.RefreshTokenExpirationInDays),
+            Secure = true
         };
 
         Response.Cookies.Append("X-Refresh-Token", model.Token.RefreshToken, cookieOptions);

@@ -58,6 +58,7 @@ internal static class RegisterAuthentication
                 IssuerSigningKey = new SymmetricSecurityKey(secretKey),
                 ValidateIssuer = true,
                 ValidateAudience = true,
+                ClockSkew = TimeSpan.FromMinutes(1),
                 ValidateIssuerSigningKey = true
             };
             o.Events = new JwtBearerEvents
