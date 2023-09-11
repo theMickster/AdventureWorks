@@ -58,8 +58,37 @@ internal static class RegisterAuthentication
                 IssuerSigningKey = new SymmetricSecurityKey(secretKey),
                 ValidateIssuer = true,
                 ValidateAudience = true,
+                ClockSkew = TimeSpan.FromMinutes(1),
                 ValidateIssuerSigningKey = true
             };
+            o.Events = new JwtBearerEvents
+            {
+                OnAuthenticationFailed = context =>
+                {
+                    if (context.Exception.GetType() == typeof(SecurityTokenExpiredException))
+                    {
+                        var authenticationException = context.Exception as SecurityTokenExpiredException;
+                        var expiredDateTime = $"{authenticationException?.Expires.ToString("yyyy-MM-dd hh:mm:ss tt")} UTC";
+                        context.Response.Headers.Add("x-token-is-expired", "true");
+                        context.Response.Headers.Add("x-token-expired-datetime", expiredDateTime);
+                    }
+                    return Task.CompletedTask;
+                },
+                OnMessageReceived = context =>
+                {
+                    if (context.Request.Cookies.ContainsKey("X-Access-Token"))
+                    {
+                        context.Token = context.Request.Cookies["X-Access-Token"];
+                    }
+
+                    return Task.CompletedTask;
+                }
+            };
+        }).AddCookie(options =>
+        {
+            options.Cookie.SameSite = SameSiteMode.Strict;
+            options.Cookie.SecurePolicy = CookieSecurePolicy.Always;
+            options.Cookie.IsEssential = true;
         });
 
         return builder;

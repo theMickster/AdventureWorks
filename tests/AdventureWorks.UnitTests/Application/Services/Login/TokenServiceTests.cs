@@ -1,7 +1,9 @@
-﻿using AdventureWorks.Application.Interfaces.Services.Login;
+﻿using AdventureWorks.Application.Interfaces.Repositories.AccountInfo;
+using AdventureWorks.Application.Interfaces.Services.Login;
 using AdventureWorks.Application.Services.Login;
 using AdventureWorks.Common.Attributes;
 using AdventureWorks.Common.Settings;
+using AdventureWorks.Domain.Entities.Shield;
 using AdventureWorks.Domain.Models.Shield;
 using Microsoft.Extensions.Options;
 using System.IdentityModel.Tokens.Jwt;
@@ -12,6 +14,7 @@ namespace AdventureWorks.UnitTests.Application.Services.Login;
 public sealed class TokenServiceTests : UnitTestBase
 {
     private readonly Mock<IOptionsSnapshot<TokenSettings>> _mockOptionsSnapshotConfig = new();
+    private readonly Mock<IUserRefreshTokenRepository> _userRefreshTokenRepository = new();
     private TokenService _sut;
 
     public TokenServiceTests()
@@ -23,10 +26,19 @@ public sealed class TokenServiceTests : UnitTestBase
                 Key = "HelloWorldThisIsASubParSecretKey",
                 Issuer = "https://localhost/",
                 Audience= "https://localhost/",
-                TokenExpirationInSeconds = 6000
+                TokenExpirationInSeconds = 6000,
+                RefreshTokenExpirationInDays = 2
             });
 
-        _sut = new TokenService(_mockOptionsSnapshotConfig.Object);
+        _sut = new TokenService(_mockOptionsSnapshotConfig.Object, _userRefreshTokenRepository.Object);
+        _userRefreshTokenRepository.Setup(a => a.AddAsync(It.IsAny<UserRefreshTokenEntity>()))
+            .ReturnsAsync(new UserRefreshTokenEntity
+            {
+                RecordId = Guid.NewGuid(),
+                RefreshToken = "HELLOWORLDREFRESHTOKEN19216820169",
+                ExpiresOn = DateTime.UtcNow.AddDays(2),
+                IsExpired = false
+            });
     }
 
     [Fact]
@@ -48,15 +60,22 @@ public sealed class TokenServiceTests : UnitTestBase
     {
         using (new AssertionScope())
         {
-            _ = ((Action)(() => _sut = new TokenService(null!)))
+            _ = ((Action)(() => _sut = new TokenService(null!, _userRefreshTokenRepository.Object)))
                 .Should().Throw<ArgumentNullException>("because we expect a null argument exception.")
                 .And.ParamName.Should().Be("tokenSettings");
+            
+            _ = ((Action)(() => _sut = new TokenService(_mockOptionsSnapshotConfig.Object,null!)))
+                .Should().Throw<ArgumentNullException>("because we expect a null argument exception.")
+                .And.ParamName.Should().Be("userRefreshTokenRepository");
         }
     }
 
     [Fact]
-    public void GenerateUserToken_with_null_collections_succeeds()
+    public async Task GenerateUserToken_with_null_collections_succeedsAsync()
     {
+        _userRefreshTokenRepository.Setup(x => x.GetMostRecentRefreshTokenByUserIdAsync(It.IsAny<int>()))
+            .ReturnsAsync((UserRefreshTokenEntity)null!);
+
         var model = new UserAccountModel
         {
             Id = 1,
@@ -66,8 +85,8 @@ public sealed class TokenServiceTests : UnitTestBase
             PasswordHash = "$2a$11$TsEBk0KOhuIXQZe0KHcSdu05/5oj3iWPRS9TZ8M2TTDFAjRwmk8eK",
             MiddleName = "Albert"
         };
-
-        var result = _sut.GenerateUserToken(model);
+        
+        var result = await _sut.GenerateUserTokenAsync(model, "192.168.20.169").ConfigureAwait(false);
         var handler = new JwtSecurityTokenHandler();
         var token = handler.ReadJwtToken(result.Token);
 
@@ -76,8 +95,9 @@ public sealed class TokenServiceTests : UnitTestBase
             result.Should().NotBeNull();
             result.TokenExpiration.Should().BeAfter(DateTime.UtcNow);
             result.Id.Should().NotBeEmpty();
-            result.RefreshToken.Should().BeNullOrWhiteSpace();
-            result.RefreshTokenExpiration.Should().Be(DateTime.MinValue);
+            result.RefreshToken.Should().NotBeNullOrWhiteSpace();
+            result.RefreshTokenExpiration.Should().BeAfter(DateTime.UtcNow);
+            result.RefreshToken.Should().Contain("19216820169");
 
             token.Claims.FirstOrDefault(x => x.Type == "sub")!.Value.Should().Be("AdventureWorksAPI");
             token.Claims.FirstOrDefault(x => x.Type == "iss")!.Value.Should().Be("https://localhost/");
@@ -92,8 +112,17 @@ public sealed class TokenServiceTests : UnitTestBase
     }
 
     [Fact]
-    public void GenerateUserToken_with_full_collections_succeeds()
+    public async Task GenerateUserToken_with_full_collections_succeedsAsync()
     {
+        _userRefreshTokenRepository.Setup(x => x.GetMostRecentRefreshTokenByUserIdAsync(It.IsAny<int>()))
+            .ReturnsAsync(new UserRefreshTokenEntity
+            {
+                RecordId = Guid.NewGuid(),
+                RefreshToken = "TOKEN731545945",
+                ExpiresOn = DateTime.UtcNow.AddDays(2),
+                IsExpired = false
+            });
+
         var model = new UserAccountModel
         {
             Id = 1,
@@ -114,7 +143,7 @@ public sealed class TokenServiceTests : UnitTestBase
             }
         };
 
-        var result = _sut.GenerateUserToken(model);
+        var result = await _sut.GenerateUserTokenAsync(model, "192.168.20.169").ConfigureAwait(false);
         var handler = new JwtSecurityTokenHandler();
         var token = handler.ReadJwtToken(result.Token);
 
@@ -123,8 +152,9 @@ public sealed class TokenServiceTests : UnitTestBase
             result.Should().NotBeNull();
             result.TokenExpiration.Should().BeAfter(DateTime.UtcNow);
             result.Id.Should().NotBeEmpty();
-            result.RefreshToken.Should().BeNullOrWhiteSpace();
-            result.RefreshTokenExpiration.Should().Be(DateTime.MinValue);
+            result.RefreshToken.Should().NotBeNullOrWhiteSpace();
+            result.RefreshTokenExpiration.Should().BeAfter(DateTime.UtcNow);
+            result.RefreshToken.Should().Contain("731545945");
 
             token.Claims.FirstOrDefault(x => x.Type == "sub")!.Value.Should().Be("AdventureWorksAPI");
             token.Claims.FirstOrDefault(x => x.Type == "iss")!.Value.Should().Be("https://localhost/");

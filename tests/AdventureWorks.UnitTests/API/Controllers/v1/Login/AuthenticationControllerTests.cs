@@ -1,12 +1,14 @@
 ﻿using AdventureWorks.API.Controllers.v1.Login;
 using AdventureWorks.Application.Interfaces.Services.Login;
+using AdventureWorks.Common.Settings;
+using AdventureWorks.Domain.Models.Shield;
 using AdventureWorks.Test.Common.Extensions;
+using FluentValidation.Results;
+using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
+using Microsoft.Extensions.Options;
 using System.Net;
-using FluentValidation.Results;
-using AdventureWorks.Domain.Models;
-using AdventureWorks.Domain.Models.Shield;
 
 namespace AdventureWorks.UnitTests.API.Controllers.v1.Login;
 
@@ -14,12 +16,33 @@ namespace AdventureWorks.UnitTests.API.Controllers.v1.Login;
 public sealed class AuthenticationControllerTests : UnitTestBase
 {
     private readonly Mock<ILogger<AuthenticationController>> _mockLogger = new();
-    private readonly Mock<IReadUserLoginService> _mockUserLoginService = new();
+    private readonly Mock<IUserLoginService> _mockUserLoginService = new();
+    private readonly Mock<IOptionsSnapshot<TokenSettings>> _mockOptionsSnapshotConfig = new();
     private AuthenticationController _sut;
 
     public AuthenticationControllerTests()
     {
-        _sut = new AuthenticationController(_mockLogger.Object, _mockUserLoginService.Object);
+        _mockOptionsSnapshotConfig.Setup(i => i.Value)
+            .Returns(new TokenSettings
+            {
+                Subject = "AdventureWorksAPI",
+                Key = "HelloWorldThisIsASubParSecretKey",
+                Issuer = "https://localhost/",
+                Audience = "https://localhost/",
+                TokenExpirationInSeconds = 6000,
+                RefreshTokenExpirationInDays = 2
+            });
+
+        _sut = new AuthenticationController(_mockLogger.Object, _mockUserLoginService.Object, _mockOptionsSnapshotConfig.Object)
+        {
+            ControllerContext = new ControllerContext
+            {
+                HttpContext = new DefaultHttpContext()
+                {
+                    Connection = { Id = "abc", RemoteIpAddress = new IPAddress(16885952) }
+                }
+            }
+        };
     }
 
     [Fact]
@@ -27,13 +50,17 @@ public sealed class AuthenticationControllerTests : UnitTestBase
     {
         using (new AssertionScope())
         {
-            _ = ((Action)(() => _sut = new AuthenticationController(null!, _mockUserLoginService.Object)))
+            _ = ((Action)(() => _sut = new AuthenticationController(null!, _mockUserLoginService.Object, _mockOptionsSnapshotConfig.Object)))
                 .Should().Throw<ArgumentNullException>("because we expect a null argument exception.")
                 .And.ParamName.Should().Be("logger");
 
-            _ = ((Action)(() => _sut = new AuthenticationController(_mockLogger.Object, null!)))
+            _ = ((Action)(() => _sut = new AuthenticationController(_mockLogger.Object, null!, _mockOptionsSnapshotConfig.Object)))
                 .Should().Throw<ArgumentNullException>("because we expect a null argument exception.")
                 .And.ParamName.Should().Be("userLoginService");
+
+            _ = ((Action)(() => _sut = new AuthenticationController(_mockLogger.Object, _mockUserLoginService.Object, null!)))
+                .Should().Throw<ArgumentNullException>("because we expect a null argument exception.")
+                .And.ParamName.Should().Be("tokenSettings");
         }
     }
 
@@ -152,7 +179,7 @@ public sealed class AuthenticationControllerTests : UnitTestBase
         string expectedLoggedMessage
         )
     {
-        _mockUserLoginService.Setup(x => x.AuthenticateUserAsync(It.IsAny<string>(), It.IsAny<string>()))
+        _mockUserLoginService.Setup(x => x.AuthenticateUserAsync(It.IsAny<string>(), It.IsAny<string>(), It.IsAny<string>()))
             .ReturnsAsync((user, tokenModel, errors));
 
         const string message = "Unable to complete authentication request.";
@@ -207,9 +234,8 @@ public sealed class AuthenticationControllerTests : UnitTestBase
             RefreshTokenExpiration = DateTime.UtcNow.AddSeconds(180)
         };
 
-        _mockUserLoginService.Setup(x => x.AuthenticateUserAsync(It.IsAny<string>(), It.IsAny<string>()))
+        _mockUserLoginService.Setup(x => x.AuthenticateUserAsync(It.IsAny<string>(), It.IsAny<string>(), It.IsAny<string>()))
             .ReturnsAsync((user, tokenModel, new List<ValidationFailure>()));
-
         
         var model = new AuthenticationRequestModel { Username = "hello.world", Password = "hello" };
         var result = await _sut.AuthenticateUser(model).ConfigureAwait(false);
@@ -239,6 +265,161 @@ public sealed class AuthenticationControllerTests : UnitTestBase
         }
     }
 
+    [Fact]
+    public async Task RefreshUserToken_fails_when_username_cookie_missingAsync()
+    {
+        const string message = "Invalid refresh token request; Username not found but is required.";
+
+        var cookies = new FakeCookieCollection
+        {
+            { "X-Refresh-Token", "d48401b993ba45c684281294162f6dee" }
+        };
+        _sut.ControllerContext.HttpContext.Request.Cookies = cookies;
+
+        var result = await _sut.RefreshUserToken().ConfigureAwait(false);
+
+        var objectResult = result as ObjectResult;
+
+        using (new AssertionScope())
+        {
+            objectResult.Should().NotBeNull();
+            objectResult!.StatusCode.Should().Be((int)HttpStatusCode.BadRequest);
+            objectResult!.Value.Should().Be(message);
+            
+            _mockLogger.VerifyLoggingMessageContains(message, null, LogLevel.Information);
+        }
+    }
+
+    [Fact]
+    public async Task RefreshUserToken_fails_when_refreshtoken_cookie_missingAsync()
+    {
+        const string message = "Invalid refresh token request; Refresh Token not found but is required.";
+        var cookies = new FakeCookieCollection
+        {
+            { "X-Username", "joe.montanta" }
+        };
+        _sut.ControllerContext.HttpContext.Request.Cookies = cookies;
+
+        var result = await _sut.RefreshUserToken().ConfigureAwait(false);
+
+        var objectResult = result as ObjectResult;
+
+        using (new AssertionScope())
+        {
+            objectResult.Should().NotBeNull();
+            objectResult!.StatusCode.Should().Be((int)HttpStatusCode.BadRequest);
+            objectResult!.Value.Should().Be(message);
+
+            _mockLogger.VerifyLoggingMessageContains(message, null, LogLevel.Information);
+        }
+    }
+
+
+    [Theory]
+    [MemberData(nameof(AuthenticateUserData))]
+    public async Task RefreshUserToken_fails_when_authenticationService_fails_01Async(
+        UserAccountModel? user,
+        UserAccountTokenModel? tokenModel,
+        List<ValidationFailure> errors,
+        string expectedLoggedMessage
+    )
+    {
+        var cookies = new FakeCookieCollection
+        {
+            { "X-Username", "joe.montanta" },
+            { "X-Refresh-Token", "d48401b993ba45c684281294162f6dee" }
+        };
+        _sut.ControllerContext.HttpContext.Request.Cookies = cookies;
+
+        _mockUserLoginService.Setup(x => x.RefreshTokenAsync(It.IsAny<string>(), It.IsAny<string>(), It.IsAny<string>()))
+            .ReturnsAsync((user, tokenModel, errors));
+
+        const string message = "Unable to complete authentication request.";
+        var result = await _sut.RefreshUserToken().ConfigureAwait(false);
+
+        var objectResult = result as ObjectResult;
+
+        using (new AssertionScope())
+        {
+            objectResult.Should().NotBeNull();
+            objectResult!.StatusCode.Should().Be((int)HttpStatusCode.BadRequest);
+            objectResult!.Value.Should().Be(message);
+
+            _mockLogger.VerifyLoggingMessageContains(expectedLoggedMessage, null, LogLevel.Information);
+        }
+    }
+
+    [Fact]
+    public async Task RefreshUserToken_succeedsAsync()
+    {
+        var cookies = new FakeCookieCollection
+        {
+            { "X-Username", "joe.montanta" },
+            { "X-Refresh-Token", "d48401b993ba45c684281294162f6dee" }
+        };
+        _sut.ControllerContext.HttpContext.Request.Cookies = cookies;
+
+        var user = new UserAccountModel
+        {
+            Id = 1,
+            FirstName = "Joe",
+            LastName = "Montanta",
+            UserName = "joe.montanta",
+            PrimaryEmailAddress = "joe.montanta@example.com",
+            SecurityRoles = new List<SecurityRoleSlimModel>
+            {
+                new(){Id = 1, Name = "Help Desk Administrator"},
+                new(){Id = 2, Name = "Adventure Works Employee"},
+                new(){Id = 3, Name = "Adventure Works IT Employee"}
+            },
+            SecurityFunctions = new List<SecurityFunctionSlimModel>
+            {
+                new(){Id = 10, Name = "Reset User Passwords"}
+            },
+            SecurityGroups = new List<SecurityGroupSlimModel>
+            {
+                new(){Id = 1, Name = "A Group 001"},
+                new(){Id = 2, Name = "A Group 002"}
+            }
+        };
+
+        var tokenModel = new UserAccountTokenModel
+        {
+            Id = new Guid(),
+            Token = "token",
+            TokenExpiration = DateTime.UtcNow.AddSeconds(120),
+            RefreshToken = "d48401b993ba45c684281294162f6dee",
+            RefreshTokenExpiration = DateTime.UtcNow.AddSeconds(180)
+        };
+
+        _mockUserLoginService.Setup(x => x.RefreshTokenAsync(It.IsAny<string>(), It.IsAny<string>(), It.IsAny<string>()))
+            .ReturnsAsync((user, tokenModel, new List<ValidationFailure>()));
+
+        var result = await _sut.RefreshUserToken().ConfigureAwait(false);
+        var objectResult = result as ObjectResult;
+        var outputModel = objectResult!.Value! as AuthenticationResponseModel;
+
+        using (new AssertionScope())
+        {
+            objectResult.Should().NotBeNull();
+            objectResult!.StatusCode.Should().Be((int)HttpStatusCode.OK);
+
+            outputModel.Should().NotBeNull();
+            outputModel!.Token.Should().NotBeNull();
+            outputModel!.Username.Should().Be("joe.montanta");
+            outputModel!.FullName.Should().Be("Montanta, Joe");
+            outputModel!.EmailAddress.Should().Be("joe.montanta@example.com");
+            outputModel!.Token.Token.Should().Be("token");
+            outputModel!.Token.RefreshToken.Should().Be("d48401b993ba45c684281294162f6dee");
+            outputModel!.Token.TokenExpiration.Should().BeAfter(DateTime.Now);
+            outputModel!.Token.RefreshTokenExpiration.Should().BeAfter(DateTime.Now);
+
+            outputModel!.SecurityFunctions.Count.Should().Be(1);
+            outputModel!.SecurityGroups.Count.Should().Be(2);
+            outputModel!.SecurityRoles.Count.Should().Be(3);
+        }
+
+    }
 
     #region Xunit Theory Test Data
 
@@ -251,4 +432,9 @@ public sealed class AuthenticationControllerTests : UnitTestBase
         };
 
     #endregion Xunit Theory Test Data
+
+    public sealed class FakeCookieCollection : Dictionary<string, string>, IRequestCookieCollection
+    {
+        public new ICollection<string> Keys => ((Dictionary<string, string>)this).Keys;
+    }
 }

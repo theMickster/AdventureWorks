@@ -69,6 +69,8 @@ public class AdventureWorksDbContext : DbContext, IAdventureWorksDbContext
 
     public DbSet<UserAccountEntity> UserAccounts { get; set; }
 
+    public DbSet<UserRefreshTokenEntity> UserRefreshTokens { get; set; }
+
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {

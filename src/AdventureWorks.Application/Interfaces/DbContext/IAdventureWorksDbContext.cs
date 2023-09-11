@@ -46,5 +46,7 @@ public interface IAdventureWorksDbContext
     
     DbSet<UserAccountEntity> UserAccounts { get; set; }
 
+    DbSet<UserRefreshTokenEntity> UserRefreshTokens { get; set; }
+
     DbSet<StoreEntity> Stores { get; set; }
 }

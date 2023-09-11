@@ -24,4 +24,5 @@ public sealed class UserAccountEntity : BaseEntity
 
     public ICollection<SecurityGroupUserAccountEntity> SecurityGroupUserAccountEntities { get; set; }
 
+    public ICollection<UserRefreshTokenEntity> UserRefreshTokenEntities { get; set; }
 }
