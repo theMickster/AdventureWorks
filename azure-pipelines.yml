@@ -15,7 +15,7 @@ variables:
   unitTestProjectName: '**/tests/AdventureWorks.UnitTests/AdventureWorks.UnitTests.csproj'
   buildPlatform: 'Any CPU'
   buildConfiguration: 'Release'
-  azureSubscriptionConnectionName: 'Mick (Outlook) Azure Connection'
+  azureSubscriptionConnectionName: 'KS - AdventureWorks - Azure Connection'
   azureAppResourceGroup: 'AdventureWorks-West-US-3'
   webApplicationNameProd: 'mick-adventureworks-api'
   webApplicationNameDev: 'mick-adventureworks-api-dev'
