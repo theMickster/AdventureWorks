@@ -1,22 +1,22 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
 
 	<PropertyGroup>
-		<TargetFrameworks>net6.0</TargetFrameworks>
+		<TargetFramework>net7.0</TargetFramework>
 		<ImplicitUsings>enable</ImplicitUsings>
 		<Nullable>enable</Nullable>
 		<IsPackable>false</IsPackable>
 	</PropertyGroup>
 
 	<ItemGroup>
-		<PackageReference Include="FluentAssertions" Version="6.10.0" />
-		<PackageReference Include="Microsoft.CodeCoverage" Version="17.7.1" />
+		<PackageReference Include="FluentAssertions" Version="6.12.0" />
+		<PackageReference Include="Microsoft.CodeCoverage" Version="17.8.0" />
 		<PackageReference Include="Microsoft.CodeAnalysis" Version="4.7.0" />
 		<PackageReference Include="Microsoft.Extensions.Configuration" Version="7.0.0" />
-		<PackageReference Include="Microsoft.Extensions.Configuration.Binder" Version="7.0.3" />
+		<PackageReference Include="Microsoft.Extensions.Configuration.Binder" Version="7.0.4" />
 		<PackageReference Include="Microsoft.Extensions.Configuration.EnvironmentVariables" Version="7.0.0" />
 		<PackageReference Include="Microsoft.Extensions.Configuration.FileExtensions" Version="7.0.0" />
 		<PackageReference Include="Microsoft.Extensions.Configuration.Json" Version="7.0.0" />
-		<PackageReference Include="Microsoft.NET.Test.Sdk" Version="17.7.1" />
+		<PackageReference Include="Microsoft.NET.Test.Sdk" Version="17.8.0" />
 		<PackageReference Include="Moq" Version="4.20.69" />
 
 		<PackageReference Include="SecurityCodeScan.VS2019" Version="5.6.7">
@@ -42,19 +42,19 @@
 		</PackageReference>
 		<PackageReference Include="Roslyn.Analyzers" Version="1.0.3.4" />
 
-		<PackageReference Include="xunit" Version="2.5.0" />
-		<PackageReference Include="xunit.runner.visualstudio" Version="2.5.0">
+		<PackageReference Include="xunit" Version="2.6.1" />
+		<PackageReference Include="xunit.runner.visualstudio" Version="2.5.3">
 			<PrivateAssets>all</PrivateAssets>
 			<IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
 		</PackageReference>
 	</ItemGroup>
 
 	<ItemGroup>
-	  <ProjectReference Include="..\..\src\AdventureWorks.API\AdventureWorks.API.csproj" />
-	  <ProjectReference Include="..\..\src\AdventureWorks.Application\AdventureWorks.Application.csproj" />
-	  <ProjectReference Include="..\..\src\AdventureWorks.Common\AdventureWorks.Common.csproj" />
-	  <ProjectReference Include="..\..\src\AdventureWorks.Domain\AdventureWorks.Domain.csproj" />
-	  <ProjectReference Include="..\AdventureWorks.Test.Common\AdventureWorks.Test.Common.csproj" />
+		<ProjectReference Include="..\..\src\AdventureWorks.API\AdventureWorks.API.csproj" />
+		<ProjectReference Include="..\..\src\AdventureWorks.Application\AdventureWorks.Application.csproj" />
+		<ProjectReference Include="..\..\src\AdventureWorks.Common\AdventureWorks.Common.csproj" />
+		<ProjectReference Include="..\..\src\AdventureWorks.Domain\AdventureWorks.Domain.csproj" />
+		<ProjectReference Include="..\AdventureWorks.Test.Common\AdventureWorks.Test.Common.csproj" />
 	</ItemGroup>
 
 </Project>
