@@ -40,11 +40,11 @@ internal static class SetupHttpHeaders
             context.Response.Headers.Remove("server");
 
             // Required Headers
-            context.Response.Headers.Add("X-Content-Type-Options", "nosniff");
-            context.Response.Headers.Add("X-Frame-Options", "DENY");
-            context.Response.Headers.Add("X-Xss-Protection", "1;mode=block");
-            context.Response.Headers.Add("Strict-Transport-Security", "max-age=31536000; includeSubDomains");
-            context.Response.Headers.Add("Content-Security-Policy", cspHeader);
+            context.Response.Headers.Append("X-Content-Type-Options", "nosniff");
+            context.Response.Headers.Append("X-Frame-Options", "DENY");
+            context.Response.Headers.Append("X-Xss-Protection", "1;mode=block");
+            context.Response.Headers.Append("Strict-Transport-Security", "max-age=31536000; includeSubDomains");
+            context.Response.Headers.Append("Content-Security-Policy", cspHeader);
 
             await next(context).ConfigureAwait(false);
         });
