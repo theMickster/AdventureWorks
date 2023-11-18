@@ -48,7 +48,7 @@ stages:
       inputs:
         command: 'build'
         projects: 'AdventureWorks.sln'
-        arguments: '--configuration $(buildConfiguration) --framework  "net6.0" /p:EnvironmentName=Production /p:PackageLocation="$(build.artifactStagingDirectory)"'
+        arguments: '--configuration $(buildConfiguration) /p:EnvironmentName=Production /p:PackageLocation="$(build.artifactStagingDirectory)"'
 
     - task: DotNetCoreCLI@2
       name: 'ExecuteUnitTests'
@@ -67,7 +67,7 @@ stages:
         command: publish
         publishWebProjects: true
         projects: '$(projectName)'
-        arguments: '--configuration $(BuildConfiguration) --output $(Build.ArtifactStagingDirectory) --framework  "net6.0"'
+        arguments: '--configuration $(BuildConfiguration) --output $(Build.ArtifactStagingDirectory) '
         
     - task: PublishBuildArtifacts@1
       name: 'PublishBuildArtifacts'
