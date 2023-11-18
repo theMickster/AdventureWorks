@@ -140,7 +140,7 @@ public sealed class UserAccountRepositoryTests : PersistenceUnitTestBase
     public async Task ListAllAsync_returns_complete_entitiesAsync()
     {
 
-        var orderedAccounts = (await _sut.ListAllAsync().ConfigureAwait(false)).OrderBy(x => x.BusinessEntityId).ToList();
+        var orderedAccounts = (await _sut.ListAllAsync()).OrderBy(x => x.BusinessEntityId).ToList();
 
         using (new AssertionScope())
         {
@@ -167,7 +167,7 @@ public sealed class UserAccountRepositoryTests : PersistenceUnitTestBase
     [InlineData(25, false)]
     public async Task GetByIdAsync_returns_correctlyAsync(int userId, bool shouldExist)
     {
-        var entity = await _sut.GetByIdAsync(userId).ConfigureAwait(false);
+        var entity = await _sut.GetByIdAsync(userId);
 
         using (new AssertionScope())
         {
@@ -190,7 +190,7 @@ public sealed class UserAccountRepositoryTests : PersistenceUnitTestBase
     [InlineData(25, "cookie-monster", false)]
     public async Task GetByUserNameAsync_correctlyAsync(int userId, string username, bool shouldExist)
     {
-        var entity = await _sut.GetByUserNameAsync(username).ConfigureAwait(false);
+        var entity = await _sut.GetByUserNameAsync(username);
 
         using (new AssertionScope())
         {

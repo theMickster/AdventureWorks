@@ -6,7 +6,6 @@ using AdventureWorks.Common.Attributes;
 using AdventureWorks.Domain.Entities.Shield;
 using AdventureWorks.Domain.Models.Shield;
 using AdventureWorks.Domain.Profiles;
-using AdventureWorks.Infrastructure.Persistence.Repositories.AccountInfo;
 using AdventureWorks.Test.Common.Extensions;
 using AutoMapper;
 using Microsoft.Extensions.Logging;
@@ -129,7 +128,7 @@ public sealed class UserLoginServiceTests : UnitTestBase
         _mockUserAccountRepository.Setup(x => x.GetByUserNameAsync("rod.smith"))
             .ReturnsAsync((UserAccountEntity)null!);
 
-        var (user, token, validationFailures) = await _sut.AuthenticateUserAsync("rod.smith", "aPassword", "192.168.100.69").ConfigureAwait(false);
+        var (user, token, validationFailures) = await _sut.AuthenticateUserAsync("rod.smith", "aPassword", "192.168.100.69");
 
         using (new AssertionScope())
         {
@@ -156,7 +155,7 @@ public sealed class UserLoginServiceTests : UnitTestBase
                 PasswordHash = "$2a$11$TsEBk0KOhuIXQZe0KHcSdu05/5oj3iWPRS9TZ8M2TTDFAjRwmk8eK"
             });
 
-        var (user, token, validationFailures) = await _sut.AuthenticateUserAsync(username, password, "192.168.100.69").ConfigureAwait(false);
+        var (user, token, validationFailures) = await _sut.AuthenticateUserAsync(username, password, "192.168.100.69");
 
         using (new AssertionScope())
         {
@@ -188,7 +187,7 @@ public sealed class UserLoginServiceTests : UnitTestBase
         _mockReadUserAuthorizationRepository.Setup(x => x.GetByUserIdAsync(It.IsAny<int>()))
             .ReturnsAsync( (UserAuthorizationEntity)null!);
 
-        var (user, token, validationFailures) = await _sut.AuthenticateUserAsync(username, password, "192.168.100.69").ConfigureAwait(false);
+        var (user, token, validationFailures) = await _sut.AuthenticateUserAsync(username, password, "192.168.100.69");
 
         using (new AssertionScope())
         {
@@ -208,7 +207,7 @@ public sealed class UserLoginServiceTests : UnitTestBase
     {
         var (username, password, refreshToken) = SetupAuthHappyPath();
 
-        var (user, outputToken, validationFailures) = await _sut.AuthenticateUserAsync(username, password, "192.168.100.69").ConfigureAwait(false);
+        var (user, outputToken, validationFailures) = await _sut.AuthenticateUserAsync(username, password, "192.168.100.69");
 
         using (new AssertionScope())
         {
@@ -233,7 +232,7 @@ public sealed class UserLoginServiceTests : UnitTestBase
         _mockUserAccountRepository.Setup(x => x.GetByUserNameAsync("rod.smith"))
             .ReturnsAsync((UserAccountEntity)null!);
 
-        var (user, token, validationFailures) = await _sut.RefreshTokenAsync("aRefreshTokenGoesHere", "rod.smith", "192.168.100.69").ConfigureAwait(false);
+        var (user, token, validationFailures) = await _sut.RefreshTokenAsync("aRefreshTokenGoesHere", "rod.smith", "192.168.100.69");
 
         using (new AssertionScope())
         {
@@ -263,7 +262,7 @@ public sealed class UserLoginServiceTests : UnitTestBase
             .Setup(x => x.GetRefreshTokenListByUserIdAsync(It.IsAny<int>(), It.IsAny<string>()))
             .ReturnsAsync(new List<UserRefreshTokenEntity>());
 
-        var (user, token, validationFailures) = await _sut.RefreshTokenAsync("aRefreshTokenGoesHere", "john.elway", "192.168.100.69").ConfigureAwait(false);
+        var (user, token, validationFailures) = await _sut.RefreshTokenAsync("aRefreshTokenGoesHere", "john.elway", "192.168.100.69");
 
         using (new AssertionScope())
         {
@@ -297,7 +296,7 @@ public sealed class UserLoginServiceTests : UnitTestBase
             .Returns(Task.CompletedTask)
             .Verifiable();
 
-        var (user, token, validationFailures) = await _sut.RefreshTokenAsync("aRefreshTokenGoesHere", "john.elway", "192.168.100.69").ConfigureAwait(false);
+        var (user, token, validationFailures) = await _sut.RefreshTokenAsync("aRefreshTokenGoesHere", "john.elway", "192.168.100.69");
 
         using (new AssertionScope())
         {
@@ -328,7 +327,7 @@ public sealed class UserLoginServiceTests : UnitTestBase
             .Setup(x => x.GetRefreshTokenListByUserIdAsync(It.IsAny<int>(), It.IsAny<string>()))
             .ReturnsAsync(new List<UserRefreshTokenEntity> { new() { BusinessEntityId = 1,IsExpired = true} });
 
-        var (user, token, validationFailures) = await _sut.RefreshTokenAsync("aRefreshTokenGoesHere", "john.elway", "192.168.100.69").ConfigureAwait(false);
+        var (user, token, validationFailures) = await _sut.RefreshTokenAsync("aRefreshTokenGoesHere", "john.elway", "192.168.100.69");
 
         using (new AssertionScope())
         {
@@ -357,7 +356,7 @@ public sealed class UserLoginServiceTests : UnitTestBase
             .Setup(x => x.GetRefreshTokenListByUserIdAsync(It.IsAny<int>(), It.IsAny<string>()))
             .ReturnsAsync(new List<UserRefreshTokenEntity> { new() { BusinessEntityId = 1, IsExpired = false, IsRevoked = true} });
 
-        var (user, token, validationFailures) = await _sut.RefreshTokenAsync("aRefreshTokenGoesHere", "john.elway", "192.168.100.69").ConfigureAwait(false);
+        var (user, token, validationFailures) = await _sut.RefreshTokenAsync("aRefreshTokenGoesHere", "john.elway", "192.168.100.69");
 
         using (new AssertionScope())
         {
@@ -389,7 +388,7 @@ public sealed class UserLoginServiceTests : UnitTestBase
         _mockReadUserAuthorizationRepository.Setup(x => x.GetByUserIdAsync(It.IsAny<int>()))
             .ReturnsAsync((UserAuthorizationEntity)null!);
 
-        var (user, token, validationFailures) = await _sut.RefreshTokenAsync("aRefreshTokenGoesHere", "john.elway", "192.168.100.69").ConfigureAwait(false);
+        var (user, token, validationFailures) = await _sut.RefreshTokenAsync("aRefreshTokenGoesHere", "john.elway", "192.168.100.69");
 
         using (new AssertionScope())
         {
@@ -407,7 +406,7 @@ public sealed class UserLoginServiceTests : UnitTestBase
     {
         var (username, password, refreshToken) = SetupAuthHappyPath();
 
-        var (user, outputToken, validationFailures) = await _sut.RefreshTokenAsync(refreshToken, username, "192.168.100.69").ConfigureAwait(false);
+        var (user, outputToken, validationFailures) = await _sut.RefreshTokenAsync(refreshToken, username, "192.168.100.69");
 
         using (new AssertionScope())
         {

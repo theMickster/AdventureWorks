@@ -1,0 +1,4 @@
+﻿[*.cs]
+
+# ASYNC0004: Use ConfigureAwait(false) on await expression
+dotnet_diagnostic.ASYNC0004.severity = none

@@ -40,7 +40,7 @@ public sealed class CountryRegionRepositoryTests : PersistenceUnitTestBase
     [Fact]
     public async Task ListAllAsync_is_correctAsync()
     {
-        var result = await _sut.ListAllAsync().ConfigureAwait(false);
+        var result = await _sut.ListAllAsync();
 
         using (new AssertionScope())
         {
@@ -53,7 +53,7 @@ public sealed class CountryRegionRepositoryTests : PersistenceUnitTestBase
     [Fact]
     public async Task GetByIdAsync_returns_nullAsync()
     {
-        var result = await _sut.GetByIdAsync("UK").ConfigureAwait(false);
+        var result = await _sut.GetByIdAsync("UK");
 
         result.Should().BeNull();
     }
@@ -62,7 +62,7 @@ public sealed class CountryRegionRepositoryTests : PersistenceUnitTestBase
     [Fact]
     public async Task GetByIdAsync_returns_correctlyAsync()
     {
-        var result = await _sut.GetByIdAsync("USA").ConfigureAwait(false);
+        var result = await _sut.GetByIdAsync("USA");
 
         using (new AssertionScope())
         {

@@ -36,7 +36,7 @@ public sealed class StoreRepositoryTests : PersistenceUnitTestBase
     {
         const int storeId = 1112;
 
-        var result = await _sut.GetStoreByIdAsync(storeId).ConfigureAwait(false);
+        var result = await _sut.GetStoreByIdAsync(storeId);
 
         using (new AssertionScope())
         {
@@ -55,7 +55,7 @@ public sealed class StoreRepositoryTests : PersistenceUnitTestBase
     public async Task GetStoreById_multiple_addresses_succeedsAsync()
     {
         const int storeId = 1111;
-        var result = await _sut.GetStoreByIdAsync(storeId).ConfigureAwait(false);
+        var result = await _sut.GetStoreByIdAsync(storeId);
 
         using (new AssertionScope())
         {
@@ -83,9 +83,9 @@ public sealed class StoreRepositoryTests : PersistenceUnitTestBase
             Demographics = "<root><hello>-856154035</hello></root>"
         };
 
-        var createResult = await _sut.AddAsync(newEntity).ConfigureAwait(false);
+        var createResult = await _sut.AddAsync(newEntity);
 
-        var getResult = await _sut.GetByIdAsync(newEntity.BusinessEntityId).ConfigureAwait(false);
+        var getResult = await _sut.GetByIdAsync(newEntity.BusinessEntityId);
 
         using (new AssertionScope())
         {
@@ -101,9 +101,9 @@ public sealed class StoreRepositoryTests : PersistenceUnitTestBase
         getResult.Demographics = "<root><goodBye>-856154035</goodBye></root>";
         getResult.ModifiedDate = new DateTime(2023, 01, 01);
 
-        await _sut.UpdateAsync(getResult).ConfigureAwait(false);
+        await _sut.UpdateAsync(getResult);
 
-        var postUpdateEntity = await _sut.GetByIdAsync(newEntity.BusinessEntityId).ConfigureAwait(false);
+        var postUpdateEntity = await _sut.GetByIdAsync(newEntity.BusinessEntityId);
 
         using (new AssertionScope())
         {
@@ -112,9 +112,9 @@ public sealed class StoreRepositoryTests : PersistenceUnitTestBase
             postUpdateEntity.Demographics.Should().Contain("<goodBye>-856154035</goodBye>");
         }
 
-        await _sut.DeleteAsync(postUpdateEntity).ConfigureAwait(false);
+        await _sut.DeleteAsync(postUpdateEntity);
 
-        var deleteResult = await _sut.GetByIdAsync(newEntity.BusinessEntityId).ConfigureAwait(false);
+        var deleteResult = await _sut.GetByIdAsync(newEntity.BusinessEntityId);
         
         deleteResult?.Should().BeNull("because the entity should have been deleted");
     }

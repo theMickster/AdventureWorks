@@ -37,7 +37,7 @@ public sealed class ReadUserAuthorizationRepositoryTests : PersistenceUnitTestBa
     {
         const int userId = -10;
 
-         var result = await _sut.GetByUserIdAsync(userId).ConfigureAwait(false);
+         var result = await _sut.GetByUserIdAsync(userId);
          result?.Should().BeNull();
     }
 
@@ -47,7 +47,7 @@ public sealed class ReadUserAuthorizationRepositoryTests : PersistenceUnitTestBa
     [InlineData(3, 1, 1, 2)]
     public async Task GetByUserIdAsync_succeedsAsync(int userId, int functionsCount, int groupsCount, int rolesCount)
     {
-        var result = await _sut.GetByUserIdAsync(userId).ConfigureAwait(false);
+        var result = await _sut.GetByUserIdAsync(userId);
 
         using (new AssertionScope())
         {

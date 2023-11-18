@@ -42,7 +42,7 @@ public sealed class ReadStateProvinceControllerTests : UnitTestBase
             .ReturnsAsync(new StateProvinceModel
                 { Code = "JP", Name = "Japan", Id = 1, IsStateProvinceCodeUnavailable = true });
 
-        var result = await _sut.GetByIdAsync(123).ConfigureAwait(false);
+        var result = await _sut.GetByIdAsync(123);
         var objectResult = result as OkObjectResult;
 
         using (new AssertionScope())
@@ -59,7 +59,7 @@ public sealed class ReadStateProvinceControllerTests : UnitTestBase
                 x => x.GetByIdAsync(It.IsAny<int>()))
             .ReturnsAsync((StateProvinceModel)null!);
 
-        var result = await _sut.GetByIdAsync(123456).ConfigureAwait(false);
+        var result = await _sut.GetByIdAsync(123456);
         var objectResult = result as NotFoundObjectResult;
         var outputModel = objectResult!.Value! as string;
 
@@ -76,7 +76,7 @@ public sealed class ReadStateProvinceControllerTests : UnitTestBase
     [Fact]
     public async Task GetById_returns_bad_request_Async()
     {
-        var result = await _sut.GetByIdAsync(-100).ConfigureAwait(false);
+        var result = await _sut.GetByIdAsync(-100);
         var objectResult = result as BadRequestObjectResult;
         var outputModel = objectResult!.Value! as string;
 
@@ -102,7 +102,7 @@ public sealed class ReadStateProvinceControllerTests : UnitTestBase
                     ,new() { Code = "KO", Name = "South Korea", Id = 2, IsStateProvinceCodeUnavailable = false}
                 });
 
-        var result = await _sut.GetListAsync().ConfigureAwait(false);
+        var result = await _sut.GetListAsync();
 
         var objectResult = result as OkObjectResult;
 
@@ -120,7 +120,7 @@ public sealed class ReadStateProvinceControllerTests : UnitTestBase
                 x => x.GetListAsync())
             .ReturnsAsync(new List<StateProvinceModel>());
 
-        var result = await _sut.GetListAsync().ConfigureAwait(false);
+        var result = await _sut.GetListAsync();
         var objectResult = result as NotFoundObjectResult;
         var outputModel = objectResult!.Value! as string;
 

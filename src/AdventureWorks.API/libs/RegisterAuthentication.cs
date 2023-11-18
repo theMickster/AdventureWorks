@@ -69,8 +69,8 @@ internal static class RegisterAuthentication
                     {
                         var authenticationException = context.Exception as SecurityTokenExpiredException;
                         var expiredDateTime = $"{authenticationException?.Expires.ToString("yyyy-MM-dd hh:mm:ss tt")} UTC";
-                        context.Response.Headers.Add("x-token-is-expired", "true");
-                        context.Response.Headers.Add("x-token-expired-datetime", expiredDateTime);
+                        context.Response.Headers.Append("x-token-is-expired", "true");
+                        context.Response.Headers.Append("x-token-expired-datetime", expiredDateTime);
                     }
                     return Task.CompletedTask;
                 },

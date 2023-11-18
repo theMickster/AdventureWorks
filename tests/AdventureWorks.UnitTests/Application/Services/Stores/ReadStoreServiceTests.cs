@@ -78,7 +78,7 @@ public sealed class ReadStoreServiceTests : UnitTestBase
         _mockStoreRepository.Setup(x => x.GetStoreByIdAsync(It.IsAny<int>()))
             .ReturnsAsync((StoreEntity)null!);
 
-        var result = await _sut.GetByIdAsync(22).ConfigureAwait(false);
+        var result = await _sut.GetByIdAsync(22);
 
         result?.Should().BeNull();
     }
@@ -99,7 +99,7 @@ public sealed class ReadStoreServiceTests : UnitTestBase
         _mockContactEntityRepository.Setup(x => x.GetContactsByIdAsync(storeId))
             .ReturnsAsync(storeContacts);
 
-        var result = await _sut.GetByIdAsync(storeId).ConfigureAwait(false);
+        var result = await _sut.GetByIdAsync(storeId);
 
         using (new AssertionScope())
         {
@@ -121,7 +121,7 @@ public sealed class ReadStoreServiceTests : UnitTestBase
         _mockStoreRepository.Setup(x => x.GetStoresAsync(It.IsAny<StoreParameter>()))
             .ReturnsAsync((null!, 0) );
 
-        var result = await _sut.GetStoresAsync(new StoreParameter()).ConfigureAwait(false);
+        var result = await _sut.GetStoresAsync(new StoreParameter());
 
         using (new AssertionScope())
         {
@@ -139,7 +139,7 @@ public sealed class ReadStoreServiceTests : UnitTestBase
         _mockStoreRepository.Setup(x => x.GetStoresAsync(It.IsAny<StoreParameter>()))
             .ReturnsAsync( (readOnlyList, 0));
 
-        var result = await _sut.GetStoresAsync(new StoreParameter()).ConfigureAwait(false);
+        var result = await _sut.GetStoresAsync(new StoreParameter());
 
         using (new AssertionScope())
         {
@@ -160,7 +160,7 @@ public sealed class ReadStoreServiceTests : UnitTestBase
             .ReturnsAsync(GetMockContactEntities().ToList());
 
         var pagedResult = await _sut.GetStoresAsync(new StoreParameter()
-            { PageNumber = 1, OrderBy = "Name", PageSize = 30, SortOrder = "DESCENDING" }).ConfigureAwait(false);
+            { PageNumber = 1, OrderBy = "Name", PageSize = 30, SortOrder = "DESCENDING" });
 
         using (new AssertionScope())
         {
@@ -192,7 +192,7 @@ public sealed class ReadStoreServiceTests : UnitTestBase
         _mockStoreRepository.Setup(x => x.SearchStoresAsync(It.IsAny<StoreParameter>(), It.IsAny<StoreSearchModel>()))
             .ReturnsAsync((null!, 0));
 
-        var result = await _sut.SearchStoresAsync(new StoreParameter(), new StoreSearchModel()).ConfigureAwait(false);
+        var result = await _sut.SearchStoresAsync(new StoreParameter(), new StoreSearchModel());
 
         using (new AssertionScope())
         {
@@ -210,7 +210,7 @@ public sealed class ReadStoreServiceTests : UnitTestBase
         _mockStoreRepository.Setup(x => x.SearchStoresAsync(It.IsAny<StoreParameter>(), It.IsAny<StoreSearchModel>()))
             .ReturnsAsync((readOnlyList, 0));
 
-        var result = await _sut.SearchStoresAsync(new StoreParameter(), new StoreSearchModel()).ConfigureAwait(false);
+        var result = await _sut.SearchStoresAsync(new StoreParameter(), new StoreSearchModel());
 
         using (new AssertionScope())
         {
@@ -233,7 +233,7 @@ public sealed class ReadStoreServiceTests : UnitTestBase
         var queryParam = new StoreParameter { PageNumber = 1, OrderBy = "Name", PageSize = 10, SortOrder = "ASC" };
         var searchParam = new StoreSearchModel { Id = 2535 };
 
-        var pagedResult = await _sut.SearchStoresAsync(queryParam, searchParam).ConfigureAwait(false);
+        var pagedResult = await _sut.SearchStoresAsync(queryParam, searchParam);
 
         using (new AssertionScope())
         {

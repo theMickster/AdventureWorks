@@ -33,9 +33,7 @@ internal static class SetupMiddlewarePipeline
         app.UseAuthentication();
 
         app.UseAuthorization();
-
-        app.UseEndpoints(endpoints => { endpoints.MapControllers(); });
-
+        
         app.MapControllers();
 
         app.UseSwagger();

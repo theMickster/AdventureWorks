@@ -65,7 +65,7 @@ public sealed class UserRefreshTokenRepositoryTests : PersistenceUnitTestBase
     public async Task GetRefreshTokenListByUserIdAsync_returns_correct_listAsync(int userId, string userToken,
         int recordCount)
     {
-        var results = await _sut.GetRefreshTokenListByUserIdAsync(userId, userToken).ConfigureAwait(false);
+        var results = await _sut.GetRefreshTokenListByUserIdAsync(userId, userToken);
         results.Should().HaveCount(recordCount);
     }
 
@@ -75,7 +75,7 @@ public sealed class UserRefreshTokenRepositoryTests : PersistenceUnitTestBase
     [InlineData(3, "", false)]
     public async Task GetMostRecentRefreshTokenByUserIdAsync_returns_correct_tokenAsync(int userId, string userToken, bool shouldExist)
     {
-        var result = await _sut.GetMostRecentRefreshTokenByUserIdAsync(userId).ConfigureAwait(false);
+        var result = await _sut.GetMostRecentRefreshTokenByUserIdAsync(userId);
 
         using (new AssertionScope())
         {
@@ -101,7 +101,7 @@ public sealed class UserRefreshTokenRepositoryTests : PersistenceUnitTestBase
             token.IsRevoked.Should().BeFalse();
             token.RevokedOn.Should().BeNull();
 
-            await _sut.RevokeRefreshTokenAsync(token).ConfigureAwait(false);
+            await _sut.RevokeRefreshTokenAsync(token);
 
 
             token.IsRevoked.Should().BeTrue();

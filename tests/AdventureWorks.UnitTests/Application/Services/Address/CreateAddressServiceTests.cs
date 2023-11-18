@@ -100,7 +100,7 @@ public sealed class CreateAddressServiceTests : UnitTestBase
                 ModifiedDate = new DateTime(2011, 11, 11)
             });
 
-        var (addressModel, errors) = await _sut.CreateAsync(inputModel).ConfigureAwait(false);
+        var (addressModel, errors) = await _sut.CreateAsync(inputModel);
 
         using (new AssertionScope())
         {
@@ -113,7 +113,7 @@ public sealed class CreateAddressServiceTests : UnitTestBase
     [Fact]
     public void CreateAsync_throws_correct_exception()
     {
-        _ = (((Func<Task>)(async () => await _sut.CreateAsync(null!).ConfigureAwait(false)))
+        _ = (((Func<Task>)(async () => await _sut.CreateAsync(null!)))
             .Should().ThrowAsync<ArgumentNullException>());
     }
 
@@ -139,7 +139,7 @@ public sealed class CreateAddressServiceTests : UnitTestBase
                 }
             });
 
-        var (addressModel, errors) = await _sut.CreateAsync(inputModel).ConfigureAwait(false);
+        var (addressModel, errors) = await _sut.CreateAsync(inputModel);
 
         using (new AssertionScope())
         {

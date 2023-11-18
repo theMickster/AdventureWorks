@@ -64,7 +64,7 @@ public sealed class ReadAddressServiceTests : UnitTestBase
         _mockAddressRepository.Setup(x => x.GetAddressByIdAsync(It.IsAny<int>()))
             .ReturnsAsync((AddressEntity)null!);
 
-        var result = await _sut.GetByIdAsync(7).ConfigureAwait(false);
+        var result = await _sut.GetByIdAsync(7);
 
         result.Should().BeNull();
     }
@@ -101,7 +101,7 @@ public sealed class ReadAddressServiceTests : UnitTestBase
         _mockAddressRepository.Setup(x => x.GetAddressByIdAsync(addressId))
             .ReturnsAsync(addressEntity);
 
-        var result = await _sut.GetByIdAsync(addressId).ConfigureAwait(false);
+        var result = await _sut.GetByIdAsync(addressId);
 
         using (new AssertionScope())
         {

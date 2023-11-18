@@ -66,7 +66,7 @@ public sealed class ReadCountryRegionServiceTests : UnitTestBase
         _mockCountryRegionRepository.Setup(x => x.GetByIdAsync(It.IsAny<string>()))
             .ReturnsAsync((CountryRegionEntity)null!);
 
-        var result = await _sut.GetByIdAsync("UK").ConfigureAwait(false);
+        var result = await _sut.GetByIdAsync("UK");
 
         result.Should().BeNull();
     }
@@ -77,7 +77,7 @@ public sealed class ReadCountryRegionServiceTests : UnitTestBase
         _mockCountryRegionRepository.Setup(x => x.GetByIdAsync(It.IsAny<string>()))
             .ReturnsAsync(new CountryRegionEntity{CountryRegionCode = "UK", Name = "United Kingdom"});
 
-        var result = await _sut.GetByIdAsync("UK").ConfigureAwait(false);
+        var result = await _sut.GetByIdAsync("UK");
 
         using (new AssertionScope())
         {
@@ -92,7 +92,7 @@ public sealed class ReadCountryRegionServiceTests : UnitTestBase
         _mockCountryRegionRepository.Setup(x => x.ListAllAsync())
             .ReturnsAsync( (IReadOnlyList<CountryRegionEntity>)null! );
 
-        var result = await _sut.GetListAsync().ConfigureAwait(false);
+        var result = await _sut.GetListAsync();
         result.Should().BeEmpty();
 
         _mockCountryRegionRepository.Reset();
@@ -100,7 +100,7 @@ public sealed class ReadCountryRegionServiceTests : UnitTestBase
         _mockCountryRegionRepository.Setup(x => x.ListAllAsync())
             .ReturnsAsync(new List<CountryRegionEntity>());
 
-        result = await _sut.GetListAsync().ConfigureAwait(false);
+        result = await _sut.GetListAsync();
         result.Should().BeEmpty();
     }
 
@@ -115,7 +115,7 @@ public sealed class ReadCountryRegionServiceTests : UnitTestBase
                 ,new() {Name = "Japan", CountryRegionCode = "JP"}
             });
 
-        var result = await _sut.GetListAsync().ConfigureAwait(false);
+        var result = await _sut.GetListAsync();
         result.Count.Should().Be(2);
     }
 }

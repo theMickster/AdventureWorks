@@ -86,7 +86,7 @@ public sealed class TokenServiceTests : UnitTestBase
             MiddleName = "Albert"
         };
         
-        var result = await _sut.GenerateUserTokenAsync(model, "192.168.20.169").ConfigureAwait(false);
+        var result = await _sut.GenerateUserTokenAsync(model, "192.168.20.169");
         var handler = new JwtSecurityTokenHandler();
         var token = handler.ReadJwtToken(result.Token);
 
@@ -143,7 +143,7 @@ public sealed class TokenServiceTests : UnitTestBase
             }
         };
 
-        var result = await _sut.GenerateUserTokenAsync(model, "192.168.20.169").ConfigureAwait(false);
+        var result = await _sut.GenerateUserTokenAsync(model, "192.168.20.169");
         var handler = new JwtSecurityTokenHandler();
         var token = handler.ReadJwtToken(result.Token);
 

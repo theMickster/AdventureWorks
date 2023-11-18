@@ -64,7 +64,7 @@ public sealed class ReadSalesTerritoryServiceTests : UnitTestBase
         _mockRepository.Setup(x => x.GetByIdAsync(It.IsAny<int>()))
             .ReturnsAsync((SalesTerritoryEntity)null!);
 
-        var result = await _sut.GetByIdAsync(12).ConfigureAwait(false);
+        var result = await _sut.GetByIdAsync(12);
 
         result.Should().BeNull();
     }
@@ -75,7 +75,7 @@ public sealed class ReadSalesTerritoryServiceTests : UnitTestBase
         _mockRepository.Setup(x => x.GetByIdAsync(1))
             .ReturnsAsync(new SalesTerritoryEntity { TerritoryId = 1, Name = "Central" });
 
-        var result = await _sut.GetByIdAsync(1).ConfigureAwait(false);
+        var result = await _sut.GetByIdAsync(1);
 
         using (new AssertionScope())
         {
@@ -91,7 +91,7 @@ public sealed class ReadSalesTerritoryServiceTests : UnitTestBase
         _mockRepository.Setup(x => x.ListAllAsync())
             .ReturnsAsync((IReadOnlyList<SalesTerritoryEntity>)null!);
 
-        var result = await _sut.GetListAsync().ConfigureAwait(false);
+        var result = await _sut.GetListAsync();
         result.Should().BeEmpty();
 
         _mockRepository.Reset();
@@ -99,7 +99,7 @@ public sealed class ReadSalesTerritoryServiceTests : UnitTestBase
         _mockRepository.Setup(x => x.ListAllAsync())
             .ReturnsAsync(new List<SalesTerritoryEntity>());
 
-        result = await _sut.GetListAsync().ConfigureAwait(false);
+        result = await _sut.GetListAsync();
         result.Should().BeEmpty();
     }
 
@@ -115,7 +115,7 @@ public sealed class ReadSalesTerritoryServiceTests : UnitTestBase
                 ,new() {TerritoryId = 4, Name = "Northwest"}
             });
 
-        var result = await _sut.GetListAsync().ConfigureAwait(false);
+        var result = await _sut.GetListAsync();
         result.Count.Should().Be(4);
     }
 }

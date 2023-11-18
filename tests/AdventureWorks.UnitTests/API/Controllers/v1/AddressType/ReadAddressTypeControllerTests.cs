@@ -41,7 +41,7 @@ public sealed class ReadAddressTypeControllerTests : UnitTestBase
                 x => x.GetByIdAsync(It.IsAny<int>()))
             .ReturnsAsync(new AddressTypeModel { Id = 1, Name = "Home"});
 
-        var result = await _sut.GetByIdAsync(123).ConfigureAwait(false);
+        var result = await _sut.GetByIdAsync(123);
         var objectResult = result as OkObjectResult;
 
         using (new AssertionScope())
@@ -57,7 +57,7 @@ public sealed class ReadAddressTypeControllerTests : UnitTestBase
         _mockReadAddressTypeService.Setup(x => x.GetByIdAsync(It.IsAny<int>()))
             .ReturnsAsync((AddressTypeModel)null!);
 
-        var result = await _sut.GetByIdAsync(123456).ConfigureAwait(false);
+        var result = await _sut.GetByIdAsync(123456);
         var objectResult = result as NotFoundObjectResult;
         var outputModel = objectResult!.Value! as string;
 
@@ -74,7 +74,7 @@ public sealed class ReadAddressTypeControllerTests : UnitTestBase
     [Fact]
     public async Task GetById_returns_bad_request_Async()
     {
-        var result = await _sut.GetByIdAsync(-100).ConfigureAwait(false);
+        var result = await _sut.GetByIdAsync(-100);
         var objectResult = result as BadRequestObjectResult;
         var outputModel = objectResult!.Value! as string;
 
@@ -101,7 +101,7 @@ public sealed class ReadAddressTypeControllerTests : UnitTestBase
                     ,new() { Id = 3, Name = "Mailing"}
                 });
 
-        var result = await _sut.GetListAsync().ConfigureAwait(false);
+        var result = await _sut.GetListAsync();
 
         var objectResult = result as OkObjectResult;
 
@@ -119,7 +119,7 @@ public sealed class ReadAddressTypeControllerTests : UnitTestBase
                 x => x.GetListAsync())
             .ReturnsAsync(new List<AddressTypeModel>());
 
-        var result = await _sut.GetListAsync().ConfigureAwait(false);
+        var result = await _sut.GetListAsync();
         var objectResult = result as NotFoundObjectResult;
         var outputModel = objectResult!.Value! as string;
 

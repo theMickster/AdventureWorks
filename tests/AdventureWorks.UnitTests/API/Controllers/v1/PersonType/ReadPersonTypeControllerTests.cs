@@ -42,7 +42,7 @@ public sealed class ReadPersonTypeControllerTests : UnitTestBase
                 x => x.GetByIdAsync(It.IsAny<int>()))
             .ReturnsAsync(new PersonTypeModel { Id = 1, Name = "Home", Code = "ABC", Description = "123456"});
 
-        var result = await _sut.GetByIdAsync(123).ConfigureAwait(false);
+        var result = await _sut.GetByIdAsync(123);
         var objectResult = result as OkObjectResult;
 
         using (new AssertionScope())
@@ -58,7 +58,7 @@ public sealed class ReadPersonTypeControllerTests : UnitTestBase
         _mockReadPersonTypeService.Setup(x => x.GetByIdAsync(It.IsAny<int>()))
             .ReturnsAsync((PersonTypeModel)null!);
 
-        var result = await _sut.GetByIdAsync(123456).ConfigureAwait(false);
+        var result = await _sut.GetByIdAsync(123456);
         var objectResult = result as NotFoundObjectResult;
         var outputModel = objectResult!.Value! as string;
 
@@ -75,7 +75,7 @@ public sealed class ReadPersonTypeControllerTests : UnitTestBase
     [Fact]
     public async Task GetById_returns_bad_request_Async()
     {
-        var result = await _sut.GetByIdAsync(-100).ConfigureAwait(false);
+        var result = await _sut.GetByIdAsync(-100);
         var objectResult = result as BadRequestObjectResult;
         var outputModel = objectResult!.Value! as string;
 
@@ -102,7 +102,7 @@ public sealed class ReadPersonTypeControllerTests : UnitTestBase
                     ,new() { Id = 3, Name = "Mailing"}
                 });
 
-        var result = await _sut.GetListAsync().ConfigureAwait(false);
+        var result = await _sut.GetListAsync();
 
         var objectResult = result as OkObjectResult;
 
@@ -120,7 +120,7 @@ public sealed class ReadPersonTypeControllerTests : UnitTestBase
                 x => x.GetListAsync())
             .ReturnsAsync(new List<PersonTypeModel>());
 
-        var result = await _sut.GetListAsync().ConfigureAwait(false);
+        var result = await _sut.GetListAsync();
         var objectResult = result as NotFoundObjectResult;
         var outputModel = objectResult!.Value! as string;
 
