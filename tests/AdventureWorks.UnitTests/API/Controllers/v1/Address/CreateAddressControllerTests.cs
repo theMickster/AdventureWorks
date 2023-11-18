@@ -41,7 +41,7 @@ public sealed class CreateAddressControllerTests : UnitTestBase
     [Fact]
     public async Task PostAsync_null_input_returns_bad_requestAsync()
     {
-        var result = await _sut.PostAsync(null).ConfigureAwait(false);
+        var result = await _sut.PostAsync(null);
 
         var objectResult = result as ObjectResult;
 
@@ -68,7 +68,7 @@ public sealed class CreateAddressControllerTests : UnitTestBase
             .ReturnsAsync((new AddressModel(),
                 new List<ValidationFailure> { new() { PropertyName = "Id", ErrorCode = "00010", ErrorMessage = "Hello Validation Error" } }));
 
-        var result = await _sut.PostAsync(input).ConfigureAwait(false);
+        var result = await _sut.PostAsync(input);
 
         var objectResult = result as BadRequestObjectResult;
         var outputModel = objectResult!.Value! as IEnumerable;
@@ -106,7 +106,7 @@ public sealed class CreateAddressControllerTests : UnitTestBase
             .ReturnsAsync((addressModel,
                 new List<ValidationFailure>()));
 
-        var result = await _sut.PostAsync(input).ConfigureAwait(false);
+        var result = await _sut.PostAsync(input);
         
         var createdResult = result as CreatedAtRouteResult;
 

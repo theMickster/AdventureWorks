@@ -68,7 +68,7 @@ public sealed class AuthenticationControllerTests : UnitTestBase
     public async Task AuthenticateUser_fails_when_model_is_nullAsync()
     {
         const string message = "Invalid authentication request.";
-        var result = await _sut.AuthenticateUser(null).ConfigureAwait(false);
+        var result = await _sut.AuthenticateUser(null);
 
         var objectResult = result as ObjectResult;
 
@@ -87,7 +87,7 @@ public sealed class AuthenticationControllerTests : UnitTestBase
     {
         const string message = "Invalid authentication request; Username and Password are required.";
         var model = new AuthenticationRequestModel { Username = null, Password = "hello" };
-        var result = await _sut.AuthenticateUser(model).ConfigureAwait(false);
+        var result = await _sut.AuthenticateUser(model);
 
         var objectResult = result as ObjectResult;
 
@@ -109,7 +109,7 @@ public sealed class AuthenticationControllerTests : UnitTestBase
     {
         const string message = "Invalid authentication request; Username and Password are required.";
         var model = new AuthenticationRequestModel { Username = "   ", Password = "hello" };
-        var result = await _sut.AuthenticateUser(model).ConfigureAwait(false);
+        var result = await _sut.AuthenticateUser(model);
 
         var objectResult = result as ObjectResult;
 
@@ -131,7 +131,7 @@ public sealed class AuthenticationControllerTests : UnitTestBase
     {
         const string message = "Invalid authentication request; Username and Password are required.";
         var model = new AuthenticationRequestModel { Username = "hello.world", Password = null };
-        var result = await _sut.AuthenticateUser(model).ConfigureAwait(false);
+        var result = await _sut.AuthenticateUser(model);
 
         var objectResult = result as ObjectResult;
 
@@ -153,7 +153,7 @@ public sealed class AuthenticationControllerTests : UnitTestBase
     {
         const string message = "Invalid authentication request; Username and Password are required.";
         var model = new AuthenticationRequestModel { Username = "hello.world", Password = "" };
-        var result = await _sut.AuthenticateUser(model).ConfigureAwait(false);
+        var result = await _sut.AuthenticateUser(model);
 
         var objectResult = result as ObjectResult;
 
@@ -184,7 +184,7 @@ public sealed class AuthenticationControllerTests : UnitTestBase
 
         const string message = "Unable to complete authentication request.";
         var model = new AuthenticationRequestModel { Username = "hello.world", Password = "hello" };
-        var result = await _sut.AuthenticateUser(model).ConfigureAwait(false);
+        var result = await _sut.AuthenticateUser(model);
 
         var objectResult = result as ObjectResult;
 
@@ -238,7 +238,7 @@ public sealed class AuthenticationControllerTests : UnitTestBase
             .ReturnsAsync((user, tokenModel, new List<ValidationFailure>()));
         
         var model = new AuthenticationRequestModel { Username = "hello.world", Password = "hello" };
-        var result = await _sut.AuthenticateUser(model).ConfigureAwait(false);
+        var result = await _sut.AuthenticateUser(model);
 
         var objectResult = result as ObjectResult;
 
@@ -276,7 +276,7 @@ public sealed class AuthenticationControllerTests : UnitTestBase
         };
         _sut.ControllerContext.HttpContext.Request.Cookies = cookies;
 
-        var result = await _sut.RefreshUserToken().ConfigureAwait(false);
+        var result = await _sut.RefreshUserToken();
 
         var objectResult = result as ObjectResult;
 
@@ -300,7 +300,7 @@ public sealed class AuthenticationControllerTests : UnitTestBase
         };
         _sut.ControllerContext.HttpContext.Request.Cookies = cookies;
 
-        var result = await _sut.RefreshUserToken().ConfigureAwait(false);
+        var result = await _sut.RefreshUserToken();
 
         var objectResult = result as ObjectResult;
 
@@ -335,7 +335,7 @@ public sealed class AuthenticationControllerTests : UnitTestBase
             .ReturnsAsync((user, tokenModel, errors));
 
         const string message = "Unable to complete authentication request.";
-        var result = await _sut.RefreshUserToken().ConfigureAwait(false);
+        var result = await _sut.RefreshUserToken();
 
         var objectResult = result as ObjectResult;
 
@@ -395,7 +395,7 @@ public sealed class AuthenticationControllerTests : UnitTestBase
         _mockUserLoginService.Setup(x => x.RefreshTokenAsync(It.IsAny<string>(), It.IsAny<string>(), It.IsAny<string>()))
             .ReturnsAsync((user, tokenModel, new List<ValidationFailure>()));
 
-        var result = await _sut.RefreshUserToken().ConfigureAwait(false);
+        var result = await _sut.RefreshUserToken();
         var objectResult = result as ObjectResult;
         var outputModel = objectResult!.Value! as AuthenticationResponseModel;
 

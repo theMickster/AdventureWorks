@@ -64,7 +64,7 @@ public sealed class ReadPersonTypeServiceTests : UnitTestBase
         _mockRepository.Setup(x => x.GetByIdAsync(It.IsAny<int>()))
             .ReturnsAsync((PersonTypeEntity)null!);
 
-        var result = await _sut.GetByIdAsync(12).ConfigureAwait(false);
+        var result = await _sut.GetByIdAsync(12);
 
         result.Should().BeNull();
     }
@@ -75,7 +75,7 @@ public sealed class ReadPersonTypeServiceTests : UnitTestBase
         _mockRepository.Setup(x => x.GetByIdAsync(1))
             .ReturnsAsync(new PersonTypeEntity { PersonTypeId = 1, PersonTypeName = "Home", PersonTypeCode = "hello", PersonTypeDescription = "hello world"});
 
-        var result = await _sut.GetByIdAsync(1).ConfigureAwait(false);
+        var result = await _sut.GetByIdAsync(1);
 
         using (new AssertionScope())
         {
@@ -93,7 +93,7 @@ public sealed class ReadPersonTypeServiceTests : UnitTestBase
         _mockRepository.Setup(x => x.ListAllAsync())
             .ReturnsAsync((IReadOnlyList<PersonTypeEntity>)null!);
 
-        var result = await _sut.GetListAsync().ConfigureAwait(false);
+        var result = await _sut.GetListAsync();
         result.Should().BeEmpty();
 
         _mockRepository.Reset();
@@ -101,7 +101,7 @@ public sealed class ReadPersonTypeServiceTests : UnitTestBase
         _mockRepository.Setup(x => x.ListAllAsync())
             .ReturnsAsync(new List<PersonTypeEntity>());
 
-        result = await _sut.GetListAsync().ConfigureAwait(false);
+        result = await _sut.GetListAsync();
         result.Should().BeEmpty();
     }
 
@@ -117,7 +117,7 @@ public sealed class ReadPersonTypeServiceTests : UnitTestBase
                 ,new() {PersonTypeId = 3, PersonTypeName = "Mailing", PersonTypeDescription = "test03"}
             });
 
-        var result = await _sut.GetListAsync().ConfigureAwait(false);
+        var result = await _sut.GetListAsync();
         result.Count.Should().Be(3);
     }
 }

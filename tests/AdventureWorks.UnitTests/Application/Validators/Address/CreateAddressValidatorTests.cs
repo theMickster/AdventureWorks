@@ -50,7 +50,7 @@ public sealed class CreateAddressValidatorTests : UnitTestBase
             PostalCode = StringGenerator.GetRandomString(15)
         };
 
-        var validationResult = await _sut.TestValidateAsync(validAddress).ConfigureAwait(false);
+        var validationResult = await _sut.TestValidateAsync(validAddress);
 
         using (new AssertionScope())
         {
@@ -68,7 +68,7 @@ public sealed class CreateAddressValidatorTests : UnitTestBase
 
         using (new AssertionScope())
         {
-            var validationResult = await _sut.TestValidateAsync(new AddressCreateModel()).ConfigureAwait(false);
+            var validationResult = await _sut.TestValidateAsync(new AddressCreateModel());
 
             validationResult.ShouldHaveValidationErrorFor(a => a.AddressLine1)
                 .WithErrorCode("Rule-01");
@@ -78,7 +78,7 @@ public sealed class CreateAddressValidatorTests : UnitTestBase
                     {
                         AddressLine1 = string.Empty
                     })
-                .ConfigureAwait(false);
+                ;
 
             validationResult.ShouldHaveValidationErrorFor(a => a.AddressLine1)
                 .WithErrorCode("Rule-01");
@@ -88,7 +88,7 @@ public sealed class CreateAddressValidatorTests : UnitTestBase
                     {
                         AddressLine1 = StringGenerator.GetRandomString(61)
                     })
-                .ConfigureAwait(false);
+                ;
 
             validationResult.ShouldHaveValidationErrorFor(a => a.AddressLine1)
                 .WithErrorCode("Rule-02");
@@ -116,7 +116,7 @@ public sealed class CreateAddressValidatorTests : UnitTestBase
                     Code = "ABCDEFG"
                 }
             })
-                .ConfigureAwait(false);
+                ;
 
             validationResult.ShouldHaveValidationErrorFor(a => a.AddressStateProvince)
                 .WithErrorCode("Rule-07");

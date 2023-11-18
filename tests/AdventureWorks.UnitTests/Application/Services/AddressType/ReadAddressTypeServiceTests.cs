@@ -64,7 +64,7 @@ public sealed class ReadAddressTypeServiceTests : UnitTestBase
         _mockRepository.Setup(x => x.GetByIdAsync(It.IsAny<int>()))
             .ReturnsAsync((AddressTypeEntity)null!);
 
-        var result = await _sut.GetByIdAsync(12).ConfigureAwait(false);
+        var result = await _sut.GetByIdAsync(12);
 
         result.Should().BeNull();
     }
@@ -75,7 +75,7 @@ public sealed class ReadAddressTypeServiceTests : UnitTestBase
         _mockRepository.Setup(x => x.GetByIdAsync(1))
             .ReturnsAsync(new AddressTypeEntity{AddressTypeId = 1, Name = "Home"});
 
-        var result = await _sut.GetByIdAsync(1).ConfigureAwait(false);
+        var result = await _sut.GetByIdAsync(1);
 
         using (new AssertionScope())
         {
@@ -91,7 +91,7 @@ public sealed class ReadAddressTypeServiceTests : UnitTestBase
         _mockRepository.Setup(x => x.ListAllAsync())
             .ReturnsAsync((IReadOnlyList<AddressTypeEntity>)null!);
 
-        var result = await _sut.GetListAsync().ConfigureAwait(false);
+        var result = await _sut.GetListAsync();
         result.Should().BeEmpty();
 
         _mockRepository.Reset();
@@ -99,7 +99,7 @@ public sealed class ReadAddressTypeServiceTests : UnitTestBase
         _mockRepository.Setup(x => x.ListAllAsync())
             .ReturnsAsync(new List<AddressTypeEntity>());
 
-        result = await _sut.GetListAsync().ConfigureAwait(false);
+        result = await _sut.GetListAsync();
         result.Should().BeEmpty();
     }
 
@@ -114,7 +114,7 @@ public sealed class ReadAddressTypeServiceTests : UnitTestBase
                 ,new() {AddressTypeId = 3, Name = "Mailing"}
             });
 
-        var result = await _sut.GetListAsync().ConfigureAwait(false);
+        var result = await _sut.GetListAsync();
         result.Count.Should().Be(3);
     }
 }

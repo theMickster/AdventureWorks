@@ -71,7 +71,7 @@ public sealed class ReadStoreService : IReadStoreService
             return result;
         }
 
-        var stores = await CraftStoreModels(storeEntities).ConfigureAwait(false);
+        var stores = await CraftStoreModelsAsync(storeEntities).ConfigureAwait(false);
 
         result.Results = stores;
         result.TotalRecords = totalRecords;
@@ -103,7 +103,7 @@ public sealed class ReadStoreService : IReadStoreService
             return result;
         }
 
-        var stores = await CraftStoreModels(storeEntities).ConfigureAwait(false);
+        var stores = await CraftStoreModelsAsync(storeEntities).ConfigureAwait(false);
 
         result.Results = stores;
         result.TotalRecords = totalRecords;
@@ -119,7 +119,7 @@ public sealed class ReadStoreService : IReadStoreService
     /// </summary>
     /// <param name="storeEntities">the list of store entities from the data access layer</param>
     /// <returns></returns>
-    private async Task<List<StoreModel>> CraftStoreModels(IReadOnlyList<StoreEntity> storeEntities)
+    private async Task<List<StoreModel>> CraftStoreModelsAsync(IReadOnlyList<StoreEntity> storeEntities)
     {
         var contactModels = _mapper.Map<List<StoreContactModel>>(await _businessEntityContactEntityRepository
             .GetContactsByStoreIdsAsync(storeEntities.Select(x => x.BusinessEntityId).ToList()).ConfigureAwait(false));

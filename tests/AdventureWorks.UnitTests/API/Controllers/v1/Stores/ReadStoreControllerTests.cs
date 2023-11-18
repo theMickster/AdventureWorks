@@ -44,7 +44,7 @@ public sealed class ReadStoreControllerTests : UnitTestBase
         _mockReadStoreService.Setup(x => x.GetByIdAsync(It.IsAny<int>()))
             .ReturnsAsync(new StoreModel { Id = id });
 
-        var result = await _sut.GetByIdAsync(7).ConfigureAwait(false);
+        var result = await _sut.GetByIdAsync(7);
 
         var objectResult = result as ObjectResult;
 
@@ -62,7 +62,7 @@ public sealed class ReadStoreControllerTests : UnitTestBase
         _mockReadStoreService.Setup(x => x.GetByIdAsync(It.IsAny<int>()))
             .ReturnsAsync((StoreModel?)null);
 
-        var result = await _sut.GetByIdAsync(7).ConfigureAwait(false);
+        var result = await _sut.GetByIdAsync(7);
         var objectResult = result as NotFoundObjectResult;
         var outputModel = objectResult!.Value! as string;
 
@@ -82,7 +82,7 @@ public sealed class ReadStoreControllerTests : UnitTestBase
     [InlineData(-10)]
     public async Task GetById_returns_bad_request_Async(int addressId)
     {
-        var result = await _sut.GetByIdAsync(addressId).ConfigureAwait(false);
+        var result = await _sut.GetByIdAsync(addressId);
         var objectResult = result as BadRequestObjectResult;
         var outputModel = objectResult!.Value! as string;
 
@@ -102,7 +102,7 @@ public sealed class ReadStoreControllerTests : UnitTestBase
         _mockReadStoreService.Setup(x => x.GetStoresAsync(It.IsAny<StoreParameter>()))
             .ReturnsAsync(new StoreSearchResultModel { Results = new List<StoreModel> {new()} });
 
-        var result = await _sut.GetStoreListAsync(new StoreParameter()).ConfigureAwait(false);
+        var result = await _sut.GetStoreListAsync(new StoreParameter());
         var objectResult = result as ObjectResult;
 
         using (new AssertionScope())
@@ -119,7 +119,7 @@ public sealed class ReadStoreControllerTests : UnitTestBase
         _mockReadStoreService.Setup(x => x.GetStoresAsync(It.IsAny<StoreParameter>()))
             .ReturnsAsync(new StoreSearchResultModel { Results = null });
 
-        var result = await _sut.GetStoreListAsync(new StoreParameter()).ConfigureAwait(false);
+        var result = await _sut.GetStoreListAsync(new StoreParameter());
         var objectResult = result as BadRequestObjectResult;
         var outputModel = objectResult!.Value! as string;
 
@@ -141,7 +141,7 @@ public sealed class ReadStoreControllerTests : UnitTestBase
         _mockReadStoreService.Setup(x => x.GetStoresAsync(It.IsAny<StoreParameter>()))
             .ReturnsAsync(new StoreSearchResultModel { Results = new List<StoreModel>() });
 
-        var result = await _sut.GetStoreListAsync(new StoreParameter()).ConfigureAwait(false);
+        var result = await _sut.GetStoreListAsync(new StoreParameter());
         var objectResult = result as BadRequestObjectResult;
         var outputModel = objectResult!.Value! as string;
 
@@ -163,7 +163,7 @@ public sealed class ReadStoreControllerTests : UnitTestBase
         _mockReadStoreService.Setup(x => x.SearchStoresAsync(It.IsAny<StoreParameter>(), It.IsAny<StoreSearchModel>()))
             .ReturnsAsync(new StoreSearchResultModel { Results = new List<StoreModel> { new() } });
 
-        var result = await _sut.SearchStoresAsync(new StoreParameter(), new StoreSearchModel()).ConfigureAwait(false);
+        var result = await _sut.SearchStoresAsync(new StoreParameter(), new StoreSearchModel());
         var objectResult = result as ObjectResult;
 
         using (new AssertionScope())
@@ -180,7 +180,7 @@ public sealed class ReadStoreControllerTests : UnitTestBase
         _mockReadStoreService.Setup(x => x.SearchStoresAsync(It.IsAny<StoreParameter>(), It.IsAny<StoreSearchModel>()))
             .ReturnsAsync(new StoreSearchResultModel { Results = null });
 
-        var result = await _sut.SearchStoresAsync(new StoreParameter(), new StoreSearchModel()).ConfigureAwait(false);
+        var result = await _sut.SearchStoresAsync(new StoreParameter(), new StoreSearchModel());
         var objectResult = result as BadRequestObjectResult;
         var outputModel = objectResult!.Value! as string;
 
@@ -202,7 +202,7 @@ public sealed class ReadStoreControllerTests : UnitTestBase
         _mockReadStoreService.Setup(x => x.SearchStoresAsync(It.IsAny<StoreParameter>(), It.IsAny<StoreSearchModel>()))
             .ReturnsAsync(new StoreSearchResultModel { Results = new List<StoreModel>() });
 
-        var result = await _sut.SearchStoresAsync(new StoreParameter(), new StoreSearchModel()).ConfigureAwait(false);
+        var result = await _sut.SearchStoresAsync(new StoreParameter(), new StoreSearchModel());
         var objectResult = result as BadRequestObjectResult;
         var outputModel = objectResult!.Value! as string;
 

@@ -39,7 +39,7 @@ public sealed class UpdateAddressControllerTests : UnitTestBase
     [Fact]
     public async Task PutAsync_null_input_returns_bad_requestAsync()
     {
-        var result = await _sut.PutAsync(1, null).ConfigureAwait(false);
+        var result = await _sut.PutAsync(1, null);
 
         var objectResult = result as BadRequestObjectResult;
 
@@ -54,7 +54,7 @@ public sealed class UpdateAddressControllerTests : UnitTestBase
     [Fact]
     public async Task PutAsync_invalid_id_returns_bad_requestAsync()
     {
-        var result = await _sut.PutAsync(-1, new AddressUpdateModel()).ConfigureAwait(false);
+        var result = await _sut.PutAsync(-1, new AddressUpdateModel());
 
         var objectResult = result as BadRequestObjectResult;
 
@@ -69,7 +69,7 @@ public sealed class UpdateAddressControllerTests : UnitTestBase
     [Fact]
     public async Task PutAsyn_mismatched_ids_returns_bad_requestAsync()
     {
-        var result = await _sut.PutAsync(11, new AddressUpdateModel{Id = 15}).ConfigureAwait(false);
+        var result = await _sut.PutAsync(11, new AddressUpdateModel{Id = 15});
 
         var objectResult = result as BadRequestObjectResult;
 
@@ -89,7 +89,7 @@ public sealed class UpdateAddressControllerTests : UnitTestBase
                 new List<ValidationFailure>
                     { new() { PropertyName = "Id", ErrorCode = "00010", ErrorMessage = "Hello Validation Error" } }));
 
-        var result = await _sut.PutAsync(11, new AddressUpdateModel { Id = 11 }).ConfigureAwait(false);
+        var result = await _sut.PutAsync(11, new AddressUpdateModel { Id = 11 });
 
         var objectResult = result as BadRequestObjectResult;
         var outputModel = objectResult!.Value! as IEnumerable;
@@ -120,7 +120,7 @@ public sealed class UpdateAddressControllerTests : UnitTestBase
             .ReturnsAsync((addressModel,
                 new List<ValidationFailure>()));
 
-        var result = await _sut.PutAsync(11, new AddressUpdateModel { Id = 11 }).ConfigureAwait(false);
+        var result = await _sut.PutAsync(11, new AddressUpdateModel { Id = 11 });
 
         var objectResult = result as OkObjectResult;
         var outputModel = objectResult!.Value! as AddressModel;

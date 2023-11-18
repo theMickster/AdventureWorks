@@ -96,7 +96,7 @@ public sealed class UpdateAddressServiceTests : UnitTestBase
 
         _mockAddressRepository.Setup(x => x.UpdateAsync(It.IsAny<AddressEntity>()));
 
-        var (addressModel, errors) = await _sut.UpdateAsync(inputModel).ConfigureAwait(false);
+        var (addressModel, errors) = await _sut.UpdateAsync(inputModel);
 
         using (new AssertionScope())
         {
@@ -109,7 +109,7 @@ public sealed class UpdateAddressServiceTests : UnitTestBase
     [Fact]
     public void UpdateAsync_throws_correct_exception()
     {
-        _ = (((Func<Task>)(async () => await _sut.UpdateAsync(null!).ConfigureAwait(false)))
+        _ = (((Func<Task>)(async () => await _sut.UpdateAsync(null!)))
             .Should().ThrowAsync<ArgumentNullException>());
     }
 
@@ -135,7 +135,7 @@ public sealed class UpdateAddressServiceTests : UnitTestBase
                 }
             });
 
-        var (addressModel, errors) = await _sut.UpdateAsync(inputModel).ConfigureAwait(false);
+        var (addressModel, errors) = await _sut.UpdateAsync(inputModel);
 
         using (new AssertionScope())
         {

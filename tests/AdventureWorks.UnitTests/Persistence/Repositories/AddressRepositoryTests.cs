@@ -61,7 +61,7 @@ public sealed class AddressRepositoryTests : PersistenceUnitTestBase
     [InlineData(395)]
     public async Task GetAddressByIdAsync_succeeds_Async(int addressId)
     {
-        var result = await _sut.GetAddressByIdAsync(addressId).ConfigureAwait(false);
+        var result = await _sut.GetAddressByIdAsync(addressId);
 
         using (new AssertionScope())
         {
@@ -79,7 +79,7 @@ public sealed class AddressRepositoryTests : PersistenceUnitTestBase
     [InlineData(395)]
     public async Task GetByIdAsync_succeeds_Async(int addressId)
     {
-        var result = await _sut.GetByIdAsync(addressId).ConfigureAwait(false);
+        var result = await _sut.GetByIdAsync(addressId);
 
         using (new AssertionScope())
         {

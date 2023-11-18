@@ -66,7 +66,7 @@ public sealed class ReadStateProvinceServiceTests : UnitTestBase
         _mockStateProvinceRepository.Setup(x => x.GetByIdAsync(It.IsAny<int>()))
             .ReturnsAsync((StateProvinceEntity)null!);
 
-        var result = await _sut.GetByIdAsync(12).ConfigureAwait(false);
+        var result = await _sut.GetByIdAsync(12);
 
         result.Should().BeNull();
     }
@@ -78,7 +78,7 @@ public sealed class ReadStateProvinceServiceTests : UnitTestBase
             .ReturnsAsync(new StateProvinceEntity
                 { StateProvinceId = 1, Name = "A State", CountryRegionCode = "UK", TerritoryId = 7, IsOnlyStateProvinceFlag = false});
 
-        var result = await _sut.GetByIdAsync(15).ConfigureAwait(false);
+        var result = await _sut.GetByIdAsync(15);
 
         using (new AssertionScope())
         {
@@ -93,7 +93,7 @@ public sealed class ReadStateProvinceServiceTests : UnitTestBase
         _mockStateProvinceRepository.Setup(x => x.ListAllAsync())
             .ReturnsAsync((IReadOnlyList<StateProvinceEntity>)null!);
 
-        var result = await _sut.GetListAsync().ConfigureAwait(false);
+        var result = await _sut.GetListAsync();
         result.Should().BeEmpty();
 
         _mockStateProvinceRepository.Reset();
@@ -101,7 +101,7 @@ public sealed class ReadStateProvinceServiceTests : UnitTestBase
         _mockStateProvinceRepository.Setup(x => x.ListAllAsync())
             .ReturnsAsync(new List<StateProvinceEntity>());
 
-        result = await _sut.GetListAsync().ConfigureAwait(false);
+        result = await _sut.GetListAsync();
         result.Should().BeEmpty();
     }
 
@@ -115,7 +115,7 @@ public sealed class ReadStateProvinceServiceTests : UnitTestBase
                 ,new() { StateProvinceId = 2, Name = "Japan", CountryRegionCode = "JP", TerritoryId = 8, IsOnlyStateProvinceFlag = true}
             });
 
-        var result = await _sut.GetListAsync().ConfigureAwait(false);
+        var result = await _sut.GetListAsync();
         result.Count.Should().Be(2);
     }
 }

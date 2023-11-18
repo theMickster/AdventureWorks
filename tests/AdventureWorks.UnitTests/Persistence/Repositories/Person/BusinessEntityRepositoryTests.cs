@@ -19,7 +19,7 @@ public sealed class BusinessEntityRepositoryTests : PersistenceUnitTestBase
     {
         var newEntity = new BusinessEntity { BusinessEntityId = -15, Rowguid = new Guid("489eed0a-6ca5-4dc2-9fc9-215a04c375b1"), ModifiedDate = StandardCreatedDate };
 
-        var createResult = await _sut.AddAsync(newEntity).ConfigureAwait(false);
+        var createResult = await _sut.AddAsync(newEntity);
 
         using (new AssertionScope())
         {
@@ -28,12 +28,12 @@ public sealed class BusinessEntityRepositoryTests : PersistenceUnitTestBase
             createResult.ModifiedDate.Should().Be(StandardCreatedDate);
         }
 
-        var updatedEntity = await _sut.GetByIdAsync(newEntity.BusinessEntityId).ConfigureAwait(false);
+        var updatedEntity = await _sut.GetByIdAsync(newEntity.BusinessEntityId);
         updatedEntity.ModifiedDate = StandardModifiedDate;
 
-        await _sut.UpdateAsync(updatedEntity).ConfigureAwait(false);
+        await _sut.UpdateAsync(updatedEntity);
 
-        var getResult = await _sut.GetByIdAsync(updatedEntity.BusinessEntityId).ConfigureAwait(false);
+        var getResult = await _sut.GetByIdAsync(updatedEntity.BusinessEntityId);
         
         using (new AssertionScope())
         {
@@ -42,9 +42,9 @@ public sealed class BusinessEntityRepositoryTests : PersistenceUnitTestBase
             getResult.ModifiedDate.Should().Be(StandardModifiedDate);
         }
 
-        await _sut.DeleteAsync(getResult).ConfigureAwait(false);
+        await _sut.DeleteAsync(getResult);
 
-        var deleteResult = await _sut.GetByIdAsync(newEntity.BusinessEntityId).ConfigureAwait(false);
+        var deleteResult = await _sut.GetByIdAsync(newEntity.BusinessEntityId);
 
         deleteResult?.Should().BeNull("because the entity should have been deleted");
     }

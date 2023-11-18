@@ -42,7 +42,7 @@ public sealed class ReadAddressControllerTests : UnitTestBase
         _mockReadAddressService.Setup(x => x.GetByIdAsync(It.IsAny<int>()))
             .ReturnsAsync(new AddressModel{Id = id} );
 
-        var result = await _sut.GetByIdAsync(7).ConfigureAwait(false);
+        var result = await _sut.GetByIdAsync(7);
 
         var objectResult = result as ObjectResult;
 
@@ -60,7 +60,7 @@ public sealed class ReadAddressControllerTests : UnitTestBase
         _mockReadAddressService.Setup(x => x.GetByIdAsync(It.IsAny<int>()))
             .ReturnsAsync((AddressModel?)null);
 
-        var result = await _sut.GetByIdAsync(7).ConfigureAwait(false);
+        var result = await _sut.GetByIdAsync(7);
 
         var objectResult = result as ObjectResult;
 
@@ -78,7 +78,7 @@ public sealed class ReadAddressControllerTests : UnitTestBase
     [InlineData(-10)]
     public async Task getById_returns_bad_request_Async(int addressId)
     {
-        var result = await _sut.GetByIdAsync(addressId).ConfigureAwait(false);
+        var result = await _sut.GetByIdAsync(addressId);
 
         var objectResult = result as ObjectResult;
 
