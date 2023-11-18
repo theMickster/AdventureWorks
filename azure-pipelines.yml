@@ -1,10 +1,8 @@
-# ASP.NET
-# Build and test ASP.NET projects.
-# Add steps that publish symbols, save build artifacts, deploy, and more:
+# AdventureWorks API - Build and test ASP.NET projects.
 # https://docs.microsoft.com/azure/devops/pipelines/apps/aspnet/build-aspnet-4
 
 trigger:
-- develop
+- main
 
 pool:
   vmImage: 'windows-latest'
