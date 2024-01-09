@@ -1,7 +1,7 @@
 ﻿using AdventureWorks.Application.Interfaces.Services.Address;
 using AdventureWorks.Domain.Models;
+using Asp.Versioning;
 using Microsoft.AspNetCore.Mvc;
-using Newtonsoft.Json;
 
 namespace AdventureWorks.API.Controllers.v1.Address;
 

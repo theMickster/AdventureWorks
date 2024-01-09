@@ -1,6 +1,7 @@
 ﻿using AdventureWorks.Application.Interfaces.Services.Login;
 using AdventureWorks.Common.Settings;
 using AdventureWorks.Domain.Models.Shield;
+using Asp.Versioning;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Options;

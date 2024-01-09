@@ -1,4 +1,5 @@
 ﻿using AdventureWorks.Application.Interfaces.Repositories;
+using Asp.Versioning;
 using Microsoft.AspNetCore.Mvc;
 
 namespace AdventureWorks.API.Controllers.v1.Products;

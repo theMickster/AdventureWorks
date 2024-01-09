@@ -1,5 +1,6 @@
 ﻿using AdventureWorks.Application.Interfaces.Services.StateProvince;
 using AdventureWorks.Domain.Models;
+using Asp.Versioning;
 using Microsoft.AspNetCore.Mvc;
 
 namespace AdventureWorks.API.Controllers.v1.StateProvince;

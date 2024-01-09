@@ -1,5 +1,6 @@
 ﻿using AdventureWorks.Application.Interfaces.Services.SalesTerritory;
 using AdventureWorks.Domain.Models;
+using Asp.Versioning;
 using Microsoft.AspNetCore.Mvc;
 
 namespace AdventureWorks.API.Controllers.v1.SalesTerritory;
