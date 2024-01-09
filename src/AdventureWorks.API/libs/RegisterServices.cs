@@ -8,12 +8,11 @@ using AdventureWorks.Common.Constants;
 using AdventureWorks.Common.Settings;
 using AdventureWorks.Domain.Profiles;
 using AdventureWorks.Infrastructure.Persistence.DbContexts;
+using Asp.Versioning;
 using FluentValidation;
 using Microsoft.AspNetCore.Mvc.Controllers;
-using Microsoft.AspNetCore.Mvc.Versioning;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.OpenApi.Models;
-using System.Diagnostics;
 using System.Net.Http.Headers;
 using System.Reflection;
 
@@ -40,19 +39,14 @@ internal static class RegisterServices
         builder.Services.AddApiVersioning(options =>
         {
             options.ReportApiVersions = true;
+            options.DefaultApiVersion = new ApiVersion(1, 0);
             options.AssumeDefaultVersionWhenUnspecified = true;
-            options.ApiVersionReader = new UrlSegmentApiVersionReader();
+            options.ApiVersionReader = ApiVersionReader.Combine(new UrlSegmentApiVersionReader(),
+                new QueryStringApiVersionReader("api-version"),
+                new HeaderApiVersionReader("x-api-version"),
+                new MediaTypeApiVersionReader("x-api-version"));
         });
-
-        builder.Services.AddVersionedApiExplorer(options =>
-        {
-            options.GroupNameFormat = "'v'VVV";
-            options.SubstituteApiVersionInUrl = true;
-        });
-
-
-        builder.Services.AddEndpointsApiExplorer();
-
+        
         builder.Services.AddSwaggerGen(options =>
         {
             options.SwaggerDoc(
@@ -114,14 +108,8 @@ internal static class RegisterServices
             options.DocInclusionPredicate((name, api) => true);
         });
 
-        builder.Services.AddAutoMapper(
-            new[]
-            {
-                typeof(AddressEntityToAddressModelProfile).GetTypeInfo().Assembly
-            });
-
+        builder.Services.AddAutoMapper(typeof(AddressEntityToAddressModelProfile).GetTypeInfo().Assembly);
         builder.Services.AddValidatorsFromAssemblyContaining<CreateAddressValidator>();
-
         return builder;
     }
 

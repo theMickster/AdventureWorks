@@ -1,5 +1,6 @@
 ﻿using AdventureWorks.Application.Interfaces.Services.AddressType;
 using AdventureWorks.Domain.Models;
+using Asp.Versioning;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
