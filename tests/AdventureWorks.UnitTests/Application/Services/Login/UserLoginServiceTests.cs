@@ -205,7 +205,9 @@ public sealed class UserLoginServiceTests : UnitTestBase
     [Fact]
     public async Task AuthenticateUserAsync_succeeds_when_all_is_goodAsync()
     {
+#pragma warning disable S1481
         var (username, password, refreshToken) = SetupAuthHappyPath();
+#pragma warning restore S1481
 
         var (user, outputToken, validationFailures) = await _sut.AuthenticateUserAsync(username, password, "192.168.100.69");
 
@@ -404,7 +406,9 @@ public sealed class UserLoginServiceTests : UnitTestBase
     [Fact]
     public async Task RefreshTokenAsync_succeeds_when_all_is_goodAsync()
     {
+#pragma warning disable S1481
         var (username, password, refreshToken) = SetupAuthHappyPath();
+#pragma warning restore S1481
 
         var (user, outputToken, validationFailures) = await _sut.RefreshTokenAsync(refreshToken, username, "192.168.100.69");
 
@@ -434,7 +438,7 @@ public sealed class UserLoginServiceTests : UnitTestBase
 
         var tokenModel = new UserAccountTokenModel
         {
-            Id = new Guid(),
+            Id = new Guid("76002567-c54b-4fcd-b704-19500c9b6c47"),
             Token = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiJBZHZlbnR1cmVXb3Jrc0FQSSIsImp0aSI6IjJlNTBiODM3LTYyNjAtNDljMy1hNTMxLTgzOTUzY2U1NzcyMiIsImlhdCI6MTY3NjA1NjcyNCwiZXhwIjoxNjc2MDYyNzI0LCJnaXZlbl9uYW1lIjoiSm9obiIsImZhbWlseV9uYW1lIjoiRWx3YXkiLCJVc2VySWQiOiIxIiwiVXNlck5hbWUiOiJqb2huLmVsd2F5IiwibmJmIjoxNjc2MDU2NzI0LCJpc3MiOiJodHRwczovL2xvY2FsaG9zdC8iLCJhdWQiOiJodHRwczovL2xvY2FsaG9zdC8ifQ.gl90yhJtcPtfTrYtgIX7nWCKpaOMUyU2Ajbc7B8FNKQ",
             TokenExpiration = DateTime.UtcNow.AddSeconds(120),
             RefreshToken = refreshToken,

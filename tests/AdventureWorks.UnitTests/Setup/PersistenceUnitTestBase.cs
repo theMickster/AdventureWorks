@@ -15,8 +15,8 @@ public abstract class PersistenceUnitTestBase : UnitTestBase
     protected AdventureWorksDbContext DbContext;
     protected const int StandardCreatedBy = -101;
     protected const int StandardModifiedBy = -107;
-    protected readonly DateTime StandardCreatedDate = new(2011, 11, 11);
-    protected readonly DateTime StandardModifiedDate = new (2021, 11, 11);
+    protected readonly DateTime StandardCreatedDate = new(2011, 11, 11, 11, 11, 11, DateTimeKind.Utc);
+    protected readonly DateTime StandardModifiedDate = new(2011, 11, 11, 11, 11, 11, DateTimeKind.Utc);
 
     protected PersistenceUnitTestBase()
     {

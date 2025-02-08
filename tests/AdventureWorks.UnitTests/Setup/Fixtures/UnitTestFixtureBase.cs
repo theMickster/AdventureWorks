@@ -4,5 +4,5 @@
 [ExcludeFromCodeCoverage]
 internal abstract class UnitTestFixtureBase
 {
-    internal static DateTime StandardModifiedDate = new(2021, 11, 11, 11, 15, 07);
+    internal static DateTime StandardModifiedDate = new(2021, 11, 11, 11, 15, 07, DateTimeKind.Utc);
 }

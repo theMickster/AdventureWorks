@@ -8,7 +8,7 @@
 [SuppressMessage("Simplification", "CLASS0001:Seal class", Justification = "This analyzer is wrong in this use-case.")]
 public abstract class UnitTestBase : TestBase
 {
-    public DateTime DefaultAuditDate => new DateTime(2011, 11, 11, 11, 11, 11);
+    public static DateTime DefaultAuditDate => new(2011, 11, 11, 11, 11, 11, DateTimeKind.Utc);
 
     protected UnitTestBase()
     {

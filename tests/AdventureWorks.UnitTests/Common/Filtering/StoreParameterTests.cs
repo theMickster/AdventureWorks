@@ -1,5 +1,6 @@
 ﻿using AdventureWorks.Common.Constants;
 using AdventureWorks.Common.Filtering;
+#pragma warning disable CS8601 // Possible null reference assignment.
 
 namespace AdventureWorks.UnitTests.Common.Filtering;
 
@@ -60,7 +61,7 @@ public sealed class StoreParameterTests : UnitTestBase
     [InlineData("NAME", "Name")]
     [InlineData("StoreName", "BusinessEntityId")]
     [InlineData(null, "BusinessEntityId")]
-    public void OrderBy_field_is_calculated_correctly(string orderByInput, string orderByExpectedOutput)
+    public void OrderBy_field_is_calculated_correctly(string? orderByInput, string orderByExpectedOutput)
     {
         var param = new StoreParameter
         {
@@ -85,7 +86,7 @@ public sealed class StoreParameterTests : UnitTestBase
     [InlineData("desc", SortedResultConstants.Descending)]
     [InlineData("descending ", SortedResultConstants.Descending)]
     [InlineData(" DESCENDING", SortedResultConstants.Descending)]
-    public void SortOrder_field_is_calculated_correctly(string sortInput, string sortExpectedOutput)
+    public void SortOrder_field_is_calculated_correctly(string? sortInput, string sortExpectedOutput)
     {
         var param = new StoreParameter
         {

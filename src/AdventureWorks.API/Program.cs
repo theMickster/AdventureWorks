@@ -1,5 +1,6 @@
 ﻿using AdventureWorks.API.libs;
 using Microsoft.AspNetCore.Mvc;
+#pragma warning disable S1118
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -63,9 +64,7 @@ builder.Services.Configure<ApiBehaviorOptions>(options =>
 
 var app = builder.Build();
 
-app.SetupMiddleware()
-    .Run();
-
+await app.SetupMiddleware().RunAsync();
 
 /// <summary>
 /// The entry point for the API.
