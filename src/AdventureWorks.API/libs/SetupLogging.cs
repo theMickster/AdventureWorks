@@ -27,16 +27,8 @@ internal static class SetupLogging
                 "The concrete implementation of IHttpContextAccessor must be registered before logging.");
         }
 
-        var appInsightsInstrumentationKey = configuration[ConfigurationConstants.AppInsightsInstrumentationKey] ?? string.Empty;
         var appInsightsConnectionString = configuration[ConfigurationConstants.AppInsightsConnectionString] ?? string.Empty;
         var aspNetEnvironment = configuration.RetrieveEnvironment();
-
-        if (string.IsNullOrWhiteSpace(appInsightsInstrumentationKey))
-        {
-            throw new ConfigurationException(
-                $"The required Configuration value for {ConfigurationConstants.AppInsightsInstrumentationKey} is missing." +
-                "Please verify local or Azure resource configuration.");
-        }
 
         if (string.IsNullOrWhiteSpace(appInsightsConnectionString))
         {

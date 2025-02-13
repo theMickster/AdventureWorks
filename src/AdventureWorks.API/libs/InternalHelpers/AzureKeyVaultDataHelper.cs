@@ -19,40 +19,6 @@ internal static class AzureKeyVaultDataHelper
                 "Please verify local or Azure resource configuration.");
         }
 
-        var akvUri = new Uri(akvUriValue);
-
-        var tenantId = configuration[ConfigurationConstants.KeyVaultTenantId] ?? string.Empty;
-
-        if (string.IsNullOrWhiteSpace(tenantId))
-        {
-            throw new ConfigurationException(
-                $"The required Configuration value for {ConfigurationConstants.KeyVaultTenantId} is missing." +
-                "Please verify local or Azure resource configuration.");
-        }
-
-        var clientId = configuration[ConfigurationConstants.KeyVaultClientId] ?? string.Empty;
-
-        if (string.IsNullOrWhiteSpace(clientId))
-        {
-            throw new ConfigurationException(
-                $"The required Configuration value for {ConfigurationConstants.KeyVaultClientId} is missing." +
-                "Please verify local or Azure resource configuration.");
-        }
-
-        var clientSecret = configuration[ConfigurationConstants.KeyVaultClientSecret] ?? string.Empty;
-
-        if (string.IsNullOrWhiteSpace(clientSecret))
-        {
-            throw new ConfigurationException(
-                $"The required Configuration value for {ConfigurationConstants.KeyVaultClientSecret} is missing." +
-                "Please verify local or Azure resource configuration.");
-        }
-
-        var akvClientSecretCredential = new ClientSecretCredential(
-            tenantId: tenantId,
-            clientId: clientId,
-            clientSecret: clientSecret);
-
         if (!double.TryParse(configuration[ConfigurationConstants.KeyVaultRetryDelay], out var retryDelay))
         {
             retryDelay = 100d;
@@ -79,6 +45,8 @@ internal static class AzureKeyVaultDataHelper
             }
         };
 
-        return new SecretClient(akvUri, akvClientSecretCredential, akvSecretOptions);
+        var akvUri = new Uri(akvUriValue);
+
+        return new SecretClient(akvUri, new DefaultAzureCredential(), akvSecretOptions);
     }
 }

@@ -3,22 +3,6 @@
 public static class ConfigurationConstants
 {
     /// <summary>
-    /// AKV Client Id from injected Environment Variables -OR- User Secrets
-    /// </summary>
-    public const string KeyVaultClientId = "KeyVault:ClientId";
-
-    /// <summary>
-    /// AKV Client Secret from injected Environment Variables -OR- User Secrets
-    /// </summary>
-
-    public const string KeyVaultClientSecret = "KeyVault:ClientSecret";
-
-    /// <summary>
-    /// AKV Application (Tenant) Id from injected Environment Variables -OR- User Secrets
-    /// </summary>
-    public const string KeyVaultTenantId = "KeyVault:TenantId";
-
-    /// <summary>
     /// AKV URL from injected Environment Variables -OR- User Secrets
     /// </summary>
     public const string KeyVaultUrl = "KeyVault:VaultUri";
@@ -37,11 +21,6 @@ public static class ConfigurationConstants
     /// The maximum number of retry attempts to connect to AKV, default to 5
     /// </summary>
     public const string KeyVaultMaxRetryAttempts = "KeyVault:MaxRetryAttempts";
-
-    /// <summary>
-    /// AppInsightsInstrumentationKey3 value name
-    /// </summary>
-    public const string AppInsightsInstrumentationKey = "ApplicationInsights:InstrumentationKey";
 
     /// <summary>
     /// AppInsightsInstrumentationKey3 value name
