@@ -25,8 +25,6 @@ internal static class RegisterServices
     [SuppressMessage("Minor Code Smell", "S1075:URIs should not be hardcoded", Justification = "Because we said so.")]
     internal static WebApplicationBuilder RegisterAspDotNetServices(this WebApplicationBuilder builder)
     {
-        // ******* Access the configuration manager *******
-        var config = builder.Configuration;
 
         builder.Services.AddControllers(options =>
             {
@@ -130,7 +128,6 @@ internal static class RegisterServices
         builder.Services.AddDbContext<AdventureWorksDbContext>(options =>
             {
                 options.UseSqlServer(currentConnectionString);
-                //options.LogTo(message => Debug.WriteLine(message));
             }
         ); 
 
