@@ -1,16 +1,20 @@
 ﻿using AdventureWorks.Common.Settings;
 using Asp.Versioning;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Options;
+using Microsoft.Identity.Web.Resource;
 
 namespace AdventureWorks.API.Controllers.v1.KeyVaultExample;
 
 /// <summary>
 /// The controller that handles retrieving mock data from Azure Key Vault.
 /// </summary>
+[Authorize]
 [ApiController]
 [ApiVersion("1.0")]
 [ApiExplorerSettings(GroupName = "Azure Key Vault Examples")]
+[RequiredScope(RequiredScopesConfigurationKey = "AzureAd:Scopes")]
 [Route("api/v{version:apiVersion}/keyVaultExample", Name = "KeyVaultExample")]
 public sealed class KeyVaultExampleController : ControllerBase
 {

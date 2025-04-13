@@ -1,5 +1,8 @@
 ﻿using AdventureWorks.API.libs;
+using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.Identity.Web;
+
 #pragma warning disable S1118
 
 var builder = WebApplication.CreateBuilder(args);
@@ -49,7 +52,8 @@ builder.Services.AddCors(options =>
             .AllowCredentials());
 });
 
-builder.RegisterApiAuthentication();
+builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
+    .AddMicrosoftIdentityWebApi(builder.Configuration);
 
 builder.RegisterAspDotNetServices();
 
