@@ -1,5 +1,5 @@
-﻿using AdventureWorks.Application.Interfaces.Services.SalesTerritory;
-using AdventureWorks.Domain.Models;
+﻿using AdventureWorks.Application.Features.Sales.Contracts;
+using AdventureWorks.Models.Features.Sales;
 using Asp.Versioning;
 using Microsoft.AspNetCore.Mvc;
 

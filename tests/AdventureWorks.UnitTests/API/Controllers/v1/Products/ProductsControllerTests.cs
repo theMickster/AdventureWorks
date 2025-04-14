@@ -1,5 +1,5 @@
 ﻿using AdventureWorks.API.Controllers.v1.Products;
-using AdventureWorks.Application.Interfaces.Repositories;
+using AdventureWorks.Application.PersistenceContracts.Repositories;
 using Microsoft.Extensions.Logging;
 
 namespace AdventureWorks.UnitTests.API.Controllers.v1.Products;

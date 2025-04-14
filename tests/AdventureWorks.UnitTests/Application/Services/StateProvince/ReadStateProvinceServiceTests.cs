@@ -1,9 +1,9 @@
-﻿using AdventureWorks.Application.Interfaces.Repositories;
-using AdventureWorks.Application.Interfaces.Services.StateProvince;
-using AdventureWorks.Application.Services.StateProvince;
+﻿using AdventureWorks.Application.Features.AddressManagement.Contracts;
+using AdventureWorks.Application.Features.AddressManagement.Profiles;
+using AdventureWorks.Application.Features.AddressManagement.Services.StateProvince;
+using AdventureWorks.Application.PersistenceContracts.Repositories;
 using AdventureWorks.Common.Attributes;
 using AdventureWorks.Domain.Entities;
-using AdventureWorks.Domain.Profiles;
 using AutoMapper;
 using Moq;
 

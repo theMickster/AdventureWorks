@@ -1,11 +1,11 @@
 ﻿using AdventureWorks.API.Controllers.v1.Stores;
-using AdventureWorks.Application.Interfaces.Services.Stores;
-using AdventureWorks.Domain.Models.Sales;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
 using System.Net;
 using AdventureWorks.Common.Filtering;
+using AdventureWorks.Models.Features.Sales;
 using AdventureWorks.Test.Common.Extensions;
+using AdventureWorks.Application.Features.Sales.Contracts;
 
 namespace AdventureWorks.UnitTests.API.Controllers.v1.Stores;
 
@@ -117,7 +117,7 @@ public sealed class ReadStoreControllerTests : UnitTestBase
     public async Task GetStoreListAsync_null_results_bad_request_Async()
     {
         _mockReadStoreService.Setup(x => x.GetStoresAsync(It.IsAny<StoreParameter>()))
-            .ReturnsAsync(new StoreSearchResultModel { Results = null });
+            .ReturnsAsync(new StoreSearchResultModel { Results = null! });
 
         var result = await _sut.GetStoreListAsync(new StoreParameter());
         var objectResult = result as BadRequestObjectResult;
@@ -178,7 +178,7 @@ public sealed class ReadStoreControllerTests : UnitTestBase
     public async Task SearchStoresAsync_null_results_bad_request_Async()
     {
         _mockReadStoreService.Setup(x => x.SearchStoresAsync(It.IsAny<StoreParameter>(), It.IsAny<StoreSearchModel>()))
-            .ReturnsAsync(new StoreSearchResultModel { Results = null });
+            .ReturnsAsync(new StoreSearchResultModel { Results = null! });
 
         var result = await _sut.SearchStoresAsync(new StoreParameter(), new StoreSearchModel());
         var objectResult = result as BadRequestObjectResult;

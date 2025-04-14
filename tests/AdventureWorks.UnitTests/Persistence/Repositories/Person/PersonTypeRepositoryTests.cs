@@ -1,4 +1,4 @@
-﻿using AdventureWorks.Application.Interfaces.Repositories.Person;
+﻿using AdventureWorks.Application.PersistenceContracts.Repositories.Person;
 using AdventureWorks.Common.Attributes;
 using AdventureWorks.Domain.Entities.Person;
 using AdventureWorks.Infrastructure.Persistence.Repositories.Person;

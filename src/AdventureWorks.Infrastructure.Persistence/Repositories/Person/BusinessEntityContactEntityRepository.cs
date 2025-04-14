@@ -1,11 +1,11 @@
 ﻿using System.Collections.Generic;
 using System.Linq;
-using AdventureWorks.Application.Interfaces.Repositories.Person;
 using AdventureWorks.Common.Attributes;
 using AdventureWorks.Domain.Entities.Person;
 using AdventureWorks.Infrastructure.Persistence.DbContexts;
 using Microsoft.EntityFrameworkCore;
 using System.Threading.Tasks;
+using AdventureWorks.Application.PersistenceContracts.Repositories.Person;
 
 namespace AdventureWorks.Infrastructure.Persistence.Repositories.Person;
 

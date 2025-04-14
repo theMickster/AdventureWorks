@@ -1,13 +1,13 @@
-﻿using AdventureWorks.Application.Interfaces.Repositories.Person;
-using AdventureWorks.Application.Interfaces.Repositories.Sales;
-using AdventureWorks.Application.Interfaces.Services.Stores;
-using AdventureWorks.Application.Services.Stores;
+﻿using AdventureWorks.Application.Features.Sales.Contracts;
+using AdventureWorks.Application.Features.Sales.Profiles;
+using AdventureWorks.Application.Features.Sales.Services.Stores;
+using AdventureWorks.Application.PersistenceContracts.Repositories.Person;
+using AdventureWorks.Application.PersistenceContracts.Repositories.Sales;
 using AdventureWorks.Common.Attributes;
 using AdventureWorks.Common.Filtering;
 using AdventureWorks.Domain.Entities;
 using AdventureWorks.Domain.Entities.Person;
 using AdventureWorks.Domain.Entities.Sales;
-using AdventureWorks.Domain.Profiles.Sales;
 using AutoMapper;
 
 namespace AdventureWorks.UnitTests.Application.Services.Stores;

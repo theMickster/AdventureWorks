@@ -1,4 +1,4 @@
-﻿using AdventureWorks.Application.Interfaces.Repositories;
+﻿using AdventureWorks.Application.PersistenceContracts.Repositories;
 using Asp.Versioning;
 using Microsoft.AspNetCore.Mvc;
 

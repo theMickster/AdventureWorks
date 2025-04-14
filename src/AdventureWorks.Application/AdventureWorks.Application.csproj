@@ -12,6 +12,7 @@
 		<PackageReference Include="AutoMapper" Version="14.0.0" />
 		<PackageReference Include="BCrypt.Net-Next" Version="4.0.3" />
 		<PackageReference Include="FluentValidation" Version="11.11.0" />
+		<PackageReference Include="MediatR" Version="12.5.0" />
 		<PackageReference Include="Microsoft.AspNetCore.Authentication.JwtBearer" Version="9.0.4" />
 		<PackageReference Include="Microsoft.AspNetCore.JsonPatch" Version="9.0.4" />
 		<PackageReference Include="Microsoft.EntityFrameworkCore" Version="9.0.4" />
@@ -38,6 +39,17 @@
 	<ItemGroup>
 		<ProjectReference Include="..\AdventureWorks.Common\AdventureWorks.Common.csproj" />
 		<ProjectReference Include="..\AdventureWorks.Domain\AdventureWorks.Domain.csproj" />
+		<ProjectReference Include="..\AdventureWorks.Models\AdventureWorks.Models.csproj" />
+	</ItemGroup>
+
+	<ItemGroup>
+	  <Folder Include="Features\AddressManagement\Commands\" />
+	  <Folder Include="Features\AddressManagement\Queries\" />
+	  <Folder Include="Features\HumanResources\Commands\" />
+	  <Folder Include="Features\HumanResources\Validators\" />
+	  <Folder Include="Features\Sales\Commands\" />
+	  <Folder Include="Features\Sales\Queries\" />
+	  <Folder Include="Features\Sales\Validators\" />
 	</ItemGroup>
 
 

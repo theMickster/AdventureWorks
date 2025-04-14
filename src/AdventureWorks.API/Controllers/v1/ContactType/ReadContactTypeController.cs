@@ -1,5 +1,5 @@
-﻿using AdventureWorks.Application.Interfaces.Services.ContactType;
-using AdventureWorks.Domain.Models.Person;
+﻿using AdventureWorks.Application.Features.HumanResources.Contracts;
+using AdventureWorks.Models.Features.HumanResources;
 using Asp.Versioning;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;

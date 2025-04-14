@@ -1,5 +1,5 @@
-﻿using AdventureWorks.Application.Interfaces.Repositories;
-using AdventureWorks.Application.Validators.Address;
+﻿using AdventureWorks.Application.Features.AddressManagement.Validators;
+using AdventureWorks.Application.PersistenceContracts.Repositories;
 
 namespace AdventureWorks.UnitTests.Application.Validators.Address;
 

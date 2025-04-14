@@ -1,5 +1,5 @@
-﻿using AdventureWorks.Application.Interfaces.Services.StateProvince;
-using AdventureWorks.Domain.Models;
+﻿using AdventureWorks.Application.Features.AddressManagement.Contracts;
+using AdventureWorks.Models.Features.AddressManagement;
 using Asp.Versioning;
 using Microsoft.AspNetCore.Mvc;
 

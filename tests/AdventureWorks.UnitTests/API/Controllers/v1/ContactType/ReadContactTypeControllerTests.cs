@@ -1,9 +1,9 @@
 ﻿using AdventureWorks.API.Controllers.v1.ContactType;
-using AdventureWorks.Application.Interfaces.Services.ContactType;
-using AdventureWorks.Domain.Models.Person;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
 using System.Net;
+using AdventureWorks.Models.Features.HumanResources;
+using AdventureWorks.Application.Features.HumanResources.Contracts;
 
 namespace AdventureWorks.UnitTests.API.Controllers.v1.ContactType;
 
@@ -39,7 +39,7 @@ public sealed class ReadContactTypeControllerTests : UnitTestBase
     {
         _mockReadContactTypeService.Setup(
                 x => x.GetByIdAsync(It.IsAny<int>()))
-            .ReturnsAsync(new ContactTypeModel { Id = 1, Name = "Home" });
+            .ReturnsAsync(new ContactTypeModel { Id = 1, Name = "Home", Code  = string.Empty, Description = string.Empty});
 
         var result = await _sut.GetByIdAsync(123);
         var objectResult = result as OkObjectResult;
@@ -96,9 +96,9 @@ public sealed class ReadContactTypeControllerTests : UnitTestBase
             .ReturnsAsync(
                 new List<ContactTypeModel>
                 {
-                    new() { Id = 1, Name = "Home"}
-                    ,new() { Id = 2, Name = "Billing"}
-                    ,new() { Id = 3, Name = "Mailing"}
+                    new() { Id = 1, Name = "Home", Code  = string.Empty, Description = string.Empty}
+                    ,new() {Id = 2, Name = "Billing", Code = string.Empty, Description = string.Empty}
+                    ,new() {Id = 3, Name = "Mailing", Code = string.Empty, Description = string.Empty}
                 });
 
         var result = await _sut.GetListAsync();

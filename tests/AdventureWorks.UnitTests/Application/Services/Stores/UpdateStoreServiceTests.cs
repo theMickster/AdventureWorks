@@ -1,8 +1,8 @@
-﻿using AdventureWorks.Application.Interfaces.Repositories.Sales;
-using AdventureWorks.Application.Interfaces.Services.Stores;
-using AdventureWorks.Application.Services.Stores;
+﻿using AdventureWorks.Application.Features.Sales.Contracts;
+using AdventureWorks.Application.Features.Sales.Profiles;
+using AdventureWorks.Application.Features.Sales.Services.Stores;
+using AdventureWorks.Application.PersistenceContracts.Repositories.Sales;
 using AdventureWorks.Common.Attributes;
-using AdventureWorks.Domain.Profiles.Sales;
 using AutoMapper;
 
 namespace AdventureWorks.UnitTests.Application.Services.Stores;

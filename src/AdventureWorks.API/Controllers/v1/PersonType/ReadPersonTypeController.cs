@@ -1,6 +1,7 @@
-﻿using AdventureWorks.Application.Interfaces.Services.PersonType;
-using AdventureWorks.Domain.Models.Person;
+﻿using AdventureWorks.Application.Features.HumanResources.Queries;
+using AdventureWorks.Models.Features.HumanResources;
 using Asp.Versioning;
+using MediatR;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
@@ -19,7 +20,7 @@ namespace AdventureWorks.API.Controllers.v1.PersonType;
 public class ReadPersonTypeController : ControllerBase
 {
     private readonly ILogger<ReadPersonTypeController> _logger;
-    private readonly IReadPersonTypeService _readPersonTypeService;
+    private readonly IMediator _mediator;
 
     /// <summary>
     /// The controller that coordinates retrieving Person Type information.
@@ -27,10 +28,12 @@ public class ReadPersonTypeController : ControllerBase
     /// <remarks></remarks>
     public ReadPersonTypeController(
         ILogger<ReadPersonTypeController> logger,
-        IReadPersonTypeService readPersonTypeService)
+        IMediator mediator)
     {
-        _logger = logger ?? throw new ArgumentNullException(nameof(logger));
-        _readPersonTypeService = readPersonTypeService ?? throw new ArgumentNullException(nameof(readPersonTypeService));
+        ArgumentNullException.ThrowIfNull(logger, nameof(logger));
+        ArgumentNullException.ThrowIfNull(mediator, nameof(mediator));
+        _logger = logger;
+        _mediator = mediator;
     }
 
     /// <summary>
@@ -47,14 +50,9 @@ public class ReadPersonTypeController : ControllerBase
             return BadRequest("A valid person type id must be specified.");
         }
 
-        var model = await _readPersonTypeService.GetByIdAsync(id).ConfigureAwait(false);
+        var model = await _mediator.Send(new ReadPersonTypeQuery { Id = id });
 
-        if (model == null)
-        {
-            return NotFound("Unable to locate the person type.");
-        }
-
-        return Ok(model);
+        return model is null ? NotFound("Unable to locate the person type.") :  Ok(model);
     }
 
     /// <summary>
@@ -65,9 +63,9 @@ public class ReadPersonTypeController : ControllerBase
     [Produces(typeof(PersonTypeModel))]
     public async Task<IActionResult> GetListAsync()
     {
-        var model = await _readPersonTypeService.GetListAsync().ConfigureAwait(false);
+        var model = await _mediator.Send(new ReadPersonTypeListQuery());
 
-        if (!model.Any())
+        if (model is not { Count: > 0 } )
         {
             return NotFound("Unable to locate records the person type list.");
         }

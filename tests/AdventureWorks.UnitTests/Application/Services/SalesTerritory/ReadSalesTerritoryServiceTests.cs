@@ -1,9 +1,9 @@
-﻿using AdventureWorks.Application.Interfaces.Repositories;
-using AdventureWorks.Application.Interfaces.Services.SalesTerritory;
-using AdventureWorks.Application.Services.SalesTerritory;
+﻿using AdventureWorks.Application.Features.Sales.Contracts;
+using AdventureWorks.Application.Features.Sales.Profiles;
+using AdventureWorks.Application.Features.Sales.Services.SalesTerritory;
+using AdventureWorks.Application.PersistenceContracts.Repositories;
 using AdventureWorks.Common.Attributes;
 using AdventureWorks.Domain.Entities;
-using AdventureWorks.Domain.Profiles;
 using AutoMapper;
 
 namespace AdventureWorks.UnitTests.Application.Services.SalesTerritory;

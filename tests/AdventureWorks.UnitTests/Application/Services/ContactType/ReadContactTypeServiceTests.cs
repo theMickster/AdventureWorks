@@ -1,9 +1,9 @@
-﻿using AdventureWorks.Application.Interfaces.Repositories.Person;
-using AdventureWorks.Application.Interfaces.Services.ContactType;
-using AdventureWorks.Application.Services.ContactType;
+﻿using AdventureWorks.Application.Features.HumanResources.Contracts;
+using AdventureWorks.Application.Features.HumanResources.Profiles;
+using AdventureWorks.Application.Features.HumanResources.Services.ContactType;
+using AdventureWorks.Application.PersistenceContracts.Repositories.Person;
 using AdventureWorks.Common.Attributes;
 using AdventureWorks.Domain.Entities.Person;
-using AdventureWorks.Domain.Profiles.Person;
 using AutoMapper;
 
 namespace AdventureWorks.UnitTests.Application.Services.ContactType;

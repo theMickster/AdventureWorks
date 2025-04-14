@@ -1,13 +1,13 @@
 ﻿using System.Collections;
 using AdventureWorks.API.Controllers.v1.Address;
-using AdventureWorks.Application.Interfaces.Services.Address;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
 using System.Net;
 using System.Text.Json;
-using AdventureWorks.Domain.Models;
-using AdventureWorks.Domain.Models.Slim;
+using AdventureWorks.Models.Features.AddressManagement;
+using AdventureWorks.Models.Slim;
 using FluentValidation.Results;
+using AdventureWorks.Application.Features.AddressManagement.Contracts;
 
 namespace AdventureWorks.UnitTests.API.Controllers.v1.Address;
 
@@ -60,7 +60,7 @@ public sealed class CreateAddressControllerTests : UnitTestBase
         {
             AddressLine1 = "hello World",
             PostalCode = "123",
-            AddressStateProvince = new GenericSlimModel { Id = 15 }
+            AddressStateProvince = new GenericSlimModel { Id = 15, Name = string.Empty, Code = string.Empty }
         };
 
         _mockCreateAddressService
@@ -98,7 +98,7 @@ public sealed class CreateAddressControllerTests : UnitTestBase
         {
             AddressLine1 = "hello World",
             PostalCode = "123",
-            AddressStateProvince = new GenericSlimModel { Id = 15}
+            AddressStateProvince = new GenericSlimModel {Id = 15, Name = string.Empty, Code = string.Empty }
         };
 
         _mockCreateAddressService

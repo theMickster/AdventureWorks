@@ -1,12 +1,12 @@
-﻿using AdventureWorks.Application.Interfaces.Services.Stores;
-using AdventureWorks.Common.Constants;
+﻿using AdventureWorks.Common.Constants;
 using AdventureWorks.Common.Filtering;
-using AdventureWorks.Domain.Models.Sales;
 using Asp.Versioning;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using System.Globalization;
 using System.Text.Json;
+using AdventureWorks.Models.Features.Sales;
+using AdventureWorks.Application.Features.Sales.Contracts;
 
 namespace AdventureWorks.API.Controllers.v1.Stores;
 

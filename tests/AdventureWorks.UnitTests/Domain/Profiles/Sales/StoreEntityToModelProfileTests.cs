@@ -1,7 +1,7 @@
-﻿using AdventureWorks.Domain.Entities;
+﻿using AdventureWorks.Application.Features.Sales.Profiles;
+using AdventureWorks.Domain.Entities;
 using AdventureWorks.Domain.Entities.Sales;
-using AdventureWorks.Domain.Models.Sales;
-using AdventureWorks.Domain.Profiles.Sales;
+using AdventureWorks.Models.Features.Sales;
 using AutoMapper;
 
 namespace AdventureWorks.UnitTests.Domain.Profiles.Sales;

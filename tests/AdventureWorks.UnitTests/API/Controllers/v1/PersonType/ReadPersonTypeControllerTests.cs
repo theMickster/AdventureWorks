@@ -1,10 +1,10 @@
 ﻿using AdventureWorks.API.Controllers.v1.PersonType;
-using AdventureWorks.Application.Interfaces.Services.PersonType;
-using AdventureWorks.Domain.Models;
+using AdventureWorks.Application.Features.HumanResources.Queries;
+using AdventureWorks.Models.Features.HumanResources;
+using MediatR;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
 using System.Net;
-using AdventureWorks.Domain.Models.Person;
 
 namespace AdventureWorks.UnitTests.API.Controllers.v1.PersonType;
 
@@ -12,12 +12,12 @@ namespace AdventureWorks.UnitTests.API.Controllers.v1.PersonType;
 public sealed class ReadPersonTypeControllerTests : UnitTestBase
 {
     private readonly Mock<ILogger<ReadPersonTypeController>> _mockLogger = new();
-    private readonly Mock<IReadPersonTypeService> _mockReadPersonTypeService = new();
+    private readonly Mock<IMediator> _mockMediator = new();
     private readonly ReadPersonTypeController _sut;
 
     public ReadPersonTypeControllerTests()
     {
-        _sut = new ReadPersonTypeController(_mockLogger.Object, _mockReadPersonTypeService.Object);
+        _sut = new ReadPersonTypeController(_mockLogger.Object, _mockMediator.Object);
     }
 
     [Fact]
@@ -25,21 +25,21 @@ public sealed class ReadPersonTypeControllerTests : UnitTestBase
     {
         using (new AssertionScope())
         {
-            _ = ((Action)(() => _ = new ReadPersonTypeController(null!, _mockReadPersonTypeService.Object)))
+            _ = ((Action)(() => _ = new ReadPersonTypeController(null!, _mockMediator.Object)))
                 .Should().Throw<ArgumentNullException>("because we expect a null argument exception.")
                 .And.ParamName.Should().Be("logger");
 
             _ = ((Action)(() => _ = new ReadPersonTypeController(_mockLogger.Object, null!)))
                 .Should().Throw<ArgumentNullException>("because we expect a null argument exception.")
-                .And.ParamName.Should().Be("readPersonTypeService");
+                .And.ParamName.Should().Be("mediator");
         }
     }
 
     [Fact]
     public async Task GetById_returns_ok_Async()
     {
-        _mockReadPersonTypeService.Setup(
-                x => x.GetByIdAsync(It.IsAny<int>()))
+        _mockMediator.Setup(
+                x => x.Send(It.IsAny<ReadPersonTypeQuery>(), It.IsAny<CancellationToken>()))
             .ReturnsAsync(new PersonTypeModel { Id = 1, Name = "Home", Code = "ABC", Description = "123456"});
 
         var result = await _sut.GetByIdAsync(123);
@@ -55,7 +55,7 @@ public sealed class ReadPersonTypeControllerTests : UnitTestBase
     [Fact]
     public async Task GetById_returns_not_found_Async()
     {
-        _mockReadPersonTypeService.Setup(x => x.GetByIdAsync(It.IsAny<int>()))
+        _mockMediator.Setup(x => x.Send(It.IsAny<ReadPersonTypeQuery>(), It.IsAny<CancellationToken>()))
             .ReturnsAsync((PersonTypeModel)null!);
 
         var result = await _sut.GetByIdAsync(123456);
@@ -92,14 +92,14 @@ public sealed class ReadPersonTypeControllerTests : UnitTestBase
     [Fact]
     public async Task GetList_returns_ok_Async()
     {
-        _mockReadPersonTypeService.Setup(
-                x => x.GetListAsync())
+        _mockMediator.Setup(
+                x => x.Send(It.IsAny<ReadPersonTypeListQuery>(), It.IsAny<CancellationToken>()))
             .ReturnsAsync(
                 new List<PersonTypeModel>
                 {
-                    new() { Id = 1, Name = "Home"}
-                    ,new() { Id = 2, Name = "Billing"}
-                    ,new() { Id = 3, Name = "Mailing"}
+                    new() { Id = 1, Name = "Home", Code  = string.Empty, Description = string.Empty}
+                    ,new() { Id = 2, Name = "Billing", Code  = string.Empty, Description = string.Empty}
+                    ,new() { Id = 3, Name = "Mailing", Code  = string.Empty, Description = string.Empty}
                 });
 
         var result = await _sut.GetListAsync();
@@ -116,8 +116,8 @@ public sealed class ReadPersonTypeControllerTests : UnitTestBase
     [Fact]
     public async Task GetList_returns_not_found_Async()
     {
-        _mockReadPersonTypeService.Setup(
-                x => x.GetListAsync())
+        _mockMediator.Setup(
+                x => x.Send(It.IsAny<ReadPersonTypeListQuery>(), It.IsAny<CancellationToken>()))
             .ReturnsAsync(new List<PersonTypeModel>());
 
         var result = await _sut.GetListAsync();

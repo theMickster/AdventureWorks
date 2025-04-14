@@ -1,6 +1,6 @@
-﻿using AdventureWorks.Domain.Entities;
-using AdventureWorks.Domain.Models;
-using AdventureWorks.Domain.Profiles;
+﻿using AdventureWorks.Application.Features.AddressManagement.Profiles;
+using AdventureWorks.Domain.Entities;
+using AdventureWorks.Models.Features.AddressManagement;
 using AutoMapper;
 
 namespace AdventureWorks.UnitTests.Domain.Profiles;
@@ -49,8 +49,7 @@ public sealed class StateProvinceEntityToStateProvinceModelProfileTests : UnitTe
             result.CountryRegion.Name.Should().Be("United States");
             result.Territory.Id.Should().Be(3);
             result.Territory.Name.Should().Be("Central");
-            result.Territory.Code?.Should().BeNull();
-
+            result.Territory.Code?.Should().BeEmpty();
         }
     }
 }

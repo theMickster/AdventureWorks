@@ -1,9 +1,9 @@
 ﻿using AdventureWorks.API.Controllers.v1.AddressType;
-using AdventureWorks.Application.Interfaces.Services.AddressType;
-using AdventureWorks.Domain.Models;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
 using System.Net;
+using AdventureWorks.Models.Features.AddressManagement;
+using AdventureWorks.Application.Features.AddressManagement.Contracts;
 
 namespace AdventureWorks.UnitTests.API.Controllers.v1.AddressType;
 

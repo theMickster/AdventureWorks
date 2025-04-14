@@ -1,9 +1,9 @@
-﻿using AdventureWorks.Application.Interfaces.Repositories;
-using AdventureWorks.Application.Interfaces.Services.AddressType;
-using AdventureWorks.Application.Services.AddressType;
+﻿using AdventureWorks.Application.Features.AddressManagement.Contracts;
+using AdventureWorks.Application.Features.AddressManagement.Profiles;
+using AdventureWorks.Application.Features.AddressManagement.Services.AddressType;
+using AdventureWorks.Application.PersistenceContracts.Repositories;
 using AdventureWorks.Common.Attributes;
 using AdventureWorks.Domain.Entities;
-using AdventureWorks.Domain.Profiles;
 using AutoMapper;
 
 namespace AdventureWorks.UnitTests.Application.Services.AddressType;

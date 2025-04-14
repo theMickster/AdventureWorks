@@ -1,4 +1,4 @@
-﻿using AdventureWorks.Application.Interfaces.DbContext;
+﻿using AdventureWorks.Application.PersistenceContracts.DbContext;
 using AdventureWorks.Domain.Entities;
 using AdventureWorks.Domain.Entities.Person;
 using AdventureWorks.Domain.Entities.Sales;
