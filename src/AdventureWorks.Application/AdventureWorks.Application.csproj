@@ -46,6 +46,8 @@
 	  <Folder Include="Features\AddressManagement\Commands\" />
 	  <Folder Include="Features\AddressManagement\Queries\" />
 	  <Folder Include="Features\HumanResources\Commands\" />
+	  <Folder Include="Features\HumanResources\Contracts\" />
+	  <Folder Include="Features\HumanResources\Services\" />
 	  <Folder Include="Features\HumanResources\Validators\" />
 	  <Folder Include="Features\Sales\Commands\" />
 	  <Folder Include="Features\Sales\Queries\" />

@@ -5,38 +5,38 @@ using AdventureWorks.Domain.Entities.Person;
 
 namespace AdventureWorks.UnitTests.Application.Features.HumanResources.Queries;
 
-public sealed class ReadPersonTypeListQueryHandlerTests
+public sealed class ReadContactTypeListQueryHandlerTests
 {
     private readonly IMapper _mapper;
-    private readonly Mock<IPersonTypeRepository> _mockRepository = new();
-    private ReadPersonTypeListQueryHandler _sut;
+    private readonly Mock<IContactTypeRepository> _mockRepository = new();
+    private ReadContactTypeListQueryHandler _sut;
 
-    public ReadPersonTypeListQueryHandlerTests()
+    public ReadContactTypeListQueryHandlerTests()
     {
         var mappingConfig = new MapperConfiguration(config =>
             config.AddMaps(typeof(PersonTypeEntityToModelProfile).Assembly)
         );
         _mapper = mappingConfig.CreateMapper();
 
-        _sut = new ReadPersonTypeListQueryHandler(_mapper, _mockRepository.Object);
+        _sut = new ReadContactTypeListQueryHandler(_mapper, _mockRepository.Object);
     }
-
+    
     [Fact]
     public void Constructor_throws_correct_exceptions()
     {
         using (new AssertionScope())
         {
-            _ = ((Action)(() => _sut = new ReadPersonTypeListQueryHandler(
+            _ = ((Action)(() => _sut = new ReadContactTypeListQueryHandler(
                     null!,
                     _mockRepository.Object)))
                 .Should().Throw<ArgumentNullException>("because we expect a null argument exception.")
                 .And.ParamName.Should().Be("mapper");
 
-            _ = ((Action)(() => _sut = new ReadPersonTypeListQueryHandler(
+            _ = ((Action)(() => _sut = new ReadContactTypeListQueryHandler(
                     _mapper,
                     null!)))
                 .Should().Throw<ArgumentNullException>("because we expect a null argument exception.")
-                .And.ParamName.Should().Be("personTypeRepository");
+                .And.ParamName.Should().Be("contactTypeRepository");
         }
     }
 
@@ -44,17 +44,17 @@ public sealed class ReadPersonTypeListQueryHandlerTests
     public async Task Handle_returns_empty_listAsync()
     {
         _mockRepository.Setup(x => x.ListAllAsync())
-            .ReturnsAsync((IReadOnlyList<PersonTypeEntity>)null!);
+            .ReturnsAsync((IReadOnlyList<ContactTypeEntity>)null!);
 
-        var result = await _sut.Handle(new ReadPersonTypeListQuery(), CancellationToken.None);
+        var result = await _sut.Handle(new ReadContactTypeListQuery(), CancellationToken.None);
         result.Should().BeEmpty();
 
         _mockRepository.Reset();
 
         _mockRepository.Setup(x => x.ListAllAsync())
-            .ReturnsAsync(new List<PersonTypeEntity>());
+            .ReturnsAsync(new List<ContactTypeEntity>());
 
-        result = await _sut.Handle(new ReadPersonTypeListQuery(), CancellationToken.None);
+        result = await _sut.Handle(new ReadContactTypeListQuery(), CancellationToken.None);
         result.Should().BeEmpty();
     }
 
@@ -62,14 +62,14 @@ public sealed class ReadPersonTypeListQueryHandlerTests
     public async Task Handle_returns_valid_listAsync()
     {
         _mockRepository.Setup(x => x.ListAllAsync())
-            .ReturnsAsync(new List<PersonTypeEntity>
+            .ReturnsAsync(new List<ContactTypeEntity>
             {
-                new() {PersonTypeId = 1, PersonTypeName = "Home", PersonTypeDescription = "test"}
-                ,new() {PersonTypeId = 2, PersonTypeName = "Billing", PersonTypeDescription = "test02"}
-                ,new() {PersonTypeId = 3, PersonTypeName = "Mailing", PersonTypeDescription = "test03"}
+                new() {ContactTypeId = 1, Name = "Home"}
+                ,new() {ContactTypeId = 2, Name = "Billing"}
+                ,new() {ContactTypeId = 3, Name = "Mailing"}
             });
 
-        var result = await _sut.Handle(new ReadPersonTypeListQuery(), CancellationToken.None);
+        var result = await _sut.Handle(new ReadContactTypeListQuery(), CancellationToken.None);
         result.Count.Should().Be(3);
     }
 }

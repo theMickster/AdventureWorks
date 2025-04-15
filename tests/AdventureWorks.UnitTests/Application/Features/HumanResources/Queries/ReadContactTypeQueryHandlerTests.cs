@@ -5,20 +5,20 @@ using AdventureWorks.Domain.Entities.Person;
 
 namespace AdventureWorks.UnitTests.Application.Features.HumanResources.Queries;
 
-public sealed class ReadPersonTypeQueryHandlerTests : UnitTestBase
+public sealed class ReadContactTypeQueryHandlerTests
 {
     private readonly IMapper _mapper;
-    private readonly Mock<IPersonTypeRepository> _mockRepository = new();
-    private ReadPersonTypeQueryHandler _sut;
+    private readonly Mock<IContactTypeRepository> _mockRepository = new();
+    private ReadContactTypeQueryHandler _sut;
 
-    public ReadPersonTypeQueryHandlerTests()
+    public ReadContactTypeQueryHandlerTests()
     {
         var mappingConfig = new MapperConfiguration(config =>
             config.AddMaps(typeof(PersonTypeEntityToModelProfile).Assembly)
         );
         _mapper = mappingConfig.CreateMapper();
 
-        _sut = new ReadPersonTypeQueryHandler(_mapper, _mockRepository.Object);
+        _sut = new ReadContactTypeQueryHandler(_mapper, _mockRepository.Object);
     }
 
     [Fact]
@@ -26,27 +26,27 @@ public sealed class ReadPersonTypeQueryHandlerTests : UnitTestBase
     {
         using (new AssertionScope())
         {
-            _ = ((Action)(() => _sut = new ReadPersonTypeQueryHandler(
+            _ = ((Action)(() => _sut = new ReadContactTypeQueryHandler(
                     null!,
                     _mockRepository.Object)))
                 .Should().Throw<ArgumentNullException>("because we expect a null argument exception.")
                 .And.ParamName.Should().Be("mapper");
 
-            _ = ((Action)(() => _sut = new ReadPersonTypeQueryHandler(
+            _ = ((Action)(() => _sut = new ReadContactTypeQueryHandler(
                     _mapper,
                     null!)))
                 .Should().Throw<ArgumentNullException>("because we expect a null argument exception.")
-                .And.ParamName.Should().Be("personTypeRepository");
+                .And.ParamName.Should().Be("contactTypeRepository");
         }
     }
-    
+
     [Fact]
     public async Task Handle_returns_null_Async()
     {
         _mockRepository.Setup(x => x.GetByIdAsync(It.IsAny<int>()))
-            .ReturnsAsync((PersonTypeEntity)null!);
+            .ReturnsAsync((ContactTypeEntity)null!);
 
-        var result = await _sut.Handle(new ReadPersonTypeQuery{Id = 12}, CancellationToken.None);
+        var result = await _sut.Handle(new ReadContactTypeQuery { Id = 12 }, CancellationToken.None);
 
         result.Should().BeNull();
     }
@@ -55,18 +55,15 @@ public sealed class ReadPersonTypeQueryHandlerTests : UnitTestBase
     public async Task Handle_returns_correctly_Async()
     {
         _mockRepository.Setup(x => x.GetByIdAsync(1))
-            .ReturnsAsync(new PersonTypeEntity { PersonTypeId = 1, PersonTypeName = "Home", PersonTypeCode = "hello", PersonTypeDescription = "hello world" });
+            .ReturnsAsync(new ContactTypeEntity { ContactTypeId = 1, Name = "Home" });
 
-        var result = await _sut.Handle(new ReadPersonTypeQuery { Id = 1 }, CancellationToken.None);
+        var result = await _sut.Handle( new ReadContactTypeQuery { Id = 1 }, CancellationToken.None);
 
         using (new AssertionScope())
         {
             result.Should().NotBeNull();
             result!.Id.Should().Be(1);
             result!.Name.Should().Be("Home");
-            result!.Code.Should().Be("hello");
-            result!.Description.Should().Be("hello world");
         }
     }
-
 }

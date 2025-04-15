@@ -5,7 +5,7 @@ using MediatR;
 
 namespace AdventureWorks.Application.Features.HumanResources.Queries;
 
-public class ReadPersonTypeQueryHandler(
+public sealed class ReadPersonTypeQueryHandler(
     IMapper mapper,
     IPersonTypeRepository personTypeRepository) : IRequestHandler<ReadPersonTypeQuery, PersonTypeModel>
 {
