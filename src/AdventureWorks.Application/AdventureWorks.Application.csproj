@@ -66,9 +66,5 @@
 		<ProjectReference Include="..\AdventureWorks.Models\AdventureWorks.Models.csproj" />
 	</ItemGroup>
 
-	<ItemGroup>
-	  <Folder Include="Features\AddressManagement\Queries\" />
-	</ItemGroup>
-
 
 </Project>
