@@ -1,0 +1,22 @@
+﻿using AdventureWorks.Application.PersistenceContracts.Repositories;
+using AdventureWorks.Models.Features.AddressManagement;
+using AutoMapper;
+using MediatR;
+
+namespace AdventureWorks.Application.Features.AddressManagement.Queries;
+
+public sealed class ReadCountryRegionListQueryHandler (
+    IMapper mapper, 
+    ICountryRegionRepository repository) 
+        : IRequestHandler<ReadCountryRegionListQuery, List<CountryRegionModel>>   
+{
+    private readonly IMapper _mapper = mapper ?? throw new ArgumentNullException(nameof(mapper));
+    private readonly ICountryRegionRepository _repository = repository ?? throw new ArgumentNullException(nameof(repository));
+
+
+    public async Task<List<CountryRegionModel>> Handle(ReadCountryRegionListQuery request, CancellationToken cancellationToken)
+    {
+        var entities = await _repository.ListAllAsync();
+        return entities is not { Count: > 0 } ? [] : _mapper.Map<List<CountryRegionModel>>(entities);
+    }
+}

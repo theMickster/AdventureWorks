@@ -1,9 +1,10 @@
 ﻿using AdventureWorks.API.Controllers.v1.StateProvince;
+using AdventureWorks.Application.Features.AddressManagement.Queries;
+using AdventureWorks.Models.Features.AddressManagement;
+using MediatR;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
 using System.Net;
-using AdventureWorks.Models.Features.AddressManagement;
-using AdventureWorks.Application.Features.AddressManagement.Contracts;
 
 namespace AdventureWorks.UnitTests.API.Controllers.v1.StateProvince;
 
@@ -11,12 +12,12 @@ namespace AdventureWorks.UnitTests.API.Controllers.v1.StateProvince;
 public sealed class ReadStateProvinceControllerTests : UnitTestBase
 {
     private readonly Mock<ILogger<ReadStateProvinceController>> _mockLogger = new();
-    private readonly Mock<IReadStateProvinceService> _mockReadStateProvinceService = new();
+    private readonly Mock<IMediator> _mockMediator = new();
     private readonly ReadStateProvinceController _sut;
 
     public ReadStateProvinceControllerTests()
     {
-        _sut = new ReadStateProvinceController(_mockLogger.Object, _mockReadStateProvinceService.Object);
+        _sut = new ReadStateProvinceController(_mockLogger.Object, _mockMediator.Object);
     }
 
     [Fact]
@@ -24,21 +25,21 @@ public sealed class ReadStateProvinceControllerTests : UnitTestBase
     {
         using (new AssertionScope())
         {
-            _ = ((Action)(() => _ = new ReadStateProvinceController(null!, _mockReadStateProvinceService.Object)))
+            _ = ((Action)(() => _ = new ReadStateProvinceController(null!, _mockMediator.Object)))
                 .Should().Throw<ArgumentNullException>("because we expect a null argument exception.")
                 .And.ParamName.Should().Be("logger");
 
             _ = ((Action)(() => _ = new ReadStateProvinceController(_mockLogger.Object, null!)))
                 .Should().Throw<ArgumentNullException>("because we expect a null argument exception.")
-                .And.ParamName.Should().Be("readStateProvinceService");
+                .And.ParamName.Should().Be("mediator");
         }
     }
 
     [Fact]
     public async Task GetById_returns_ok_Async()
     {
-        _mockReadStateProvinceService.Setup(
-                x => x.GetByIdAsync(It.IsAny<int>()))
+        _mockMediator.Setup(
+                x => x.Send(It.IsAny<ReadStateProvinceQuery>(), It.IsAny<CancellationToken>()))
             .ReturnsAsync(new StateProvinceModel
                 { Code = "JP", Name = "Japan", Id = 1, IsStateProvinceCodeUnavailable = true });
 
@@ -55,8 +56,8 @@ public sealed class ReadStateProvinceControllerTests : UnitTestBase
     [Fact]
     public async Task GetById_returns_not_found_Async()
     {
-        _mockReadStateProvinceService.Setup(
-                x => x.GetByIdAsync(It.IsAny<int>()))
+        _mockMediator.Setup(
+                x => x.Send(It.IsAny<ReadStateProvinceQuery>(), It.IsAny<CancellationToken>()))
             .ReturnsAsync((StateProvinceModel)null!);
 
         var result = await _sut.GetByIdAsync(123456);
@@ -93,8 +94,8 @@ public sealed class ReadStateProvinceControllerTests : UnitTestBase
     [Fact]
     public async Task GetList_returns_ok_Async()
     {
-        _mockReadStateProvinceService.Setup(
-                x => x.GetListAsync())
+        _mockMediator.Setup(
+                x => x.Send(It.IsAny<ReadStateProvinceListQuery>(), It.IsAny<CancellationToken>()))
             .ReturnsAsync(
                 new List<StateProvinceModel>
                 {
@@ -116,8 +117,8 @@ public sealed class ReadStateProvinceControllerTests : UnitTestBase
     [Fact]
     public async Task GetList_returns_not_found_Async()
     {
-        _mockReadStateProvinceService.Setup(
-                x => x.GetListAsync())
+        _mockMediator.Setup(
+                x => x.Send(It.IsAny<ReadStateProvinceListQuery>(), It.IsAny<CancellationToken>()))
             .ReturnsAsync(new List<StateProvinceModel>());
 
         var result = await _sut.GetListAsync();
