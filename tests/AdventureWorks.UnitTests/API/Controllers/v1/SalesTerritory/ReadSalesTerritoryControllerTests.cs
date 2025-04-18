@@ -1,6 +1,7 @@
 ﻿using AdventureWorks.API.Controllers.v1.SalesTerritory;
-using AdventureWorks.Application.Interfaces.Services.SalesTerritory;
-using AdventureWorks.Domain.Models;
+using AdventureWorks.Application.Features.Sales.Queries;
+using AdventureWorks.Models.Features.Sales;
+using MediatR;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
 using System.Net;
@@ -11,12 +12,12 @@ namespace AdventureWorks.UnitTests.API.Controllers.v1.SalesTerritory;
 public sealed class ReadSalesTerritoryControllerTests : UnitTestBase
 {
     private readonly Mock<ILogger<ReadSalesTerritoryController>> _mockLogger = new();
-    private readonly Mock<IReadSalesTerritoryService> _mockReadSalesTerritoryService = new();
+    private readonly Mock<IMediator> _mockMediator = new();
     private readonly ReadSalesTerritoryController _sut;
 
     public ReadSalesTerritoryControllerTests()
     {
-        _sut = new ReadSalesTerritoryController(_mockLogger.Object, _mockReadSalesTerritoryService.Object);
+        _sut = new ReadSalesTerritoryController(_mockLogger.Object, _mockMediator.Object);
     }
 
     [Fact]
@@ -24,21 +25,21 @@ public sealed class ReadSalesTerritoryControllerTests : UnitTestBase
     {
         using (new AssertionScope())
         {
-            _ = ((Action)(() => _ = new ReadSalesTerritoryController(null!, _mockReadSalesTerritoryService.Object)))
+            _ = ((Action)(() => _ = new ReadSalesTerritoryController(null!, _mockMediator.Object)))
                 .Should().Throw<ArgumentNullException>("because we expect a null argument exception.")
                 .And.ParamName.Should().Be("logger");
 
             _ = ((Action)(() => _ = new ReadSalesTerritoryController(_mockLogger.Object, null!)))
                 .Should().Throw<ArgumentNullException>("because we expect a null argument exception.")
-                .And.ParamName.Should().Be("readSalesTerritoryService");
+                .And.ParamName.Should().Be("mediator");
         }
     }
 
     [Fact]
     public async Task GetById_returns_ok_Async()
     {
-        _mockReadSalesTerritoryService.Setup(
-                x => x.GetByIdAsync(It.IsAny<int>()))
+        _mockMediator.Setup(
+                x => x.Send(It.IsAny<ReadSalesTerritoryQuery>(), It.IsAny<CancellationToken>()))
             .ReturnsAsync(new SalesTerritoryModel { Id = 1, Name = "Home" });
 
         var result = await _sut.GetByIdAsync(123);
@@ -54,7 +55,7 @@ public sealed class ReadSalesTerritoryControllerTests : UnitTestBase
     [Fact]
     public async Task GetById_returns_not_found_Async()
     {
-        _mockReadSalesTerritoryService.Setup(x => x.GetByIdAsync(It.IsAny<int>()))
+        _mockMediator.Setup(x => x.Send(It.IsAny<ReadSalesTerritoryQuery>(), It.IsAny<CancellationToken>()))
             .ReturnsAsync((SalesTerritoryModel)null!);
 
         var result = await _sut.GetByIdAsync(123456);
@@ -91,8 +92,8 @@ public sealed class ReadSalesTerritoryControllerTests : UnitTestBase
     [Fact]
     public async Task GetList_returns_ok_Async()
     {
-        _mockReadSalesTerritoryService.Setup(
-                x => x.GetListAsync())
+        _mockMediator.Setup(
+                x => x.Send(It.IsAny<ReadSalesTerritoryListQuery>(), It.IsAny<CancellationToken>()))
             .ReturnsAsync(
                 new List<SalesTerritoryModel>
                 {
@@ -115,8 +116,8 @@ public sealed class ReadSalesTerritoryControllerTests : UnitTestBase
     [Fact]
     public async Task GetList_returns_not_found_Async()
     {
-        _mockReadSalesTerritoryService.Setup(
-                x => x.GetListAsync())
+        _mockMediator.Setup(
+                x => x.Send(It.IsAny<ReadSalesTerritoryListQuery>(), It.IsAny<CancellationToken>()))
             .ReturnsAsync(new List<SalesTerritoryModel>());
 
         var result = await _sut.GetListAsync();

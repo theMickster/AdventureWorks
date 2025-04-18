@@ -1,8 +1,8 @@
-﻿using AdventureWorks.Application.Interfaces.Repositories;
-using AdventureWorks.Domain.Entities;
+﻿using AdventureWorks.Domain.Entities;
 using AdventureWorks.Infrastructure.Persistence.DbContexts;
 using Microsoft.EntityFrameworkCore;
 using System.Threading.Tasks;
+using AdventureWorks.Application.PersistenceContracts.Repositories;
 using AdventureWorks.Domain.Entities.Sales;
 
 namespace AdventureWorks.Infrastructure.Persistence.Repositories;

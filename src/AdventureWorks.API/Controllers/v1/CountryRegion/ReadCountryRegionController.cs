@@ -1,6 +1,7 @@
-﻿using AdventureWorks.Application.Interfaces.Services.CountryRegion;
-using AdventureWorks.Domain.Models;
+﻿using AdventureWorks.Application.Features.AddressManagement.Queries;
+using AdventureWorks.Models.Features.AddressManagement;
 using Asp.Versioning;
+using MediatR;
 using Microsoft.AspNetCore.Mvc;
 
 namespace AdventureWorks.API.Controllers.v1.CountryRegion;
@@ -17,20 +18,19 @@ namespace AdventureWorks.API.Controllers.v1.CountryRegion;
 public  class ReadCountryRegionController : ControllerBase
 {
     private readonly ILogger<ReadCountryRegionController> _logger;
-    private readonly IReadCountryRegionService _readCountryRegionService;
+    private readonly IMediator _mediator;
 
     /// <summary>
     /// The controller that coordinates retrieving Country Region information.
     /// </summary>
-    /// <param name="logger"></param>
-    /// <param name="readCountryRegionService"></param>
-    /// <exception cref="ArgumentNullException"></exception>
     public ReadCountryRegionController(
         ILogger<ReadCountryRegionController> logger,
-        IReadCountryRegionService readCountryRegionService)
+        IMediator mediator)
     {
-        _logger = logger ?? throw new ArgumentNullException(nameof(logger));
-        _readCountryRegionService = readCountryRegionService ?? throw new ArgumentNullException(nameof(readCountryRegionService));
+        ArgumentNullException.ThrowIfNull(logger, nameof(logger));
+        ArgumentNullException.ThrowIfNull(mediator, nameof(mediator));
+        _logger = logger;
+        _mediator = mediator;
     }
 
     /// <summary>
@@ -47,14 +47,9 @@ public  class ReadCountryRegionController : ControllerBase
             return BadRequest("A valid country region id must be specified.");
         }
 
-        var model = await _readCountryRegionService.GetByIdAsync(id).ConfigureAwait(false);
+        var model = await _mediator.Send(new ReadCountryRegionQuery { Code = id });
 
-        if (model == null)
-        {
-            return NotFound("Unable to locate the country region.");
-        }
-
-        return Ok(model);
+        return model is null ? NotFound("Unable to locate the country region.") : Ok(model);
 
     }
 
@@ -66,9 +61,9 @@ public  class ReadCountryRegionController : ControllerBase
     [Produces(typeof(CountryRegionModel))]
     public async Task<IActionResult> GetListAsync()
     {
-        var model = await _readCountryRegionService.GetListAsync().ConfigureAwait(false);
+        var model = await _mediator.Send(new ReadCountryRegionListQuery());
 
-        if (!model.Any())
+        if (model is not { Count: > 0 })
         {
             return NotFound("Unable to locate records the country region list.");
         }

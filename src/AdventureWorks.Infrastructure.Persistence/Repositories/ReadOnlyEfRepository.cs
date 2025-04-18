@@ -1,8 +1,8 @@
 ﻿using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
-using AdventureWorks.Application;
-using AdventureWorks.Application.Interfaces.Repositories;
+using AdventureWorks.Application.PersistenceContracts.Repositories;
+using AdventureWorks.Application.Specifications;
 using AdventureWorks.Domain.Entities;
 using AdventureWorks.Infrastructure.Persistence.DbContexts;
 using Microsoft.EntityFrameworkCore;

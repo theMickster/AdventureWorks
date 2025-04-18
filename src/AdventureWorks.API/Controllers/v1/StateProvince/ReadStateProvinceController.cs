@@ -1,6 +1,7 @@
-﻿using AdventureWorks.Application.Interfaces.Services.StateProvince;
-using AdventureWorks.Domain.Models;
+﻿using AdventureWorks.Application.Features.AddressManagement.Queries;
+using AdventureWorks.Models.Features.AddressManagement;
 using Asp.Versioning;
+using MediatR;
 using Microsoft.AspNetCore.Mvc;
 
 namespace AdventureWorks.API.Controllers.v1.StateProvince;
@@ -18,21 +19,20 @@ namespace AdventureWorks.API.Controllers.v1.StateProvince;
 public sealed class ReadStateProvinceController : ControllerBase
 {
     private readonly ILogger<ReadStateProvinceController> _logger;
-    private readonly IReadStateProvinceService _readStateProvinceService;
+    private readonly IMediator _mediator;
 
     /// <summary>
     /// The controller that coordinates retrieving State Province information.
     /// </summary>
-    /// <param name="logger"></param>
-    /// <param name="readStateProvinceService"></param>
-    /// <exception cref="ArgumentNullException"></exception>
     public ReadStateProvinceController(
         ILogger<ReadStateProvinceController> logger,
-        IReadStateProvinceService readStateProvinceService
+        IMediator mediator
         )
     {
-        _logger = logger ?? throw new ArgumentNullException(nameof(logger));
-        _readStateProvinceService = readStateProvinceService ?? throw new ArgumentNullException(nameof(readStateProvinceService));
+        ArgumentNullException.ThrowIfNull(logger, nameof(logger));
+        ArgumentNullException.ThrowIfNull(mediator, nameof(mediator));
+        _logger = logger;
+        _mediator = mediator;
     }
 
     /// <summary>
@@ -49,14 +49,9 @@ public sealed class ReadStateProvinceController : ControllerBase
             return BadRequest("A valid state province id must be specified.");
         }
 
-        var model = await _readStateProvinceService.GetByIdAsync(id).ConfigureAwait(false);
+        var model = await _mediator.Send(new ReadStateProvinceQuery() { Id = id });
 
-        if (model == null)
-        {
-            return NotFound("Unable to locate the state province.");
-        }
-
-        return Ok(model);
+        return model is null ? NotFound("Unable to locate the state province.") : Ok(model);
     }
 
     /// <summary>
@@ -67,9 +62,9 @@ public sealed class ReadStateProvinceController : ControllerBase
     [Produces(typeof(StateProvinceModel))]
     public async Task<IActionResult> GetListAsync()
     {
-        var model = await _readStateProvinceService.GetListAsync().ConfigureAwait(false);
+        var model = await _mediator.Send(new ReadStateProvinceListQuery());
 
-        if (!model.Any())
+        if (model is not { Count: > 0 })
         {
             return NotFound("Unable to locate records the state province list.");
         }

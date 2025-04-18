@@ -1,6 +1,7 @@
 ﻿using AdventureWorks.API.Controllers.v1.AddressType;
-using AdventureWorks.Application.Interfaces.Services.AddressType;
-using AdventureWorks.Domain.Models;
+using AdventureWorks.Application.Features.AddressManagement.Queries;
+using AdventureWorks.Models.Features.AddressManagement;
+using MediatR;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
 using System.Net;
@@ -11,12 +12,12 @@ namespace AdventureWorks.UnitTests.API.Controllers.v1.AddressType;
 public sealed class ReadAddressTypeControllerTests : UnitTestBase
 {
     private readonly Mock<ILogger<ReadAddressTypeController>> _mockLogger = new();
-    private readonly Mock<IReadAddressTypeService> _mockReadAddressTypeService = new();
+    private readonly Mock<IMediator> _mockMediator = new();
     private readonly ReadAddressTypeController _sut;
 
     public ReadAddressTypeControllerTests()
     {
-        _sut = new ReadAddressTypeController(_mockLogger.Object, _mockReadAddressTypeService.Object);
+        _sut = new ReadAddressTypeController(_mockLogger.Object, _mockMediator.Object);
     }
 
     [Fact]
@@ -24,21 +25,21 @@ public sealed class ReadAddressTypeControllerTests : UnitTestBase
     {
         using (new AssertionScope())
         {
-            _ = ((Action)(() => _ = new ReadAddressTypeController(null!, _mockReadAddressTypeService.Object)))
+            _ = ((Action)(() => _ = new ReadAddressTypeController(null!, _mockMediator.Object)))
                 .Should().Throw<ArgumentNullException>("because we expect a null argument exception.")
                 .And.ParamName.Should().Be("logger");
 
             _ = ((Action)(() => _ = new ReadAddressTypeController(_mockLogger.Object, null!)))
                 .Should().Throw<ArgumentNullException>("because we expect a null argument exception.")
-                .And.ParamName.Should().Be("readAddressTypeService");
+                .And.ParamName.Should().Be("mediator");
         }
     }
 
     [Fact]
     public async Task GetById_returns_ok_Async()
     {
-        _mockReadAddressTypeService.Setup(
-                x => x.GetByIdAsync(It.IsAny<int>()))
+        _mockMediator.Setup(
+                x => x.Send(It.IsAny<ReadAddressTypeQuery>(), It.IsAny<CancellationToken>()))
             .ReturnsAsync(new AddressTypeModel { Id = 1, Name = "Home"});
 
         var result = await _sut.GetByIdAsync(123);
@@ -54,7 +55,7 @@ public sealed class ReadAddressTypeControllerTests : UnitTestBase
     [Fact]
     public async Task GetById_returns_not_found_Async()
     {
-        _mockReadAddressTypeService.Setup(x => x.GetByIdAsync(It.IsAny<int>()))
+        _mockMediator.Setup(x => x.Send(It.IsAny<ReadAddressTypeQuery>(), It.IsAny<CancellationToken>()))
             .ReturnsAsync((AddressTypeModel)null!);
 
         var result = await _sut.GetByIdAsync(123456);
@@ -91,8 +92,8 @@ public sealed class ReadAddressTypeControllerTests : UnitTestBase
     [Fact]
     public async Task GetList_returns_ok_Async()
     {
-        _mockReadAddressTypeService.Setup(
-                x => x.GetListAsync())
+        _mockMediator.Setup(
+                x => x.Send(It.IsAny<ReadAddressTypeListQuery>() ,It.IsAny<CancellationToken>()))
             .ReturnsAsync(
                 new List<AddressTypeModel>
                 {
@@ -115,8 +116,8 @@ public sealed class ReadAddressTypeControllerTests : UnitTestBase
     [Fact]
     public async Task GetList_returns_not_found_Async()
     {
-        _mockReadAddressTypeService.Setup(
-                x => x.GetListAsync())
+        _mockMediator.Setup(
+                x => x.Send(It.IsAny<ReadAddressTypeListQuery>(), It.IsAny<CancellationToken>()))
             .ReturnsAsync(new List<AddressTypeModel>());
 
         var result = await _sut.GetListAsync();

@@ -1,7 +1,7 @@
-﻿using System.Collections;
-using AdventureWorks.API.Controllers.v1.CountryRegion;
-using AdventureWorks.Application.Interfaces.Services.CountryRegion;
-using AdventureWorks.Domain.Models;
+﻿using AdventureWorks.API.Controllers.v1.CountryRegion;
+using AdventureWorks.Application.Features.AddressManagement.Queries;
+using AdventureWorks.Models.Features.AddressManagement;
+using MediatR;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
 using System.Net;
@@ -12,12 +12,12 @@ namespace AdventureWorks.UnitTests.API.Controllers.v1.CountryRegion;
 public sealed class ReadCountryRegionControllerTests : UnitTestBase
 {
     private readonly Mock<ILogger<ReadCountryRegionController>> _mockLogger = new();
-    private readonly Mock<IReadCountryRegionService> _mockReadCountryRegionService = new();
+    private readonly Mock<IMediator> _mockMediator = new();
     private readonly ReadCountryRegionController _sut;
 
     public ReadCountryRegionControllerTests()
     {
-        _sut = new ReadCountryRegionController(_mockLogger.Object, _mockReadCountryRegionService.Object);
+        _sut = new ReadCountryRegionController(_mockLogger.Object, _mockMediator.Object);
     }
 
     [Fact]
@@ -25,21 +25,21 @@ public sealed class ReadCountryRegionControllerTests : UnitTestBase
     {
         using (new AssertionScope())
         {
-            _ = ((Action)(() => _ = new ReadCountryRegionController(null!, _mockReadCountryRegionService.Object)))
+            _ = ((Action)(() => _ = new ReadCountryRegionController(null!, _mockMediator.Object)))
                 .Should().Throw<ArgumentNullException>("because we expect a null argument exception.")
                 .And.ParamName.Should().Be("logger");
 
             _ = ((Action)(() => _ = new ReadCountryRegionController(_mockLogger.Object, null!)))
                 .Should().Throw<ArgumentNullException>("because we expect a null argument exception.")
-                .And.ParamName.Should().Be("readCountryRegionService");
+                .And.ParamName.Should().Be("mediator");
         }
     }
 
     [Fact]
     public async Task GetById_returns_ok_Async()
     {
-        _mockReadCountryRegionService.Setup(
-                x => x.GetByIdAsync(It.IsAny<string>()))
+        _mockMediator.Setup(
+                x => x.Send(It.IsAny<ReadCountryRegionQuery>(), It.IsAny<CancellationToken>()))
             .ReturnsAsync( new CountryRegionModel {Code = "JP", Name = "Japan"});
 
         var result = await _sut.GetByIdAsync("JP");
@@ -55,8 +55,8 @@ public sealed class ReadCountryRegionControllerTests : UnitTestBase
     [Fact]
     public async Task GetById_returns_not_found_Async()
     {
-        _mockReadCountryRegionService.Setup(
-                x => x.GetByIdAsync(It.IsAny<string>()))
+        _mockMediator.Setup(
+                x => x.Send(It.IsAny<ReadCountryRegionQuery>(), It.IsAny<CancellationToken>()))
             .ReturnsAsync((CountryRegionModel)null!);
 
         var result = await _sut.GetByIdAsync("JP");
@@ -93,8 +93,8 @@ public sealed class ReadCountryRegionControllerTests : UnitTestBase
     [Fact]
     public async Task GetList_returns_ok_Async()
     {
-        _mockReadCountryRegionService.Setup(
-                x => x.GetListAsync())
+        _mockMediator.Setup(
+                x => x.Send(It.IsAny<ReadCountryRegionListQuery>(), It.IsAny<CancellationToken>()))
             .ReturnsAsync(
                 new List<CountryRegionModel>
                 {
@@ -115,8 +115,8 @@ public sealed class ReadCountryRegionControllerTests : UnitTestBase
     [Fact]
     public async Task GetList_returns_not_found_Async()
     {
-        _mockReadCountryRegionService.Setup(
-                x => x.GetListAsync())
+        _mockMediator.Setup(
+                x => x.Send(It.IsAny<ReadCountryRegionListQuery>(), It.IsAny<CancellationToken>()))
             .ReturnsAsync(new List<CountryRegionModel>());
 
         var result = await _sut.GetListAsync();

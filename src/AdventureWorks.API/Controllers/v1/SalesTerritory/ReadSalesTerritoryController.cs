@@ -1,6 +1,7 @@
-﻿using AdventureWorks.Application.Interfaces.Services.SalesTerritory;
-using AdventureWorks.Domain.Models;
+﻿using AdventureWorks.Application.Features.Sales.Queries;
+using AdventureWorks.Models.Features.Sales;
 using Asp.Versioning;
+using MediatR;
 using Microsoft.AspNetCore.Mvc;
 
 namespace AdventureWorks.API.Controllers.v1.SalesTerritory;
@@ -17,7 +18,7 @@ namespace AdventureWorks.API.Controllers.v1.SalesTerritory;
 public sealed class ReadSalesTerritoryController : ControllerBase
 {
     private readonly ILogger<ReadSalesTerritoryController> _logger;
-    private readonly IReadSalesTerritoryService _readSalesTerritoryService;
+    private readonly IMediator _mediator;
 
     /// <summary>
     /// The controller that coordinates retrieving Sales Territory information.
@@ -25,11 +26,12 @@ public sealed class ReadSalesTerritoryController : ControllerBase
     /// <remarks></remarks>
     public ReadSalesTerritoryController(
         ILogger<ReadSalesTerritoryController> logger,
-        IReadSalesTerritoryService readSalesTerritoryService
-    )
+        IMediator mediator)
     {
-        _logger = logger ?? throw new ArgumentNullException(nameof(logger));
-        _readSalesTerritoryService = readSalesTerritoryService ?? throw new ArgumentNullException(nameof(readSalesTerritoryService));
+        ArgumentNullException.ThrowIfNull(logger, nameof(logger));
+        ArgumentNullException.ThrowIfNull(mediator, nameof(mediator));
+        _logger = logger;
+        _mediator = mediator;
     }
 
     /// <summary>
@@ -46,14 +48,9 @@ public sealed class ReadSalesTerritoryController : ControllerBase
             return BadRequest("A valid sales territory id must be specified.");
         }
 
-        var model = await _readSalesTerritoryService.GetByIdAsync(id).ConfigureAwait(false);
+        var model = await _mediator.Send(new ReadSalesTerritoryQuery { Id = id });
 
-        if (model == null)
-        {
-            return NotFound("Unable to locate the sales territory.");
-        }
-
-        return Ok(model);
+        return model is null ? NotFound("Unable to locate the sales territory.") : Ok(model);
     }
 
     /// <summary>
@@ -64,9 +61,9 @@ public sealed class ReadSalesTerritoryController : ControllerBase
     [Produces(typeof(SalesTerritoryModel))]
     public async Task<IActionResult> GetListAsync()
     {
-        var model = await _readSalesTerritoryService.GetListAsync().ConfigureAwait(false);
+        var model = await _mediator.Send(new ReadSalesTerritoryListQuery());
 
-        if (!model.Any())
+        if (model is not { Count: > 0 })
         {
             return NotFound("Unable to locate records the sales territory list.");
         }

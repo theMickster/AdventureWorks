@@ -1,6 +1,7 @@
-﻿using AdventureWorks.Application.Interfaces.Services.ContactType;
-using AdventureWorks.Domain.Models.Person;
+﻿using AdventureWorks.Application.Features.HumanResources.Queries;
+using AdventureWorks.Models.Features.HumanResources;
 using Asp.Versioning;
+using MediatR;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
@@ -19,7 +20,7 @@ namespace AdventureWorks.API.Controllers.v1.ContactType;
 public class ReadContactTypeController : ControllerBase
 {
     private readonly ILogger<ReadContactTypeController> _logger;
-    private readonly IReadContactTypeService _readContactTypeService;
+    private readonly IMediator _mediator;
 
     /// <summary>
     /// The controller that coordinates retrieving Contact Type information.
@@ -27,10 +28,12 @@ public class ReadContactTypeController : ControllerBase
     /// <remarks></remarks>
     public ReadContactTypeController(
         ILogger<ReadContactTypeController> logger,
-        IReadContactTypeService readContactTypeService)
+        IMediator mediator)
     {
-        _logger = logger ?? throw new ArgumentNullException(nameof(logger));
-        _readContactTypeService = readContactTypeService ?? throw new ArgumentNullException(nameof(readContactTypeService));
+        ArgumentNullException.ThrowIfNull(logger, nameof(logger));
+        ArgumentNullException.ThrowIfNull(mediator, nameof(mediator));
+        _logger = logger;
+        _mediator = mediator;
     }
 
     /// <summary>
@@ -47,14 +50,9 @@ public class ReadContactTypeController : ControllerBase
             return BadRequest("A valid contact type id must be specified.");
         }
 
-        var model = await _readContactTypeService.GetByIdAsync(id).ConfigureAwait(false);
+        var model = await _mediator.Send(new ReadContactTypeQuery{ Id = id });
 
-        if (model == null)
-        {
-            return NotFound("Unable to locate the contact type.");
-        }
-
-        return Ok(model);
+        return model is null ? NotFound("Unable to locate the contact type.") : Ok(model);
     }
 
     /// <summary>
@@ -65,9 +63,9 @@ public class ReadContactTypeController : ControllerBase
     [Produces(typeof(ContactTypeModel))]
     public async Task<IActionResult> GetListAsync()
     {
-        var model = await _readContactTypeService.GetListAsync().ConfigureAwait(false);
+        var model = await _mediator.Send(new ReadContactTypeListQuery());
 
-        if (!model.Any())
+        if (model is not { Count: > 0 })
         {
             return NotFound("Unable to locate records the contact type list.");
         }

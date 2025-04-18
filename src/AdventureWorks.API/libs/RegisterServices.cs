@@ -1,12 +1,12 @@
 using AdventureWorks.Application.Exceptions;
+using AdventureWorks.Application.Features.AddressManagement.Validators;
+using AdventureWorks.Application.Helpers;
 using AdventureWorks.Application.Http;
-using AdventureWorks.Application.Interfaces.DbContext;
-using AdventureWorks.Application.Interfaces.Http;
-using AdventureWorks.Application.Validators.Address;
+using AdventureWorks.Application.PersistenceContracts.DbContext;
+using AdventureWorks.Application.PersistenceContracts.Http;
 using AdventureWorks.Common.Attributes;
 using AdventureWorks.Common.Constants;
 using AdventureWorks.Common.Settings;
-using AdventureWorks.Domain.Profiles;
 using AdventureWorks.Infrastructure.Persistence.DbContexts;
 using Asp.Versioning;
 using FluentValidation;
@@ -106,8 +106,8 @@ internal static class RegisterServices
             options.DocInclusionPredicate((name, api) => true);
         });
 
-        builder.Services.AddAutoMapper(typeof(AddressEntityToAddressModelProfile).GetTypeInfo().Assembly);
         builder.Services.AddValidatorsFromAssemblyContaining<CreateAddressValidator>();
+        builder.Services.AddApplicationServices();
         return builder;
     }
 

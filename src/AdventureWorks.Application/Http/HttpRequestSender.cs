@@ -1,8 +1,8 @@
-﻿using AdventureWorks.Application.Interfaces.Http;
-using Microsoft.AspNetCore.JsonPatch;
+﻿using Microsoft.AspNetCore.JsonPatch;
 using System.Net.Http.Headers;
 using System.Text;
 using System.Text.Json;
+using AdventureWorks.Application.PersistenceContracts.Http;
 
 namespace AdventureWorks.Application.Http;
 public sealed class HttpRequestSender : IHttpRequestSender

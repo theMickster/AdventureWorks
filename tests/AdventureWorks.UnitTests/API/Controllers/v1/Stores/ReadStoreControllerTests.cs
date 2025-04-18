@@ -1,11 +1,12 @@
 ﻿using AdventureWorks.API.Controllers.v1.Stores;
-using AdventureWorks.Application.Interfaces.Services.Stores;
-using AdventureWorks.Domain.Models.Sales;
+using AdventureWorks.Application.Features.Sales.Queries;
+using AdventureWorks.Common.Filtering;
+using AdventureWorks.Models.Features.Sales;
+using AdventureWorks.Test.Common.Extensions;
+using MediatR;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
 using System.Net;
-using AdventureWorks.Common.Filtering;
-using AdventureWorks.Test.Common.Extensions;
 
 namespace AdventureWorks.UnitTests.API.Controllers.v1.Stores;
 
@@ -13,12 +14,12 @@ namespace AdventureWorks.UnitTests.API.Controllers.v1.Stores;
 public sealed class ReadStoreControllerTests : UnitTestBase
 {
     private readonly Mock<ILogger<ReadStoreController>> _mockLogger = new();
-    private readonly Mock<IReadStoreService> _mockReadStoreService = new();
+    private readonly Mock<IMediator> _mockMediator = new();
     private readonly ReadStoreController _sut;
 
     public ReadStoreControllerTests()
     {
-        _sut = new ReadStoreController(_mockLogger.Object, _mockReadStoreService.Object);
+        _sut = new ReadStoreController(_mockLogger.Object, _mockMediator.Object);
     }
     
     [Fact]
@@ -26,13 +27,13 @@ public sealed class ReadStoreControllerTests : UnitTestBase
     {
         using (new AssertionScope())
         {
-            _ = ((Action)(() => _ = new ReadStoreController(null!, _mockReadStoreService.Object)))
+            _ = ((Action)(() => _ = new ReadStoreController(null!, _mockMediator.Object)))
                 .Should().Throw<ArgumentNullException>("because we expect a null argument exception.")
                 .And.ParamName.Should().Be("logger");
 
             _ = ((Action)(() => _ = new ReadStoreController(_mockLogger.Object, null!)))
                 .Should().Throw<ArgumentNullException>("because we expect a null argument exception.")
-                .And.ParamName.Should().Be("readStoreService");
+                .And.ParamName.Should().Be("mediator");
         }
     }
 
@@ -41,7 +42,7 @@ public sealed class ReadStoreControllerTests : UnitTestBase
     {
         const int id = 7;
 
-        _mockReadStoreService.Setup(x => x.GetByIdAsync(It.IsAny<int>()))
+        _mockMediator.Setup(x => x.Send(It.IsAny<ReadStoreQuery>(), It.IsAny<CancellationToken>()))
             .ReturnsAsync(new StoreModel { Id = id });
 
         var result = await _sut.GetByIdAsync(7);
@@ -59,7 +60,7 @@ public sealed class ReadStoreControllerTests : UnitTestBase
     [Fact]
     public async Task GetById_returns_not_found_Async()
     {
-        _mockReadStoreService.Setup(x => x.GetByIdAsync(It.IsAny<int>()))
+        _mockMediator.Setup(x => x.Send(It.IsAny<ReadStoreQuery>(), It.IsAny<CancellationToken>()))
             .ReturnsAsync((StoreModel?)null);
 
         var result = await _sut.GetByIdAsync(7);
@@ -72,7 +73,7 @@ public sealed class ReadStoreControllerTests : UnitTestBase
             objectResult!.StatusCode.Should().Be((int)HttpStatusCode.NotFound);
 
             outputModel.Should().NotBeNull();
-            outputModel!.Should().Be("Unable to locate Store.");
+            outputModel!.Should().Be("Unable to locate the store.");
         }
     }
 
@@ -99,7 +100,7 @@ public sealed class ReadStoreControllerTests : UnitTestBase
     [Fact]
     public async Task GetStoreListAsync_returns_ok_Async()
     {
-        _mockReadStoreService.Setup(x => x.GetStoresAsync(It.IsAny<StoreParameter>()))
+        _mockMediator.Setup(x => x.Send(It.IsAny<ReadStoreListQuery>(), It.IsAny<CancellationToken>()))
             .ReturnsAsync(new StoreSearchResultModel { Results = new List<StoreModel> {new()} });
 
         var result = await _sut.GetStoreListAsync(new StoreParameter());
@@ -116,8 +117,8 @@ public sealed class ReadStoreControllerTests : UnitTestBase
     [Fact]
     public async Task GetStoreListAsync_null_results_bad_request_Async()
     {
-        _mockReadStoreService.Setup(x => x.GetStoresAsync(It.IsAny<StoreParameter>()))
-            .ReturnsAsync(new StoreSearchResultModel { Results = null });
+        _mockMediator.Setup(x => x.Send(It.IsAny<ReadStoreListQuery>(), It.IsAny<CancellationToken>()))
+            .ReturnsAsync(new StoreSearchResultModel { Results = null! });
 
         var result = await _sut.GetStoreListAsync(new StoreParameter());
         var objectResult = result as BadRequestObjectResult;
@@ -138,7 +139,7 @@ public sealed class ReadStoreControllerTests : UnitTestBase
     [Fact]
     public async Task GetStoreListAsync_empty_results_bad_request_Async()
     {
-        _mockReadStoreService.Setup(x => x.GetStoresAsync(It.IsAny<StoreParameter>()))
+        _mockMediator.Setup(x => x.Send(It.IsAny<ReadStoreListQuery>(), It.IsAny<CancellationToken>()))
             .ReturnsAsync(new StoreSearchResultModel { Results = new List<StoreModel>() });
 
         var result = await _sut.GetStoreListAsync(new StoreParameter());
@@ -160,7 +161,7 @@ public sealed class ReadStoreControllerTests : UnitTestBase
     [Fact]
     public async Task SearchStoresAsync_returns_ok_Async()
     {
-        _mockReadStoreService.Setup(x => x.SearchStoresAsync(It.IsAny<StoreParameter>(), It.IsAny<StoreSearchModel>()))
+        _mockMediator.Setup(x => x.Send(It.IsAny<ReadStoreListQuery>(), It.IsAny<CancellationToken>()))
             .ReturnsAsync(new StoreSearchResultModel { Results = new List<StoreModel> { new() } });
 
         var result = await _sut.SearchStoresAsync(new StoreParameter(), new StoreSearchModel());
@@ -177,8 +178,8 @@ public sealed class ReadStoreControllerTests : UnitTestBase
     [Fact]
     public async Task SearchStoresAsync_null_results_bad_request_Async()
     {
-        _mockReadStoreService.Setup(x => x.SearchStoresAsync(It.IsAny<StoreParameter>(), It.IsAny<StoreSearchModel>()))
-            .ReturnsAsync(new StoreSearchResultModel { Results = null });
+        _mockMediator.Setup(x => x.Send(It.IsAny<ReadStoreListQuery>(), It.IsAny<CancellationToken>()))
+                    .ReturnsAsync(new StoreSearchResultModel { Results = null! });
 
         var result = await _sut.SearchStoresAsync(new StoreParameter(), new StoreSearchModel());
         var objectResult = result as BadRequestObjectResult;
@@ -199,7 +200,7 @@ public sealed class ReadStoreControllerTests : UnitTestBase
     [Fact]
     public async Task SearchStoresAsync_empty_results_bad_request_Async()
     {
-        _mockReadStoreService.Setup(x => x.SearchStoresAsync(It.IsAny<StoreParameter>(), It.IsAny<StoreSearchModel>()))
+        _mockMediator.Setup(x => x.Send(It.IsAny<ReadStoreListQuery>(), It.IsAny<CancellationToken>()))
             .ReturnsAsync(new StoreSearchResultModel { Results = new List<StoreModel>() });
 
         var result = await _sut.SearchStoresAsync(new StoreParameter(), new StoreSearchModel());

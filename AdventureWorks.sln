@@ -23,6 +23,8 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "AdventureWorks.Infrastructu
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution Items", "{73E2C441-355C-46E4-85D9-9039AEC0AE73}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "AdventureWorks.Models", "src\AdventureWorks.Models\AdventureWorks.Models.csproj", "{4D21681D-0DFA-E29C-775D-CF5CD11CA175}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -57,6 +59,10 @@ Global
 		{3DAC7949-0D7D-488D-9532-981346EBEF08}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{3DAC7949-0D7D-488D-9532-981346EBEF08}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{3DAC7949-0D7D-488D-9532-981346EBEF08}.Release|Any CPU.Build.0 = Release|Any CPU
+		{4D21681D-0DFA-E29C-775D-CF5CD11CA175}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{4D21681D-0DFA-E29C-775D-CF5CD11CA175}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{4D21681D-0DFA-E29C-775D-CF5CD11CA175}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{4D21681D-0DFA-E29C-775D-CF5CD11CA175}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
@@ -69,6 +75,7 @@ Global
 		{1EE21C60-1B98-4EAE-ABC5-00BADD571C02} = {70B5052F-3FC3-4026-8F65-C77FD0E46686}
 		{2D5DAA70-CB6E-4431-9CFB-F62E2CABD5C5} = {70B5052F-3FC3-4026-8F65-C77FD0E46686}
 		{3DAC7949-0D7D-488D-9532-981346EBEF08} = {51631969-0DD2-459F-8A10-6D85C97ADA1B}
+		{4D21681D-0DFA-E29C-775D-CF5CD11CA175} = {51631969-0DD2-459F-8A10-6D85C97ADA1B}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {6F6161B3-F0B5-4234-A940-CED59C8D7749}

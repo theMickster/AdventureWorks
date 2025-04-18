@@ -1,11 +1,11 @@
-﻿using AdventureWorks.Application.Interfaces.Repositories;
-using AdventureWorks.Application.Interfaces.Services.Address;
-using AdventureWorks.Application.Services.Address;
+﻿using AdventureWorks.Application.Features.AddressManagement.Contracts;
+using AdventureWorks.Application.Features.AddressManagement.Profiles;
+using AdventureWorks.Application.Features.AddressManagement.Services.Address;
+using AdventureWorks.Application.PersistenceContracts.Repositories;
 using AdventureWorks.Common.Attributes;
 using AdventureWorks.Domain.Entities;
-using AdventureWorks.Domain.Models;
-using AdventureWorks.Domain.Models.Slim;
-using AdventureWorks.Domain.Profiles;
+using AdventureWorks.Models.Features.AddressManagement;
+using AdventureWorks.Models.Slim;
 using AutoMapper;
 using FluentValidation;
 using FluentValidation.Results;
@@ -84,7 +84,7 @@ public sealed class UpdateAddressServiceTests : UnitTestBase
             AddressLine2 = "hello world2",
             City = "Denver",
             PostalCode = "80256",
-            AddressStateProvince = new GenericSlimModel { Id = 12 }
+            AddressStateProvince = new GenericSlimModel { Id = 12, Code = string.Empty, Name = string.Empty }
         };
 
         _mockValidator.Setup(x => x.ValidateAsync(It.IsAny<AddressUpdateModel>(),

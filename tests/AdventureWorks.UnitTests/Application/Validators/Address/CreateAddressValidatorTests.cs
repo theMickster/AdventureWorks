@@ -1,8 +1,8 @@
-﻿using AdventureWorks.Application.Interfaces.Repositories;
-using AdventureWorks.Application.Validators.Address;
+﻿using AdventureWorks.Application.Features.AddressManagement.Validators;
+using AdventureWorks.Application.PersistenceContracts.Repositories;
 using AdventureWorks.Domain.Entities;
-using AdventureWorks.Domain.Models;
-using AdventureWorks.Domain.Models.Slim;
+using AdventureWorks.Models.Features.AddressManagement;
+using AdventureWorks.Models.Slim;
 using AdventureWorks.Test.Common.Utilities;
 using FluentValidation.TestHelper;
 
@@ -46,7 +46,7 @@ public sealed class CreateAddressValidatorTests : UnitTestBase
             AddressLine1 = StringGenerator.GetRandomString(60),
             AddressLine2 = StringGenerator.GetRandomString(60),
             City = StringGenerator.GetRandomString(30),
-            AddressStateProvince = new GenericSlimModel { Id = stateId },
+            AddressStateProvince = new GenericSlimModel { Id = stateId, Name = string.Empty, Code = string.Empty },
             PostalCode = StringGenerator.GetRandomString(15)
         };
 
@@ -113,7 +113,8 @@ public sealed class CreateAddressValidatorTests : UnitTestBase
                 AddressStateProvince = new GenericSlimModel
                 {
                     Id = 1548,
-                    Code = "ABCDEFG"
+                    Code = "ABCDEFG",
+                    Name = string.Empty
                 }
             })
                 ;

@@ -1,8 +1,9 @@
-﻿using AdventureWorks.Application.Interfaces.Services.Stores;
+﻿using AdventureWorks.Application.Features.Sales.Queries;
 using AdventureWorks.Common.Constants;
 using AdventureWorks.Common.Filtering;
-using AdventureWorks.Domain.Models.Sales;
+using AdventureWorks.Models.Features.Sales;
 using Asp.Versioning;
+using MediatR;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using System.Globalization;
@@ -23,7 +24,7 @@ namespace AdventureWorks.API.Controllers.v1.Stores;
 public sealed class ReadStoreController : ControllerBase
 {
     private readonly ILogger<ReadStoreController> _logger;
-    private readonly IReadStoreService _readStoreService;
+    private readonly IMediator _mediator;
 
     /// <summary>
     /// The controller that coordinates retrieving store information.
@@ -31,14 +32,16 @@ public sealed class ReadStoreController : ControllerBase
     /// <remarks></remarks>
     public ReadStoreController(
         ILogger<ReadStoreController> logger,
-        IReadStoreService readStoreService)
+        IMediator mediator)
     {
-        _logger = logger ?? throw new ArgumentNullException(nameof(logger));
-        _readStoreService = readStoreService ?? throw new ArgumentNullException(nameof(readStoreService));
+        ArgumentNullException.ThrowIfNull(logger, nameof(logger));
+        ArgumentNullException.ThrowIfNull(mediator, nameof(mediator));
+        _logger = logger;
+        _mediator = mediator;
     }
 
     /// <summary>
-    /// Retrieve an store using its unique identifier
+    /// Retrieve a store using its unique identifier
     /// </summary>
     /// <param name="storeId">the unique identifier</param>
     /// <returns></returns>
@@ -53,14 +56,9 @@ public sealed class ReadStoreController : ControllerBase
             return BadRequest("A valid store id must be specified.");
         }
 
-        var address = await _readStoreService.GetByIdAsync(storeId);
+        var model = await _mediator.Send(new ReadStoreQuery { Id = storeId });
 
-        if (address == null)
-        {
-            return NotFound("Unable to locate Store.");
-        }
-
-        return Ok(address);
+        return model is null ? NotFound("Unable to locate the store.") : Ok(model);
     }
 
     /// <summary>
@@ -73,27 +71,28 @@ public sealed class ReadStoreController : ControllerBase
     [ProducesResponseType(StatusCodes.Status400BadRequest)]
     public async Task<IActionResult> GetStoreListAsync([FromQuery] StoreParameter parameters)
     {
-        var searchResult = await _readStoreService.GetStoresAsync(parameters).ConfigureAwait(false);
+        var searchResult = await _mediator.Send( new ReadStoreListQuery{Parameters = parameters});
 
-        if (searchResult.Results == null || !searchResult.Results.Any())
+        if (searchResult.Results is not (null or { Count: 0 }))
         {
-            var logErrorParams = new
-            {
-                Status = AppLoggingConstants.StatusBadRequest,
-                Operation = "StoreListAsync",
-                DateTime = DateTime.UtcNow.ToString(CultureInfo.InvariantCulture),
-                Message = "Unable to locate results based upon input query parameters.",
-                ErrCode = AppLoggingConstants.HttpGetRequestErrorCode,
-                ServiceId = "AdventureWorksApi",
-                AdditionalInfo = parameters
-            };
-
-            _logger.LogError(JsonSerializer.Serialize(logErrorParams));
-
-            return BadRequest(logErrorParams.Message);
+            return Ok(searchResult);
         }
+        
+        var logErrorParams = new
+        {
+            Status = AppLoggingConstants.StatusBadRequest,
+            Operation = "StoreListAsync",
+            DateTime = DateTime.UtcNow.ToString(CultureInfo.InvariantCulture),
+            Message = "Unable to locate results based upon input query parameters.",
+            ErrCode = AppLoggingConstants.HttpGetRequestErrorCode,
+            ServiceId = "AdventureWorksApi",
+            AdditionalInfo = parameters
+        };
 
-        return Ok(searchResult);
+        _logger.LogError(JsonSerializer.Serialize(logErrorParams));
+
+        return BadRequest(logErrorParams.Message);
+
     }
 
     /// <summary>
@@ -108,26 +107,26 @@ public sealed class ReadStoreController : ControllerBase
     [ProducesResponseType(StatusCodes.Status400BadRequest)]
     public async Task<IActionResult> SearchStoresAsync([FromQuery] StoreParameter parameters, [FromBody] StoreSearchModel storeSearchModel)
     {
-        var searchResult = await _readStoreService.SearchStoresAsync(parameters, storeSearchModel).ConfigureAwait(false);
+        var searchResult = await _mediator.Send(new ReadStoreListQuery { Parameters = parameters, SearchModel = storeSearchModel});
 
-        if (searchResult.Results == null || !searchResult.Results.Any())
+        if (searchResult.Results is not (null or { Count: 0 }))
         {
-            var logErrorParams = new
-            {
-                Status = AppLoggingConstants.StatusBadRequest,
-                Operation = "StoreSearchAsync",
-                DateTime = DateTime.UtcNow.ToString(CultureInfo.InvariantCulture),
-                Message = "Unable to locate results based upon client input parameters.",
-                ErrCode = AppLoggingConstants.HttpGetRequestErrorCode,
-                ServiceId = "AdventureWorksApi",
-                AdditionalInfo = parameters
-            };
-
-            _logger.LogError(JsonSerializer.Serialize(logErrorParams));
-
-            return BadRequest(logErrorParams.Message);
+            return Ok(searchResult);
         }
 
-        return Ok(searchResult);
+        var logErrorParams = new
+        {
+            Status = AppLoggingConstants.StatusBadRequest,
+            Operation = "StoreSearchAsync",
+            DateTime = DateTime.UtcNow.ToString(CultureInfo.InvariantCulture),
+            Message = "Unable to locate results based upon client input parameters.",
+            ErrCode = AppLoggingConstants.HttpGetRequestErrorCode,
+            ServiceId = "AdventureWorksApi",
+            AdditionalInfo = parameters
+        };
+
+        _logger.LogError(JsonSerializer.Serialize(logErrorParams));
+
+        return BadRequest(logErrorParams.Message);
     }
 }

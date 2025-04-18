@@ -1,6 +1,6 @@
 ﻿using System.Linq;
 using System.Threading.Tasks;
-using AdventureWorks.Application.Interfaces.Repositories;
+using AdventureWorks.Application.PersistenceContracts.Repositories;
 using AdventureWorks.Common.Attributes;
 using AdventureWorks.Domain.Entities;
 using AdventureWorks.Infrastructure.Persistence.DbContexts;

@@ -1,5 +1,4 @@
-﻿using AdventureWorks.Application.Interfaces.Repositories.Sales;
-using AdventureWorks.Common.Attributes;
+﻿using AdventureWorks.Common.Attributes;
 using AdventureWorks.Common.Constants;
 using AdventureWorks.Common.Filtering;
 using AdventureWorks.Domain.Entities.Sales;
@@ -9,6 +8,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using System.Xml.XPath;
+using AdventureWorks.Application.PersistenceContracts.Repositories.Sales;
 
 namespace AdventureWorks.Infrastructure.Persistence.Repositories.Sales;
 

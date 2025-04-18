@@ -1,7 +1,7 @@
-﻿using AdventureWorks.Domain.Entities;
-using AdventureWorks.Domain.Models;
-using AdventureWorks.Domain.Models.Slim;
-using AdventureWorks.Domain.Profiles;
+﻿using AdventureWorks.Application.Features.AddressManagement.Profiles;
+using AdventureWorks.Domain.Entities;
+using AdventureWorks.Models.Features.AddressManagement;
+using AdventureWorks.Models.Slim;
 using AutoMapper;
 
 namespace AdventureWorks.UnitTests.Domain.Profiles;
@@ -33,7 +33,7 @@ public sealed class AddressUpdateModelToAddressEntityProfileTests
             AddressLine2 = "Apt 2821",
             City = "Denver",
             PostalCode = "82023",
-            AddressStateProvince = new GenericSlimModel { Id = 25 }
+            AddressStateProvince = new GenericSlimModel { Id = 25,Name = string.Empty,Code = string.Empty}
         };
 
         var result = _mapper.Map<AddressEntity>(model);
