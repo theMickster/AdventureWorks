@@ -8,6 +8,8 @@ namespace AdventureWorks.UnitTests.Setup.Fixtures;
 
 internal sealed class SalesDomainFixtures : UnitTestFixtureBase
 {
+    internal static DateTime SalesDomainDefaultAuditDate => new(2011, 11, 11, 11, 11, 11, DateTimeKind.Utc);
+
     internal static List<StoreEntity> GetStores() => new()
     {
         new StoreEntity {BusinessEntityId = 292, Name = "Next-Door Bike Store", SalesPersonId = 279, Rowguid = new Guid("A22517E3-848D-4EBE-B9D9-7437F3432304"), ModifiedDate = StandardModifiedDate},
@@ -1845,4 +1847,223 @@ internal sealed class SalesDomainFixtures : UnitTestFixtureBase
          new SalesPerson {BusinessEntityId = 289, TerritoryId = 10, Rowguid = new Guid("25F6838D-9DB4-4833-9DDC-7A24283AF1BA"), ModifiedDate = StandardModifiedDate},
          new SalesPerson {BusinessEntityId = 290, TerritoryId = 7, Rowguid = new Guid("F509E3D4-76C8-42AA-B353-90B7B8DB08DE"), ModifiedDate = StandardModifiedDate},
     };
+
+
+    internal static IEnumerable<StoreEntity> GetMockStores()
+    {
+        var usa = new CountryRegionEntity { CountryRegionCode = "US", Name = "United States of America", ModifiedDate = SalesDomainDefaultAuditDate };
+        var colorado = new StateProvinceEntity { StateProvinceId = 10, Name = "Colorado", CountryRegionCode = "US", CountryRegion = usa };
+
+        return new List<StoreEntity>
+        {
+            new()
+            {
+                BusinessEntityId = 2534,
+                Name = "Pro Sporting Goods",
+                SalesPersonId = 7777,
+                PrimarySalesPerson = new SalesPerson { TerritoryId = 7, BusinessEntityId = 7777 },
+                ModifiedDate = SalesDomainDefaultAuditDate,
+                StoreBusinessEntity = new BusinessEntity
+                {
+                    BusinessEntityId = 2534, BusinessEntityAddresses = new List<BusinessEntityAddressEntity>()
+                    {
+                        new()
+                        {
+                            BusinessEntityId = 2534,
+                            Address = new AddressEntity
+                            {
+                                AddressId = 553,
+                                AddressLine1 = "1234 Broadway Ave",
+                                City = "Aurora",
+                                StateProvinceId = 10,
+                                Rowguid = new Guid("8f83c8eb-ee79-46ba-8e2c-6645794674b4"),
+                                PostalCode = "80015",
+                                ModifiedDate = SalesDomainDefaultAuditDate,
+                                StateProvince = colorado
+                            },
+                            AddressTypeId = 1,
+                            AddressType = new AddressTypeEntity { AddressTypeId = 1, Name = "Home" }
+
+                        },
+                        new()
+                        {
+                            BusinessEntityId = 2534,
+                            Address = new AddressEntity
+                            {
+                                AddressId = 554,
+                                AddressLine1 = "456 Union Ave",
+                                City = "Aurora",
+                                StateProvinceId = 10,
+                                Rowguid = new Guid("28238dcb-1842-4a64-9224-6b13cbbb0ab4"),
+                                PostalCode = "80016",
+                                ModifiedDate = SalesDomainDefaultAuditDate,
+                                StateProvince = colorado
+                            },
+                            AddressTypeId = 2,
+                            AddressType = new AddressTypeEntity { AddressTypeId = 2, Name = "Billing" }
+                        },
+                    }
+                }
+            },
+            new()
+            {
+                BusinessEntityId = 2535,
+                Name = "Semi-Pro Sporting Goods",
+                SalesPersonId = 7778,
+                PrimarySalesPerson = new SalesPerson { TerritoryId = 7, BusinessEntityId = 7778 },
+                ModifiedDate = SalesDomainDefaultAuditDate,
+                StoreBusinessEntity = new BusinessEntity
+                {
+                    BusinessEntityId = 2535, BusinessEntityAddresses = new List<BusinessEntityAddressEntity>()
+                    {
+                        new()
+                        {
+                            BusinessEntityId = 2535,
+                            Address = new AddressEntity
+                            {
+                                AddressId = 555,
+                                AddressLine1 = "25981 College Street",
+                                City = "Montreal",
+                                StateProvinceId = 10,
+                                Rowguid = new Guid("11F4E4E8-CABA-4B5A-991A-909ABCFF61AF"),
+                                PostalCode = "80010",
+                                ModifiedDate = SalesDomainDefaultAuditDate,
+                                StateProvince = colorado
+                            },
+                            AddressTypeId = 1,
+                            AddressType = new AddressTypeEntity { AddressTypeId = 1, Name = "Home" }
+
+                        },
+                        new()
+                        {
+                            BusinessEntityId = 2535,
+                            Address = new AddressEntity
+                            {
+                                AddressId = 556,
+                                AddressLine1 = "26910 Indela Road",
+                                City = "Aurora",
+                                StateProvinceId = 10,
+                                Rowguid = new Guid("8612FBAD-3CE1-435B-BE0B-5A48DDBD2B62"),
+                                PostalCode = "80011",
+                                ModifiedDate = SalesDomainDefaultAuditDate,
+                                StateProvince = colorado
+                            },
+                            AddressTypeId = 2,
+                            AddressType = new AddressTypeEntity { AddressTypeId = 2, Name = "Billing" }
+                        },
+                        new()
+                        {
+                            BusinessEntityId = 2535,
+                            Address = new AddressEntity
+                            {
+                                AddressId = 557,
+                                AddressLine1 = "2551 East Warner Road",
+                                City = "Aurora",
+                                StateProvinceId = 10,
+                                Rowguid = new Guid("54F6FA82-5762-4C27-B0FE-5A30E06C57B2"),
+                                PostalCode = "80012",
+                                ModifiedDate = SalesDomainDefaultAuditDate,
+                                StateProvince = colorado
+                            },
+                            AddressTypeId = 2,
+                            AddressType = new AddressTypeEntity { AddressTypeId = 2, Name = "Billing" }
+                        },
+                        new()
+                        {
+                            BusinessEntityId = 2535,
+                            Address = new AddressEntity
+                            {
+                                AddressId = 558,
+                                AddressLine1 = "998 Forest Road",
+                                City = "Aurora",
+                                StateProvinceId = 10,
+                                Rowguid = new Guid("4DDBACC9-7898-403E-856A-128E34245424"),
+                                PostalCode = "80013",
+                                ModifiedDate = SalesDomainDefaultAuditDate,
+                                StateProvince = colorado
+                            },
+                            AddressTypeId = 2,
+                            AddressType = new AddressTypeEntity { AddressTypeId = 2, Name = "Billing" }
+                        },
+                    }
+                }
+            },
+            new()
+            {
+                BusinessEntityId = 2536,
+                Name = "Rookie Sporting Goods",
+                SalesPersonId = 7779,
+                PrimarySalesPerson = new SalesPerson { TerritoryId = 7, BusinessEntityId = 7779 },
+                ModifiedDate = SalesDomainDefaultAuditDate,
+                StoreBusinessEntity = new BusinessEntity
+                {
+                    BusinessEntityId = 2536, BusinessEntityAddresses = new List<BusinessEntityAddressEntity>()
+                    {
+                        new()
+                        {
+                            BusinessEntityId = 2536,
+                            Address = new AddressEntity
+                            {
+                                AddressId = 559,
+                                AddressLine1 = "254 Colonnade Road",
+                                City = "Montreal",
+                                StateProvinceId = 10,
+                                Rowguid = new Guid("8EC24E8C-C114-4240-80D5-CE7E4BDAE4D1"),
+                                PostalCode = "80010",
+                                ModifiedDate = SalesDomainDefaultAuditDate,
+                                StateProvince = colorado
+                            },
+                            AddressTypeId = 3,
+                            AddressType = new AddressTypeEntity { AddressTypeId = 3, Name = "Main Office" }
+
+                        }
+                    }
+                }
+            }
+        };
+    }
+
+    internal static IEnumerable<BusinessEntityContactEntity> GetMockContactEntities()
+    {
+        return new List<BusinessEntityContactEntity>
+        {
+            new()
+            {
+                BusinessEntityId = 2534, ContactTypeId = 11,
+                ContactType = new ContactTypeEntity { ContactTypeId = 11, Name = "Owner" }, PersonId = 987,
+                Person = new PersonEntity { BusinessEntityId = 987, FirstName = "Steve", LastName = "Jones" }
+            },
+            new()
+            {
+                BusinessEntityId = 2534, ContactTypeId = 12,
+                ContactType = new ContactTypeEntity { ContactTypeId = 12, Name = "Store Contact" }, PersonId = 988,
+                Person = new PersonEntity { BusinessEntityId = 988, FirstName = "Peter", LastName = "Jones" }
+            },
+            new()
+            {
+                BusinessEntityId = 2535, ContactTypeId = 11,
+                ContactType = new ContactTypeEntity { ContactTypeId = 11, Name = "Owner" }, PersonId = 989,
+                Person = new PersonEntity { BusinessEntityId = 989, FirstName = "Amy", LastName = "Alberts" }
+            },
+            new()
+            {
+                BusinessEntityId = 2535, ContactTypeId = 12,
+                ContactType = new ContactTypeEntity { ContactTypeId = 12, Name = "Store Contact" }, PersonId = 990,
+                Person = new PersonEntity { BusinessEntityId = 990, FirstName = "Emilio", LastName = "Alvarado" }
+            },
+            new()
+            {
+                BusinessEntityId = 2535, ContactTypeId = 12,
+                ContactType = new ContactTypeEntity { ContactTypeId = 12, Name = "Store Contact" }, PersonId = 991,
+                Person = new PersonEntity { BusinessEntityId = 991, FirstName = "Oscar", LastName = "Belli" }
+            },
+            new()
+            {
+                BusinessEntityId = 2536, ContactTypeId = 11,
+                ContactType = new ContactTypeEntity { ContactTypeId = 11, Name = "Store Contact" }, PersonId = 992,
+                Person = new PersonEntity { BusinessEntityId = 992, FirstName = "Payton", LastName = "Benson" }
+            }
+        };
+    }
+
 }
