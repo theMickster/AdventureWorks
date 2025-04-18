@@ -1,42 +1,24 @@
-﻿using AdventureWorks.Application.Features.AddressManagement.Contracts;
-using AdventureWorks.Application.Features.AddressManagement.Profiles;
-using AdventureWorks.Application.Features.AddressManagement.Services.Address;
+﻿using AdventureWorks.Application.Features.AddressManagement.Profiles;
+using AdventureWorks.Application.Features.AddressManagement.Queries;
 using AdventureWorks.Application.PersistenceContracts.Repositories;
-using AdventureWorks.Common.Attributes;
 using AdventureWorks.Domain.Entities;
-using AutoMapper;
 
-namespace AdventureWorks.UnitTests.Application.Services.Address;
+namespace AdventureWorks.UnitTests.Application.Features.AddressManagement.Queries;
 
-[ExcludeFromCodeCoverage]
-public sealed class ReadAddressServiceTests : UnitTestBase
+public sealed class ReadAddressQueryHandlerTests : UnitTestBase
 {
     private readonly IMapper _mapper;
     private readonly Mock<IAddressRepository> _mockAddressRepository = new();
-    private ReadAddressService _sut;
+    private ReadAddressQueryHandler _sut;
 
-    public ReadAddressServiceTests()
+    public ReadAddressQueryHandlerTests()
     {
         var mappingConfig = new MapperConfiguration(config =>
             config.AddMaps(typeof(AddressEntityToAddressModelProfile).Assembly)
         );
         _mapper = mappingConfig.CreateMapper();
 
-        _sut = new ReadAddressService(_mapper, _mockAddressRepository.Object);
-    }
-
-    [Fact]
-    public void Type_has_correct_structure()
-    {
-        using (new AssertionScope())
-        {
-            typeof(ReadAddressService)
-                .Should().Implement<IReadAddressService>();
-
-            typeof(ReadAddressService)
-                .IsDefined(typeof(ServiceLifetimeScopedAttribute), false)
-                .Should().BeTrue();
-        }
+        _sut = new ReadAddressQueryHandler(_mapper, _mockAddressRepository.Object);
     }
 
     [Fact]
@@ -44,17 +26,17 @@ public sealed class ReadAddressServiceTests : UnitTestBase
     {
         using (new AssertionScope())
         {
-            _ = ((Action)(() => _sut = new ReadAddressService(
+            _ = ((Action)(() => _sut = new ReadAddressQueryHandler(
                     null!,
                     _mockAddressRepository.Object)))
                 .Should().Throw<ArgumentNullException>("because we expect a null argument exception.")
                 .And.ParamName.Should().Be("mapper");
 
-            _ = ((Action)(() => _sut = new ReadAddressService(
+            _ = ((Action)(() => _sut = new ReadAddressQueryHandler(
                     _mapper,
                     null!)))
                 .Should().Throw<ArgumentNullException>("because we expect a null argument exception.")
-                .And.ParamName.Should().Be("addressRepository");
+                .And.ParamName.Should().Be("repository");
         }
     }
 
@@ -64,7 +46,7 @@ public sealed class ReadAddressServiceTests : UnitTestBase
         _mockAddressRepository.Setup(x => x.GetAddressByIdAsync(It.IsAny<int>()))
             .ReturnsAsync((AddressEntity)null!);
 
-        var result = await _sut.GetByIdAsync(7);
+        var result = await _sut.Handle( new ReadAddressQuery{Id = 7}, It.IsAny<CancellationToken>());
 
         result.Should().BeNull();
     }
@@ -98,10 +80,10 @@ public sealed class ReadAddressServiceTests : UnitTestBase
             }
         };
 
-        _mockAddressRepository.Setup(x => x.GetAddressByIdAsync(addressId))
+        _mockAddressRepository.Setup(x => x.GetAddressByIdAsync(797))
             .ReturnsAsync(addressEntity);
 
-        var result = await _sut.GetByIdAsync(addressId);
+        var result = await _sut.Handle(new ReadAddressQuery { Id = 797 }, CancellationToken.None);
 
         using (new AssertionScope())
         {

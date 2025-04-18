@@ -1,6 +1,7 @@
-﻿using AdventureWorks.Application.Features.AddressManagement.Contracts;
+﻿using AdventureWorks.Application.Features.AddressManagement.Queries;
 using AdventureWorks.Models.Features.AddressManagement;
 using Asp.Versioning;
+using MediatR;
 using Microsoft.AspNetCore.Mvc;
 
 namespace AdventureWorks.API.Controllers.v1.Address;
@@ -17,7 +18,7 @@ namespace AdventureWorks.API.Controllers.v1.Address;
 public sealed class ReadAddressController : ControllerBase
 {
     private readonly ILogger<ReadAddressController> _logger;
-    private readonly IReadAddressService _readAddressService;
+    private readonly IMediator _mediator;
 
     /// <summary>
     /// The controller that coordinates retrieving Address information.
@@ -25,10 +26,12 @@ public sealed class ReadAddressController : ControllerBase
     /// <remarks></remarks>
     public ReadAddressController( 
         ILogger<ReadAddressController> logger,
-        IReadAddressService readAddressService)
+        IMediator mediator)
     {
-        _logger = logger ?? throw new ArgumentNullException(nameof(logger));
-        _readAddressService = readAddressService ?? throw new ArgumentNullException(nameof(readAddressService));
+        ArgumentNullException.ThrowIfNull(logger, nameof(logger));
+        ArgumentNullException.ThrowIfNull(mediator, nameof(mediator));
+        _logger = logger;
+        _mediator = mediator;
     }
 
     /// <summary>
@@ -45,13 +48,8 @@ public sealed class ReadAddressController : ControllerBase
             return BadRequest("A valid address id must be specified.");
         }
 
-        var address = await _readAddressService.GetByIdAsync(addressId);
-        
-        if (address == null)
-        {
-            return NotFound("Unable to locate Address.");
-        }
+        var model = await _mediator.Send(new ReadAddressQuery{Id = addressId });
 
-        return Ok(address);
+        return model is null ? NotFound("Unable to locate the Address.") : Ok(model);
     }
 }
