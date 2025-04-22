@@ -26,6 +26,8 @@ internal static class SetupMiddlewarePipeline
 
         app.UseHsts();
 
+        app.UseAdventureWorksExceptionHandler();
+
         app.UseHttpsRedirection();
 
         app.UseRouting();
@@ -33,7 +35,7 @@ internal static class SetupMiddlewarePipeline
         app.UseAuthentication();
 
         app.UseAuthorization();
-        
+
         app.MapControllers();
 
         app.UseSwagger();

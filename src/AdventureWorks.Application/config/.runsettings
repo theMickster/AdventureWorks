@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RunSettings>
+  <TestRunParameters>    
+  </TestRunParameters>
+  <Execution>
+    <TestHost>
+      <StopOnException>false</StopOnException>
+    </TestHost>
+  </Execution>
+  <Debugger>
+    <ExceptionBreaks>
+      <ExceptionBreak Type="FluentValidation.ValidationException" Action="Continue" />
+    </ExceptionBreaks>
+  </Debugger>
+</RunSettings>
