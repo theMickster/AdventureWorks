@@ -9,21 +9,18 @@
 	</PropertyGroup>
 
 	<ItemGroup>
-	  <Compile Remove="Features\AddressManagement\Commands\**" />
 	  <Compile Remove="Features\HumanResources\Commands\**" />
 	  <Compile Remove="Features\HumanResources\Contracts\**" />
 	  <Compile Remove="Features\HumanResources\Services\**" />
 	  <Compile Remove="Features\HumanResources\Validators\**" />
 	  <Compile Remove="Features\Sales\Commands\**" />
 	  <Compile Remove="Features\Sales\Validators\**" />
-	  <EmbeddedResource Remove="Features\AddressManagement\Commands\**" />
 	  <EmbeddedResource Remove="Features\HumanResources\Commands\**" />
 	  <EmbeddedResource Remove="Features\HumanResources\Contracts\**" />
 	  <EmbeddedResource Remove="Features\HumanResources\Services\**" />
 	  <EmbeddedResource Remove="Features\HumanResources\Validators\**" />
 	  <EmbeddedResource Remove="Features\Sales\Commands\**" />
 	  <EmbeddedResource Remove="Features\Sales\Validators\**" />
-	  <None Remove="Features\AddressManagement\Commands\**" />
 	  <None Remove="Features\HumanResources\Commands\**" />
 	  <None Remove="Features\HumanResources\Contracts\**" />
 	  <None Remove="Features\HumanResources\Services\**" />

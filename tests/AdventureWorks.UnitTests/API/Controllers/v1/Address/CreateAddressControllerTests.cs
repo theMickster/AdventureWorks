@@ -1,13 +1,14 @@
-﻿using System.Collections;
-using AdventureWorks.API.Controllers.v1.Address;
+﻿using AdventureWorks.API.Controllers.v1.Address;
+using AdventureWorks.Application.Features.AddressManagement.Commands;
+using AdventureWorks.Application.Features.AddressManagement.Queries;
+using AdventureWorks.Models.Features.AddressManagement;
+using AdventureWorks.Models.Slim;
+using FluentValidation;
+using FluentValidation.Results;
+using MediatR;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
 using System.Net;
-using System.Text.Json;
-using AdventureWorks.Models.Features.AddressManagement;
-using AdventureWorks.Models.Slim;
-using FluentValidation.Results;
-using AdventureWorks.Application.Features.AddressManagement.Contracts;
 
 namespace AdventureWorks.UnitTests.API.Controllers.v1.Address;
 
@@ -15,12 +16,12 @@ namespace AdventureWorks.UnitTests.API.Controllers.v1.Address;
 public sealed class CreateAddressControllerTests : UnitTestBase
 {
     private readonly Mock<ILogger<CreateAddressController>> _mockLogger = new();
-    private readonly Mock<ICreateAddressService> _mockCreateAddressService = new();
+    private readonly Mock<IMediator> _mockMediator = new();
     private readonly CreateAddressController _sut;
 
     public CreateAddressControllerTests()
     {
-        _sut = new CreateAddressController(_mockLogger.Object, _mockCreateAddressService.Object);
+        _sut = new CreateAddressController(_mockLogger.Object, _mockMediator.Object);
     }
 
     [Fact]
@@ -28,13 +29,13 @@ public sealed class CreateAddressControllerTests : UnitTestBase
     {
         using (new AssertionScope())
         {
-            _ = ((Action)(() => _ = new CreateAddressController(null!, _mockCreateAddressService.Object)))
+            _ = ((Action)(() => _ = new CreateAddressController(null!, _mockMediator.Object)))
                 .Should().Throw<ArgumentNullException>("because we expect a null argument exception.")
                 .And.ParamName.Should().Be("logger");
 
             _ = ((Action)(() => _ = new CreateAddressController(_mockLogger.Object, null!)))
                 .Should().Throw<ArgumentNullException>("because we expect a null argument exception.")
-                .And.ParamName.Should().Be("createAddressService");
+                .And.ParamName.Should().Be("mediator");
         }
     }
 
@@ -54,7 +55,7 @@ public sealed class CreateAddressControllerTests : UnitTestBase
     }
 
     [Fact]
-    public async Task PostAsync_invalid_input_returns_bad_requestAsync()
+    public async Task PostAsync_invalid_input_handles_exceptionAsync()
     {
         var input = new AddressCreateModel
         {
@@ -63,25 +64,14 @@ public sealed class CreateAddressControllerTests : UnitTestBase
             AddressStateProvince = new GenericSlimModel { Id = 15, Name = string.Empty, Code = string.Empty }
         };
 
-        _mockCreateAddressService
-            .Setup(x => x.CreateAsync(It.IsAny<AddressCreateModel>()))
-            .ReturnsAsync((new AddressModel(),
-                new List<ValidationFailure> { new() { PropertyName = "Id", ErrorCode = "00010", ErrorMessage = "Hello Validation Error" } }));
+        _mockMediator
+            .Setup(x => x.Send(It.IsAny<CreateAddressCommand>(), CancellationToken.None))
+            .ThrowsAsync(new ValidationException(new List<ValidationFailure>
+                { new() { PropertyName = "Id", ErrorCode = "00010", ErrorMessage = "Hello Validation Error" } }));
 
-        var result = await _sut.PostAsync(input);
+        Func<Task> act = async () => await _sut.PostAsync(input);
 
-        var objectResult = result as BadRequestObjectResult;
-        var outputModel = objectResult!.Value! as IEnumerable;
-
-        using (new AssertionScope())
-        {
-            objectResult.Should().NotBeNull();
-            objectResult!.StatusCode.Should().Be((int)HttpStatusCode.BadRequest);
-            objectResult!.Value!.ToString().Should().NotBeNullOrWhiteSpace();
-
-            outputModel.Should().NotBeNull();
-            outputModel?.Cast<string>().Select(x => x).FirstOrDefault().Should().Be("Hello Validation Error");
-        }
+        await act.Should().ThrowAsync<ValidationException>();
     }
 
     [Fact]
@@ -101,10 +91,13 @@ public sealed class CreateAddressControllerTests : UnitTestBase
             AddressStateProvince = new GenericSlimModel {Id = 15, Name = string.Empty, Code = string.Empty }
         };
 
-        _mockCreateAddressService
-            .Setup(x => x.CreateAsync(It.IsAny<AddressCreateModel>()))
-            .ReturnsAsync((addressModel,
-                new List<ValidationFailure>()));
+        _mockMediator
+            .Setup(x => x.Send(It.IsAny<CreateAddressCommand>(), CancellationToken.None))
+            .ReturnsAsync(1);
+
+        _mockMediator
+            .Setup(x => x.Send(It.IsAny<ReadAddressQuery>(), CancellationToken.None))
+            .ReturnsAsync(addressModel);
 
         var result = await _sut.PostAsync(input);
         

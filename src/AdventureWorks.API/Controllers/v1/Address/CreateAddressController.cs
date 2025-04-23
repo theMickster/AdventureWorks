@@ -1,6 +1,8 @@
-﻿using AdventureWorks.Application.Features.AddressManagement.Contracts;
+﻿using AdventureWorks.Application.Features.AddressManagement.Commands;
+using AdventureWorks.Application.Features.AddressManagement.Queries;
 using AdventureWorks.Models.Features.AddressManagement;
 using Asp.Versioning;
+using MediatR;
 using Microsoft.AspNetCore.Mvc;
 
 namespace AdventureWorks.API.Controllers.v1.Address;
@@ -17,14 +19,16 @@ namespace AdventureWorks.API.Controllers.v1.Address;
 public sealed class CreateAddressController : ControllerBase
 {
     private readonly ILogger<CreateAddressController> _logger;
-    private readonly ICreateAddressService _createAddressService;
+    private readonly IMediator _mediator;
 
     public CreateAddressController(
         ILogger<CreateAddressController> logger,
-        ICreateAddressService createAddressService)
+        IMediator mediator)
     {
-        _logger = logger ?? throw new ArgumentNullException(nameof(logger));
-        _createAddressService = createAddressService ?? throw  new ArgumentNullException(nameof(createAddressService));
+        ArgumentNullException.ThrowIfNull(logger, nameof(logger));
+        ArgumentNullException.ThrowIfNull(mediator, nameof(mediator));
+        _logger = logger;
+        _mediator = mediator;
     }
 
     /// <summary>
@@ -40,15 +44,12 @@ public sealed class CreateAddressController : ControllerBase
         {
             return BadRequest("The address input model cannot be null.");
         }
-            
-        var (addressModel, errors)  = await _createAddressService.CreateAsync(inputModel).ConfigureAwait(false);
-            
-        if (errors.Any())
-        {
-            return BadRequest(errors.Select(x => x.ErrorMessage));
-        }
-        
-        return CreatedAtRoute("GetAddressById", new { addressId = addressModel.Id }, addressModel);
+        var cmd = new CreateAddressCommand { Model = inputModel, ModifiedDate = DateTime.UtcNow, RowGuid = Guid.NewGuid() };
+
+        var addressId = await _mediator.Send(cmd);
+        var model = await _mediator.Send(new ReadAddressQuery { Id = addressId });
+
+        return CreatedAtRoute("GetAddressById", new { addressId = model.Id }, model);
             
     }
 }
