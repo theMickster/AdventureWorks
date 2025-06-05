@@ -60,7 +60,7 @@ public sealed class ReadStoreControllerTests : UnitTestBase
     [Fact]
     public async Task GetById_returns_not_found_Async()
     {
-        _mockMediator.Setup(x => x.Send(It.IsAny<ReadStoreQuery>(), It.IsAny<CancellationToken>()))
+        _mockMediator.Setup(x => x.Send(It.IsAny<ReadStoreQuery>(), It.IsAny<CancellationToken>()))!
             .ReturnsAsync((StoreModel?)null);
 
         var result = await _sut.GetByIdAsync(7);

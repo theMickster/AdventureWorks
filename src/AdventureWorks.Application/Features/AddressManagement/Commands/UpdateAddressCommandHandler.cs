@@ -1,5 +1,4 @@
 ﻿using AdventureWorks.Application.PersistenceContracts.Repositories;
-using AdventureWorks.Domain.Entities;
 using AdventureWorks.Models.Features.AddressManagement;
 using AutoMapper;
 using FluentValidation;
@@ -7,29 +6,25 @@ using MediatR;
 
 namespace AdventureWorks.Application.Features.AddressManagement.Commands;
 
-public sealed class CreateAddressCommandHandler (
+public sealed class UpdateAddressCommandHandler(
     IMapper mapper,
     IAddressRepository addressRepository,
-    IValidator<AddressCreateModel> validator) 
-        : IRequestHandler<CreateAddressCommand, int>
+    IValidator<AddressUpdateModel?> validator) 
+        : IRequestHandler<UpdateAddressCommand>
 {
     private readonly IMapper _mapper = mapper ?? throw new ArgumentNullException(nameof(mapper));
     private readonly IAddressRepository _addressRepository = addressRepository ?? throw new ArgumentNullException(nameof(addressRepository));
-    private readonly IValidator<AddressCreateModel> _validator = validator ?? throw new ArgumentNullException(nameof(validator));
-    
-    public async Task<int> Handle(CreateAddressCommand request, CancellationToken cancellationToken)
+    private readonly IValidator<AddressUpdateModel> _validator = validator ?? throw new ArgumentNullException(nameof(validator));
+
+    public async Task Handle(UpdateAddressCommand request, CancellationToken cancellationToken)
     {
         ArgumentNullException.ThrowIfNull(request);
         ArgumentNullException.ThrowIfNull(request.Model);
 
         await _validator.ValidateAndThrowAsync(request.Model, cancellationToken);
-        
-        var inputEntity = _mapper.Map<AddressEntity>(request.Model);
-        inputEntity.ModifiedDate = request.ModifiedDate;
-        inputEntity.Rowguid = request.RowGuid;
-
-        var outputEntity = await _addressRepository.AddAsync(inputEntity);
-        
-        return outputEntity.AddressId;
+        var currentEntity = await _addressRepository.GetByIdAsync(request.Model.Id);
+        _mapper.Map(request.Model, currentEntity);
+        currentEntity.ModifiedDate = request.ModifiedDate;
+        await _addressRepository.UpdateAsync(currentEntity);
     }
 }

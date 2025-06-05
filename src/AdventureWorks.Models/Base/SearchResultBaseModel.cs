@@ -14,5 +14,5 @@ public abstract class SearchResultBaseModel<T>
 
     public int TotalRecords { get; set; } = 0;
 
-    public IReadOnlyList<T> Results { get; set; }
+    public List<T>? Results { get; set; }
 }

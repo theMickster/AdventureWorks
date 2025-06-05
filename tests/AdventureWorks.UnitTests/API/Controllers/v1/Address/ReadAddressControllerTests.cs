@@ -58,7 +58,7 @@ public sealed class ReadAddressControllerTests : UnitTestBase
     [Fact]
     public async Task getById_returns_not_found_Async()
     {
-        _mockMediator.Setup(x => x.Send(It.IsAny<ReadAddressQuery>(), It.IsAny<CancellationToken>()))
+        _mockMediator.Setup(x => x.Send(It.IsAny<ReadAddressQuery>(), It.IsAny<CancellationToken>()))!
             .ReturnsAsync((AddressModel?)null);
 
         var result = await _sut.GetByIdAsync(7);

@@ -13,7 +13,7 @@ public sealed class AddressCreateModelToAddressEntityProfile : Profile
 
             .ForPath(m => m.StateProvinceId,
                 options
-                    => options.MapFrom(e => e.AddressStateProvince.Id))
+                    => options.MapFrom(e => e.StateProvince.Id))
         
             .ForMember(x => x.ModifiedDate, 
                 o => o.Ignore())

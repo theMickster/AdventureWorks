@@ -36,13 +36,13 @@ public class AddressBaseModelValidator<T> : AbstractValidator<T> where T : Addre
 
         RuleFor(address => address)
             .MustAsync(async (address, cancellation)
-                => await StateProvinceMustExistAsync(address.AddressStateProvince.Id).ConfigureAwait(false))
-            .When(x => x?.AddressStateProvince != null)
+                => await StateProvinceMustExistAsync(address?.StateProvince?.Id ?? int.MinValue))
+            .When(x => x?.StateProvince != null)
             .WithMessage(StateProvinceIdExists)
             .WithErrorCode("Rule-07")
             .OverridePropertyName("AddressStateProvince");
 
-        RuleFor(x => x.AddressStateProvince)
+        RuleFor(x => x.StateProvince)
             .NotNull()
             .WithMessage(StateProvinceExists)
             .WithErrorCode("Rule-08")
