@@ -55,13 +55,13 @@ public sealed class CreateAddressControllerTests : UnitTestBase
     }
 
     [Fact]
-    public async Task PostAsync_invalid_input_handles_exceptionAsync()
+    public void PostAsync_invalid_input_handles_exception()
     {
         var input = new AddressCreateModel
         {
             AddressLine1 = "hello World",
             PostalCode = "123",
-            AddressStateProvince = new GenericSlimModel { Id = 15, Name = string.Empty, Code = string.Empty }
+            StateProvince = new GenericSlimModel { Id = 15, Name = string.Empty, Code = string.Empty }
         };
 
         _mockMediator
@@ -71,7 +71,7 @@ public sealed class CreateAddressControllerTests : UnitTestBase
 
         Func<Task> act = async () => await _sut.PostAsync(input);
 
-        await act.Should().ThrowAsync<ValidationException>();
+        _ = act.Should().ThrowAsync<ValidationException>();
     }
 
     [Fact]
@@ -88,7 +88,7 @@ public sealed class CreateAddressControllerTests : UnitTestBase
         {
             AddressLine1 = "hello World",
             PostalCode = "123",
-            AddressStateProvince = new GenericSlimModel {Id = 15, Name = string.Empty, Code = string.Empty }
+            StateProvince = new GenericSlimModel {Id = 15, Name = string.Empty, Code = string.Empty }
         };
 
         _mockMediator

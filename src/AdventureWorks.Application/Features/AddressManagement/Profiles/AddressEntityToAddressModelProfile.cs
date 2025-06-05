@@ -13,15 +13,15 @@ public sealed class AddressEntityToAddressModelProfile : Profile
                 options
                     => options.MapFrom(e => e.AddressId))
 
-            .ForPath(m => m.AddressStateProvince.Id,
+            .ForPath(m => m.StateProvince.Id,
                 options
                     => options.MapFrom(e => e.StateProvince.StateProvinceId))
 
-            .ForPath(m => m.AddressStateProvince.Code,
+            .ForPath(m => m.StateProvince.Code,
                 options
                     => options.MapFrom(e => e.StateProvince.StateProvinceCode.Trim()))
 
-            .ForPath(m => m.AddressStateProvince.Name,
+            .ForPath(m => m.StateProvince.Name,
              options => options.MapFrom(e => e.StateProvince.Name.Trim()))
 
             .ForPath(m => m.CountryRegion.Code,

@@ -12,7 +12,7 @@ public sealed class AddressUpdateModelToAddressEntityProfile : Profile
 
             .ForPath(m => m.StateProvinceId,
                 options
-                    => options.MapFrom(e => e.AddressStateProvince.Id))
+                    => options.MapFrom(e => e.StateProvince.Id))
 
             .ForPath(x => x.AddressId,
                 options => options.MapFrom(e => e.Id))

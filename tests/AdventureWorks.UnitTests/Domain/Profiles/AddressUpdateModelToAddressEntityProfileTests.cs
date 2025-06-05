@@ -33,7 +33,7 @@ public sealed class AddressUpdateModelToAddressEntityProfileTests
             AddressLine2 = "Apt 2821",
             City = "Denver",
             PostalCode = "82023",
-            AddressStateProvince = new GenericSlimModel { Id = 25,Name = string.Empty,Code = string.Empty}
+            StateProvince = new GenericSlimModel { Id = 25,Name = string.Empty,Code = string.Empty}
         };
 
         var result = _mapper.Map<AddressEntity>(model);

@@ -1,11 +1,13 @@
-﻿using System.Collections;
-using AdventureWorks.API.Controllers.v1.Address;
+﻿using AdventureWorks.API.Controllers.v1.Address;
+using AdventureWorks.Application.Features.AddressManagement.Commands;
+using AdventureWorks.Application.Features.AddressManagement.Queries;
+using AdventureWorks.Models.Features.AddressManagement;
+using FluentValidation;
+using FluentValidation.Results;
+using MediatR;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
 using System.Net;
-using AdventureWorks.Models.Features.AddressManagement;
-using FluentValidation.Results;
-using AdventureWorks.Application.Features.AddressManagement.Contracts;
 
 namespace AdventureWorks.UnitTests.API.Controllers.v1.Address;
 
@@ -13,12 +15,12 @@ namespace AdventureWorks.UnitTests.API.Controllers.v1.Address;
 public sealed class UpdateAddressControllerTests : UnitTestBase
 {
     private readonly Mock<ILogger<UpdateAddressController>> _mockLogger = new();
-    private readonly Mock<IUpdateAddressService> _mockUpdateAddressService = new();
+    private readonly Mock<IMediator> _mockMediator = new();
     private readonly UpdateAddressController _sut;
 
     public UpdateAddressControllerTests()
     {
-        _sut = new UpdateAddressController(_mockLogger.Object, _mockUpdateAddressService.Object);
+        _sut = new UpdateAddressController(_mockLogger.Object, _mockMediator.Object);
     }
 
     [Fact]
@@ -26,13 +28,13 @@ public sealed class UpdateAddressControllerTests : UnitTestBase
     {
         using (new AssertionScope())
         {
-            _ = ((Action)(() => _ = new UpdateAddressController(null!, _mockUpdateAddressService.Object)))
+            _ = ((Action)(() => _ = new UpdateAddressController(null!, _mockMediator.Object)))
                 .Should().Throw<ArgumentNullException>("because we expect a null argument exception.")
                 .And.ParamName.Should().Be("logger");
 
             _ = ((Action)(() => _ = new UpdateAddressController(_mockLogger.Object, null!)))
                 .Should().Throw<ArgumentNullException>("because we expect a null argument exception.")
-                .And.ParamName.Should().Be("updateAddressService");
+                .And.ParamName.Should().Be("mediator");
         }
     }
 
@@ -67,7 +69,7 @@ public sealed class UpdateAddressControllerTests : UnitTestBase
     }
 
     [Fact]
-    public async Task PutAsyn_mismatched_ids_returns_bad_requestAsync()
+    public async Task PutAsync_mismatched_ids_returns_bad_requestAsync()
     {
         var result = await _sut.PutAsync(11, new AddressUpdateModel{Id = 15});
 
@@ -82,43 +84,34 @@ public sealed class UpdateAddressControllerTests : UnitTestBase
     }
 
     [Fact]
-    public async Task PutAsync_input_has_validation_errors_returns_bad_requestAsync()
+    public void PutAsync_invalid_input_handles_exception()
     {
-        _mockUpdateAddressService.Setup(x => x.UpdateAsync(It.IsAny<AddressUpdateModel>()))
-            .ReturnsAsync((new AddressModel(),
-                new List<ValidationFailure>
-                    { new() { PropertyName = "Id", ErrorCode = "00010", ErrorMessage = "Hello Validation Error" } }));
 
-        var result = await _sut.PutAsync(11, new AddressUpdateModel { Id = 11 });
+        _mockMediator
+            .Setup(x => x.Send(It.IsAny<CreateAddressCommand>(), CancellationToken.None))
+            .ThrowsAsync(new ValidationException(new List<ValidationFailure>
+                { new() { PropertyName = "Id", ErrorCode = "00010", ErrorMessage = "Hello Validation Error" } }));
 
-        var objectResult = result as BadRequestObjectResult;
-        var outputModel = objectResult!.Value! as IEnumerable;
-        
-        using (new AssertionScope())
-        {
-            objectResult.Should().NotBeNull();
-            objectResult!.StatusCode.Should().Be((int)HttpStatusCode.BadRequest);
-            objectResult!.Value!.ToString().Should().NotBeNullOrWhiteSpace();
+        Func<Task> act = async () => await _sut.PutAsync(11, new AddressUpdateModel { Id = 11 });
 
-            outputModel.Should().NotBeNull();
-            outputModel?.Cast<string>().Select(x => x).FirstOrDefault().Should().Be("Hello Validation Error");
-        }
+        _ = act.Should().ThrowAsync<ValidationException>();
     }
 
 
     [Fact]
-    public async Task PostAsync_valid_input_returns_createdAsync()
+    public async Task PutAsync_succeeds_Async()
     {
         var addressModel = new AddressModel
         {
-            Id = 1,
+            Id = 11,
             AddressLine1 = "hello World",
             PostalCode = "123"
         };
 
-        _mockUpdateAddressService.Setup(x => x.UpdateAsync(It.IsAny<AddressUpdateModel>()))
-            .ReturnsAsync((addressModel,
-                new List<ValidationFailure>()));
+        _mockMediator.Setup(x => x.Send(It.IsAny<UpdateAddressCommand>(), CancellationToken.None));
+
+        _mockMediator.Setup(x => x.Send(It.IsAny<ReadAddressQuery>(), It.IsAny<CancellationToken>()))
+            .ReturnsAsync(addressModel);
 
         var result = await _sut.PutAsync(11, new AddressUpdateModel { Id = 11 });
 
@@ -132,7 +125,7 @@ public sealed class UpdateAddressControllerTests : UnitTestBase
             objectResult!.Value!.ToString().Should().NotBeNullOrWhiteSpace();
 
             outputModel.Should().NotBeNull();
-            outputModel!.Id.Should().Be(1);
+            outputModel!.Id.Should().Be(11);
         }
     }
 }

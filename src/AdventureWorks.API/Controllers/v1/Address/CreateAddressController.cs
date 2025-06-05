@@ -25,8 +25,8 @@ public sealed class CreateAddressController : ControllerBase
         ILogger<CreateAddressController> logger,
         IMediator mediator)
     {
-        ArgumentNullException.ThrowIfNull(logger, nameof(logger));
-        ArgumentNullException.ThrowIfNull(mediator, nameof(mediator));
+        ArgumentNullException.ThrowIfNull(logger);
+        ArgumentNullException.ThrowIfNull(mediator);
         _logger = logger;
         _mediator = mediator;
     }

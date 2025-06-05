@@ -5,48 +5,28 @@
 		<ImplicitUsings>enable</ImplicitUsings>
 		<Nullable>enable</Nullable>
 		<IsPackable>false</IsPackable>
+		<EnableNETAnalyzers>true</EnableNETAnalyzers>
+		<AnalysisLevel>latest</AnalysisLevel>
 	</PropertyGroup>
 
 	<ItemGroup>
 		<PackageReference Include="AutoMapper" Version="14.0.0" />
-		<PackageReference Include="FluentAssertions" Version="8.2.0" />
-		<PackageReference Include="Microsoft.CodeCoverage" Version="17.13.0" />
-		<PackageReference Include="Microsoft.CodeAnalysis" Version="4.13.0" />
-		<PackageReference Include="Microsoft.EntityFrameworkCore.InMemory" Version="9.0.4" />
-		<PackageReference Include="Microsoft.Extensions.Configuration" Version="9.0.4" />
-		<PackageReference Include="Microsoft.Extensions.Configuration.Binder" Version="9.0.4" />
-		<PackageReference Include="Microsoft.Extensions.Configuration.EnvironmentVariables" Version="9.0.4" />
-		<PackageReference Include="Microsoft.Extensions.Configuration.FileExtensions" Version="9.0.4" />
-		<PackageReference Include="Microsoft.Extensions.Configuration.Json" Version="9.0.4" />
-		<PackageReference Include="Microsoft.NET.Test.Sdk" Version="17.13.0" />
+		<PackageReference Include="FluentAssertions" Version="8.3.0" />
+		<PackageReference Include="Microsoft.CodeCoverage" Version="17.14.1" />
+		<PackageReference Include="Microsoft.EntityFrameworkCore.InMemory" Version="9.0.5" />
+		<PackageReference Include="Microsoft.Extensions.Configuration" Version="9.0.5" />
+		<PackageReference Include="Microsoft.Extensions.Configuration.Binder" Version="9.0.5" />
+		<PackageReference Include="Microsoft.Extensions.Configuration.EnvironmentVariables" Version="9.0.5" />
+		<PackageReference Include="Microsoft.Extensions.Configuration.FileExtensions" Version="9.0.5" />
+		<PackageReference Include="Microsoft.Extensions.Configuration.Json" Version="9.0.5" />
+		<PackageReference Include="Microsoft.NET.Test.Sdk" Version="17.14.1" />
 		<PackageReference Include="Moq" Version="4.20.72" />
-
-		<PackageReference Include="SecurityCodeScan.VS2019" Version="5.6.7">
-			<PrivateAssets>all</PrivateAssets>
-			<IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
-		</PackageReference>
 		<PackageReference Include="coverlet.collector" Version="6.0.4">
 			<IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
 			<PrivateAssets>all</PrivateAssets>
 		</PackageReference>
-		<PackageReference Include="AsyncFixer" Version="1.6.0">
-			<PrivateAssets>all</PrivateAssets>
-			<IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
-		</PackageReference>
-		<PackageReference Include="Asyncify" Version="0.9.5707.38527" />
-		<PackageReference Include="Microsoft.CodeAnalysis.NetAnalyzers" Version="9.0.0">
-			<PrivateAssets>all</PrivateAssets>
-			<IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
-		</PackageReference>
-		<PackageReference Include="Microsoft.VisualStudio.Threading.Analyzers" Version="17.13.61">
-			<PrivateAssets>all</PrivateAssets>
-			<IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
-		</PackageReference>
-		<PackageReference Include="Roslyn.Analyzers" Version="1.0.3.4" />
-		<PackageReference Include="System.Text.Json" Version="9.0.4" />
-
 		<PackageReference Include="xunit" Version="2.9.3" />
-		<PackageReference Include="xunit.runner.visualstudio" Version="3.0.2">
+		<PackageReference Include="xunit.runner.visualstudio" Version="3.1.0">
 			<PrivateAssets>all</PrivateAssets>
 			<IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
 		</PackageReference>
@@ -58,6 +38,10 @@
 		<ProjectReference Include="..\..\src\AdventureWorks.Common\AdventureWorks.Common.csproj" />
 		<ProjectReference Include="..\..\src\AdventureWorks.Domain\AdventureWorks.Domain.csproj" />
 		<ProjectReference Include="..\AdventureWorks.Test.Common\AdventureWorks.Test.Common.csproj" />
+	</ItemGroup>
+
+	<ItemGroup>
+	  <Folder Include="Application\Services\Address\" />
 	</ItemGroup>
 
 </Project>

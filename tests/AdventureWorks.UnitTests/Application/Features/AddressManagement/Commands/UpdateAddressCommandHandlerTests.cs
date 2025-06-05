@@ -10,21 +10,21 @@ using FluentValidation.Results;
 
 namespace AdventureWorks.UnitTests.Application.Features.AddressManagement.Commands;
 
-public sealed class CreateAddressCommandHandlerTests : UnitTestBase
+public sealed class UpdateAddressCommandHandlerTests : UnitTestBase
 {
     private readonly IMapper _mapper;
     private readonly Mock<IAddressRepository> _mockAddressRepository = new();
-    private readonly Mock<IValidator<AddressCreateModel>> _mockValidator = new();
-    private CreateAddressCommandHandler _sut;
+    private readonly Mock<IValidator<AddressUpdateModel?>> _mockValidator = new();
+    private UpdateAddressCommandHandler _sut;
 
-    public CreateAddressCommandHandlerTests()
+    public UpdateAddressCommandHandlerTests()
     {
         var mappingConfig = new MapperConfiguration(config =>
-            config.AddMaps(typeof(AddressEntityToAddressModelProfile).Assembly)
+            config.AddMaps(typeof(AddressUpdateModelToAddressEntityProfile).Assembly)
         );
         _mapper = mappingConfig.CreateMapper();
 
-        _sut = new CreateAddressCommandHandler(_mapper, _mockAddressRepository.Object, _mockValidator.Object);
+        _sut = new UpdateAddressCommandHandler(_mapper, _mockAddressRepository.Object, _mockValidator.Object);
     }
 
     [Fact]
@@ -32,21 +32,21 @@ public sealed class CreateAddressCommandHandlerTests : UnitTestBase
     {
         using (new AssertionScope())
         {
-            _ = ((Action)(() => _sut = new CreateAddressCommandHandler(
+            _ = ((Action)(() => _ = new UpdateAddressCommandHandler(
                     null!,
                     _mockAddressRepository.Object,
                     _mockValidator.Object!)))
                 .Should().Throw<ArgumentNullException>("because we expect a null argument exception.")
                 .And.ParamName.Should().Be("mapper");
 
-            _ = ((Action)(() => _sut = new CreateAddressCommandHandler(
+            _ = ((Action)(() => _ = new UpdateAddressCommandHandler(
                     _mapper,
                     null!,
                     _mockValidator.Object!)))
                 .Should().Throw<ArgumentNullException>("because we expect a null argument exception.")
                 .And.ParamName.Should().Be("addressRepository");
 
-            _ = ((Action)(() => _sut = new CreateAddressCommandHandler(
+            _ = ((Action)(() => _ = new UpdateAddressCommandHandler(
                     _mapper,
                     _mockAddressRepository.Object,
                     null!)))
@@ -56,71 +56,62 @@ public sealed class CreateAddressCommandHandlerTests : UnitTestBase
     }
 
     [Fact]
-    public void Handle_throws_correct_exception()
-    {
-        _ = (((Func<Task>)(async () => await _sut.Handle(null!, CancellationToken.None)))
-            .Should().ThrowAsync<ArgumentNullException>());
-    }
-
-
-    [Fact]
     public async Task Handle_returns_successAsync()
     {
-        var command = new CreateAddressCommand
+        var command = new UpdateAddressCommand()
         {
-            Model = new AddressCreateModel
+            Model = new AddressUpdateModel
             {
+                Id = 12,
                 AddressLine1 = "hello world",
                 AddressLine2 = "hello world2",
                 City = "Denver",
                 PostalCode = "80256",
                 StateProvince = new GenericSlimModel { Id = 12, Code = string.Empty, Name = string.Empty }
             },
-            ModifiedDate = DefaultAuditDate,
-            RowGuid = new Guid("5ec92f1e-232b-430e-a729-ea59c943e3fc")
+            ModifiedDate = DefaultAuditDate
         };
 
-        _mockValidator.Setup(x => x.ValidateAsync(It.IsAny<AddressCreateModel>(),
+        _mockValidator.Setup(x => x.ValidateAsync(It.IsAny<AddressUpdateModel>(),
                 It.IsAny<CancellationToken>()))
             .ReturnsAsync(new ValidationResult { Errors = new List<ValidationFailure>() });
 
-        _mockAddressRepository.Setup(x => x.AddAsync(It.IsAny<AddressEntity>()))
-            .ReturnsAsync(new AddressEntity
-            {
-                AddressId = 8768,
-                AddressLine1 = "hello world",
-                AddressLine2 = "hello world2",
-                City = "Denver",
-                PostalCode = "80256",
-                StateProvinceId = 1589,
-                ModifiedDate = DefaultAuditDate
-            });
+        _mockAddressRepository.Setup(x => x.GetByIdAsync(12))
+            .ReturnsAsync(new AddressEntity { AddressId = 12 });
 
-        var result = await _sut.Handle(command, CancellationToken.None);
+        _mockAddressRepository.Setup(x => x.UpdateAsync(It.IsAny<AddressEntity>()));
 
-        result.Should().Be(8768);
+        await _sut.Handle(command, CancellationToken.None);
+
+        using (new AssertionScope())
+        {
+            _mockAddressRepository.Verify(x => x.GetByIdAsync(12), Times.Once);
+            _mockAddressRepository.Verify(x => x.UpdateAsync(It.IsAny<AddressEntity>()), Times.Once);
+        }
     }
 
     [Fact]
-    public async Task Handle_throws_correct_validation_errorsAsync()
+    public void Handle_throws_correct_exception()
     {
-        var command = new CreateAddressCommand
+        _ = ((Func<Task>)(async () => await _sut.Handle(null!, CancellationToken.None)))
+            .Should().ThrowAsync<ArgumentNullException>();
+    }
+
+    [Fact]
+    public async Task UpdateAsync_returns_correct_validation_errorsAsync()
+    {
+        var command = new UpdateAddressCommand
         {
-            Model = new AddressCreateModel
+            Model = new AddressUpdateModel
             {
-                AddressLine1 = "    ",
-                AddressLine2 = "unit 1",
-                City = string.Empty,
-                PostalCode = string.Empty,
-                StateProvince = new GenericSlimModel(){Name = string.Empty, Code = string.Empty}
+                AddressLine1 = "hello world"
             },
-            ModifiedDate = DefaultAuditDate,
-            RowGuid = new Guid("5ec92f1e-232b-430e-a729-ea59c943e3fc")
+            ModifiedDate = DateTime.UtcNow
         };
 
-        var validator = new FakeFailureValidator<AddressCreateModel>("AddressLine1", "Street is required");
+        var validator = new FakeFailureValidator<AddressUpdateModel>("AddressLine2", "Street is required");
 
-        _sut = new CreateAddressCommandHandler(_mapper, _mockAddressRepository.Object, validator);
+        _sut = new UpdateAddressCommandHandler(_mapper, _mockAddressRepository.Object, validator!);
 
         var act = async () => await _sut.Handle(command, CancellationToken.None);
 

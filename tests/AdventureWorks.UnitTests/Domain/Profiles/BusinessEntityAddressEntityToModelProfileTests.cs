@@ -62,7 +62,7 @@ public sealed class BusinessEntityAddressEntityToModelProfileTests : UnitTestBas
             result.Address.Id.Should().Be(addressId);
             result.Address.City.Should().Be("Denver");
             result.Address.CountryRegion.Should().NotBeNull();
-            result.Address.AddressStateProvince.Should().NotBeNull();
+            result.Address.StateProvince.Should().NotBeNull();
 
             result.AddressType.Id.Should().Be(addressTypeId);
             result.AddressType.Name.Should().Be("Storefront Location");

@@ -94,7 +94,7 @@ public sealed class ReadAddressQueryHandlerTests : UnitTestBase
             result.AddressLine1.Should().Be("1234");
             result.AddressLine2.Should().Be("5671");
             result.City.Should().Be("Denver");
-            result.AddressStateProvince.Id.Should().Be(18);
+            result.StateProvince.Id.Should().Be(18);
             result.ModifiedDate.Should().Be(dateModified);
             result.ModifiedDate.Year.Should().Be(dateModified.Year);
             result.CountryRegion.Name.Should().Be("United States");

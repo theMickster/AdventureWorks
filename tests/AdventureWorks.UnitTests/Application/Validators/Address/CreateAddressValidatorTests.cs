@@ -46,7 +46,7 @@ public sealed class CreateAddressValidatorTests : UnitTestBase
             AddressLine1 = StringGenerator.GetRandomString(60),
             AddressLine2 = StringGenerator.GetRandomString(60),
             City = StringGenerator.GetRandomString(30),
-            AddressStateProvince = new GenericSlimModel { Id = stateId, Name = string.Empty, Code = string.Empty },
+            StateProvince = new GenericSlimModel { Id = stateId, Name = string.Empty, Code = string.Empty },
             PostalCode = StringGenerator.GetRandomString(15)
         };
 
@@ -93,7 +93,7 @@ public sealed class CreateAddressValidatorTests : UnitTestBase
             validationResult.ShouldHaveValidationErrorFor(a => a.AddressLine1)
                 .WithErrorCode("Rule-02");
 
-            validationResult.ShouldHaveValidationErrorFor(a => a.AddressStateProvince)
+            validationResult.ShouldHaveValidationErrorFor(a => a.StateProvince)
                 .WithErrorCode("Rule-08");
         }
     }
@@ -110,7 +110,7 @@ public sealed class CreateAddressValidatorTests : UnitTestBase
         {
             var validationResult = await _sut.TestValidateAsync(new AddressCreateModel
                 {
-                AddressStateProvince = new GenericSlimModel
+                StateProvince = new GenericSlimModel
                 {
                     Id = 1548,
                     Code = "ABCDEFG",
@@ -119,7 +119,7 @@ public sealed class CreateAddressValidatorTests : UnitTestBase
             })
                 ;
 
-            validationResult.ShouldHaveValidationErrorFor(a => a.AddressStateProvince)
+            validationResult.ShouldHaveValidationErrorFor(a => a.StateProvince)
                 .WithErrorCode("Rule-07");
         }
     }
