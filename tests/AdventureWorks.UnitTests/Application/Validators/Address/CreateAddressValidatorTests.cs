@@ -29,8 +29,8 @@ public sealed class CreateAddressValidatorTests : UnitTestBase
         CreateAddressValidator.MessageCityLength.Should().Be("City cannot be greater than 30 characters");
         CreateAddressValidator.PostalCodeEmpty.Should().Be("Postal Code cannot be null, empty, or whitespace");
         CreateAddressValidator.PostalCodeLength.Should().Be("Postal Code cannot be greater than 15 characters");
-        CreateAddressValidator.StateProvinceIdExists.Should().Be("AddressStateProvince Id must exist prior to use");
-        CreateAddressValidator.StateProvinceExists.Should().Be("AddressStateProvince is required");
+        CreateAddressValidator.StateProvinceIdExists.Should().Be("StateProvince Id must exist prior to use");
+        CreateAddressValidator.StateProvinceExists.Should().Be("StateProvince is required");
     }
 
     [Fact]
