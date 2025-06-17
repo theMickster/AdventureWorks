@@ -34,8 +34,8 @@ public sealed class ReadStoreController : ControllerBase
         ILogger<ReadStoreController> logger,
         IMediator mediator)
     {
-        ArgumentNullException.ThrowIfNull(logger, nameof(logger));
-        ArgumentNullException.ThrowIfNull(mediator, nameof(mediator));
+        ArgumentNullException.ThrowIfNull(logger);
+        ArgumentNullException.ThrowIfNull(mediator);
         _logger = logger;
         _mediator = mediator;
     }
