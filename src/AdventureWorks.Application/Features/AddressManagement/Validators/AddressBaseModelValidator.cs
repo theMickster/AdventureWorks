@@ -40,13 +40,13 @@ public class AddressBaseModelValidator<T> : AbstractValidator<T> where T : Addre
             .When(x => x?.StateProvince != null)
             .WithMessage(StateProvinceIdExists)
             .WithErrorCode("Rule-07")
-            .OverridePropertyName("AddressStateProvince");
+            .OverridePropertyName("StateProvince");
 
         RuleFor(x => x.StateProvince)
             .NotNull()
             .WithMessage(StateProvinceExists)
             .WithErrorCode("Rule-08")
-            .OverridePropertyName("AddressStateProvince");
+            .OverridePropertyName("StateProvince");
     }
 
     public static string MessageAddressLine1Empty => "Address Line 1 cannot be null, empty, or whitespace";
@@ -63,9 +63,9 @@ public class AddressBaseModelValidator<T> : AbstractValidator<T> where T : Addre
 
     public static string PostalCodeLength => "Postal Code cannot be greater than 15 characters";
 
-    public static string StateProvinceIdExists => "AddressStateProvince Id must exist prior to use";
+    public static string StateProvinceIdExists => "StateProvince Id must exist prior to use";
 
-    public static string StateProvinceExists => "AddressStateProvince is required";
+    public static string StateProvinceExists => "StateProvince is required";
 
     protected async Task<bool> StateProvinceMustExistAsync(int stateProvinceId)
     {
