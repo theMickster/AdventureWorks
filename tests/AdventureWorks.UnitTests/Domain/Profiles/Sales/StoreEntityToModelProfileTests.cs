@@ -2,11 +2,9 @@
 using AdventureWorks.Domain.Entities;
 using AdventureWorks.Domain.Entities.Sales;
 using AdventureWorks.Models.Features.Sales;
-using AutoMapper;
 
 namespace AdventureWorks.UnitTests.Domain.Profiles.Sales;
 
-[ExcludeFromCodeCoverage]
 public sealed class StoreEntityToModelProfileTests : UnitTestBase
 {
     private readonly IMapper _mapper;

@@ -25,7 +25,7 @@ public sealed class AddressEntityToAddressModelProfileTests : UnitTestBase
     public void map_entities_to_model_succeeds()
     {
         const int id = 9865;
-        var modified = new DateTime(2022, 11, 11, 11, 11, 11);
+        var modified = new DateTime(2022, 11, 11, 11, 11, 11, DateTimeKind.Utc);
 
         var entity = new AddressEntity
         {
@@ -54,7 +54,7 @@ public sealed class AddressEntityToAddressModelProfileTests : UnitTestBase
             result.AddressLine1.Should().Be("1234 Hello World");
             result.AddressLine2.Should().Be("Apt 1");
             result.City.Should().Be("Denver");
-            result.StateProvince.Id.Should().Be(26);
+            result.StateProvince!.Id.Should().Be(26);
             result.StateProvince.Code.Should().Be("CO");
             result.CountryRegion.Code.Should().Be("USA");
             result.CountryRegion.Name.Should().Be("United States");

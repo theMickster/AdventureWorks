@@ -1,8 +1,9 @@
 ﻿using AdventureWorks.Domain.Entities.Person;
+using AdventureWorks.Domain.Entities.Sales;
 
 namespace AdventureWorks.Domain.Entities;
 
-public class Employee : BaseEntity
+public class EmployeeEntity : BaseEntity
 {
     public int BusinessEntityId { get; set; }
 
@@ -42,7 +43,7 @@ public class Employee : BaseEntity
 
     public ICollection<PurchaseOrderHeader> PurchaseOrderHeaders { get; set; }
 
-    public ICollection<SalesPerson> SalesPersons { get; set; }
+    public ICollection<SalesPersonEntity> SalesPersons { get; set; }
         
     public PersonEntity PersonBusinessEntity { get; set; }
 }

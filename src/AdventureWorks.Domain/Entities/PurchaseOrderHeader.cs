@@ -18,7 +18,7 @@ public class PurchaseOrderHeader : BaseEntity
     public DateTime ModifiedDate { get; set; }
 
     public ICollection<PurchaseOrderDetail> PurchaseOrderDetails { get; set; }
-    public Employee Employee { get; set; }
+    public EmployeeEntity EmployeeEntity { get; set; }
     public ShipMethod ShipMethod { get; set; }
     public Vendor Vendor { get; set; }
 }

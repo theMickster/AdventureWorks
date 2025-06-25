@@ -55,7 +55,7 @@ public sealed class ReadAddressQueryHandlerTests : UnitTestBase
     public async Task GetByIdAsync_returns_valid_model_Async()
     {
         const int addressId = 797;
-        var dateModified = new DateTime(2011, 11, 11);
+        var dateModified = new DateTime(2011, 11, 11, 0, 0, 0, DateTimeKind.Utc);
 
         var addressEntity = new AddressEntity
         {
@@ -94,7 +94,7 @@ public sealed class ReadAddressQueryHandlerTests : UnitTestBase
             result.AddressLine1.Should().Be("1234");
             result.AddressLine2.Should().Be("5671");
             result.City.Should().Be("Denver");
-            result.StateProvince.Id.Should().Be(18);
+            result.StateProvince!.Id.Should().Be(18);
             result.ModifiedDate.Should().Be(dateModified);
             result.ModifiedDate.Year.Should().Be(dateModified.Year);
             result.CountryRegion.Name.Should().Be("United States");

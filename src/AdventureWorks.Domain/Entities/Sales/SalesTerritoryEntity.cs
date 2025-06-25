@@ -1,4 +1,4 @@
-﻿namespace AdventureWorks.Domain.Entities;
+﻿namespace AdventureWorks.Domain.Entities.Sales;
 
 public sealed class SalesTerritoryEntity : BaseEntity
 {
@@ -26,7 +26,7 @@ public sealed class SalesTerritoryEntity : BaseEntity
     
     public ICollection<SalesOrderHeader> SalesOrderHeaders { get; set; }
     
-    public ICollection<SalesPerson> SalesPeople { get; set; }
+    public ICollection<SalesPersonEntity> SalesPeople { get; set; }
     
     public ICollection<SalesTerritoryHistory> SalesTerritoryHistory { get; set; }
     

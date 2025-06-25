@@ -1,4 +1,6 @@
-﻿namespace AdventureWorks.Domain.Entities;
+﻿using AdventureWorks.Domain.Entities.Sales;
+
+namespace AdventureWorks.Domain.Entities;
 
 public class SalesOrderHeader : BaseEntity
 {
@@ -36,7 +38,7 @@ public class SalesOrderHeader : BaseEntity
     public CreditCard CreditCard { get; set; }
     public CurrencyRate CurrencyRate { get; set; }
     public CustomerEntity CustomerEntity { get; set; }
-    public SalesPerson SalesPerson { get; set; }
+    public SalesPersonEntity SalesPerson { get; set; }
     public ShipMethod ShipMethod { get; set; }
     public AddressEntity ShipToAddressEntity { get; set; }
     public SalesTerritoryEntity TerritoryEntity { get; set; }

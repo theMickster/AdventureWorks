@@ -1,4 +1,6 @@
-﻿namespace AdventureWorks.Domain.Entities;
+﻿using AdventureWorks.Domain.Entities.Sales;
+
+namespace AdventureWorks.Domain.Entities;
 
 public class SalesTerritoryHistory : BaseEntity
 {
@@ -14,7 +16,7 @@ public class SalesTerritoryHistory : BaseEntity
 
     public DateTime ModifiedDate { get; set; }
 
-    public virtual SalesPerson BusinessEntity { get; set; }
+    public virtual SalesPersonEntity BusinessEntity { get; set; }
 
     public virtual SalesTerritoryEntity TerritoryEntity { get; set; }
 }

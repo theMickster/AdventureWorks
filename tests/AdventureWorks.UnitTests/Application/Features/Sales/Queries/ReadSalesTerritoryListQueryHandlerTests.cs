@@ -2,6 +2,7 @@
 using AdventureWorks.Application.Features.Sales.Queries;
 using AdventureWorks.Application.PersistenceContracts.Repositories;
 using AdventureWorks.Domain.Entities;
+using AdventureWorks.Domain.Entities.Sales;
 
 namespace AdventureWorks.UnitTests.Application.Features.Sales.Queries;
 

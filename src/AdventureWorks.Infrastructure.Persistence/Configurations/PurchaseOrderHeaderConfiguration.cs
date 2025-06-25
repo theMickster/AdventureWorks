@@ -12,7 +12,7 @@ public class PurchaseOrderHeaderConfiguration : IEntityTypeConfiguration<Purchas
 
         builder.HasKey(a => a.PurchaseOrderId);
 
-        builder.HasOne(a => a.Employee)
+        builder.HasOne(a => a.EmployeeEntity)
             .WithMany(b=>b.PurchaseOrderHeaders)
             .HasForeignKey(a => a.EmployeeId);
 

@@ -1,10 +1,8 @@
-﻿using AdventureWorks.Testing.Console;
-using AdventureWorks.Testing.Console.libs;
+﻿using AdventureWorks.Testing.Console.libs;
 using AdventureWorks.Testing.Console.Settings;
 using AdventureWorks.Testing.Console.Verifications;
 using Autofac;
 using Autofac.Extensions.DependencyInjection;
-using CommandLine;
 using Microsoft.Extensions.Configuration;
 
 var builder = new ConfigurationBuilder()
@@ -30,22 +28,12 @@ var serviceProvider = new AutofacServiceProvider(
 Console.ForegroundColor = ConsoleColor.Cyan;
 Console.WriteLine("Hello from the AdventureWorks Testing Console App");
 
-//Parser.Default.ParseArguments<CommandLineOptions>(args)
-//.WithParsed<CommandLineOptions>(
-//    o =>
-//    {
-//        if (o.TestSecurityModel)
-//        {
-            Console.ForegroundColor = ConsoleColor.Magenta;
-            Console.WriteLine("****************************************************************");
-            Console.WriteLine("Verifying:: AdventureWorksDbContext ........ ");
-            Console.WriteLine("****************************************************************");
+Console.ForegroundColor = ConsoleColor.Magenta;
+Console.WriteLine("****************************************************************");
+Console.WriteLine("Verifying:: AdventureWorksDbContext ........ ");
+Console.WriteLine("****************************************************************");
 
-            var (rtSuccess, errorList) = await new VerifyDbContext(serviceProvider).VerifyAllTheThings().ConfigureAwait(false);
-
-//        }
-//    }
-//);
+var (rtSuccess, errorList) = await new VerifyDbContext(serviceProvider).VerifyAllTheThings().ConfigureAwait(false);
 
 Console.ForegroundColor = ConsoleColor.Magenta;
 Console.WriteLine("****************************************************************");

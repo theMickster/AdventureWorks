@@ -1,12 +1,13 @@
 ﻿using AdventureWorks.Domain.Entities;
+using AdventureWorks.Domain.Entities.Sales;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
 
 namespace AdventureWorks.Infrastructure.Persistence.Configurations;
 
-public class SalesPersonQuotaHistoryConfiguration : IEntityTypeConfiguration<SalesPersonQuotaHistory>
+public class SalesPersonQuotaHistoryConfiguration : IEntityTypeConfiguration<SalesPersonQuotaHistoryEntity>
 {
-    public void Configure(EntityTypeBuilder<SalesPersonQuotaHistory> builder)
+    public void Configure(EntityTypeBuilder<SalesPersonQuotaHistoryEntity> builder)
     {
         builder.ToTable("SalesPersonQuotaHistory", "Sales");
 

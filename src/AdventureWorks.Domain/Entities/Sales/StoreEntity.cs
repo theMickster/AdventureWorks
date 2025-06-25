@@ -18,6 +18,6 @@ public sealed class StoreEntity : BaseEntity
 
     public BusinessEntity StoreBusinessEntity { get; set; }
 
-    public SalesPerson PrimarySalesPerson { get; set; }
+    public SalesPersonEntity PrimarySalesPerson { get; set; }
 
 }

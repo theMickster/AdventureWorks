@@ -1,4 +1,6 @@
-﻿namespace AdventureWorks.Domain.Entities;
+﻿using AdventureWorks.Domain.Entities.Sales;
+
+namespace AdventureWorks.Domain.Entities;
 
 public sealed class StateProvinceEntity : BaseEntity
 {

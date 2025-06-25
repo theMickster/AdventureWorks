@@ -8,7 +8,9 @@ public sealed class StoreModel : StoreBaseModel
 
     public DateTime ModifiedDate { get; set; }
 
-    public List<BusinessEntityAddressModel> StoreAddresses { get; set; }
+    public List<BusinessEntityAddressModel> StoreAddresses { get; set; } = [];
 
-    public List<StoreContactModel> StoreContacts { get; set; }
+    public List<StoreContactModel> StoreContacts { get; set; } = [];
+
+    public SalesPersonModel? SalesPerson { get; set; }
 }

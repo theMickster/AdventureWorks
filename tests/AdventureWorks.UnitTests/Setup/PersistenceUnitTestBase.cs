@@ -226,7 +226,7 @@ public abstract class PersistenceUnitTestBase : UnitTestBase
             new (){BusinessEntityId = 12, FirstName = "Bill", LastName = "Romanowski", Rowguid = new Guid("207a0b49-4e9b-4868-9831-7083399f1fd5"), ModifiedDate = StandardModifiedDate}
         });
         
-        DbContext.EmailAddresses.AddRange(new List<EmailAddress>
+        DbContext.EmailAddresses.AddRange(new List<EmailAddressEntity>
         {
             new(){BusinessEntityId = 1, EmailAddressId = 1, EmailAddressName = "john.elway@adventure-works.com",ModifiedDate = StandardModifiedDate},
             new(){BusinessEntityId = 2, EmailAddressId = 2, EmailAddressName = "terrell.davis@adventure-works.com",ModifiedDate = StandardModifiedDate},
@@ -280,7 +280,7 @@ public abstract class PersistenceUnitTestBase : UnitTestBase
 
         });
 
-        DbContext.SalesPersons.AddRange(new List<SalesPerson>
+        DbContext.SalesPersons.AddRange(new List<SalesPersonEntity>
         {
             new(){BusinessEntityId = 7777, TerritoryId = 4, Rowguid = new Guid("1e28194c-6f14-4dc9-b4ff-e715ebd606ef"), ModifiedDate = StandardModifiedDate},
             new(){BusinessEntityId = 7778, TerritoryId = 4, Rowguid = new Guid("2126a5df-a5ba-4261-878d-c85b9ea39aa9"), ModifiedDate = StandardModifiedDate},
