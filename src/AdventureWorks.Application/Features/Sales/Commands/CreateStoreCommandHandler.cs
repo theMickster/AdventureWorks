@@ -1,4 +1,5 @@
 ﻿using AdventureWorks.Application.PersistenceContracts.Repositories.Sales;
+using AdventureWorks.Domain.Entities;
 using AdventureWorks.Domain.Entities.Sales;
 using AdventureWorks.Models.Features.Sales;
 using AutoMapper;
@@ -27,6 +28,7 @@ public sealed class CreateStoreCommandHandler(
         var inputEntity = _mapper.Map<StoreEntity>(request.Model);
         inputEntity.ModifiedDate = request.ModifiedDate;
         inputEntity.Rowguid = request.RowGuid;
+        inputEntity.StoreBusinessEntity = new BusinessEntity { Rowguid = Guid.NewGuid(), ModifiedDate = request.ModifiedDate };
 
         var outputEntity = await _storeRepository.AddAsync(inputEntity);
 

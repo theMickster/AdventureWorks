@@ -55,6 +55,6 @@ public sealed class CreateStoreController : ControllerBase
         var addressId = await _mediator.Send(cmd);
         var model = await _mediator.Send(new ReadStoreQuery { Id = addressId });
 
-        return CreatedAtRoute("GetStoreById", new { addressId = model.Id }, model);
+        return CreatedAtRoute("GetStoreById", new { storeId = model.Id }, model);
     }
 }

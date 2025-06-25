@@ -1,4 +1,4 @@
-﻿using AdventureWorks.Application.Features.Sales.Validators.Validators;
+﻿using AdventureWorks.Application.Features.Sales.Validators;
 using AdventureWorks.Models.Features.Sales;
 using FluentValidation.TestHelper;
 
@@ -21,7 +21,7 @@ public sealed class UpdateStoreValidatorTests : UnitTestBase
     [InlineData("   ")]
     public void Validator_should_have_store_name_errors(string name)
     {
-        var model = new StoreCreateModel { Name = name };
+        var model = new StoreUpdateModel { Name = name };
         var result = _sut.TestValidate(model);
         result.ShouldHaveValidationErrorFor(x => x.Name);
     }
@@ -29,7 +29,7 @@ public sealed class UpdateStoreValidatorTests : UnitTestBase
     [Fact]
     public void Validator_fails_when_store_name_is_too_long()
     {
-        var model = new StoreCreateModel { Name = new string('a', 61) };
+        var model = new StoreUpdateModel { Name = new string('a', 61) };
         var result = _sut.TestValidate(model);
         result.ShouldHaveValidationErrorFor(x => x.Name);
     }
@@ -37,7 +37,7 @@ public sealed class UpdateStoreValidatorTests : UnitTestBase
     [Fact]
     public void Validator_succeeds_when_all_data_is_valid()
     {
-        var model = new StoreCreateModel { Name = "Valid Store Name" };
+        var model = new StoreUpdateModel { Name = "Valid Store Name" };
         var result = _sut.TestValidate(model);
         result.ShouldNotHaveValidationErrorFor(x => x.Name);
     }
