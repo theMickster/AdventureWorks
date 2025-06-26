@@ -19,10 +19,10 @@ public sealed class SalesPersonRepositoryTests : PersistenceUnitTestBase
     {
         using (new AssertionScope())
         {
-            typeof(StoreRepository)
-                .Should().Implement<IStoreRepository>();
+            typeof(SalesPersonRepository)
+                .Should().Implement<ISalesPersonRepository>();
 
-            typeof(StoreRepository)
+            typeof(SalesPersonRepository)
                 .IsDefined(typeof(ServiceLifetimeScopedAttribute), false)
                 .Should().BeTrue();
         }

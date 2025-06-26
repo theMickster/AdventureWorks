@@ -21,6 +21,7 @@ public sealed class StoreRepository(AdventureWorksDbContext dbContext)
     public async Task<StoreEntity> GetStoreByIdAsync(int storeId)
     {
         return await DbContext.Stores
+            .AsNoTracking()
             .Include(x => x.StoreBusinessEntity)
                 .ThenInclude(y => y.BusinessEntityAddresses)
                 .ThenInclude(y => y.AddressType)
@@ -45,6 +46,7 @@ public sealed class StoreRepository(AdventureWorksDbContext dbContext)
         var totalCount = await DbContext.Stores.CountAsync();
 
         var storeQuery = DbContext.Stores
+            .AsNoTracking()
             .Include(x => x.StoreBusinessEntity)
                 .ThenInclude(y => y.BusinessEntityAddresses)
                 .ThenInclude(y => y.AddressType)
@@ -91,6 +93,7 @@ public sealed class StoreRepository(AdventureWorksDbContext dbContext)
         StoreSearchModel storeSearchModel)
     {
         var storeQuery = DbContext.Stores
+            .AsNoTracking()
             .Include(x => x.StoreBusinessEntity)
                 .ThenInclude(y => y.BusinessEntityAddresses)
                 .ThenInclude(y => y.AddressType)
