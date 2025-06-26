@@ -57,6 +57,8 @@ builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
 
 builder.RegisterAspDotNetServices();
 
+builder.RegisterApiVersioning();
+
 builder.RegisterAdventureWorksDbContexts();
 
 builder.RegisterServicesViaReflection();

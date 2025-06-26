@@ -22,18 +22,10 @@ namespace AdventureWorks.API.libs;
 [ExcludeFromCodeCoverage]
 internal static class RegisterServices
 {
+
     [SuppressMessage("Minor Code Smell", "S1075:URIs should not be hardcoded", Justification = "Because we said so.")]
-    internal static WebApplicationBuilder RegisterAspDotNetServices(this WebApplicationBuilder builder)
+    internal static WebApplicationBuilder RegisterApiVersioning(this WebApplicationBuilder builder)
     {
-
-        builder.Services.AddControllers(options =>
-            {
-                options.ReturnHttpNotAcceptable = true;
-            })
-            .AddJsonOptions(options => options.JsonSerializerOptions.WriteIndented = true)
-            .AddXmlSerializerFormatters()
-            .AddXmlDataContractSerializerFormatters();
-
         builder.Services.AddApiVersioning(options =>
         {
             options.ReportApiVersions = true;
@@ -44,7 +36,7 @@ internal static class RegisterServices
                 new HeaderApiVersionReader("x-api-version"),
                 new MediaTypeApiVersionReader("x-api-version"));
         });
-        
+
         builder.Services.AddSwaggerGen(options =>
         {
             options.SwaggerDoc(
@@ -53,7 +45,7 @@ internal static class RegisterServices
                                 "v1",
                                 "API",
                                 new Uri("http://hello-world.info")));
-            
+
             options.AddSecurityDefinition("Bearer", new OpenApiSecurityScheme
             {
                 In = ParameterLocation.Header,
@@ -92,12 +84,12 @@ internal static class RegisterServices
             {
                 if (api.GroupName != null)
                 {
-                    return new[] { api.GroupName };
+                    return [api.GroupName];
                 }
 
                 if (api.ActionDescriptor is ControllerActionDescriptor controllerActionDescriptor)
                 {
-                    return new[] { controllerActionDescriptor.ControllerName };
+                    return [controllerActionDescriptor.ControllerName];
                 }
 
                 throw new InvalidOperationException("Unable to determine tag for endpoint.");
@@ -105,7 +97,20 @@ internal static class RegisterServices
 
             options.DocInclusionPredicate((name, api) => true);
         });
+        return builder;
+    }
 
+    internal static WebApplicationBuilder RegisterAspDotNetServices(this WebApplicationBuilder builder)
+    {
+
+        builder.Services.AddControllers(options =>
+            {
+                options.ReturnHttpNotAcceptable = true;
+            })
+            .AddJsonOptions(options => options.JsonSerializerOptions.WriteIndented = true)
+            .AddXmlSerializerFormatters()
+            .AddXmlDataContractSerializerFormatters();
+        
         builder.Services.AddValidatorsFromAssemblyContaining<CreateAddressValidator>();
         builder.Services.AddApplicationServices();
         return builder;
@@ -195,9 +200,11 @@ internal static class RegisterServices
         return builder;
     }
 
+
+
     #region Private Methods
 
-    private static OpenApiInfo MakeOpenApiInfo(string title, string version, string description, Uri releaseNotes)
+    private static OpenApiInfo MakeOpenApiInfo(string title, string version, string description, Uri uri)
     {
         var oai = new OpenApiInfo
         {
@@ -208,9 +215,9 @@ internal static class RegisterServices
             Description = description
         };
 
-        if (releaseNotes != null)
+        if (uri != null)
         {
-            oai.Contact.Url = releaseNotes;
+            oai.Contact.Url = uri;
         }
 
         return oai;
