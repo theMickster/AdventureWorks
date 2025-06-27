@@ -11,4 +11,7 @@ public static class SortedResultConstants
 
     public const string Name = "Name";
 
+    public const string FirstName = "FirstName";
+
+    public const string LastName = "LastName";
 }

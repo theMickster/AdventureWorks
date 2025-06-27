@@ -383,6 +383,44 @@ public abstract class PersistenceUnitTestBase : UnitTestBase
         DbContext.SaveChanges();
     }
 
+    protected void LoadMockSalesPersons()
+    {
+        var usa = new CountryRegionEntity { CountryRegionCode = "US", Name = "United States of America", ModifiedDate = StandardModifiedDate };
+        var colorado = new StateProvinceEntity { StateProvinceId = 10, Name = "Colorado", CountryRegionCode = "US", CountryRegion = usa };
+
+        DbContext.AddressTypes.AddRange(new List<AddressTypeEntity>
+        {
+            new() { AddressTypeId = 1, Name = "Home" },
+            new() { AddressTypeId = 2, Name = "Billing" },
+            new() { AddressTypeId = 3, Name = "Main Office" },
+            new() { AddressTypeId = 4, Name = "Primary" },
+            new() { AddressTypeId = 5, Name = "Secondary" },
+            new() { AddressTypeId = 6, Name = "Tertiary" },
+            new() { AddressTypeId = 7, Name = "Shipping" }
+        });
+
+        DbContext.SalesPersons.AddRange(new List<SalesPersonEntity>
+        {
+            new(){BusinessEntityId = 7777, TerritoryId = 4, Rowguid = new Guid("1e28194c-6f14-4dc9-b4ff-e715ebd606ef"), ModifiedDate = StandardModifiedDate},
+        });
+
+        DbContext.SalesTerritories.AddRange(new List<SalesTerritoryEntity>
+        {
+            new(){TerritoryId = 1 , Name = "Northwest", CountryRegion = new CountryRegionEntity{CountryRegionCode = "US"}, CountryRegionCode = "US",Group = "North America", SalesYtd = 7887186.79M, SalesLastYear = 3298694.49M, CostYtd = 0.00M, CostLastYear = 0.00M, Rowguid = new Guid("43689A10-E30B-497F-B0DE-11DE20267FF7"), ModifiedDate = DefaultAuditDate},
+            new(){TerritoryId = 2 , Name = "Northeast", CountryRegion = new CountryRegionEntity{CountryRegionCode = "US"}, CountryRegionCode = "US",Group = "North America", SalesYtd = 2402176.85M, SalesLastYear = 3607148.94M, CostYtd = 0.00M, CostLastYear = 0.00M, Rowguid = new Guid("00FB7309-96CC-49E2-8363-0A1BA72486F2"), ModifiedDate = DefaultAuditDate},
+            new(){TerritoryId = 3 , Name = "Central", CountryRegion = new CountryRegionEntity{CountryRegionCode = "US"}, CountryRegionCode = "US",Group = "North America", SalesYtd = 3072175.12M, SalesLastYear = 3205014.08M, CostYtd = 0.00M, CostLastYear = 0.00M, Rowguid = new Guid("DF6E7FD8-1A8D-468C-B103-ED8ADDB452C1"), ModifiedDate = DefaultAuditDate},
+            new(){TerritoryId = 4 , Name = "Southwest", CountryRegion = new CountryRegionEntity{CountryRegionCode = "US"}, CountryRegionCode = "US",Group = "North America", SalesYtd = 10510853.87M, SalesLastYear = 5366575.71M, CostYtd = 0.00M, CostLastYear = 0.00M, Rowguid = new Guid("DC3E9EA0-7950-4431-9428-99DBCBC33865"), ModifiedDate = DefaultAuditDate},
+            new(){TerritoryId = 5 , Name = "Southeast", CountryRegion = new CountryRegionEntity{CountryRegionCode = "US"}, CountryRegionCode = "US",Group = "North America", SalesYtd = 2538667.25M, SalesLastYear = 3925071.43M, CostYtd = 0.00M, CostLastYear = 0.00M, Rowguid = new Guid("6DC4165A-5E4C-42D2-809D-4344E0AC75E7"), ModifiedDate = DefaultAuditDate},
+            new(){TerritoryId = 6 , Name = "Canada", CountryRegion = new CountryRegionEntity{CountryRegionCode = "CA"}, CountryRegionCode = "CA",Group = "North America", SalesYtd = 6771829.14M, SalesLastYear = 5693988.86M, CostYtd = 0.00M, CostLastYear = 0.00M, Rowguid = new Guid("06B4AF8A-1639-476E-9266-110461D66B00"), ModifiedDate = DefaultAuditDate},
+            new(){TerritoryId = 7 , Name = "France", CountryRegion = new CountryRegionEntity{CountryRegionCode = "FR"}, CountryRegionCode = "FR",Group = "Europe", SalesYtd = 4772398.31M, SalesLastYear = 2396539.76M, CostYtd = 0.00M, CostLastYear = 0.00M, Rowguid = new Guid("BF806804-9B4C-4B07-9D19-706F2E689552"), ModifiedDate = DefaultAuditDate},
+            new(){TerritoryId = 8 , Name = "Germany", CountryRegion = new CountryRegionEntity{CountryRegionCode = "DE"}, CountryRegionCode = "DE",Group = "Europe", SalesYtd = 3805202.35M, SalesLastYear = 1307949.79M, CostYtd = 0.00M, CostLastYear = 0.00M, Rowguid = new Guid("6D2450DB-8159-414F-A917-E73EE91C38A9"), ModifiedDate = DefaultAuditDate},
+            new(){TerritoryId = 9 , Name = "Australia", CountryRegion = new CountryRegionEntity{CountryRegionCode = "AU"}, CountryRegionCode = "AU",Group = "Pacific", SalesYtd = 5977814.92M, SalesLastYear = 2278548.98M, CostYtd = 0.00M, CostLastYear = 0.00M, Rowguid = new Guid("602E612E-DFE9-41D9-B894-27E489747885"), ModifiedDate = DefaultAuditDate},
+            new(){TerritoryId = 10 , Name = "United Kingdom", CountryRegion = new CountryRegionEntity{CountryRegionCode = "GB"}, CountryRegionCode = "GB",Group = "Europe", SalesYtd = 5012905.37M, SalesLastYear = 1635823.40M, CostYtd = 0.00M, CostLastYear = 0.00M, Rowguid = new Guid("05FC7E1F-2DEA-414E-9ECD-09D150516FB5"), ModifiedDate = DefaultAuditDate}
+        });
+
+        DbContext.SaveChanges();
+    }
+
     protected void LoadMockBusinessEntityContacts()
     {
         DbContext.BusinessEntities.AddRange(new List<BusinessEntity>
