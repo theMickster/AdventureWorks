@@ -1,4 +1,4 @@
-﻿namespace AdventureWorks.Domain.Entities;
+﻿namespace AdventureWorks.Domain.Entities.Sales;
 
 public sealed class SalesTaxRateEntity : BaseEntity
 {

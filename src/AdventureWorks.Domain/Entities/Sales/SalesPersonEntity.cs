@@ -1,8 +1,6 @@
-﻿using AdventureWorks.Domain.Entities.Sales;
+﻿namespace AdventureWorks.Domain.Entities.Sales;
 
-namespace AdventureWorks.Domain.Entities;
-
-public sealed class SalesPerson : BaseEntity
+public sealed class SalesPersonEntity : BaseEntity
 {
     public int BusinessEntityId { get; set; }
     
@@ -24,11 +22,11 @@ public sealed class SalesPerson : BaseEntity
 
     public ICollection<SalesOrderHeader> SalesOrderHeaders { get; set; }
     
-    public ICollection<SalesPersonQuotaHistory> SalesPersonQuotaHistory { get; set; }
+    public ICollection<SalesPersonQuotaHistoryEntity> SalesPersonQuotaHistory { get; set; }
     
     public ICollection<SalesTerritoryHistory> SalesTerritoryHistory { get; set; }
 
-    public Employee BusinessEntity { get; set; }
+    public EmployeeEntity Employee { get; set; }
     
-    public SalesTerritoryEntity TerritoryEntity { get; set; }
+    public SalesTerritoryEntity SalesTerritory { get; set; }
 }

@@ -1,4 +1,4 @@
-﻿using AdventureWorks.Application.Interfaces.DbContext;
+﻿using AdventureWorks.Application.PersistenceContracts.DbContext;
 using AdventureWorks.Common.Extensions;
 using AdventureWorks.Common.Logging;
 using AdventureWorks.Common.Settings;

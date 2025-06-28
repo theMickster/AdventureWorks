@@ -1,23 +1,17 @@
-﻿using AdventureWorks.Common.Attributes;
+﻿using AdventureWorks.Application.PersistenceContracts.Repositories.Sales;
+using AdventureWorks.Common.Attributes;
 using AdventureWorks.Common.Constants;
 using AdventureWorks.Common.Filtering;
 using AdventureWorks.Domain.Entities.Sales;
 using AdventureWorks.Infrastructure.Persistence.DbContexts;
 using Microsoft.EntityFrameworkCore;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
-using System.Xml.XPath;
-using AdventureWorks.Application.PersistenceContracts.Repositories.Sales;
 
 namespace AdventureWorks.Infrastructure.Persistence.Repositories.Sales;
 
 [ServiceLifetimeScoped]
-public sealed class StoreRepository : EfRepository<StoreEntity>, IStoreRepository
+public sealed class StoreRepository(AdventureWorksDbContext dbContext) 
+    : EfRepository<StoreEntity>(dbContext), IStoreRepository
 {
-    public StoreRepository(AdventureWorksDbContext dbContext) : base(dbContext)
-    {
-    }
 
     /// <summary>
     /// Retrieve a store by id along with its related entities
@@ -27,14 +21,19 @@ public sealed class StoreRepository : EfRepository<StoreEntity>, IStoreRepositor
     public async Task<StoreEntity> GetStoreByIdAsync(int storeId)
     {
         return await DbContext.Stores
+            .AsNoTracking()
             .Include(x => x.StoreBusinessEntity)
-            .ThenInclude(y => y.BusinessEntityAddresses)
-            .ThenInclude(y => y.AddressType)
+                .ThenInclude(y => y.BusinessEntityAddresses)
+                .ThenInclude(y => y.AddressType)
             .Include(x => x.StoreBusinessEntity)
-            .ThenInclude(y => y.BusinessEntityAddresses)
-            .ThenInclude(z => z.Address)
-            .ThenInclude(ab => ab.StateProvince)
-            .ThenInclude(abc => abc.CountryRegion)
+                .ThenInclude(y => y.BusinessEntityAddresses)
+                .ThenInclude(z => z.Address)
+                .ThenInclude(ab => ab.StateProvince)
+                .ThenInclude(abc => abc.CountryRegion)
+            .Include(x => x.PrimarySalesPerson)
+                .ThenInclude(y => y.Employee)
+                .ThenInclude(z => z.PersonBusinessEntity)
+                .ThenInclude(e => e.EmailAddresses)
             .FirstOrDefaultAsync(x => x.BusinessEntityId == storeId);
     }
 
@@ -47,14 +46,19 @@ public sealed class StoreRepository : EfRepository<StoreEntity>, IStoreRepositor
         var totalCount = await DbContext.Stores.CountAsync();
 
         var storeQuery = DbContext.Stores
+            .AsNoTracking()
             .Include(x => x.StoreBusinessEntity)
-            .ThenInclude(y => y.BusinessEntityAddresses)
-            .ThenInclude(y => y.AddressType)
+                .ThenInclude(y => y.BusinessEntityAddresses)
+                .ThenInclude(y => y.AddressType)
             .Include(x => x.StoreBusinessEntity)
-            .ThenInclude(y => y.BusinessEntityAddresses)
-            .ThenInclude(z => z.Address)
-            .ThenInclude(ab => ab.StateProvince)
-            .ThenInclude(abc => abc.CountryRegion)
+                .ThenInclude(y => y.BusinessEntityAddresses)
+                .ThenInclude(z => z.Address)
+                .ThenInclude(ab => ab.StateProvince)
+                .ThenInclude(abc => abc.CountryRegion)
+            .Include(x => x.PrimarySalesPerson)
+                .ThenInclude(y => y.Employee)
+                .ThenInclude(z => z.PersonBusinessEntity)
+                .ThenInclude(e => e.EmailAddresses)
             .AsQueryable();
 
         switch (parameters.OrderBy)
@@ -89,14 +93,19 @@ public sealed class StoreRepository : EfRepository<StoreEntity>, IStoreRepositor
         StoreSearchModel storeSearchModel)
     {
         var storeQuery = DbContext.Stores
+            .AsNoTracking()
             .Include(x => x.StoreBusinessEntity)
-            .ThenInclude(y => y.BusinessEntityAddresses)
-            .ThenInclude(y => y.AddressType)
+                .ThenInclude(y => y.BusinessEntityAddresses)
+                .ThenInclude(y => y.AddressType)
             .Include(x => x.StoreBusinessEntity)
-            .ThenInclude(y => y.BusinessEntityAddresses)
-            .ThenInclude(z => z.Address)
-            .ThenInclude(ab => ab.StateProvince)
-            .ThenInclude(abc => abc.CountryRegion)
+                .ThenInclude(y => y.BusinessEntityAddresses)
+                .ThenInclude(z => z.Address)
+                .ThenInclude(ab => ab.StateProvince)
+                .ThenInclude(abc => abc.CountryRegion)
+            .Include(x => x.PrimarySalesPerson)
+                .ThenInclude(y => y.Employee)
+                .ThenInclude(z => z.PersonBusinessEntity)
+                .ThenInclude(e => e.EmailAddresses)
             .AsQueryable();
 
         if (storeSearchModel != null)
@@ -123,7 +132,7 @@ public sealed class StoreRepository : EfRepository<StoreEntity>, IStoreRepositor
             _ => storeQuery
         };
 
-        var totalCount = storeQuery.Count();
+        var totalCount = await storeQuery.CountAsync();
 
         storeQuery = storeQuery.Skip(parameters.GetRecordsToSkip()).Take(parameters.PageSize);
 

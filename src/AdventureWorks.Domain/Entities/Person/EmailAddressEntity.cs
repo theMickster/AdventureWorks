@@ -1,8 +1,6 @@
-﻿using AdventureWorks.Domain.Entities.Person;
+﻿namespace AdventureWorks.Domain.Entities.Person;
 
-namespace AdventureWorks.Domain.Entities;
-
-public class EmailAddress : BaseEntity
+public class EmailAddressEntity : BaseEntity
 {
     public int BusinessEntityId { get; set; }
     

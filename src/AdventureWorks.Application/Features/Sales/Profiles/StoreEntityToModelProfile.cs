@@ -17,6 +17,8 @@ public sealed class StoreEntityToModelProfile : Profile
 
             .ForMember(x => x.StoreAddresses, o => o.MapFrom(y => y.StoreBusinessEntity.BusinessEntityAddresses))
 
-            .ForMember(x => x.StoreContacts, o => o.Ignore());
+            .ForMember(x => x.StoreContacts, o => o.Ignore())
+
+            .ForMember(x => x.SalesPerson, o => o.MapFrom(y => y.PrimarySalesPerson));
     }
 }

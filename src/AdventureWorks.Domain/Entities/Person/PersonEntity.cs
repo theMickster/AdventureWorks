@@ -34,13 +34,13 @@ public sealed class PersonEntity : BaseEntity
 
     public ICollection<CustomerEntity> Customers { get; set; }
 
-    public ICollection<EmailAddress> EmailAddresses { get; set; }
+    public ICollection<EmailAddressEntity> EmailAddresses { get; set; }
 
     public ICollection<PersonCreditCard> PersonCreditCards { get; set; }
 
     public ICollection<PersonPhone> PersonPhones { get; set; }
 
-    public ICollection<Employee> Employees { get; set; }
+    public ICollection<EmployeeEntity> Employees { get; set; }
 
     public BusinessEntity BusinessEntity { get; set; }
 

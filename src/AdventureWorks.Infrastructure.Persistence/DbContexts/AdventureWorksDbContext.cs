@@ -41,13 +41,13 @@ public class AdventureWorksDbContext : DbContext, IAdventureWorksDbContext
 
     public DbSet<CountryRegionEntity> CountryRegions { get; set; }
 
-    public DbSet<EmailAddress> EmailAddresses { get; set; }
+    public DbSet<EmailAddressEntity> EmailAddresses { get; set; }
 
     public DbSet<PersonEntity> Persons { get; set; }
 
     public DbSet<PersonTypeEntity> PersonTypes { get; set; }
 
-    public DbSet<SalesPerson> SalesPersons { get; set; }
+    public DbSet<SalesPersonEntity> SalesPersons { get; set; }
 
     public DbSet<SalesTerritoryEntity> SalesTerritories { get; set; }
 

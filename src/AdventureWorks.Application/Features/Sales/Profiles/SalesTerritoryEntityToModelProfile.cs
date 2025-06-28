@@ -1,4 +1,5 @@
 ﻿using AdventureWorks.Domain.Entities;
+using AdventureWorks.Domain.Entities.Sales;
 using AdventureWorks.Models.Features.Sales;
 using AutoMapper;
 

@@ -22,11 +22,11 @@ public interface IAdventureWorksDbContext
 
     DbSet<CountryRegionEntity> CountryRegions { get; set; }
 
-    DbSet<EmailAddress> EmailAddresses { get; set; }
+    DbSet<EmailAddressEntity> EmailAddresses { get; set; }
 
     DbSet<PersonEntity> Persons { get; set; }
 
-    DbSet<SalesPerson> SalesPersons { get; set; }
+    DbSet<SalesPersonEntity> SalesPersons { get; set; }
 
     DbSet<SalesTerritoryEntity> SalesTerritories { get; set; }
     

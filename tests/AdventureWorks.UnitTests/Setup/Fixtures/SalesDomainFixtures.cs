@@ -1831,21 +1831,21 @@ internal sealed class SalesDomainFixtures : UnitTestFixtureBase
          new AddressEntity {AddressId = 11380, AddressLine1 = "165 North Main" , AddressLine2 = null, City = "Austin" , PostalCode = "78701" , StateProvinceId = 73, Rowguid = new Guid("7C6297BE-EA24-433F-A038-50E082D341B8"), ModifiedDate = StandardModifiedDate},
     };
 
-    internal static List<SalesPerson> GetSalesPersonEntities() => new()
+    internal static List<SalesPersonEntity> GetSalesPersonEntities() => new()
     {
-         new SalesPerson {BusinessEntityId = 275, TerritoryId = 2, Rowguid = new Guid("1E0A7274-3064-4F58-88EE-4C6586C87169"), ModifiedDate = StandardModifiedDate},
-         new SalesPerson {BusinessEntityId = 276, TerritoryId = 4, Rowguid = new Guid("4DD9EEE4-8E81-4F8C-AF97-683394C1F7C0"), ModifiedDate = StandardModifiedDate},
-         new SalesPerson {BusinessEntityId = 277, TerritoryId = 3, Rowguid = new Guid("39012928-BFEC-4242-874D-423162C3F567"), ModifiedDate = StandardModifiedDate},
-         new SalesPerson {BusinessEntityId = 278, TerritoryId = 6, Rowguid = new Guid("7A0AE1AB-B283-40F9-91D1-167ABF06D720"), ModifiedDate = StandardModifiedDate},
-         new SalesPerson {BusinessEntityId = 279, TerritoryId = 5, Rowguid = new Guid("52A5179D-3239-4157-AE29-17E868296DC0"), ModifiedDate = StandardModifiedDate},
-         new SalesPerson {BusinessEntityId = 280, TerritoryId = 1, Rowguid = new Guid("BE941A4A-FB50-4947-BDA4-BB8972365B08"), ModifiedDate = StandardModifiedDate},
-         new SalesPerson {BusinessEntityId = 281, TerritoryId = 4, Rowguid = new Guid("35326DDB-7278-4FEF-B3BA-EA137B69094E"), ModifiedDate = StandardModifiedDate},
-         new SalesPerson {BusinessEntityId = 282, TerritoryId = 6, Rowguid = new Guid("31FD7FC1-DC84-4F05-B9A0-762519EACACC"), ModifiedDate = StandardModifiedDate},
-         new SalesPerson {BusinessEntityId = 283, TerritoryId = 1, Rowguid = new Guid("6BAC15B2-8FFB-45A9-B6D5-040E16C2073F"), ModifiedDate = StandardModifiedDate},
-         new SalesPerson {BusinessEntityId = 286, TerritoryId = 9, Rowguid = new Guid("9B968777-75DC-45BD-A8DF-9CDAA72839E1"), ModifiedDate = StandardModifiedDate},
-         new SalesPerson {BusinessEntityId = 288, TerritoryId = 8, Rowguid = new Guid("224BB25A-62E3-493E-ACAF-4F8F5C72396A"), ModifiedDate = StandardModifiedDate},
-         new SalesPerson {BusinessEntityId = 289, TerritoryId = 10, Rowguid = new Guid("25F6838D-9DB4-4833-9DDC-7A24283AF1BA"), ModifiedDate = StandardModifiedDate},
-         new SalesPerson {BusinessEntityId = 290, TerritoryId = 7, Rowguid = new Guid("F509E3D4-76C8-42AA-B353-90B7B8DB08DE"), ModifiedDate = StandardModifiedDate},
+         new SalesPersonEntity {BusinessEntityId = 275, TerritoryId = 2, Rowguid = new Guid("1E0A7274-3064-4F58-88EE-4C6586C87169"), ModifiedDate = StandardModifiedDate},
+         new SalesPersonEntity {BusinessEntityId = 276, TerritoryId = 4, Rowguid = new Guid("4DD9EEE4-8E81-4F8C-AF97-683394C1F7C0"), ModifiedDate = StandardModifiedDate},
+         new SalesPersonEntity {BusinessEntityId = 277, TerritoryId = 3, Rowguid = new Guid("39012928-BFEC-4242-874D-423162C3F567"), ModifiedDate = StandardModifiedDate},
+         new SalesPersonEntity {BusinessEntityId = 278, TerritoryId = 6, Rowguid = new Guid("7A0AE1AB-B283-40F9-91D1-167ABF06D720"), ModifiedDate = StandardModifiedDate},
+         new SalesPersonEntity {BusinessEntityId = 279, TerritoryId = 5, Rowguid = new Guid("52A5179D-3239-4157-AE29-17E868296DC0"), ModifiedDate = StandardModifiedDate},
+         new SalesPersonEntity {BusinessEntityId = 280, TerritoryId = 1, Rowguid = new Guid("BE941A4A-FB50-4947-BDA4-BB8972365B08"), ModifiedDate = StandardModifiedDate},
+         new SalesPersonEntity {BusinessEntityId = 281, TerritoryId = 4, Rowguid = new Guid("35326DDB-7278-4FEF-B3BA-EA137B69094E"), ModifiedDate = StandardModifiedDate},
+         new SalesPersonEntity {BusinessEntityId = 282, TerritoryId = 6, Rowguid = new Guid("31FD7FC1-DC84-4F05-B9A0-762519EACACC"), ModifiedDate = StandardModifiedDate},
+         new SalesPersonEntity {BusinessEntityId = 283, TerritoryId = 1, Rowguid = new Guid("6BAC15B2-8FFB-45A9-B6D5-040E16C2073F"), ModifiedDate = StandardModifiedDate},
+         new SalesPersonEntity {BusinessEntityId = 286, TerritoryId = 9, Rowguid = new Guid("9B968777-75DC-45BD-A8DF-9CDAA72839E1"), ModifiedDate = StandardModifiedDate},
+         new SalesPersonEntity {BusinessEntityId = 288, TerritoryId = 8, Rowguid = new Guid("224BB25A-62E3-493E-ACAF-4F8F5C72396A"), ModifiedDate = StandardModifiedDate},
+         new SalesPersonEntity {BusinessEntityId = 289, TerritoryId = 10, Rowguid = new Guid("25F6838D-9DB4-4833-9DDC-7A24283AF1BA"), ModifiedDate = StandardModifiedDate},
+         new SalesPersonEntity {BusinessEntityId = 290, TerritoryId = 7, Rowguid = new Guid("F509E3D4-76C8-42AA-B353-90B7B8DB08DE"), ModifiedDate = StandardModifiedDate},
     };
 
 
@@ -1861,7 +1861,7 @@ internal sealed class SalesDomainFixtures : UnitTestFixtureBase
                 BusinessEntityId = 2534,
                 Name = "Pro Sporting Goods",
                 SalesPersonId = 7777,
-                PrimarySalesPerson = new SalesPerson { TerritoryId = 7, BusinessEntityId = 7777 },
+                PrimarySalesPerson = new SalesPersonEntity { TerritoryId = 7, BusinessEntityId = 7777 },
                 ModifiedDate = SalesDomainDefaultAuditDate,
                 StoreBusinessEntity = new BusinessEntity
                 {
@@ -1910,7 +1910,7 @@ internal sealed class SalesDomainFixtures : UnitTestFixtureBase
                 BusinessEntityId = 2535,
                 Name = "Semi-Pro Sporting Goods",
                 SalesPersonId = 7778,
-                PrimarySalesPerson = new SalesPerson { TerritoryId = 7, BusinessEntityId = 7778 },
+                PrimarySalesPerson = new SalesPersonEntity { TerritoryId = 7, BusinessEntityId = 7778 },
                 ModifiedDate = SalesDomainDefaultAuditDate,
                 StoreBusinessEntity = new BusinessEntity
                 {
@@ -1993,7 +1993,7 @@ internal sealed class SalesDomainFixtures : UnitTestFixtureBase
                 BusinessEntityId = 2536,
                 Name = "Rookie Sporting Goods",
                 SalesPersonId = 7779,
-                PrimarySalesPerson = new SalesPerson { TerritoryId = 7, BusinessEntityId = 7779 },
+                PrimarySalesPerson = new SalesPersonEntity { TerritoryId = 7, BusinessEntityId = 7779 },
                 ModifiedDate = SalesDomainDefaultAuditDate,
                 StoreBusinessEntity = new BusinessEntity
                 {

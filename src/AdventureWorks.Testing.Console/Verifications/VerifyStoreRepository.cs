@@ -1,5 +1,5 @@
-﻿using AdventureWorks.Application.Interfaces.DbContext;
-using AdventureWorks.Application.Interfaces.Repositories.Sales;
+﻿using AdventureWorks.Application.PersistenceContracts.DbContext;
+using AdventureWorks.Application.PersistenceContracts.Repositories.Sales;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.DependencyInjection;
 
@@ -11,10 +11,7 @@ internal sealed class VerifyStoreRepository
 
     public VerifyStoreRepository(IServiceProvider serviceProvider)
     {
-        if (serviceProvider == null)
-        {
-            throw new ArgumentNullException(nameof(serviceProvider));
-        }
+        ArgumentNullException.ThrowIfNull(serviceProvider);
 
         _dbContext = serviceProvider.GetRequiredService<IAdventureWorksDbContext>() ??
                      throw new InvalidOperationException(
@@ -30,7 +27,7 @@ internal sealed class VerifyStoreRepository
         var success = true;
         var errorList = new List<string>();
 
-        var result = _dbContext
+        var result = await _dbContext
             .Stores
             .Include(x => x.StoreBusinessEntity)
             .ThenInclude(y => y.BusinessEntityAddresses)
@@ -38,19 +35,22 @@ internal sealed class VerifyStoreRepository
             .Include(x => x.StoreBusinessEntity)
             .ThenInclude(y => y.BusinessEntityAddresses)
             .ThenInclude(z => z.Address)
-            .FirstOrDefault(x => x.BusinessEntityId == 644);
+            .FirstOrDefaultAsync(x => x.BusinessEntityId == 644);
 
         if (result is null)
         {
             success = false;
         }
 
-        result = await _repository.GetByIdAsync(644).ConfigureAwait(false);
+        result = await _repository.GetByIdAsync(644);
 
         if (result is null)
         {
             success = false;
         }
+
+        result = await _repository.GetStoreByIdAsync(644);
+
 
         return (success, errorList);
     }

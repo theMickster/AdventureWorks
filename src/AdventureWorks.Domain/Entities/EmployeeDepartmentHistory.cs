@@ -9,7 +9,7 @@ public class EmployeeDepartmentHistory : BaseEntity
     public DateTime? EndDate { get; set; }
     public DateTime ModifiedDate { get; set; }
 
-    public Employee BusinessEntity { get; set; }
+    public EmployeeEntity BusinessEntity { get; set; }
     public Department Department { get; set; }
     public Shift Shift { get; set; }
 }

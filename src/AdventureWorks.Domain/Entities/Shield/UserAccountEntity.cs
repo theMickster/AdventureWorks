@@ -20,7 +20,7 @@ public sealed class UserAccountEntity : BaseEntity
 
     public PersonEntity Person { get; set; }
 
-    public EmailAddress EmailAddress { get; set; }
+    public EmailAddressEntity EmailAddress { get; set; }
 
     public ICollection<SecurityGroupUserAccountEntity> SecurityGroupUserAccountEntities { get; set; }
 

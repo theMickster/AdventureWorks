@@ -1,0 +1,12 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(powershell -Command \"(Get-Content ''.claude\\CLAUDE.md'' | Measure-Object -Line).Lines\")",
+      "WebSearch",
+      "Bash(dotnet build:*)",
+      "Bash(dotnet test:*)"
+    ],
+    "deny": [],
+    "ask": []
+  }
+}
