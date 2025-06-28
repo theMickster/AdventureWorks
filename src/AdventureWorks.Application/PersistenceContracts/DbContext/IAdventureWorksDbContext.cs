@@ -22,6 +22,8 @@ public interface IAdventureWorksDbContext
 
     DbSet<CountryRegionEntity> CountryRegions { get; set; }
 
+    DbSet<DepartmentEntity> Departments { get; set; }
+
     DbSet<EmailAddressEntity> EmailAddresses { get; set; }
 
     DbSet<PersonEntity> Persons { get; set; }

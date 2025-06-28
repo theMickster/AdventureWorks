@@ -10,6 +10,6 @@ public class EmployeeDepartmentHistory : BaseEntity
     public DateTime ModifiedDate { get; set; }
 
     public EmployeeEntity BusinessEntity { get; set; }
-    public Department Department { get; set; }
+    public DepartmentEntity Department { get; set; }
     public Shift Shift { get; set; }
 }

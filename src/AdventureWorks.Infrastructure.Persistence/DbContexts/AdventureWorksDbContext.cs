@@ -41,6 +41,8 @@ public class AdventureWorksDbContext : DbContext, IAdventureWorksDbContext
 
     public DbSet<CountryRegionEntity> CountryRegions { get; set; }
 
+    public DbSet<DepartmentEntity> Departments { get; set; }
+
     public DbSet<EmailAddressEntity> EmailAddresses { get; set; }
 
     public DbSet<PersonEntity> Persons { get; set; }

@@ -1,6 +1,6 @@
 ﻿namespace AdventureWorks.Domain.Entities;
 
-public class Department : BaseEntity
+public class DepartmentEntity : BaseEntity
 {
 
     public short DepartmentId { get; set; }
