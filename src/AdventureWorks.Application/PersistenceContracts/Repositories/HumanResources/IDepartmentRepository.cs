@@ -1,4 +1,4 @@
-using AdventureWorks.Domain.Entities;
+using AdventureWorks.Domain.Entities.HumanResources;
 
 namespace AdventureWorks.Application.PersistenceContracts.Repositories.HumanResources;
 

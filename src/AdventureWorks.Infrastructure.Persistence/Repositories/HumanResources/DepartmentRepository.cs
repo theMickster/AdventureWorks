@@ -3,6 +3,7 @@ using AdventureWorks.Domain.Entities;
 using AdventureWorks.Infrastructure.Persistence.DbContexts;
 using Microsoft.EntityFrameworkCore;
 using AdventureWorks.Application.PersistenceContracts.Repositories.HumanResources;
+using AdventureWorks.Domain.Entities.HumanResources;
 
 namespace AdventureWorks.Infrastructure.Persistence.Repositories.HumanResources;
 

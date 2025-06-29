@@ -1,12 +1,13 @@
 ﻿using AdventureWorks.Domain.Entities;
+using AdventureWorks.Domain.Entities.Person;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
 
 namespace AdventureWorks.Infrastructure.Persistence.Configurations;
 
-public class PhoneNumberTypeConfiguration : IEntityTypeConfiguration<PhoneNumberType>
+public class PhoneNumberTypeConfiguration : IEntityTypeConfiguration<PhoneNumberTypeEntity>
 {
-    public void Configure(EntityTypeBuilder<PhoneNumberType> builder)
+    public void Configure(EntityTypeBuilder<PhoneNumberTypeEntity> builder)
     {
         builder.ToTable("PhoneNumberType", "Person");
 

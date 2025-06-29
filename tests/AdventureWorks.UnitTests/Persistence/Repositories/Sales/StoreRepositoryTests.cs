@@ -1,6 +1,5 @@
 ﻿using AdventureWorks.Application.PersistenceContracts.Repositories.Sales;
 using AdventureWorks.Common.Attributes;
-using AdventureWorks.Common.Filtering;
 using AdventureWorks.Domain.Entities.Sales;
 using AdventureWorks.Infrastructure.Persistence.Repositories.Sales;
 

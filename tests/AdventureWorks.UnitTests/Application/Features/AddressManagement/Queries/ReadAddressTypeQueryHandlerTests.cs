@@ -2,7 +2,6 @@
 using AdventureWorks.Application.Features.AddressManagement.Queries;
 using AdventureWorks.Application.PersistenceContracts.Repositories;
 using AdventureWorks.Domain.Entities;
-using AutoMapper;
 
 namespace AdventureWorks.UnitTests.Application.Features.AddressManagement.Queries;
 

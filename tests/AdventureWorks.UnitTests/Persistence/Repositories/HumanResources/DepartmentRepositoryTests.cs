@@ -1,6 +1,6 @@
 using AdventureWorks.Application.PersistenceContracts.Repositories.HumanResources;
 using AdventureWorks.Common.Attributes;
-using AdventureWorks.Domain.Entities;
+using AdventureWorks.Domain.Entities.HumanResources;
 using AdventureWorks.Infrastructure.Persistence.Repositories.HumanResources;
 
 namespace AdventureWorks.UnitTests.Persistence.Repositories.HumanResources;

@@ -1,4 +1,4 @@
-using AdventureWorks.Domain.Entities;
+using AdventureWorks.Domain.Entities.HumanResources;
 using AdventureWorks.Models.Features.HumanResources;
 using AutoMapper;
 

@@ -1,7 +1,7 @@
 using AdventureWorks.Application.Features.HumanResources.Profiles;
 using AdventureWorks.Application.Features.HumanResources.Queries;
 using AdventureWorks.Application.PersistenceContracts.Repositories.HumanResources;
-using AdventureWorks.Domain.Entities;
+using AdventureWorks.Domain.Entities.HumanResources;
 
 namespace AdventureWorks.UnitTests.Application.Features.HumanResources.Queries;
 

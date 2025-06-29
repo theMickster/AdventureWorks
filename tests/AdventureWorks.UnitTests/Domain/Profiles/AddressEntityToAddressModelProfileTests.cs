@@ -1,7 +1,6 @@
 ﻿using AdventureWorks.Application.Features.AddressManagement.Profiles;
 using AdventureWorks.Domain.Entities;
 using AdventureWorks.Models.Features.AddressManagement;
-using AutoMapper;
 
 namespace AdventureWorks.UnitTests.Domain.Profiles;
 

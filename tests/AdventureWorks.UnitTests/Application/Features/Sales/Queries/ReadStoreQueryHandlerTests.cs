@@ -3,7 +3,6 @@ using AdventureWorks.Application.Features.Sales.Queries;
 using AdventureWorks.Application.PersistenceContracts.Repositories.Person;
 using AdventureWorks.Application.PersistenceContracts.Repositories.Sales;
 using AdventureWorks.Domain.Entities.Sales;
-using AdventureWorks.Models.Features.Sales;
 using AdventureWorks.UnitTests.Setup.Fixtures;
 
 namespace AdventureWorks.UnitTests.Application.Features.Sales.Queries;

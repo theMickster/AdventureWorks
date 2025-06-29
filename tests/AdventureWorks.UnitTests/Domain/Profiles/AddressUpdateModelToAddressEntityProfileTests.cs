@@ -2,7 +2,6 @@
 using AdventureWorks.Domain.Entities;
 using AdventureWorks.Models.Features.AddressManagement;
 using AdventureWorks.Models.Slim;
-using AutoMapper;
 
 namespace AdventureWorks.UnitTests.Domain.Profiles;
 

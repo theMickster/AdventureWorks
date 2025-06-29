@@ -1,7 +1,6 @@
 ﻿using AdventureWorks.Application.Features.HumanResources.Profiles;
 using AdventureWorks.Domain.Entities.Person;
 using AdventureWorks.Models.Features.HumanResources;
-using AutoMapper;
 
 namespace AdventureWorks.UnitTests.Domain.Profiles.Person;
 

@@ -14,5 +14,5 @@ public class PersonPhone : BaseEntity
 
     public virtual PersonEntity BusinessEntity { get; set; }
 
-    public virtual PhoneNumberType PhoneNumberType { get; set; }
+    public virtual PhoneNumberTypeEntity PhoneNumberType { get; set; }
 }
