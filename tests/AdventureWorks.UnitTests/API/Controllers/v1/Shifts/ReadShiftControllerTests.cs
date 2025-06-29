@@ -1,4 +1,4 @@
-using AdventureWorks.API.Controllers.v1.Departments;
+using AdventureWorks.API.Controllers.v1.Shifts;
 using AdventureWorks.Application.Features.HumanResources.Queries;
 using AdventureWorks.Models.Features.HumanResources;
 using MediatR;
@@ -6,18 +6,18 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
 using System.Net;
 
-namespace AdventureWorks.UnitTests.API.Controllers.v1.Departments;
+namespace AdventureWorks.UnitTests.API.Controllers.v1.Shifts;
 
 [ExcludeFromCodeCoverage]
-public sealed class ReadDepartmentControllerTests : UnitTestBase
+public sealed class ReadShiftControllerTests : UnitTestBase
 {
-    private readonly Mock<ILogger<ReadDepartmentController>> _mockLogger = new();
+    private readonly Mock<ILogger<ReadShiftController>> _mockLogger = new();
     private readonly Mock<IMediator> _mockMediator = new();
-    private readonly ReadDepartmentController _sut;
+    private readonly ReadShiftController _sut;
 
-    public ReadDepartmentControllerTests()
+    public ReadShiftControllerTests()
     {
-        _sut = new ReadDepartmentController(_mockLogger.Object, _mockMediator.Object);
+        _sut = new ReadShiftController(_mockLogger.Object, _mockMediator.Object);
     }
 
     [Fact]
@@ -25,11 +25,11 @@ public sealed class ReadDepartmentControllerTests : UnitTestBase
     {
         using (new AssertionScope())
         {
-            _ = ((Action)(() => _ = new ReadDepartmentController(null!, _mockMediator.Object)))
+            _ = ((Action)(() => _ = new ReadShiftController(null!, _mockMediator.Object)))
                 .Should().Throw<ArgumentNullException>("because we expect a null argument exception.")
                 .And.ParamName.Should().Be("logger");
 
-            _ = ((Action)(() => _ = new ReadDepartmentController(_mockLogger.Object, null!)))
+            _ = ((Action)(() => _ = new ReadShiftController(_mockLogger.Object, null!)))
                 .Should().Throw<ArgumentNullException>("because we expect a null argument exception.")
                 .And.ParamName.Should().Be("mediator");
         }
@@ -39,8 +39,8 @@ public sealed class ReadDepartmentControllerTests : UnitTestBase
     public async Task GetById_returns_ok_Async()
     {
         _mockMediator.Setup(
-                x => x.Send(It.IsAny<ReadDepartmentQuery>(), It.IsAny<CancellationToken>()))
-            .ReturnsAsync(new DepartmentModel { Id = 1, Name = "Engineering" });
+                x => x.Send(It.IsAny<ReadShiftQuery>(), It.IsAny<CancellationToken>()))
+            .ReturnsAsync(new ShiftModel { Id = 1, Name = "Day" });
 
         var result = await _sut.GetByIdAsync(1);
         var objectResult = result as OkObjectResult;
@@ -55,10 +55,10 @@ public sealed class ReadDepartmentControllerTests : UnitTestBase
     [Fact]
     public async Task GetById_returns_not_found_Async()
     {
-        _mockMediator.Setup(x => x.Send(It.IsAny<ReadDepartmentQuery>(), It.IsAny<CancellationToken>()))
-            .ReturnsAsync((DepartmentModel)null!);
+        _mockMediator.Setup(x => x.Send(It.IsAny<ReadShiftQuery>(), It.IsAny<CancellationToken>()))
+            .ReturnsAsync((ShiftModel)null!);
 
-        var result = await _sut.GetByIdAsync(999);
+        var result = await _sut.GetByIdAsync(99);
         var objectResult = result as NotFoundObjectResult;
         var outputModel = objectResult!.Value! as string;
 
@@ -68,14 +68,14 @@ public sealed class ReadDepartmentControllerTests : UnitTestBase
             objectResult!.StatusCode.Should().Be((int)HttpStatusCode.NotFound);
 
             outputModel.Should().NotBeNull();
-            outputModel!.Should().Be("Unable to locate the department.");
+            outputModel!.Should().Be("Unable to locate the shift.");
         }
     }
 
     [Fact]
     public async Task GetById_returns_bad_request_Async()
     {
-        var result = await _sut.GetByIdAsync(-100);
+        var result = await _sut.GetByIdAsync(0);
         var objectResult = result as BadRequestObjectResult;
         var outputModel = objectResult!.Value! as string;
 
@@ -85,7 +85,7 @@ public sealed class ReadDepartmentControllerTests : UnitTestBase
             objectResult!.StatusCode.Should().Be((int)HttpStatusCode.BadRequest);
 
             outputModel.Should().NotBeNull();
-            outputModel!.Should().Be("A valid department id must be specified.");
+            outputModel!.Should().Be("A valid shift id must be specified.");
         }
     }
 
@@ -93,12 +93,12 @@ public sealed class ReadDepartmentControllerTests : UnitTestBase
     public async Task GetList_returns_ok_Async()
     {
         _mockMediator.Setup(
-                x => x.Send(It.IsAny<ReadDepartmentListQuery>(), It.IsAny<CancellationToken>()))
+                x => x.Send(It.IsAny<ReadShiftListQuery>(), It.IsAny<CancellationToken>()))
             .ReturnsAsync(
             [
-                new() { Id = 1, Name = "Engineering" },
-                new() { Id = 2, Name = "Tool Design" },
-                new() { Id = 3, Name = "Sales" }
+                new() { Id = 1, Name = "Day" },
+                new() { Id = 2, Name = "Evening" },
+                new() { Id = 3, Name = "Night" }
             ]);
 
         var result = await _sut.GetListAsync();
@@ -116,8 +116,8 @@ public sealed class ReadDepartmentControllerTests : UnitTestBase
     public async Task GetList_returns_not_found_Async()
     {
         _mockMediator.Setup(
-                x => x.Send(It.IsAny<ReadDepartmentListQuery>(), It.IsAny<CancellationToken>()))
-            .ReturnsAsync(new List<DepartmentModel>());
+                x => x.Send(It.IsAny<ReadShiftListQuery>(), It.IsAny<CancellationToken>()))
+            .ReturnsAsync(new List<ShiftModel>());
 
         var result = await _sut.GetListAsync();
         var objectResult = result as NotFoundObjectResult;
@@ -129,7 +129,7 @@ public sealed class ReadDepartmentControllerTests : UnitTestBase
             objectResult!.StatusCode.Should().Be((int)HttpStatusCode.NotFound);
 
             outputModel.Should().NotBeNull();
-            outputModel!.Should().Be("Unable to locate records in the department list.");
+            outputModel!.Should().Be("Unable to locate records in the shift list.");
         }
     }
 }

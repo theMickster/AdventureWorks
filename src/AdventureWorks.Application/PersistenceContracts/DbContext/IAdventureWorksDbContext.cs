@@ -31,6 +31,8 @@ public interface IAdventureWorksDbContext
 
     DbSet<SalesPersonEntity> SalesPersons { get; set; }
 
+    DbSet<ShiftEntity> Shifts { get; set; }
+
     DbSet<SalesTerritoryEntity> SalesTerritories { get; set; }
     
     DbSet<SecurityFunctionEntity> SecurityFunctions { get; set; }
