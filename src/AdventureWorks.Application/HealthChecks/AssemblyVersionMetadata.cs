@@ -73,13 +73,14 @@ public sealed class AssemblyVersionMetadata
         get
         {
             var version = "1";
-            if (!string.IsNullOrWhiteSpace(SemanticVersion))
+            if (string.IsNullOrWhiteSpace(SemanticVersion))
             {
-                var data = SemanticVersion.Split(new char[] { '.' });
-                if (data.Length > 1)
-                {
-                    version = data[0];
-                }
+                return $"v{version}";
+            }
+            var data = SemanticVersion.Split(Separator);
+            if (data.Length > 1)
+            {
+                version = data[0];
             }
 
             return $"v{version}";
@@ -154,6 +155,8 @@ public sealed class AssemblyVersionMetadata
     /// Process Architecture
     /// </summary>
     public string ProcessArchitecture { get; set; } = RuntimeInformation.ProcessArchitecture.ToString();
+
+    private static readonly char[] Separator = ['.'];
 
     /// <summary>
     /// Formatted String (Changing this output is a breaking change!)

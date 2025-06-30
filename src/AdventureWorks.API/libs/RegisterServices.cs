@@ -259,7 +259,7 @@ internal static class RegisterServices
         return connectionStrings;
     }
 
-    private static string GetSqlConnectionString(IConfiguration configuration, IEnumerable<DatabaseConnectionString> connectionStrings)
+    private static string GetSqlConnectionString(ConfigurationManager configuration, IEnumerable<DatabaseConnectionString> connectionStrings)
     {
         var settings = configuration.GetSection(EntityFrameworkCoreSettings.SettingsRootName);
 

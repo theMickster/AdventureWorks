@@ -1,0 +1,44 @@
+using AdventureWorks.Domain.Entities.HumanResources;
+using AdventureWorks.Domain.Entities.Person;
+
+namespace AdventureWorks.Application.PersistenceContracts.Repositories;
+
+/// <summary>
+/// Repository contract for Employee entity operations.
+/// </summary>
+public interface IEmployeeRepository : IAsyncRepository<EmployeeEntity>
+{
+    /// <summary>
+    /// Creates a new employee with full entity graph: BusinessEntity → Person → Employee.
+    /// Leverages EF Core navigation properties for cascade inserts.
+    /// All operations are performed within a single transaction.
+    /// </summary>
+    /// <param name="employeeEntity">Employee entity with navigation properties populated</param>
+    /// <param name="personEntity">Person entity to be created</param>
+    /// <param name="personPhone">Optional phone number entity</param>
+    /// <param name="emailAddress">Optional email address entity</param>
+    /// <param name="address">Optional address entity</param>
+    /// <param name="addressTypeId">Address type ID (required if address provided)</param>
+    /// <param name="modifiedDate">System modification timestamp</param>
+    /// <param name="rowGuid">System-generated unique identifier</param>
+    /// <param name="cancellationToken">Cancellation token</param>
+    /// <returns>BusinessEntityId of the created employee</returns>
+    Task<int> CreateEmployeeWithPersonAsync(
+        EmployeeEntity employeeEntity,
+        PersonEntity personEntity,
+        PersonPhone personPhone,
+        EmailAddressEntity emailAddress,
+        AddressEntity address,
+        int addressTypeId,
+        DateTime modifiedDate,
+        Guid rowGuid,
+        CancellationToken cancellationToken = default);
+
+    /// <summary>
+    /// Retrieves an employee by their BusinessEntityId with Person data.
+    /// </summary>
+    /// <param name="businessEntityId">The unique business entity identifier</param>
+    /// <param name="cancellationToken">Cancellation token</param>
+    /// <returns>Employee entity or null if not found</returns>
+    Task<EmployeeEntity?> GetEmployeeByIdAsync(int businessEntityId, CancellationToken cancellationToken = default);
+}

@@ -28,7 +28,11 @@ public interface IAdventureWorksDbContext
 
     DbSet<EmailAddressEntity> EmailAddresses { get; set; }
 
+    DbSet<EmployeeEntity> Employees { get; set; }
+
     DbSet<PersonEntity> Persons { get; set; }
+
+    DbSet<PersonPhone> PersonPhones { get; set; }
 
     DbSet<PhoneNumberTypeEntity> PhoneNumberTypes { get; set; }
 

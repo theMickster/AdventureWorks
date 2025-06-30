@@ -10,11 +10,11 @@ public static class CustomAttributeDataExtensions
     /// <param name="attribute">(this)</param>
     /// <param name="output">the string to parse attribute data into</param>
     /// <returns>True if success</returns>
-    public static bool TryParse(this CustomAttributeData attribute, out string output)
+    public static bool TryParse(this CustomAttributeData? attribute, out string output)
     {
         output = null;
 
-        if (attribute is not { ConstructorArguments: { } } ||
+        if (attribute is null ||
             attribute.ConstructorArguments.All(a => a.ArgumentType != typeof(string)))
         {
             return false;

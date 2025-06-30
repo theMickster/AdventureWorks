@@ -8,16 +8,9 @@ namespace AdventureWorks.Common.Helpers.Fakes;
 /// </summary>
 /// <typeparam name="T"></typeparam>
 [ExcludeFromCodeCoverage]
-public class FakeResponse<T> : Response<T>
+public class FakeResponse<T>(T value) : Response<T>
 {
-    private readonly T _value;
-
-    public FakeResponse(T value)
-    {
-        _value = value;
-    }
-
-    public override T Value => _value;
+    public override T Value => value;
 
     /// <summary>
     /// Not Implemented

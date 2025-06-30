@@ -10,18 +10,12 @@
 	</PropertyGroup>
 
 	<ItemGroup>
-	  <Compile Remove="Features\HumanResources\Commands\**" />
 	  <Compile Remove="Features\HumanResources\Contracts\**" />
 	  <Compile Remove="Features\HumanResources\Services\**" />
-	  <Compile Remove="Features\HumanResources\Validators\**" />
-	  <EmbeddedResource Remove="Features\HumanResources\Commands\**" />
 	  <EmbeddedResource Remove="Features\HumanResources\Contracts\**" />
 	  <EmbeddedResource Remove="Features\HumanResources\Services\**" />
-	  <EmbeddedResource Remove="Features\HumanResources\Validators\**" />
-	  <None Remove="Features\HumanResources\Commands\**" />
 	  <None Remove="Features\HumanResources\Contracts\**" />
 	  <None Remove="Features\HumanResources\Services\**" />
-	  <None Remove="Features\HumanResources\Validators\**" />
 	</ItemGroup>
 
 	<ItemGroup>

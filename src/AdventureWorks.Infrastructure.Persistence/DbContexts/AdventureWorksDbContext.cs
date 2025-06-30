@@ -47,7 +47,11 @@ public class AdventureWorksDbContext : DbContext, IAdventureWorksDbContext
 
     public DbSet<EmailAddressEntity> EmailAddresses { get; set; }
 
+    public DbSet<EmployeeEntity> Employees { get; set; }
+
     public DbSet<PersonEntity> Persons { get; set; }
+
+    public DbSet<PersonPhone> PersonPhones { get; set; }
 
     public DbSet<PersonTypeEntity> PersonTypes { get; set; }
 

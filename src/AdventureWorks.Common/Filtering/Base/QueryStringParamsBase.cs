@@ -1,5 +1,4 @@
 ﻿using AdventureWorks.Common.Constants;
-using System.Diagnostics.Contracts;
 
 namespace AdventureWorks.Common.Filtering.Base;
 
@@ -11,7 +10,7 @@ public abstract class QueryStringParamsBase
     /// <summary>
     /// The maximum amount of records that a may be requested in a list endpoint
     /// </summary>
-    protected int MaxTake => 50;
+    protected static int MaxTake => 50;
 
     /// <summary>
     /// The minimum page number that a may be requested in a list endpoint
@@ -53,10 +52,8 @@ public abstract class QueryStringParamsBase
         init => _sortOrder = value == null ? SortedResultConstants.Ascending : value.Trim().ToLower()
             switch
             {
-                "asc" => SortedResultConstants.Ascending,
-                "ascending" => SortedResultConstants.Ascending,
-                "desc" => SortedResultConstants.Descending,
-                "descending" => SortedResultConstants.Descending,
+                "asc" or "ascending" => SortedResultConstants.Ascending,
+                "desc" or "descending" => SortedResultConstants.Descending,
                 _ => SortedResultConstants.Ascending
             };
     }

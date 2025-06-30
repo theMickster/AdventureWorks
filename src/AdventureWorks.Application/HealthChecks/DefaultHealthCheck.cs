@@ -29,7 +29,7 @@ public class DefaultHealthCheck : IHealthCheck
     /// <returns>HealthCheckResult</returns>
     public Task<HealthCheckResult> CheckHealthAsync(
         HealthCheckContext context,
-        CancellationToken cancellationToken = default(CancellationToken))
+        CancellationToken cancellationToken = default)
     {
         var dictionary1 = MetadataAccessor.DictionaryFromType(MetadataAccessor.ProgramMetadata);
 
