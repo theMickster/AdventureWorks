@@ -14,7 +14,7 @@ namespace AdventureWorks.API.Controllers.v1.PersonType;
 [ApiController]
 [Authorize]
 [ApiVersion("1.0")]
-[ApiExplorerSettings(GroupName = "Person Type")]
+[ApiExplorerSettings(GroupName = "Person")]
 [Produces("application/json")]
 [Route("api/v{version:apiVersion}/personTypes", Name = "ReadPersonTypeControllerV1")]
 public class ReadPersonTypeController : ControllerBase

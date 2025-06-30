@@ -50,6 +50,8 @@ public class AdventureWorksDbContext : DbContext, IAdventureWorksDbContext
 
     public DbSet<PersonTypeEntity> PersonTypes { get; set; }
 
+    public DbSet<PhoneNumberTypeEntity> PhoneNumberTypes { get; set; }
+
     public DbSet<SalesPersonEntity> SalesPersons { get; set; }
 
     public DbSet<SalesTerritoryEntity> SalesTerritories { get; set; }

@@ -29,6 +29,8 @@ public interface IAdventureWorksDbContext
 
     DbSet<PersonEntity> Persons { get; set; }
 
+    DbSet<PhoneNumberTypeEntity> PhoneNumberTypes { get; set; }
+
     DbSet<SalesPersonEntity> SalesPersons { get; set; }
 
     DbSet<ShiftEntity> Shifts { get; set; }
