@@ -1,4 +1,5 @@
 ﻿using AdventureWorks.Domain.Entities;
+using AdventureWorks.Domain.Entities.Production;
 
 namespace AdventureWorks.Application.PersistenceContracts.Repositories;
 

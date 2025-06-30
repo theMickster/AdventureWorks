@@ -1,4 +1,5 @@
 ﻿using AdventureWorks.Domain.Entities;
+using AdventureWorks.Domain.Entities.Person;
 using AdventureWorks.Infrastructure.Persistence.Repositories.Person;
 
 namespace AdventureWorks.UnitTests.Persistence.Repositories.Person;

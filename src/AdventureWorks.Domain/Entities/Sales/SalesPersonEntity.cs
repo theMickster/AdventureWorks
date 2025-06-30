@@ -1,4 +1,6 @@
-﻿namespace AdventureWorks.Domain.Entities.Sales;
+﻿using AdventureWorks.Domain.Entities.HumanResources;
+
+namespace AdventureWorks.Domain.Entities.Sales;
 
 public sealed class SalesPersonEntity : BaseEntity
 {

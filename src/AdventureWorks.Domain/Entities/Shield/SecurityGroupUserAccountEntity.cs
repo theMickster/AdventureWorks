@@ -1,4 +1,6 @@
-﻿namespace AdventureWorks.Domain.Entities.Shield;
+﻿using AdventureWorks.Domain.Entities.Person;
+
+namespace AdventureWorks.Domain.Entities.Shield;
 
 public sealed class SecurityGroupUserAccountEntity : BaseEntity
 {

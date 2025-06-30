@@ -1,5 +1,6 @@
 ﻿using AdventureWorks.Application.PersistenceContracts.Repositories.Sales;
 using AdventureWorks.Domain.Entities;
+using AdventureWorks.Domain.Entities.Person;
 using AdventureWorks.Domain.Entities.Sales;
 using AdventureWorks.Models.Features.Sales;
 using AutoMapper;

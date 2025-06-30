@@ -1,4 +1,5 @@
 ﻿using AdventureWorks.Domain.Entities;
+using AdventureWorks.Domain.Entities.HumanResources;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
 

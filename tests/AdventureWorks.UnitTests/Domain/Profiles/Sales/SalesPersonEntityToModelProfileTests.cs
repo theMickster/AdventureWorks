@@ -1,5 +1,6 @@
 ﻿using AdventureWorks.Application.Features.Sales.Profiles;
 using AdventureWorks.Domain.Entities;
+using AdventureWorks.Domain.Entities.HumanResources;
 using AdventureWorks.Domain.Entities.Person;
 using AdventureWorks.Domain.Entities.Sales;
 using AdventureWorks.Models.Features.Sales;

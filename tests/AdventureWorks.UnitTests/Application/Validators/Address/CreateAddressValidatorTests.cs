@@ -1,6 +1,7 @@
 ﻿using AdventureWorks.Application.Features.AddressManagement.Validators;
 using AdventureWorks.Application.PersistenceContracts.Repositories;
 using AdventureWorks.Domain.Entities;
+using AdventureWorks.Domain.Entities.Person;
 using AdventureWorks.Models.Features.AddressManagement;
 using AdventureWorks.Models.Slim;
 using AdventureWorks.Test.Common.Utilities;

@@ -2,6 +2,7 @@
 using AdventureWorks.Application.Features.AddressManagement.Profiles;
 using AdventureWorks.Application.PersistenceContracts.Repositories;
 using AdventureWorks.Domain.Entities;
+using AdventureWorks.Domain.Entities.Person;
 using AdventureWorks.Models.Features.AddressManagement;
 using AdventureWorks.Models.Slim;
 using AdventureWorks.UnitTests.Setup.Fakes;

@@ -5,6 +5,7 @@ using Microsoft.EntityFrameworkCore;
 using System.Linq;
 using System.Threading.Tasks;
 using AdventureWorks.Application.PersistenceContracts.Repositories;
+using AdventureWorks.Domain.Entities.Person;
 
 namespace AdventureWorks.Infrastructure.Persistence.Repositories;
 

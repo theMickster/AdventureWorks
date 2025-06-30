@@ -1,5 +1,6 @@
 ﻿using AdventureWorks.Application.PersistenceContracts.Repositories;
 using AdventureWorks.Domain.Entities;
+using AdventureWorks.Domain.Entities.Person;
 using AdventureWorks.Models.Features.AddressManagement;
 using AutoMapper;
 using FluentValidation;
