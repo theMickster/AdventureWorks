@@ -16,7 +16,7 @@ public class ProductRepository : EfRepository<Product>, IProductRepository
     {
     }
 
-    public Task<Product> GetByIdWithItemsAsync(int id)
+    public Task<Product?> GetByIdWithItemsAsync(int id)
     {
         return DbContext.Products
             .Include(p => p.ProductModel)

@@ -28,7 +28,7 @@ public sealed class SalesTerritoryRepository : ReadOnlyEfRepository<SalesTerrito
     /// </summary>
     /// <param name="id"></param>
     /// <returns></returns>
-    public override async Task<SalesTerritoryEntity> GetByIdAsync(int id)
+    public override async Task<SalesTerritoryEntity?> GetByIdAsync(int id)
     {
         return await DbContext.SalesTerritories
             .Include(x => x.CountryRegion)

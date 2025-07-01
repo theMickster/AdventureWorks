@@ -21,7 +21,7 @@ public sealed class PhoneNumberTypeRepository(AdventureWorksDbContext dbContext)
     /// </summary>
     /// <param name="id"></param>
     /// <returns></returns>
-    public override async Task<PhoneNumberTypeEntity> GetByIdAsync(int id)
+    public override async Task<PhoneNumberTypeEntity?> GetByIdAsync(int id)
     {
         return await DbContext.PhoneNumberTypes
             .FirstOrDefaultAsync(s => s.PhoneNumberTypeId == id);

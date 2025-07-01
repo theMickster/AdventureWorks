@@ -24,7 +24,7 @@ public sealed class ShiftRepository : ReadOnlyEfRepository<ShiftEntity>, IShiftR
     /// </summary>
     /// <param name="id"></param>
     /// <returns></returns>
-    public override async Task<ShiftEntity> GetByIdAsync(int id)
+    public override async Task<ShiftEntity?> GetByIdAsync(int id)
     {
         return await DbContext.Shifts
             .FirstOrDefaultAsync(s => s.ShiftId == id);

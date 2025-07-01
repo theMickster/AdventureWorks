@@ -10,7 +10,7 @@ public class ReadOnlyEfRepository<T>(AdventureWorksDbContext dbContext) : IReadO
 {
     protected readonly AdventureWorksDbContext DbContext = dbContext;
 
-    public virtual async Task<T> GetByIdAsync(int id)
+    public virtual async Task<T?> GetByIdAsync(int id)
     {
         return await DbContext.Set<T>().FindAsync(id);
     }

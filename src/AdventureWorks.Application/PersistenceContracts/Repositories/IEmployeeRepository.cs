@@ -1,3 +1,4 @@
+using AdventureWorks.Common.Filtering;
 using AdventureWorks.Domain.Entities.HumanResources;
 using AdventureWorks.Domain.Entities.Person;
 
@@ -41,4 +42,24 @@ public interface IEmployeeRepository : IAsyncRepository<EmployeeEntity>
     /// <param name="cancellationToken">Cancellation token</param>
     /// <returns>Employee entity or null if not found</returns>
     Task<EmployeeEntity?> GetEmployeeByIdAsync(int businessEntityId, CancellationToken cancellationToken = default);
+
+    /// <summary>
+    /// Retrieves a paginated list of employees and the total count of employees in the database.
+    /// </summary>
+    /// <param name="parameters">The input paging parameters</param>
+    /// <param name="cancellationToken">Cancellation token</param>
+    /// <returns>Tuple containing the list of employees and total count</returns>
+    Task<(IReadOnlyList<EmployeeEntity>, int)> GetEmployeesAsync(EmployeeParameter parameters, CancellationToken cancellationToken = default);
+
+    /// <summary>
+    /// Retrieves a paged list of employees filtered using the search criteria.
+    /// </summary>
+    /// <param name="parameters">The input paging parameters</param>
+    /// <param name="employeeSearchModel">The employee search criteria</param>
+    /// <param name="cancellationToken">Cancellation token</param>
+    /// <returns>Tuple containing the filtered list of employees and total count</returns>
+    Task<(IReadOnlyList<EmployeeEntity>, int)> SearchEmployeesAsync(
+        EmployeeParameter parameters,
+        EmployeeSearchModel employeeSearchModel,
+        CancellationToken cancellationToken = default);
 }

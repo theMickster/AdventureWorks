@@ -18,7 +18,7 @@ public sealed class StoreRepository(AdventureWorksDbContext dbContext)
     /// </summary>
     /// <param name="storeId">the unique store identifier</param>
     /// <returns></returns>
-    public async Task<StoreEntity> GetStoreByIdAsync(int storeId)
+    public async Task<StoreEntity?> GetStoreByIdAsync(int storeId)
     {
         return await DbContext.Stores
             .AsNoTracking()

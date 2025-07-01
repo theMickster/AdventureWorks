@@ -30,7 +30,7 @@ public sealed class StateProvinceRepository : ReadOnlyEfRepository<StateProvince
     /// </summary>
     /// <param name="id"></param>
     /// <returns></returns>
-    public override async Task<StateProvinceEntity> GetByIdAsync(int id)
+    public override async Task<StateProvinceEntity?> GetByIdAsync(int id)
     {
         return await DbContext.StateProvinces
             .Include(x => x.CountryRegion)

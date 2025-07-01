@@ -1,5 +1,4 @@
-﻿using AdventureWorks.Domain.Entities;
-using AdventureWorks.Domain.Entities.Person;
+﻿using AdventureWorks.Domain.Entities.Person;
 using AdventureWorks.Infrastructure.Persistence.Repositories.Person;
 
 namespace AdventureWorks.UnitTests.Persistence.Repositories.Person;
@@ -30,7 +29,7 @@ public sealed class BusinessEntityRepositoryTests : PersistenceUnitTestBase
         }
 
         var updatedEntity = await _sut.GetByIdAsync(newEntity.BusinessEntityId);
-        updatedEntity.ModifiedDate = StandardModifiedDate;
+        updatedEntity!.ModifiedDate = StandardModifiedDate;
 
         await _sut.UpdateAsync(updatedEntity);
 

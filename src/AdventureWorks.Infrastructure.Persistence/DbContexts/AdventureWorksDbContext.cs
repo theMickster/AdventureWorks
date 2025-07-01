@@ -1,10 +1,8 @@
 ﻿using AdventureWorks.Application.PersistenceContracts.DbContext;
-using AdventureWorks.Domain.Entities;
 using AdventureWorks.Domain.Entities.HumanResources;
 using AdventureWorks.Domain.Entities.Person;
 using AdventureWorks.Domain.Entities.Production;
 using AdventureWorks.Domain.Entities.Sales;
-using AdventureWorks.Domain.Entities.Shield;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Logging.Abstractions;
@@ -62,28 +60,10 @@ public class AdventureWorksDbContext : DbContext, IAdventureWorksDbContext
     public DbSet<SalesTerritoryEntity> SalesTerritories { get; set; }
 
     public DbSet<ShiftEntity> Shifts { get; set; }
-
-    public DbSet<SecurityFunctionEntity> SecurityFunctions { get; set; }
-
-    public DbSet<SecurityGroupEntity> SecurityGroups { get; set; }
-
-    public DbSet<SecurityGroupSecurityFunctionEntity> SecurityGroupSecurityFunctions { get; set; }
-
-    public DbSet<SecurityGroupSecurityRoleEntity> SecurityGroupSecurityRoles { get; set; }
-
-    public DbSet<SecurityGroupUserAccountEntity> SecurityGroupUserAccounts { get; set; }
-
-    public DbSet<SecurityRoleEntity> SecurityRoles { get; set; }
-
     public DbSet<StoreEntity> Stores { get; set; }
 
     public DbSet<StateProvinceEntity> StateProvinces { get; set; }
-
-    public DbSet<UserAccountEntity> UserAccounts { get; set; }
-
-    public DbSet<UserRefreshTokenEntity> UserRefreshTokens { get; set; }
-
-
+    
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
         var assemblyWithConfigurations = GetType().Assembly;

@@ -1,23 +1,16 @@
-﻿using AdventureWorks.Common.Attributes;
-using AdventureWorks.Domain.Entities;
+﻿using AdventureWorks.Application.PersistenceContracts.Repositories;
+using AdventureWorks.Common.Attributes;
+using AdventureWorks.Domain.Entities.Person;
 using AdventureWorks.Infrastructure.Persistence.DbContexts;
 using Microsoft.EntityFrameworkCore;
-using System.Linq;
-using System.Threading.Tasks;
-using AdventureWorks.Application.PersistenceContracts.Repositories;
-using AdventureWorks.Domain.Entities.Person;
 
 namespace AdventureWorks.Infrastructure.Persistence.Repositories;
 
 [ServiceLifetimeScoped]
-public sealed class AddressRepository : EfRepository<AddressEntity>, IAddressRepository
+public sealed class AddressRepository(AdventureWorksDbContext dbContext)
+    : EfRepository<AddressEntity>(dbContext), IAddressRepository
 {
-    public AddressRepository(AdventureWorksDbContext dbContext) : base(dbContext)
-    {
-
-    }
-
-    public async Task<AddressEntity> GetAddressByIdAsync(int addressId)
+    public async Task<AddressEntity?> GetAddressByIdAsync(int addressId)
     {
         return await DbContext.Addresses
             

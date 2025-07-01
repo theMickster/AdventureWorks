@@ -21,7 +21,7 @@ public sealed class CountryRegionRepository : ReadOnlyEfRepository<CountryRegion
     /// </summary>
     /// <param name="id"></param>
     /// <returns></returns>
-    public async Task<CountryRegionEntity> GetByIdAsync(string id)
+    public async Task<CountryRegionEntity?> GetByIdAsync(string id)
     {
         return await DbContext
             .CountryRegions

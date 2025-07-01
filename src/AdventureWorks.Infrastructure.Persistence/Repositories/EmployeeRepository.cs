@@ -1,5 +1,7 @@
 using AdventureWorks.Application.PersistenceContracts.Repositories;
 using AdventureWorks.Common.Attributes;
+using AdventureWorks.Common.Constants;
+using AdventureWorks.Common.Filtering;
 using AdventureWorks.Domain.Entities.HumanResources;
 using AdventureWorks.Domain.Entities.Person;
 using AdventureWorks.Infrastructure.Persistence.DbContexts;
@@ -125,7 +127,126 @@ public sealed class EmployeeRepository(AdventureWorksDbContext dbContext)
         return await DbContext.Employees
             .AsNoTracking()
             .Include(e => e.PersonBusinessEntity)
+                .ThenInclude(p => p.EmailAddresses)
             .Where(e => e.BusinessEntityId == businessEntityId)
             .FirstOrDefaultAsync(cancellationToken);
+    }
+
+    /// <summary>
+    /// Retrieves a paginated list of employees and the total count of employees in the database.
+    /// </summary>
+    public async Task<(IReadOnlyList<EmployeeEntity>, int)> GetEmployeesAsync(
+        EmployeeParameter parameters,
+        CancellationToken cancellationToken = default)
+    {
+        var totalCount = await DbContext.Employees.CountAsync(cancellationToken);
+
+        var employeeQuery = DbContext.Employees
+            .AsNoTracking()
+            .Include(e => e.PersonBusinessEntity)
+                .ThenInclude(p => p.EmailAddresses)
+            .AsQueryable();
+
+        employeeQuery = parameters.OrderBy switch
+        {
+            SortedResultConstants.BusinessEntityId => parameters.SortOrder == SortedResultConstants.Ascending
+                ? employeeQuery.OrderBy(x => x.BusinessEntityId)
+                : employeeQuery.OrderByDescending(x => x.BusinessEntityId),
+            SortedResultConstants.FirstName => parameters.SortOrder == SortedResultConstants.Ascending
+                ? employeeQuery.OrderBy(x => x.PersonBusinessEntity.FirstName)
+                : employeeQuery.OrderByDescending(x => x.PersonBusinessEntity.FirstName),
+            SortedResultConstants.LastName => parameters.SortOrder == SortedResultConstants.Ascending
+                ? employeeQuery.OrderBy(x => x.PersonBusinessEntity.LastName)
+                : employeeQuery.OrderByDescending(x => x.PersonBusinessEntity.LastName),
+            _ => employeeQuery.OrderBy(x => x.BusinessEntityId)
+        };
+
+        employeeQuery = employeeQuery.Skip(parameters.GetRecordsToSkip()).Take(parameters.PageSize);
+
+        var results = await employeeQuery.ToListAsync(cancellationToken);
+
+        return (results.AsReadOnly(), totalCount);
+    }
+
+    /// <summary>
+    /// Retrieves a paged list of employees filtered using the search criteria.
+    /// </summary>
+    public async Task<(IReadOnlyList<EmployeeEntity>, int)> SearchEmployeesAsync(
+        EmployeeParameter parameters,
+        EmployeeSearchModel employeeSearchModel,
+        CancellationToken cancellationToken = default)
+    {
+        var employeeQuery = DbContext.Employees
+            .AsNoTracking()
+            .Include(e => e.PersonBusinessEntity)
+                .ThenInclude(p => p.EmailAddresses)
+            .AsQueryable();
+
+        if (employeeSearchModel != null)
+        {
+            if (employeeSearchModel.Id != null)
+            {
+                employeeQuery = employeeQuery.Where(e => e.BusinessEntityId == employeeSearchModel.Id);
+            }
+
+            if (!string.IsNullOrWhiteSpace(employeeSearchModel.FirstName))
+            {
+                employeeQuery = employeeQuery.Where(e =>
+                    e.PersonBusinessEntity.FirstName.ToLower().Contains(employeeSearchModel.FirstName.Trim().ToLower()));
+            }
+
+            if (!string.IsNullOrWhiteSpace(employeeSearchModel.LastName))
+            {
+                employeeQuery = employeeQuery.Where(e =>
+                    e.PersonBusinessEntity.LastName.ToLower().Contains(employeeSearchModel.LastName.Trim().ToLower()));
+            }
+
+            if (!string.IsNullOrWhiteSpace(employeeSearchModel.JobTitle))
+            {
+                employeeQuery = employeeQuery.Where(e =>
+                    e.JobTitle.ToLower().Contains(employeeSearchModel.JobTitle.Trim().ToLower()));
+            }
+
+            if (!string.IsNullOrWhiteSpace(employeeSearchModel.EmailAddress))
+            {
+                employeeQuery = employeeQuery.Where(e =>
+                    e.PersonBusinessEntity.EmailAddresses.Any(email =>
+                        email.EmailAddressName.ToLower().Contains(employeeSearchModel.EmailAddress.Trim().ToLower())));
+            }
+
+            if (!string.IsNullOrWhiteSpace(employeeSearchModel.NationalIdNumber))
+            {
+                employeeQuery = employeeQuery.Where(e =>
+                    e.NationalIdnumber.ToLower().Contains(employeeSearchModel.NationalIdNumber.Trim().ToLower()));
+            }
+
+            if (!string.IsNullOrWhiteSpace(employeeSearchModel.LoginId))
+            {
+                employeeQuery = employeeQuery.Where(e =>
+                    e.LoginId.ToLower().Contains(employeeSearchModel.LoginId.Trim().ToLower()));
+            }
+        }
+
+        employeeQuery = parameters.OrderBy switch
+        {
+            SortedResultConstants.BusinessEntityId => parameters.SortOrder == SortedResultConstants.Ascending
+                ? employeeQuery.OrderBy(x => x.BusinessEntityId)
+                : employeeQuery.OrderByDescending(x => x.BusinessEntityId),
+            SortedResultConstants.FirstName => parameters.SortOrder == SortedResultConstants.Ascending
+                ? employeeQuery.OrderBy(x => x.PersonBusinessEntity.FirstName)
+                : employeeQuery.OrderByDescending(x => x.PersonBusinessEntity.FirstName),
+            SortedResultConstants.LastName => parameters.SortOrder == SortedResultConstants.Ascending
+                ? employeeQuery.OrderBy(x => x.PersonBusinessEntity.LastName)
+                : employeeQuery.OrderByDescending(x => x.PersonBusinessEntity.LastName),
+            _ => employeeQuery
+        };
+
+        var totalCount = await employeeQuery.CountAsync(cancellationToken);
+
+        employeeQuery = employeeQuery.Skip(parameters.GetRecordsToSkip()).Take(parameters.PageSize);
+
+        var results = await employeeQuery.ToListAsync(cancellationToken);
+
+        return (results.AsReadOnly(), totalCount);
     }
 }

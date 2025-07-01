@@ -1,6 +1,5 @@
 ﻿using AdventureWorks.Domain.Entities.HumanResources;
 using AdventureWorks.Domain.Entities.Sales;
-using AdventureWorks.Domain.Entities.Shield;
 
 namespace AdventureWorks.Domain.Entities.Person;
 
@@ -45,8 +44,6 @@ public sealed class PersonEntity : BaseEntity
     public ICollection<EmployeeEntity> Employees { get; set; }
 
     public BusinessEntity BusinessEntity { get; set; }
-
-    public UserAccountEntity UserAccount { get; set; }
-
+    
     public PersonTypeEntity PersonType { get; set; }
 }

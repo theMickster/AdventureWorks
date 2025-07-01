@@ -10,5 +10,5 @@ public interface ICountryRegionRepository : IReadOnlyAsyncRepository<CountryRegi
     /// </summary>
     /// <param name="id"></param>
     /// <returns></returns>
-    Task<CountryRegionEntity> GetByIdAsync(string id);
+    Task<CountryRegionEntity?> GetByIdAsync(string id);
 }

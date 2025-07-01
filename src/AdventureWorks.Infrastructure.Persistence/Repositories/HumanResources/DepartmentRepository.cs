@@ -25,7 +25,7 @@ public sealed class DepartmentRepository : ReadOnlyEfRepository<DepartmentEntity
     /// </summary>
     /// <param name="id"></param>
     /// <returns></returns>
-    public override async Task<DepartmentEntity> GetByIdAsync(int id)
+    public override async Task<DepartmentEntity?> GetByIdAsync(int id)
     {
         return await DbContext.Departments
             .FirstOrDefaultAsync(s => s.DepartmentId == id);

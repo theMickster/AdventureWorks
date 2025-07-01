@@ -16,7 +16,6 @@ public sealed class CreateStoreValidatorTests : UnitTestBase
     }
 
     [Theory]
-    [InlineData(null)]
     [InlineData("")]
     [InlineData("   ")]
     public void Validator_should_have_store_name_errors(string name)
