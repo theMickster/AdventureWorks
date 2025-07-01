@@ -17,6 +17,9 @@ public class EmployeeConfiguration : IEntityTypeConfiguration<EmployeeEntity>
             .WithMany(b=>b.Employees)
             .HasForeignKey(a => a.BusinessEntityId);
 
-            
+        // OrganizationLevel is a computed column in the database
+        // Mark it as computed so EF Core won't try to insert/update it
+        builder.Property(e => e.OrganizationLevel)
+            .ValueGeneratedOnAddOrUpdate();
     }
 }

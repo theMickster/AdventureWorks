@@ -1,19 +1,15 @@
+using AdventureWorks.Application.PersistenceContracts.Repositories.Person;
 using AdventureWorks.Common.Attributes;
-using AdventureWorks.Domain.Entities;
+using AdventureWorks.Domain.Entities.Person;
 using AdventureWorks.Infrastructure.Persistence.DbContexts;
 using Microsoft.EntityFrameworkCore;
-using AdventureWorks.Application.PersistenceContracts.Repositories.Person;
-using AdventureWorks.Domain.Entities.Person;
 
 namespace AdventureWorks.Infrastructure.Persistence.Repositories.Person;
 
 [ServiceLifetimeScoped]
-public sealed class PhoneNumberTypeRepository : ReadOnlyEfRepository<PhoneNumberTypeEntity>, IPhoneNumberTypeRepository
+public sealed class PhoneNumberTypeRepository(AdventureWorksDbContext dbContext)
+    : ReadOnlyEfRepository<PhoneNumberTypeEntity>(dbContext), IPhoneNumberTypeRepository
 {
-    public PhoneNumberTypeRepository(AdventureWorksDbContext dbContext) : base(dbContext)
-    {
-    }
-
     public override async Task<IReadOnlyList<PhoneNumberTypeEntity>> ListAllAsync()
     {
         return await DbContext.PhoneNumberTypes

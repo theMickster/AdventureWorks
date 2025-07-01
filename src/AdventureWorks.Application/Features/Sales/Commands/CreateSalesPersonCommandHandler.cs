@@ -1,4 +1,6 @@
 using AdventureWorks.Application.PersistenceContracts.Repositories.Sales;
+using AdventureWorks.Domain.Entities.HumanResources;
+using AdventureWorks.Domain.Entities.Person;
 using AdventureWorks.Domain.Entities.Sales;
 using AdventureWorks.Models.Features.Sales;
 using AutoMapper;
@@ -7,6 +9,11 @@ using MediatR;
 
 namespace AdventureWorks.Application.Features.Sales.Commands;
 
+/// <summary>
+/// Handler for CreateSalesPersonCommand.
+/// Builds complete entity graph (BusinessEntity → Person → Employee → SalesPerson)
+/// and delegates to repository for cascade inserts.
+/// </summary>
 public sealed class CreateSalesPersonCommandHandler(
     IMapper mapper,
     ISalesPersonRepository salesPersonRepository,
@@ -24,12 +31,61 @@ public sealed class CreateSalesPersonCommandHandler(
 
         await _validator.ValidateAndThrowAsync(request.Model, cancellationToken);
 
-        var inputEntity = _mapper.Map<SalesPersonEntity>(request.Model);
-        inputEntity.ModifiedDate = request.ModifiedDate;
-        inputEntity.Rowguid = request.RowGuid;
+        // Build SalesPerson entity
+        var salesPersonEntity = _mapper.Map<SalesPersonEntity>(request.Model);
 
-        var outputEntity = await _salesPersonRepository.AddAsync(inputEntity);
+        // Build Employee entity
+        var employeeEntity = new EmployeeEntity
+        {
+            NationalIdnumber = request.Model.NationalIdNumber,
+            LoginId = request.Model.LoginId,
+            JobTitle = request.Model.JobTitle,
+            BirthDate = request.Model.BirthDate,
+            HireDate = request.Model.HireDate,
+            MaritalStatus = request.Model.MaritalStatus,
+            Gender = request.Model.Gender,
+            SalariedFlag = request.Model.SalariedFlag,
+            OrganizationLevel = request.Model.OrganizationLevel
+        };
 
-        return outputEntity.BusinessEntityId;
+        // Build Person entity
+        var personEntity = new PersonEntity
+        {
+            FirstName = request.Model.FirstName,
+            LastName = request.Model.LastName,
+            MiddleName = request.Model.MiddleName,
+            Title = request.Model.Title,
+            Suffix = request.Model.Suffix
+        };
+
+        // Build PersonPhone
+        var personPhone = new PersonPhone
+        {
+            PhoneNumber = request.Model.Phone.PhoneNumber,
+            PhoneNumberTypeId = request.Model.Phone.PhoneNumberTypeId
+        };
+
+        // Build EmailAddress
+        var emailAddress = new EmailAddressEntity
+        {
+            EmailAddressName = request.Model.EmailAddress
+        };
+
+        // Build Address
+        var address = _mapper.Map<AddressEntity>(request.Model.Address);
+
+        var businessEntityId = await _salesPersonRepository.CreateSalesPersonWithEmployeeAsync(
+            salesPersonEntity,
+            employeeEntity,
+            personEntity,
+            personPhone,
+            emailAddress,
+            address,
+            request.Model.AddressTypeId,
+            request.ModifiedDate,
+            request.RowGuid,
+            cancellationToken);
+
+        return businessEntityId;
     }
 }

@@ -11,63 +11,73 @@ public class EmployeeBaseModelValidator<T> : AbstractValidator<T> where T : Empl
 {
     public EmployeeBaseModelValidator()
     {
-        // Person name validation (NotEmpty handled by 'required' modifier)
         RuleFor(x => x.FirstName)
-            .MaximumLength(50)
+            .NotEmpty()
             .WithErrorCode("Rule-01")
+            .WithMessage(MessageFirstNameRequired)
+            .MaximumLength(50)
+            .WithErrorCode("Rule-02")
             .WithMessage(MessageFirstNameLength);
 
         RuleFor(x => x.LastName)
+            .NotEmpty()
+            .WithErrorCode("Rule-03")
+            .WithMessage(MessageLastNameRequired)
             .MaximumLength(50)
-            .WithErrorCode("Rule-02")
+            .WithErrorCode("Rule-04")
             .WithMessage(MessageLastNameLength);
 
         RuleFor(x => x.MiddleName)
             .MaximumLength(50)
-            .WithErrorCode("Rule-03")
+            .WithErrorCode("Rule-05")
             .WithMessage(MessageMiddleNameLength)
             .When(x => !string.IsNullOrEmpty(x.MiddleName));
 
         RuleFor(x => x.Title)
             .MaximumLength(8)
-            .WithErrorCode("Rule-04")
+            .WithErrorCode("Rule-06")
             .WithMessage(MessageTitleLength)
             .When(x => !string.IsNullOrEmpty(x.Title));
 
         RuleFor(x => x.Suffix)
             .MaximumLength(10)
-            .WithErrorCode("Rule-05")
+            .WithErrorCode("Rule-07")
             .WithMessage(MessageSuffixLength)
             .When(x => !string.IsNullOrEmpty(x.Suffix));
 
-        // Employee validation (NotEmpty handled by 'required' modifier)
         RuleFor(x => x.JobTitle)
+            .NotEmpty()
+            .WithErrorCode("Rule-08")
+            .WithMessage(MessageJobTitleRequired)
             .MaximumLength(50)
-            .WithErrorCode("Rule-06")
+            .WithErrorCode("Rule-09")
             .WithMessage(MessageJobTitleLength);
 
         RuleFor(x => x.MaritalStatus)
             .Must(status => status == "M" || status == "S")
-            .WithErrorCode("Rule-07")
+            .WithErrorCode("Rule-10")
             .WithMessage(MessageMaritalStatusInvalid);
 
         RuleFor(x => x.Gender)
             .Must(gender => gender == "M" || gender == "F")
-            .WithErrorCode("Rule-08")
+            .WithErrorCode("Rule-11")
             .WithMessage(MessageGenderInvalid);
 
         RuleFor(x => x.OrganizationLevel)
             .GreaterThanOrEqualTo((short)0)
-            .WithErrorCode("Rule-09")
+            .WithErrorCode("Rule-12")
             .WithMessage(MessageOrganizationLevelInvalid)
             .When(x => x.OrganizationLevel.HasValue);
     }
 
+    public static string MessageFirstNameRequired => "First name is required";
     public static string MessageFirstNameLength => "First name cannot be greater than 50 characters";
+    public static string MessageLastNameRequired => "Last name is required";
     public static string MessageLastNameLength => "Last name cannot be greater than 50 characters";
     public static string MessageMiddleNameLength => "Middle name cannot be greater than 50 characters";
     public static string MessageTitleLength => "Title cannot be greater than 8 characters";
     public static string MessageSuffixLength => "Suffix cannot be greater than 10 characters";
+    public static string MessageJobTitleRequired => "Job title is required";
     public static string MessageJobTitleLength => "Job title cannot be greater than 50 characters";
     public static string MessageMaritalStatusInvalid => "Marital status must be 'M' (Married) or 'S' (Single)";
     public static string MessageGenderInvalid => "Gender must be 'M' (Male) or 'F' (Female)";

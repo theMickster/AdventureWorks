@@ -1,7 +1,9 @@
 using AdventureWorks.API.Controllers.v1.SalesPersons;
 using AdventureWorks.Application.Features.Sales.Commands;
 using AdventureWorks.Application.Features.Sales.Queries;
+using AdventureWorks.Models.Features.AddressManagement;
 using AdventureWorks.Models.Features.Sales;
+using AdventureWorks.Models.Slim;
 using FluentValidation;
 using FluentValidation.Results;
 using MediatR;
@@ -21,6 +23,40 @@ public sealed class CreateSalesPersonControllerTests : UnitTestBase
     public CreateSalesPersonControllerTests()
     {
         _sut = new CreateSalesPersonController(_mockLogger.Object, _mockMediator.Object);
+    }
+
+    private static SalesPersonCreateModel GetValidModel()
+    {
+        return new SalesPersonCreateModel
+        {
+            FirstName = "Jane",
+            LastName = "Smith",
+            NationalIdNumber = "987654321",
+            LoginId = "adventure-works\\jane.smith",
+            JobTitle = "Sales Rep",
+            BirthDate = new DateTime(1988, 8, 20),
+            HireDate = new DateTime(2019, 3, 15),
+            MaritalStatus = "M",
+            Gender = "F",
+            Phone = new SalesPersonPhoneCreateModel
+            {
+                PhoneNumber = "555-987-6543",
+                PhoneNumberTypeId = 1
+            },
+            EmailAddress = "jane.smith@adventure-works.com",
+            Address = new AddressCreateModel
+            {
+                AddressLine1 = "789 Sales Avenue",
+                City = "Seattle",
+                PostalCode = "98102",
+                StateProvince = new GenericSlimModel { Id = 79, Name = "Washington", Code = "WA" }
+            },
+            AddressTypeId = 2,
+            TerritoryId = 1,
+            SalesQuota = 300000,
+            Bonus = 5000,
+            CommissionPct = 0.02m
+        };
     }
 
     [Fact]
@@ -56,17 +92,12 @@ public sealed class CreateSalesPersonControllerTests : UnitTestBase
     [Fact]
     public void PostAsync_invalid_input_handles_exception()
     {
-        var input = new SalesPersonCreateModel
-        {
-            SalesQuota = 250000m,
-            Bonus = 0m,
-            CommissionPct = 0.012m
-        };
+        var input = GetValidModel();
 
         _mockMediator
             .Setup(x => x.Send(It.IsAny<CreateSalesPersonCommand>(), CancellationToken.None))
             .ThrowsAsync(new ValidationException(new List<ValidationFailure>
-                { new() { PropertyName = "TerritoryId", ErrorCode = "00010", ErrorMessage = "Territory ID is required" } }));
+                { new() { PropertyName = "FirstName", ErrorCode = "00010", ErrorMessage = "First name is required" } }));
 
         Func<Task> act = async () => await _sut.PostAsync(input);
 
@@ -90,12 +121,7 @@ public sealed class CreateSalesPersonControllerTests : UnitTestBase
             ModifiedDate = DateTime.UtcNow
         };
 
-        var input = new SalesPersonCreateModel
-        {
-            SalesQuota = 250000m,
-            Bonus = 0m,
-            CommissionPct = 0.012m
-        };
+        var input = GetValidModel();
 
         _mockMediator
             .Setup(x => x.Send(It.IsAny<CreateSalesPersonCommand>(), CancellationToken.None))

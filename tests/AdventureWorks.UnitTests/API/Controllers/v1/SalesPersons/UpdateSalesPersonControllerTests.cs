@@ -23,6 +23,28 @@ public sealed class UpdateSalesPersonControllerTests : UnitTestBase
         _sut = new UpdateSalesPersonController(_mockLogger.Object, _mockMediator.Object);
     }
 
+    private static SalesPersonUpdateModel GetValidUpdateModel(int id = 274)
+    {
+        return new SalesPersonUpdateModel
+        {
+            Id = id,
+            FirstName = "Jane",
+            LastName = "Smith",
+            MiddleName = "A.",
+            Title = "Ms.",
+            Suffix = "Jr.",
+            JobTitle = "Senior Sales Rep",
+            MaritalStatus = "M",
+            Gender = "F",
+            SalariedFlag = true,
+            OrganizationLevel = 2,
+            TerritoryId = 2,
+            SalesQuota = 300000,
+            Bonus = 2000,
+            CommissionPct = 0.06m
+        };
+    }
+
     [Fact]
     public void Controller_throws_correct_exceptions()
     {
@@ -59,7 +81,7 @@ public sealed class UpdateSalesPersonControllerTests : UnitTestBase
     [InlineData(-999)]
     public async Task PutAsync_invalid_id_returns_bad_requestAsync(int salesPersonId)
     {
-        var result = await _sut.PutAsync(salesPersonId, new SalesPersonUpdateModel { Id = 274 });
+        var result = await _sut.PutAsync(salesPersonId, GetValidUpdateModel(274));
 
         var objectResult = result as BadRequestObjectResult;
 
@@ -74,7 +96,7 @@ public sealed class UpdateSalesPersonControllerTests : UnitTestBase
     [Fact]
     public async Task PutAsync_mismatched_ids_returns_bad_requestAsync()
     {
-        var result = await _sut.PutAsync(274, new SalesPersonUpdateModel { Id = 275 });
+        var result = await _sut.PutAsync(274, GetValidUpdateModel(275));
 
         var objectResult = result as BadRequestObjectResult;
 
@@ -89,13 +111,8 @@ public sealed class UpdateSalesPersonControllerTests : UnitTestBase
     [Fact]
     public void PutAsync_invalid_input_handles_exception()
     {
-        var input = new SalesPersonUpdateModel
-        {
-            Id = 274,
-            SalesQuota = -1000m,
-            Bonus = 0m,
-            CommissionPct = 0.012m
-        };
+        var input = GetValidUpdateModel(274);
+        input.SalesQuota = -1000m; // Invalid value
 
         _mockMediator
             .Setup(x => x.Send(It.IsAny<UpdateSalesPersonCommand>(), CancellationToken.None))
@@ -124,13 +141,7 @@ public sealed class UpdateSalesPersonControllerTests : UnitTestBase
             ModifiedDate = DateTime.UtcNow
         };
 
-        var input = new SalesPersonUpdateModel
-        {
-            Id = salesPersonId,
-            SalesQuota = 300000m,
-            Bonus = 5000m,
-            CommissionPct = 0.015m
-        };
+        var input = GetValidUpdateModel(salesPersonId);
 
         _mockMediator.Setup(x => x.Send(It.IsAny<UpdateSalesPersonCommand>(), CancellationToken.None));
 

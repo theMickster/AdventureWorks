@@ -1,10 +1,41 @@
 ﻿using AdventureWorks.Common.Filtering;
+using AdventureWorks.Domain.Entities.HumanResources;
+using AdventureWorks.Domain.Entities.Person;
 using AdventureWorks.Domain.Entities.Sales;
 
 namespace AdventureWorks.Application.PersistenceContracts.Repositories.Sales;
 
 public interface ISalesPersonRepository : IAsyncRepository<SalesPersonEntity>
 {
+    /// <summary>
+    /// Creates a new sales person with full entity graph.
+    /// Creates: BusinessEntity → Person → Employee → SalesPerson + Phone + Email + Address.
+    /// All operations are performed within a single transaction.
+    /// </summary>
+    Task<int> CreateSalesPersonWithEmployeeAsync(
+        SalesPersonEntity salesPersonEntity,
+        EmployeeEntity employeeEntity,
+        PersonEntity personEntity,
+        PersonPhone personPhone,
+        EmailAddressEntity emailAddress,
+        AddressEntity address,
+        int addressTypeId,
+        DateTime modifiedDate,
+        Guid rowGuid,
+        CancellationToken cancellationToken = default);
+
+    /// <summary>
+    /// Updates an existing sales person with cascade updates to related entities.
+    /// Updates: Person → Employee → SalesPerson.
+    /// All operations are performed within a single transaction.
+    /// </summary>
+    Task UpdateSalesPersonWithEmployeeAsync(
+        SalesPersonEntity salesPersonEntity,
+        EmployeeEntity employeeEntity,
+        PersonEntity personEntity,
+        DateTime modifiedDate,
+        CancellationToken cancellationToken = default);
+
     /// <summary>
     /// Retrieve a sales person by id along with their related entities
     /// </summary>

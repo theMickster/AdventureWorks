@@ -16,6 +16,28 @@ public sealed class SalesPersonUpdateModelToSalesPersonEntityProfileTests : Unit
         _mapper = mappingConfig.CreateMapper();
     }
 
+    private static SalesPersonUpdateModel GetValidUpdateModel(int id = 100)
+    {
+        return new SalesPersonUpdateModel
+        {
+            Id = id,
+            FirstName = "Jane",
+            LastName = "Smith",
+            MiddleName = "A.",
+            Title = "Ms.",
+            Suffix = "Jr.",
+            JobTitle = "Senior Sales Rep",
+            MaritalStatus = "M",
+            Gender = "F",
+            SalariedFlag = true,
+            OrganizationLevel = 2,
+            TerritoryId = 2,
+            SalesQuota = 300000,
+            Bonus = 2000,
+            CommissionPct = 0.06m
+        };
+    }
+
     [Fact]
     public void all_mappings_are_correctly_setup_succeeds() => _mapper.ConfigurationProvider.AssertConfigurationIsValid();
 
@@ -43,14 +65,7 @@ public sealed class SalesPersonUpdateModelToSalesPersonEntityProfileTests : Unit
         };
 
         // Update model with new values
-        var updateModel = new SalesPersonUpdateModel
-        {
-            Id = existingBusinessEntityId,
-            TerritoryId = 2, // changed
-            SalesQuota = 300000m, // changed
-            Bonus = 2000m, // changed
-            CommissionPct = 0.06m // changed
-        };
+        var updateModel = GetValidUpdateModel(existingBusinessEntityId);
 
         // Map update model onto existing entity
         _mapper.Map(updateModel, existingEntity);
@@ -84,14 +99,11 @@ public sealed class SalesPersonUpdateModelToSalesPersonEntityProfileTests : Unit
             CommissionPct = 0.05m
         };
 
-        var updateModel = new SalesPersonUpdateModel
-        {
-            Id = 100,
-            TerritoryId = null, // clearing territory
-            SalesQuota = null, // clearing quota
-            Bonus = 0,
-            CommissionPct = 0.04m
-        };
+        var updateModel = GetValidUpdateModel(100);
+        updateModel.TerritoryId = null; // clearing territory
+        updateModel.SalesQuota = null; // clearing quota
+        updateModel.Bonus = 0;
+        updateModel.CommissionPct = 0.04m;
 
         _mapper.Map(updateModel, existingEntity);
 

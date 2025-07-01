@@ -22,9 +22,33 @@ public sealed class UpdateSalesPersonCommandHandler(
         ArgumentNullException.ThrowIfNull(request.Model);
 
         await _validator.ValidateAndThrowAsync(request.Model, cancellationToken);
-        var currentEntity = await _salesPersonRepository.GetByIdAsync(request.Model.Id);
+
+        // Fetch existing entity WITH related data (Employee and Person)
+        var currentEntity = await _salesPersonRepository.GetSalesPersonByIdAsync(request.Model.Id);
+
+        // Map SalesPerson-specific fields via AutoMapper
         _mapper.Map(request.Model, currentEntity);
-        currentEntity.ModifiedDate = request.ModifiedDate;
-        await _salesPersonRepository.UpdateAsync(currentEntity);
+
+        // Manually update Employee fields (updatable only - immutable fields excluded)
+        currentEntity.Employee.JobTitle = request.Model.JobTitle;
+        currentEntity.Employee.MaritalStatus = request.Model.MaritalStatus;
+        currentEntity.Employee.Gender = request.Model.Gender;
+        currentEntity.Employee.SalariedFlag = request.Model.SalariedFlag;
+        currentEntity.Employee.OrganizationLevel = request.Model.OrganizationLevel;
+
+        // Manually update Person fields
+        currentEntity.Employee.PersonBusinessEntity.FirstName = request.Model.FirstName;
+        currentEntity.Employee.PersonBusinessEntity.LastName = request.Model.LastName;
+        currentEntity.Employee.PersonBusinessEntity.MiddleName = request.Model.MiddleName;
+        currentEntity.Employee.PersonBusinessEntity.Title = request.Model.Title;
+        currentEntity.Employee.PersonBusinessEntity.Suffix = request.Model.Suffix;
+
+        // Call cascade update with transaction
+        await _salesPersonRepository.UpdateSalesPersonWithEmployeeAsync(
+            currentEntity,
+            currentEntity.Employee,
+            currentEntity.Employee.PersonBusinessEntity,
+            request.ModifiedDate,
+            cancellationToken);
     }
 }

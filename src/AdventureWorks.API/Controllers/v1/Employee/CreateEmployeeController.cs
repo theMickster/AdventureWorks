@@ -8,14 +8,14 @@ using Microsoft.AspNetCore.Mvc;
 namespace AdventureWorks.API.Controllers.v1.Employee;
 
 /// <summary>
-/// Controller for creating new employees in the HumanResources system.
+/// Controller for creating new employees.
 /// </summary>
 [ApiController]
 [ApiVersion("1.0")]
 [ApiExplorerSettings(GroupName = "Human Resources")]
 [Produces("application/json")]
 [Route("api/v{version:apiVersion}/employees", Name = "CreateEmployeeControllerV1")]
-[Authorize] // Employee creation requires authentication
+[Authorize]
 public sealed class CreateEmployeeController : ControllerBase
 {
     private readonly ILogger<CreateEmployeeController> _logger;

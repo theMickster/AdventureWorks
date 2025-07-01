@@ -2,6 +2,8 @@
 using AdventureWorks.Common.Attributes;
 using AdventureWorks.Common.Constants;
 using AdventureWorks.Common.Filtering;
+using AdventureWorks.Domain.Entities.HumanResources;
+using AdventureWorks.Domain.Entities.Person;
 using AdventureWorks.Domain.Entities.Sales;
 using AdventureWorks.Infrastructure.Persistence.DbContexts;
 using Microsoft.EntityFrameworkCore;
@@ -12,6 +14,163 @@ namespace AdventureWorks.Infrastructure.Persistence.Repositories.Sales;
 public sealed class SalesPersonRepository(AdventureWorksDbContext dbContext)
     : EfRepository<SalesPersonEntity>(dbContext), ISalesPersonRepository
 {
+    /// <summary>
+    /// Creates a new sales person with full entity graph using EF Core navigation properties.
+    /// Leverages EF Core's change tracking for cascade inserts.
+    /// All operations are performed within a single transaction.
+    /// Creates: BusinessEntity → Person → Employee → SalesPerson + Phone + Email + Address.
+    /// </summary>
+    public async Task<int> CreateSalesPersonWithEmployeeAsync(
+        SalesPersonEntity salesPersonEntity,
+        EmployeeEntity employeeEntity,
+        PersonEntity personEntity,
+        PersonPhone personPhone,
+        EmailAddressEntity emailAddress,
+        AddressEntity address,
+        int addressTypeId,
+        DateTime modifiedDate,
+        Guid rowGuid,
+        CancellationToken cancellationToken = default)
+    {
+        ArgumentNullException.ThrowIfNull(salesPersonEntity);
+        ArgumentNullException.ThrowIfNull(employeeEntity);
+        ArgumentNullException.ThrowIfNull(personEntity);
+        ArgumentNullException.ThrowIfNull(personPhone);
+        ArgumentNullException.ThrowIfNull(emailAddress);
+        ArgumentNullException.ThrowIfNull(address);
+
+        await using var transaction = await DbContext.Database.BeginTransactionAsync(cancellationToken);
+
+        try
+        {
+            var businessEntity = new BusinessEntity
+            {
+                Rowguid = rowGuid,
+                ModifiedDate = modifiedDate
+            };
+
+            DbContext.BusinessEntities.Add(businessEntity);
+            await DbContext.SaveChangesAsync(cancellationToken);
+
+            var businessEntityId = businessEntity.BusinessEntityId;
+
+            personEntity.BusinessEntityId = businessEntityId;
+            personEntity.PersonTypeId = 2;
+            personEntity.NameStyle = false;
+            personEntity.EmailPromotion = 0;
+            personEntity.Rowguid = Guid.NewGuid();
+            personEntity.ModifiedDate = modifiedDate;
+
+            employeeEntity.BusinessEntityId = businessEntityId;
+            employeeEntity.CurrentFlag = true;
+            employeeEntity.VacationHours = 0;
+            employeeEntity.SickLeaveHours = 0;
+            employeeEntity.Rowguid = Guid.NewGuid();
+            employeeEntity.ModifiedDate = modifiedDate;
+
+            employeeEntity.PersonBusinessEntity = personEntity;
+
+            DbContext.Employees.Add(employeeEntity);
+            await DbContext.SaveChangesAsync(cancellationToken);
+
+            salesPersonEntity.BusinessEntityId = businessEntityId;
+            salesPersonEntity.SalesYtd = 0;
+            salesPersonEntity.SalesLastYear = 0;
+            salesPersonEntity.Rowguid = Guid.NewGuid();
+            salesPersonEntity.ModifiedDate = modifiedDate;
+
+            salesPersonEntity.Employee = employeeEntity;
+
+            DbContext.SalesPersons.Add(salesPersonEntity);
+            await DbContext.SaveChangesAsync(cancellationToken);
+
+            personPhone.BusinessEntityId = businessEntityId;
+            personPhone.ModifiedDate = modifiedDate;
+            personEntity.PersonPhones ??= new List<PersonPhone>();
+            personEntity.PersonPhones.Add(personPhone);
+
+            await DbContext.SaveChangesAsync(cancellationToken);
+
+            emailAddress.BusinessEntityId = businessEntityId;
+            emailAddress.Rowguid = Guid.NewGuid();
+            emailAddress.ModifiedDate = modifiedDate;
+
+            personEntity.EmailAddresses ??= new List<EmailAddressEntity>();
+            personEntity.EmailAddresses.Add(emailAddress);
+
+            await DbContext.SaveChangesAsync(cancellationToken);
+
+            address.Rowguid = Guid.NewGuid();
+            address.ModifiedDate = modifiedDate;
+
+            DbContext.Addresses.Add(address);
+            await DbContext.SaveChangesAsync(cancellationToken);
+
+            var businessEntityAddress = new BusinessEntityAddressEntity
+            {
+                BusinessEntityId = businessEntityId,
+                AddressId = address.AddressId,
+                AddressTypeId = addressTypeId,
+                Rowguid = Guid.NewGuid(),
+                ModifiedDate = modifiedDate
+            };
+
+            DbContext.BusinessEntityAddresses.Add(businessEntityAddress);
+            await DbContext.SaveChangesAsync(cancellationToken);
+
+            await transaction.CommitAsync(cancellationToken);
+
+            return businessEntityId;
+        }
+        catch
+        {
+            await transaction.RollbackAsync(cancellationToken);
+            throw;
+        }
+    }
+
+    /// <summary>
+    /// Updates an existing sales person with cascade updates to related entities.
+    /// Updates: Person → Employee → SalesPerson.
+    /// All operations are performed within a single transaction.
+    /// </summary>
+    public async Task UpdateSalesPersonWithEmployeeAsync(
+        SalesPersonEntity salesPersonEntity,
+        EmployeeEntity employeeEntity,
+        PersonEntity personEntity,
+        DateTime modifiedDate,
+        CancellationToken cancellationToken = default)
+    {
+        ArgumentNullException.ThrowIfNull(salesPersonEntity);
+        ArgumentNullException.ThrowIfNull(employeeEntity);
+        ArgumentNullException.ThrowIfNull(personEntity);
+
+        await using var transaction = await DbContext.Database.BeginTransactionAsync(cancellationToken);
+
+        try
+        {
+            // Update Person entity
+            personEntity.ModifiedDate = modifiedDate;
+            DbContext.Persons.Update(personEntity);
+
+            // Update Employee entity
+            employeeEntity.ModifiedDate = modifiedDate;
+            DbContext.Employees.Update(employeeEntity);
+
+            // Update SalesPerson entity
+            salesPersonEntity.ModifiedDate = modifiedDate;
+            DbContext.SalesPersons.Update(salesPersonEntity);
+
+            await DbContext.SaveChangesAsync(cancellationToken);
+            await transaction.CommitAsync(cancellationToken);
+        }
+        catch
+        {
+            await transaction.RollbackAsync(cancellationToken);
+            throw;
+        }
+    }
+
     /// <summary>
     /// Retrieve a sales person by id along with their related entities
     /// </summary>

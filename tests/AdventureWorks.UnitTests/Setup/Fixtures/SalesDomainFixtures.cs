@@ -1,6 +1,9 @@
 ﻿using AdventureWorks.Domain.Entities;
 using AdventureWorks.Domain.Entities.Person;
 using AdventureWorks.Domain.Entities.Sales;
+using AdventureWorks.Models.Features.AddressManagement;
+using AdventureWorks.Models.Features.Sales;
+using AdventureWorks.Models.Slim;
 
 namespace AdventureWorks.UnitTests.Setup.Fixtures;
 

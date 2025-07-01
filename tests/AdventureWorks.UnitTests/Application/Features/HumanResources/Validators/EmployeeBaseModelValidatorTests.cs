@@ -21,7 +21,7 @@ public sealed class EmployeeBaseModelValidatorTests : UnitTestBase
         var result = _sut.TestValidate(model);
 
         result.ShouldHaveValidationErrorFor(x => x.FirstName)
-            .WithErrorCode("Rule-01");
+            .WithErrorCode("Rule-02");
     }
 
     [Theory]
@@ -35,7 +35,7 @@ public sealed class EmployeeBaseModelValidatorTests : UnitTestBase
         var result = _sut.TestValidate(model);
 
         result.ShouldHaveValidationErrorFor(x => x.LastName)
-            .WithErrorCode("Rule-02");
+            .WithErrorCode("Rule-04");
     }
 
     [Theory]
@@ -49,7 +49,7 @@ public sealed class EmployeeBaseModelValidatorTests : UnitTestBase
         var result = _sut.TestValidate(model);
 
         result.ShouldHaveValidationErrorFor(x => x.MiddleName)
-            .WithErrorCode("Rule-03");
+            .WithErrorCode("Rule-05");
     }
 
     [Fact]
@@ -74,7 +74,7 @@ public sealed class EmployeeBaseModelValidatorTests : UnitTestBase
         var result = _sut.TestValidate(model);
 
         result.ShouldHaveValidationErrorFor(x => x.Title)
-            .WithErrorCode("Rule-04");
+            .WithErrorCode("Rule-06");
     }
 
     [Fact]
@@ -99,7 +99,7 @@ public sealed class EmployeeBaseModelValidatorTests : UnitTestBase
         var result = _sut.TestValidate(model);
 
         result.ShouldHaveValidationErrorFor(x => x.Suffix)
-            .WithErrorCode("Rule-05");
+            .WithErrorCode("Rule-07");
     }
 
     [Fact]
@@ -124,7 +124,7 @@ public sealed class EmployeeBaseModelValidatorTests : UnitTestBase
         var result = _sut.TestValidate(model);
 
         result.ShouldHaveValidationErrorFor(x => x.JobTitle)
-            .WithErrorCode("Rule-06");
+            .WithErrorCode("Rule-09");
     }
 
     [Theory]
@@ -141,7 +141,7 @@ public sealed class EmployeeBaseModelValidatorTests : UnitTestBase
         var result = _sut.TestValidate(model);
 
         result.ShouldHaveValidationErrorFor(x => x.MaritalStatus)
-            .WithErrorCode("Rule-07");
+            .WithErrorCode("Rule-10");
     }
 
     [Theory]
@@ -171,7 +171,7 @@ public sealed class EmployeeBaseModelValidatorTests : UnitTestBase
         var result = _sut.TestValidate(model);
 
         result.ShouldHaveValidationErrorFor(x => x.Gender)
-            .WithErrorCode("Rule-08");
+            .WithErrorCode("Rule-11");
     }
 
     [Theory]
@@ -198,7 +198,7 @@ public sealed class EmployeeBaseModelValidatorTests : UnitTestBase
         var result = _sut.TestValidate(model);
 
         result.ShouldHaveValidationErrorFor(x => x.OrganizationLevel)
-            .WithErrorCode("Rule-09");
+            .WithErrorCode("Rule-12");
     }
 
     [Theory]

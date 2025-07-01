@@ -9,12 +9,12 @@ public sealed class SalesPersonCreateModelToSalesPersonEntityProfile : Profile
     public SalesPersonCreateModelToSalesPersonEntityProfile()
     {
         CreateMap<SalesPersonCreateModel, SalesPersonEntity>()
-            .ForMember(x => x.BusinessEntityId, options => options.MapFrom(y => y.BusinessEntityId))
             .ForMember(x => x.TerritoryId, options => options.MapFrom(y => y.TerritoryId))
             .ForMember(x => x.SalesQuota, options => options.MapFrom(y => y.SalesQuota))
             .ForMember(x => x.Bonus, options => options.MapFrom(y => y.Bonus))
             .ForMember(x => x.CommissionPct, options => options.MapFrom(y => y.CommissionPct))
 
+            .ForMember(x => x.BusinessEntityId, o => o.Ignore())
             .ForMember(x => x.ModifiedDate, o => o.Ignore())
             .ForMember(x => x.Rowguid, o => o.Ignore())
             .ForMember(x => x.SalesYtd, o => o.Ignore())
