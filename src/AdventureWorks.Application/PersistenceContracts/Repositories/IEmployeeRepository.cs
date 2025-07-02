@@ -62,4 +62,21 @@ public interface IEmployeeRepository : IAsyncRepository<EmployeeEntity>
         EmployeeParameter parameters,
         EmployeeSearchModel employeeSearchModel,
         CancellationToken cancellationToken = default);
+
+    /// <summary>
+    /// Retrieves all addresses for a specific employee.
+    /// </summary>
+    /// <param name="businessEntityId">The employee's business entity identifier</param>
+    /// <param name="cancellationToken">Cancellation token</param>
+    /// <returns>List of BusinessEntityAddress entities with Address and AddressType included</returns>
+    Task<IReadOnlyList<BusinessEntityAddressEntity>> GetEmployeeAddressesAsync(int businessEntityId, CancellationToken cancellationToken = default);
+
+    /// <summary>
+    /// Retrieves a specific address for an employee.
+    /// </summary>
+    /// <param name="businessEntityId">The employee's business entity identifier</param>
+    /// <param name="addressId">The address identifier</param>
+    /// <param name="cancellationToken">Cancellation token</param>
+    /// <returns>BusinessEntityAddress entity with Address and AddressType included, or null if not found</returns>
+    Task<BusinessEntityAddressEntity?> GetEmployeeAddressByIdAsync(int businessEntityId, int addressId, CancellationToken cancellationToken = default);
 }

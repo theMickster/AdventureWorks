@@ -1,5 +1,4 @@
 ﻿using AdventureWorks.Application.Features.AddressManagement.Profiles;
-using AdventureWorks.Domain.Entities;
 using AdventureWorks.Domain.Entities.Person;
 using AdventureWorks.Models.Features.AddressManagement;
 

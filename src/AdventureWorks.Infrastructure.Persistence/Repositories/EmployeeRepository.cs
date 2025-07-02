@@ -249,4 +249,41 @@ public sealed class EmployeeRepository(AdventureWorksDbContext dbContext)
 
         return (results.AsReadOnly(), totalCount);
     }
+
+    /// <summary>
+    /// Retrieves all addresses for a specific employee with related Address and AddressType data.
+    /// </summary>
+    public async Task<IReadOnlyList<BusinessEntityAddressEntity>> GetEmployeeAddressesAsync(
+        int businessEntityId,
+        CancellationToken cancellationToken = default)
+    {
+        var addresses = await DbContext.BusinessEntityAddresses
+            .AsNoTracking()
+            .Include(bea => bea.Address)
+                .ThenInclude(a => a.StateProvince)
+                    .ThenInclude(sp => sp.CountryRegion)
+            .Include(bea => bea.AddressType)
+            .Where(bea => bea.BusinessEntityId == businessEntityId)
+            .ToListAsync(cancellationToken);
+
+        return addresses.AsReadOnly();
+    }
+
+    /// <summary>
+    /// Retrieves a specific address for an employee with related Address and AddressType data.
+    /// </summary>
+    public async Task<BusinessEntityAddressEntity?> GetEmployeeAddressByIdAsync(
+        int businessEntityId,
+        int addressId,
+        CancellationToken cancellationToken = default)
+    {
+        return await DbContext.BusinessEntityAddresses
+            .AsNoTracking()
+            .Include(bea => bea.Address)
+                .ThenInclude(a => a.StateProvince)
+                    .ThenInclude(sp => sp.CountryRegion)
+            .Include(bea => bea.AddressType)
+            .Where(bea => bea.BusinessEntityId == businessEntityId && bea.AddressId == addressId)
+            .FirstOrDefaultAsync(cancellationToken);
+    }
 }

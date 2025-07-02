@@ -3,7 +3,6 @@ using AdventureWorks.Application.Features.HumanResources.Queries;
 using AdventureWorks.Application.PersistenceContracts.Repositories;
 using AdventureWorks.Domain.Entities.HumanResources;
 using AdventureWorks.Domain.Entities.Person;
-using AdventureWorks.UnitTests.Setup.Fixtures;
 
 namespace AdventureWorks.UnitTests.Application.Features.HumanResources.Queries;
 

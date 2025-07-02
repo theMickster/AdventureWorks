@@ -1,4 +1,4 @@
-﻿using AdventureWorks.Common.Extensions;
+using AdventureWorks.Common.Extensions;
 using System.ComponentModel;
 using System.ComponentModel.DataAnnotations;
 
@@ -10,7 +10,6 @@ public sealed class EnumExtensionsTests : UnitTestBase
         [Fact]
         public void Enum_extension_get_description_returns_value_when_no_description()
         {
-            // Arrange + Act + Assert all in one
             Months.January.GetDescription().Should().Be("January");
             Months.February.GetDescription().Should().Be("February");
             Months.March.GetDescription().Should().Be("March");

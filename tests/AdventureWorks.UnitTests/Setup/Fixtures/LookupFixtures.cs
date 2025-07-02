@@ -1,5 +1,4 @@
-﻿using AdventureWorks.Domain.Entities;
-using AdventureWorks.Domain.Entities.Person;
+﻿using AdventureWorks.Domain.Entities.Person;
 
 namespace AdventureWorks.UnitTests.Setup.Fixtures;
 

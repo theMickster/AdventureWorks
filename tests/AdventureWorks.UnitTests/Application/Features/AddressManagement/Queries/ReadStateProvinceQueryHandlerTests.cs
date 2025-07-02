@@ -1,7 +1,6 @@
 ﻿using AdventureWorks.Application.Features.AddressManagement.Profiles;
 using AdventureWorks.Application.Features.AddressManagement.Queries;
 using AdventureWorks.Application.PersistenceContracts.Repositories;
-using AdventureWorks.Domain.Entities;
 using AdventureWorks.Domain.Entities.Person;
 
 namespace AdventureWorks.UnitTests.Application.Features.AddressManagement.Queries;

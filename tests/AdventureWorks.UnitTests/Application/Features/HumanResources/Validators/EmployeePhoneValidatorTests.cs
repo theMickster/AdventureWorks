@@ -1,7 +1,6 @@
 using AdventureWorks.Application.Features.HumanResources.Validators;
 using AdventureWorks.Application.PersistenceContracts.Repositories.Person;
 using AdventureWorks.Domain.Entities.Person;
-using AdventureWorks.Models.Features.HumanResources;
 using AdventureWorks.UnitTests.Setup.Fixtures;
 using FluentValidation.TestHelper;
 

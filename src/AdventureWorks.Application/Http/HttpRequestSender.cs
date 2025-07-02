@@ -5,6 +5,7 @@ using System.Text.Json;
 using AdventureWorks.Application.PersistenceContracts.Http;
 
 namespace AdventureWorks.Application.Http;
+
 public sealed class HttpRequestSender : IHttpRequestSender
 {
     private readonly HttpClient _httpClient;

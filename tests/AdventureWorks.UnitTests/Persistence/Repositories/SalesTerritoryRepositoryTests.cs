@@ -1,6 +1,5 @@
 ﻿using AdventureWorks.Application.PersistenceContracts.Repositories;
 using AdventureWorks.Common.Attributes;
-using AdventureWorks.Domain.Entities;
 using AdventureWorks.Domain.Entities.Person;
 using AdventureWorks.Domain.Entities.Sales;
 using AdventureWorks.Infrastructure.Persistence.Repositories;

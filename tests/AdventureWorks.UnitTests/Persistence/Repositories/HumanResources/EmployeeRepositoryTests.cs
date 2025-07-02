@@ -1,8 +1,11 @@
 using AdventureWorks.Application.PersistenceContracts.Repositories;
 using AdventureWorks.Common.Attributes;
+using AdventureWorks.Common.Constants;
+using AdventureWorks.Common.Filtering;
 using AdventureWorks.Domain.Entities.HumanResources;
 using AdventureWorks.Domain.Entities.Person;
 using AdventureWorks.Infrastructure.Persistence.Repositories;
+using AdventureWorks.UnitTests.Setup.Fixtures;
 using Microsoft.EntityFrameworkCore;
 
 namespace AdventureWorks.UnitTests.Persistence.Repositories.HumanResources;
@@ -369,6 +372,746 @@ public sealed class EmployeeRepositoryTests : PersistenceUnitTestBase
         var entry = DbContext.Entry(result!);
         entry.State.Should().Be(EntityState.Detached);
     }
+
+    #region GetEmployeesAsync Tests
+
+    [Fact]
+    public async Task GetEmployeesAsync_returns_paginated_employees_with_total_countAsync()
+    {
+        var employees = HumanResourcesDomainFixtures.GetEmployeeListForPaging();
+        DbContext.Employees.AddRange(employees);
+        await DbContext.SaveChangesAsync();
+
+        var parameters = new EmployeeParameter { PageNumber = 1, PageSize = 3 };
+
+        var (result, totalCount) = await _sut.GetEmployeesAsync(parameters);
+
+        using (new AssertionScope())
+        {
+            result.Should().NotBeNull();
+            result.Count.Should().Be(3);
+            totalCount.Should().Be(5);
+            result.Should().AllSatisfy(e => e.PersonBusinessEntity.Should().NotBeNull());
+        }
+    }
+
+    [Fact]
+    public async Task GetEmployeesAsync_honors_page_size_and_numberAsync()
+    {
+        var employees = HumanResourcesDomainFixtures.GetEmployeeListForPaging();
+        DbContext.Employees.AddRange(employees);
+        await DbContext.SaveChangesAsync();
+
+        var parameters = new EmployeeParameter { PageNumber = 2, PageSize = 2 };
+
+        var (result, totalCount) = await _sut.GetEmployeesAsync(parameters);
+
+        using (new AssertionScope())
+        {
+            result.Count.Should().Be(2);
+            totalCount.Should().Be(5);
+            result[0].BusinessEntityId.Should().Be(3);
+            result[1].BusinessEntityId.Should().Be(4);
+        }
+    }
+
+    [Fact]
+    public async Task GetEmployeesAsync_sorts_by_BusinessEntityId_ascendingAsync()
+    {
+        var employees = HumanResourcesDomainFixtures.GetEmployeeListForPaging();
+        DbContext.Employees.AddRange(employees);
+        await DbContext.SaveChangesAsync();
+
+        var parameters = new EmployeeParameter
+        {
+            PageNumber = 1,
+            PageSize = 10,
+            OrderBy = "id",
+            SortOrder = SortedResultConstants.Ascending
+        };
+
+        var (result, _) = await _sut.GetEmployeesAsync(parameters);
+
+        using (new AssertionScope())
+        {
+            result.Should().BeInAscendingOrder(e => e.BusinessEntityId);
+            result[0].BusinessEntityId.Should().Be(1);
+            result[^1].BusinessEntityId.Should().Be(5);
+        }
+    }
+
+    [Fact]
+    public async Task GetEmployeesAsync_sorts_by_BusinessEntityId_descendingAsync()
+    {
+        var employees = HumanResourcesDomainFixtures.GetEmployeeListForPaging();
+        DbContext.Employees.AddRange(employees);
+        await DbContext.SaveChangesAsync();
+
+        var parameters = new EmployeeParameter
+        {
+            PageNumber = 1,
+            PageSize = 10,
+            OrderBy = "id",
+            SortOrder = SortedResultConstants.Descending
+        };
+
+        var (result, _) = await _sut.GetEmployeesAsync(parameters);
+
+        using (new AssertionScope())
+        {
+            result.Should().BeInDescendingOrder(e => e.BusinessEntityId);
+            result[0].BusinessEntityId.Should().Be(5);
+            result[^1].BusinessEntityId.Should().Be(1);
+        }
+    }
+
+    [Fact]
+    public async Task GetEmployeesAsync_sorts_by_FirstName_ascendingAsync()
+    {
+        var employees = HumanResourcesDomainFixtures.GetEmployeeListForPaging();
+        DbContext.Employees.AddRange(employees);
+        await DbContext.SaveChangesAsync();
+
+        var parameters = new EmployeeParameter
+        {
+            PageNumber = 1,
+            PageSize = 10,
+            OrderBy = "firstName",
+            SortOrder = SortedResultConstants.Ascending
+        };
+
+        var (result, _) = await _sut.GetEmployeesAsync(parameters);
+
+        using (new AssertionScope())
+        {
+            result.Should().BeInAscendingOrder(e => e.PersonBusinessEntity.FirstName);
+            result[0].PersonBusinessEntity.FirstName.Should().Be("Alice");
+            result[^1].PersonBusinessEntity.FirstName.Should().Be("Edward");
+        }
+    }
+
+    [Fact]
+    public async Task GetEmployeesAsync_sorts_by_LastName_descendingAsync()
+    {
+        var employees = HumanResourcesDomainFixtures.GetEmployeeListForPaging();
+        DbContext.Employees.AddRange(employees);
+        await DbContext.SaveChangesAsync();
+
+        var parameters = new EmployeeParameter
+        {
+            PageNumber = 1,
+            PageSize = 10,
+            OrderBy = "lastName",
+            SortOrder = SortedResultConstants.Descending
+        };
+
+        var (result, _) = await _sut.GetEmployeesAsync(parameters);
+
+        using (new AssertionScope())
+        {
+            result.Should().BeInDescendingOrder(e => e.PersonBusinessEntity.LastName);
+            result[0].PersonBusinessEntity.LastName.Should().Be("Evans");
+        }
+    }
+
+    [Fact]
+    public async Task GetEmployeesAsync_returns_empty_list_when_no_employeesAsync()
+    {
+        var parameters = new EmployeeParameter { PageNumber = 1, PageSize = 10 };
+
+        var (result, totalCount) = await _sut.GetEmployeesAsync(parameters);
+
+        using (new AssertionScope())
+        {
+            result.Should().BeEmpty();
+            totalCount.Should().Be(0);
+        }
+    }
+
+    [Fact]
+    public async Task GetEmployeesAsync_includes_person_and_email_dataAsync()
+    {
+        var employee = HumanResourcesDomainFixtures.GetCompleteEmployeeEntity(1, "Test", "User", "Tester", "999999999", "adventure-works\\test.user", "test.user@adventure-works.com");
+        DbContext.Employees.Add(employee);
+        await DbContext.SaveChangesAsync();
+
+        var parameters = new EmployeeParameter { PageNumber = 1, PageSize = 10 };
+
+        var (result, _) = await _sut.GetEmployeesAsync(parameters);
+
+        using (new AssertionScope())
+        {
+            result.Should().HaveCount(1);
+            result[0].PersonBusinessEntity.Should().NotBeNull();
+            result[0].PersonBusinessEntity.FirstName.Should().Be("Test");
+            result[0].PersonBusinessEntity.LastName.Should().Be("User");
+            result[0].PersonBusinessEntity.EmailAddresses.Should().NotBeEmpty();
+            result[0].PersonBusinessEntity.EmailAddresses.First().EmailAddressName.Should().Be("test.user@adventure-works.com");
+        }
+    }
+
+    [Fact]
+    public async Task GetEmployeesAsync_uses_no_trackingAsync()
+    {
+        var employee = HumanResourcesDomainFixtures.GetCompleteEmployeeEntity();
+        DbContext.Employees.Add(employee);
+        await DbContext.SaveChangesAsync();
+
+        var parameters = new EmployeeParameter { PageNumber = 1, PageSize = 10 };
+
+        var (result, _) = await _sut.GetEmployeesAsync(parameters);
+
+        var entry = DbContext.Entry(result[0]);
+        entry.State.Should().Be(EntityState.Detached);
+    }
+
+    #endregion
+
+    #region SearchEmployeesAsync Tests
+
+    [Fact]
+    public async Task SearchEmployeesAsync_filters_by_IdAsync()
+    {
+        var employees = HumanResourcesDomainFixtures.GetEmployeeListForPaging();
+        DbContext.Employees.AddRange(employees);
+        await DbContext.SaveChangesAsync();
+
+        var parameters = new EmployeeParameter { PageNumber = 1, PageSize = 10 };
+        var searchModel = new EmployeeSearchModel { Id = 3 };
+
+        var (result, totalCount) = await _sut.SearchEmployeesAsync(parameters, searchModel);
+
+        using (new AssertionScope())
+        {
+            result.Should().HaveCount(1);
+            result[0].BusinessEntityId.Should().Be(3);
+            totalCount.Should().Be(1);
+        }
+    }
+
+    [Fact]
+    public async Task SearchEmployeesAsync_filters_by_FirstNameAsync()
+    {
+        var employees = HumanResourcesDomainFixtures.GetEmployeeListForPaging();
+        DbContext.Employees.AddRange(employees);
+        await DbContext.SaveChangesAsync();
+
+        var parameters = new EmployeeParameter { PageNumber = 1, PageSize = 10 };
+        var searchModel = new EmployeeSearchModel { FirstName = "bob" };
+
+        var (result, totalCount) = await _sut.SearchEmployeesAsync(parameters, searchModel);
+
+        using (new AssertionScope())
+        {
+            result.Should().HaveCount(1);
+            result[0].PersonBusinessEntity.FirstName.Should().Be("Bob");
+            totalCount.Should().Be(1);
+        }
+    }
+
+    [Fact]
+    public async Task SearchEmployeesAsync_filters_by_LastNameAsync()
+    {
+        var employees = HumanResourcesDomainFixtures.GetEmployeeListForPaging();
+        DbContext.Employees.AddRange(employees);
+        await DbContext.SaveChangesAsync();
+
+        var parameters = new EmployeeParameter { PageNumber = 1, PageSize = 10 };
+        var searchModel = new EmployeeSearchModel { LastName = "davis" };
+
+        var (result, totalCount) = await _sut.SearchEmployeesAsync(parameters, searchModel);
+
+        using (new AssertionScope())
+        {
+            result.Should().HaveCount(1);
+            result[0].PersonBusinessEntity.LastName.Should().Be("Davis");
+            totalCount.Should().Be(1);
+        }
+    }
+
+    [Fact]
+    public async Task SearchEmployeesAsync_filters_by_JobTitleAsync()
+    {
+        var employees = HumanResourcesDomainFixtures.GetEmployeeListForPaging();
+        DbContext.Employees.AddRange(employees);
+        await DbContext.SaveChangesAsync();
+
+        var parameters = new EmployeeParameter { PageNumber = 1, PageSize = 10 };
+        var searchModel = new EmployeeSearchModel { JobTitle = "developer" };
+
+        var (result, totalCount) = await _sut.SearchEmployeesAsync(parameters, searchModel);
+
+        using (new AssertionScope())
+        {
+            result.Should().HaveCount(1);
+            result[0].JobTitle.Should().Be("Developer");
+            totalCount.Should().Be(1);
+        }
+    }
+
+    [Fact]
+    public async Task SearchEmployeesAsync_filters_by_EmailAddressAsync()
+    {
+        var employees = HumanResourcesDomainFixtures.GetEmployeeListForPaging();
+        DbContext.Employees.AddRange(employees);
+        await DbContext.SaveChangesAsync();
+
+        var parameters = new EmployeeParameter { PageNumber = 1, PageSize = 10 };
+        var searchModel = new EmployeeSearchModel { EmailAddress = "charlie.chen" };
+
+        var (result, totalCount) = await _sut.SearchEmployeesAsync(parameters, searchModel);
+
+        using (new AssertionScope())
+        {
+            result.Should().HaveCount(1);
+            result[0].PersonBusinessEntity.EmailAddresses.First().EmailAddressName.Should().Contain("charlie.chen");
+            totalCount.Should().Be(1);
+        }
+    }
+
+    [Fact]
+    public async Task SearchEmployeesAsync_filters_by_NationalIdNumberAsync()
+    {
+        var employees = HumanResourcesDomainFixtures.GetEmployeeListForPaging();
+        DbContext.Employees.AddRange(employees);
+        await DbContext.SaveChangesAsync();
+
+        var parameters = new EmployeeParameter { PageNumber = 1, PageSize = 10 };
+        var searchModel = new EmployeeSearchModel { NationalIdNumber = "444444444" };
+
+        var (result, totalCount) = await _sut.SearchEmployeesAsync(parameters, searchModel);
+
+        using (new AssertionScope())
+        {
+            result.Should().HaveCount(1);
+            result[0].NationalIdnumber.Should().Be("444444444");
+            totalCount.Should().Be(1);
+        }
+    }
+
+    [Fact]
+    public async Task SearchEmployeesAsync_filters_by_LoginIdAsync()
+    {
+        var employees = HumanResourcesDomainFixtures.GetEmployeeListForPaging();
+        DbContext.Employees.AddRange(employees);
+        await DbContext.SaveChangesAsync();
+
+        var parameters = new EmployeeParameter { PageNumber = 1, PageSize = 10 };
+        var searchModel = new EmployeeSearchModel { LoginId = "alice.anderson" };
+
+        var (result, totalCount) = await _sut.SearchEmployeesAsync(parameters, searchModel);
+
+        using (new AssertionScope())
+        {
+            result.Should().HaveCount(1);
+            result[0].LoginId.Should().Contain("alice.anderson");
+            totalCount.Should().Be(1);
+        }
+    }
+
+    [Fact]
+    public async Task SearchEmployeesAsync_combines_multiple_filtersAsync()
+    {
+        var employees = HumanResourcesDomainFixtures.GetEmployeeListForPaging();
+        DbContext.Employees.AddRange(employees);
+        await DbContext.SaveChangesAsync();
+
+        var parameters = new EmployeeParameter { PageNumber = 1, PageSize = 10 };
+        var searchModel = new EmployeeSearchModel
+        {
+            FirstName = "bob",
+            LastName = "brown",
+            JobTitle = "developer"
+        };
+
+        var (result, totalCount) = await _sut.SearchEmployeesAsync(parameters, searchModel);
+
+        using (new AssertionScope())
+        {
+            result.Should().HaveCount(1);
+            result[0].PersonBusinessEntity.FirstName.Should().Be("Bob");
+            result[0].PersonBusinessEntity.LastName.Should().Be("Brown");
+            result[0].JobTitle.Should().Be("Developer");
+            totalCount.Should().Be(1);
+        }
+    }
+
+    [Fact]
+    public async Task SearchEmployeesAsync_returns_empty_when_no_matchesAsync()
+    {
+        var employees = HumanResourcesDomainFixtures.GetEmployeeListForPaging();
+        DbContext.Employees.AddRange(employees);
+        await DbContext.SaveChangesAsync();
+
+        var parameters = new EmployeeParameter { PageNumber = 1, PageSize = 10 };
+        var searchModel = new EmployeeSearchModel { FirstName = "NonExistent" };
+
+        var (result, totalCount) = await _sut.SearchEmployeesAsync(parameters, searchModel);
+
+        using (new AssertionScope())
+        {
+            result.Should().BeEmpty();
+            totalCount.Should().Be(0);
+        }
+    }
+
+    [Fact]
+    public async Task SearchEmployeesAsync_case_insensitive_searchAsync()
+    {
+        var employees = HumanResourcesDomainFixtures.GetEmployeeListForPaging();
+        DbContext.Employees.AddRange(employees);
+        await DbContext.SaveChangesAsync();
+
+        var parameters = new EmployeeParameter { PageNumber = 1, PageSize = 10 };
+        var searchModel = new EmployeeSearchModel { FirstName = "CHARLIE" };
+
+        var (result, totalCount) = await _sut.SearchEmployeesAsync(parameters, searchModel);
+
+        using (new AssertionScope())
+        {
+            result.Should().HaveCount(1);
+            result[0].PersonBusinessEntity.FirstName.Should().Be("Charlie");
+            totalCount.Should().Be(1);
+        }
+    }
+
+    [Fact]
+    public async Task SearchEmployeesAsync_honors_paging_parametersAsync()
+    {
+        var employees = HumanResourcesDomainFixtures.GetEmployeeListForPaging();
+        DbContext.Employees.AddRange(employees);
+        await DbContext.SaveChangesAsync();
+
+        var parameters = new EmployeeParameter { PageNumber = 2, PageSize = 2 };
+        var searchModel = new EmployeeSearchModel();
+
+        var (result, totalCount) = await _sut.SearchEmployeesAsync(parameters, searchModel);
+
+        using (new AssertionScope())
+        {
+            result.Count.Should().Be(2);
+            totalCount.Should().Be(5);
+        }
+    }
+
+    [Fact]
+    public async Task SearchEmployeesAsync_sorts_by_FirstName_ascendingAsync()
+    {
+        var employees = HumanResourcesDomainFixtures.GetEmployeeListForPaging();
+        DbContext.Employees.AddRange(employees);
+        await DbContext.SaveChangesAsync();
+
+        var parameters = new EmployeeParameter
+        {
+            PageNumber = 1,
+            PageSize = 10,
+            OrderBy = "firstName",
+            SortOrder = SortedResultConstants.Ascending
+        };
+        var searchModel = new EmployeeSearchModel();
+
+        var (result, _) = await _sut.SearchEmployeesAsync(parameters, searchModel);
+
+        result.Should().BeInAscendingOrder(e => e.PersonBusinessEntity.FirstName);
+    }
+
+    [Fact]
+    public async Task SearchEmployeesAsync_uses_no_trackingAsync()
+    {
+        var employee = HumanResourcesDomainFixtures.GetCompleteEmployeeEntity();
+        DbContext.Employees.Add(employee);
+        await DbContext.SaveChangesAsync();
+
+        var parameters = new EmployeeParameter { PageNumber = 1, PageSize = 10 };
+        var searchModel = new EmployeeSearchModel();
+
+        var (result, _) = await _sut.SearchEmployeesAsync(parameters, searchModel);
+
+        var entry = DbContext.Entry(result[0]);
+        entry.State.Should().Be(EntityState.Detached);
+    }
+
+    #endregion
+
+    #region GetEmployeeAddressesAsync Tests
+
+    [Fact]
+    public async Task GetEmployeeAddressesAsync_returns_all_addresses_for_employeeAsync()
+    {
+        var employeeEntity = CreateTestEmployeeEntity();
+        var personEntity = CreateTestPersonEntity();
+        var personPhone = CreateTestPersonPhone();
+        var emailAddress = CreateTestEmailAddress();
+        var address = CreateTestAddress();
+
+        var businessEntityId = await _sut.CreateEmployeeWithPersonAsync(
+            employeeEntity,
+            personEntity,
+            personPhone,
+            emailAddress,
+            address,
+            addressTypeId: 1,
+            StandardModifiedDate,
+            Guid.NewGuid());
+
+        var secondAddress = new AddressEntity
+        {
+            AddressLine1 = "456 Oak Avenue",
+            City = "Portland",
+            PostalCode = "97201",
+            StateProvinceId = 79,
+            Rowguid = Guid.NewGuid(),
+            ModifiedDate = StandardModifiedDate
+        };
+        DbContext.Addresses.Add(secondAddress);
+        await DbContext.SaveChangesAsync();
+
+        var secondBea = new BusinessEntityAddressEntity
+        {
+            BusinessEntityId = businessEntityId,
+            AddressId = secondAddress.AddressId,
+            AddressTypeId = 2,
+            Rowguid = Guid.NewGuid(),
+            ModifiedDate = StandardModifiedDate
+        };
+        DbContext.BusinessEntityAddresses.Add(secondBea);
+        await DbContext.SaveChangesAsync();
+
+        var result = await _sut.GetEmployeeAddressesAsync(businessEntityId);
+
+        using (new AssertionScope())
+        {
+            result.Should().NotBeNull();
+            result.Count.Should().Be(2);
+            result.Should().AllSatisfy(bea =>
+            {
+                bea.Address.Should().NotBeNull();
+                bea.AddressType.Should().NotBeNull();
+                bea.Address.StateProvince.Should().NotBeNull();
+                bea.Address.StateProvince.CountryRegion.Should().NotBeNull();
+            });
+        }
+    }
+
+    [Fact]
+    public async Task GetEmployeeAddressesAsync_returns_empty_when_no_addressesAsync()
+    {
+        var result = await _sut.GetEmployeeAddressesAsync(99999);
+
+        result.Should().BeEmpty();
+    }
+
+    [Fact]
+    public async Task GetEmployeeAddressesAsync_includes_full_address_hierarchyAsync()
+    {
+        var employeeEntity = CreateTestEmployeeEntity();
+        var personEntity = CreateTestPersonEntity();
+        var personPhone = CreateTestPersonPhone();
+        var emailAddress = CreateTestEmailAddress();
+        var address = CreateTestAddress();
+
+        var businessEntityId = await _sut.CreateEmployeeWithPersonAsync(
+            employeeEntity,
+            personEntity,
+            personPhone,
+            emailAddress,
+            address,
+            addressTypeId: 1,
+            StandardModifiedDate,
+            Guid.NewGuid());
+
+        var result = await _sut.GetEmployeeAddressesAsync(businessEntityId);
+
+        using (new AssertionScope())
+        {
+            result.Should().HaveCount(1);
+            result[0].Address.AddressLine1.Should().Be("123 Main Street");
+            result[0].Address.City.Should().Be("Seattle");
+            result[0].Address.StateProvince.Name.Should().Be("Washington");
+            result[0].Address.StateProvince.CountryRegion.Name.Should().Be("United States");
+            result[0].AddressType.Name.Should().Be("Home");
+        }
+    }
+
+    [Fact]
+    public async Task GetEmployeeAddressesAsync_uses_no_trackingAsync()
+    {
+        var employeeEntity = CreateTestEmployeeEntity();
+        var personEntity = CreateTestPersonEntity();
+        var personPhone = CreateTestPersonPhone();
+        var emailAddress = CreateTestEmailAddress();
+        var address = CreateTestAddress();
+
+        var businessEntityId = await _sut.CreateEmployeeWithPersonAsync(
+            employeeEntity,
+            personEntity,
+            personPhone,
+            emailAddress,
+            address,
+            addressTypeId: 1,
+            StandardModifiedDate,
+            Guid.NewGuid());
+
+        var result = await _sut.GetEmployeeAddressesAsync(businessEntityId);
+
+        var entry = DbContext.Entry(result[0]);
+        entry.State.Should().Be(EntityState.Detached);
+    }
+
+    #endregion
+
+    #region GetEmployeeAddressByIdAsync Tests
+
+    [Fact]
+    public async Task GetEmployeeAddressByIdAsync_returns_specific_addressAsync()
+    {
+        var employeeEntity = CreateTestEmployeeEntity();
+        var personEntity = CreateTestPersonEntity();
+        var personPhone = CreateTestPersonPhone();
+        var emailAddress = CreateTestEmailAddress();
+        var address = CreateTestAddress();
+
+        var businessEntityId = await _sut.CreateEmployeeWithPersonAsync(
+            employeeEntity,
+            personEntity,
+            personPhone,
+            emailAddress,
+            address,
+            addressTypeId: 1,
+            StandardModifiedDate,
+            Guid.NewGuid());
+
+        var createdAddress = await DbContext.Addresses
+            .FirstAsync(a => a.AddressLine1 == "123 Main Street");
+
+        var result = await _sut.GetEmployeeAddressByIdAsync(businessEntityId, createdAddress.AddressId);
+
+        using (new AssertionScope())
+        {
+            result.Should().NotBeNull();
+            result!.BusinessEntityId.Should().Be(businessEntityId);
+            result.AddressId.Should().Be(createdAddress.AddressId);
+            result.Address.Should().NotBeNull();
+            result.AddressType.Should().NotBeNull();
+        }
+    }
+
+    [Fact]
+    public async Task GetEmployeeAddressByIdAsync_returns_null_when_not_foundAsync()
+    {
+        var result = await _sut.GetEmployeeAddressByIdAsync(99999, 99999);
+
+        result.Should().BeNull();
+    }
+
+    [Fact]
+    public async Task GetEmployeeAddressByIdAsync_returns_null_when_address_not_for_employeeAsync()
+    {
+        var employee1 = CreateTestEmployeeEntity();
+        var person1 = CreateTestPersonEntity();
+        var phone1 = CreateTestPersonPhone();
+        var email1 = CreateTestEmailAddress();
+        var address1 = CreateTestAddress();
+
+        var businessEntityId1 = await _sut.CreateEmployeeWithPersonAsync(
+            employee1, person1, phone1, email1, address1, 1, StandardModifiedDate, Guid.NewGuid());
+
+        var employee2 = new EmployeeEntity
+        {
+            NationalIdnumber = "987654321",
+            LoginId = "adventure-works\\jane.doe",
+            JobTitle = "Manager",
+            BirthDate = new DateTime(1985, 3, 20),
+            HireDate = new DateTime(2019, 5, 1),
+            MaritalStatus = "S",
+            Gender = "F",
+            OrganizationLevel = 3
+        };
+        var person2 = new PersonEntity { FirstName = "Jane", LastName = "Doe" };
+        var phone2 = new PersonPhone { PhoneNumber = "555-987-6543", PhoneNumberTypeId = 1 };
+        var email2 = new EmailAddressEntity { EmailAddressName = "jane.doe@adventure-works.com" };
+        var address2 = new AddressEntity
+        {
+            AddressLine1 = "789 Elm Street",
+            City = "Portland",
+            PostalCode = "97201",
+            StateProvinceId = 79
+        };
+
+        var businessEntityId2 = await _sut.CreateEmployeeWithPersonAsync(
+            employee2, person2, phone2, email2, address2, 1, StandardModifiedDate, Guid.NewGuid());
+
+        var employee2Address = await DbContext.Addresses.FirstAsync(a => a.AddressLine1 == "789 Elm Street");
+
+        var result = await _sut.GetEmployeeAddressByIdAsync(businessEntityId1, employee2Address.AddressId);
+
+        result.Should().BeNull();
+    }
+
+    [Fact]
+    public async Task GetEmployeeAddressByIdAsync_includes_full_address_hierarchyAsync()
+    {
+        var employeeEntity = CreateTestEmployeeEntity();
+        var personEntity = CreateTestPersonEntity();
+        var personPhone = CreateTestPersonPhone();
+        var emailAddress = CreateTestEmailAddress();
+        var address = CreateTestAddress();
+
+        var businessEntityId = await _sut.CreateEmployeeWithPersonAsync(
+            employeeEntity,
+            personEntity,
+            personPhone,
+            emailAddress,
+            address,
+            addressTypeId: 1,
+            StandardModifiedDate,
+            Guid.NewGuid());
+
+        var createdAddress = await DbContext.Addresses.FirstAsync(a => a.AddressLine1 == "123 Main Street");
+
+        var result = await _sut.GetEmployeeAddressByIdAsync(businessEntityId, createdAddress.AddressId);
+
+        using (new AssertionScope())
+        {
+            result.Should().NotBeNull();
+            result!.Address.AddressLine1.Should().Be("123 Main Street");
+            result.Address.StateProvince.Should().NotBeNull();
+            result.Address.StateProvince.Name.Should().Be("Washington");
+            result.Address.StateProvince.CountryRegion.Should().NotBeNull();
+            result.Address.StateProvince.CountryRegion.Name.Should().Be("United States");
+            result.AddressType.Should().NotBeNull();
+            result.AddressType.Name.Should().Be("Home");
+        }
+    }
+
+    [Fact]
+    public async Task GetEmployeeAddressByIdAsync_uses_no_trackingAsync()
+    {
+        var employeeEntity = CreateTestEmployeeEntity();
+        var personEntity = CreateTestPersonEntity();
+        var personPhone = CreateTestPersonPhone();
+        var emailAddress = CreateTestEmailAddress();
+        var address = CreateTestAddress();
+
+        var businessEntityId = await _sut.CreateEmployeeWithPersonAsync(
+            employeeEntity,
+            personEntity,
+            personPhone,
+            emailAddress,
+            address,
+            addressTypeId: 1,
+            StandardModifiedDate,
+            Guid.NewGuid());
+
+        var createdAddress = await DbContext.Addresses.FirstAsync(a => a.AddressLine1 == "123 Main Street");
+
+        var result = await _sut.GetEmployeeAddressByIdAsync(businessEntityId, createdAddress.AddressId);
+
+        var entry = DbContext.Entry(result!);
+        entry.State.Should().Be(EntityState.Detached);
+    }
+
+    #endregion
 
     // Helper methods to create test entities
     private static EmployeeEntity CreateTestEmployeeEntity()

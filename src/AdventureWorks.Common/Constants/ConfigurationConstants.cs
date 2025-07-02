@@ -51,4 +51,9 @@ public static class ConfigurationConstants
     /// The configuration key used for setting the default Sql connection string
     /// </summary>
     public const string CurrentConnectionStringNameKey = "CurrentConnectionStringName";
+
+    /// <summary>
+    /// The HTTP header name for correlation ID tracking across distributed systems
+    /// </summary>
+    public const string CorrelationIdHeaderName = "X-Correlation-ID";
 }

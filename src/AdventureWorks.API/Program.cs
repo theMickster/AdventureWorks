@@ -1,4 +1,5 @@
 ﻿using AdventureWorks.API.libs;
+using AdventureWorks.API.libs.Extensions;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Identity.Web;
@@ -24,6 +25,8 @@ builder.AddHttpRequestSender();
 builder.Services.AddMemoryCache();
 
 builder.AddAdventureWorksResponseCompression();
+
+builder.Services.AddCorrelationIdServices();
 
 builder.Services.AddHsts(options =>
 {

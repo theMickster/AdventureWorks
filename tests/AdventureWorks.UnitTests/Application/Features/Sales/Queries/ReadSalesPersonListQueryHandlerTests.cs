@@ -2,7 +2,6 @@ using AdventureWorks.Application.Features.Sales.Profiles;
 using AdventureWorks.Application.Features.Sales.Queries;
 using AdventureWorks.Application.PersistenceContracts.Repositories.Sales;
 using AdventureWorks.Common.Filtering;
-using AdventureWorks.Domain.Entities;
 using AdventureWorks.Domain.Entities.HumanResources;
 using AdventureWorks.Domain.Entities.Person;
 using AdventureWorks.Domain.Entities.Sales;

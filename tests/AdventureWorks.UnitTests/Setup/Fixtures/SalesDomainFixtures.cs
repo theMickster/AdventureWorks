@@ -1,9 +1,6 @@
-﻿using AdventureWorks.Domain.Entities;
+using AdventureWorks.Domain.Entities.HumanResources;
 using AdventureWorks.Domain.Entities.Person;
 using AdventureWorks.Domain.Entities.Sales;
-using AdventureWorks.Models.Features.AddressManagement;
-using AdventureWorks.Models.Features.Sales;
-using AdventureWorks.Models.Slim;
 
 namespace AdventureWorks.UnitTests.Setup.Fixtures;
 
@@ -1615,21 +1612,21 @@ internal sealed class SalesDomainFixtures : UnitTestFixtureBase
          new AddressEntity {AddressId = 698, AddressLine1 = "7551, avenue Foch" , AddressLine2 = null, City = "Paris" , PostalCode = "75010" , StateProvinceId = 161, Rowguid = new Guid("AB36CB48-C204-4B47-8CD0-37101A867CB5"), ModifiedDate = StandardModifiedDate},
          new AddressEntity {AddressId = 699, AddressLine1 = "22, rue Lafayette" , AddressLine2 = null, City = "Pantin" , PostalCode = "93500" , StateProvinceId = 179, Rowguid = new Guid("0133B5E9-A1E1-4E5D-9C83-469A79025B50"), ModifiedDate = StandardModifiedDate},
          new AddressEntity {AddressId = 700, AddressLine1 = "215, avenue Reille" , AddressLine2 = null, City = "Les Ulis" , PostalCode = "91940" , StateProvinceId = 177, Rowguid = new Guid("35DE7117-C6D5-4ED7-A0C0-191EA4280B0E"), ModifiedDate = StandardModifiedDate},
-         new AddressEntity {AddressId = 703, AddressLine1 = "30, avenue de l´ Union Centrale" , AddressLine2 = null, City = "Les Ulis" , PostalCode = "91940" , StateProvinceId = 177, Rowguid = new Guid("10ED68A8-D710-491E-BD6A-9B458FC7C29A"), ModifiedDate = StandardModifiedDate},
-         new AddressEntity {AddressId = 704, AddressLine1 = "33, rue Georges-Clémenceau" , AddressLine2 = null, City = "Cergy" , PostalCode = "95000" , StateProvinceId = 181, Rowguid = new Guid("4C7A2010-E762-41A9-BE14-E9A3C3E5A64D"), ModifiedDate = StandardModifiedDate},
-         new AddressEntity {AddressId = 708, AddressLine1 = "1, place de la République" , AddressLine2 = null, City = "Paris" , PostalCode = "75017" , StateProvinceId = 161, Rowguid = new Guid("A15E545E-A127-46EC-82D5-721E55C512FB"), ModifiedDate = StandardModifiedDate},
+         new AddressEntity {AddressId = 703, AddressLine1 = "30, avenue de l� Union Centrale" , AddressLine2 = null, City = "Les Ulis" , PostalCode = "91940" , StateProvinceId = 177, Rowguid = new Guid("10ED68A8-D710-491E-BD6A-9B458FC7C29A"), ModifiedDate = StandardModifiedDate},
+         new AddressEntity {AddressId = 704, AddressLine1 = "33, rue Georges-Cl�menceau" , AddressLine2 = null, City = "Cergy" , PostalCode = "95000" , StateProvinceId = 181, Rowguid = new Guid("4C7A2010-E762-41A9-BE14-E9A3C3E5A64D"), ModifiedDate = StandardModifiedDate},
+         new AddressEntity {AddressId = 708, AddressLine1 = "1, place de la R�publique" , AddressLine2 = null, City = "Paris" , PostalCode = "75017" , StateProvinceId = 161, Rowguid = new Guid("A15E545E-A127-46EC-82D5-721E55C512FB"), ModifiedDate = StandardModifiedDate},
          new AddressEntity {AddressId = 717, AddressLine1 = "Bundesallee 9571" , AddressLine2 = "Rechnungsstelle - C 035" , City = "Berlin" , PostalCode = "14197" , StateProvinceId = 85, Rowguid = new Guid("225DB1FA-43B5-49AF-BD1D-3A0728F31FCF"), ModifiedDate = StandardModifiedDate},
          new AddressEntity {AddressId = 718, AddressLine1 = "Auf Der Steige 29" , AddressLine2 = null, City = "Muehlheim" , PostalCode = "63151" , StateProvinceId = 20, Rowguid = new Guid("AE69DC7A-5751-433E-A241-D07B604427C1"), ModifiedDate = StandardModifiedDate},
          new AddressEntity {AddressId = 719, AddressLine1 = "Hellweg 4934" , AddressLine2 = null, City = "Essen" , PostalCode = "45001" , StateProvinceId = 20, Rowguid = new Guid("B14CBF02-036F-4816-870D-43F65E81C792"), ModifiedDate = StandardModifiedDate},
-         new AddressEntity {AddressId = 720, AddressLine1 = "Kurfürstenstr 9" , AddressLine2 = null, City = "Duesseldorf" , PostalCode = "40605" , StateProvinceId = 19, Rowguid = new Guid("63C72A08-D6A0-4B2B-8772-B424C063C227"), ModifiedDate = StandardModifiedDate},
+         new AddressEntity {AddressId = 720, AddressLine1 = "Kurf�rstenstr 9" , AddressLine2 = null, City = "Duesseldorf" , PostalCode = "40605" , StateProvinceId = 19, Rowguid = new Guid("63C72A08-D6A0-4B2B-8772-B424C063C227"), ModifiedDate = StandardModifiedDate},
          new AddressEntity {AddressId = 722, AddressLine1 = "Haberstr 29" , AddressLine2 = null, City = "Bonn" , PostalCode = "53131" , StateProvinceId = 20, Rowguid = new Guid("D9488C14-F65B-467B-978C-67A9A0BA249A"), ModifiedDate = StandardModifiedDate},
          new AddressEntity {AddressId = 723, AddressLine1 = "Auf der Krone 53" , AddressLine2 = null, City = "Bonn" , PostalCode = "53131" , StateProvinceId = 53, Rowguid = new Guid("FF2CD359-27ED-498D-893F-F548A0B73D8B"), ModifiedDate = StandardModifiedDate},
-         new AddressEntity {AddressId = 724, AddressLine1 = "Winterfeldtstr 5557" , AddressLine2 = "Kreditorenbuchhaltung" , City = "Münster" , PostalCode = "48001" , StateProvinceId = 70, Rowguid = new Guid("5C1CB8C4-4E3C-40F0-9F48-0914CB6572C3"), ModifiedDate = StandardModifiedDate},
+         new AddressEntity {AddressId = 724, AddressLine1 = "Winterfeldtstr 5557" , AddressLine2 = "Kreditorenbuchhaltung" , City = "M�nster" , PostalCode = "48001" , StateProvinceId = 70, Rowguid = new Guid("5C1CB8C4-4E3C-40F0-9F48-0914CB6572C3"), ModifiedDate = StandardModifiedDate},
          new AddressEntity {AddressId = 729, AddressLine1 = "Hans-Rosenthal-Platz 4223" , AddressLine2 = null, City = "Grevenbroich" , PostalCode = "41485" , StateProvinceId = 8, Rowguid = new Guid("B1E77962-D333-4A8B-A592-4EABB97B3AE1"), ModifiedDate = StandardModifiedDate},
          new AddressEntity {AddressId = 730, AddressLine1 = "Nonnendamm 63" , AddressLine2 = null, City = "Berlin" , PostalCode = "14197" , StateProvinceId = 53, Rowguid = new Guid("49079404-1B8F-47E6-8ABD-C79D42E5DE3B"), ModifiedDate = StandardModifiedDate},
          new AddressEntity {AddressId = 731, AddressLine1 = "Berliner Platz 45" , AddressLine2 = null, City = "Offenbach" , PostalCode = "63009" , StateProvinceId = 70, Rowguid = new Guid("56BC3A3B-380F-4C31-8EB9-AAB2AC234D87"), ModifiedDate = StandardModifiedDate},
          new AddressEntity {AddressId = 732, AddressLine1 = "Brunnenstr 422" , AddressLine2 = null, City = "Frankfurt am Main" , PostalCode = "60082" , StateProvinceId = 20, Rowguid = new Guid("B2A667AA-992D-442B-B40A-3AF83374A0B6"), ModifiedDate = StandardModifiedDate},
-         new AddressEntity {AddressId = 733, AddressLine1 = "Rotthäuser Weg 511" , AddressLine2 = null, City = "Stuttgart" , PostalCode = "70511" , StateProvinceId = 70, Rowguid = new Guid("6C64342F-0570-437F-86C8-37715D6FF3A3"), ModifiedDate = StandardModifiedDate},
+         new AddressEntity {AddressId = 733, AddressLine1 = "Rotth�user Weg 511" , AddressLine2 = null, City = "Stuttgart" , PostalCode = "70511" , StateProvinceId = 70, Rowguid = new Guid("6C64342F-0570-437F-86C8-37715D6FF3A3"), ModifiedDate = StandardModifiedDate},
          new AddressEntity {AddressId = 734, AddressLine1 = "Am Karlshof 8200" , AddressLine2 = null, City = "Hamburg" , PostalCode = "22001" , StateProvinceId = 19, Rowguid = new Guid("8E3F91F0-075D-4EE9-841E-3668F018B7F4"), ModifiedDate = StandardModifiedDate},
          new AddressEntity {AddressId = 735, AddressLine1 = "Holzstr 6444" , AddressLine2 = null, City = "Salzgitter" , PostalCode = "38231" , StateProvinceId = 19, Rowguid = new Guid("DD0249A1-6A03-485D-AC9B-8C97B39B972B"), ModifiedDate = StandardModifiedDate},
          new AddressEntity {AddressId = 736, AddressLine1 = "Am Grossen Dern 982" , AddressLine2 = null, City = "Hamburg" , PostalCode = "20354" , StateProvinceId = 20, Rowguid = new Guid("AF2928B1-A9C2-4CB1-B13B-555D4712B76E"), ModifiedDate = StandardModifiedDate},
@@ -1637,10 +1634,10 @@ internal sealed class SalesDomainFixtures : UnitTestFixtureBase
          new AddressEntity {AddressId = 742, AddressLine1 = "Pappelallee 19" , AddressLine2 = null, City = "Dresden" , PostalCode = "01071" , StateProvinceId = 19, Rowguid = new Guid("A1718E2D-8BC4-4D75-BEC8-66B737868892"), ModifiedDate = StandardModifiedDate},
          new AddressEntity {AddressId = 745, AddressLine1 = "Knaackstr 7" , AddressLine2 = null, City = "Paderborn" , PostalCode = "33041" , StateProvinceId = 20, Rowguid = new Guid("70F8C905-40B9-4396-B4D1-E44DB0F2F34D"), ModifiedDate = StandardModifiedDate},
          new AddressEntity {AddressId = 746, AddressLine1 = "Alderstr 1849" , AddressLine2 = null, City = "Braunschweig" , PostalCode = "38001" , StateProvinceId = 53, Rowguid = new Guid("D6E8FD48-535C-41DB-86CE-A4E3F39870AE"), ModifiedDate = StandardModifiedDate},
-         new AddressEntity {AddressId = 747, AddressLine1 = "Kurfürstenstr 74" , AddressLine2 = null, City = "Poing" , PostalCode = "66041" , StateProvinceId = 70, Rowguid = new Guid("877D09CC-94EA-448B-83C6-846F1A18A7CD"), ModifiedDate = StandardModifiedDate},
+         new AddressEntity {AddressId = 747, AddressLine1 = "Kurf�rstenstr 74" , AddressLine2 = null, City = "Poing" , PostalCode = "66041" , StateProvinceId = 70, Rowguid = new Guid("877D09CC-94EA-448B-83C6-846F1A18A7CD"), ModifiedDate = StandardModifiedDate},
          new AddressEntity {AddressId = 752, AddressLine1 = "Buergermeister-ulrich-str 9500" , AddressLine2 = null, City = "Augsburg" , PostalCode = "86171" , StateProvinceId = 20, Rowguid = new Guid("D959FCCD-ADE6-46A5-8FE1-D25403A7923D"), ModifiedDate = StandardModifiedDate},
          new AddressEntity {AddressId = 753, AddressLine1 = "Erftplatz 22" , AddressLine2 = null, City = "Sulzbach Taunus" , PostalCode = "66272" , StateProvinceId = 70, Rowguid = new Guid("29AEB8B8-9A67-40D9-B78D-EBDEBB380835"), ModifiedDate = StandardModifiedDate},
-         new AddressEntity {AddressId = 754, AddressLine1 = "Viktoria-Luise-Platz 475" , AddressLine2 = null, City = "München" , PostalCode = "80074" , StateProvinceId = 53, Rowguid = new Guid("5EC03527-5CF4-4B1F-ADA1-45691C77A049"), ModifiedDate = StandardModifiedDate},
+         new AddressEntity {AddressId = 754, AddressLine1 = "Viktoria-Luise-Platz 475" , AddressLine2 = null, City = "M�nchen" , PostalCode = "80074" , StateProvinceId = 53, Rowguid = new Guid("5EC03527-5CF4-4B1F-ADA1-45691C77A049"), ModifiedDate = StandardModifiedDate},
          new AddressEntity {AddressId = 759, AddressLine1 = "99 Edgewater Drive" , AddressLine2 = null, City = "Norwood" , PostalCode = "02062" , StateProvinceId = 30, Rowguid = new Guid("D9A4DF02-A424-4BD8-8D80-BF9764B0A2A6"), ModifiedDate = StandardModifiedDate},
          new AddressEntity {AddressId = 761, AddressLine1 = "225 Hyde Rd" , AddressLine2 = null, City = "Farmington" , PostalCode = "06032" , StateProvinceId = 11, Rowguid = new Guid("E2C96C52-2035-45F1-A2E1-8D835BA14462"), ModifiedDate = StandardModifiedDate},
          new AddressEntity {AddressId = 762, AddressLine1 = "6 Cotton Road" , AddressLine2 = null, City = "Nashua" , PostalCode = "03064" , StateProvinceId = 46, Rowguid = new Guid("4511C3DE-6AF2-4B62-BE6A-1647816818C2"), ModifiedDate = StandardModifiedDate},
@@ -2065,6 +2062,154 @@ internal sealed class SalesDomainFixtures : UnitTestFixtureBase
                 BusinessEntityId = 2536, ContactTypeId = 11,
                 ContactType = new ContactTypeEntity { ContactTypeId = 11, Name = "Store Contact" }, PersonId = 992,
                 Person = new PersonEntity { BusinessEntityId = 992, FirstName = "Payton", LastName = "Benson" }
+            }
+        };
+    }
+
+
+    /// <summary>
+    /// Creates a complete SalesPerson entity with Employee and Person data for repository testing.
+    /// SalesTerritory must be added separately to the database to avoid tracking conflicts.
+    /// </summary>
+    internal static SalesPersonEntity GetCompleteSalesPersonEntity(
+        int businessEntityId = 100,
+        string firstName = "John",
+        string lastName = "Doe",
+        string jobTitle = "Sales Representative",
+        int? territoryId = null,
+        string territoryName = "Northwest",
+        string emailAddress = "john.doe@adventure-works.com")
+    {
+        return new SalesPersonEntity
+        {
+            BusinessEntityId = businessEntityId,
+            TerritoryId = territoryId,
+            SalesQuota = 250000,
+            Bonus = 0,
+            CommissionPct = 0.01M,
+            SalesYtd = 0,
+            SalesLastYear = 0,
+            Rowguid = Guid.NewGuid(),
+            ModifiedDate = SalesDomainDefaultAuditDate,
+            Employee = new EmployeeEntity
+            {
+                BusinessEntityId = businessEntityId,
+                NationalIdnumber = $"NID{businessEntityId:D9}",
+                LoginId = $"adventure-works\\{firstName.ToLower()}.{lastName.ToLower()}",
+                JobTitle = jobTitle,
+                BirthDate = new DateTime(1985, 5, 15),
+                HireDate = new DateTime(2015, 1, 10),
+                MaritalStatus = "M",
+                Gender = "M",
+                OrganizationLevel = 3,
+                CurrentFlag = true,
+                SalariedFlag = true,
+                VacationHours = 40,
+                SickLeaveHours = 20,
+                Rowguid = Guid.NewGuid(),
+                ModifiedDate = SalesDomainDefaultAuditDate,
+                PersonBusinessEntity = new PersonEntity
+                {
+                    BusinessEntityId = businessEntityId,
+                    PersonTypeId = 2,
+                    NameStyle = false,
+                    FirstName = firstName,
+                    LastName = lastName,
+                    MiddleName = "M",
+                    Title = "Mr.",
+                    EmailPromotion = 0,
+                    Rowguid = Guid.NewGuid(),
+                    ModifiedDate = SalesDomainDefaultAuditDate,
+                    EmailAddresses = new List<EmailAddressEntity>
+                    {
+                        new EmailAddressEntity
+                        {
+                            BusinessEntityId = businessEntityId,
+                            EmailAddressId = businessEntityId,
+                            EmailAddressName = emailAddress,
+                            Rowguid = Guid.NewGuid(),
+                            ModifiedDate = SalesDomainDefaultAuditDate
+                        }
+                    }
+                }
+            }
+        };
+    }
+
+    /// <summary>
+    /// Creates a list of SalesPerson entities for pagination and search testing.
+    /// Call GetSalesTerritories() separately and add to context before adding sales persons.
+    /// </summary>
+    internal static List<SalesPersonEntity> GetSalesPersonListForPaging()
+    {
+        return new List<SalesPersonEntity>
+        {
+            GetCompleteSalesPersonEntity(1, "Alice", "Anderson", "Sales Manager", 1, "Northwest", "alice.anderson@adventure-works.com"),
+            GetCompleteSalesPersonEntity(2, "Bob", "Brown", "Sales Representative", 2, "Northeast", "bob.brown@adventure-works.com"),
+            GetCompleteSalesPersonEntity(3, "Charlie", "Chen", "Sales Representative", 3, "Central", "charlie.chen@adventure-works.com"),
+            GetCompleteSalesPersonEntity(4, "Diana", "Davis", "Sales Representative", 4, "Southwest", "diana.davis@adventure-works.com"),
+            GetCompleteSalesPersonEntity(5, "Edward", "Evans", "Sales Representative", 1, "Northwest", "edward.evans@adventure-works.com")
+        };
+    }
+
+    /// <summary>
+    /// Creates sales territories for testing.
+    /// </summary>
+    internal static List<SalesTerritoryEntity> GetSalesTerritories()
+    {
+        return new List<SalesTerritoryEntity>
+        {
+            new SalesTerritoryEntity
+            {
+                TerritoryId = 1,
+                Name = "Northwest",
+                CountryRegionCode = "US",
+                Group = "North America",
+                SalesYtd = 0,
+                SalesLastYear = 0,
+                CostYtd = 0,
+                CostLastYear = 0,
+                Rowguid = Guid.NewGuid(),
+                ModifiedDate = SalesDomainDefaultAuditDate
+            },
+            new SalesTerritoryEntity
+            {
+                TerritoryId = 2,
+                Name = "Northeast",
+                CountryRegionCode = "US",
+                Group = "North America",
+                SalesYtd = 0,
+                SalesLastYear = 0,
+                CostYtd = 0,
+                CostLastYear = 0,
+                Rowguid = Guid.NewGuid(),
+                ModifiedDate = SalesDomainDefaultAuditDate
+            },
+            new SalesTerritoryEntity
+            {
+                TerritoryId = 3,
+                Name = "Central",
+                CountryRegionCode = "US",
+                Group = "North America",
+                SalesYtd = 0,
+                SalesLastYear = 0,
+                CostYtd = 0,
+                CostLastYear = 0,
+                Rowguid = Guid.NewGuid(),
+                ModifiedDate = SalesDomainDefaultAuditDate
+            },
+            new SalesTerritoryEntity
+            {
+                TerritoryId = 4,
+                Name = "Southwest",
+                CountryRegionCode = "US",
+                Group = "North America",
+                SalesYtd = 0,
+                SalesLastYear = 0,
+                CostYtd = 0,
+                CostLastYear = 0,
+                Rowguid = Guid.NewGuid(),
+                ModifiedDate = SalesDomainDefaultAuditDate
             }
         };
     }

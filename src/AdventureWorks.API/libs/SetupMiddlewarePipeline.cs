@@ -1,4 +1,5 @@
-﻿using Swashbuckle.AspNetCore.SwaggerUI;
+﻿using AdventureWorks.API.libs.Extensions;
+using Swashbuckle.AspNetCore.SwaggerUI;
 using System.Text;
 
 [assembly: InternalsVisibleTo("AdventureWorks.UnitTests")]
@@ -19,7 +20,10 @@ internal static class SetupMiddlewarePipeline
         {
             app.UseDeveloperExceptionPage();
         }
-        
+
+        // Register correlation ID middleware FIRST to ensure all subsequent middleware and requests have access
+        app.UseCorrelationId();
+
         app.ConfigureApplicatonHeaders(isDevelopment, _swaggerNonceString);
 
         app.UseResponseCompression();
