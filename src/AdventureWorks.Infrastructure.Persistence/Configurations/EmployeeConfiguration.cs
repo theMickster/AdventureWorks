@@ -9,7 +9,12 @@ public class EmployeeConfiguration : IEntityTypeConfiguration<EmployeeEntity>
 {
     public void Configure(EntityTypeBuilder<EmployeeEntity> builder)
     {
-        builder.ToTable("Employee", "HumanResources");
+        builder.ToTable("Employee", "HumanResources", tableBuilder =>
+        {
+            // Disable OUTPUT clause - Employee table may have triggers
+            tableBuilder.UseSqlOutputClause(false);
+            tableBuilder.HasComment("Table may have database triggers - EF Core OUTPUT clause disabled");
+        });
 
         builder.HasKey(a => a.BusinessEntityId);
 

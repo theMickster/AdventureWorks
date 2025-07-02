@@ -120,12 +120,14 @@ public sealed class EmployeeRepository(AdventureWorksDbContext dbContext)
     /// <summary>
     /// Retrieves an employee by their BusinessEntityId with related Person data.
     /// </summary>
+    /// <param name="businessEntityId">The employee's business entity identifier</param>
+    /// <param name="cancellationToken">Cancellation token</param>
+    /// <returns>Employee entity with navigation properties, or null if not found</returns>
     public async Task<EmployeeEntity?> GetEmployeeByIdAsync(
         int businessEntityId,
         CancellationToken cancellationToken = default)
     {
         return await DbContext.Employees
-            .AsNoTracking()
             .Include(e => e.PersonBusinessEntity)
                 .ThenInclude(p => p.EmailAddresses)
             .Where(e => e.BusinessEntityId == businessEntityId)

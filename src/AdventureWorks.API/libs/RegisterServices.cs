@@ -107,7 +107,10 @@ internal static class RegisterServices
             {
                 options.ReturnHttpNotAcceptable = true;
             })
-            .AddJsonOptions(options => options.JsonSerializerOptions.WriteIndented = true)
+            .AddNewtonsoftJson(options =>
+            {
+                options.SerializerSettings.NullValueHandling = Newtonsoft.Json.NullValueHandling.Include;
+            })
             .AddXmlSerializerFormatters()
             .AddXmlDataContractSerializerFormatters();
         

@@ -346,7 +346,7 @@ public sealed class EmployeeRepositoryTests : PersistenceUnitTestBase
     }
 
     [Fact]
-    public async Task GetEmployeeByIdAsync_uses_no_trackingAsync()
+    public async Task GetEmployeeByIdAsync_uses_trackingAsync()
     {
         // Create an employee first
         var employeeEntity = CreateTestEmployeeEntity();
@@ -368,9 +368,9 @@ public sealed class EmployeeRepositoryTests : PersistenceUnitTestBase
         // Retrieve the employee
         var result = await _sut.GetEmployeeByIdAsync(businessEntityId);
 
-        // Verify it's not tracked
+        // Verify it's tracked
         var entry = DbContext.Entry(result!);
-        entry.State.Should().Be(EntityState.Detached);
+        entry.State.Should().Be(EntityState.Unchanged);
     }
 
     #region GetEmployeesAsync Tests

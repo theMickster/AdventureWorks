@@ -1,9 +1,7 @@
-﻿using AdventureWorks.Domain.Entities;
+﻿using AdventureWorks.Application.PersistenceContracts.Repositories;
+using AdventureWorks.Domain.Entities;
 using AdventureWorks.Infrastructure.Persistence.DbContexts;
 using Microsoft.EntityFrameworkCore;
-using System.Threading.Tasks;
-using AdventureWorks.Application.PersistenceContracts.Repositories;
-using AdventureWorks.Domain.Entities.Sales;
 
 namespace AdventureWorks.Infrastructure.Persistence.Repositories;
 
@@ -12,13 +10,10 @@ namespace AdventureWorks.Infrastructure.Persistence.Repositories;
 /// https://blogs.msdn.microsoft.com/pfxteam/2012/04/13/should-i-expose-synchronous-wrappers-for-asynchronous-methods/
 /// </summary>
 /// <typeparam name="T"></typeparam>
-public class EfRepository<T> : ReadOnlyEfRepository<T>,  IAsyncRepository<T> where T : BaseEntity
+public class EfRepository<T>(AdventureWorksDbContext dbContext)
+    : ReadOnlyEfRepository<T>(dbContext), IAsyncRepository<T>
+    where T : BaseEntity
 {
-    public EfRepository(AdventureWorksDbContext dbContext)
-        : base(dbContext)
-    {
-    }
-    
     public async Task<T> AddAsync(T entity)
     {
         DbContext.Set<T>().Add(entity);

@@ -31,7 +31,6 @@ public sealed class UpdateEmployeeCommandHandler(
             throw new KeyNotFoundException($"Employee with ID {request.Model.Id} not found.");
         }
 
-        // Update PersonEntity fields
         var personEntity = employeeEntity.PersonBusinessEntity;
         personEntity.FirstName = request.Model.FirstName;
         personEntity.LastName = request.Model.LastName;
@@ -39,8 +38,6 @@ public sealed class UpdateEmployeeCommandHandler(
         personEntity.Title = request.Model.Title;
         personEntity.Suffix = request.Model.Suffix;
         personEntity.ModifiedDate = request.ModifiedDate;
-
-        // Update EmployeeEntity fields
         employeeEntity.MaritalStatus = request.Model.MaritalStatus;
         employeeEntity.Gender = request.Model.Gender;
         employeeEntity.ModifiedDate = request.ModifiedDate;

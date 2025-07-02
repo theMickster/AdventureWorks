@@ -93,3 +93,19 @@ GET    /api/v1/addresses/{id}  - Read address
 POST   /api/v1/salespersons    - Create sales person (requires auth)
 GET    /api/v1/salespersons/{id} - Read sales person
 ```
+## Developer Setup
+
+### Visual Studio 2022 Debugging Configuration
+
+**IMPORTANT**: The API uses FluentValidation with exception middleware. Validation exceptions are **expected** and handled gracefully.
+
+**First-time setup (required for smooth debugging):**
+
+1. Open Visual Studio 2022
+2. Go to: Debug ? Windows ? Exception Settings (Ctrl+Alt+E)
+3. Click **Import** icon ? Browse to .vs/ExceptionSettings.xml ? Open
+4. This prevents the debugger from breaking on FluentValidation.ValidationException and KeyNotFoundException
+
+**Alternative**: See docs/DEBUGGING.md for manual configuration instructions.
+
+**Why this matters**: Without this setup, the debugger breaks on every validation failure, significantly slowing down development and testing.

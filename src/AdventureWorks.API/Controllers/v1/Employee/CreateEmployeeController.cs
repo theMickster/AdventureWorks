@@ -1,4 +1,5 @@
 using AdventureWorks.Application.Features.HumanResources.Commands;
+using AdventureWorks.Application.Features.HumanResources.Queries;
 using AdventureWorks.Models.Features.HumanResources;
 using Asp.Versioning;
 using MediatR;
@@ -35,13 +36,13 @@ public sealed class CreateEmployeeController : ControllerBase
     /// Creates a new employee with person data and optional contact information.
     /// </summary>
     /// <param name="inputModel">Employee creation data including person details, contact info, and address</param>
-    /// <returns>BusinessEntityId of the created employee</returns>
+    /// <returns>The created employee model</returns>
     /// <response code="201">Employee created successfully</response>
     /// <response code="400">Invalid input data</response>
     /// <response code="401">Unauthorized - authentication required</response>
     /// <response code="500">Internal server error</response>
     [HttpPost]
-    [ProducesResponseType(typeof(int), StatusCodes.Status201Created)]
+    [ProducesResponseType(typeof(EmployeeModel), StatusCodes.Status201Created)]
     [ProducesResponseType(StatusCodes.Status400BadRequest)]
     [ProducesResponseType(StatusCodes.Status401Unauthorized)]
     [ProducesResponseType(StatusCodes.Status500InternalServerError)]
@@ -67,6 +68,7 @@ public sealed class CreateEmployeeController : ControllerBase
         };
 
         var businessEntityId = await _mediator.Send(command);
+        var model = await _mediator.Send(new ReadEmployeeQuery { BusinessEntityId = businessEntityId });
 
         _logger.LogInformation(
             "Employee created successfully with BusinessEntityId: {BusinessEntityId}",
@@ -75,6 +77,6 @@ public sealed class CreateEmployeeController : ControllerBase
         return CreatedAtRoute(
             "GetEmployeeById",
             new { businessEntityId },
-            new { businessEntityId });
+            model);
     }
 }

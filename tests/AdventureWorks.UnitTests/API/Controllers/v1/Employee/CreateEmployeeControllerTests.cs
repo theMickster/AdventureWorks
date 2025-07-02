@@ -1,5 +1,6 @@
 using AdventureWorks.API.Controllers.v1.Employee;
 using AdventureWorks.Application.Features.HumanResources.Commands;
+using AdventureWorks.Application.Features.HumanResources.Queries;
 using AdventureWorks.Models.Features.AddressManagement;
 using AdventureWorks.Models.Features.HumanResources;
 using AdventureWorks.Models.Slim;
@@ -74,10 +75,25 @@ public sealed class CreateEmployeeControllerTests : UnitTestBase
     {
         var input = CreateValidEmployeeModel();
         const int expectedBusinessEntityId = 100;
+        var expectedEmployeeModel = new EmployeeModel
+        {
+            Id = expectedBusinessEntityId,
+            FirstName = input.FirstName,
+            LastName = input.LastName,
+            JobTitle = input.JobTitle,
+            NationalIdNumber = input.NationalIdNumber,
+            LoginId = input.LoginId,
+            MaritalStatus = input.MaritalStatus,
+            Gender = input.Gender
+        };
 
         _mockMediator
             .Setup(x => x.Send(It.IsAny<CreateEmployeeCommand>(), CancellationToken.None))
             .ReturnsAsync(expectedBusinessEntityId);
+
+        _mockMediator
+            .Setup(x => x.Send(It.IsAny<ReadEmployeeQuery>(), CancellationToken.None))
+            .ReturnsAsync(expectedEmployeeModel);
 
         var result = await _sut.PostAsync(input);
 
@@ -94,13 +110,11 @@ public sealed class CreateEmployeeControllerTests : UnitTestBase
             routeValues.Should().ContainKey("businessEntityId");
             routeValues!["businessEntityId"].Should().Be(expectedBusinessEntityId);
 
-            var returnValue = createdResult.Value;
+            var returnValue = createdResult.Value as EmployeeModel;
             returnValue.Should().NotBeNull();
-
-            var businessEntityIdValue = returnValue.GetType()
-                .GetProperty("businessEntityId")!
-                .GetValue(returnValue, null);
-            businessEntityIdValue.Should().Be(expectedBusinessEntityId);
+            returnValue!.Id.Should().Be(expectedBusinessEntityId);
+            returnValue.FirstName.Should().Be(input.FirstName);
+            returnValue.LastName.Should().Be(input.LastName);
         }
     }
 
@@ -109,11 +123,27 @@ public sealed class CreateEmployeeControllerTests : UnitTestBase
     {
         var input = CreateValidEmployeeModel();
         CreateEmployeeCommand? capturedCommand = null;
+        const int expectedBusinessEntityId = 100;
+        var expectedEmployeeModel = new EmployeeModel
+        {
+            Id = expectedBusinessEntityId,
+            FirstName = input.FirstName,
+            LastName = input.LastName,
+            JobTitle = input.JobTitle,
+            NationalIdNumber = input.NationalIdNumber,
+            LoginId = input.LoginId,
+            MaritalStatus = input.MaritalStatus,
+            Gender = input.Gender
+        };
 
         _mockMediator
             .Setup(x => x.Send(It.IsAny<CreateEmployeeCommand>(), CancellationToken.None))
             .Callback<IRequest<int>, CancellationToken>((cmd, _) => capturedCommand = cmd as CreateEmployeeCommand)
-            .ReturnsAsync(1);
+            .ReturnsAsync(expectedBusinessEntityId);
+
+        _mockMediator
+            .Setup(x => x.Send(It.IsAny<ReadEmployeeQuery>(), CancellationToken.None))
+            .ReturnsAsync(expectedEmployeeModel);
 
         await _sut.PostAsync(input);
 
@@ -130,10 +160,26 @@ public sealed class CreateEmployeeControllerTests : UnitTestBase
     public async Task PostAsync_valid_input_logs_informationAsync()
     {
         var input = CreateValidEmployeeModel();
+        const int expectedBusinessEntityId = 100;
+        var expectedEmployeeModel = new EmployeeModel
+        {
+            Id = expectedBusinessEntityId,
+            FirstName = input.FirstName,
+            LastName = input.LastName,
+            JobTitle = input.JobTitle,
+            NationalIdNumber = input.NationalIdNumber,
+            LoginId = input.LoginId,
+            MaritalStatus = input.MaritalStatus,
+            Gender = input.Gender
+        };
 
         _mockMediator
             .Setup(x => x.Send(It.IsAny<CreateEmployeeCommand>(), CancellationToken.None))
-            .ReturnsAsync(1);
+            .ReturnsAsync(expectedBusinessEntityId);
+
+        _mockMediator
+            .Setup(x => x.Send(It.IsAny<ReadEmployeeQuery>(), CancellationToken.None))
+            .ReturnsAsync(expectedEmployeeModel);
 
         await _sut.PostAsync(input);
 
@@ -154,6 +200,46 @@ public sealed class CreateEmployeeControllerTests : UnitTestBase
                 null,
                 It.IsAny<Func<It.IsAnyType, Exception?, string>>()),
             Times.Once);
+    }
+
+    [Fact]
+    public async Task PostAsync_valid_input_sends_query_with_correct_idAsync()
+    {
+        var input = CreateValidEmployeeModel();
+        const int expectedBusinessEntityId = 100;
+        ReadEmployeeQuery? capturedQuery = null;
+        var expectedEmployeeModel = new EmployeeModel
+        {
+            Id = expectedBusinessEntityId,
+            FirstName = input.FirstName,
+            LastName = input.LastName,
+            JobTitle = input.JobTitle,
+            NationalIdNumber = input.NationalIdNumber,
+            LoginId = input.LoginId,
+            MaritalStatus = input.MaritalStatus,
+            Gender = input.Gender
+        };
+
+        _mockMediator
+            .Setup(x => x.Send(It.IsAny<CreateEmployeeCommand>(), CancellationToken.None))
+            .ReturnsAsync(expectedBusinessEntityId);
+
+        _mockMediator
+            .Setup(x => x.Send(It.IsAny<ReadEmployeeQuery>(), CancellationToken.None))
+            .Callback<IRequest<EmployeeModel>, CancellationToken>((query, _) => capturedQuery = query as ReadEmployeeQuery)
+            .ReturnsAsync(expectedEmployeeModel);
+
+        await _sut.PostAsync(input);
+
+        using (new AssertionScope())
+        {
+            capturedQuery.Should().NotBeNull();
+            capturedQuery!.BusinessEntityId.Should().Be(expectedBusinessEntityId);
+
+            _mockMediator.Verify(
+                x => x.Send(It.Is<ReadEmployeeQuery>(q => q.BusinessEntityId == expectedBusinessEntityId), CancellationToken.None),
+                Times.Once);
+        }
     }
 
     [Fact]
