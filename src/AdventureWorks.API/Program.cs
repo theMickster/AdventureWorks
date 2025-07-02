@@ -23,6 +23,8 @@ builder.AddHttpRequestSender();
 
 builder.Services.AddMemoryCache();
 
+builder.AddAdventureWorksResponseCompression();
+
 builder.Services.AddHsts(options =>
 {
     options.Preload = true;

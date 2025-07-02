@@ -22,6 +22,8 @@ internal static class SetupMiddlewarePipeline
         
         app.ConfigureApplicatonHeaders(isDevelopment, _swaggerNonceString);
 
+        app.UseResponseCompression();
+
         app.UseCors();
 
         app.UseHsts();
