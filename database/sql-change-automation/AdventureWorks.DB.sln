@@ -1,9 +1,9 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
-# Visual Studio 15
-VisualStudioVersion = 15.0.28307.572
+# Visual Studio Version 17
+VisualStudioVersion = 17.0.31903.59
 MinimumVisualStudioVersion = 10.0.40219.1
-Project("{00D1A9C2-B5F0-4AF3-8072-F6C62B433612}") = "AdventureWorks.DB", "AdventureWorks.DB.sqlproj", "{5FC754E7-74BD-4AAE-8B4E-CFC8CDDA1035}"
+Project("{00D1A9C2-B5F0-4AF3-8072-F6C62B433612}") = "AdventureWorks.DB", "AdventureWorks.Database.sqlproj", "{5FC754E7-74BD-4AAE-8B4E-CFC8CDDA1035}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
