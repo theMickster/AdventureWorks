@@ -1,47 +1,50 @@
-﻿using DbUp;
-using Microsoft.Extensions.Configuration;
-using System.Reflection;
+﻿using AdventureWorks.DbUp.Configuration;
+using AdventureWorks.DbUp.Deployers;
 
-var configuration = new ConfigurationBuilder()
-    .SetBasePath(Directory.GetCurrentDirectory())
-    .AddJsonFile("appsettings.json", optional: false)
-    .AddJsonFile($"appsettings.{Environment.GetEnvironmentVariable("ASPNETCORE_ENVIRONMENT") ?? "Production"}.json", optional: true)
-    .AddUserSecrets<Program>(optional: true)
-    .AddEnvironmentVariables()
-    .Build();
+Console.WriteLine("═══════════════════════════════════════════════════════════════");
+Console.WriteLine("  AdventureWorks Database Deployment (DbUp)");
+Console.WriteLine("═══════════════════════════════════════════════════════════════");
 
-var connectionString = configuration.GetConnectionString("AdventureWorks");
+try
+{
+    var configuration = DbConnectionProvider.BuildConfiguration();
+    var connectionProvider = new DbConnectionProvider(configuration);
+    var connectionString = connectionProvider.GetConnectionString();
+    var databaseName = configuration["DatabaseName"] ?? "AdventureWorks";
 
-if (string.IsNullOrEmpty(connectionString))
+    Console.WriteLine($"Target Database: {databaseName}\n");
+
+    // Step 1: Run one-time migrations
+    var migrationDeployer = new MigrationDeployer(connectionString);
+    var migrationResult = migrationDeployer.Deploy();
+
+    if (!migrationResult.Successful)
+    {
+        return -1;
+    }
+
+    // Step 2: Deploy programmable objects (always run)
+    var programmableDeployer = new ProgrammableObjectsDeployer(connectionString);
+    var programmableResult = programmableDeployer.Deploy();
+
+    if (!programmableResult.Successful)
+    {
+        return -1;
+    }
+
+    Console.WriteLine("\n═══════════════════════════════════════════════════════════════");
+    Console.ForegroundColor = ConsoleColor.Green;
+    Console.WriteLine("  ✓ Database deployment completed successfully!");
+    Console.ResetColor();
+    Console.WriteLine("═══════════════════════════════════════════════════════════════");
+
+    return 0;
+}
+catch (Exception ex)
 {
     Console.ForegroundColor = ConsoleColor.Red;
-    Console.WriteLine("Connection string 'AdventureWorks' not found.");
+    Console.WriteLine($"\n✗ Fatal error: {ex.Message}");
     Console.ResetColor();
     return -1;
 }
-
-Console.WriteLine("Starting DbUp migration...");
-
-var upgrader = DeployChanges.To
-    .SqlDatabase(connectionString)
-    .WithScriptsEmbeddedInAssembly(Assembly.GetExecutingAssembly())
-    .JournalToSqlTable("dbo", "DatabaseMigrationHistory")
-    .LogToConsole()
-    .WithTransactionPerScript()
-    .Build();
-
-var result = upgrader.PerformUpgrade();
-
-if (!result.Successful)
-{
-    Console.ForegroundColor = ConsoleColor.Red;
-    Console.WriteLine($"Migration failed: {result.Error}");
-    Console.ResetColor();
-    return -1;
-}
-
-Console.ForegroundColor = ConsoleColor.Green;
-Console.WriteLine("Migration completed successfully!");
-Console.ResetColor();
-return 0;
 
