@@ -1,4 +1,5 @@
 ﻿using AdventureWorks.Application.Features.AddressManagement.Queries;
+using AdventureWorks.Application.Interfaces;
 using AdventureWorks.Models.Features.AddressManagement;
 using Asp.Versioning;
 using MediatR;
@@ -21,6 +22,7 @@ public sealed class ReadAddressTypeController : ControllerBase
 {
     private readonly ILogger<ReadAddressTypeController> _logger;
     private readonly IMediator _mediator;
+    private readonly IUserContextAccessor _userContext;
 
     /// <summary>
     /// The controller that coordinates retrieving Address Type information.
@@ -28,18 +30,26 @@ public sealed class ReadAddressTypeController : ControllerBase
     /// <remarks></remarks>
     public ReadAddressTypeController(
         ILogger<ReadAddressTypeController> logger,
-        IMediator mediator
+        IMediator mediator,
+        IUserContextAccessor userContext
         )
     {
-        ArgumentNullException.ThrowIfNull(logger, nameof(logger));
-        ArgumentNullException.ThrowIfNull(mediator, nameof(mediator));
+        ArgumentNullException.ThrowIfNull(logger);
+        ArgumentNullException.ThrowIfNull(mediator);
+        ArgumentNullException.ThrowIfNull(userContext);
         _logger = logger;
         _mediator = mediator;
+        _userContext = userContext;
+        
+        if (!_userContext.IsLinkedToAdventureWorks)
+        {
+            _logger.LogInformation("User not linked to AdventureWorks system");
+        }
+
     }
 
-
     /// <summary>
-    /// Retrieve a address type using its unique identifier
+    /// Retrieve an address type using its unique identifier
     /// </summary>
     /// <param name="id">the unique identifier</param>
     /// <returns></returns>

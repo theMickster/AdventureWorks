@@ -9,8 +9,10 @@ public class BusinessEntity : BaseEntity
     
     public Guid Rowguid { get; set; }
     
+    public bool IsEntraUser { get; set; }
+    
     public DateTime ModifiedDate { get; set; }
-
+    
     public ICollection<PersonEntity> Persons { get; set; }
     
     public ICollection<Vendor> Vendors { get; set; }

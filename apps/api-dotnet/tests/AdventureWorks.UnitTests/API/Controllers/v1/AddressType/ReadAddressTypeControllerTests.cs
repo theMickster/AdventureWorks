@@ -5,6 +5,7 @@ using MediatR;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
 using System.Net;
+using AdventureWorks.Application.Interfaces;
 
 namespace AdventureWorks.UnitTests.API.Controllers.v1.AddressType;
 
@@ -14,10 +15,11 @@ public sealed class ReadAddressTypeControllerTests : UnitTestBase
     private readonly Mock<ILogger<ReadAddressTypeController>> _mockLogger = new();
     private readonly Mock<IMediator> _mockMediator = new();
     private readonly ReadAddressTypeController _sut;
+    private readonly Mock<IUserContextAccessor> _mockUserContextAccessor = new();
 
     public ReadAddressTypeControllerTests()
     {
-        _sut = new ReadAddressTypeController(_mockLogger.Object, _mockMediator.Object);
+        _sut = new ReadAddressTypeController(_mockLogger.Object, _mockMediator.Object, _mockUserContextAccessor.Object);
     }
 
     [Fact]
@@ -25,13 +27,17 @@ public sealed class ReadAddressTypeControllerTests : UnitTestBase
     {
         using (new AssertionScope())
         {
-            _ = ((Action)(() => _ = new ReadAddressTypeController(null!, _mockMediator.Object)))
+            _ = ((Action)(() => _ = new ReadAddressTypeController(null!, _mockMediator.Object, _mockUserContextAccessor.Object)))
                 .Should().Throw<ArgumentNullException>("because we expect a null argument exception.")
                 .And.ParamName.Should().Be("logger");
 
-            _ = ((Action)(() => _ = new ReadAddressTypeController(_mockLogger.Object, null!)))
+            _ = ((Action)(() => _ = new ReadAddressTypeController(_mockLogger.Object, null!, _mockUserContextAccessor.Object)))
                 .Should().Throw<ArgumentNullException>("because we expect a null argument exception.")
                 .And.ParamName.Should().Be("mediator");
+
+            _ = ((Action)(() => _ = new ReadAddressTypeController(_mockLogger.Object, _mockMediator.Object, null!)))
+                .Should().Throw<ArgumentNullException>("because we expect a null argument exception.")
+                .And.ParamName.Should().Be("userContext");
         }
     }
 

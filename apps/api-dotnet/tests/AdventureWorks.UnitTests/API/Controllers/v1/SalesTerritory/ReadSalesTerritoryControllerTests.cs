@@ -40,7 +40,7 @@ public sealed class ReadSalesTerritoryControllerTests : UnitTestBase
     {
         _mockMediator.Setup(
                 x => x.Send(It.IsAny<ReadSalesTerritoryQuery>(), It.IsAny<CancellationToken>()))
-            .ReturnsAsync(new SalesTerritoryModel { Id = 1, Name = "Home" });
+            .ReturnsAsync(new SalesTerritoryModel { Id = 1, Name = "Home", Group = "A"});
 
         var result = await _sut.GetByIdAsync(123);
         var objectResult = result as OkObjectResult;
@@ -97,9 +97,9 @@ public sealed class ReadSalesTerritoryControllerTests : UnitTestBase
             .ReturnsAsync(
                 new List<SalesTerritoryModel>
                 {
-                    new() { Id = 1, Name = "West"}
-                    ,new() { Id = 2, Name = "Central"}
-                    ,new() { Id = 3, Name = "East"}
+                    new() { Id = 1, Name = "West", Group = "A"}
+                    ,new() { Id = 2, Name = "Central", Group = "B"}
+                    ,new() { Id = 3, Name = "East", Group = "C"}
                 });
 
         var result = await _sut.GetListAsync();

@@ -40,7 +40,7 @@ public sealed class ReadDepartmentControllerTests : UnitTestBase
     {
         _mockMediator.Setup(
                 x => x.Send(It.IsAny<ReadDepartmentQuery>(), It.IsAny<CancellationToken>()))
-            .ReturnsAsync(new DepartmentModel { Id = 1, Name = "Engineering" });
+            .ReturnsAsync(new DepartmentModel { Id = 1, Name = "Engineering", GroupName = "A"});
 
         var result = await _sut.GetByIdAsync(1);
         var objectResult = result as OkObjectResult;
@@ -96,9 +96,9 @@ public sealed class ReadDepartmentControllerTests : UnitTestBase
                 x => x.Send(It.IsAny<ReadDepartmentListQuery>(), It.IsAny<CancellationToken>()))
             .ReturnsAsync(
             [
-                new() { Id = 1, Name = "Engineering" },
-                new() { Id = 2, Name = "Tool Design" },
-                new() { Id = 3, Name = "Sales" }
+                new() { Id = 1, Name = "Engineering", GroupName = "A"},
+                new() { Id = 2, Name = "Tool Design", GroupName = "B"},
+                new() { Id = 3, Name = "Sales", GroupName = "C"}
             ]);
 
         var result = await _sut.GetListAsync();

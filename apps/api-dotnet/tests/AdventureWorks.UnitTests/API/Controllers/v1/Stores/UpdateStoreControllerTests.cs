@@ -59,7 +59,7 @@ public sealed class UpdateStoreControllerTests : UnitTestBase
     [InlineData(-999)]
     public async Task PutAsync_negative_id_returns_bad_requestAsync(int storeId)
     {
-        var result = await _sut.PutAsync(storeId, new StoreUpdateModel { Id = 2534 });
+        var result = await _sut.PutAsync(storeId, new StoreUpdateModel { Id = 2534, Name = "test" });
 
         var objectResult = result as BadRequestObjectResult;
 
@@ -100,7 +100,7 @@ public sealed class UpdateStoreControllerTests : UnitTestBase
     [Fact]
     public async Task PutAsync_mismatched_ids_returns_bad_requestAsync()
     {
-        var result = await _sut.PutAsync(2534, new StoreUpdateModel { Id = 2535 });
+        var result = await _sut.PutAsync(2534, new StoreUpdateModel { Id = 2535, Name = "test"});
 
         var objectResult = result as BadRequestObjectResult;
 

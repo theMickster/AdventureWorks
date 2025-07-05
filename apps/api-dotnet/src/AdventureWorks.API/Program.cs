@@ -20,6 +20,8 @@ builder.Services.AddOptions();
 
 builder.Services.AddHttpContextAccessor();
 
+builder.Services.AddUserContextServices();
+
 builder.AddHttpRequestSender();
 
 builder.Services.AddMemoryCache();

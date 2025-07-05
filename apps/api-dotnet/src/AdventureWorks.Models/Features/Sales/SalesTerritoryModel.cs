@@ -6,9 +6,9 @@ public sealed class SalesTerritoryModel
 {
     public int Id { get; set; }
 
-    public string Name { get; set; }
+    public required string Name { get; set; }
 
-    public string Group { get; set; }
+    public required string Group { get; set; }
 
     public decimal SalesYtd { get; set; }
 

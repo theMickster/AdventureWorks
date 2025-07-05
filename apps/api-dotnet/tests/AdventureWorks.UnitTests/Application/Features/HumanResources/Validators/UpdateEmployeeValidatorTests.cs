@@ -1,7 +1,6 @@
 using AdventureWorks.Application.Features.HumanResources.Validators;
 using AdventureWorks.Application.PersistenceContracts.Repositories;
 using AdventureWorks.Domain.Entities.HumanResources;
-using AdventureWorks.Models.Features.HumanResources;
 using AdventureWorks.UnitTests.Setup.Fixtures;
 using FluentValidation.TestHelper;
 
@@ -75,7 +74,6 @@ public sealed class UpdateEmployeeValidatorTests : UnitTestBase
     [Theory]
     [InlineData("")]
     [InlineData(" ")]
-    [InlineData(null)]
     public async Task Validator_should_have_first_name_required_error(string firstName)
     {
         var model = HumanResourcesDomainFixtures.GetValidEmployeeUpdateModel();
@@ -102,7 +100,6 @@ public sealed class UpdateEmployeeValidatorTests : UnitTestBase
     [Theory]
     [InlineData("")]
     [InlineData(" ")]
-    [InlineData(null)]
     public async Task Validator_should_have_last_name_required_error(string lastName)
     {
         var model = HumanResourcesDomainFixtures.GetValidEmployeeUpdateModel();

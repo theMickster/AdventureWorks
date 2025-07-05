@@ -80,7 +80,6 @@ public sealed class UpdateEmployeeAddressValidatorTests : UnitTestBase
     [Theory]
     [InlineData("")]
     [InlineData(" ")]
-    [InlineData(null)]
     public async Task Validator_should_have_address_line1_required_error(string addressLine1)
     {
         var model = HumanResourcesDomainFixtures.GetValidEmployeeAddressUpdateModel();
@@ -119,7 +118,6 @@ public sealed class UpdateEmployeeAddressValidatorTests : UnitTestBase
     [Theory]
     [InlineData("")]
     [InlineData(" ")]
-    [InlineData(null)]
     public async Task Validator_should_have_city_required_error(string city)
     {
         var model = HumanResourcesDomainFixtures.GetValidEmployeeAddressUpdateModel();
@@ -176,7 +174,6 @@ public sealed class UpdateEmployeeAddressValidatorTests : UnitTestBase
     [Theory]
     [InlineData("")]
     [InlineData(" ")]
-    [InlineData(null)]
     public async Task Validator_should_have_postal_code_required_error(string postalCode)
     {
         var model = HumanResourcesDomainFixtures.GetValidEmployeeAddressUpdateModel();

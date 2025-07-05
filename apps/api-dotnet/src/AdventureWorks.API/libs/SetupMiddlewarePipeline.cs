@@ -40,6 +40,8 @@ internal static class SetupMiddlewarePipeline
 
         app.UseAuthentication();
 
+        app.UseUserContext();
+
         app.UseAuthorization();
 
         app.MapControllers();

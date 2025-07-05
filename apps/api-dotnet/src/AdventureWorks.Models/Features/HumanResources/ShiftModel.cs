@@ -4,7 +4,7 @@ public sealed class ShiftModel
 {
     public byte Id { get; set; }
 
-    public string Name { get; set; }
+    public required string Name { get; set; }
 
     public TimeSpan StartTime { get; set; }
 
