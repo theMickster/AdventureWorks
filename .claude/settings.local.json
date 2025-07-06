@@ -14,7 +14,12 @@
       "Bash(del remove-aaa-comments.ps1)",
       "Bash(Select-Object -Last 30)",
       "Bash(powershell -ExecutionPolicy Bypass -File simplifyFixture.ps1)",
-      "WebFetch(domain:github.com)"
+      "WebFetch(domain:github.com)",
+      "WebFetch(domain:docs.rs)",
+      "WebFetch(domain:pkg.go.dev)",
+      "WebFetch(domain:raw.githubusercontent.com)",
+      "WebFetch(domain:stackoverflow.com)",
+      "WebFetch(domain:blog.jonathanchannon.com)"
     ],
     "deny": [],
     "ask": []
