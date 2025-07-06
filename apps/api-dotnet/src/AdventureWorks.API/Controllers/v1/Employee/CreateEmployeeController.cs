@@ -54,11 +54,7 @@ public sealed class CreateEmployeeController : ControllerBase
             return BadRequest("The employee input model cannot be null.");
         }
 
-        _logger.LogInformation(
-            "Creating new employee: {FirstName} {LastName}, Job Title: {JobTitle}",
-            inputModel.FirstName,
-            inputModel.LastName,
-            inputModel.JobTitle);
+        _logger.LogInformation("Create new employee request received");
 
         var command = new CreateEmployeeCommand
         {
@@ -70,13 +66,8 @@ public sealed class CreateEmployeeController : ControllerBase
         var businessEntityId = await _mediator.Send(command);
         var model = await _mediator.Send(new ReadEmployeeQuery { BusinessEntityId = businessEntityId });
 
-        _logger.LogInformation(
-            "Employee created successfully with BusinessEntityId: {BusinessEntityId}",
-            businessEntityId);
+        _logger.LogInformation("Employee created successfully with BusinessEntityId: {BusinessEntityId}", businessEntityId);
 
-        return CreatedAtRoute(
-            "GetEmployeeById",
-            new { businessEntityId },
-            model);
+        return CreatedAtRoute("GetEmployeeById", new { businessEntityId }, model);
     }
 }

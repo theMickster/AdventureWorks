@@ -187,7 +187,7 @@ public sealed class CreateEmployeeControllerTests : UnitTestBase
             x => x.Log(
                 LogLevel.Information,
                 It.IsAny<EventId>(),
-                It.Is<It.IsAnyType>((v, t) => v.ToString()!.Contains("Creating new employee")),
+                It.Is<It.IsAnyType>((v, t) => v.ToString()!.Contains("Create new employee request received")),
                 null,
                 It.IsAny<Func<It.IsAnyType, Exception?, string>>()),
             Times.Once);
@@ -273,7 +273,6 @@ public sealed class CreateEmployeeControllerTests : UnitTestBase
             LoginId = "john.doe@adventure-works.com",
             JobTitle = "Software Engineer",
             BirthDate = new DateTime(1990, 5, 15),
-            HireDate = new DateTime(2020, 1, 10),
             MaritalStatus = "M",
             Gender = "M",
             OrganizationLevel = 2,

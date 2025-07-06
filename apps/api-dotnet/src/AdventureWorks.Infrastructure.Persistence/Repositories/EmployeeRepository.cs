@@ -288,4 +288,44 @@ public sealed class EmployeeRepository(AdventureWorksDbContext dbContext)
             .Where(bea => bea.BusinessEntityId == businessEntityId && bea.AddressId == addressId)
             .FirstOrDefaultAsync(cancellationToken);
     }
+
+    /// <summary>
+    /// Retrieves an employee by their BusinessEntityId with EmployeeDepartmentHistory collection.
+    /// Includes related Department and Shift entities for each history record.
+    /// Used by lifecycle commands (Terminate, Rehire) that need to manage department assignments.
+    /// </summary>
+    public async Task<EmployeeEntity?> GetEmployeeByIdWithDepartmentHistoryAsync(
+        int businessEntityId,
+        CancellationToken cancellationToken = default)
+    {
+        return await DbContext.Employees
+            .Include(e => e.EmployeeDepartmentHistory)
+                .ThenInclude(dh => dh.Department)
+            .Include(e => e.EmployeeDepartmentHistory)
+                .ThenInclude(dh => dh.Shift)
+            .Where(e => e.BusinessEntityId == businessEntityId)
+            .FirstOrDefaultAsync(cancellationToken);
+    }
+
+    /// <summary>
+    /// Retrieves an employee by their BusinessEntityId with full lifecycle data.
+    /// Includes Person, EmployeeDepartmentHistory (with Department and Shift), and EmployeePayHistory.
+    /// Used by lifecycle status query to aggregate comprehensive employee information.
+    /// Uses AsNoTracking for read-only queries to improve performance.
+    /// </summary>
+    public async Task<EmployeeEntity?> GetEmployeeByIdWithLifecycleDataAsync(
+        int businessEntityId,
+        CancellationToken cancellationToken = default)
+    {
+        return await DbContext.Employees
+            .AsNoTracking()
+            .Include(e => e.PersonBusinessEntity)
+            .Include(e => e.EmployeeDepartmentHistory)
+                .ThenInclude(dh => dh.Department)
+            .Include(e => e.EmployeeDepartmentHistory)
+                .ThenInclude(dh => dh.Shift)
+            .Include(e => e.EmployeePayHistory)
+            .Where(e => e.BusinessEntityId == businessEntityId)
+            .FirstOrDefaultAsync(cancellationToken);
+    }
 }

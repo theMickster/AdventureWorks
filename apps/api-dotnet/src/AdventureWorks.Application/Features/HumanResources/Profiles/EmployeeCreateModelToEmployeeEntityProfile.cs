@@ -1,3 +1,4 @@
+using AdventureWorks.Common.Constants;
 using AdventureWorks.Domain.Entities.HumanResources;
 using AdventureWorks.Models.Features.HumanResources;
 using AutoMapper;
@@ -26,7 +27,7 @@ public sealed class EmployeeCreateModelToEmployeeEntityProfile : Profile
             .ForMember(dest => dest.Gender,
                 opt => opt.MapFrom(src => src.Gender))
             .ForMember(dest => dest.HireDate,
-                opt => opt.MapFrom(src => src.HireDate))
+                opt => opt.MapFrom(_ => HumanResourcesConstants.TemporaryHireDate))
             .ForMember(dest => dest.SalariedFlag,
                 opt => opt.MapFrom(src => src.SalariedFlag))
             .ForMember(dest => dest.OrganizationLevel,

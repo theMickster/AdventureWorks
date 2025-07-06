@@ -57,8 +57,6 @@ public sealed class ReadEmployeeController : ControllerBase
             return BadRequest("A valid business entity ID must be specified.");
         }
 
-        _logger.LogInformation("Retrieving employee with BusinessEntityId: {BusinessEntityId}", businessEntityId);
-
         var model = await _mediator.Send(new ReadEmployeeQuery { BusinessEntityId = businessEntityId });
 
         if (model is null)
@@ -67,7 +65,6 @@ public sealed class ReadEmployeeController : ControllerBase
             return NotFound("Unable to locate the employee.");
         }
 
-        _logger.LogInformation("Successfully retrieved employee with BusinessEntityId: {BusinessEntityId}", businessEntityId);
         return Ok(model);
     }
 

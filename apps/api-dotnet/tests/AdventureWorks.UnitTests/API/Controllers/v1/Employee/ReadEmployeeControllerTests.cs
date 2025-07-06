@@ -152,43 +152,7 @@ public sealed class ReadEmployeeControllerTests : UnitTestBase
                 "because mediator should be called exactly once");
         }
     }
-
-    [Fact]
-    public async Task GetById_logs_information_when_employee_found_Async()
-    {
-        const int businessEntityId = 100;
-
-        _mockMediator.Setup(x => x.Send(It.IsAny<ReadEmployeeQuery>(), It.IsAny<CancellationToken>()))
-            .ReturnsAsync(new EmployeeModel
-            {
-                Id = businessEntityId,
-                FirstName = "Jane",
-                LastName = "Smith",
-                JobTitle = "Manager",
-                NationalIdNumber = "987654321",
-                LoginId = "adventure-works\\jane.smith",
-                BirthDate = new DateTime(1985, 3, 20),
-                HireDate = new DateTime(2015, 6, 1),
-                MaritalStatus = "M",
-                Gender = "F"
-            });
-
-        await _sut.GetByIdAsync(businessEntityId);
-
-        using (new AssertionScope())
-        {
-            _mockLogger.VerifyLoggingMessageContains(
-                "Retrieving employee with BusinessEntityId",
-                null,
-                LogLevel.Information);
-
-            _mockLogger.VerifyLoggingMessageContains(
-                "Successfully retrieved employee with BusinessEntityId",
-                null,
-                LogLevel.Information);
-        }
-    }
-
+    
     [Fact]
     public async Task GetById_logs_warning_when_invalid_id_provided_Async()
     {

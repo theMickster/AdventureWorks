@@ -2,6 +2,7 @@ using AdventureWorks.Application.Features.AddressManagement.Profiles;
 using AdventureWorks.Application.Features.HumanResources.Commands;
 using AdventureWorks.Application.Features.HumanResources.Profiles;
 using AdventureWorks.Application.PersistenceContracts.Repositories;
+using AdventureWorks.Common.Constants;
 using AdventureWorks.Domain.Entities.HumanResources;
 using AdventureWorks.Domain.Entities.Person;
 using AdventureWorks.Models.Features.HumanResources;
@@ -161,7 +162,7 @@ public sealed class CreateEmployeeCommandHandlerTests : UnitTestBase
             capturedEmployeeEntity.LoginId.Should().Be(model.LoginId);
             capturedEmployeeEntity.JobTitle.Should().Be(model.JobTitle);
             capturedEmployeeEntity.BirthDate.Should().Be(model.BirthDate);
-            capturedEmployeeEntity.HireDate.Should().Be(model.HireDate);
+            capturedEmployeeEntity.HireDate.Should().Be(HumanResourcesConstants.TemporaryHireDate);
             capturedEmployeeEntity.MaritalStatus.Should().Be(model.MaritalStatus);
             capturedEmployeeEntity.Gender.Should().Be(model.Gender);
             capturedEmployeeEntity.OrganizationLevel.Should().Be(model.OrganizationLevel);

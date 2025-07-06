@@ -19,14 +19,9 @@ public sealed class EmployeeCreateModel : EmployeeBaseModel
     public required string LoginId { get; set; }
 
     /// <summary>
-    /// Employee's date of birth. Must be at least 18 years before hire date.
+    /// Employee's date of birth. Must be at least 18 years in the past.
     /// </summary>
     public DateTime BirthDate { get; set; }
-
-    /// <summary>
-    /// Employee's hire date. Cannot be in the future.
-    /// </summary>
-    public DateTime HireDate { get; set; }
 
     /// <summary>
     /// Phone number information.

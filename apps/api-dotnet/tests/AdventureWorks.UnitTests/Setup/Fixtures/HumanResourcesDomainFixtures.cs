@@ -1,3 +1,4 @@
+using AdventureWorks.Common.Constants;
 using AdventureWorks.Domain.Entities.HumanResources;
 using AdventureWorks.Domain.Entities.Person;
 using AdventureWorks.Models.Features.AddressManagement;
@@ -33,7 +34,6 @@ internal sealed class HumanResourcesDomainFixtures : UnitTestFixtureBase
             LoginId = "adventure-works\\john.doe",
             JobTitle = "Software Engineer",
             BirthDate = new DateTime(1990, 5, 15),
-            HireDate = new DateTime(2020, 1, 10),
             MaritalStatus = "M",
             Gender = "M",
             OrganizationLevel = 2,
@@ -118,7 +118,6 @@ internal sealed class HumanResourcesDomainFixtures : UnitTestFixtureBase
             LoginId = "adventure-works\\jane.smith",
             JobTitle = "Developer",
             BirthDate = new DateTime(1995, 3, 20),
-            HireDate = new DateTime(2022, 6, 1),
             MaritalStatus = "S",
             Gender = "F",
             Phone = new EmployeePhoneCreateModel
@@ -333,5 +332,146 @@ internal sealed class HumanResourcesDomainFixtures : UnitTestFixtureBase
             GetCompleteEmployeeEntity(4, "Diana", "Davis", "Analyst", "444444444", "adventure-works\\diana.davis", "diana.davis@adventure-works.com"),
             GetCompleteEmployeeEntity(5, "Edward", "Evans", "Engineer", "555555555", "adventure-works\\edward.evans", "edward.evans@adventure-works.com")
         };
+    }
+
+    /// <summary>
+    /// Creates a valid EmployeeHireModel with all required fields populated.
+    /// </summary>
+    internal static EmployeeHireModel GetValidEmployeeHireModel(int employeeId = 1)
+    {
+        return new EmployeeHireModel
+        {
+            EmployeeId = employeeId,
+            HireDate = DateTime.UtcNow.Date.AddDays(1),
+            DepartmentId = 1,
+            ShiftId = HumanResourcesConstants.MinimumShiftId,
+            InitialPayRate = 50.00m,
+            PayFrequency = HumanResourcesConstants.PayFrequencyBiWeekly,
+            ManagerId = 100,
+            InitialVacationHours = HumanResourcesConstants.DefaultVacationHours,
+            InitialSickLeaveHours = HumanResourcesConstants.DefaultSickLeaveHours,
+            Notes = "New hire onboarding"
+        };
+    }
+
+    /// <summary>
+    /// Creates a valid EmployeeTerminateModel with all required fields populated.
+    /// </summary>
+    internal static EmployeeTerminateModel GetValidEmployeeTerminateModel(int employeeId = 1)
+    {
+        return new EmployeeTerminateModel
+        {
+            EmployeeId = employeeId,
+            TerminationDate = DateTime.UtcNow.Date,
+            Reason = "Voluntary resignation",
+            TerminationType = "Voluntary",
+            EligibleForRehire = true,
+            PayoutPto = true,
+            Notes = "Left for better opportunity"
+        };
+    }
+
+    /// <summary>
+    /// Creates a valid EmployeeRehireModel with all required fields populated.
+    /// </summary>
+    internal static EmployeeRehireModel GetValidEmployeeRehireModel(int employeeId = 1)
+    {
+        return new EmployeeRehireModel
+        {
+            EmployeeId = employeeId,
+            RehireDate = DateTime.UtcNow.Date.AddDays(7),
+            DepartmentId = 1,
+            ShiftId = HumanResourcesConstants.MinimumShiftId,
+            PayRate = 50.00m,
+            PayFrequency = HumanResourcesConstants.PayFrequencyBiWeekly,
+            ManagerId = 100,
+            RestoreSeniority = false,
+            Notes = "Boomerang employee - rehire after 6 months"
+        };
+    }
+
+    /// <summary>
+    /// Creates an inactive employee entity for hire/rehire testing.
+    /// </summary>
+    internal static EmployeeEntity GetInactiveEmployeeEntity(int businessEntityId = 1)
+    {
+        return new EmployeeEntity
+        {
+            BusinessEntityId = businessEntityId,
+            NationalIdnumber = "987654321",
+            LoginId = "adventure-works\\inactive.user",
+            JobTitle = "Former Employee",
+            BirthDate = new DateTime(1985, 3, 10),
+            HireDate = new DateTime(2015, 1, 1),
+            MaritalStatus = "M",
+            Gender = "F",
+            OrganizationLevel = 1,
+            CurrentFlag = false,
+            SalariedFlag = false,
+            VacationHours = 80,
+            SickLeaveHours = 48,
+            Rowguid = Guid.NewGuid(),
+            ModifiedDate = HumanResourcesDefaultAuditDate
+        };
+    }
+
+    /// <summary>
+    /// Creates an employee entity with department history for termination/rehire testing.
+    /// </summary>
+    internal static EmployeeEntity GetEmployeeWithDepartmentHistory(
+        int businessEntityId = 1,
+        bool hasActiveAssignment = true,
+        bool hasPastTermination = false)
+    {
+        var employee = new EmployeeEntity
+        {
+            BusinessEntityId = businessEntityId,
+            NationalIdnumber = "123456789",
+            LoginId = "adventure-works\\test.user",
+            JobTitle = "Test Employee",
+            BirthDate = new DateTime(1990, 5, 15),
+            HireDate = new DateTime(2020, 1, 10),
+            MaritalStatus = "M",
+            Gender = "M",
+            OrganizationLevel = 2,
+            CurrentFlag = hasActiveAssignment,
+            SalariedFlag = false,
+            VacationHours = HumanResourcesConstants.DefaultVacationHours,
+            SickLeaveHours = HumanResourcesConstants.DefaultSickLeaveHours,
+            Rowguid = Guid.NewGuid(),
+            ModifiedDate = HumanResourcesDefaultAuditDate,
+            EmployeeDepartmentHistory = new List<EmployeeDepartmentHistory>(),
+            EmployeePayHistory = new List<EmployeePayHistory>()
+        };
+
+        // Add past termination if requested
+        if (hasPastTermination)
+        {
+            employee.EmployeeDepartmentHistory.Add(new EmployeeDepartmentHistory
+            {
+                BusinessEntityId = businessEntityId,
+                DepartmentId = 1,
+                ShiftId = 1,
+                StartDate = new DateTime(2020, 1, 10),
+                EndDate = DateTime.UtcNow.Date.AddDays(-100),
+                ModifiedDate = HumanResourcesDefaultAuditDate
+            });
+        }
+
+        // Add active assignment if requested
+        if (hasActiveAssignment)
+        {
+            employee.EmployeeDepartmentHistory.Add(new EmployeeDepartmentHistory
+            {
+                BusinessEntityId = businessEntityId,
+                DepartmentId = 2,
+                ShiftId = 2,
+                StartDate = new DateTime(2023, 6, 1),
+                EndDate = null,
+                ModifiedDate = HumanResourcesDefaultAuditDate
+            });
+        }
+
+        return employee;
     }
 }

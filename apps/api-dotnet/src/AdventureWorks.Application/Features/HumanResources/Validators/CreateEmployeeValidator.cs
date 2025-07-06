@@ -46,22 +46,6 @@ public sealed class CreateEmployeeValidator : EmployeeBaseModelValidator<Employe
             .WithErrorCode("Rule-20")
             .WithMessage(MessageBirthDateMinimumAge);
 
-        // Hire date validation
-        RuleFor(x => x.HireDate)
-            .NotEmpty()
-            .WithErrorCode("Rule-21")
-            .WithMessage(MessageHireDateEmpty)
-            .LessThanOrEqualTo(DateTime.Today)
-            .WithErrorCode("Rule-22")
-            .WithMessage(MessageHireDateFuture);
-
-        // Hire date must be after birth date
-        RuleFor(x => x)
-            .Must(model => model.HireDate > model.BirthDate)
-            .WithErrorCode("Rule-23")
-            .WithMessage(MessageHireDateAfterBirthDate)
-            .OverridePropertyName(nameof(EmployeeCreateModel.HireDate));
-
         // Phone validation (NotNull handled by 'required' modifier)
         RuleFor(x => x.Phone)
             .SetValidator(new EmployeePhoneValidator(_phoneNumberTypeRepository)!);
@@ -93,9 +77,6 @@ public sealed class CreateEmployeeValidator : EmployeeBaseModelValidator<Employe
     public static string MessageLoginIdLength => "Login ID cannot be greater than 256 characters";
     public static string MessageBirthDateEmpty => "Birth date cannot be null or empty";
     public static string MessageBirthDateMinimumAge => "Employee must be at least 18 years old";
-    public static string MessageHireDateEmpty => "Hire date cannot be null or empty";
-    public static string MessageHireDateFuture => "Hire date cannot be in the future";
-    public static string MessageHireDateAfterBirthDate => "Hire date must be after birth date";
     public static string MessageEmailAddressInvalid => "Email address must be in a valid format";
     public static string MessageEmailAddressLength => "Email address cannot be greater than 50 characters";
     public static string MessageAddressTypeIdGreaterThanZero => "Address type ID must be greater than 0";

@@ -47,9 +47,6 @@ public sealed class CreateEmployeeValidatorTests : UnitTestBase
             CreateEmployeeValidator.MessageLoginIdLength.Should().Be("Login ID cannot be greater than 256 characters");
             CreateEmployeeValidator.MessageBirthDateEmpty.Should().Be("Birth date cannot be null or empty");
             CreateEmployeeValidator.MessageBirthDateMinimumAge.Should().Be("Employee must be at least 18 years old");
-            CreateEmployeeValidator.MessageHireDateEmpty.Should().Be("Hire date cannot be null or empty");
-            CreateEmployeeValidator.MessageHireDateFuture.Should().Be("Hire date cannot be in the future");
-            CreateEmployeeValidator.MessageHireDateAfterBirthDate.Should().Be("Hire date must be after birth date");
             CreateEmployeeValidator.MessageEmailAddressInvalid.Should().Be("Email address must be in a valid format");
             CreateEmployeeValidator.MessageEmailAddressLength.Should().Be("Email address cannot be greater than 50 characters");
             CreateEmployeeValidator.MessageAddressTypeIdGreaterThanZero.Should().Be("Address type ID must be greater than 0");
@@ -111,31 +108,6 @@ public sealed class CreateEmployeeValidatorTests : UnitTestBase
 
         result.ShouldHaveValidationErrorFor(x => x.BirthDate)
             .WithErrorCode("Rule-20");
-    }
-
-    [Fact]
-    public async Task Validator_should_have_hire_date_future_errorAsync()
-    {
-        var model = HumanResourcesDomainFixtures.GetValidEmployeeCreateModel();
-        model.HireDate = DateTime.Today.AddDays(1); // Future date
-
-        var result = await _sut.TestValidateAsync(model);
-
-        result.ShouldHaveValidationErrorFor(x => x.HireDate)
-            .WithErrorCode("Rule-22");
-    }
-
-    [Fact]
-    public async Task Validator_should_have_hire_date_before_birth_date_errorAsync()
-    {
-        var model = HumanResourcesDomainFixtures.GetValidEmployeeCreateModel();
-        model.BirthDate = new DateTime(1990, 5, 15);
-        model.HireDate = new DateTime(1990, 1, 1); // Before birth date
-
-        var result = await _sut.TestValidateAsync(model);
-
-        result.ShouldHaveValidationErrorFor(x => x.HireDate)
-            .WithErrorCode("Rule-23");
     }
 
     [Theory]

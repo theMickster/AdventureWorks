@@ -79,4 +79,24 @@ public interface IEmployeeRepository : IAsyncRepository<EmployeeEntity>
     /// <param name="cancellationToken">Cancellation token</param>
     /// <returns>BusinessEntityAddress entity with Address and AddressType included, or null if not found</returns>
     Task<BusinessEntityAddressEntity?> GetEmployeeAddressByIdAsync(int businessEntityId, int addressId, CancellationToken cancellationToken = default);
+
+    /// <summary>
+    /// Retrieves an employee by their BusinessEntityId with EmployeeDepartmentHistory collection.
+    /// Includes related Department and Shift entities for each history record.
+    /// Used by lifecycle commands that need to manage department assignments.
+    /// </summary>
+    /// <param name="businessEntityId">The unique business entity identifier</param>
+    /// <param name="cancellationToken">Cancellation token</param>
+    /// <returns>Employee entity with department history, or null if not found</returns>
+    Task<EmployeeEntity?> GetEmployeeByIdWithDepartmentHistoryAsync(int businessEntityId, CancellationToken cancellationToken = default);
+
+    /// <summary>
+    /// Retrieves an employee by their BusinessEntityId with full lifecycle data.
+    /// Includes Person, EmployeeDepartmentHistory (with Department and Shift), and EmployeePayHistory.
+    /// Used by lifecycle status query to aggregate comprehensive employee information.
+    /// </summary>
+    /// <param name="businessEntityId">The unique business entity identifier</param>
+    /// <param name="cancellationToken">Cancellation token</param>
+    /// <returns>Employee entity with full lifecycle data, or null if not found</returns>
+    Task<EmployeeEntity?> GetEmployeeByIdWithLifecycleDataAsync(int businessEntityId, CancellationToken cancellationToken = default);
 }

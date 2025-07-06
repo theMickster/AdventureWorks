@@ -1113,6 +1113,543 @@ public sealed class EmployeeRepositoryTests : PersistenceUnitTestBase
 
     #endregion
 
+    #region GetEmployeeByIdWithDepartmentHistoryAsync Tests
+
+    [Fact]
+    public async Task GetEmployeeByIdWithDepartmentHistoryAsync_returns_employee_with_department_historyAsync()
+    {
+        // Seed departments and shifts
+        var department = new DepartmentEntity
+        {
+            DepartmentId = 1,
+            Name = "Engineering",
+            GroupName = "Research and Development",
+            ModifiedDate = StandardModifiedDate
+        };
+        DbContext.Departments.Add(department);
+
+        var shift = new ShiftEntity
+        {
+            ShiftId = 1,
+            Name = "Day",
+            StartTime = new TimeSpan(8, 0, 0),
+            EndTime = new TimeSpan(17, 0, 0),
+            ModifiedDate = StandardModifiedDate
+        };
+        DbContext.Shifts.Add(shift);
+        await DbContext.SaveChangesAsync();
+
+        // Create employee
+        var employeeEntity = CreateTestEmployeeEntity();
+        var personEntity = CreateTestPersonEntity();
+        var personPhone = CreateTestPersonPhone();
+        var emailAddress = CreateTestEmailAddress();
+        var address = CreateTestAddress();
+
+        var businessEntityId = await _sut.CreateEmployeeWithPersonAsync(
+            employeeEntity,
+            personEntity,
+            personPhone,
+            emailAddress,
+            address,
+            addressTypeId: 1,
+            StandardModifiedDate,
+            Guid.NewGuid());
+
+        // Add department history
+        // Retrieve the employee to add history record
+        var employee = await DbContext.Employees.FindAsync(businessEntityId);
+        employee!.EmployeeDepartmentHistory = new List<EmployeeDepartmentHistory>
+        {
+            new EmployeeDepartmentHistory
+            {
+                BusinessEntityId = businessEntityId,
+                DepartmentId = 1,
+                ShiftId = 1,
+                StartDate = new DateTime(2020, 1, 10),
+                EndDate = null,
+                ModifiedDate = StandardModifiedDate
+            }
+        };
+        await DbContext.SaveChangesAsync();
+
+        // Act
+        var result = await _sut.GetEmployeeByIdWithDepartmentHistoryAsync(businessEntityId);
+
+        // Assert
+        using (new AssertionScope())
+        {
+            result.Should().NotBeNull();
+            result!.BusinessEntityId.Should().Be(businessEntityId);
+            result.EmployeeDepartmentHistory.Should().NotBeNull();
+            result.EmployeeDepartmentHistory.Should().HaveCount(1);
+
+            var history = result.EmployeeDepartmentHistory.First();
+            history.Department.Should().NotBeNull();
+            history.Department.Name.Should().Be("Engineering");
+            history.Shift.Should().NotBeNull();
+            history.Shift.Name.Should().Be("Day");
+            history.StartDate.Should().Be(new DateTime(2020, 1, 10));
+            history.EndDate.Should().BeNull();
+        }
+    }
+
+    [Fact]
+    public async Task GetEmployeeByIdWithDepartmentHistoryAsync_returns_null_for_nonexistent_employeeAsync()
+    {
+        var result = await _sut.GetEmployeeByIdWithDepartmentHistoryAsync(99999);
+
+        result.Should().BeNull();
+    }
+
+    [Fact]
+    public async Task GetEmployeeByIdWithDepartmentHistoryAsync_includes_multiple_history_recordsAsync()
+    {
+        // Seed departments and shifts
+        var dept1 = new DepartmentEntity
+        {
+            DepartmentId = 1,
+            Name = "Engineering",
+            GroupName = "Research and Development",
+            ModifiedDate = StandardModifiedDate
+        };
+        var dept2 = new DepartmentEntity
+        {
+            DepartmentId = 2,
+            Name = "Marketing",
+            GroupName = "Sales and Marketing",
+            ModifiedDate = StandardModifiedDate
+        };
+        DbContext.Departments.AddRange(dept1, dept2);
+
+        var shift = new ShiftEntity
+        {
+            ShiftId = 1,
+            Name = "Day",
+            StartTime = new TimeSpan(8, 0, 0),
+            EndTime = new TimeSpan(17, 0, 0),
+            ModifiedDate = StandardModifiedDate
+        };
+        DbContext.Shifts.Add(shift);
+        await DbContext.SaveChangesAsync();
+
+        // Create employee
+        var employeeEntity = CreateTestEmployeeEntity();
+        var personEntity = CreateTestPersonEntity();
+        var personPhone = CreateTestPersonPhone();
+        var emailAddress = CreateTestEmailAddress();
+        var address = CreateTestAddress();
+
+        var businessEntityId = await _sut.CreateEmployeeWithPersonAsync(
+            employeeEntity,
+            personEntity,
+            personPhone,
+            emailAddress,
+            address,
+            addressTypeId: 1,
+            StandardModifiedDate,
+            Guid.NewGuid());
+
+        // Add two department history records (transfer scenario)
+        // Retrieve the employee to add history records
+        var employee = await DbContext.Employees.FindAsync(businessEntityId);
+        employee!.EmployeeDepartmentHistory = new List<EmployeeDepartmentHistory>
+        {
+            new EmployeeDepartmentHistory
+            {
+                BusinessEntityId = businessEntityId,
+                DepartmentId = 1,
+                ShiftId = 1,
+                StartDate = new DateTime(2020, 1, 10),
+                EndDate = new DateTime(2022, 6, 30),
+                ModifiedDate = StandardModifiedDate
+            },
+            new EmployeeDepartmentHistory
+            {
+                BusinessEntityId = businessEntityId,
+                DepartmentId = 2,
+                ShiftId = 1,
+                StartDate = new DateTime(2022, 7, 1),
+                EndDate = null,
+                ModifiedDate = StandardModifiedDate
+            }
+        };
+        await DbContext.SaveChangesAsync();
+
+        // Act
+        var result = await _sut.GetEmployeeByIdWithDepartmentHistoryAsync(businessEntityId);
+
+        // Assert
+        using (new AssertionScope())
+        {
+            result.Should().NotBeNull();
+            result!.EmployeeDepartmentHistory.Should().HaveCount(2);
+            result.EmployeeDepartmentHistory.Should().Contain(h => h.Department.Name == "Engineering" && h.EndDate.HasValue);
+            result.EmployeeDepartmentHistory.Should().Contain(h => h.Department.Name == "Marketing" && h.EndDate == null);
+        }
+    }
+
+    [Fact]
+    public async Task GetEmployeeByIdWithDepartmentHistoryAsync_uses_trackingAsync()
+    {
+        // Seed department and shift
+        var department = new DepartmentEntity
+        {
+            DepartmentId = 1,
+            Name = "Engineering",
+            GroupName = "Research and Development",
+            ModifiedDate = StandardModifiedDate
+        };
+        DbContext.Departments.Add(department);
+
+        var shift = new ShiftEntity
+        {
+            ShiftId = 1,
+            Name = "Day",
+            StartTime = new TimeSpan(8, 0, 0),
+            EndTime = new TimeSpan(17, 0, 0),
+            ModifiedDate = StandardModifiedDate
+        };
+        DbContext.Shifts.Add(shift);
+        await DbContext.SaveChangesAsync();
+
+        // Create employee with department history
+        var employeeEntity = CreateTestEmployeeEntity();
+        var personEntity = CreateTestPersonEntity();
+        var personPhone = CreateTestPersonPhone();
+        var emailAddress = CreateTestEmailAddress();
+        var address = CreateTestAddress();
+
+        var businessEntityId = await _sut.CreateEmployeeWithPersonAsync(
+            employeeEntity,
+            personEntity,
+            personPhone,
+            emailAddress,
+            address,
+            addressTypeId: 1,
+            StandardModifiedDate,
+            Guid.NewGuid());
+
+        // Retrieve the employee to add history record
+        var employee = await DbContext.Employees.FindAsync(businessEntityId);
+        employee!.EmployeeDepartmentHistory = new List<EmployeeDepartmentHistory>
+        {
+            new EmployeeDepartmentHistory
+            {
+                BusinessEntityId = businessEntityId,
+                DepartmentId = 1,
+                ShiftId = 1,
+                StartDate = new DateTime(2020, 1, 10),
+                EndDate = null,
+                ModifiedDate = StandardModifiedDate
+            }
+        };
+        await DbContext.SaveChangesAsync();
+
+        // Act
+        var result = await _sut.GetEmployeeByIdWithDepartmentHistoryAsync(businessEntityId);
+
+        // Assert - Should be tracked for update scenarios
+        var entry = DbContext.Entry(result!);
+        entry.State.Should().Be(EntityState.Unchanged);
+    }
+
+    #endregion
+
+    #region GetEmployeeByIdWithLifecycleDataAsync Tests
+
+    [Fact]
+    public async Task GetEmployeeByIdWithLifecycleDataAsync_returns_employee_with_full_lifecycle_dataAsync()
+    {
+        // Seed departments, shifts
+        var department = new DepartmentEntity
+        {
+            DepartmentId = 1,
+            Name = "Engineering",
+            GroupName = "Research and Development",
+            ModifiedDate = StandardModifiedDate
+        };
+        DbContext.Departments.Add(department);
+
+        var shift = new ShiftEntity
+        {
+            ShiftId = 1,
+            Name = "Day",
+            StartTime = new TimeSpan(8, 0, 0),
+            EndTime = new TimeSpan(17, 0, 0),
+            ModifiedDate = StandardModifiedDate
+        };
+        DbContext.Shifts.Add(shift);
+        await DbContext.SaveChangesAsync();
+
+        // Create employee
+        var employeeEntity = CreateTestEmployeeEntity();
+        var personEntity = CreateTestPersonEntity();
+        var personPhone = CreateTestPersonPhone();
+        var emailAddress = CreateTestEmailAddress();
+        var address = CreateTestAddress();
+
+        var businessEntityId = await _sut.CreateEmployeeWithPersonAsync(
+            employeeEntity,
+            personEntity,
+            personPhone,
+            emailAddress,
+            address,
+            addressTypeId: 1,
+            StandardModifiedDate,
+            Guid.NewGuid());
+
+        // Add department history and pay history through employee entity
+        var employee = await DbContext.Employees.FindAsync(businessEntityId);
+        employee!.EmployeeDepartmentHistory = new List<EmployeeDepartmentHistory>
+        {
+            new EmployeeDepartmentHistory
+            {
+                BusinessEntityId = businessEntityId,
+                DepartmentId = 1,
+                ShiftId = 1,
+                StartDate = new DateTime(2020, 1, 10),
+                EndDate = null,
+                ModifiedDate = StandardModifiedDate
+            }
+        };
+        employee.EmployeePayHistory = new List<EmployeePayHistory>
+        {
+            new EmployeePayHistory
+            {
+                BusinessEntityId = businessEntityId,
+                RateChangeDate = new DateTime(2020, 1, 10),
+                Rate = 45.00m,
+                PayFrequency = 2,
+                ModifiedDate = StandardModifiedDate
+            }
+        };
+        await DbContext.SaveChangesAsync();
+
+        // Act
+        var result = await _sut.GetEmployeeByIdWithLifecycleDataAsync(businessEntityId);
+
+        // Assert
+        using (new AssertionScope())
+        {
+            result.Should().NotBeNull();
+            result!.BusinessEntityId.Should().Be(businessEntityId);
+
+            // Verify Person data
+            result.PersonBusinessEntity.Should().NotBeNull();
+            result.PersonBusinessEntity.FirstName.Should().Be("John");
+            result.PersonBusinessEntity.LastName.Should().Be("Doe");
+
+            // Verify Department History
+            result.EmployeeDepartmentHistory.Should().NotBeNull();
+            result.EmployeeDepartmentHistory.Should().HaveCount(1);
+            result.EmployeeDepartmentHistory.First().Department.Should().NotBeNull();
+            result.EmployeeDepartmentHistory.First().Department.Name.Should().Be("Engineering");
+            result.EmployeeDepartmentHistory.First().Shift.Should().NotBeNull();
+            result.EmployeeDepartmentHistory.First().Shift.Name.Should().Be("Day");
+
+            // Verify Pay History
+            result.EmployeePayHistory.Should().NotBeNull();
+            result.EmployeePayHistory.Should().HaveCount(1);
+            result.EmployeePayHistory.First().Rate.Should().Be(45.00m);
+            result.EmployeePayHistory.First().PayFrequency.Should().Be(2);
+        }
+    }
+
+    [Fact]
+    public async Task GetEmployeeByIdWithLifecycleDataAsync_returns_null_for_nonexistent_employeeAsync()
+    {
+        var result = await _sut.GetEmployeeByIdWithLifecycleDataAsync(99999);
+
+        result.Should().BeNull();
+    }
+
+    [Fact]
+    public async Task GetEmployeeByIdWithLifecycleDataAsync_handles_employee_without_history_dataAsync()
+    {
+        // Create employee without department/pay history
+        var employeeEntity = CreateTestEmployeeEntity();
+        var personEntity = CreateTestPersonEntity();
+        var personPhone = CreateTestPersonPhone();
+        var emailAddress = CreateTestEmailAddress();
+        var address = CreateTestAddress();
+
+        var businessEntityId = await _sut.CreateEmployeeWithPersonAsync(
+            employeeEntity,
+            personEntity,
+            personPhone,
+            emailAddress,
+            address,
+            addressTypeId: 1,
+            StandardModifiedDate,
+            Guid.NewGuid());
+
+        // Act
+        var result = await _sut.GetEmployeeByIdWithLifecycleDataAsync(businessEntityId);
+
+        // Assert
+        using (new AssertionScope())
+        {
+            result.Should().NotBeNull();
+            result!.PersonBusinessEntity.Should().NotBeNull();
+            result.EmployeeDepartmentHistory.Should().BeEmpty();
+            result.EmployeePayHistory.Should().BeEmpty();
+        }
+    }
+
+    [Fact]
+    public async Task GetEmployeeByIdWithLifecycleDataAsync_includes_multiple_pay_history_recordsAsync()
+    {
+        // Seed department and shift
+        var department = new DepartmentEntity
+        {
+            DepartmentId = 1,
+            Name = "Engineering",
+            GroupName = "Research and Development",
+            ModifiedDate = StandardModifiedDate
+        };
+        DbContext.Departments.Add(department);
+
+        var shift = new ShiftEntity
+        {
+            ShiftId = 1,
+            Name = "Day",
+            StartTime = new TimeSpan(8, 0, 0),
+            EndTime = new TimeSpan(17, 0, 0),
+            ModifiedDate = StandardModifiedDate
+        };
+        DbContext.Shifts.Add(shift);
+        await DbContext.SaveChangesAsync();
+
+        // Create employee
+        var employeeEntity = CreateTestEmployeeEntity();
+        var personEntity = CreateTestPersonEntity();
+        var personPhone = CreateTestPersonPhone();
+        var emailAddress = CreateTestEmailAddress();
+        var address = CreateTestAddress();
+
+        var businessEntityId = await _sut.CreateEmployeeWithPersonAsync(
+            employeeEntity,
+            personEntity,
+            personPhone,
+            emailAddress,
+            address,
+            addressTypeId: 1,
+            StandardModifiedDate,
+            Guid.NewGuid());
+
+        // Add multiple pay history records (raises scenario) through employee entity
+        var employee = await DbContext.Employees.FindAsync(businessEntityId);
+        employee!.EmployeePayHistory = new List<EmployeePayHistory>
+        {
+            new EmployeePayHistory
+            {
+                BusinessEntityId = businessEntityId,
+                RateChangeDate = new DateTime(2020, 1, 10),
+                Rate = 40.00m,
+                PayFrequency = 2,
+                ModifiedDate = StandardModifiedDate
+            },
+            new EmployeePayHistory
+            {
+                BusinessEntityId = businessEntityId,
+                RateChangeDate = new DateTime(2021, 1, 10),
+                Rate = 45.00m,
+                PayFrequency = 2,
+                ModifiedDate = StandardModifiedDate
+            },
+            new EmployeePayHistory
+            {
+                BusinessEntityId = businessEntityId,
+                RateChangeDate = new DateTime(2022, 1, 10),
+                Rate = 50.00m,
+                PayFrequency = 2,
+                ModifiedDate = StandardModifiedDate
+            }
+        };
+        await DbContext.SaveChangesAsync();
+
+        // Act
+        var result = await _sut.GetEmployeeByIdWithLifecycleDataAsync(businessEntityId);
+
+        // Assert
+        using (new AssertionScope())
+        {
+            result.Should().NotBeNull();
+            result!.EmployeePayHistory.Should().HaveCount(3);
+            result.EmployeePayHistory.Should().Contain(ph => ph.Rate == 40.00m);
+            result.EmployeePayHistory.Should().Contain(ph => ph.Rate == 45.00m);
+            result.EmployeePayHistory.Should().Contain(ph => ph.Rate == 50.00m);
+        }
+    }
+
+    [Fact]
+    public async Task GetEmployeeByIdWithLifecycleDataAsync_uses_no_trackingAsync()
+    {
+        // Seed department and shift
+        var department = new DepartmentEntity
+        {
+            DepartmentId = 1,
+            Name = "Engineering",
+            GroupName = "Research and Development",
+            ModifiedDate = StandardModifiedDate
+        };
+        DbContext.Departments.Add(department);
+
+        var shift = new ShiftEntity
+        {
+            ShiftId = 1,
+            Name = "Day",
+            StartTime = new TimeSpan(8, 0, 0),
+            EndTime = new TimeSpan(17, 0, 0),
+            ModifiedDate = StandardModifiedDate
+        };
+        DbContext.Shifts.Add(shift);
+        await DbContext.SaveChangesAsync();
+
+        // Create employee
+        var employeeEntity = CreateTestEmployeeEntity();
+        var personEntity = CreateTestPersonEntity();
+        var personPhone = CreateTestPersonPhone();
+        var emailAddress = CreateTestEmailAddress();
+        var address = CreateTestAddress();
+
+        var businessEntityId = await _sut.CreateEmployeeWithPersonAsync(
+            employeeEntity,
+            personEntity,
+            personPhone,
+            emailAddress,
+            address,
+            addressTypeId: 1,
+            StandardModifiedDate,
+            Guid.NewGuid());
+
+        // Retrieve the employee to add history record
+        var employee = await DbContext.Employees.FindAsync(businessEntityId);
+        employee!.EmployeeDepartmentHistory = new List<EmployeeDepartmentHistory>
+        {
+            new EmployeeDepartmentHistory
+            {
+                BusinessEntityId = businessEntityId,
+                DepartmentId = 1,
+                ShiftId = 1,
+                StartDate = new DateTime(2020, 1, 10),
+                EndDate = null,
+                ModifiedDate = StandardModifiedDate
+            }
+        };
+        await DbContext.SaveChangesAsync();
+
+        // Act
+        var result = await _sut.GetEmployeeByIdWithLifecycleDataAsync(businessEntityId);
+
+        // Assert - Should NOT be tracked (read-only query for status)
+        var entry = DbContext.Entry(result!);
+        entry.State.Should().Be(EntityState.Detached);
+    }
+
+    #endregion
+
     // Helper methods to create test entities
     private static EmployeeEntity CreateTestEmployeeEntity()
     {
