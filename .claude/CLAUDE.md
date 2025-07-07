@@ -1,111 +1,222 @@
-# AdventureWorks Web API
+# AdventureWorks - Claude Code Configuration
 
-**Purpose**: Guide code generation for this .NET 9.0 Clean Architecture API with CQRS patterns.
+Enterprise application demonstrating modern software architecture patterns across multiple platforms and services.
 
-## Project Boundaries (CRITICAL)
+## Repository Overview
 
-**What Can Reference What:**
-- **API** → Application, Models, Common (NOT Infrastructure or Domain directly)
-- **Application** → Domain, Common (NOT Infrastructure - only via interfaces)
-- **Infrastructure.Persistence** → Application (interfaces), Domain, Common
-- **Domain** → Nothing (pure entities, no dependencies)
-- **Models** → Nothing (pure DTOs)
+This monorepo contains:
+- **.NET 10.0 REST API** (`apps/api-dotnet/`) - Clean Architecture with CQRS
+- **Angular Web Application** (`apps/angular-web/`) - Coming soon
+- **Microservices** (`apps/microservices/`) - Coming soon
+- **Database Scripts** (`database/`) - AdventureWorks schema and migrations
 
-**Rule**: Never let Infrastructure leak into Application. Use interface abstractions in Application.
+## Working with Child CLAUDE.md Files
 
-## Domain Areas
-- **Sales** - Store, SalesPerson, SalesTerritory, SalesOrderHeader/Detail
-- **AddressManagement** - Address, AddressType, StateProvince, CountryRegion
-- **HumanResources** - Employee entities
+Each application/service has its own CLAUDE.md with technology-specific instructions:
 
-## Naming Conventions (Follow These)
+- **For .NET API work**: See `apps/api-dotnet/.claude/CLAUDE.md`
+- **For Angular work**: See `apps/angular-web/.claude/CLAUDE.md` (future)
+- **For Microservices**: See `apps/microservices/{service}/.claude/CLAUDE.md` (future)
 
-- **Entities**: `*Entity` suffix → `StoreEntity`, `SalesPersonEntity`
-- **Commands**: `Create*Command`, `Update*Command`
-- **Queries**: `Read*Query`, `Read*ListQuery`
-- **Handlers**: `*CommandHandler`, `*QueryHandler` (sealed classes)
-- **Validators**: `Create*Validator`, `Update*Validator`
-- **DTOs**: `*Model`, `*CreateModel`, `*UpdateModel`, `*SearchModel`
-- **Repositories**: `I*Repository` interface, `*Repository` implementation
+**When starting work in a specific application:**
+1. Navigate to that application's directory
+2. Read its CLAUDE.md file for context-specific instructions
+3. Follow technology-specific patterns and conventions
 
-## DON'Ts (Anti-Patterns to Avoid)
+## Repository-Wide Standards
 
-- ❌ **NO** `.Result` or `.Wait()` - Use async/await throughout
-- ❌ **NO** returning Entity classes from API - Use Models/DTOs only
-- ❌ **NO** DbContext in Controllers/Handlers - Use repositories
-- ❌ **NO** magic strings for config - Use constants in `Common.Constants`
-- ❌ **NO** swallowing exceptions - Let middleware handle them
-- ❌ **NO** N+1 queries - Use `.Include()` or projection
+### Git Workflow
 
-## When Adding a New Feature
+**Branch Strategy:**
+- `main` - Production-ready code
+- `develop` - Integration branch (future)
+- `feature/*` - Feature branches
+- `bugfix/*` - Bug fix branches
 
-Create these artifacts in `/Features/{FeatureName}/`:
-1. **Command/Query** class in `/Commands` or `/Queries`
-2. **Handler** (sealed, uses `IRequestHandler<TRequest, TResponse>`)
-3. **Validator** in `/Validators` (extends base validator if available)
-4. **AutoMapper Profile** in `/Profiles` (separate for Create/Update/Read)
-5. **Controller** endpoint in API (thin, delegates to `_mediator.Send()`)
-6. **Tests** in test project
+**Commit Message Format:**
+```
+<type>(<scope>): <subject>
 
-## CQRS Pattern
+<body>
 
-- **Commands** (Write): Return int (ID), Guid, or void
-- **Queries** (Read): Return Model/DTO
-- All go through MediatR: `await _mediator.Send(request, cancellationToken)`
-- Handlers are sealed, use primary constructors
+Co-Authored-By: Claude Sonnet 4.5 <noreply@anthropic.com>
+```
 
-## Validation & Security
+**Types**: `feat`, `fix`, `refactor`, `docs`, `test`, `chore`
+**Scopes**: `api`, `web`, `db`, `auth`, `sales`, etc.
 
-- **Validate** all external input (IDs > 0, required fields non-empty)
-- **FluentValidation** for all commands (separate validator class)
-- **Authorization**: New endpoints default to `[Authorize]` unless explicitly public
-- **Never** expose internal entity properties to API consumers
+**Example:**
+```
+feat(api): add customer CRUD endpoints
 
-## Data Access Rules
+Implements Create, Read, Update, Delete operations for customers
+following Clean Architecture and CQRS patterns.
 
-- **Repositories**: Define interfaces in Application, implement in Infrastructure
-- **Tracking**: Use `.AsNoTracking()` for read-only queries
-- **Queries**: Avoid loading large collections - project to DTOs in EF query when possible
+Co-Authored-By: Claude Sonnet 4.5 <noreply@anthropic.com>
+```
+
+### Creating Commits
+
+**ONLY create commits when the user explicitly asks.** Follow these steps:
+
+1. Run `git status` and `git diff` (both staged and unstaged)
+2. Draft a commit message following the format above
+3. Add relevant files: `git add <files>`
+4. Create commit with Co-Authored-By trailer
+5. Run `git status` after commit to verify
+
+**NEVER:**
+- Use `git commit --amend` unless explicitly requested
+- Use `--no-verify` or `--no-gpg-sign` flags
+- Force push to `main`/`master`
+- Commit files with secrets (`.env`, `credentials.json`)
+
+### Creating Pull Requests
+
+**When the user asks to create a PR:**
+
+1. Run `git status`, `git diff`, and `git log` to understand full scope
+2. Review ALL commits that will be included (not just latest)
+3. Draft PR summary covering all changes
+4. Use format:
+   ```markdown
+   ## Summary
+   - Bullet points of changes
+
+   ## Test plan
+   - [ ] Checklist of testing steps
+
+   🤖 Generated with [Claude Code](https://claude.com/claude-code)
+   ```
+5. Create PR: `gh pr create --title "..." --body "$(cat <<'EOF' ... EOF)"`
+
+### Naming Conventions
+
+**General Rules:**
+- `PascalCase` - Classes, interfaces, public members, constants
+- `camelCase` - Private fields, parameters, local variables
+- `_camelCase` - Private readonly fields (underscore prefix)
+- `kebab-case` - File names (except C# which uses PascalCase)
+
+**Directory Structure:**
+- Feature-based organization over layer-based
+- Group by domain/feature, not by technical type
+
+### Code Quality Standards
+
+**Required:**
+- ✅ Async/await for all I/O operations (never `.Result` or `.Wait()`)
+- ✅ Null checks at method boundaries (`ArgumentNullException.ThrowIfNull`)
+- ✅ Explicit error handling (no silent catch blocks)
+- ✅ Unit tests for new features (80%+ coverage target)
+- ✅ No magic strings - use constants
+- ✅ No secrets in code - use environment variables/Key Vault
+
+**Forbidden:**
+- ❌ Hardcoded credentials, connection strings, API keys
+- ❌ Blocking async code (`.Result`, `.Wait()`, `Task.Run` for I/O)
+- ❌ Empty catch blocks that swallow exceptions
+- ❌ Magic numbers/strings without explanation
+- ❌ Circular dependencies between projects
+
+### Security Rules
+
+**MANDATORY across all applications:**
+
+1. **Authentication Required** - All write endpoints (POST/PUT/PATCH/DELETE) require authentication
+2. **Validate All Input** - Never trust user input, validate at boundaries
+3. **No Secrets in Code** - Use Azure Key Vault (prod) or User Secrets (dev)
+4. **Principle of Least Privilege** - Request minimum permissions needed
+5. **Correlation IDs** - Include request tracing IDs in all responses
+
+### Documentation Standards
+
+**NEVER proactively create documentation files (*.md, README, etc.) unless explicitly requested.**
+
+When documentation is needed:
+- Use concise, technical language
+- Focus on "why" over "what"
+- Include code references with file paths and line numbers
+- Keep examples minimal and relevant
+- Update existing docs rather than creating new ones
+
+### Environment Configuration
+
+**Development:**
+- Local User Secrets for sensitive configuration
+- `appsettings.Development.json` for non-sensitive overrides
+- Local SQL Server / Docker containers
+
+**Production:**
+- Azure Key Vault for all secrets
+- `appsettings.Production.json` for environment config
+- Managed identities where possible
 
 ## Technology Stack
-- .NET 9.0, EF Core 9.0.5, SQL Server
-- MediatR 12.5.0, FluentValidation 12.0.0, AutoMapper 14.0.0
-- JWT Bearer auth, Swagger, Azure Key Vault
 
-## Code Quality
+### Current
+- **.NET 10.0** - Backend API
+- **Entity Framework Core** - ORM
+- **SQL Server** - Database
+- **MediatR** - CQRS implementation
+- **FluentValidation** - Input validation
+- **AutoMapper** - Object mapping
+- **xUnit** - Testing framework
 
-- **Sealed classes** for all handlers and repositories
-- **Primary constructors** for DI (C# 12)
-- **Feature folders**: `/Features/{Area}/{Commands|Queries|Validators|Profiles}/`
-- **Async throughout**: Include `CancellationToken` parameters
-- Use `ArgumentNullException.ThrowIfNull()` for null checks
+### Future
+- **Angular 17+** - Frontend web application
+- **Docker** - Containerization
+- **Kubernetes** - Orchestration (maybe)
+- **Azure Services** - Cloud infrastructure
 
-## Example API Routes
+## Project Structure
+
 ```
-POST   /api/v1/stores          - Create (auth required)
-GET    /api/v1/stores/{id}     - Read
-PUT    /api/v1/stores/{id}     - Update (auth required)
-POST   /api/v1/stores          - Create store (requires auth)
-GET    /api/v1/stores/{id}     - Read store
-PUT    /api/v1/stores/{id}     - Update store (requires auth)
-POST   /api/v1/addresses       - Create address (requires auth)
-GET    /api/v1/addresses/{id}  - Read address
-POST   /api/v1/salespersons    - Create sales person (requires auth)
-GET    /api/v1/salespersons/{id} - Read sales person
+AdventureWorks/
+├── .claude/
+│   └── CLAUDE.md                    # This file (repo-wide standards)
+│
+├── apps/
+│   ├── api-dotnet/                  # .NET REST API
+│   │   ├── .claude/
+│   │   │   ├── CLAUDE.md            # .NET-specific instructions
+│   │   │   └── guides/              # Detailed implementation guides
+│   │   ├── src/                     # Source code
+│   │   └── tests/                   # Unit tests
+│   │
+│   ├── angular-web/                 # Angular SPA (future)
+│   └── microservices/               # Additional services (future)
+│
+├── database/
+│   ├── dbup/                        # Database migrations
+│   └── scripts/                     # SQL scripts
+│
+└── docs/                            # Shared documentation
 ```
-## Developer Setup
 
-### Visual Studio 2022 Debugging Configuration
+## Getting Started
 
-**IMPORTANT**: The API uses FluentValidation with exception middleware. Validation exceptions are **expected** and handled gracefully.
+**When beginning work in this repository:**
 
-**First-time setup (required for smooth debugging):**
+1. **Identify the application** you'll be working on
+2. **Navigate to its directory** (e.g., `cd apps/api-dotnet`)
+3. **Read its CLAUDE.md** for technology-specific context
+4. **Check for guide files** in `.claude/guides/` for detailed walkthroughs
+5. **Follow this file** for repository-wide standards (git, naming, security)
 
-1. Open Visual Studio 2022
-2. Go to: Debug ? Windows ? Exception Settings (Ctrl+Alt+E)
-3. Click **Import** icon ? Browse to .vs/ExceptionSettings.xml ? Open
-4. This prevents the debugger from breaking on FluentValidation.ValidationException and KeyNotFoundException
+## Progressive Context Loading
 
-**Alternative**: See docs/DEBUGGING.md for manual configuration instructions.
+**Claude should load additional context based on the task:**
 
-**Why this matters**: Without this setup, the debugger breaks on every validation failure, significantly slowing down development and testing.
+- **"Add a feature to the API"** → Read `apps/api-dotnet/.claude/CLAUDE.md` + `guides/adding-features.md`
+- **"Write tests for the API"** → Read `apps/api-dotnet/.claude/CLAUDE.md` + `guides/testing-guide.md`
+- **"Create a new microservice"** → Read `apps/microservices/.claude/CLAUDE.md` (future)
+- **"Build an Angular component"** → Read `apps/angular-web/.claude/CLAUDE.md` (future)
+
+**Pattern:** Always read the application's CLAUDE.md + relevant guide files when starting work in that application.
+
+---
+
+**Version**: Monorepo Structure v1.0
+**Last Updated**: 2026-01-17
+**Primary Application**: .NET 10.0 REST API (Clean Architecture with CQRS)
