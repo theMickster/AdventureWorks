@@ -1,25 +1,11 @@
 {
   "permissions": {
     "allow": [
-      "Bash(powershell -Command \"(Get-Content ''.claude\\CLAUDE.md'' | Measure-Object -Line).Lines\")",
       "WebSearch",
       "Bash(dotnet build:*)",
       "Bash(dotnet test:*)",
-      "Bash(claude mcp list:*)",
-      "Bash(claude mcp --help:*)",
-      "Bash(claude mcp add-json AdventureWorksSQL \"{\"\"command\"\":\"\"C:\\\\source\\\\microsoft\\\\SQL-AI-samples\\\\MssqlMcp\\\\dotnet\\\\bin\\\\Debug\\\\net8.0\\\\MssqlMcp.exe\"\",\"\"env\"\":{\"\"CONNECTION_STRING\"\":\"\"Server=10.211.55.2,15432;Database=AdventureWorks;User Id=sa;Password=%MSSQL_SA_PASSWORD%;Trusted_Connection=False;Encrypt=True;TrustServerCertificate=True;ApplicationName=ClaudeCodeCLI;\"\",\"\"READONLY\"\":\"\"true\"\"}}\")",
       "Bash(dotnet clean:*)",
-      "Bash(powershell -Command:*)",
-      "Bash(powershell -ExecutionPolicy Bypass -File remove-aaa-comments.ps1)",
-      "Bash(del remove-aaa-comments.ps1)",
-      "Bash(Select-Object -Last 30)",
-      "Bash(powershell -ExecutionPolicy Bypass -File simplifyFixture.ps1)",
-      "WebFetch(domain:github.com)",
-      "WebFetch(domain:docs.rs)",
-      "WebFetch(domain:pkg.go.dev)",
-      "WebFetch(domain:raw.githubusercontent.com)",
-      "WebFetch(domain:stackoverflow.com)",
-      "WebFetch(domain:blog.jonathanchannon.com)"
+      "Bash(az version:*)"
     ],
     "deny": [],
     "ask": []
