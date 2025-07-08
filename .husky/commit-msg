@@ -1,0 +1,1 @@
+cd apps/angular-web && npx commitlint --edit $1

@@ -1,0 +1,94 @@
+{
+  "name": "adventureworks-web",
+  "$schema": "../../node_modules/nx/schemas/project-schema.json",
+  "projectType": "application",
+  "prefix": "aw",
+  "sourceRoot": "apps/adventureworks-web/src",
+  "tags": ["type:app", "scope:app"],
+  "targets": {
+    "build": {
+      "executor": "@angular/build:application",
+      "outputs": ["{options.outputPath}"],
+      "options": {
+        "outputPath": "dist/apps/adventureworks-web",
+        "browser": "apps/adventureworks-web/src/main.ts",
+        "tsConfig": "apps/adventureworks-web/tsconfig.app.json",
+        "inlineStyleLanguage": "scss",
+        "assets": [
+          {
+            "glob": "**/*",
+            "input": "apps/adventureworks-web/public"
+          }
+        ],
+        "styles": ["apps/adventureworks-web/src/styles.scss"]
+      },
+      "configurations": {
+        "production": {
+          "sourceMap": false,
+          "optimization": true,
+          "namedChunks": false,
+          "extractLicenses": true,
+          "subresourceIntegrity": true,
+          "budgets": [
+            {
+              "type": "initial",
+              "maximumWarning": "500kb",
+              "maximumError": "1mb"
+            },
+            {
+              "type": "anyComponentStyle",
+              "maximumWarning": "4kb",
+              "maximumError": "8kb"
+            }
+          ],
+          "outputHashing": "all"
+        },
+        "development": {
+          "optimization": false,
+          "extractLicenses": false,
+          "sourceMap": true,
+          "fileReplacements": [
+            {
+              "replace": "apps/adventureworks-web/src/environments/environment.ts",
+              "with": "apps/adventureworks-web/src/environments/environment.development.ts"
+            }
+          ]
+        }
+      },
+      "defaultConfiguration": "production"
+    },
+    "serve": {
+      "continuous": true,
+      "executor": "@angular/build:dev-server",
+      "options": {
+        "port": 4200
+      },
+      "configurations": {
+        "production": {
+          "buildTarget": "adventureworks-web:build:production"
+        },
+        "development": {
+          "buildTarget": "adventureworks-web:build:development"
+        }
+      },
+      "defaultConfiguration": "development"
+    },
+    "lint": {
+      "executor": "@nx/eslint:lint"
+    },
+    "test": {
+      "executor": "@angular/build:unit-test",
+      "options": {}
+    },
+    "serve-static": {
+      "continuous": true,
+      "executor": "@nx/web:file-server",
+      "options": {
+        "buildTarget": "adventureworks-web:build",
+        "port": 4200,
+        "staticFilePath": "dist/apps/adventureworks-web/browser",
+        "spa": true
+      }
+    }
+  }
+}

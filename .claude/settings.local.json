@@ -5,7 +5,14 @@
       "Bash(dotnet build:*)",
       "Bash(dotnet test:*)",
       "Bash(dotnet clean:*)",
-      "Bash(az version:*)"
+      "Bash(az version:*)",
+      "Bash(AZURE_DEVOPS_EXT_PAT=$AZURE_DEVOPS_PAT az boards:*)",
+      "Bash(tail:*)",
+      "Bash(npx nx:*)",
+      "Bash(find:*)",
+      "Bash(ls:*)",
+      "Bash(wc:*)",
+      "Bash(head:*)"
     ],
     "deny": [],
     "ask": []

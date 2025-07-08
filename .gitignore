@@ -326,5 +326,21 @@ ASALocalRun/
 # NVidia Nsight GPU debugger configuration file
 *.nvuser
 
-# MFractors (Xamarin productivity tool) working folder 
+# MFractors (Xamarin productivity tool) working folder
 .mfractor/
+
+# Angular/Nx workspace (apps/angular-web/)
+apps/angular-web/node_modules/
+apps/angular-web/dist/
+apps/angular-web/.nx/
+apps/angular-web/.angular/
+apps/angular-web/tmp/
+apps/angular-web/.DS_Store
+
+# Environment files
+.env
+.env.*
+!.env.example
+
+# Claude local settings (machine-specific)
+.claude/settings.local.json

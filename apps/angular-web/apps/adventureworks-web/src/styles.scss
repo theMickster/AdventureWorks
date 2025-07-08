@@ -1,0 +1,97 @@
+/* Alpine Circuit v2 - CSS Custom Properties */
+
+:root {
+  /* Surfaces */
+  --ac-background: #ffffff;
+  --ac-surface: #f8fafc;
+  --ac-surface-alt: #f0fdfa;
+  --ac-border: #e2e8f0;
+
+  /* Text */
+  --ac-text: #164e63;
+  --ac-text-muted: #64748b;
+
+  /* Brand Colors (light mode values) */
+  --ac-primary: #0891b2;
+  --ac-primary-hover: #0e7490;
+  --ac-secondary: #64748b;
+  --ac-accent: #14b8a6;
+  --ac-pop: #dc2626;
+  --ac-pop-hover: #b91c1c;
+
+  /* Semantic */
+  --ac-success: #059669;
+  --ac-warning: #d97706;
+  --ac-error: #dc2626;
+  --ac-info: #0891b2;
+}
+
+[data-theme="dark"],
+.dark {
+  /* Surfaces */
+  --ac-background: #0c1821;
+  --ac-surface: #132634;
+  --ac-surface-alt: #1a3344;
+  --ac-border: #334155;
+
+  /* Text */
+  --ac-text: #e0f2fe;
+  --ac-text-muted: #94a3b8;
+
+  /* Brand Colors (dark mode - brightened) */
+  --ac-primary: #22d3ee;
+  --ac-primary-hover: #67e8f9;
+  --ac-secondary: #94a3b8;
+  --ac-accent: #2dd4bf;
+  --ac-pop: #f87171;
+  --ac-pop-hover: #fca5a5;
+
+  /* Semantic */
+  --ac-success: #10b981;
+  --ac-warning: #f59e0b;
+  --ac-error: #f87171;
+  --ac-info: #22d3ee;
+}
+
+/* Utility classes for common patterns */
+.ac-btn-primary {
+  background-color: var(--ac-primary);
+  color: white;
+}
+.ac-btn-primary:hover {
+  background-color: var(--ac-primary-hover);
+}
+
+.ac-btn-pop {
+  background-color: var(--ac-pop);
+  color: white;
+}
+.ac-btn-pop:hover {
+  background-color: var(--ac-pop-hover);
+}
+
+.ac-card {
+  background-color: var(--ac-surface);
+  border: 1px solid var(--ac-border);
+}
+
+.ac-text-gradient {
+  background: linear-gradient(135deg, var(--ac-primary), var(--ac-accent));
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+}
+
+body {
+  background-color: var(--ac-background);
+  color: var(--ac-text);
+  font-family:
+    "Inter",
+    -apple-system,
+    BlinkMacSystemFont,
+    "Segoe UI",
+    Roboto,
+    sans-serif;
+  margin: 0;
+  padding: 0;
+}

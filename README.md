@@ -1,4 +1,4 @@
-<p align="center"><img width=128 height=128 src="https://github.com/theMickster/AdventureWorks/blob/main/_media/AdventureWorksCycling02.jpg"></p>
+<p align="center"><img width=128 height=128 src="https://github.com/theMickster/AdventureWorks/blob/main/_media/AdventureWorksIconBlue01.png"></p>
 
 # AdventureWorks
 Adventure Works is a sample application built with ASP.NET Core and Entity Framework Core. The architecture and design of the project is focused on the clean architecture pattern. The foundation of the project is the old school Adventure Works Cycling SQL database created by the SQL team at Microsoft.

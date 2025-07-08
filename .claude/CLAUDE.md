@@ -6,7 +6,7 @@ Enterprise application demonstrating modern software architecture patterns acros
 
 This monorepo contains:
 - **.NET 10.0 REST API** (`apps/api-dotnet/`) - Clean Architecture with CQRS
-- **Angular Web Application** (`apps/angular-web/`) - Coming soon
+- **Angular Web Application** (`apps/angular-web/`) - Angular 21.1.1 + Nx 22.5.1 monorepo
 - **Microservices** (`apps/microservices/`) - Coming soon
 - **Database Scripts** (`database/`) - AdventureWorks schema and migrations
 
@@ -15,7 +15,7 @@ This monorepo contains:
 Each application/service has its own CLAUDE.md with technology-specific instructions:
 
 - **For .NET API work**: See `apps/api-dotnet/.claude/CLAUDE.md`
-- **For Angular work**: See `apps/angular-web/.claude/CLAUDE.md` (future)
+- **For Angular work**: See `apps/angular-web/.claude/CLAUDE.md`
 - **For Microservices**: See `apps/microservices/{service}/.claude/CLAUDE.md` (future)
 
 **When starting work in a specific application:**
@@ -162,9 +162,10 @@ When documentation is needed:
 - **FluentValidation** - Input validation
 - **AutoMapper** - Object mapping
 - **xUnit** - Testing framework
+- **Angular 21** - Frontend web application
+- **Nx 22** - Angular monorepo tooling
 
 ### Future
-- **Angular 17+** - Frontend web application
 - **Docker** - Containerization
 - **Kubernetes** - Orchestration (maybe)
 - **Azure Services** - Cloud infrastructure
@@ -184,7 +185,7 @@ AdventureWorks/
 │   │   ├── src/                     # Source code
 │   │   └── tests/                   # Unit tests
 │   │
-│   ├── angular-web/                 # Angular SPA (future)
+│   ├── angular-web/                 # Angular 21 SPA (Nx monorepo)
 │   └── microservices/               # Additional services (future)
 │
 ├── database/
@@ -211,12 +212,12 @@ AdventureWorks/
 - **"Add a feature to the API"** → Read `apps/api-dotnet/.claude/CLAUDE.md` + `guides/adding-features.md`
 - **"Write tests for the API"** → Read `apps/api-dotnet/.claude/CLAUDE.md` + `guides/testing-guide.md`
 - **"Create a new microservice"** → Read `apps/microservices/.claude/CLAUDE.md` (future)
-- **"Build an Angular component"** → Read `apps/angular-web/.claude/CLAUDE.md` (future)
+- **"Build an Angular component"** → Read `apps/angular-web/.claude/CLAUDE.md`
 
 **Pattern:** Always read the application's CLAUDE.md + relevant guide files when starting work in that application.
 
 ---
 
-**Version**: Monorepo Structure v1.0
-**Last Updated**: 2026-01-17
+**Version**: Monorepo Structure v1.1
+**Last Updated**: 2026-02-22
 **Primary Application**: .NET 10.0 REST API (Clean Architecture with CQRS)

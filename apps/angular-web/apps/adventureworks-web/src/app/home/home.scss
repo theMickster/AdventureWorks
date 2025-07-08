@@ -1,0 +1,50 @@
+.welcome-page {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  min-height: 100vh;
+  padding: 2rem;
+}
+
+.welcome-content {
+  text-align: center;
+  max-width: 480px;
+}
+
+.welcome-logo {
+  width: 160px;
+  height: auto;
+  margin-bottom: 1.5rem;
+}
+
+.welcome-heading {
+  font-size: 2rem;
+  font-weight: 700;
+  color: var(--ac-primary);
+  margin: 0 0 0.5rem;
+}
+
+.welcome-subtitle {
+  font-size: 1.125rem;
+  color: var(--ac-accent);
+  margin: 0 0 2rem;
+}
+
+.welcome-status {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
+  font-size: 0.875rem;
+  color: var(--ac-text-muted);
+  background-color: var(--ac-surface);
+  border: 1px solid var(--ac-border);
+  border-radius: 9999px;
+  padding: 0.5rem 1rem;
+}
+
+.status-dot {
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  background-color: var(--ac-success);
+}
