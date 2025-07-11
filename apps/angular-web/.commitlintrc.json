@@ -1,6 +1,8 @@
 {
   "extends": ["@commitlint/config-conventional"],
   "rules": {
-    "scope-enum": [2, "always", ["api", "web", "db", "auth", "sales", "hr", "shared", "app", "e2e", "deps", "ci"]]
+    "type-empty": [1, "never"],
+    "subject-empty": [1, "never"],
+    "scope-enum": [1, "always", ["api", "web", "db", "auth", "sales", "hr", "shared", "app", "e2e", "deps", "ci"]]
   }
 }
