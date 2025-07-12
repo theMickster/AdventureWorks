@@ -13,14 +13,14 @@
         "outputPath": "dist/apps/adventureworks-web",
         "browser": "apps/adventureworks-web/src/main.ts",
         "tsConfig": "apps/adventureworks-web/tsconfig.app.json",
-        "inlineStyleLanguage": "scss",
+        "inlineStyleLanguage": "css",
         "assets": [
           {
             "glob": "**/*",
             "input": "apps/adventureworks-web/public"
           }
         ],
-        "styles": ["apps/adventureworks-web/src/styles.scss"]
+        "styles": ["apps/adventureworks-web/src/styles.css"]
       },
       "configurations": {
         "production": {

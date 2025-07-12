@@ -15,19 +15,19 @@ Never hardcode hex colors in component styles or templates. Always use `var(--ac
 
 Use the right variable for the right purpose:
 
-| Variable | Use for |
-|---|---|
-| `--ac-primary` | Headers, links, nav active states |
-| `--ac-secondary` | Body text, borders, muted UI |
-| `--ac-accent` | Success states, highlights, badges |
-| `--ac-pop` | CTAs, sale badges, destructive actions |
-| `--ac-background` | Page background |
-| `--ac-surface` | Card/panel backgrounds |
-| `--ac-surface-alt` | Alternate surface (teal tint) |
-| `--ac-border` | Borders, dividers |
-| `--ac-text` | Primary body text |
-| `--ac-text-muted` | Secondary/helper text |
-| `--ac-success`, `--ac-warning`, `--ac-error`, `--ac-info` | Status indicators |
+| Variable                                                  | Use for                                |
+| --------------------------------------------------------- | -------------------------------------- |
+| `--ac-primary`                                            | Headers, links, nav active states      |
+| `--ac-secondary`                                          | Body text, borders, muted UI           |
+| `--ac-accent`                                             | Success states, highlights, badges     |
+| `--ac-pop`                                                | CTAs, sale badges, destructive actions |
+| `--ac-background`                                         | Page background                        |
+| `--ac-surface`                                            | Card/panel backgrounds                 |
+| `--ac-surface-alt`                                        | Alternate surface (teal tint)          |
+| `--ac-border`                                             | Borders, dividers                      |
+| `--ac-text`                                               | Primary body text                      |
+| `--ac-text-muted`                                         | Secondary/helper text                  |
+| `--ac-success`, `--ac-warning`, `--ac-error`, `--ac-info` | Status indicators                      |
 
 ## Utility Classes
 

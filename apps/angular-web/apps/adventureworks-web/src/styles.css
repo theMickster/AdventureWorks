@@ -1,0 +1,234 @@
+/* ==========================================================================
+   Tailwind CSS v4 + DaisyUI v5
+   ========================================================================== */
+
+@import "tailwindcss";
+
+/* Ensure Nx library files are scanned for Tailwind class usage */
+@source "../../../libs";
+
+@plugin "daisyui";
+
+/* ==========================================================================
+   Alpine Circuit v2 - DaisyUI Theme (Light)
+   ========================================================================== */
+
+@plugin "daisyui/theme" {
+  name: "alpine-circuit";
+  default: true;
+  color-scheme: light;
+
+  --color-primary: #0891b2;
+  --color-primary-content: #0c1821;    /* 4.9:1 AA */
+  --color-secondary: #64748b;
+  --color-secondary-content: #ffffff;  /* 4.8:1 AA */
+  --color-accent: #14b8a6;
+  --color-accent-content: #0c1821;     /* 7.2:1 AAA */
+  --color-neutral: #334155;
+  --color-neutral-content: #f8fafc;    /* 9.9:1 AAA */
+  --color-base-100: #ffffff;
+  --color-base-200: #f8fafc;
+  --color-base-300: #f0fdfa;
+  --color-base-content: #164e63;       /* 9.1:1 AAA */
+  --color-info: #0891b2;
+  --color-info-content: #0c1821;       /* 4.9:1 AA */
+  --color-success: #059669;
+  --color-success-content: #0c1821;    /* 4.8:1 AA */
+  --color-warning: #d97706;
+  --color-warning-content: #0c1821;    /* 5.6:1 AA */
+  --color-error: #dc2626;
+  --color-error-content: #ffffff;      /* 4.8:1 AA */
+}
+
+/* ==========================================================================
+   Alpine Circuit v2 - DaisyUI Theme (Dark)
+   ========================================================================== */
+
+@plugin "daisyui/theme" {
+  name: "alpine-circuit-dark";
+  prefersdark: true;
+  color-scheme: dark;
+
+  --color-primary: #22d3ee;
+  --color-primary-content: #0c1821;
+  --color-secondary: #94a3b8;
+  --color-secondary-content: #0c1821;
+  --color-accent: #2dd4bf;
+  --color-accent-content: #0c1821;
+  --color-neutral: #1e293b;
+  --color-neutral-content: #e0f2fe;
+  --color-base-100: #0c1821;
+  --color-base-200: #132634;
+  --color-base-300: #1a3344;
+  --color-base-content: #e0f2fe;
+  --color-info: #22d3ee;
+  --color-info-content: #0c1821;
+  --color-success: #10b981;
+  --color-success-content: #0c1821;
+  --color-warning: #f59e0b;
+  --color-warning-content: #0c1821;
+  --color-error: #f87171;
+  --color-error-content: #0c1821;
+}
+
+/* ==========================================================================
+   Alpine Circuit v2 - Extended Tailwind Color Utilities
+   Generates classes like bg-ac-primary, text-ac-accent-400, etc.
+   ========================================================================== */
+
+@theme {
+  /* Primary (Cyan) */
+  --color-ac-primary-50: #ecfeff;
+  --color-ac-primary-100: #cffafe;
+  --color-ac-primary-200: #a5f3fc;
+  --color-ac-primary-300: #67e8f9;
+  --color-ac-primary-400: #22d3ee;
+  --color-ac-primary-500: #06b6d4;
+  --color-ac-primary-600: #0891b2;
+  --color-ac-primary-700: #0e7490;
+  --color-ac-primary-800: #155e75;
+  --color-ac-primary-900: #164e63;
+  --color-ac-primary: #0891b2;
+
+  /* Secondary (Slate) */
+  --color-ac-secondary-50: #f8fafc;
+  --color-ac-secondary-100: #f1f5f9;
+  --color-ac-secondary-200: #e2e8f0;
+  --color-ac-secondary-300: #cbd5e1;
+  --color-ac-secondary-400: #94a3b8;
+  --color-ac-secondary-500: #64748b;
+  --color-ac-secondary-600: #475569;
+  --color-ac-secondary-700: #334155;
+  --color-ac-secondary-800: #1e293b;
+  --color-ac-secondary-900: #0f172a;
+  --color-ac-secondary: #64748b;
+
+  /* Accent (Teal) */
+  --color-ac-accent-50: #f0fdfa;
+  --color-ac-accent-100: #ccfbf1;
+  --color-ac-accent-200: #99f6e4;
+  --color-ac-accent-300: #5eead4;
+  --color-ac-accent-400: #2dd4bf;
+  --color-ac-accent-500: #14b8a6;
+  --color-ac-accent-600: #0d9488;
+  --color-ac-accent-700: #0f766e;
+  --color-ac-accent-800: #115e59;
+  --color-ac-accent-900: #134e4a;
+  --color-ac-accent: #14b8a6;
+
+  /* Pop (Crimson) */
+  --color-ac-pop-50: #fef2f2;
+  --color-ac-pop-100: #fee2e2;
+  --color-ac-pop-200: #fecaca;
+  --color-ac-pop-300: #fca5a5;
+  --color-ac-pop-400: #f87171;
+  --color-ac-pop-500: #ef4444;
+  --color-ac-pop-600: #dc2626;
+  --color-ac-pop-700: #b91c1c;
+  --color-ac-pop-800: #991b1b;
+  --color-ac-pop-900: #7f1d1d;
+  --color-ac-pop: #dc2626;
+}
+
+/* ==========================================================================
+   Alpine Circuit v2 - CSS Custom Properties (backward compatibility)
+   These are preserved so existing var(--ac-*) references continue to work.
+   New code should prefer Tailwind ac-* utilities or DaisyUI classes.
+   ========================================================================== */
+
+:root {
+  /* Surfaces */
+  --ac-background: #ffffff;
+  --ac-surface: #f8fafc;
+  --ac-surface-alt: #f0fdfa;
+  --ac-border: #e2e8f0;
+
+  /* Text */
+  --ac-text: #164e63;
+  --ac-text-muted: #64748b;
+
+  /* Brand Colors (light mode values) */
+  --ac-primary: #0891b2;
+  --ac-primary-hover: #0e7490;
+  --ac-secondary: #64748b;
+  --ac-accent: #14b8a6;
+  --ac-pop: #dc2626;
+  --ac-pop-hover: #b91c1c;
+
+  /* Semantic */
+  --ac-success: #059669;
+  --ac-warning: #d97706;
+  --ac-error: #dc2626;
+  --ac-info: #0891b2;
+}
+
+[data-theme="alpine-circuit-dark"],
+[data-theme="dark"],
+.dark {
+  /* Surfaces */
+  --ac-background: #0c1821;
+  --ac-surface: #132634;
+  --ac-surface-alt: #1a3344;
+  --ac-border: #334155;
+
+  /* Text */
+  --ac-text: #e0f2fe;
+  --ac-text-muted: #94a3b8;
+
+  /* Brand Colors (dark mode - brightened) */
+  --ac-primary: #22d3ee;
+  --ac-primary-hover: #67e8f9;
+  --ac-secondary: #94a3b8;
+  --ac-accent: #2dd4bf;
+  --ac-pop: #f87171;
+  --ac-pop-hover: #fca5a5;
+
+  /* Semantic */
+  --ac-success: #10b981;
+  --ac-warning: #f59e0b;
+  --ac-error: #f87171;
+  --ac-info: #22d3ee;
+}
+
+/* Legacy utility classes (prefer DaisyUI btn/card classes in new code) */
+.ac-btn-primary {
+  background-color: var(--ac-primary);
+  color: white;
+}
+.ac-btn-primary:hover {
+  background-color: var(--ac-primary-hover);
+}
+
+.ac-btn-pop {
+  background-color: var(--ac-pop);
+  color: white;
+}
+.ac-btn-pop:hover {
+  background-color: var(--ac-pop-hover);
+}
+
+.ac-card {
+  background-color: var(--ac-surface);
+  border: 1px solid var(--ac-border);
+}
+
+.ac-text-gradient {
+  background: linear-gradient(135deg, var(--ac-primary), var(--ac-accent));
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+}
+
+body {
+  background-color: var(--ac-background);
+  color: var(--ac-text);
+  font-family:
+    "Inter",
+    -apple-system,
+    BlinkMacSystemFont,
+    "Segoe UI",
+    Roboto,
+    sans-serif;
+  margin: 0;
+  padding: 0;
+}

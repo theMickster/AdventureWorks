@@ -3,5 +3,6 @@
   "editor.defaultFormatter": "esbenp.prettier-vscode",
   "[csharp]": {
     "editor.defaultFormatter": "ms-dotnettools.csharp"
-  }
+  },
+  "cSpell.words": ["adventureworks", "nameof", "Rowguid", "VSTS", "wiql"]
 }

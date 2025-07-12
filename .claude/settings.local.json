@@ -12,7 +12,10 @@
       "Bash(find:*)",
       "Bash(ls:*)",
       "Bash(wc:*)",
-      "Bash(head:*)"
+      "Bash(head:*)",
+      "Bash(az boards:*)",
+      "Bash(npm install)",
+      "WebFetch(domain:daisyui.com)"
     ],
     "deny": [],
     "ask": []

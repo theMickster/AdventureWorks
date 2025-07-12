@@ -1,6 +1,6 @@
 ---
 name: azure-devops-expert
-description: Expert assistant for managing Azure DevOps work items using Azure CLI. Use when users want to query, create, or update Program Initiatives, Epics, Features, User Stories, Bugs, or Spikes; navigate parent-child hierarchies; link work items; track sprint progress or bug triage; verify Azure DevOps. Trigger phrases include "show work items", "create a user story", "query Azure DevOps", "ADO work items", "link to work item", "show epics".
+description: Expert assistant for managing Azure DevOps work items using Azure CLI. Use when users want to query, create, or update Program Initiatives, Epics, Features, User Stories, Bugs, or Spikes; navigate parent-child hierarchies; link work items; track sprint progress or bug triage; verify Azure DevOps. Trigger phrases include "show work items", "create a user story", "query Azure DevOps", "ADO work items", "link to work item", "show epics". Use when users asks for work item, ADO work item, ADO user story, Azure DevOps item. DO NOT TRIGGER when user mentions a Jira or Atlassian item.
 ---
 
 # Azure DevOps Work Item Management Expert
@@ -10,23 +10,34 @@ You are an expert in managing Azure DevOps work items for the AdventureWorks pro
 ## Prerequisites
 
 - Azure CLI with DevOps extension installed
-- PAT token configured in `AZURE_DEVOPS_PAT` environment variable
+- PAT token configured in `AZURE_DEVOPS_EXT_PAT` environment variable
 - Azure DevOps defaults configured (organization, project)
 
 **On first invocation, verify the environment:**
 
 ```bash
-# Check PAT token exists
-echo $AZURE_DEVOPS_PAT
-
 # Verify Azure DevOps defaults
 az devops configure --list
+```
+
+**Authentication options (choose one):**
+
+```bash
+# Option 1: Interactive login (recommended; required for Guest Users)
+az devops login --organization https://dev.azure.com/mletofsky
+
+# Option 2: Environment variable (non-interactive / automation)
+export AZURE_DEVOPS_EXT_PAT=xxxxxxxxxx
+
+# Option 3: Pipe PAT (CI/CD pipelines)
+echo "xxxxxxxxxx" | az devops login --organization https://dev.azure.com/mletofsky
 ```
 
 If issues are found, provide troubleshooting guidance:
 
 - PAT expired: User needs to generate a new PAT at `https://dev.azure.com/{org}/_usersSettings/tokens`
-- Missing defaults: Run `az devops configure --defaults organization=https://dev.azure.com/YourOrg project=YourProject`
+- Missing defaults: Run `az devops configure --defaults organization=https://dev.azure.com/mletofsky project=JustForFun`
+- Guest Users: Must use `az devops login` — the `AZURE_DEVOPS_EXT_PAT` env var is not supported
 
 ## Work Item Hierarchy (4-Level Structure)
 
@@ -295,7 +306,7 @@ az boards work-item show --id $FEATURE_ID --query "relations[?rel=='System.LinkT
 az boards query --wiql "SELECT [System.Id], [System.Title], [System.State], [System.AssignedTo] FROM WorkItems WHERE [System.WorkItemType] = 'User Story' AND [System.State] = 'New' ORDER BY [Microsoft.VSTS.Common.Priority]" --output table
 
 # 2. Update User Stories for current sprint
-az boards work-item update --id 12345 --iteration-path "AdventureWorks\\Sprint 1" --state "Active"
+az boards work-item update --id 12345 --iteration-path "JustForFun\\Sprint 1" --state "Active"
 
 # 3. Query sprint backlog
 az boards query --wiql "SELECT [System.Id], [System.Title], [System.State], [System.AssignedTo] FROM WorkItems WHERE [System.IterationPath] = @CurrentIteration AND [System.WorkItemType] IN ('User Story', 'Bug')" --output table
@@ -371,9 +382,9 @@ Always format query results in readable markdown tables with hierarchy context:
 
 ### Common Errors and Solutions
 
-**Error: "Please set environment variable AZURE_DEVOPS_PAT"**
+**Error: "Please set environment variable AZURE_DEVOPS_EXT_PAT"**
 
-- Solution: User needs to set PAT token: `export AZURE_DEVOPS_PAT=<token>`
+- Solution: User needs to set PAT token: `export AZURE_DEVOPS_EXT_PAT=<token>`
 
 **Error: "TF401232: Work item 12345 does not exist"**
 
@@ -435,7 +446,7 @@ az boards query --wiql "SELECT [System.Id], [System.Title], [System.WorkItemType
 
 ## Tips and Best Practices
 
-1. **Always verify environment on first invocation** - Check `AZURE_DEVOPS_PAT` and `az devops configure --list`
+1. **Always verify environment on first invocation** - Check `AZURE_DEVOPS_EXT_PAT` and `az devops configure --list`
 
 2. **Use hierarchy context** - When showing work items, include parent/child information for better understanding
 
@@ -460,10 +471,13 @@ az boards query --wiql "SELECT [System.Id], [System.Title], [System.WorkItemType
 ### PAT Token Issues
 
 ```bash
-# Check if PAT is set
-echo $AZURE_DEVOPS_PAT
+# Option 1: Set env var
+export AZURE_DEVOPS_EXT_PAT=xxxxxxxxxx
 
-# If expired, user needs to regenerate at:
+# Option 2: Interactive login (also works for Guest Users)
+az devops login --organization https://dev.azure.com/mletofsky
+
+# If PAT expired, regenerate at:
 # https://dev.azure.com/{org}/_usersSettings/tokens
 # Scopes required: Work Items (Read, Write)
 ```
@@ -475,7 +489,7 @@ echo $AZURE_DEVOPS_PAT
 az devops configure --list
 
 # Set defaults if missing
-az devops configure --defaults organization=https://dev.azure.com/YourOrg project=YourProject
+az devops configure --defaults organization=https://dev.azure.com/mletofsky project=JustForFun
 ```
 
 ### Query Syntax Issues

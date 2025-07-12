@@ -3,7 +3,7 @@ paths:
   - "apps/angular-web/**/*.ts"
 ---
 
-# Angular 21 Signals & Zoneless Patterns
+# Angular Signals & Zoneless Patterns
 
 This workspace is **zoneless** (no Zone.js). Follow modern Angular signal APIs.
 
@@ -23,12 +23,12 @@ This workspace is **zoneless** (no Zone.js). Follow modern Angular signal APIs.
 
 Prefer signal-based component APIs over decorators:
 
-| Instead of | Use |
-|---|---|
-| `@Input()` | `input()` / `input.required()` |
-| `@Output()` | `output()` |
-| Two-way binding decorator | `model()` |
-| `@ViewChild()` | `viewChild()` / `viewChildren()` |
+| Instead of                | Use                              |
+| ------------------------- | -------------------------------- |
+| `@Input()`                | `input()` / `input.required()`   |
+| `@Output()`               | `output()`                       |
+| Two-way binding decorator | `model()`                        |
+| `@ViewChild()`            | `viewChild()` / `viewChildren()` |
 
 Decorators are not banned — they're allowed when interop demands it — but signal APIs are the default.
 
