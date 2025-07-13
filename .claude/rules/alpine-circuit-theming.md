@@ -1,47 +1,61 @@
 ---
 paths:
-  - "apps/angular-web/**/*.scss"
+  - "apps/angular-web/**/*.css"
   - "apps/angular-web/**/*.html"
   - "apps/angular-web/**/*.ts"
 ---
 
 # Alpine Circuit v2 Theming Rules
 
+## Class Preference Order
+
+When styling, use this priority:
+
+1. **DaisyUI component class** — `btn btn-primary`, `card`, `badge badge-accent`, `alert alert-info`
+2. **Tailwind `ac-*` utility** — `bg-ac-primary`, `text-ac-accent-400`, `border-ac-secondary-200`
+3. **DaisyUI semantic utility** — `bg-base-200`, `text-base-content`, `text-primary`
+4. **CSS custom property** — `var(--ac-primary)` in component CSS (legacy — avoid in new code)
+
 ## No Raw Hex Values
 
-Never hardcode hex colors in component styles or templates. Always use `var(--ac-*)` CSS custom properties.
+Never hardcode hex colors in component styles or templates. Use DaisyUI theme classes or Tailwind `ac-*` utilities.
 
-## Semantic Color Map
+## Available DaisyUI Semantic Colors
 
-Use the right variable for the right purpose:
+These map to Alpine Circuit colors and switch automatically with light/dark theme:
 
-| Variable                                                  | Use for                                |
-| --------------------------------------------------------- | -------------------------------------- |
-| `--ac-primary`                                            | Headers, links, nav active states      |
-| `--ac-secondary`                                          | Body text, borders, muted UI           |
-| `--ac-accent`                                             | Success states, highlights, badges     |
-| `--ac-pop`                                                | CTAs, sale badges, destructive actions |
-| `--ac-background`                                         | Page background                        |
-| `--ac-surface`                                            | Card/panel backgrounds                 |
-| `--ac-surface-alt`                                        | Alternate surface (teal tint)          |
-| `--ac-border`                                             | Borders, dividers                      |
-| `--ac-text`                                               | Primary body text                      |
-| `--ac-text-muted`                                         | Secondary/helper text                  |
-| `--ac-success`, `--ac-warning`, `--ac-error`, `--ac-info` | Status indicators                      |
+| DaisyUI Class | Light Value | Use for |
+|---------------|-------------|---------|
+| `primary` | `#0891b2` | Headers, links, nav active states |
+| `secondary` | `#64748b` | Body text, borders, muted UI |
+| `accent` | `#14b8a6` | Highlights, badges |
+| `error` | `#dc2626` | CTAs, destructive actions, errors |
+| `success` | `#059669` | Success states |
+| `warning` | `#d97706` | Warning indicators |
+| `info` | `#0891b2` | Info alerts |
+| `base-100/200/300` | `#fff/#f8fafc/#f0fdfa` | Surfaces, backgrounds |
+| `base-content` | `#164e63` | Primary body text |
 
-## Utility Classes
+## Alpine Circuit Tailwind Utilities
 
-Only these 4 utility classes are defined in `styles.scss`:
+Full 50-900 color scales for brand colors (defined via `@theme` in `styles.css`):
+- `bg-ac-primary-{50-900}`, `text-ac-primary-{50-900}`
+- `bg-ac-secondary-{50-900}`, `bg-ac-accent-{50-900}`, `bg-ac-pop-{50-900}`
+- Shorthand defaults: `bg-ac-primary` = `#0891b2`, `bg-ac-pop` = `#dc2626`
 
-- `.ac-btn-primary` — primary button with hover
-- `.ac-btn-pop` — CTA/pop button with hover
-- `.ac-card` — surface background + border
-- `.ac-text-gradient` — primary-to-accent gradient text
+## Legacy CSS Custom Properties
+
+Still available in `styles.css` for backward compat (`:root` / `[data-theme="dark"]`):
+- `--ac-primary`, `--ac-secondary`, `--ac-accent`, `--ac-pop`
+- `--ac-background`, `--ac-surface`, `--ac-border`, `--ac-text`, `--ac-text-muted`
+- `.ac-btn-primary`, `.ac-card`, `.ac-text-gradient` — prefer DaisyUI equivalents
 
 ## Dark Mode
 
-Theme switching uses `[data-theme="dark"]` attribute (not `@media (prefers-color-scheme)`). All `--ac-*` vars are re-mapped automatically — no per-component dark mode overrides needed.
+- **DaisyUI**: Handled by `data-theme` attribute on `<html>` — `alpine-circuit` (light) or `alpine-circuit-dark` (dark)
+- **CSS vars**: Also respond to `[data-theme="dark"]` and `.dark` class for backward compat
+- No per-component dark mode overrides needed
 
-## Tailwind (Feature 572)
+## Critical: No Sass
 
-When Tailwind is integrated, use `ac-*` Tailwind classes in templates (e.g., `bg-ac-primary`, `text-ac-muted`). Config is at `libs/shared/util/src/lib/theme/alpine-circuit-tailwind.ts`. CSS vars remain the source of truth in SCSS files.
+Tailwind v4 is incompatible with Sass. Global styles must be `.css`, not `.scss`. The Angular builder's inline style language is set to `css`.
