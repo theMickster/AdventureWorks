@@ -1,1 +1,1 @@
-export { AppLayoutComponent } from './lib/shared-feature-shell/shared-feature-shell';
+export { AppLayoutComponent } from './lib/app-layout/app-layout';

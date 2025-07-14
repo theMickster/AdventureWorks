@@ -1,5 +1,5 @@
 import { ComponentFixture, TestBed } from '@angular/core/testing';
-import { AppLayoutComponent } from './shared-feature-shell';
+import { AppLayoutComponent } from './app-layout';
 
 describe('AppLayoutComponent', () => {
   let component: AppLayoutComponent;

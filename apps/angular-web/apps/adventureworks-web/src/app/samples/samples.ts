@@ -13,9 +13,7 @@ export class SamplesComponent {
 
   toggleTheme(): void {
     this.darkMode.update((v) => !v);
-    const theme = this.darkMode()
-      ? 'alpine-circuit-dark'
-      : 'alpine-circuit';
-    document.documentElement.setAttribute('data-theme', theme);
+    const theme = this.darkMode() ? 'alpine-circuit-dark' : 'alpine-circuit';
+    document.documentElement.dataset['theme'] = theme;
   }
 }

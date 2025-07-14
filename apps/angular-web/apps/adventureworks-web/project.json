@@ -20,7 +20,7 @@
             "input": "apps/adventureworks-web/public"
           }
         ],
-        "styles": ["apps/adventureworks-web/src/styles.css"]
+        "styles": ["node_modules/@fortawesome/fontawesome-free/css/all.css", "apps/adventureworks-web/src/styles.css"]
       },
       "configurations": {
         "production": {
