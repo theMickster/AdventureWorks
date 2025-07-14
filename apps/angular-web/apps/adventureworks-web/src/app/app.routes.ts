@@ -23,13 +23,28 @@ export const appRoutes: Route[] = [
     loadComponent: () => import('@adventureworks-web/shared/feature-shell').then((m) => m.AppLayoutComponent),
     children: [
       { path: '', redirectTo: 'dashboard', pathMatch: 'full' },
-      { path: 'dashboard', component: PlaceholderComponent },
-      { path: 'sales/stores', component: PlaceholderComponent },
-      { path: 'sales/persons', component: PlaceholderComponent },
-      { path: 'hr/employees', component: PlaceholderComponent },
-      { path: 'hr/departments', component: PlaceholderComponent },
+      { path: 'dashboard', data: { breadcrumb: 'Dashboard' }, component: PlaceholderComponent },
+      {
+        path: 'sales',
+        data: { breadcrumb: 'Sales' },
+        children: [
+          { path: '', redirectTo: 'stores', pathMatch: 'full' },
+          { path: 'stores', data: { breadcrumb: 'Stores' }, component: PlaceholderComponent },
+          { path: 'persons', data: { breadcrumb: 'Sales Persons' }, component: PlaceholderComponent },
+        ],
+      },
+      {
+        path: 'hr',
+        data: { breadcrumb: 'Human Resources' },
+        children: [
+          { path: '', redirectTo: 'employees', pathMatch: 'full' },
+          { path: 'employees', data: { breadcrumb: 'Employees' }, component: PlaceholderComponent },
+          { path: 'departments', data: { breadcrumb: 'Departments' }, component: PlaceholderComponent },
+        ],
+      },
       {
         path: 'samples',
+        data: { breadcrumb: 'Samples' },
         loadComponent: () => import('./samples/samples').then((m) => m.SamplesComponent),
       },
     ],

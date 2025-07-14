@@ -22,9 +22,29 @@
           </label>
         </div>
 
-        <!-- Placeholder: breadcrumbs go here (Story 3) -->
+        <!-- Breadcrumbs -->
         <div id="aw-navbar-center" class="flex-1 px-4">
-          <span class="text-lg font-semibold text-base-content">AdventureWorks</span>
+          <nav aria-label="Breadcrumb">
+            <div class="breadcrumbs text-sm">
+              <ul>
+                <li>
+                  <a routerLink="/dashboard">
+                    <i class="fa-solid fa-house" aria-hidden="true"></i>
+                    Home
+                  </a>
+                </li>
+                @for (crumb of breadcrumbs(); track crumb.url) {
+                  @if ($last) {
+                    <li>{{ crumb.label }}</li>
+                  } @else {
+                    <li>
+                      <a [routerLink]="crumb.url">{{ crumb.label }}</a>
+                    </li>
+                  }
+                }
+              </ul>
+            </div>
+          </nav>
         </div>
 
         <!-- Placeholder: user menu + theme toggle go here (Story 4) -->
