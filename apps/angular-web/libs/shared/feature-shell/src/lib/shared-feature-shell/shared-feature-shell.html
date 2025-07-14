@@ -1,0 +1,68 @@
+<!-- Skip to content (WCAG AA) -->
+<a
+  id="aw-skip-link"
+  class="sr-only focus:not-sr-only focus:absolute focus:z-50 focus:rounded focus:bg-base-100 focus:p-4 focus:text-primary focus:underline focus:shadow-lg"
+  href="#main-content"
+>
+  Skip to main content
+</a>
+
+<div id="aw-shell" class="drawer lg:drawer-open">
+  <input id="aw-drawer" type="checkbox" class="drawer-toggle" />
+
+  <!-- Main content area -->
+  <div id="aw-drawer-content" class="drawer-content flex flex-col bg-base-100 h-screen">
+    <!-- Top navbar -->
+    <header id="aw-header" role="banner">
+      <nav id="aw-navbar" class="navbar bg-base-100 shadow-sm sticky top-0 z-30" aria-label="Global">
+        <!-- Hamburger (mobile only) -->
+        <div class="flex-none lg:hidden">
+          <label id="aw-sidebar-open" for="aw-drawer" aria-label="Open sidebar" class="btn btn-square btn-ghost">
+            <svg
+              xmlns="http://www.w3.org/2000/svg"
+              fill="none"
+              viewBox="0 0 24 24"
+              class="inline-block h-6 w-6 stroke-current"
+            >
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16" />
+            </svg>
+          </label>
+        </div>
+
+        <!-- Placeholder: breadcrumbs go here (Story 3) -->
+        <div id="aw-navbar-center" class="flex-1 px-4">
+          <span class="text-lg font-semibold text-base-content">AdventureWorks</span>
+        </div>
+
+        <!-- Placeholder: user menu + theme toggle go here (Story 4) -->
+        <div id="aw-navbar-end" class="flex-none"></div>
+      </nav>
+    </header>
+
+    <!-- Page content -->
+    <main id="main-content" role="main" class="flex-1 overflow-y-auto p-6">
+      <router-outlet />
+    </main>
+  </div>
+
+  <!-- Sidebar -->
+  <div id="aw-drawer-side" class="drawer-side z-40">
+    <label id="aw-sidebar-close" for="aw-drawer" aria-label="Close sidebar" class="drawer-overlay"></label>
+
+    <nav id="aw-sidebar" aria-label="Primary" role="navigation" class="bg-base-200 min-h-full w-72 flex flex-col">
+      <!-- Logo (h-16 + border-b aligns with navbar height + shadow) -->
+      <div id="aw-sidebar-brand" class="flex h-16 items-center gap-3 border-b border-base-300 px-4">
+        <img ngSrc="logos/aw-badge-transparent.png" alt="AdventureWorks" width="40" height="40" class="h-10 w-10" />
+        <div>
+          <h2 class="text-lg font-bold text-base-content leading-tight">AdventureWorks</h2>
+          <p class="text-xs text-base-content/60">Cycling</p>
+        </div>
+      </div>
+
+      <!-- Placeholder: navigation menu goes here (Story 2) -->
+      <div id="aw-sidebar-nav" class="flex-1 px-4 py-4">
+        <p class="text-sm text-base-content/50">Navigation items (Story 2)</p>
+      </div>
+    </nav>
+  </div>
+</div>

@@ -3,11 +3,16 @@ import { Route } from '@angular/router';
 export const appRoutes: Route[] = [
   {
     path: '',
-    loadComponent: () => import('./home/home').then((m) => m.HomeComponent),
-  },
-  {
-    path: 'samples',
-    loadComponent: () =>
-      import('./samples/samples').then((m) => m.SamplesComponent),
+    loadComponent: () => import('@adventureworks-web/shared/feature-shell').then((m) => m.AppLayoutComponent),
+    children: [
+      {
+        path: '',
+        loadComponent: () => import('./home/home').then((m) => m.HomeComponent),
+      },
+      {
+        path: 'samples',
+        loadComponent: () => import('./samples/samples').then((m) => m.SamplesComponent),
+      },
+    ],
   },
 ];

@@ -15,7 +15,8 @@
     "baseUrl": ".",
     "paths": {
       "@adventureworks-web/shared/ui": ["libs/shared/ui/src/index.ts"],
-      "@adventureworks-web/shared/util": ["libs/shared/util/src/index.ts"]
+      "@adventureworks-web/shared/util": ["libs/shared/util/src/index.ts"],
+      "@adventureworks-web/shared/feature-shell": ["libs/shared/feature-shell/src/index.ts"]
     }
   },
   "exclude": ["node_modules", "tmp"]
