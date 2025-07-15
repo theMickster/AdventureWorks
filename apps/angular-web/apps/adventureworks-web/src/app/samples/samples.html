@@ -1,33 +1,4 @@
-<!-- Navbar -->
-<div class="navbar bg-base-200 shadow-sm">
-  <div class="navbar-start">
-    <a routerLink="/" class="btn btn-ghost text-lg font-bold text-primary"> AdventureWorks </a>
-  </div>
-  <div class="navbar-center hidden md:flex">
-    <ul class="menu menu-horizontal gap-1 px-1">
-      <li><a class="font-medium">Dashboard</a></li>
-      <li><a class="font-medium text-primary">Samples</a></li>
-      <li><a class="font-medium">Sales</a></li>
-      <li><a class="font-medium">HR</a></li>
-    </ul>
-  </div>
-  <div class="navbar-end gap-2">
-    <button class="btn btn-ghost btn-sm" (click)="toggleTheme()">
-      @if (darkMode()) {
-        <span class="text-lg">&#9728;</span> Light
-      } @else {
-        <span class="text-lg">&#9790;</span> Dark
-      }
-    </button>
-    <div class="avatar placeholder">
-      <div class="w-9 rounded-full bg-primary text-primary-content">
-        <span class="text-sm">ML</span>
-      </div>
-    </div>
-  </div>
-</div>
-
-<div class="min-h-screen bg-base-100">
+<div id="aw-samples-page">
   <!-- Hero -->
   <div class="hero bg-base-200 py-12">
     <div class="hero-content text-center">

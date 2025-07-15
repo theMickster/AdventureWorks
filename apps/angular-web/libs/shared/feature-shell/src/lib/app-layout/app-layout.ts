@@ -2,6 +2,7 @@ import { NgOptimizedImage } from '@angular/common';
 import { afterNextRender, ChangeDetectionStrategy, Component, DestroyRef, inject, signal } from '@angular/core';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { ActivatedRoute, NavigationEnd, Router, RouterLink, RouterLinkActive, RouterOutlet } from '@angular/router';
+import { ThemeService } from '@adventureworks-web/shared/util';
 import { filter, map, startWith } from 'rxjs';
 
 interface Breadcrumb {
@@ -20,6 +21,7 @@ export class AppLayoutComponent {
   private readonly router = inject(Router);
   private readonly activatedRoute = inject(ActivatedRoute);
   private readonly destroyRef = inject(DestroyRef);
+  protected readonly themeService = inject(ThemeService);
 
   protected readonly breadcrumbs = signal<Breadcrumb[]>([]);
 

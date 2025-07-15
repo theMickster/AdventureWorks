@@ -16,7 +16,7 @@
     <header id="aw-header" role="banner">
       <nav id="aw-navbar" class="navbar bg-base-100 shadow-sm sticky top-0 z-30" aria-label="Global">
         <!-- Hamburger (mobile only) -->
-        <div class="flex-none lg:hidden">
+        <div id="aw-navbar-start" class="flex-none lg:hidden">
           <label id="aw-sidebar-open" for="aw-drawer" aria-label="Open sidebar" class="btn btn-square btn-ghost">
             <i class="fa-solid fa-bars text-lg" aria-hidden="true"></i>
           </label>
@@ -24,8 +24,8 @@
 
         <!-- Breadcrumbs -->
         <div id="aw-navbar-center" class="flex-1 px-4">
-          <nav aria-label="Breadcrumb">
-            <div class="breadcrumbs text-sm">
+          <nav id="aw-breadcrumb-nav" aria-label="Breadcrumb">
+            <div id="aw-breadcrumbs" class="breadcrumbs text-sm">
               <ul>
                 <li>
                   <a routerLink="/dashboard">
@@ -47,8 +47,47 @@
           </nav>
         </div>
 
-        <!-- Placeholder: user menu + theme toggle go here (Story 4) -->
-        <div id="aw-navbar-end" class="flex-none"></div>
+        <!-- Theme toggle + user menu -->
+        <div id="aw-navbar-end" class="flex-none flex items-center gap-1">
+          <!-- Theme toggle -->
+          <button id="aw-theme-toggle" (click)="themeService.toggle()" class="btn btn-ghost btn-circle">
+            @if (themeService.darkMode()) {
+              <i class="fa-solid fa-sun text-lg" aria-hidden="true"></i>
+              <span class="sr-only">Switch to light theme</span>
+            } @else {
+              <i class="fa-solid fa-moon text-lg" aria-hidden="true"></i>
+              <span class="sr-only">Switch to dark theme</span>
+            }
+          </button>
+
+          <!-- User avatar dropdown -->
+          <div id="aw-user-menu" class="dropdown dropdown-end">
+            <button id="aw-user-menu-trigger" class="btn btn-ghost btn-circle" aria-haspopup="true">
+              <div class="avatar placeholder">
+                <div class="flex h-8 w-8 items-center justify-center rounded-full bg-neutral text-neutral-content">
+                  <span class="text-xs font-semibold">AW</span>
+                </div>
+              </div>
+              <span class="sr-only">User menu</span>
+            </button>
+            <ul
+              id="aw-user-menu-dropdown"
+              tabindex="-1"
+              class="menu menu-sm dropdown-content bg-base-100 rounded-box z-50 mt-3 w-52 p-2 shadow-lg"
+            >
+              <li class="menu-title">Admin User</li>
+              <li id="aw-user-menu-profile">
+                <a><i class="fa-solid fa-user" aria-hidden="true"></i> Profile</a>
+              </li>
+              <li id="aw-user-menu-settings">
+                <a><i class="fa-solid fa-gear" aria-hidden="true"></i> Settings</a>
+              </li>
+              <li id="aw-user-menu-signout" class="border-t border-base-300 mt-1 pt-1">
+                <a class="text-error"><i class="fa-solid fa-right-from-bracket" aria-hidden="true"></i> Sign Out</a>
+              </li>
+            </ul>
+          </div>
+        </div>
       </nav>
     </header>
 
@@ -75,7 +114,7 @@
       <!-- Navigation menu -->
       <ul id="aw-sidebar-nav" class="menu menu-md w-full flex-1 px-2 py-4">
         <!-- Dashboard -->
-        <li>
+        <li id="aw-nav-dashboard">
           <a routerLink="/dashboard" routerLinkActive="menu-active" [routerLinkActiveOptions]="{ exact: true }">
             <i class="fa-solid fa-gauge-high" aria-hidden="true"></i>
             Dashboard
@@ -90,7 +129,7 @@
               Sales
             </summary>
             <ul>
-              <li>
+              <li id="aw-nav-sales-stores">
                 <a
                   routerLink="/sales/stores"
                   routerLinkActive="menu-active"
@@ -99,7 +138,7 @@
                   Stores
                 </a>
               </li>
-              <li>
+              <li id="aw-nav-sales-persons">
                 <a
                   routerLink="/sales/persons"
                   routerLinkActive="menu-active"
@@ -120,7 +159,7 @@
               Human Resources
             </summary>
             <ul>
-              <li>
+              <li id="aw-nav-hr-employees">
                 <a
                   routerLink="/hr/employees"
                   routerLinkActive="menu-active"
@@ -129,7 +168,7 @@
                   Employees
                 </a>
               </li>
-              <li>
+              <li id="aw-nav-hr-departments">
                 <a
                   routerLink="/hr/departments"
                   routerLinkActive="menu-active"
@@ -146,7 +185,7 @@
         <li class="menu-title mt-4">System</li>
 
         <!-- Samples (design system showcase) -->
-        <li>
+        <li id="aw-nav-samples">
           <a routerLink="/samples" routerLinkActive="menu-active" [routerLinkActiveOptions]="{ exact: true }">
             <i class="fa-solid fa-palette" aria-hidden="true"></i>
             Samples
