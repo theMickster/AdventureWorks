@@ -22,6 +22,7 @@ export class AppLayoutComponent {
   private readonly activatedRoute = inject(ActivatedRoute);
   private readonly destroyRef = inject(DestroyRef);
   protected readonly themeService = inject(ThemeService);
+  protected readonly currentYear = new Date().getFullYear();
 
   protected readonly breadcrumbs = signal<Breadcrumb[]>([]);
 

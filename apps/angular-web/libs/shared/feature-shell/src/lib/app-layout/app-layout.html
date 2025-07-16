@@ -8,7 +8,7 @@
 </a>
 
 <div id="aw-shell" class="drawer lg:drawer-open">
-  <input id="aw-drawer" type="checkbox" class="drawer-toggle" />
+  <input id="aw-drawer" type="checkbox" class="drawer-toggle" aria-label="Sidebar toggle" />
 
   <!-- Main content area -->
   <div id="aw-drawer-content" class="drawer-content flex flex-col bg-base-100 h-screen">
@@ -35,7 +35,7 @@
                 </li>
                 @for (crumb of breadcrumbs(); track crumb.url) {
                   @if ($last) {
-                    <li>{{ crumb.label }}</li>
+                    <li aria-current="page">{{ crumb.label }}</li>
                   } @else {
                     <li>
                       <a [routerLink]="crumb.url">{{ crumb.label }}</a>
@@ -77,13 +77,15 @@
             >
               <li class="menu-title">Admin User</li>
               <li id="aw-user-menu-profile">
-                <a><i class="fa-solid fa-user" aria-hidden="true"></i> Profile</a>
+                <button><i class="fa-solid fa-user" aria-hidden="true"></i> Profile</button>
               </li>
               <li id="aw-user-menu-settings">
-                <a><i class="fa-solid fa-gear" aria-hidden="true"></i> Settings</a>
+                <button><i class="fa-solid fa-gear" aria-hidden="true"></i> Settings</button>
               </li>
               <li id="aw-user-menu-signout" class="border-t border-base-300 mt-1 pt-1">
-                <a class="text-error"><i class="fa-solid fa-right-from-bracket" aria-hidden="true"></i> Sign Out</a>
+                <button class="text-error">
+                  <i class="fa-solid fa-right-from-bracket" aria-hidden="true"></i> Sign Out
+                </button>
               </li>
             </ul>
           </div>
@@ -95,6 +97,11 @@
     <main id="main-content" role="main" class="flex-1 overflow-y-auto p-6">
       <router-outlet />
     </main>
+
+    <!-- Footer -->
+    <footer id="aw-footer" class="border-t border-base-300 px-6 py-3 text-center text-xs text-base-content/50">
+      &copy; 2005&ndash;{{ currentYear }} AdventureWorks Cycling. All rights reserved.
+    </footer>
   </div>
 
   <!-- Sidebar -->
