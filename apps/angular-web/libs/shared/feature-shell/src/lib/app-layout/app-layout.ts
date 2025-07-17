@@ -1,5 +1,14 @@
 import { NgOptimizedImage } from '@angular/common';
-import { afterNextRender, ChangeDetectionStrategy, Component, DestroyRef, inject, signal } from '@angular/core';
+import {
+  afterNextRender,
+  ChangeDetectionStrategy,
+  Component,
+  DestroyRef,
+  ElementRef,
+  inject,
+  signal,
+  viewChild,
+} from '@angular/core';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { ActivatedRoute, NavigationEnd, Router, RouterLink, RouterLinkActive, RouterOutlet } from '@angular/router';
 import { ThemeService } from '@adventureworks-web/shared/util';
@@ -25,6 +34,11 @@ export class AppLayoutComponent {
   protected readonly currentYear = new Date().getFullYear();
 
   protected readonly breadcrumbs = signal<Breadcrumb[]>([]);
+  protected readonly userMenuOpen = signal(false);
+
+  private readonly salesNav = viewChild<ElementRef<HTMLElement>>('salesNav');
+  private readonly hrNav = viewChild<ElementRef<HTMLElement>>('hrNav');
+  private readonly userMenuTrigger = viewChild<ElementRef<HTMLButtonElement>>('userMenuTrigger');
 
   constructor() {
     afterNextRender(() => {
@@ -38,16 +52,19 @@ export class AppLayoutComponent {
         .subscribe((crumbs) => {
           this.breadcrumbs.set(crumbs);
 
-          document
-            .getElementById('aw-nav-sales')
-            ?.querySelector('details')
+          this.salesNav()
+            ?.nativeElement.querySelector('details')
             ?.toggleAttribute('open', this.router.url.startsWith('/sales'));
-          document
-            .getElementById('aw-nav-hr')
-            ?.querySelector('details')
+          this.hrNav()
+            ?.nativeElement.querySelector('details')
             ?.toggleAttribute('open', this.router.url.startsWith('/hr'));
         });
     });
+  }
+
+  protected closeUserMenu(): void {
+    this.userMenuOpen.set(false);
+    this.userMenuTrigger()?.nativeElement.focus();
   }
 
   private buildBreadcrumbs(): Breadcrumb[] {

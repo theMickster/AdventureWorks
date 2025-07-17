@@ -62,7 +62,16 @@
 
           <!-- User avatar dropdown -->
           <div id="aw-user-menu" class="dropdown dropdown-end">
-            <button id="aw-user-menu-trigger" class="btn btn-ghost btn-circle" aria-haspopup="true">
+            <button
+              id="aw-user-menu-trigger"
+              #userMenuTrigger
+              class="btn btn-ghost btn-circle"
+              aria-haspopup="true"
+              [attr.aria-expanded]="userMenuOpen()"
+              aria-controls="aw-user-menu-dropdown"
+              (click)="userMenuOpen.set(!userMenuOpen())"
+              (keydown.escape)="closeUserMenu()"
+            >
               <div class="avatar placeholder">
                 <div class="flex h-8 w-8 items-center justify-center rounded-full bg-neutral text-neutral-content">
                   <span class="text-xs font-semibold">AW</span>
@@ -77,13 +86,17 @@
             >
               <li class="menu-title">Admin User</li>
               <li id="aw-user-menu-profile">
-                <button><i class="fa-solid fa-user" aria-hidden="true"></i> Profile</button>
+                <button (keydown.escape)="closeUserMenu()">
+                  <i class="fa-solid fa-user" aria-hidden="true"></i> Profile
+                </button>
               </li>
               <li id="aw-user-menu-settings">
-                <button><i class="fa-solid fa-gear" aria-hidden="true"></i> Settings</button>
+                <button (keydown.escape)="closeUserMenu()">
+                  <i class="fa-solid fa-gear" aria-hidden="true"></i> Settings
+                </button>
               </li>
               <li id="aw-user-menu-signout" class="border-t border-base-300 mt-1 pt-1">
-                <button class="text-error">
+                <button class="text-error" (keydown.escape)="closeUserMenu()">
                   <i class="fa-solid fa-right-from-bracket" aria-hidden="true"></i> Sign Out
                 </button>
               </li>
@@ -129,7 +142,7 @@
         </li>
 
         <!-- Sales (collapsible) -->
-        <li id="aw-nav-sales">
+        <li id="aw-nav-sales" #salesNav>
           <details>
             <summary>
               <i class="fa-solid fa-cart-shopping" aria-hidden="true"></i>
@@ -159,7 +172,7 @@
         </li>
 
         <!-- Human Resources (collapsible) -->
-        <li id="aw-nav-hr">
+        <li id="aw-nav-hr" #hrNav>
           <details>
             <summary>
               <i class="fa-solid fa-users" aria-hidden="true"></i>

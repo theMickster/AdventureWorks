@@ -335,7 +335,7 @@ apps/angular-web/dist/
 apps/angular-web/.nx/
 apps/angular-web/.angular/
 apps/angular-web/tmp/
-apps/angular-web/.DS_Store
+**/.DS_Store
 
 # Environment files
 .env
