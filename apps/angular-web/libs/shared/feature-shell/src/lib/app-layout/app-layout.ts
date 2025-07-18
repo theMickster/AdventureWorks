@@ -11,7 +11,7 @@ import {
 } from '@angular/core';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { ActivatedRoute, NavigationEnd, Router, RouterLink, RouterLinkActive, RouterOutlet } from '@angular/router';
-import { ThemeService } from '@adventureworks-web/shared/util';
+import { LanguageService, ThemeService } from '@adventureworks-web/shared/util';
 import { filter, map, startWith } from 'rxjs';
 
 interface Breadcrumb {
@@ -31,6 +31,7 @@ export class AppLayoutComponent {
   private readonly activatedRoute = inject(ActivatedRoute);
   private readonly destroyRef = inject(DestroyRef);
   protected readonly themeService = inject(ThemeService);
+  private readonly languageService = inject(LanguageService);
   protected readonly currentYear = new Date().getFullYear();
 
   protected readonly breadcrumbs = signal<Breadcrumb[]>([]);

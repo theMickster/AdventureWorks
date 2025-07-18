@@ -1,0 +1,34 @@
+{
+  "APP": {
+    "TITLE": "AdventureWorks Cycling",
+    "COPYRIGHT": "© 2005–{{year}} AdventureWorks Cycling. All rights reserved."
+  },
+  "NAV": {
+    "DASHBOARD": "Dashboard",
+    "SALES": "Sales",
+    "STORES": "Stores",
+    "SALES_PERSONS": "Sales Persons",
+    "HR": "Human Resources",
+    "EMPLOYEES": "Employees",
+    "DEPARTMENTS": "Departments",
+    "SAMPLES": "Samples",
+    "SYSTEM": "System"
+  },
+  "USER_MENU": {
+    "PROFILE": "Profile",
+    "SETTINGS": "Settings",
+    "SIGN_OUT": "Sign Out"
+  },
+  "THEME": {
+    "SWITCH_TO_LIGHT": "Switch to light theme",
+    "SWITCH_TO_DARK": "Switch to dark theme"
+  },
+  "BREADCRUMB": {
+    "HOME": "Home"
+  },
+  "ERRORS": {
+    "NOT_FOUND_TITLE": "Page Not Found",
+    "NOT_FOUND_DESCRIPTION": "The page you're looking for doesn't exist or has been moved.",
+    "BACK_TO_DASHBOARD": "Back to Dashboard"
+  }
+}
