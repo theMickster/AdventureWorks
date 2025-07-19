@@ -17,6 +17,13 @@ export interface Environment {
     primary: ApiEndpoint;
     [key: string]: ApiEndpoint;
   };
+  /** Azure Application Insights configuration for telemetry and distributed tracing. */
+  appInsights?: {
+    /** Connection string from Azure Portal (includes instrumentation key + endpoints). */
+    connectionString: string;
+    /** Cloud role name shown in the Application Map (e.g., 'AdventureWorks.Web'). */
+    cloudRoleName: string;
+  };
   /** Optional Microsoft Entra ID authentication settings. */
   auth?: {
     /** Authority URL (e.g., 'https://login.microsoftonline.com/{tenant}'). */

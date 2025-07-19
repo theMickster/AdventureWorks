@@ -12,7 +12,7 @@ import {
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { ActivatedRoute, NavigationEnd, Router, RouterLink, RouterLinkActive, RouterOutlet } from '@angular/router';
 import { ToastContainerComponent } from '@adventureworks-web/shared/ui';
-import { LanguageService, LoadingService, ThemeService } from '@adventureworks-web/shared/util';
+import { AppInsightsService, LanguageService, LoadingService, ThemeService } from '@adventureworks-web/shared/util';
 import { filter, map, startWith } from 'rxjs';
 
 interface Breadcrumb {
@@ -34,6 +34,7 @@ export class AppLayoutComponent {
   protected readonly themeService = inject(ThemeService);
   protected readonly loadingService = inject(LoadingService);
   private readonly languageService = inject(LanguageService);
+  private readonly appInsightsService = inject(AppInsightsService);
   protected readonly currentYear = new Date().getFullYear();
 
   protected readonly breadcrumbs = signal<Breadcrumb[]>([]);

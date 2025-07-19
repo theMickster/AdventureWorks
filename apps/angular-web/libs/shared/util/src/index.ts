@@ -1,7 +1,12 @@
 export * from './lib/shared-util/shared-util';
 export { ThemeService } from './lib/theme/theme.service';
 export type { ApiEndpoint, Environment } from './lib/environment/environment.model';
+export { ENVIRONMENT } from './lib/environment/environment.token';
+export { correlationIdInterceptor } from './lib/http/correlation-id.interceptor';
+export { ApiService } from './lib/http/api.service';
+export { errorInterceptor } from './lib/http/error.interceptor';
 export { LanguageService } from './lib/i18n/language.service';
 export { LoadingService } from './lib/loading/loading.service';
 export { NotificationService } from './lib/notification/notification.service';
 export type { Notification, NotificationType } from './lib/notification/notification.service';
+export { AppInsightsService } from './lib/telemetry/app-insights.service';

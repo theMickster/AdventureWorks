@@ -341,6 +341,7 @@ apps/angular-web/tmp/
 .env
 .env.*
 !.env.example
+apps/angular-web/apps/adventureworks-web/src/environments/environment.development.ts
 
 # Claude local settings (machine-specific)
 .claude/settings.local.json

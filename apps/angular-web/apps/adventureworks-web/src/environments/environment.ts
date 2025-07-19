@@ -6,4 +6,8 @@ export const environment: Environment = {
   api: {
     primary: { baseUrl: '/api', name: 'AdventureWorks API' },
   },
+  appInsights: {
+    connectionString: '__APP_INSIGHTS_CONNECTION_STRING__',
+    cloudRoleName: 'AdventureWorks.Web',
+  },
 };
