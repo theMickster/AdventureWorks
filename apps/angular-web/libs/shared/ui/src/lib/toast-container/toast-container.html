@@ -1,0 +1,21 @@
+<div id="aw-toast-container" class="toast toast-end toast-bottom z-50" aria-live="polite">
+  @for (notification of notificationService.notifications(); track notification.id) {
+    <div
+      [id]="'aw-toast-' + notification.id"
+      class="alert shadow-lg"
+      [class]="alertClass(notification.type)"
+      role="alert"
+    >
+      <i [class]="iconClass(notification.type)" aria-hidden="true"></i>
+      <span>{{ notification.message }}</span>
+      <button
+        class="btn btn-ghost btn-xs"
+        (click)="notificationService.dismiss(notification.id)"
+        (keydown.escape)="notificationService.dismiss(notification.id)"
+        aria-label="Dismiss notification"
+      >
+        <i class="fa-solid fa-xmark" aria-hidden="true"></i>
+      </button>
+    </div>
+  }
+</div>

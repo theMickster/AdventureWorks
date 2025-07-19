@@ -11,6 +11,7 @@ import {
 } from '@angular/core';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { ActivatedRoute, NavigationEnd, Router, RouterLink, RouterLinkActive, RouterOutlet } from '@angular/router';
+import { ToastContainerComponent } from '@adventureworks-web/shared/ui';
 import { LanguageService, ThemeService } from '@adventureworks-web/shared/util';
 import { filter, map, startWith } from 'rxjs';
 
@@ -21,7 +22,7 @@ interface Breadcrumb {
 
 @Component({
   selector: 'aw-app-layout',
-  imports: [RouterOutlet, RouterLink, RouterLinkActive, NgOptimizedImage],
+  imports: [RouterOutlet, RouterLink, RouterLinkActive, NgOptimizedImage, ToastContainerComponent],
   templateUrl: './app-layout.html',
   styleUrl: './app-layout.css',
   changeDetection: ChangeDetectionStrategy.OnPush,
