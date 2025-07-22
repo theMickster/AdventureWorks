@@ -1,7 +1,7 @@
 {
-  "name": "shared-feature-shell",
+  "name": "shared-app-layout",
   "$schema": "../../../node_modules/nx/schemas/project-schema.json",
-  "sourceRoot": "libs/shared/feature-shell/src",
+  "sourceRoot": "libs/shared/app-layout/src",
   "prefix": "aw",
   "projectType": "library",
   "tags": ["type:feature", "scope:shared"],
@@ -10,12 +10,12 @@
       "executor": "@nx/angular:ng-packagr-lite",
       "outputs": ["{workspaceRoot}/dist/{projectRoot}"],
       "options": {
-        "project": "libs/shared/feature-shell/ng-package.json",
-        "tsConfig": "libs/shared/feature-shell/tsconfig.lib.json"
+        "project": "libs/shared/app-layout/ng-package.json",
+        "tsConfig": "libs/shared/app-layout/tsconfig.lib.json"
       },
       "configurations": {
         "production": {
-          "tsConfig": "libs/shared/feature-shell/tsconfig.lib.prod.json"
+          "tsConfig": "libs/shared/app-layout/tsconfig.lib.prod.json"
         },
         "development": {}
       },

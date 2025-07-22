@@ -1,8 +1,71 @@
 {
   "editor.formatOnSave": true,
+  "explorer.autoReveal": true,
+  "explorer.compactFolders": false,
   "editor.defaultFormatter": "esbenp.prettier-vscode",
   "[csharp]": {
     "editor.defaultFormatter": "ms-dotnettools.csharp"
   },
-  "cSpell.words": ["adventureworks", "nameof", "Rowguid", "VSTS", "wiql"]
+  "cSpell.words": ["adventureworks", "nameof", "Rowguid", "VSTS", "wiql"],
+  "material-icon-theme.folders.associations": {
+    ".vs": "Vscode",
+    "entities": "database",
+    "data": "Core",
+    "_test_": "Test",
+    "fixtures": "Snippet",
+    "queries": "Quasar",
+    "features": "Home",
+    "cqrs": "Link",
+    "postman": "Shader",
+    "author": "Apollo",
+    "v1": "Routes",
+    "v2": "Routes",
+    "adventureworks-web": "Angular",
+    "adventureworks-web-e2e": "Simulations",
+    ".nx": "Node",
+    "AdventureWorks.UnitTests": "Test",
+    "AdventureWorks.Infrastructure.Persistence": "Database",
+    "AdventureWorks.Models": "Public",
+    "AdventureWorks.Application": "Container"
+  },
+  "material-icon-theme.files.associations": {
+    "*.query.ts": "Sequelize",
+    "*.query.handler.ts": "Roadmap",
+    "*.validator.ts": "Arduino",
+    "*.command.ts": "Cabal",
+    "*.command.handler.ts": "Roadmap",
+    "*.entity.ts": "Fastlane",
+    "*.type.ts": "Laravel",
+    "*.repository.ts": "Deepsource"
+  },
+  "material-icon-theme.folders.customClones": [
+    {
+      "name": "purple-robot", // Give your custom clone a name
+      "base": "robot", // The existing icon you want to clone
+      "color": "purple-500", // The material palette color you want (e.g., purple-400, purple-500, #A259FF)
+      "folderNames": ["angular-web"] // The folder(s) that should use this new icon
+    },
+    {
+      "name": "blue-mojo", // Give your custom clone a name
+      "base": "mojo", // The existing icon you want to clone
+      "color": "blue-500", // The material palette color you want (e.g., purple-400, purple-500, #A259FF)
+      "folderNames": ["api-dotnet"] // The folder(s) that should use this new icon
+    },
+    {
+      "name": "teal-core", // Give your custom clone a name
+      "base": "core", // The existing icon you want to clone
+      "color": "teal-500", // The material palette color you want (e.g., purple-400, purple-500, #A259FF)
+      "folderNames": [
+        "AdventureWorks.Test.Common",
+        "AdventureWorks.Common",
+        "AdventureWorks.Domain"
+      ] // The folder(s) that should use this new icon
+    },
+    {
+      "name": "blue-api", // Give your custom clone a name
+      "base": "api", // The existing icon you want to clone
+      "color": "blue-500", // The material palette color you want (e.g., purple-400, purple-500, #A259FF)
+      "folderNames": ["AdventureWorks.API"] // The folder(s) that should use this new icon
+    }
+  ]
 }

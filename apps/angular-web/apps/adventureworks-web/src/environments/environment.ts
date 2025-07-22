@@ -10,4 +10,11 @@ export const environment: Environment = {
     connectionString: '__APP_INSIGHTS_CONNECTION_STRING__',
     cloudRoleName: 'AdventureWorks.Web',
   },
+  auth: {
+    authority: '__ENTRA_AUTHORITY__',
+    clientId: '__ENTRA_CLIENT_ID__',
+    redirectUri: '__ENTRA_REDIRECT_URI__',
+    postLogoutRedirectUri: '__ENTRA_POST_LOGOUT_REDIRECT_URI__',
+    scopes: ['__ENTRA_API_SCOPE__'],
+  },
 };

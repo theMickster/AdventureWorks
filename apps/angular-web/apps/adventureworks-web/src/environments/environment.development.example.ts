@@ -14,4 +14,11 @@ export const environment: Environment = {
     connectionString: '<YOUR_APP_INSIGHTS_CONNECTION_STRING>',
     cloudRoleName: 'AdventureWorks.Web',
   },
+  auth: {
+    authority: 'https://login.microsoftonline.com/<YOUR_TENANT_ID>',
+    clientId: '<YOUR_CLIENT_ID>',
+    redirectUri: 'http://localhost:4200',
+    postLogoutRedirectUri: 'http://localhost:4200',
+    scopes: ['api://<YOUR_CLIENT_ID>/access_via_group_assignments'],
+  },
 };

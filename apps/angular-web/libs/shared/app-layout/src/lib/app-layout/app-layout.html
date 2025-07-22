@@ -81,7 +81,7 @@
             >
               <div class="avatar placeholder">
                 <div class="flex h-8 w-8 items-center justify-center rounded-full bg-neutral text-neutral-content">
-                  <span class="text-xs font-semibold">AW</span>
+                  <span class="text-xs font-semibold">{{ authService.userInitials() || 'AW' }}</span>
                 </div>
               </div>
               <span class="sr-only">User menu</span>
@@ -91,7 +91,7 @@
               tabindex="-1"
               class="menu menu-sm dropdown-content bg-base-100 rounded-box z-50 mt-3 w-52 p-2 shadow-lg"
             >
-              <li class="menu-title">Admin User</li>
+              <li id="aw-user-menu-name" class="menu-title">{{ authService.displayName() || 'User' }}</li>
               <li id="aw-user-menu-profile">
                 <button (keydown.escape)="closeUserMenu()">
                   <i class="fa-solid fa-user" aria-hidden="true"></i> Profile
@@ -103,7 +103,7 @@
                 </button>
               </li>
               <li id="aw-user-menu-signout" class="border-t border-base-300 mt-1 pt-1">
-                <button class="text-error" (keydown.escape)="closeUserMenu()">
+                <button class="text-error" (click)="authService.logout()" (keydown.escape)="closeUserMenu()">
                   <i class="fa-solid fa-right-from-bracket" aria-hidden="true"></i> Sign Out
                 </button>
               </li>

@@ -1,0 +1,18 @@
+{
+  "version": "0.2.0",
+  "configurations": [
+    {
+      "name": "AdventureWorks API",
+      "type": "coreclr",
+      "request": "launch",
+      "preLaunchTask": "build-api",
+      "program": "${workspaceFolder}/apps/api-dotnet/src/AdventureWorks.API/bin/Debug/net10.0/AdventureWorks.API.dll",
+      "args": [],
+      "cwd": "${workspaceFolder}/apps/api-dotnet/src/AdventureWorks.API",
+      "stopAtEntry": false,
+      "env": {
+        "ASPNETCORE_ENVIRONMENT": "Development"
+      }
+    }
+  ]
+}

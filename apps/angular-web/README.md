@@ -21,8 +21,9 @@ apps/
   adventureworks-web-e2e/      # Playwright E2E tests
 libs/
   shared/
+    app-layout/             # App shell layout with nav (type:feature, scope:shared)
     ui/                        # Shared UI components (type:ui, scope:shared)
-    util/                      # Shared utilities & theme config (type:util, scope:shared)
+    util/                      # Shared utilities, auth, http, theme (type:util, scope:shared)
 ```
 
 ### Library Dependency Rules
@@ -57,7 +58,9 @@ import { someUtil } from '@adventureworks-web/shared/util';
 | esbuild    | -       | Build bundler (via @angular/build)      |
 | Vitest     | -       | Unit testing (@angular/build:unit-test) |
 | Playwright | -       | E2E testing                             |
-| SCSS       | -       | Stylesheets                             |
+| Tailwind   | 4.2     | Utility-first CSS framework             |
+| DaisyUI    | 5.5     | Tailwind component library              |
+| MSAL       | 5.x     | Microsoft Entra ID authentication       |
 
 ## Design System
 
@@ -70,8 +73,19 @@ import { someUtil } from '@adventureworks-web/shared/util';
 | Accent (Teal)     | `#14b8a6` | `#2dd4bf` | Success, highlights |
 | Pop (Crimson)     | `#dc2626` | `#f87171` | CTAs, sale badges   |
 
-- Theme CSS: `apps/adventureworks-web/src/styles.scss`
-- Tailwind config: `libs/shared/util/src/lib/theme/alpine-circuit-tailwind.ts` _(not yet installed — Feature #572)_
+- Global styles: `apps/adventureworks-web/src/styles.css` (Tailwind v4, not SCSS)
+- Themes: `alpine-circuit` (light) + `alpine-circuit-dark` via DaisyUI `@plugin` directives
+
+## Authentication
+
+Microsoft Entra ID authentication via `@azure/msal-angular` v5 (redirect flow).
+
+- **Config**: `libs/shared/util/src/lib/auth/msal-config.ts` — factory functions for MSAL instance, interceptor, and guard
+- **Service**: `libs/shared/util/src/lib/auth/auth.service.ts` — signal-based `AuthService` wrapping MSAL
+- **Routes**: `/auth` handles redirect callback (`MsalRedirectComponent`), `/login-failed` is unguarded fallback
+- **Guard**: `MsalGuard` on the shell route protects all authenticated pages
+- **Token attachment**: `MsalInterceptor` (class-based, via `withInterceptorsFromDi()`) auto-attaches Bearer tokens to API calls
+- **Environment**: Auth settings in `environment.ts` use deployment placeholders (`__ENTRA_*__`); dev values in gitignored `environment.development.ts`
 
 ## Commands
 
@@ -108,4 +122,5 @@ Production builds (`--configuration=production`) include:
 - AOT compilation (inherent with esbuild)
 - No source maps
 - Output hashing
-- Bundle budgets: 500kB warn / 1MB error (initial), 4kB warn / 8kB error (component styles)
+- Bundle budgets: 750kB warn / 1MB error (initial), 4kB warn / 8kB error (component styles)
+- Current initial bundle: ~855kB (includes MSAL ~250kB)

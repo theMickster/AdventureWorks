@@ -1,5 +1,7 @@
 import { ChangeDetectionStrategy, Component, inject } from '@angular/core';
 import { ActivatedRoute, Route, RouterLink } from '@angular/router';
+import { MsalGuard, MsalRedirectComponent } from '@azure/msal-angular';
+import { AuthService, ThemeService } from '@adventureworks-web/shared/util';
 
 @Component({
   selector: 'aw-placeholder',
@@ -33,10 +35,37 @@ class PlaceholderComponent {
 })
 class NotFoundComponent {}
 
+@Component({
+  selector: 'aw-login-failed',
+  template: `
+    <div
+      id="aw-login-failed"
+      class="flex min-h-screen flex-col items-center justify-center gap-6 bg-base-100 text-center"
+    >
+      <h2 class="text-lg font-bold text-base-content">AdventureWorks</h2>
+      <i class="fa-solid fa-circle-xmark text-6xl text-error" aria-hidden="true"></i>
+      <h1 class="text-3xl font-bold text-base-content">Sign In Failed</h1>
+      <p class="text-base-content/60">We were unable to sign you in. Please try again.</p>
+      <button id="aw-login-failed-retry" class="btn btn-primary" (click)="authService.login()">
+        <i class="fa-solid fa-right-to-bracket" aria-hidden="true"></i>
+        Try Again
+      </button>
+    </div>
+  `,
+  changeDetection: ChangeDetectionStrategy.OnPush,
+})
+class LoginFailedComponent {
+  protected readonly authService = inject(AuthService);
+  private readonly _themeService = inject(ThemeService);
+}
+
 export const appRoutes: Route[] = [
+  { path: 'auth', component: MsalRedirectComponent },
+  { path: 'login-failed', component: LoginFailedComponent },
   {
     path: '',
-    loadComponent: () => import('@adventureworks-web/shared/feature-shell').then((m) => m.AppLayoutComponent),
+    loadComponent: () => import('@adventureworks-web/shared/app-layout').then((m) => m.AppLayoutComponent),
+    canActivate: [MsalGuard],
     children: [
       { path: '', redirectTo: 'dashboard', pathMatch: 'full' },
       { path: 'dashboard', data: { breadcrumb: 'Dashboard' }, component: PlaceholderComponent },

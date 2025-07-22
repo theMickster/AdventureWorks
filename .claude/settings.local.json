@@ -13,9 +13,13 @@
       "Bash(ls:*)",
       "Bash(wc:*)",
       "Bash(head:*)",
-      "Bash(az boards:*)",
+      "Bash(az boards *)",
       "Bash(npm install)",
-      "WebFetch(domain:daisyui.com)"
+      "WebFetch(domain:daisyui.com)",
+      "Bash(az boards:*)",
+      "Bash(az boards work-item show)`",
+      "Bash(npm ls:*)",
+      "WebFetch(domain:www.npmjs.com)"
     ],
     "deny": [],
     "ask": []

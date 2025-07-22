@@ -32,5 +32,9 @@ export interface Environment {
     clientId: string;
     /** Redirect URI after authentication. */
     redirectUri: string;
+    /** Redirect URI after logout. */
+    postLogoutRedirectUri: string;
+    /** OAuth 2.0 scopes to request (e.g., ['api://{clientId}/access_via_group_assignments']). */
+    scopes: string[];
   };
 }

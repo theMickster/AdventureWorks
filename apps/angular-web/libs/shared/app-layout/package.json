@@ -1,10 +1,10 @@
 {
-  "name": "@adventureworks-web/shared/feature-shell",
+  "name": "@adventureworks-web/shared/app-layout",
   "version": "0.0.1",
   "peerDependencies": {
-    "@angular/common": "^21.1.0",
-    "@angular/core": "^21.1.0",
-    "@angular/router": "^21.1.0",
+    "@angular/common": "21.1.6",
+    "@angular/core": "21.1.6",
+    "@angular/router": "21.1.6",
     "@adventureworks-web/shared/ui": "0.0.1",
     "@adventureworks-web/shared/util": "0.0.1",
     "rxjs": "~7.8.0"
