@@ -28,7 +28,7 @@ internal static class SetupMiddlewarePipeline
 
         app.UseResponseCompression();
 
-        app.UseCors();
+        app.UseCors("AdventureWorksCorsPolicy");
 
         app.UseHsts();
 
