@@ -56,7 +56,7 @@ AdventureWorks/
 
 Please visit and read the following ReadMe to understand the changes to the default AdventureWorks database.
 
-- [Enhancement ReadMe](/docs/README.md)
+- [Enhancement ReadMe](/database/dbup/AdventureWorks.DbUp/README.md)
 
 ## License
 
