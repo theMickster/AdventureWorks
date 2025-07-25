@@ -73,26 +73,23 @@ public sealed class ReadStoreController : ControllerBase
     {
         var searchResult = await _mediator.Send( new ReadStoreListQuery{Parameters = parameters});
 
-        if (searchResult.Results is not (null or { Count: 0 }))
+        if (searchResult.Results is null or { Count: 0 })
         {
-            return Ok(searchResult);
+            var logParams = new
+            {
+                Status = AppLoggingConstants.StatusBadRequest,
+                Operation = "StoreListAsync",
+                DateTime = DateTime.UtcNow.ToString(CultureInfo.InvariantCulture),
+                Message = "Unable to locate results based upon input query parameters.",
+                ErrCode = AppLoggingConstants.HttpGetRequestErrorCode,
+                ServiceId = "AdventureWorksApi",
+                AdditionalInfo = parameters
+            };
+
+            _logger.LogInformation(JsonSerializer.Serialize(logParams));
         }
-        
-        var logErrorParams = new
-        {
-            Status = AppLoggingConstants.StatusBadRequest,
-            Operation = "StoreListAsync",
-            DateTime = DateTime.UtcNow.ToString(CultureInfo.InvariantCulture),
-            Message = "Unable to locate results based upon input query parameters.",
-            ErrCode = AppLoggingConstants.HttpGetRequestErrorCode,
-            ServiceId = "AdventureWorksApi",
-            AdditionalInfo = parameters
-        };
 
-        _logger.LogError(JsonSerializer.Serialize(logErrorParams));
-
-        return BadRequest(logErrorParams.Message);
-
+        return Ok(searchResult);
     }
 
     /// <summary>
@@ -109,24 +106,22 @@ public sealed class ReadStoreController : ControllerBase
     {
         var searchResult = await _mediator.Send(new ReadStoreListQuery { Parameters = parameters, SearchModel = storeSearchModel});
 
-        if (searchResult.Results is not (null or { Count: 0 }))
+        if (searchResult.Results is null or { Count: 0 })
         {
-            return Ok(searchResult);
+            var logParams = new
+            {
+                Status = AppLoggingConstants.StatusBadRequest,
+                Operation = "StoreSearchAsync",
+                DateTime = DateTime.UtcNow.ToString(CultureInfo.InvariantCulture),
+                Message = "Unable to locate results based upon client input parameters.",
+                ErrCode = AppLoggingConstants.HttpGetRequestErrorCode,
+                ServiceId = "AdventureWorksApi",
+                AdditionalInfo = parameters
+            };
+
+            _logger.LogInformation(JsonSerializer.Serialize(logParams));
         }
 
-        var logErrorParams = new
-        {
-            Status = AppLoggingConstants.StatusBadRequest,
-            Operation = "StoreSearchAsync",
-            DateTime = DateTime.UtcNow.ToString(CultureInfo.InvariantCulture),
-            Message = "Unable to locate results based upon client input parameters.",
-            ErrCode = AppLoggingConstants.HttpGetRequestErrorCode,
-            ServiceId = "AdventureWorksApi",
-            AdditionalInfo = parameters
-        };
-
-        _logger.LogError(JsonSerializer.Serialize(logErrorParams));
-
-        return BadRequest(logErrorParams.Message);
+        return Ok(searchResult);
     }
 }

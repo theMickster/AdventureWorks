@@ -13,7 +13,7 @@ public abstract class SearchPersonModelBase
     public string? FirstName { get; set; }
 
     /// <summary>
-    /// The first name of the person entity 
+    /// The last name of the person entity
     /// </summary>
     public string? LastName { get; set; }
 }

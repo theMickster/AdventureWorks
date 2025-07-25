@@ -115,46 +115,38 @@ public sealed class ReadStoreControllerTests : UnitTestBase
     }
 
     [Fact]
-    public async Task GetStoreListAsync_null_results_bad_request_Async()
+    public async Task GetStoreListAsync_null_results_returns_ok_Async()
     {
         _mockMediator.Setup(x => x.Send(It.IsAny<ReadStoreListQuery>(), It.IsAny<CancellationToken>()))
             .ReturnsAsync(new StoreSearchResultModel { Results = null! });
 
         var result = await _sut.GetStoreListAsync(new StoreParameter());
-        var objectResult = result as BadRequestObjectResult;
-        var outputModel = objectResult!.Value! as string;
+        var objectResult = result as OkObjectResult;
 
         using (new AssertionScope())
         {
             objectResult.Should().NotBeNull();
-            objectResult!.StatusCode.Should().Be((int)HttpStatusCode.BadRequest);
+            objectResult!.StatusCode.Should().Be((int)HttpStatusCode.OK);
 
-            outputModel.Should().NotBeNull();
-            outputModel!.Should().Be("Unable to locate results based upon input query parameters.");
-
-            _mockLogger.VerifyLoggingMessageContains("Unable to locate results based upon input query parameters", null, LogLevel.Error);
+            _mockLogger.VerifyLoggingMessageContains("Unable to locate results based upon input query parameters", null, LogLevel.Information);
         }
     }
 
     [Fact]
-    public async Task GetStoreListAsync_empty_results_bad_request_Async()
+    public async Task GetStoreListAsync_empty_results_returns_ok_Async()
     {
         _mockMediator.Setup(x => x.Send(It.IsAny<ReadStoreListQuery>(), It.IsAny<CancellationToken>()))
             .ReturnsAsync(new StoreSearchResultModel { Results = new List<StoreModel>() });
 
         var result = await _sut.GetStoreListAsync(new StoreParameter());
-        var objectResult = result as BadRequestObjectResult;
-        var outputModel = objectResult!.Value! as string;
+        var objectResult = result as OkObjectResult;
 
         using (new AssertionScope())
         {
             objectResult.Should().NotBeNull();
-            objectResult!.StatusCode.Should().Be((int)HttpStatusCode.BadRequest);
+            objectResult!.StatusCode.Should().Be((int)HttpStatusCode.OK);
 
-            outputModel.Should().NotBeNull();
-            outputModel!.Should().Be("Unable to locate results based upon input query parameters.");
-
-            _mockLogger.VerifyLoggingMessageContains("Unable to locate results based upon input query parameters", null, LogLevel.Error);
+            _mockLogger.VerifyLoggingMessageContains("Unable to locate results based upon input query parameters", null, LogLevel.Information);
         }
     }
 
@@ -176,46 +168,38 @@ public sealed class ReadStoreControllerTests : UnitTestBase
     }
 
     [Fact]
-    public async Task SearchStoresAsync_null_results_bad_request_Async()
+    public async Task SearchStoresAsync_null_results_returns_ok_Async()
     {
         _mockMediator.Setup(x => x.Send(It.IsAny<ReadStoreListQuery>(), It.IsAny<CancellationToken>()))
                     .ReturnsAsync(new StoreSearchResultModel { Results = null! });
 
         var result = await _sut.SearchStoresAsync(new StoreParameter(), new StoreSearchModel());
-        var objectResult = result as BadRequestObjectResult;
-        var outputModel = objectResult!.Value! as string;
+        var objectResult = result as OkObjectResult;
 
         using (new AssertionScope())
         {
             objectResult.Should().NotBeNull();
-            objectResult!.StatusCode.Should().Be((int)HttpStatusCode.BadRequest);
+            objectResult!.StatusCode.Should().Be((int)HttpStatusCode.OK);
 
-            outputModel.Should().NotBeNull();
-            outputModel!.Should().Be("Unable to locate results based upon client input parameters.");
-
-            _mockLogger.VerifyLoggingMessageContains("Unable to locate results based upon client input parameters", null, LogLevel.Error);
+            _mockLogger.VerifyLoggingMessageContains("Unable to locate results based upon client input parameters", null, LogLevel.Information);
         }
     }
 
     [Fact]
-    public async Task SearchStoresAsync_empty_results_bad_request_Async()
+    public async Task SearchStoresAsync_empty_results_returns_ok_Async()
     {
         _mockMediator.Setup(x => x.Send(It.IsAny<ReadStoreListQuery>(), It.IsAny<CancellationToken>()))
             .ReturnsAsync(new StoreSearchResultModel { Results = new List<StoreModel>() });
 
         var result = await _sut.SearchStoresAsync(new StoreParameter(), new StoreSearchModel());
-        var objectResult = result as BadRequestObjectResult;
-        var outputModel = objectResult!.Value! as string;
+        var objectResult = result as OkObjectResult;
 
         using (new AssertionScope())
         {
             objectResult.Should().NotBeNull();
-            objectResult!.StatusCode.Should().Be((int)HttpStatusCode.BadRequest);
+            objectResult!.StatusCode.Should().Be((int)HttpStatusCode.OK);
 
-            outputModel.Should().NotBeNull();
-            outputModel!.Should().Be("Unable to locate results based upon client input parameters.");
-
-            _mockLogger.VerifyLoggingMessageContains("Unable to locate results based upon client input parameters", null, LogLevel.Error);
+            _mockLogger.VerifyLoggingMessageContains("Unable to locate results based upon client input parameters", null, LogLevel.Information);
         }
     }
 }

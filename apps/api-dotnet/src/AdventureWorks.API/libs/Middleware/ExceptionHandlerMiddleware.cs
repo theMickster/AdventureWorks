@@ -64,9 +64,6 @@ internal class ExceptionHandlerMiddleware(RequestDelegate next, ILogger<Exceptio
                 });
                 result = JsonSerializer.Serialize(errors);
                 break;
-            case Exception:
-                httpStatusCode = HttpStatusCode.BadRequest;
-                break;
         }
 
         context.Response.StatusCode = (int)httpStatusCode;

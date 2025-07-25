@@ -84,25 +84,23 @@ public sealed class ReadEmployeeController : ControllerBase
     {
         var searchResult = await _mediator.Send(new ReadEmployeeListQuery { Parameters = parameters });
 
-        if (searchResult.Results is not (null or { Count: 0 }))
+        if (searchResult.Results is null or { Count: 0 })
         {
-            return Ok(searchResult);
+            var logParams = new
+            {
+                Status = AppLoggingConstants.StatusBadRequest,
+                Operation = "EmployeeListAsync",
+                DateTime = DateTime.UtcNow.ToString(CultureInfo.InvariantCulture),
+                Message = "Unable to locate results based upon input query parameters.",
+                ErrCode = AppLoggingConstants.HttpGetRequestErrorCode,
+                ServiceId = "AdventureWorksApi",
+                AdditionalInfo = parameters
+            };
+
+            _logger.LogInformation(JsonSerializer.Serialize(logParams));
         }
 
-        var logErrorParams = new
-        {
-            Status = AppLoggingConstants.StatusBadRequest,
-            Operation = "EmployeeListAsync",
-            DateTime = DateTime.UtcNow.ToString(CultureInfo.InvariantCulture),
-            Message = "Unable to locate results based upon input query parameters.",
-            ErrCode = AppLoggingConstants.HttpGetRequestErrorCode,
-            ServiceId = "AdventureWorksApi",
-            AdditionalInfo = parameters
-        };
-
-        _logger.LogError(JsonSerializer.Serialize(logErrorParams));
-
-        return BadRequest(logErrorParams.Message);
+        return Ok(searchResult);
     }
 
     /// <summary>
@@ -129,24 +127,22 @@ public sealed class ReadEmployeeController : ControllerBase
             SearchModel = employeeSearchModel
         });
 
-        if (searchResult.Results is not (null or { Count: 0 }))
+        if (searchResult.Results is null or { Count: 0 })
         {
-            return Ok(searchResult);
+            var logParams = new
+            {
+                Status = AppLoggingConstants.StatusBadRequest,
+                Operation = "EmployeeSearchAsync",
+                DateTime = DateTime.UtcNow.ToString(CultureInfo.InvariantCulture),
+                Message = "Unable to locate results based upon client input parameters.",
+                ErrCode = AppLoggingConstants.HttpGetRequestErrorCode,
+                ServiceId = "AdventureWorksApi",
+                AdditionalInfo = parameters
+            };
+
+            _logger.LogInformation(JsonSerializer.Serialize(logParams));
         }
 
-        var logErrorParams = new
-        {
-            Status = AppLoggingConstants.StatusBadRequest,
-            Operation = "EmployeeSearchAsync",
-            DateTime = DateTime.UtcNow.ToString(CultureInfo.InvariantCulture),
-            Message = "Unable to locate results based upon client input parameters.",
-            ErrCode = AppLoggingConstants.HttpGetRequestErrorCode,
-            ServiceId = "AdventureWorksApi",
-            AdditionalInfo = parameters
-        };
-
-        _logger.LogError(JsonSerializer.Serialize(logErrorParams));
-
-        return BadRequest(logErrorParams.Message);
+        return Ok(searchResult);
     }
 }

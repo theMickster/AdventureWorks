@@ -262,52 +262,44 @@ public sealed class ReadEmployeeControllerTests : UnitTestBase
     }
 
     [Fact]
-    public async Task GetEmployeeList_null_results_bad_request_Async()
+    public async Task GetEmployeeList_null_results_returns_ok_Async()
     {
         _mockMediator.Setup(x => x.Send(It.IsAny<ReadEmployeeListQuery>(), It.IsAny<CancellationToken>()))
             .ReturnsAsync(new EmployeeSearchResultModel { Results = null! });
 
         var result = await _sut.GetEmployeeListAsync(new EmployeeParameter());
-        var objectResult = result as BadRequestObjectResult;
-        var outputModel = objectResult!.Value! as string;
+        var objectResult = result as OkObjectResult;
 
         using (new AssertionScope())
         {
             objectResult.Should().NotBeNull();
-            objectResult!.StatusCode.Should().Be((int)HttpStatusCode.BadRequest);
-
-            outputModel.Should().NotBeNull();
-            outputModel!.Should().Be("Unable to locate results based upon input query parameters.");
+            objectResult!.StatusCode.Should().Be((int)HttpStatusCode.OK);
 
             _mockLogger.VerifyLoggingMessageContains(
                 "Unable to locate results based upon input query parameters",
                 null,
-                LogLevel.Error);
+                LogLevel.Information);
         }
     }
 
     [Fact]
-    public async Task GetEmployeeList_empty_results_bad_request_Async()
+    public async Task GetEmployeeList_empty_results_returns_ok_Async()
     {
         _mockMediator.Setup(x => x.Send(It.IsAny<ReadEmployeeListQuery>(), It.IsAny<CancellationToken>()))
             .ReturnsAsync(new EmployeeSearchResultModel { Results = new List<EmployeeModel>() });
 
         var result = await _sut.GetEmployeeListAsync(new EmployeeParameter());
-        var objectResult = result as BadRequestObjectResult;
-        var outputModel = objectResult!.Value! as string;
+        var objectResult = result as OkObjectResult;
 
         using (new AssertionScope())
         {
             objectResult.Should().NotBeNull();
-            objectResult!.StatusCode.Should().Be((int)HttpStatusCode.BadRequest);
-
-            outputModel.Should().NotBeNull();
-            outputModel!.Should().Be("Unable to locate results based upon input query parameters.");
+            objectResult!.StatusCode.Should().Be((int)HttpStatusCode.OK);
 
             _mockLogger.VerifyLoggingMessageContains(
                 "Unable to locate results based upon input query parameters",
                 null,
-                LogLevel.Error);
+                LogLevel.Information);
         }
     }
 
@@ -386,52 +378,44 @@ public sealed class ReadEmployeeControllerTests : UnitTestBase
     }
 
     [Fact]
-    public async Task SearchEmployees_null_results_bad_request_Async()
+    public async Task SearchEmployees_null_results_returns_ok_Async()
     {
         _mockMediator.Setup(x => x.Send(It.IsAny<ReadEmployeeListQuery>(), It.IsAny<CancellationToken>()))
             .ReturnsAsync(new EmployeeSearchResultModel { Results = null! });
 
         var result = await _sut.SearchEmployeesAsync(new EmployeeParameter(), new EmployeeSearchModel());
-        var objectResult = result as BadRequestObjectResult;
-        var outputModel = objectResult!.Value! as string;
+        var objectResult = result as OkObjectResult;
 
         using (new AssertionScope())
         {
             objectResult.Should().NotBeNull();
-            objectResult!.StatusCode.Should().Be((int)HttpStatusCode.BadRequest);
-
-            outputModel.Should().NotBeNull();
-            outputModel!.Should().Be("Unable to locate results based upon client input parameters.");
+            objectResult!.StatusCode.Should().Be((int)HttpStatusCode.OK);
 
             _mockLogger.VerifyLoggingMessageContains(
                 "Unable to locate results based upon client input parameters",
                 null,
-                LogLevel.Error);
+                LogLevel.Information);
         }
     }
 
     [Fact]
-    public async Task SearchEmployees_empty_results_bad_request_Async()
+    public async Task SearchEmployees_empty_results_returns_ok_Async()
     {
         _mockMediator.Setup(x => x.Send(It.IsAny<ReadEmployeeListQuery>(), It.IsAny<CancellationToken>()))
             .ReturnsAsync(new EmployeeSearchResultModel { Results = new List<EmployeeModel>() });
 
         var result = await _sut.SearchEmployeesAsync(new EmployeeParameter(), new EmployeeSearchModel());
-        var objectResult = result as BadRequestObjectResult;
-        var outputModel = objectResult!.Value! as string;
+        var objectResult = result as OkObjectResult;
 
         using (new AssertionScope())
         {
             objectResult.Should().NotBeNull();
-            objectResult!.StatusCode.Should().Be((int)HttpStatusCode.BadRequest);
-
-            outputModel.Should().NotBeNull();
-            outputModel!.Should().Be("Unable to locate results based upon client input parameters.");
+            objectResult!.StatusCode.Should().Be((int)HttpStatusCode.OK);
 
             _mockLogger.VerifyLoggingMessageContains(
                 "Unable to locate results based upon client input parameters",
                 null,
-                LogLevel.Error);
+                LogLevel.Information);
         }
     }
 
