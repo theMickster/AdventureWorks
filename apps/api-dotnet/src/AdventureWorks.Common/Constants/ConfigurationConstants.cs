@@ -53,6 +53,11 @@ public static class ConfigurationConstants
     public const string CurrentConnectionStringNameKey = "CurrentConnectionStringName";
 
     /// <summary>
+    /// AutoMapper license key value name
+    /// </summary>
+    public const string AutoMapperLicenseKey = "AutoMapperLicenseKey";
+
+    /// <summary>
     /// The HTTP header name for correlation ID tracking across distributed systems
     /// </summary>
     public const string CorrelationIdHeaderName = "X-Correlation-ID";

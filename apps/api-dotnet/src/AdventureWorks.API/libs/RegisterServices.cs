@@ -115,7 +115,7 @@ internal static class RegisterServices
             .AddXmlDataContractSerializerFormatters();
         
         builder.Services.AddValidatorsFromAssemblyContaining<CreateAddressValidator>();
-        builder.Services.AddApplicationServices();
+        builder.Services.AddApplicationServices(builder.Configuration);
         return builder;
     }
 

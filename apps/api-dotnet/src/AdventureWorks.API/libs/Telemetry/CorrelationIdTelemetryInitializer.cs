@@ -1,7 +1,6 @@
 using AdventureWorks.Application.Interfaces;
 using AdventureWorks.Common.Constants;
 using Microsoft.ApplicationInsights.Channel;
-using Microsoft.ApplicationInsights.Extensibility;
 
 namespace AdventureWorks.API.libs.Telemetry;
 
@@ -9,7 +8,7 @@ namespace AdventureWorks.API.libs.Telemetry;
 /// Application Insights telemetry initializer that adds correlation ID to all telemetry items.
 /// This ensures correlation IDs are tracked in Application Insights for distributed tracing.
 /// </summary>
-public sealed class CorrelationIdTelemetryInitializer(ICorrelationIdAccessor correlationIdAccessor) : ITelemetryInitializer
+public sealed class CorrelationIdTelemetryInitializer(ICorrelationIdAccessor correlationIdAccessor)
 {
     private readonly ICorrelationIdAccessor _correlationIdAccessor = correlationIdAccessor ?? throw new ArgumentNullException(nameof(correlationIdAccessor));
 

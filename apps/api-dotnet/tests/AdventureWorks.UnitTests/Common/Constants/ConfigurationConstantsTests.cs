@@ -20,6 +20,7 @@ public sealed class ConfigurationConstantsTests
             ConfigurationConstants.SqlConnectionDefaultConnectionName.Should().Be("DefaultConnection");
             ConfigurationConstants.SqlConnectionSqlAzureConnectionName.Should().Be("SqlAzureConnection");
             ConfigurationConstants.CurrentConnectionStringNameKey.Should().Be("CurrentConnectionStringName");
+            ConfigurationConstants.AutoMapperLicenseKey.Should().Be("AutoMapperLicenseKey");
         }
     }
 }

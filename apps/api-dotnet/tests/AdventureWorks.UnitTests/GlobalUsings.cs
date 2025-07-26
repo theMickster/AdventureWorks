@@ -6,3 +6,4 @@ global using AdventureWorks.Test.Common.Setup;
 global using AdventureWorks.UnitTests.Setup;
 global using Xunit;
 global using AutoMapper;
+global using MapperConfiguration = AdventureWorks.UnitTests.Setup.LicensedMapperConfiguration;

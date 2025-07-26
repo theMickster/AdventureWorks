@@ -10,6 +10,13 @@ public abstract class UnitTestBase : TestBase
 {
     public static DateTime DefaultAuditDate => new(2011, 11, 11, 11, 11, 11, DateTimeKind.Utc);
 
+    protected static MapperConfiguration CreateMapperConfiguration(Action<IMapperConfigurationExpression> configure)
+    {
+        ArgumentNullException.ThrowIfNull(configure);
+
+        return new MapperConfiguration(configure);
+    }
+
     protected UnitTestBase()
     {
         Setup();

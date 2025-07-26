@@ -1,7 +1,5 @@
 using AdventureWorks.API.libs.Services;
-using AdventureWorks.API.libs.Telemetry;
 using AdventureWorks.Application.Interfaces;
-using Microsoft.ApplicationInsights.Extensibility;
 
 namespace AdventureWorks.API.libs.Extensions;
 
@@ -12,7 +10,7 @@ namespace AdventureWorks.API.libs.Extensions;
 public static class CorrelationIdServiceExtensions
 {
     /// <summary>
-    /// Registers all correlation ID related services including accessor and Application Insights telemetry initializer
+    /// Registers all correlation ID related services
     /// </summary>
     /// <param name="services">The service collection</param>
     /// <returns>The service collection for chaining</returns>
@@ -22,9 +20,6 @@ public static class CorrelationIdServiceExtensions
 
         // Register correlation ID accessor as singleton (safe because it uses IHttpContextAccessor which is thread-safe)
         services.AddSingleton<ICorrelationIdAccessor, CorrelationIdAccessor>();
-
-        // Register Application Insights telemetry initializer
-        services.AddSingleton<ITelemetryInitializer, CorrelationIdTelemetryInitializer>();
 
         return services;
     }

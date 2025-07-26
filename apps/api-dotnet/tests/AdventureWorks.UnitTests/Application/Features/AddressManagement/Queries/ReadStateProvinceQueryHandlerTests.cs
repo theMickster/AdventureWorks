@@ -13,7 +13,7 @@ public sealed class ReadStateProvinceQueryHandlerTests : UnitTestBase
 
     public ReadStateProvinceQueryHandlerTests()
     {
-        var mappingConfig = new MapperConfiguration(config =>
+        var mappingConfig = CreateMapperConfiguration(config =>
             config.AddMaps(typeof(StateProvinceEntityToModelProfile).Assembly)
         );
         _mapper = mappingConfig.CreateMapper();
