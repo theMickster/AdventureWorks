@@ -8,6 +8,24 @@ namespace AdventureWorks.UnitTests.Setup;
 [ExcludeFromCodeCoverage]
 public sealed class LicensedMapperConfiguration
 {
+    private static readonly Lazy<string> CachedLicenseKey = new(() =>
+    {
+        var configuration = new ConfigurationBuilder()
+            .AddUserSecrets<Program>(optional: true)
+            .AddEnvironmentVariables()
+            .Build();
+
+        var key = configuration[ConfigurationConstants.AutoMapperLicenseKey];
+
+        if (string.IsNullOrWhiteSpace(key))
+        {
+            throw new InvalidOperationException(
+                $"The '{ConfigurationConstants.AutoMapperLicenseKey}' configuration value is required for AutoMapper unit tests.");
+        }
+
+        return key;
+    });
+
     private readonly AutoMapper.MapperConfiguration _inner;
 
     public LicensedMapperConfiguration(Action<IMapperConfigurationExpression> configure)
@@ -20,18 +38,7 @@ public sealed class LicensedMapperConfiguration
         ArgumentNullException.ThrowIfNull(configure);
         ArgumentNullException.ThrowIfNull(loggerFactory);
 
-        var configuration = new ConfigurationBuilder()
-            .AddUserSecrets<Program>(optional: true)
-            .AddEnvironmentVariables()
-            .Build();
-
-        var autoMapperLicenseKey = configuration[ConfigurationConstants.AutoMapperLicenseKey];
-
-        if (string.IsNullOrWhiteSpace(autoMapperLicenseKey))
-        {
-            throw new InvalidOperationException(
-                $"The '{ConfigurationConstants.AutoMapperLicenseKey}' configuration value is required for AutoMapper unit tests.");
-        }
+        var autoMapperLicenseKey = CachedLicenseKey.Value;
 
         _inner = new AutoMapper.MapperConfiguration(cfg =>
         {
