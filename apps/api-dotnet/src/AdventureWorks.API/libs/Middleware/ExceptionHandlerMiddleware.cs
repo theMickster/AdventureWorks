@@ -10,6 +10,7 @@ namespace AdventureWorks.API.libs.Middleware;
 [ExcludeFromCodeCoverage]
 internal class ExceptionHandlerMiddleware(RequestDelegate next, ILogger<ExceptionHandlerMiddleware> logger)
 {
+    private static readonly JsonSerializerOptions CamelCaseOptions = new() { PropertyNamingPolicy = JsonNamingPolicy.CamelCase };
     private readonly RequestDelegate _next = next ?? throw new ArgumentNullException(nameof(next));
     private readonly ILogger<ExceptionHandlerMiddleware> _logger = logger ?? throw new ArgumentNullException(nameof(logger));
 
@@ -62,7 +63,7 @@ internal class ExceptionHandlerMiddleware(RequestDelegate next, ILogger<Exceptio
                     x.ErrorMessage,
                     CorrelationId = correlationId
                 });
-                result = JsonSerializer.Serialize(errors);
+                result = JsonSerializer.Serialize(errors, CamelCaseOptions);
                 break;
         }
 
