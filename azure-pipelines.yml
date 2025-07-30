@@ -5,12 +5,13 @@ trigger:
   - main
 
 pool:
-  vmImage: "windows-latest"
+  vmImage: "ubuntu-latest"
 
 variables:
   solution: "apps/api-dotnet/AdventureWorks.sln"
   projectName: "apps/api-dotnet/src/AdventureWorks.API/AdventureWorks.API.csproj"
   unitTestProjectName: "apps/api-dotnet/tests/AdventureWorks.UnitTests/AdventureWorks.UnitTests.csproj"
+  dotNetSdkVersion: "10.0.x"
   buildPlatform: "Any CPU"
   buildConfiguration: "Release"
   azureSubscriptionConnectionName: "KS - AdventureWorks - Azure Connection"
@@ -30,15 +31,18 @@ stages:
           - script: set
             displayName: "Print All YAML Build Pipleline Variables"
 
-          - task: NuGetToolInstaller@1
-            displayName: "NuGet tool installer"
+          - task: UseDotNet@2
+            displayName: "Install .NET SDK $(dotNetSdkVersion)"
+            inputs:
+              packageType: "sdk"
+              version: "$(dotNetSdkVersion)"
 
-          - task: NuGetCommand@2
-            name: "NuGetRestore"
+          - task: DotNetCoreCLI@2
+            name: "DotNetRestore"
             displayName: "Restore NuGet Packages"
             inputs:
               command: "restore"
-              restoreSolution: "$(solution)"
+              projects: "$(solution)"
 
           - task: DotNetCoreCLI@2
             name: "BuildSolution"
@@ -104,7 +108,7 @@ stages:
                     appType: "webApp"
                     WebAppName: $(webApplicationNameDev)
                     ResourceGroupName: $(azureAppResourceGroup)
-                    package: '$(System.ArtifactsDirectory)\**\*.zip'
+                    package: "$(System.ArtifactsDirectory)/**/*.zip"
 
   - stage: "DeployToProd"
     displayName: "Deploy Adventure Works Api to Production"
@@ -138,4 +142,4 @@ stages:
                     appType: "webApp"
                     WebAppName: $(webApplicationNameProd)
                     ResourceGroupName: $(azureAppResourceGroup)
-                    package: '$(System.ArtifactsDirectory)\**\*.zip'
+                    package: "$(System.ArtifactsDirectory)/**/*.zip"
