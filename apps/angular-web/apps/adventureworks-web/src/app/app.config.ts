@@ -1,5 +1,6 @@
 import {
   ApplicationConfig,
+  ErrorHandler,
   inject,
   provideAppInitializer,
   provideBrowserGlobalErrorListeners,
@@ -25,10 +26,12 @@ import {
   MsalService,
 } from '@azure/msal-angular';
 import {
+  appInsightsErrorHandler,
   AuthService,
   correlationIdInterceptor,
   ENVIRONMENT,
   errorInterceptor,
+  loadingInterceptor,
   msalGuardConfigFactory,
   msalInstanceFactory,
   msalInterceptorConfigFactory,
@@ -40,9 +43,10 @@ export const appConfig: ApplicationConfig = {
   providers: [
     provideBrowserGlobalErrorListeners(),
     provideZonelessChangeDetection(),
+    { provide: ErrorHandler, useValue: appInsightsErrorHandler },
     provideHttpClient(
       withFetch(),
-      withInterceptors([correlationIdInterceptor, errorInterceptor]),
+      withInterceptors([correlationIdInterceptor, loadingInterceptor, errorInterceptor]),
       withInterceptorsFromDi(),
     ),
     { provide: ENVIRONMENT, useValue: environment },

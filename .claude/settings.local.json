@@ -17,7 +17,8 @@
       "Bash(npm install)",
       "WebFetch(domain:daisyui.com)",
       "Bash(az boards:*)",
-      "Bash(az boards work-item show)`"
+      "Bash(az boards work-item show)`",
+      "Bash(npx prettier:*)"
     ],
     "deny": [],
     "ask": []

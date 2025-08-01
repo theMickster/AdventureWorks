@@ -4,6 +4,8 @@ export interface ApiEndpoint {
   baseUrl: string;
   /** Human-readable name for logging and diagnostics. */
   name: string;
+  /** Optional per-API OAuth scopes. Falls back to global auth.scopes if not specified. */
+  scopes?: string[];
 }
 
 /** Typed environment configuration consumed across the workspace. */

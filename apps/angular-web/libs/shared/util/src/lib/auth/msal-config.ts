@@ -37,11 +37,15 @@ export function msalInstanceFactory(env: Environment): IPublicClientApplication 
   });
 }
 
-/** Builds the MSAL interceptor config, mapping the primary API URL to auth scopes. */
+/** Builds the MSAL interceptor config, mapping all API URLs to their OAuth scopes. */
 export function msalInterceptorConfigFactory(env: Environment): MsalInterceptorConfiguration {
   const auth = getAuthConfig(env);
   const protectedResourceMap = new Map<string, string[]>();
-  protectedResourceMap.set(`${env.api.primary.baseUrl}/*`, auth.scopes);
+
+  for (const key of Object.keys(env.api)) {
+    const endpoint = env.api[key];
+    protectedResourceMap.set(`${endpoint.baseUrl}/*`, endpoint.scopes ?? auth.scopes);
+  }
 
   return {
     interactionType: InteractionType.Redirect,
