@@ -9,7 +9,7 @@ namespace AdventureWorks.Application.HealthChecks;
 /// </summary>
 public static class MetadataAccessor
 {
-    private static AssemblyVersionMetadata _assemblyVersionMetadata = null!;
+    private static AssemblyVersionMetadata? _assemblyVersionMetadata;
 
     /// <summary>
     /// Gets semantic Version, etc from Assembly Metadata
@@ -27,7 +27,7 @@ public static class MetadataAccessor
 
             var assembly = Assembly.GetEntryAssembly();
 
-            return assembly != null ? MetadataFromAssembly(assembly) : null!;
+            return assembly != null ? MetadataFromAssembly(assembly) : new AssemblyVersionMetadata();
         }
     }
 

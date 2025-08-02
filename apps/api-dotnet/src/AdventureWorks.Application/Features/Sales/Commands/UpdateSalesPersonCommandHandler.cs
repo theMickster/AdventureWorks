@@ -25,6 +25,9 @@ public sealed class UpdateSalesPersonCommandHandler(
 
         // Fetch existing entity WITH related data (Employee and Person)
         var currentEntity = await _salesPersonRepository.GetSalesPersonByIdAsync(request.Model.Id);
+        ArgumentNullException.ThrowIfNull(currentEntity);
+        ArgumentNullException.ThrowIfNull(currentEntity.Employee);
+        ArgumentNullException.ThrowIfNull(currentEntity.Employee.PersonBusinessEntity);
 
         // Map SalesPerson-specific fields via AutoMapper
         _mapper.Map(request.Model, currentEntity);

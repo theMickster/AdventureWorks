@@ -1,6 +1,6 @@
-﻿using AdventureWorks.Domain.Entities;
-using AdventureWorks.Domain.Entities.Person;
+﻿using AdventureWorks.Domain.Entities.Person;
 using AdventureWorks.Models.Features.AddressManagement;
+using AdventureWorks.Models.Slim;
 using AutoMapper;
 
 namespace AdventureWorks.Application.Features.AddressManagement.Profiles;
@@ -14,24 +14,22 @@ public sealed class AddressEntityToAddressModelProfile : Profile
                 options
                     => options.MapFrom(e => e.AddressId))
 
-            .ForPath(m => m.StateProvince.Id,
+            .ForMember(m => m.StateProvince,
                 options
-                    => options.MapFrom(e => e.StateProvince.StateProvinceId))
+                    => options.MapFrom(e => new GenericSlimModel
+                    {
+                        Id = e.StateProvince!.StateProvinceId,
+                        Code = (e.StateProvince.StateProvinceCode ?? string.Empty).Trim(),
+                        Name = (e.StateProvince.Name ?? string.Empty).Trim()
+                    }))
 
-            .ForPath(m => m.StateProvince.Code,
+            .ForMember(m => m.CountryRegion,
                 options
-                    => options.MapFrom(e => e.StateProvince.StateProvinceCode.Trim()))
-
-            .ForPath(m => m.StateProvince.Name,
-             options => options.MapFrom(e => e.StateProvince.Name.Trim()))
-
-            .ForPath(m => m.CountryRegion.Code,
-                options
-                    => options.MapFrom(e => e.StateProvince.CountryRegionCode))
-
-            .ForPath(m => m.CountryRegion.Name,
-                options
-                    => options.MapFrom(e => e.StateProvince.CountryRegion.Name));
+                    => options.MapFrom(e => new CountryRegionModel
+                    {
+                        Code = e.StateProvince!.CountryRegionCode ?? string.Empty,
+                        Name = e.StateProvince.CountryRegion!.Name ?? string.Empty
+                    }));
 
 
     }

@@ -58,6 +58,7 @@ public sealed class CreateSalesPersonController : ControllerBase
 
         var salesPersonId = await _mediator.Send(cmd);
         var model = await _mediator.Send(new ReadSalesPersonQuery { Id = salesPersonId });
+        ArgumentNullException.ThrowIfNull(model);
 
         return CreatedAtRoute("GetSalesPersonById", new { salesPersonId = model.Id }, model);
     }

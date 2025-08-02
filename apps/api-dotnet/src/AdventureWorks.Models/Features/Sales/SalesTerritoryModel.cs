@@ -18,5 +18,5 @@ public sealed class SalesTerritoryModel
 
     public decimal CostLastYear { get; set; }
 
-    public CountryRegionModel CountryRegion { get; set; }
+    public CountryRegionModel CountryRegion { get; set; } = new();
 }

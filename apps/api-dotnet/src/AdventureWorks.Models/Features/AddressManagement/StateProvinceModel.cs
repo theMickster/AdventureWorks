@@ -11,8 +11,8 @@ public sealed class StateProvinceModel
     public required string Name { get; set; }
 
     public bool IsStateProvinceCodeUnavailable { get; set; }
-    
-    public CountryRegionModel CountryRegion { get; set; }
 
-    public GenericSlimModel Territory { get; set; }
+    public CountryRegionModel CountryRegion { get; set; } = new();
+
+    public GenericSlimModel Territory { get; set; } = new();
 }

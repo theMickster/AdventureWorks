@@ -53,7 +53,7 @@ public sealed class TerminateEmployeeValidatorTests : UnitTestBase
     [InlineData("")]
     [InlineData(" ")]
     [InlineData(null)]
-    public async Task Validator_should_have_reason_error_when_emptyAsync(string reason)
+    public async Task Validator_should_have_reason_error_when_emptyAsync(string? reason)
     {
         var model = GetValidTerminateEmployeeModel();
         model.Reason = reason!;
@@ -80,7 +80,7 @@ public sealed class TerminateEmployeeValidatorTests : UnitTestBase
     [InlineData("")]
     [InlineData(" ")]
     [InlineData(null)]
-    public async Task Validator_should_have_termination_type_error_when_emptyAsync(string terminationType)
+    public async Task Validator_should_have_termination_type_error_when_emptyAsync(string? terminationType)
     {
         var model = GetValidTerminateEmployeeModel();
         model.TerminationType = terminationType!;

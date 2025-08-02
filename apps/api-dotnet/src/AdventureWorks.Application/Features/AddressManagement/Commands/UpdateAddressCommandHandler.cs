@@ -9,7 +9,7 @@ namespace AdventureWorks.Application.Features.AddressManagement.Commands;
 public sealed class UpdateAddressCommandHandler(
     IMapper mapper,
     IAddressRepository addressRepository,
-    IValidator<AddressUpdateModel?> validator) 
+    IValidator<AddressUpdateModel?> validator)
         : IRequestHandler<UpdateAddressCommand>
 {
     private readonly IMapper _mapper = mapper ?? throw new ArgumentNullException(nameof(mapper));
@@ -23,6 +23,7 @@ public sealed class UpdateAddressCommandHandler(
 
         await _validator.ValidateAndThrowAsync(request.Model, cancellationToken);
         var currentEntity = await _addressRepository.GetByIdAsync(request.Model.Id);
+        ArgumentNullException.ThrowIfNull(currentEntity);
         _mapper.Map(request.Model, currentEntity);
         currentEntity.ModifiedDate = request.ModifiedDate;
         await _addressRepository.UpdateAsync(currentEntity);
