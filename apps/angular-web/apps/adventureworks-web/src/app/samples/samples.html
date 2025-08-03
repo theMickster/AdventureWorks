@@ -519,6 +519,41 @@
       </div>
     </section>
 
+    <!-- Data Access Validation -->
+    <section id="aw-samples-data-access" class="mb-12">
+      <h2 id="aw-samples-data-access-title" class="mb-6 text-2xl font-bold text-base-content">
+        Data Access Validation
+      </h2>
+      <div id="aw-samples-data-access-content" class="rounded-xl border border-base-300 bg-base-200/50 p-6">
+        <h3 class="mb-4 text-lg font-semibold text-base-content">LookupStore — Departments</h3>
+        @if (lookupStore.isLoading()) {
+          <div id="aw-samples-departments-loading" class="flex items-center gap-2">
+            <span class="loading loading-spinner loading-sm text-primary"></span>
+            <span class="text-sm text-base-content/70">Loading departments...</span>
+          </div>
+        }
+        @if (lookupStore.hasError()) {
+          <div id="aw-samples-departments-error" role="alert" class="alert alert-error">
+            <span>{{ lookupStore.error() }}</span>
+          </div>
+        }
+        @if (lookupStore.isLoaded()) {
+          <fieldset id="aw-samples-departments-fieldset" class="fieldset">
+            <label for="aw-samples-department-select" class="fieldset-legend">Department</label>
+            <select id="aw-samples-department-select" class="select select-bordered w-full max-w-xs">
+              <option disabled selected>Select a department</option>
+              @for (dept of lookupStore.departments(); track dept.id) {
+                <option [value]="dept.id">{{ dept.name }} — {{ dept.groupName }}</option>
+              }
+            </select>
+          </fieldset>
+          <p id="aw-samples-departments-count" class="mt-2 text-sm text-base-content/70">
+            {{ lookupStore.departments().length }} departments loaded from API
+          </p>
+        }
+      </div>
+    </section>
+
     <!-- Footer -->
     <footer class="footer footer-center rounded-lg bg-base-200 p-6 text-base-content">
       <div>

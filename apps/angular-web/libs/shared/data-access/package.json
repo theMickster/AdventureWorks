@@ -4,7 +4,8 @@
   "peerDependencies": {
     "@angular/common": "^21.1.0",
     "@angular/core": "^21.1.0",
-    "@ngrx/signals": "^21.0.0"
+    "@ngrx/signals": "^21.0.0",
+    "@angular-architects/ngrx-toolkit": "^21.0.0"
   },
   "sideEffects": false
 }

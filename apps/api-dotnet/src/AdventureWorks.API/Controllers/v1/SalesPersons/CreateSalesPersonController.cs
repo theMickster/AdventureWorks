@@ -46,8 +46,16 @@ public sealed class CreateSalesPersonController : ControllerBase
     {
         if (inputModel == null)
         {
+            _logger.LogWarning("CreateSalesPerson called with null input model");
             return BadRequest("The sales person input model cannot be null.");
         }
+
+        _logger.LogInformation(
+            "Creating sales person: TerritoryId={TerritoryId}, HireDate={HireDate}, AddressTypeId={AddressTypeId}, HasSalesQuota={HasSalesQuota}",
+            inputModel.TerritoryId,
+            inputModel.HireDate,
+            inputModel.AddressTypeId,
+            inputModel.SalesQuota.HasValue);
 
         var cmd = new CreateSalesPersonCommand
         {
@@ -59,6 +67,12 @@ public sealed class CreateSalesPersonController : ControllerBase
         var salesPersonId = await _mediator.Send(cmd);
         var model = await _mediator.Send(new ReadSalesPersonQuery { Id = salesPersonId });
         ArgumentNullException.ThrowIfNull(model);
+
+        _logger.LogInformation(
+            "Sales person created successfully: SalesPersonId={SalesPersonId}, TerritoryId={TerritoryId}, JobTitle={JobTitle}",
+            salesPersonId,
+            model.TerritoryId,
+            model.JobTitle);
 
         return CreatedAtRoute("GetSalesPersonById", new { salesPersonId = model.Id }, model);
     }

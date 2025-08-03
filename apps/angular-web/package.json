@@ -20,6 +20,7 @@
   },
   "private": true,
   "dependencies": {
+    "@angular-architects/ngrx-toolkit": "^21.0.1",
     "@angular/common": "21.1.6",
     "@angular/compiler": "21.1.6",
     "@angular/core": "21.1.6",
@@ -32,6 +33,8 @@
     "@microsoft/applicationinsights-angularplugin-js": "^15.3.8",
     "@microsoft/applicationinsights-web": "^3.3.11",
     "@ngrx/signals": "^21.0.1",
+    "@ngrx/store": "^21.0.1",
+    "@ngrx/store-devtools": "^21.0.1",
     "@ngx-translate/core": "^17.0.0",
     "@ngx-translate/http-loader": "^17.0.0",
     "rxjs": "~7.8.0",

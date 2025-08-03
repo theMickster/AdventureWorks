@@ -54,7 +54,6 @@ public static class MetadataAccessor
 
             var name = attribute.AttributeType.Name;
 
-            System.Diagnostics.Trace.WriteLine($"{name}, {value}");
             _assemblyVersionMetadata.PropertySet(name, value);
         }
 

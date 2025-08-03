@@ -10,7 +10,13 @@ export default [
         'error',
         {
           ignoredFiles: ['{projectRoot}/eslint.config.{js,cjs,mjs,ts,cts,mts}'],
-          ignoredDependencies: ['@angular/common', '@adventureworks-web/shared/util'],
+          ignoredDependencies: [
+            '@angular/common',
+            '@adventureworks-web/shared/util',
+            '@ngrx/store',
+            '@angular-architects/ngrx-toolkit',
+            'rxjs',
+          ],
         },
       ],
     },
