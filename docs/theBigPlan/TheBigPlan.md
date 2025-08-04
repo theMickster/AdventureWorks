@@ -1,14 +1,14 @@
-# AdventureWorks Enterprise Application - 4-Month Implementation Plan
+# AdventureWorks Enterprise Application - Implementation Plan
 
-**Project Vision**: Build a modern, production-ready AdventureWorks showcase demonstrating Angular v21, .NET 10.0 API with Clean Architecture, Azure Functions microservices, and cloud-native practices - achievable by solo developer + Claude Code in 4 months.
+**Project Vision**: Build a modern, production-ready AdventureWorks showcase demonstrating Angular v21, .NET 10.0 API with Clean Architecture, Azure Functions microservices, and cloud-native practices - achievable by solo developer + Claude Code.
 
 **Scope Philosophy**: Focus on **one domain end-to-end** (Sales) with impressive Azure Functions scenarios, rather than broad but shallow coverage. Quality over quantity. Showcase best-in-class architecture that can be extended later.
 
-**Current Status Summary**:
+**Current Status Summary** (as of 2026-03-15):
 - ✅ Backend API: Sales, HR, Address Management fully implemented with CQRS + Clean Architecture
-- ❌ Frontend: Empty directory - need Angular skeleton + Sales UI only
-- ❌ Azure Functions: Empty directories - focus on 2-3 impressive showcase scenarios
-- ⚠️ Infrastructure: Azure DevOps exists, need Docker + essential IaC
+- 🔄 Frontend: Angular Foundation 70% complete, Data Interaction Layer 67% complete
+- ❌ Azure Functions: Planned as Epic #569 (Polyglot Azure Functions Architecture) - not yet started
+- ❌ Infrastructure: IaC + CI/CD planned (Epic #570), Testing Foundation planned (Epic #565)
 
 **Success Metrics**:
 - ✅ Working Angular app with authentication + Sales management UI
@@ -24,28 +24,25 @@
 
 **2 focused initiatives** that deliver maximum impact with minimal scope creep:
 
-### Initiative Priority & Phasing Strategy
+### Initiative Priority & Phasing Strategy (Revised 2026-03-15)
 
-**Month 1 - Foundation**:
-- Angular skeleton with authentication
-- Sales UI (CRUD for Stores & SalesPersons)
-- Docker containerization
+**Phase 1 - Angular Foundation** (Epic #560) -- 70% COMPLETE:
+- ✅ Nx workspace, Tailwind/DaisyUI, Entra Auth, HTTP interceptors, environment config, error handling, app shell
+- Remaining: Shared Component Library, Routing with Guards
 
-**Month 2 - Vertical Integration**:
-- Complete Sales management UI with dashboards
-- First Azure Function (Document OCR Pipeline)
-- SignalR real-time updates
+**Phase 2 - Data Interaction Layer** (Epic #577) -- 67% COMPLETE:
+- ✅ Shared data models, API contract corrections, enhanced HTTP pipeline, NgRx SignalStore foundation
+- Remaining: Domain data access libraries, SignalR real-time communication
 
-**Month 3 - Event-Driven Showcase**:
-- Second Azure Function (Fraud Detection or Inventory AI)
-- Multi-language function (Go or Node.js integration)
-- Event Grid + Service Bus wiring
+**Phase 3 - Simple IaC + CI/CD** (Epic #570) -- NOT STARTED:
+- Bicep IaC, secrets management, GitHub Actions PR validation, Azure Pipelines CI/CD, Docker local dev
 
-**Month 4 - Production Hardening**:
-- Bicep IaC for Azure deployment
-- E2E Playwright tests
-- Monitoring dashboards + alerts
-- Performance optimization
+**Phase 4 - Testing Foundation** (Epic #565) -- NOT STARTED:
+- .NET integration tests, k6 load testing, Playwright E2E smoke tests, Angular testing utilities
+
+**Future Phases** (not yet scheduled):
+- Sales CRUD UI, HR CRUD UI, Real-Time Dashboard
+- Azure Functions (Epic #569 - Polyglot Architecture with Rust, C#, Go, TypeScript)
 
 ---
 
@@ -74,20 +71,52 @@
 - **Modern UX**: Tailwind CSS provides polished look with minimal effort
 - **TDD Practice**: Building with tests from the start ensures quality and confidence
 
-### Technical Foundation
-- **Framework**: Angular v21 standalone components with Signals
-- **Monorepo**: Nx workspace with single app + shared libraries
-- **Styling**: Tailwind CSS + DaisyUI component library (faster than building from scratch)
-- **State Management**: Angular Signals (simpler than NgRx for this scope)
-- **HTTP**: HTTP interceptors for JWT, correlation IDs, error handling
-- **Real-Time**: @microsoft/signalr for live updates
-- **Testing**: Playwright for critical user flows only (not comprehensive coverage yet)
+### Technical Foundation (Updated)
+- **Framework**: Angular v21.1.1 standalone components with Signals (zoneless)
+- **Monorepo**: Nx 22.5.1 workspace with single app + shared libraries
+- **Styling**: Tailwind CSS v4.2.0 + DaisyUI v5.5.19 (Alpine Circuit theme)
+- **State Management**: NgRx SignalStore (`@ngrx/signals` v21.0.1) -- extends existing signal-based architecture
+- **HTTP**: HTTP interceptors for MSAL JWT, correlation IDs, error handling, loading states
+- **Real-Time**: @microsoft/signalr for live updates (planned in Feature #621)
+- **Auth**: MSAL Angular v5.1.0 + MSAL Browser v5.3.0 (Entra ID redirect flow)
+- **Testing**: Vitest (unit), Playwright (E2E), k6 (load)
+- **Telemetry**: Azure Application Insights + OpenTelemetry
 
-### Epics (4 epics for Initiative 1)
-1. **Angular Foundation** (Week 1-2) - Nx setup, auth, routing, HTTP client, shared components, Tailwind config
-2. **Sales CRUD UI** (Week 3-4) - Store and SalesPerson list/create/update forms with validation
-3. **HR CRUD UI** (Week 5-6) - Employee list/create/update, department management (API already exists)
-4. **Real-Time Dashboard** (Week 7-8) - SignalR integration, dashboard with charts, live updates for Sales & HR
+### Epics (Initiative 1)
+
+#### Epic #560 -- Angular Foundation (7/9 features complete)
+
+| Order | ID | Feature | Status |
+|-------|-----|---------|--------|
+| -- | #571 | Nx Workspace Setup | ✅ Done |
+| -- | #572 | Tailwind CSS + DaisyUI Configuration | ✅ Done |
+| -- | #575 | Microsoft Entra ID Authentication | ✅ Done |
+| -- | #576 | HTTP Client with Interceptors | ✅ Done |
+| -- | #578 | Environment Configuration | ✅ Done |
+| -- | #579 | Global Error Handling and Loading States | ✅ Done |
+| -- | #580 | App Shell with Navigation | ✅ Done |
+| 1 | #573 | Shared Component Library | ⏭️ Next |
+| 2 | #574 | Routing Configuration with Guards | 📋 Planned |
+
+> **Pivot**: Feature #577 (API Service Layer) was promoted to its own Epic -- the Data Interaction Layer (see below). This reduced Epic #560 from 10 to 9 features.
+
+#### Epic #577 -- Data Interaction Layer (4/6 features complete)
+
+| Order | ID | Feature | Status |
+|-------|-----|---------|--------|
+| -- | #617 | Shared Data Models & API Contracts | ✅ Done |
+| -- | #639 | API Contract Corrections | ✅ Done |
+| -- | #618 | Enhanced HTTP Pipeline | ✅ Done |
+| -- | #619 | NgRx SignalStore Foundation | ✅ Done |
+| 3 | #620 | Domain Data Access Libraries (Sales, HR) | ⏭️ Next |
+| 4 | #621 | Real-Time Communication (SignalR) | 📋 Planned |
+
+> **Pivot**: State management upgraded from plain Angular Signals to NgRx SignalStore. The codebase is 100% signal-based; SignalStore extends that pattern with `rxMethod()` for HTTP bridging, `withRequestStatus()`, and `withPagination()`.
+
+#### Future Epics (not yet broken down in ADO)
+- **Sales CRUD UI** -- Stores, SalesPersons list/create/update with validation
+- **HR CRUD UI** -- Employees, Departments list/create/update with validation
+- **Real-Time Dashboard** -- SignalR integration, charts, live updates
 
 ### Dependencies
 - **API**: Sales endpoints already exist (Stores, SalesPersons, SalesTerritories)
@@ -129,13 +158,35 @@
 - **CI/CD**: GitHub Actions with secrets from Key Vault
 - **Monitoring**: App Insights custom metrics, correlation IDs, dashboards, alerts
 
-### Epics (6 epics for Initiative 2)
-1. **Test-Driven Development Foundation** (Week 9) - Unit tests (TDD), API integration tests, E2E test framework (Playwright), load testing setup
-2. **Docker Basics** (Week 10) - Simple Dockerfiles for API/Frontend, basic docker-compose for local dev
-3. **Intelligent Document Pipeline Function** (Week 11-12) - Blob trigger → Azure Form Recognizer → validation → store results (with tests)
-4. **Real-Time Fraud Detection Function** (Week 13) - Event Grid → rules engine → alert workflow with Durable Functions (with tests)
-5. **Polyglot Integration Function** (Week 14) - Go or Node.js function for external API integration (with tests)
-6. **Simple IaC + CI/CD** (Week 15-16) - Basic Bicep templates, straightforward GitHub Actions for deployment
+### Epics (Initiative 2)
+
+#### Epic #570 -- Simple IaC + CI/CD (0/5 features complete)
+
+| Order | ID | Feature | Status |
+|-------|-----|---------|--------|
+| 5 | #643 | IaC with Bicep | 📋 Planned |
+| 6 | #644 | Environment & Secrets Management | 📋 Planned |
+| 7 | #645 | GitHub Actions PR Validation | 📋 Planned |
+| 8 | #646 | Azure Pipelines CI/CD Enhancement | 📋 Planned |
+| 9 | #647 | Docker Local Dev Environment | 📋 Planned |
+
+> **Pivot**: Epic #566 (Docker Basics) has been superseded by Feature #647 within this epic. User will close #566 manually.
+> **Architecture**: GitHub Actions for PR validation, Azure Pipelines for deployment. Angular hosted on Azure App Service (not Static Web Apps). Single B1 Linux plan shared by all App Services (~$13/mo). Budget: ~$18/mo total on MSDN subscription.
+
+#### Epic #565 -- Testing Foundation (0/4 features complete)
+
+| Order | ID | Feature | Status |
+|-------|-----|---------|--------|
+| 10 | #669 | .NET Integration Tests (WebApplicationFactory) | 📋 Planned |
+| 11 | #670 | k6 Load Testing Foundation | 📋 Planned |
+| 12 | #671 | Playwright E2E Smoke Test Suite | 📋 Planned |
+| 13 | #672 | Angular Testing Foundation & Utilities | 📋 Planned |
+
+> **Scope clarification**: 151 existing .NET unit tests and 16 existing Angular spec files are NOT in scope. This epic adds integration tests, load tests, E2E smoke tests, and Angular testing utilities only.
+
+#### Future Epics (not yet started)
+- **Epic #569 -- Polyglot Azure Functions Architecture** (9 features: Rust, C#, Go, TypeScript functions)
+  - BOM Cost Explosion Engine (Rust), Sales Order Saga (C# Durable), Inventory Processor (Go), Product Image Pipeline (Rust), Notification Hub (TypeScript), Vendor Health (Go), Employee Lifecycle (C# Durable), Reporting (C# Durable)
 
 ### "Wow Factor" Function Scenarios (Streamlined to 3)
 
@@ -182,43 +233,56 @@
 
 ---
 
-## Summary: 4-Month Roadmap
+## Execution Order: All Remaining Features
 
-### Total Scope (Streamlined)
-- **2 Initiatives** (down from 4)
-- **10 Epics** total (down from 40+)
-  - Initiative 1: 4 epics (Angular Foundation, Sales CRUD, HR CRUD, Real-Time Dashboard)
-  - Initiative 2: 6 epics (Testing Foundation, Docker Basics, 3 Azure Functions, Simple IaC/CI/CD)
-- **~70-90 Features** (down from 400+)
-- **~140-180 User Stories** (down from 800+)
-- **Estimated: 700-900 story points**
-- **Timeline: 16 weeks (4 months)** with solo dev + Claude Code using TDD approach
+The precise order for completing the 4 active epics (560 -> 577 -> 570 -> 565):
 
-### Week-by-Week Plan
-| Week | Focus | Deliverable |
-|------|-------|-------------|
-| 1-2 | Angular Foundation | Nx workspace, auth, routing, HTTP client, base components with Tailwind |
-| 3-4 | Sales CRUD UI | Store & SalesPerson list/create/update with validation (TDD) |
-| 5-6 | HR CRUD UI | Employee & Department list/create/update with validation (TDD) |
-| 7-8 | Real-Time Dashboard | SignalR integration, charts, live updates for Sales & HR metrics |
-| 9 | Testing Foundation | E2E framework (Playwright), API integration tests, load testing (k6), unit test patterns |
-| 10 | Docker Basics | Simple Dockerfiles (API/Frontend), basic docker-compose for local dev |
-| 11-12 | Document Processing Function | Blob trigger → Form Recognizer → validation → results (with tests) |
-| 13 | Fraud Detection Function | Event Grid → Durable Function → alerting (with tests) |
-| 14 | Polyglot Integration Function | Go or Node.js for external API integration (with tests) |
-| 15-16 | Simple IaC + CI/CD | Basic Bicep templates, straightforward GitHub Actions for deploy |
+| # | Epic | ID | Feature | Status | Depends On |
+|---|------|----|---------|--------|------------|
+| 1 | #560 | #573 | Shared Component Library | ⏭️ Next | #572 (DaisyUI) |
+| 2 | #560 | #574 | Routing Configuration with Guards | 📋 Planned | #575 (Auth) |
+| 3 | #577 | #620 | Domain Data Access Libraries (Sales, HR) | ⏭️ Next | #619 (SignalStore) |
+| 4 | #577 | #621 | Real-Time Communication (SignalR) | 📋 Planned | #618 (HTTP Pipeline) |
+| 5 | #570 | #643 | IaC with Bicep | 📋 Planned | -- |
+| 6 | #570 | #644 | Environment & Secrets Management | 📋 Planned | #643 |
+| 7 | #570 | #645 | GitHub Actions PR Validation | 📋 Planned | -- |
+| 8 | #570 | #646 | Azure Pipelines CI/CD Enhancement | 📋 Planned | #643, #644 |
+| 9 | #570 | #647 | Docker Local Dev Environment | 📋 Planned | -- |
+| 10 | #565 | #672 | Angular Testing Foundation & Utilities | 📋 Planned | -- |
+| 11 | #565 | #669 | .NET Integration Tests (WebApplicationFactory) | 📋 Planned | -- |
+| 12 | #565 | #670 | k6 Load Testing Foundation | 📋 Planned | -- |
+| 13 | #565 | #671 | Playwright E2E Smoke Test Suite | 📋 Planned | Deployed app (ideal) |
+
+**Note on parallelism within epics**: Features #643/#645/#647 in Epic #570 have no mutual dependencies and could be worked in parallel. Similarly, all four features in Epic #565 are independent. The order above reflects the most logical solo-developer sequence.
+
+---
+
+## Summary: Progress and Roadmap
+
+### Completed Work (11 features across 2 epics)
+
+**Epic #560 -- Angular Foundation**: 7 of 9 features done
+- Nx Workspace, Tailwind/DaisyUI, Entra Auth, HTTP Interceptors, Environment Config, Error Handling/Loading, App Shell
+
+**Epic #577 -- Data Interaction Layer**: 4 of 6 features done
+- Shared Data Models, API Contract Corrections, Enhanced HTTP Pipeline, NgRx SignalStore Foundation
+
+### Remaining Work (13 features across 4 epics)
+- **Epic #560**: 2 features remaining
+- **Epic #577**: 2 features remaining
+- **Epic #570**: 5 features (all new)
+- **Epic #565**: 4 features (all new)
 
 ### Success Criteria for "Done"
 - ✅ Angular app deployed with **Sales + HR management UI**
 - ✅ Authentication working with Microsoft Entra ID
-- ✅ **3 impressive Azure Functions** demonstrating event-driven patterns (Document OCR, Fraud Detection, Integration)
 - ✅ Real-time SignalR updates between users
-- ✅ **Solid test coverage** (E2E tests for critical flows, API integration tests, unit tests via TDD, load tests)
+- ✅ **Solid test coverage** (E2E smoke tests, API integration tests, load tests, Angular testing utils)
 - ✅ Everything containerized with **simple Docker setup** (Dockerfiles + docker-compose)
 - ✅ Deployed to Azure via **basic Bicep IaC**
-- ✅ **Simple CI/CD** pipelines (GitHub Actions for build/test/deploy)
-- ✅ Application Insights dashboards showing metrics
-- ✅ Security hardened (Key Vault, Managed Identities, HTTPS)
+- ✅ **CI/CD pipelines** (GitHub Actions for PR validation, Azure Pipelines for deployment)
+- ✅ Application Insights with correlation IDs and telemetry
+- ✅ Security hardened (Key Vault, Managed Identities, HTTPS, Entra ID)
 
 ### What's NOT in Scope (Future Extensions)
 - ❌ Products/Production/Purchasing domains (focus on Sales + HR only)
@@ -229,37 +293,37 @@
 - ❌ Comprehensive E2E test coverage (only critical user paths)
 - ❌ Complex Docker orchestration (Kubernetes, service mesh, etc.)
 - ❌ Advanced CI/CD (blue-green deployments, canary releases, etc.)
-- ❌ 10 Azure Functions scenarios (only 3 best ones)
 
 ---
 
-## Next Steps in Planning Process
+## Pivots and Changes from Original Plan
 
-**User requested**: Continue planning iteratively through Epics → Features with TDD approach
+This section documents significant deviations from the v1.0 plan (2026-01-17).
 
-**Next Phase**: Break down the **10 Epics** with detailed Gherkin acceptance criteria and feature lists:
+### Structural Changes
+1. **Feature #577 promoted to Epic** -- "API Service Layer" was insufficient. ApiService already had CRUD methods. Expanded to a full Data Interaction Layer with 6 child features covering shared models, enhanced HTTP, NgRx SignalStore, domain data access, and SignalR.
+2. **Epic #566 (Docker Basics) superseded** -- Absorbed into Feature #647 (Docker Local Dev Environment) under Epic #570. User will close #566 manually.
+3. **Azure Functions scope expanded** -- Original plan called for 3 "wow factor" scenarios. Epic #569 now defines 9 features across 4 languages (Rust, C#, Go, TypeScript). This is a future-phase epic.
 
-**Initiative 1 - Frontend (4 Epics)**:
-1. Angular Foundation (8-10 features) - Nx, auth, routing, HTTP, components, Tailwind
-2. Sales CRUD UI (8-10 features) - Stores, SalesPersons list/create/update with TDD
-3. HR CRUD UI (8-10 features) - Employees, Departments list/create/update with TDD
-4. Real-Time Dashboard (6-8 features) - SignalR, charts, live updates for Sales & HR
+### Technology Decisions (vs. Original Plan)
+1. **State management**: NgRx SignalStore replaces "plain Angular Signals" -- the codebase is 100% signal-based, and SignalStore extends (not replaces) that pattern.
+2. **Auth**: MSAL Angular v5 with redirect flow (not popup). Token cache uses `BrowserCacheLocation.LocalStorage` for cross-tab SSO.
+3. **Styling**: Tailwind CSS v4 is CSS-first (no `tailwind.config.js`). DaisyUI v5 uses `@plugin` directives. Alpine Circuit custom theme.
+4. **Angular**: Zoneless (no Zone.js). Uses `provideAppInitializer` (not deprecated `APP_INITIALIZER`). `@angular/animations` removed -- Angular 21 uses native CSS animations.
+5. **CI/CD split**: GitHub Actions for PR validation, Azure Pipelines for deployment (not GitHub Actions for everything).
+6. **Deployment**: Zip push to App Service (not ACR/containers). Dockerfiles are for local dev only.
+7. **Multi-API from the start**: `Environment.api` uses `{ primary: ApiEndpoint; [key: string]: ApiEndpoint }` pattern with per-API OAuth scopes.
 
-**Initiative 2 - Functions + Infrastructure (6 Epics)**:
-5. Testing Foundation (8-10 features) - E2E (Playwright), integration tests, load tests (k6), TDD patterns
-6. Docker Basics (4-5 features) - Dockerfiles, docker-compose, local dev environment
-7. Document Processing Function (8-10 features) - Blob trigger, Form Recognizer, validation (with tests)
-8. Fraud Detection Function (6-8 features) - Event Grid, Durable Function, alerting (with tests)
-9. Polyglot Integration Function (5-6 features) - Go/Node.js for external APIs (with tests)
-10. Simple IaC + CI/CD (8-10 features) - Basic Bicep, straightforward GitHub Actions
-
-After approval, I'll expand each Epic with full feature breakdowns in Scrum format ("As a... I want... So that...") with Gherkin acceptance criteria ("Given... When... Then...").
+### Scope Adjustments
+- Original "Week-by-Week Plan" timelines were aspirational. Real delivery is feature-by-feature, not week-locked.
+- Azure Functions (Epic #569) moved to future phases, replacing the 3 original scenarios with a more ambitious 9-feature polyglot architecture.
+- Sales CRUD UI, HR CRUD UI, and Real-Time Dashboard epics have not yet been broken down in ADO. They follow after Epics #560 and #577 are complete.
 
 ---
 
 ## Markdown Documentation Structure
 
-All work breakdown documents are created in: `C:\source\mick\AdventureWorks\docs\theBigPlan\`
+All work breakdown documents are in: `docs/theBigPlan/`
 
 ### File Organization
 
@@ -318,6 +382,6 @@ Each markdown file follows this structure:
 
 ---
 
-**Document Version**: 1.0
-**Last Updated**: 2026-01-17
-**Status**: Plan Approved - Ready for Epic Breakdown
+**Document Version**: 2.0
+**Last Updated**: 2026-03-15
+**Status**: Active Execution - Epic #560 and #577 in progress, #570 and #565 planned
