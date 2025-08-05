@@ -2,8 +2,8 @@
   "name": "@adventureworks-web/shared/data-access",
   "version": "0.0.1",
   "peerDependencies": {
-    "@angular/common": "^21.1.0",
-    "@angular/core": "^21.1.0",
+    "@angular/common": "^21.2.0",
+    "@angular/core": "^21.2.0",
     "@ngrx/signals": "^21.0.0",
     "@angular-architects/ngrx-toolkit": "^21.0.0"
   },
