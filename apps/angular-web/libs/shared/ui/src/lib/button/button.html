@@ -1,0 +1,6 @@
+<button [type]="type()" [class]="buttonClass()" [disabled]="isDisabled()" (click)="clicked.emit($event)">
+  @if (loading()) {
+    <span class="loading loading-spinner loading-sm" aria-hidden="true"></span>
+  }
+  <ng-content />
+</button>

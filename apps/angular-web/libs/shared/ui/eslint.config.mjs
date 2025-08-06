@@ -10,6 +10,7 @@ export default [
         'error',
         {
           ignoredFiles: ['{projectRoot}/eslint.config.{js,cjs,mjs,ts,cts,mts}'],
+          ignoredDependencies: ['@angular/cdk', '@angular/common', '@ngx-translate/core', '@angular/forms'],
         },
       ],
     },
@@ -38,6 +39,12 @@ export default [
           style: 'kebab-case',
         },
       ],
+    },
+  },
+  {
+    files: ['**/*.spec.ts'],
+    rules: {
+      '@angular-eslint/prefer-on-push-component-change-detection': 'off',
     },
   },
   {

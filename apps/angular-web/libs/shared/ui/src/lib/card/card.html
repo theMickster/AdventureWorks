@@ -1,0 +1,19 @@
+<div [id]="fieldId()" class="card bg-base-200 shadow-md">
+  @if (loading()) {
+    <div [id]="fieldId() + '-skeleton'" class="card-body">
+      <div class="skeleton h-6 w-3/5"></div>
+      <div class="skeleton h-16 w-full"></div>
+    </div>
+  } @else {
+    <div [id]="fieldId() + '-body'" class="card-body">
+      @if (title()) {
+        <h3 [id]="fieldId() + '-title'" class="card-title">{{ title() | translate }}</h3>
+      }
+      <ng-content select="[card-header]" />
+      <ng-content />
+      <div [id]="fieldId() + '-actions'" class="card-actions justify-end">
+        <ng-content select="[card-actions]" />
+      </div>
+    </div>
+  }
+</div>

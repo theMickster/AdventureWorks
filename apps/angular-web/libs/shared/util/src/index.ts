@@ -17,3 +17,7 @@ export { msalInstanceFactory, msalInterceptorConfigFactory, msalGuardConfigFacto
 export type { ValidationError } from './lib/http/errors/validation-error.model';
 export { ApiValidationError } from './lib/http/errors/api-validation-error';
 export { ApiEmptyResultError } from './lib/http/errors/api-empty-result-error';
+export { createControlValueAccessor } from './lib/forms/create-control-value-accessor';
+export type { ControlValueAccessorBridge } from './lib/forms/create-control-value-accessor';
+export { ConfirmService } from './lib/confirm/confirm.service';
+export type { ConfirmOptions, ConfirmState } from './lib/confirm/confirm.service';

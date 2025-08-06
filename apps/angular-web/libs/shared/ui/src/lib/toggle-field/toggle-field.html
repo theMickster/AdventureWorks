@@ -1,0 +1,13 @@
+<label [id]="fieldId() + '-label'" class="flex cursor-pointer items-center gap-3" [for]="fieldId() + '-toggle'">
+  <input
+    [id]="fieldId() + '-toggle'"
+    type="checkbox"
+    class="toggle toggle-primary"
+    [checked]="cva.value()"
+    [disabled]="cva.disabled()"
+    (change)="onToggle($event)"
+  />
+  @if (label()) {
+    <span class="label-text">{{ label() | translate }}</span>
+  }
+</label>

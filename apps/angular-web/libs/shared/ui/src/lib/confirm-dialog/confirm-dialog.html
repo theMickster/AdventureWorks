@@ -1,0 +1,11 @@
+<aw-modal fieldId="aw-confirm-dialog" [title]="options().title" [open]="visible()" (closed)="onCancel()">
+  <p id="aw-confirm-dialog-message" class="py-4">{{ options().message | translate }}</p>
+  <div modal-actions>
+    <aw-button id="aw-confirm-dialog-cancel" variant="ghost" (clicked)="onCancel()">
+      {{ options().cancelLabel ?? 'Cancel' | translate }}
+    </aw-button>
+    <aw-button id="aw-confirm-dialog-confirm" [variant]="options().variant ?? 'primary'" (clicked)="onConfirm()">
+      {{ options().confirmLabel ?? 'Confirm' | translate }}
+    </aw-button>
+  </div>
+</aw-modal>

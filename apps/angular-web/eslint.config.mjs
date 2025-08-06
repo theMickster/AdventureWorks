@@ -51,6 +51,12 @@ export default [
     },
   },
   {
+    files: ['**/*.spec.ts'],
+    rules: {
+      '@angular-eslint/prefer-on-push-component-change-detection': 'off',
+    },
+  },
+  {
     files: ['**/*.html'],
     ...angular.configs.templateRecommended[0],
   },

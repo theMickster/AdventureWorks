@@ -1,0 +1,27 @@
+<fieldset [id]="fieldId() + '-fieldset'" class="fieldset">
+  @if (label()) {
+    <legend class="fieldset-legend">
+      <label [for]="fieldId() + '-input'">{{ label() | translate }}</label>
+    </legend>
+  }
+  <input
+    [id]="fieldId() + '-input'"
+    [type]="inputType()"
+    [class]="inputClass()"
+    [placeholder]="placeholder() | translate"
+    [value]="cva.value()"
+    [disabled]="cva.disabled()"
+    [attr.aria-invalid]="!!errors()"
+    [attr.aria-describedby]="ariaDescribedBy()"
+    (input)="onInput($event)"
+    (blur)="onBlur()"
+  />
+  @if (hint() && !errors()) {
+    <p [id]="fieldId() + '-hint'" class="fieldset-label">{{ hint() | translate }}</p>
+  }
+  @for (entry of errorEntries(); track entry[0]) {
+    <p [id]="fieldId() + '-error-' + entry[0]" class="fieldset-label text-error">
+      {{ entry[1] | translate }}
+    </p>
+  }
+</fieldset>

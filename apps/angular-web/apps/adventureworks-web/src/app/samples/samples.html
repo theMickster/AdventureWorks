@@ -21,435 +21,186 @@
   </div>
 
   <div class="mx-auto max-w-6xl px-6 py-10">
-    <!-- Stats -->
-    <section class="mb-12">
-      <div class="stats w-full shadow">
-        <div class="stat">
-          <div class="stat-figure text-primary">
-            <svg
-              xmlns="http://www.w3.org/2000/svg"
-              fill="none"
-              viewBox="0 0 24 24"
-              class="inline-block h-8 w-8 stroke-current"
-            >
-              <path
-                stroke-linecap="round"
-                stroke-linejoin="round"
-                stroke-width="2"
-                d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"
-              ></path>
-            </svg>
-          </div>
-          <div class="stat-title">Total Stores</div>
-          <div class="stat-value text-primary">1,247</div>
-          <div class="stat-desc">21% more than last quarter</div>
+    <!-- ========================================= -->
+    <!-- SHARED COMPONENT GALLERY                  -->
+    <!-- ========================================= -->
+
+    <!-- 1. BUTTONS -->
+    <section id="aw-samples-buttons" class="mb-12">
+      <h2 class="mb-6 text-2xl font-bold text-base-content">Buttons</h2>
+      <div id="aw-samples-buttons-content" class="rounded-xl border border-base-300 bg-base-200/50 p-6">
+        <h3 class="mb-4 text-lg font-semibold text-base-content">Variants</h3>
+        <div id="aw-samples-buttons-variants" class="flex flex-wrap gap-2">
+          <aw-button variant="primary" (clicked)="(false)">Primary</aw-button>
+          <aw-button variant="secondary" (clicked)="(false)">Secondary</aw-button>
+          <aw-button variant="accent" (clicked)="(false)">Accent</aw-button>
+          <aw-button variant="error" (clicked)="(false)">Error</aw-button>
+          <aw-button variant="ghost" (clicked)="(false)">Ghost</aw-button>
         </div>
-        <div class="stat">
-          <div class="stat-figure text-accent">
-            <svg
-              xmlns="http://www.w3.org/2000/svg"
-              fill="none"
-              viewBox="0 0 24 24"
-              class="inline-block h-8 w-8 stroke-current"
-            >
-              <path
-                stroke-linecap="round"
-                stroke-linejoin="round"
-                stroke-width="2"
-                d="M12 6V4m0 2a2 2 0 100 4m0-4a2 2 0 110 4m-6 8a2 2 0 100-4m0 4a2 2 0 110-4m0 4v2m0-6V4m6 6v10m6-2a2 2 0 100-4m0 4a2 2 0 110-4m0 4v2m0-6V4"
-              ></path>
-            </svg>
-          </div>
-          <div class="stat-title">Active Sales Reps</div>
-          <div class="stat-value text-accent">284</div>
-          <div class="stat-desc">↗︎ 14 new this month</div>
+        <div class="divider"></div>
+        <h3 class="mb-4 text-lg font-semibold text-base-content">Sizes</h3>
+        <div id="aw-samples-buttons-sizes" class="flex flex-wrap items-center gap-2">
+          <aw-button variant="primary" size="sm" (clicked)="(false)">Small</aw-button>
+          <aw-button variant="primary" size="md" (clicked)="(false)">Medium</aw-button>
+          <aw-button variant="primary" size="lg" (clicked)="(false)">Large</aw-button>
         </div>
-        <div class="stat">
-          <div class="stat-figure text-secondary">
-            <svg
-              xmlns="http://www.w3.org/2000/svg"
-              fill="none"
-              viewBox="0 0 24 24"
-              class="inline-block h-8 w-8 stroke-current"
-            >
-              <path
-                stroke-linecap="round"
-                stroke-linejoin="round"
-                stroke-width="2"
-                d="M5 8h14M5 8a2 2 0 110-4h14a2 2 0 110 4M5 8v10a2 2 0 002 2h10a2 2 0 002-2V8m-9 4h4"
-              ></path>
-            </svg>
-          </div>
-          <div class="stat-title">Revenue YTD</div>
-          <div class="stat-value">$4.2M</div>
-          <div class="stat-desc text-success">↗︎ 12% vs last year</div>
+        <div class="divider"></div>
+        <h3 class="mb-4 text-lg font-semibold text-base-content">States</h3>
+        <div id="aw-samples-buttons-states" class="flex flex-wrap items-center gap-2">
+          <aw-button variant="primary" [loading]="true" (clicked)="(false)">Loading</aw-button>
+          <aw-button variant="primary" [disabled]="true" (clicked)="(false)">Disabled</aw-button>
+          <aw-button variant="error" [loading]="true" (clicked)="(false)">Saving...</aw-button>
         </div>
       </div>
     </section>
 
-    <!-- Cards: Domain Modules -->
-    <section class="mb-12">
-      <h2 class="mb-6 text-2xl font-bold text-base-content">Modules</h2>
-      <div class="grid grid-cols-1 gap-6 md:grid-cols-3">
-        <div class="card bg-base-200 shadow-md transition-shadow hover:shadow-lg">
-          <div class="card-body">
-            <div class="flex items-center gap-3">
-              <div class="rounded-lg bg-primary/10 p-3">
-                <svg
-                  xmlns="http://www.w3.org/2000/svg"
-                  fill="none"
-                  viewBox="0 0 24 24"
-                  class="h-6 w-6 stroke-primary"
-                  stroke-width="2"
-                >
-                  <path
-                    stroke-linecap="round"
-                    stroke-linejoin="round"
-                    d="M13.5 21v-7.5a.75.75 0 01.75-.75h3a.75.75 0 01.75.75V21m-4.5 0H2.36m11.14 0H18m0 0h3.64m-1.39 0V9.349m-16.5 11.65V9.35m0 0a3.001 3.001 0 003.75-.615A2.993 2.993 0 009.75 9.75c.896 0 1.7-.393 2.25-1.016a2.993 2.993 0 002.25 1.016c.896 0 1.7-.393 2.25-1.016A3.001 3.001 0 0021 9.349m-18 0a2.999 2.999 0 00.621-1.596A3 3 0 013 6.75h18a3 3 0 01-.621 2.603A2.999 2.999 0 0021 9.35"
-                  ></path>
-                </svg>
-              </div>
-              <h3 class="card-title">Sales</h3>
-            </div>
-            <p class="mt-2 text-base-content/70">
-              Store and SalesPerson management with full CRUD, territory assignments, and quota tracking.
-            </p>
-            <div class="card-actions mt-4 items-center justify-between">
-              <div class="flex gap-1">
-                <span class="badge badge-primary badge-sm">12 stores</span>
-                <span class="badge badge-outline badge-sm">3 territories</span>
-              </div>
-              <button class="btn btn-primary btn-sm">Open</button>
-            </div>
+    <!-- 2. FORM FIELDS -->
+    <section id="aw-samples-forms" class="mb-12">
+      <h2 class="mb-6 text-2xl font-bold text-base-content">Form Fields</h2>
+      <div id="aw-samples-forms-content" class="rounded-xl border border-base-300 bg-base-200/50 p-6">
+        <div class="grid grid-cols-1 gap-6 md:grid-cols-2">
+          <div>
+            <aw-input-field
+              fieldId="aw-samples-store-name"
+              label="Store Name"
+              placeholder="e.g. Northwest Bikes"
+              hint="Enter the full store name"
+              [formControl]="demoForm.controls.storeName"
+              [errors]="storeNameErrors()"
+              (focusout)="validateStoreName()"
+            />
           </div>
-        </div>
-
-        <div class="card bg-base-200 shadow-md transition-shadow hover:shadow-lg">
-          <div class="card-body">
-            <div class="flex items-center gap-3">
-              <div class="rounded-lg bg-accent/10 p-3">
-                <svg
-                  xmlns="http://www.w3.org/2000/svg"
-                  fill="none"
-                  viewBox="0 0 24 24"
-                  class="h-6 w-6 stroke-accent"
-                  stroke-width="2"
-                >
-                  <path
-                    stroke-linecap="round"
-                    stroke-linejoin="round"
-                    d="M15 19.128a9.38 9.38 0 002.625.372 9.337 9.337 0 004.121-.952 4.125 4.125 0 00-7.533-2.493M15 19.128v-.003c0-1.113-.285-2.16-.786-3.07M15 19.128v.106A12.318 12.318 0 018.624 21c-2.331 0-4.512-.645-6.374-1.766l-.001-.109a6.375 6.375 0 0111.964-3.07M12 6.375a3.375 3.375 0 11-6.75 0 3.375 3.375 0 016.75 0zm8.25 2.25a2.625 2.625 0 11-5.25 0 2.625 2.625 0 015.25 0z"
-                  ></path>
-                </svg>
-              </div>
-              <h3 class="card-title">Human Resources</h3>
-            </div>
-            <p class="mt-2 text-base-content/70">
-              Employee onboarding, department management, shift scheduling, and role assignments.
-            </p>
-            <div class="card-actions mt-4 items-center justify-between">
-              <div class="flex gap-1">
-                <span class="badge badge-accent badge-sm">290 employees</span>
-                <span class="badge badge-outline badge-sm">16 depts</span>
-              </div>
-              <button class="btn btn-accent btn-sm">Open</button>
-            </div>
+          <div>
+            <aw-select-field
+              fieldId="aw-samples-territory"
+              label="Territory"
+              emptyOptionLabel="Select a territory"
+              [formControl]="demoForm.controls.territory"
+              [options]="territoryOptions"
+            />
           </div>
-        </div>
-
-        <div class="card bg-base-200 shadow-md transition-shadow hover:shadow-lg">
-          <div class="card-body">
-            <div class="flex items-center gap-3">
-              <div class="rounded-lg bg-secondary/10 p-3">
-                <svg
-                  xmlns="http://www.w3.org/2000/svg"
-                  fill="none"
-                  viewBox="0 0 24 24"
-                  class="h-6 w-6 stroke-secondary"
-                  stroke-width="2"
-                >
-                  <path
-                    stroke-linecap="round"
-                    stroke-linejoin="round"
-                    d="M5.25 14.25h13.5m-13.5 0a3 3 0 01-3-3m3 3a3 3 0 100 6h13.5a3 3 0 100-6m-16.5-3a3 3 0 013-3h13.5a3 3 0 013 3m-19.5 0a4.5 4.5 0 01.9-2.7L5.737 5.1a3.375 3.375 0 012.7-1.35h7.126c1.062 0 2.062.5 2.7 1.35l2.587 3.45a4.5 4.5 0 01.9 2.7m0 0a3 3 0 01-3 3m0 3h.008v.008h-.008v-.008zm0-6h.008v.008h-.008v-.008zm-3 6h.008v.008h-.008v-.008zm0-6h.008v.008h-.008v-.008z"
-                  ></path>
-                </svg>
-              </div>
-              <h3 class="card-title">API Health</h3>
-            </div>
-            <p class="mt-2 text-base-content/70">
-              Backend connectivity, response times, and service health monitoring dashboard.
-            </p>
-            <div class="card-actions mt-4 items-center justify-between">
-              <div class="flex gap-1">
-                <span class="badge badge-success badge-sm">Online</span>
-                <span class="badge badge-outline badge-sm">42ms avg</span>
-              </div>
-              <button class="btn btn-secondary btn-sm">Status</button>
-            </div>
+          <div class="md:col-span-2">
+            <aw-textarea-field
+              fieldId="aw-samples-description"
+              label="Description"
+              placeholder="Describe the store..."
+              hint="Optional notes about the store"
+              [formControl]="demoForm.controls.description"
+            />
+          </div>
+          <div>
+            <aw-toggle-field fieldId="aw-samples-active" label="Active" [formControl]="demoForm.controls.active" />
           </div>
         </div>
       </div>
     </section>
 
-    <!-- Table + Alerts side by side -->
-    <div class="mb-12 grid grid-cols-1 gap-6 lg:grid-cols-5">
-      <!-- Recent Activity Table -->
-      <section class="lg:col-span-3">
-        <h2 class="mb-4 text-2xl font-bold text-base-content">Recent Activity</h2>
-        <div class="overflow-x-auto rounded-lg border border-base-300">
-          <table class="table">
-            <thead>
-              <tr>
-                <th>Action</th>
-                <th>Entity</th>
-                <th>User</th>
-                <th>Status</th>
-              </tr>
-            </thead>
-            <tbody>
-              <tr class="hover">
-                <td>Created</td>
-                <td class="font-medium">Northwest Bikes</td>
-                <td>
-                  <div class="flex items-center gap-2">
-                    <div class="avatar placeholder">
-                      <div class="w-7 rounded-full bg-primary text-primary-content">
-                        <span class="text-xs">ML</span>
-                      </div>
-                    </div>
-                    Mick L.
-                  </div>
-                </td>
-                <td><span class="badge badge-success badge-sm">Complete</span></td>
-              </tr>
-              <tr class="hover">
-                <td>Updated</td>
-                <td class="font-medium">Pacific Territory</td>
-                <td>
-                  <div class="flex items-center gap-2">
-                    <div class="avatar placeholder">
-                      <div class="w-7 rounded-full bg-accent text-accent-content">
-                        <span class="text-xs">JD</span>
-                      </div>
-                    </div>
-                    Jane D.
-                  </div>
-                </td>
-                <td><span class="badge badge-warning badge-sm">Pending</span></td>
-              </tr>
-              <tr class="hover">
-                <td>Deleted</td>
-                <td class="font-medium">Seasonal Promo Q3</td>
-                <td>
-                  <div class="flex items-center gap-2">
-                    <div class="avatar placeholder">
-                      <div class="w-7 rounded-full bg-secondary text-secondary-content">
-                        <span class="text-xs">AS</span>
-                      </div>
-                    </div>
-                    Alex S.
-                  </div>
-                </td>
-                <td><span class="badge badge-error badge-sm">Reverted</span></td>
-              </tr>
-              <tr class="hover">
-                <td>Created</td>
-                <td class="font-medium">Mountain Gear Co.</td>
-                <td>
-                  <div class="flex items-center gap-2">
-                    <div class="avatar placeholder">
-                      <div class="w-7 rounded-full bg-primary text-primary-content">
-                        <span class="text-xs">ML</span>
-                      </div>
-                    </div>
-                    Mick L.
-                  </div>
-                </td>
-                <td><span class="badge badge-success badge-sm">Complete</span></td>
-              </tr>
-            </tbody>
-          </table>
-        </div>
-      </section>
+    <!-- 3. CARDS -->
+    <section id="aw-samples-cards" class="mb-12">
+      <h2 class="mb-6 text-2xl font-bold text-base-content">Cards</h2>
+      <div id="aw-samples-cards-grid" class="grid grid-cols-1 gap-6 md:grid-cols-3">
+        <aw-card fieldId="aw-samples-card-default" title="Sales Overview">
+          <p class="text-base-content/70">Revenue tracking and territory performance metrics.</p>
+          <div card-actions>
+            <aw-button variant="primary" size="sm" (clicked)="(false)">View</aw-button>
+          </div>
+        </aw-card>
+        <aw-card fieldId="aw-samples-card-actions" title="Employee Directory">
+          <p class="text-base-content/70">Browse and manage employee records across departments.</p>
+          <div card-actions>
+            <aw-button variant="ghost" size="sm" (clicked)="(false)">Cancel</aw-button>
+            <aw-button variant="accent" size="sm" (clicked)="(false)">Save</aw-button>
+          </div>
+        </aw-card>
+        <aw-card fieldId="aw-samples-card-loading" title="Loading Card" [loading]="true" />
+      </div>
+    </section>
 
-      <!-- Notifications -->
-      <section class="lg:col-span-2">
-        <h2 class="mb-4 text-2xl font-bold text-base-content">Notifications</h2>
-        <div class="flex flex-col gap-3">
-          <div role="alert" class="alert alert-info">
-            <svg
-              xmlns="http://www.w3.org/2000/svg"
-              fill="none"
-              viewBox="0 0 24 24"
-              class="h-5 w-5 shrink-0 stroke-current"
-            >
-              <path
-                stroke-linecap="round"
-                stroke-linejoin="round"
-                stroke-width="2"
-                d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"
-              ></path>
-            </svg>
-            <span>Q4 sales data is ready for review.</span>
-          </div>
-          <div role="alert" class="alert alert-success">
-            <svg
-              xmlns="http://www.w3.org/2000/svg"
-              fill="none"
-              viewBox="0 0 24 24"
-              class="h-5 w-5 shrink-0 stroke-current"
-            >
-              <path
-                stroke-linecap="round"
-                stroke-linejoin="round"
-                stroke-width="2"
-                d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"
-              ></path>
-            </svg>
-            <span>Store "Northwest Bikes" created.</span>
-          </div>
-          <div role="alert" class="alert alert-warning">
-            <svg
-              xmlns="http://www.w3.org/2000/svg"
-              fill="none"
-              viewBox="0 0 24 24"
-              class="h-5 w-5 shrink-0 stroke-current"
-            >
-              <path
-                stroke-linecap="round"
-                stroke-linejoin="round"
-                stroke-width="2"
-                d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z"
-              ></path>
-            </svg>
-            <span>API latency above 200ms threshold.</span>
-          </div>
-          <div role="alert" class="alert alert-error">
-            <svg
-              xmlns="http://www.w3.org/2000/svg"
-              fill="none"
-              viewBox="0 0 24 24"
-              class="h-5 w-5 shrink-0 stroke-current"
-            >
-              <path
-                stroke-linecap="round"
-                stroke-linejoin="round"
-                stroke-width="2"
-                d="M10 14l2-2m0 0l2-2m-2 2l-2-2m2 2l2 2m7-2a9 9 0 11-18 0 9 9 0 0118 0z"
-              ></path>
-            </svg>
-            <span>Failed sync with territory service.</span>
-          </div>
-        </div>
-      </section>
-    </div>
+    <!-- 4. DATA TABLE -->
+    <section id="aw-samples-table" class="mb-12">
+      <h2 class="mb-6 text-2xl font-bold text-base-content">Data Table</h2>
+      <aw-data-table
+        fieldId="aw-samples-store-table"
+        [columns]="tableColumns"
+        [data]="tableData()"
+        [sortColumn]="sortColumn()"
+        [sortDirection]="sortDirection()"
+        [totalPages]="2"
+        [totalRecords]="5"
+        [pageNumber]="1"
+        (sortChange)="onSortChange($event)"
+      >
+        <ng-template awColumnDef="status" let-row>
+          <aw-status-badge [status]="row['status']" />
+        </ng-template>
+      </aw-data-table>
+    </section>
 
-    <!-- Component Palette -->
-    <section class="mb-12">
-      <h2 class="mb-6 text-2xl font-bold text-base-content">Component Palette</h2>
-      <div class="grid grid-cols-1 gap-6 md:grid-cols-2">
-        <!-- Buttons -->
-        <div class="rounded-xl border border-base-300 bg-base-200/50 p-6">
-          <h3 class="mb-4 text-lg font-semibold text-base-content">Buttons</h3>
-          <div class="flex flex-wrap gap-2">
-            <button class="btn btn-primary">Primary</button>
-            <button class="btn btn-secondary">Secondary</button>
-            <button class="btn btn-accent">Accent</button>
-            <button class="btn btn-error">Error</button>
-          </div>
-          <div class="divider"></div>
-          <div class="flex flex-wrap gap-2">
-            <button class="btn btn-outline btn-primary">Outline</button>
-            <button class="btn btn-ghost">Ghost</button>
-            <button class="btn btn-link">Link</button>
-            <button class="btn btn-primary btn-sm">Small</button>
-            <button class="btn btn-primary btn-xs">Tiny</button>
-          </div>
+    <!-- 5. FEEDBACK (Empty State + Status Badges) -->
+    <section id="aw-samples-feedback" class="mb-12">
+      <h2 class="mb-6 text-2xl font-bold text-base-content">Feedback Components</h2>
+      <div id="aw-samples-feedback-grid" class="grid grid-cols-1 gap-6 md:grid-cols-2">
+        <!-- Empty State -->
+        <div id="aw-samples-empty-state-panel" class="rounded-xl border border-base-300 bg-base-200/50 p-6">
+          <h3 class="mb-4 text-lg font-semibold text-base-content">Empty State</h3>
+          <aw-empty-state
+            fieldId="aw-samples-empty"
+            icon="fa-solid fa-store"
+            title="No stores found"
+            description="Try adjusting your filters or create a new store."
+          >
+            <aw-button variant="primary" size="sm" (clicked)="(false)">
+              <i class="fa-solid fa-plus" aria-hidden="true"></i> Create Store
+            </aw-button>
+          </aw-empty-state>
         </div>
-
-        <!-- Badges & Progress -->
-        <div class="rounded-xl border border-base-300 bg-base-200/50 p-6">
-          <h3 class="mb-4 text-lg font-semibold text-base-content">Badges &amp; Indicators</h3>
-          <div class="flex flex-wrap gap-2">
-            <span class="badge badge-primary">Primary</span>
-            <span class="badge badge-secondary">Secondary</span>
-            <span class="badge badge-accent">Accent</span>
-            <span class="badge badge-success">Success</span>
-            <span class="badge badge-warning">Warning</span>
-            <span class="badge badge-error">Error</span>
-            <span class="badge badge-info">Info</span>
-            <span class="badge badge-outline">Outline</span>
-          </div>
-          <div class="divider"></div>
-          <div class="flex flex-col gap-2">
-            <progress class="progress progress-primary" value="87" max="100"></progress>
-            <progress class="progress progress-accent" value="62" max="100"></progress>
-            <progress class="progress progress-secondary" value="34" max="100"></progress>
-          </div>
-        </div>
-
-        <!-- Form Controls -->
-        <div class="rounded-xl border border-base-300 bg-base-200/50 p-6">
-          <h3 class="mb-4 text-lg font-semibold text-base-content">Form Controls</h3>
-          <fieldset class="fieldset">
-            <label for="store-name" class="fieldset-legend">Store Name</label>
-            <input id="store-name" type="text" placeholder="e.g. Northwest Bikes" class="input input-bordered w-full" />
-          </fieldset>
-          <fieldset class="fieldset mt-3">
-            <label for="territory" class="fieldset-legend">Territory</label>
-            <select id="territory" class="select select-bordered w-full">
-              <option disabled selected>Select territory</option>
-              <option>Northwest</option>
-              <option>Southwest</option>
-              <option>Central</option>
-            </select>
-          </fieldset>
-          <div class="mt-3 flex items-center gap-4">
-            <div class="flex cursor-pointer items-center gap-2">
-              <input id="toggle-active" type="checkbox" class="toggle toggle-primary" checked />
-              <label for="toggle-active">Active</label>
-            </div>
-            <div class="flex cursor-pointer items-center gap-2">
-              <input id="check-featured" type="checkbox" class="checkbox checkbox-accent" checked />
-              <label for="check-featured">Featured</label>
-            </div>
-          </div>
-        </div>
-
-        <!-- Ratings & Tooltips -->
-        <div class="rounded-xl border border-base-300 bg-base-200/50 p-6">
-          <h3 class="mb-4 text-lg font-semibold text-base-content">Feedback</h3>
-          <div class="flex items-center gap-3">
-            <span class="text-sm text-base-content/70">Store Rating:</span>
-            <div class="rating">
-              <input type="radio" name="rating" class="mask mask-star-2 bg-warning" />
-              <input type="radio" name="rating" class="mask mask-star-2 bg-warning" />
-              <input type="radio" name="rating" class="mask mask-star-2 bg-warning" />
-              <input type="radio" name="rating" class="mask mask-star-2 bg-warning" checked />
-              <input type="radio" name="rating" class="mask mask-star-2 bg-warning" />
-            </div>
-          </div>
-          <div class="divider"></div>
-          <div class="flex flex-wrap gap-2">
-            <div class="tooltip" data-tip="View store details">
-              <button class="btn btn-sm btn-primary">Hover me</button>
-            </div>
-            <div class="tooltip tooltip-accent" data-tip="Edit store">
-              <button class="btn btn-sm btn-outline btn-accent">Or me</button>
-            </div>
-          </div>
-          <div class="divider"></div>
-          <div class="flex items-center gap-3 text-sm">
-            <kbd class="kbd kbd-sm">Ctrl</kbd>+<kbd class="kbd kbd-sm">K</kbd>
-            <span class="text-base-content/70">Command palette</span>
+        <!-- Status Badges -->
+        <div id="aw-samples-status-badges-panel" class="rounded-xl border border-base-300 bg-base-200/50 p-6">
+          <h3 class="mb-4 text-lg font-semibold text-base-content">Status Badges</h3>
+          <div id="aw-samples-status-badges" class="flex flex-wrap gap-3">
+            <aw-status-badge status="active" />
+            <aw-status-badge status="inactive" />
+            <aw-status-badge status="pending" />
+            <aw-status-badge status="error" />
+            <aw-status-badge status="complete" />
+            <aw-status-badge status="cancelled" />
+            <aw-status-badge status="draft" />
+            <aw-status-badge status="unknown" />
           </div>
         </div>
       </div>
     </section>
+
+    <!-- 6. MODAL -->
+    <section id="aw-samples-modal" class="mb-12">
+      <h2 class="mb-6 text-2xl font-bold text-base-content">Modal &amp; Confirm Dialog</h2>
+      <div id="aw-samples-modal-content" class="rounded-xl border border-base-300 bg-base-200/50 p-6">
+        <div class="flex flex-wrap items-center gap-4">
+          <aw-button variant="primary" (clicked)="modalOpen.set(true)">Open Modal</aw-button>
+          <aw-button variant="error" (clicked)="onConfirmDemo()">Delete Store (Confirm)</aw-button>
+          @if (lastConfirmResult()) {
+            <span id="aw-samples-confirm-result" class="badge badge-outline">{{ lastConfirmResult() }}</span>
+          }
+        </div>
+      </div>
+      <aw-modal fieldId="aw-samples-modal-dialog" title="Sample Modal" [(open)]="modalOpen">
+        <p class="py-4 text-base-content/70">
+          This is a reusable modal using the native &lt;dialog&gt; element with DaisyUI styling. Press Escape or click
+          outside to close.
+        </p>
+        <div modal-actions>
+          <aw-button variant="ghost" (clicked)="modalOpen.set(false)">Close</aw-button>
+          <aw-button variant="primary" (clicked)="modalOpen.set(false)">Got it</aw-button>
+        </div>
+      </aw-modal>
+    </section>
+
+    <!-- ========================================= -->
+    <!-- EXISTING SECTIONS (preserved from before) -->
+    <!-- ========================================= -->
 
     <!-- Color System -->
-    <section class="mb-12">
+    <section id="aw-samples-colors" class="mb-12">
       <h2 class="mb-6 text-2xl font-bold text-base-content">Alpine Circuit Color System</h2>
       <div class="grid grid-cols-1 gap-6 md:grid-cols-4">
         <!-- Primary -->
@@ -519,7 +270,12 @@
       </div>
     </section>
 
-    <!-- Data Access Validation -->
+    <!--
+      Data Access Validation: This section validates the NgRx SignalStore integration
+      with the LookupApiService. It loads departments from the API and displays them
+      in a dropdown. Kept here to verify end-to-end data flow during development.
+      See Feature #619 (Story #631) for context.
+    -->
     <section id="aw-samples-data-access" class="mb-12">
       <h2 id="aw-samples-data-access-title" class="mb-6 text-2xl font-bold text-base-content">
         Data Access Validation

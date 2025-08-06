@@ -1,0 +1,89 @@
+<div [id]="fieldId()" class="overflow-x-auto rounded-lg border border-base-300">
+  @if (loading()) {
+    <div [id]="fieldId() + '-loading'" class="p-4">
+      @for (i of [1, 2, 3, 4, 5]; track i) {
+        <div class="skeleton mb-2 h-8 w-full"></div>
+      }
+    </div>
+  } @else if (data().length === 0) {
+    <aw-empty-state
+      [fieldId]="fieldId() + '-empty'"
+      [icon]="emptyIcon()"
+      [title]="emptyTitle()"
+      [description]="emptyDescription()"
+    />
+  } @else {
+    <table [id]="fieldId() + '-table'" class="table">
+      <thead>
+        <tr>
+          @for (col of columns(); track col.key) {
+            <th [id]="fieldId() + '-th-' + col.key" [class]="col.headerClass ?? ''">
+              @if (col.sortable) {
+                <button class="btn btn-ghost btn-xs gap-1" (click)="onSort(col.key)" (keydown.enter)="onSort(col.key)">
+                  {{ col.label | translate }}
+                  @if (sortColumn() === col.key) {
+                    <i
+                      class="fa-solid"
+                      [class.fa-sort-up]="sortDirection() === 'asc'"
+                      [class.fa-sort-down]="sortDirection() === 'desc'"
+                      aria-hidden="true"
+                    ></i>
+                  }
+                </button>
+              } @else {
+                {{ col.label | translate }}
+              }
+            </th>
+          }
+        </tr>
+      </thead>
+      <tbody>
+        @for (row of data(); track $index) {
+          <tr class="hover">
+            @for (col of columns(); track col.key) {
+              <td [class]="col.cellClass ?? ''">
+                @if (templateMap().get(col.key); as colDef) {
+                  <ng-container [ngTemplateOutlet]="colDef.template" [ngTemplateOutletContext]="{ $implicit: row }" />
+                } @else {
+                  {{ getCellValue(row, col.key) }}
+                }
+              </td>
+            }
+          </tr>
+        }
+      </tbody>
+    </table>
+
+    @if (totalPages() > 1) {
+      <div
+        [id]="fieldId() + '-pagination'"
+        class="flex items-center justify-between border-t border-base-300 px-4 py-3"
+      >
+        <span class="text-sm text-base-content/60"> {{ totalRecords() }} records </span>
+        <div class="join">
+          <aw-button
+            [id]="fieldId() + '-prev'"
+            variant="ghost"
+            size="sm"
+            [disabled]="pageNumber() <= 1"
+            (clicked)="pageChange.emit(pageNumber() - 1)"
+          >
+            <i class="fa-solid fa-chevron-left" aria-hidden="true"></i>
+            <span class="sr-only">Previous page</span>
+          </aw-button>
+          <span class="btn btn-ghost btn-sm no-animation">{{ pageNumber() }} / {{ totalPages() }}</span>
+          <aw-button
+            [id]="fieldId() + '-next'"
+            variant="ghost"
+            size="sm"
+            [disabled]="pageNumber() >= totalPages()"
+            (clicked)="pageChange.emit(pageNumber() + 1)"
+          >
+            <i class="fa-solid fa-chevron-right" aria-hidden="true"></i>
+            <span class="sr-only">Next page</span>
+          </aw-button>
+        </div>
+      </div>
+    }
+  }
+</div>

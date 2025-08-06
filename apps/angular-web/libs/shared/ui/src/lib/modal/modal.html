@@ -1,0 +1,21 @@
+<dialog
+  #dialogEl
+  [id]="fieldId()"
+  class="modal"
+  (close)="onDialogClose()"
+  (click)="onBackdropClick($event)"
+  (keydown.escape)="onDialogClose()"
+  role="dialog"
+  aria-modal="true"
+  [attr.aria-labelledby]="title() ? fieldId() + '-title' : null"
+>
+  <div [id]="fieldId() + '-box'" class="modal-box">
+    @if (title()) {
+      <h3 [id]="fieldId() + '-title'" class="text-lg font-bold">{{ title() | translate }}</h3>
+    }
+    <ng-content />
+    <div [id]="fieldId() + '-actions'" class="modal-action">
+      <ng-content select="[modal-actions]" />
+    </div>
+  </div>
+</dialog>
