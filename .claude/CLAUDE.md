@@ -6,7 +6,7 @@ Enterprise application demonstrating modern software architecture patterns acros
 
 This monorepo contains:
 - **.NET 10.0 REST API** (`apps/api-dotnet/`) - Clean Architecture with CQRS
-- **Angular Web Application** (`apps/angular-web/`) - Angular 21.1.1 + Nx 22.5.1 monorepo
+- **Angular Web Application** (`apps/angular-web/`) - Angular 21.2.4 + Nx 22.5.2 monorepo
 - **Microservices** (`apps/microservices/`) - Coming soon
 - **Database Scripts** (`database/`) - AdventureWorks schema and migrations
 
