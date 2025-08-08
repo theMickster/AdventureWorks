@@ -12,6 +12,7 @@ import {
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { ActivatedRoute, NavigationEnd, Router, RouterLink, RouterLinkActive, RouterOutlet } from '@angular/router';
 import { ConfirmDialogComponent, ToastContainerComponent } from '@adventureworks-web/shared/ui';
+import type { AwRouteData } from '@adventureworks-web/shared/util';
 import {
   AppInsightsService,
   AuthService,
@@ -28,7 +29,14 @@ interface Breadcrumb {
 
 @Component({
   selector: 'aw-app-layout',
-  imports: [RouterOutlet, RouterLink, RouterLinkActive, NgOptimizedImage, ToastContainerComponent, ConfirmDialogComponent],
+  imports: [
+    RouterOutlet,
+    RouterLink,
+    RouterLinkActive,
+    NgOptimizedImage,
+    ToastContainerComponent,
+    ConfirmDialogComponent,
+  ],
   templateUrl: './app-layout.html',
   styleUrl: './app-layout.css',
   changeDetection: ChangeDetectionStrategy.OnPush,
@@ -93,7 +101,7 @@ export class AppLayoutComponent {
           url += '/' + segments.join('/');
         }
 
-        const label = child.snapshot.data['breadcrumb'] as string | undefined;
+        const label = (child.snapshot.data as AwRouteData).breadcrumb;
         if (label) {
           crumbs.push({ label, url: url || '/' });
         }

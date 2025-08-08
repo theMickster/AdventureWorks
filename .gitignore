@@ -345,3 +345,6 @@ apps/angular-web/apps/adventureworks-web/src/environments/environment.developmen
 
 # Claude local settings (machine-specific)
 .claude/settings.local.json
+
+# Local Notes
+.notes/

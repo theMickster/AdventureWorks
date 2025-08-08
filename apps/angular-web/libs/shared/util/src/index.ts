@@ -21,3 +21,7 @@ export { createControlValueAccessor } from './lib/forms/create-control-value-acc
 export type { ControlValueAccessorBridge } from './lib/forms/create-control-value-accessor';
 export { ConfirmService } from './lib/confirm/confirm.service';
 export type { ConfirmOptions, ConfirmState } from './lib/confirm/confirm.service';
+export type { AwRouteData } from './lib/routing/route-data.model';
+export { AwTitleStrategy } from './lib/routing/aw-title-strategy';
+export { unsavedChangesGuard } from './lib/routing/unsaved-changes.guard';
+export type { HasUnsavedChanges } from './lib/routing/unsaved-changes.guard';

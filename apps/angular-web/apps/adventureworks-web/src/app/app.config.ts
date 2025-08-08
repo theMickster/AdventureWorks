@@ -13,7 +13,7 @@ import {
   withInterceptors,
   withInterceptorsFromDi,
 } from '@angular/common/http';
-import { provideRouter } from '@angular/router';
+import { provideRouter, TitleStrategy, withComponentInputBinding } from '@angular/router';
 import { provideTranslateService } from '@ngx-translate/core';
 import { provideTranslateHttpLoader } from '@ngx-translate/http-loader';
 import {
@@ -28,6 +28,7 @@ import {
 import {
   appInsightsErrorHandler,
   AuthService,
+  AwTitleStrategy,
   correlationIdInterceptor,
   ENVIRONMENT,
   errorInterceptor,
@@ -50,7 +51,8 @@ export const appConfig: ApplicationConfig = {
       withInterceptorsFromDi(),
     ),
     { provide: ENVIRONMENT, useValue: environment },
-    provideRouter(appRoutes),
+    provideRouter(appRoutes, withComponentInputBinding()),
+    { provide: TitleStrategy, useClass: AwTitleStrategy },
     provideTranslateService({
       fallbackLang: 'en',
       loader: provideTranslateHttpLoader({ prefix: './i18n/' }),
