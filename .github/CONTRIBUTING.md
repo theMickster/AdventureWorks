@@ -9,7 +9,7 @@
 
 ## Development Setup
 
-**Prerequisites**: .NET 10.0 SDK, Node.js 22+, SQL Server
+**Prerequisites**: .NET 10.0 SDK, Node.js 24+, SQL Server
 
 ```bash
 # .NET API
@@ -27,6 +27,17 @@ cd apps/angular-web && npm install && npx nx serve adventureworks-web
 
 **Types**: `feat`, `fix`, `refactor`, `docs`, `test`, `chore`
 **Scopes**: `api`, `web`, `db`, `auth`, `sales`, `hr`
+
+## Branch Protection
+
+The `main` branch requires all PR validation checks to pass before merge:
+- **.NET API** — build + unit tests
+- **Angular Web** — lint + format + build + tests
+- **DbUp Build** — database migration project compiles
+
+Configure in GitHub Settings > Branches > Branch protection rules:
+- Require status checks: `.NET API`, `Angular Web`, `DbUp Build`
+- Require branches to be up to date before merging
 
 ## Code Standards
 

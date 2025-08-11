@@ -1,0 +1,113 @@
+name: PR Validation
+
+on:
+  pull_request:
+    branches: [main]
+
+permissions:
+  contents: read
+
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  dbup:
+    name: DbUp Build
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: database/dbup
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Setup .NET
+        uses: actions/setup-dotnet@v4
+        with:
+          dotnet-version: '10.0.x'
+
+      - name: Build
+        run: dotnet build AdventureWorks.DbUp.sln --configuration Release
+
+  api:
+    name: .NET API
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+      checks: write
+    defaults:
+      run:
+        working-directory: apps/api-dotnet
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Setup .NET
+        uses: actions/setup-dotnet@v4
+        with:
+          dotnet-version: '10.0.x'
+
+      - name: Cache NuGet packages
+        uses: actions/cache@v4
+        with:
+          path: ~/.nuget/packages
+          key: nuget-${{ hashFiles('apps/api-dotnet/**/*.csproj') }}
+          restore-keys: nuget-
+
+      - name: Restore
+        run: dotnet restore AdventureWorks.sln
+
+      - name: Build
+        run: dotnet build AdventureWorks.sln --configuration Release --no-restore
+
+      - name: Test
+        run: dotnet test tests/AdventureWorks.UnitTests/AdventureWorks.UnitTests.csproj --configuration Release --no-build --verbosity normal --logger "trx;LogFileName=test-results.trx" --collect:"XPlat Code Coverage"
+        env:
+          AutoMapperLicenseKey: ${{ secrets.AUTOMAPPER_LICENSE_KEY }}
+
+      - name: Test Report
+        uses: dorny/test-reporter@31a54ee7ebcacc03a09ea97a7e5465a47b84aea5 # v1.9.1
+        if: always()
+        with:
+          name: API Test Results
+          path: apps/api-dotnet/**/test-results.trx
+          reporter: dotnet-trx
+
+  angular:
+    name: Angular Web
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: apps/angular-web
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '24'
+          cache: 'npm'
+          cache-dependency-path: apps/angular-web/package-lock.json
+
+      - name: Install dependencies
+        run: npm ci
+
+      - name: Cache Nx
+        uses: actions/cache@v4
+        with:
+          path: apps/angular-web/.nx/cache
+          key: nx-${{ hashFiles('apps/angular-web/package-lock.json') }}-${{ github.sha }}
+          restore-keys: |
+            nx-${{ hashFiles('apps/angular-web/package-lock.json') }}-
+            nx-
+
+      - name: Lint
+        run: npx nx lint adventureworks-web
+
+      - name: Format check
+        run: npx prettier --check "apps/**/*.ts" "libs/**/*.ts"
+
+      - name: Build
+        run: npx nx build adventureworks-web --configuration=production
+
+      - name: Test
+        run: npx nx test adventureworks-web
