@@ -4,11 +4,12 @@
 
 **Scope Philosophy**: Focus on **one domain end-to-end** (Sales) with impressive Azure Functions scenarios, rather than broad but shallow coverage. Quality over quantity. Showcase best-in-class architecture that can be extended later.
 
-**Current Status Summary** (as of 2026-03-19):
+**Current Status Summary** (as of 2026-03-20):
 
 - ✅ Backend API: Sales, HR, Address Management fully implemented with CQRS + Clean Architecture
+- 🔄 API Completion: 4-wave plan to round out Store Manager, HR gaps, Person foundation, and lookup endpoints (13 Features, 40 Stories — see `api-completion-features.md`)
 - ✅ Frontend Foundation: Angular Foundation (Epic #560) complete — all 9 features done
-- 🔄 Frontend Data Layer: Data Interaction Layer (Epic #577) 67% complete — Feature #620 in progress
+- ✅ Frontend Data Layer: Data Interaction Layer (Epic #577) 83% complete — Feature #620 done, #621 (SignalR) remaining
 - ❌ Azure Functions: Planned as Epic #569 (Polyglot Azure Functions Architecture) - not yet started
 - 🔄 Infrastructure: IaC + CI/CD (Epic #570) 60% complete — Bicep, PR validation, Docker done; secrets + CD remaining
 
@@ -33,11 +34,18 @@
 
 - ✅ Nx workspace, Tailwind/DaisyUI, Shared Component Library, Entra Auth, HTTP interceptors, Environment config, Error handling, App Shell, Routing with Guards
 
-**Phase 2 - Data Interaction Layer** (Epic #577) -- 67% COMPLETE (Feature #620 In Progress):
+**Phase 2 - Data Interaction Layer** (Epic #577) -- 83% COMPLETE (5/6 features done):
 
-- ✅ Shared data models, API contract corrections, enhanced HTTP pipeline, NgRx SignalStore foundation
-- 🔄 Domain data access libraries (Sales, HR) — in progress
-- Remaining: SignalR real-time communication
+- ✅ Shared data models, API contract corrections, enhanced HTTP pipeline, NgRx SignalStore foundation, domain data access libraries (Sales, HR)
+- Remaining: SignalR real-time communication (#621)
+
+**Phase 2.5 - API Completion** (Epic #552 expansion) -- NEW (2026-03-20):
+
+- 📋 **Wave 1**: Store Manager Completion — Contact CRUD, Address CRUD, Analytics, Sales Person Assignment (4 features, 12 stories)
+- 📋 **Wave 2**: HR Process Completion — Department Transfer, Pay Management, Department Reporting (3 features, 7 stories)
+- 📋 **Wave 3**: Person Foundation — Email CRUD, Phone CRUD, Person Directory, PersonCreditCard bug fix (4 features, 11 stories)
+- 📋 **Wave 4**: Lookup Endpoint Blitz — 6 Production + 4 Sales lookup endpoints (2 features, 10 stories)
+- Full details: `docs/theBigPlan/api-completion-features.md`
 
 **Phase 3 - Simple IaC + CI/CD** (Epic #570) -- 60% COMPLETE (3/5 features done):
 
@@ -48,9 +56,14 @@
 
 - .NET integration tests, k6 load testing, Playwright E2E smoke tests, Angular testing utilities
 
+**Phase 5 - Sales & HR CRUD UI** (Epics #561 + #562) -- NOT STARTED:
+
+- Sales CRUD UI: Stores, SalesPersons, Customers (requires Phase 2.5 Wave 1 API endpoints)
+- HR CRUD UI: Employees, Departments (requires Phase 2.5 Wave 2 API endpoints)
+- Real-Time Dashboard (Epic #563): SignalR-powered KPI dashboard
+
 **Future Phases** (not yet scheduled):
 
-- Sales CRUD UI, HR CRUD UI, Real-Time Dashboard
 - Azure Functions (Epic #569 - Polyglot Architecture with Rust, C#, Go, TypeScript)
 
 ---
@@ -135,10 +148,12 @@
 
 ### Dependencies
 
-- **API**: Sales endpoints already exist (Stores, SalesPersons, SalesTerritories)
-- **API**: HR endpoints already exist (Employees, Departments, Shifts)
+- **API**: Sales endpoints already exist (Stores, SalesPersons, SalesTerritories) — Phase 2.5 Wave 1 adds analytics + sub-resource CRUD
+- **API**: HR endpoints already exist (Employees, Departments, Shifts) — Phase 2.5 Wave 2 adds transfer + pay + reporting
+- **API**: Person foundation (Phase 2.5 Wave 3) enables email/phone management for all domain UIs
+- **API**: Lookup endpoints (Phase 2.5 Wave 4) provide dropdown data for all forms
 - **Auth**: Microsoft Entra ID already configured in API
-- **No blockers**: Both domains fully implemented in backend, can start frontend immediately
+- **Sequencing**: API Completion (Phase 2.5) should precede CRUD UI work for richer, lovable screens
 
 ---
 
@@ -264,47 +279,97 @@
 
 ## Execution Order: All Remaining Features
 
-The precise order for completing the 4 active epics (560 -> 577 -> 570 -> 565):
+The precise order for completing remaining work (577 → 552 API Completion → 570 → 565 → UI):
 
-| #   | Epic | ID   | Feature                                        | Status         | Depends On           |
-| --- | ---- | ---- | ---------------------------------------------- | -------------- | -------------------- |
-| ~~1~~ | #560 | #573 | ~~Shared Component Library~~                 | ✅ Done        | #572 (DaisyUI)       |
-| ~~2~~ | #560 | #574 | ~~Routing Configuration with Guards~~        | ✅ Done        | #575 (Auth)          |
-| 3   | #577 | #620 | Domain Data Access Libraries (Sales, HR)       | 🔄 In Progress | #619 (SignalStore)   |
-| 4   | #577 | #621 | Real-Time Communication (SignalR)              | 📋 Planned | #618 (HTTP Pipeline) |
-| ~~5~~ | #570 | #643 | ~~IaC with Bicep~~                           | ✅ Done        | --                   |
-| 6   | #570 | #644 | Environment & Secrets Management               | 📋 Planned | #643                 |
-| ~~7~~ | #570 | #645 | ~~GitHub Actions PR Validation~~             | ✅ Done        | --                   |
-| 8   | #570 | #646 | Azure Pipelines CI/CD Enhancement              | 📋 Planned | #643, #644           |
-| ~~9~~ | #570 | #647 | ~~Docker Local Dev Environment~~             | ✅ Done        | --                   |
-| 10  | #565 | #672 | Angular Testing Foundation & Utilities         | 📋 Planned | --                   |
-| 11  | #565 | #669 | .NET Integration Tests (WebApplicationFactory) | 📋 Planned | --                   |
-| 12  | #565 | #670 | k6 Load Testing Foundation                     | 📋 Planned | --                   |
-| 13  | #565 | #671 | Playwright E2E Smoke Test Suite                | 📋 Planned | Deployed app (ideal) |
+### Phase 2: Data Interaction Layer (Epic #577)
 
-**Note on parallelism within epics**: Features #643, #645, and #647 in Epic #570 are complete. The remaining #644 and #646 are sequential (#646 depends on #644). All four features in Epic #565 are independent. The order above reflects the most logical solo-developer sequence.
+| #   | Epic | Feature                                        | Status         | Depends On           |
+| --- | ---- | ---------------------------------------------- | -------------- | -------------------- |
+| ~~3~~ | #577 | ~~Domain Data Access Libraries (Sales, HR) #620~~ | ✅ Done     | #619 (SignalStore)   |
+| 4   | #577 | Real-Time Communication (SignalR) #621          | 📋 Planned     | #618 (HTTP Pipeline) |
+
+### Phase 2.5: API Completion (Epic #552) — NEW
+
+**Wave 1: Store Manager Completion** (4 features, 12 stories)
+
+| #   | Feature                           | Stories | Depends On           |
+| --- | --------------------------------- | ------- | -------------------- |
+| 5   | Store Contact Management          | 3       | Existing #691 (read) |
+| 6   | Store Address Management          | 3       | Existing #690 (read) |
+| 7   | Store Analytics & Insights        | 3       | --                   |
+| 8   | Sales Person Assignment Tracking  | 3       | DbUp migration first |
+
+**Wave 2: HR Process Completion** (3 features, 7 stories)
+
+| #   | Feature                           | Stories | Depends On           |
+| --- | --------------------------------- | ------- | -------------------- |
+| 9   | Employee Department Transfer      | 2       | --                   |
+| 10  | Employee Pay Management           | 2       | --                   |
+| 11  | Department Reporting              | 3       | --                   |
+
+**Wave 3: Person Foundation** (4 features, 11 stories)
+
+| #   | Feature                           | Stories | Depends On           |
+| --- | --------------------------------- | ------- | -------------------- |
+| 12  | Person Email Management           | 4       | --                   |
+| 13  | Person Phone Management           | 4       | --                   |
+| 14  | Person Directory & Search         | 2       | #12, #13 (emails/phones) |
+| 15  | PersonCreditCard DbContext Fix    | 1       | -- (bug fix)         |
+
+**Wave 4: Lookup Endpoint Blitz** (2 features, 10 stories — all parallelizable)
+
+| #   | Feature                           | Stories | Depends On           |
+| --- | --------------------------------- | ------- | -------------------- |
+| 16  | Production Lookup Endpoints       | 6       | -- (all independent) |
+| 17  | Sales Lookup Endpoints            | 4       | -- (all independent) |
+
+> **Full story details**: `docs/theBigPlan/api-completion-features.md`
+
+### Phase 3: Simple IaC + CI/CD (Epic #570)
+
+| #   | Epic | Feature                                        | Status         | Depends On           |
+| --- | ---- | ---------------------------------------------- | -------------- | -------------------- |
+| 18  | #570 | Environment & Secrets Management #644          | 📋 Planned     | #643 (Bicep)         |
+| 19  | #570 | Azure Pipelines CI/CD Enhancement #646         | 📋 Planned     | #643, #644           |
+
+### Phase 4: Testing Foundation (Epic #565)
+
+| #   | Epic | Feature                                        | Status         | Depends On           |
+| --- | ---- | ---------------------------------------------- | -------------- | -------------------- |
+| 20  | #565 | Angular Testing Foundation & Utilities #672    | 📋 Planned     | --                   |
+| 21  | #565 | .NET Integration Tests (WebApplicationFactory) #669 | 📋 Planned | --                   |
+| 22  | #565 | k6 Load Testing Foundation #670                | 📋 Planned     | --                   |
+| 23  | #565 | Playwright E2E Smoke Test Suite #671           | 📋 Planned     | Deployed app (ideal) |
+
+### Phase 5: Sales & HR CRUD UI (Epics #561 + #562)
+
+- Requires Phase 2.5 API Completion for rich, lovable screens
+- See `epics-561-562-sales-hr-ui.md` in memory for story breakdown
+
+**Note on parallelism**: Waves 1-3 are sequential (each builds on prior work). Wave 4 is fully parallel — each lookup story is independent and ideal for batch development. Phases 3 and 4 can overlap with Phase 2.5 if desired (no API dependencies).
 
 ---
 
 ## Summary: Progress and Roadmap
 
-### Completed Work (16 features across 3 epics)
+### Completed Work (17 features across 3 epics)
 
 **Epic #560 -- Angular Foundation**: ✅ ALL 9 features done (2026-03-17)
 
 - Nx Workspace, Tailwind/DaisyUI, Shared Component Library, Routing with Guards, Entra Auth, HTTP Interceptors, Environment Config, Error Handling/Loading, App Shell
 
-**Epic #577 -- Data Interaction Layer**: 4 of 6 features done
+**Epic #577 -- Data Interaction Layer**: 5 of 6 features done
 
-- Shared Data Models, API Contract Corrections, Enhanced HTTP Pipeline, NgRx SignalStore Foundation
+- Shared Data Models, API Contract Corrections, Enhanced HTTP Pipeline, NgRx SignalStore Foundation, Domain Data Access Libraries (Sales & HR)
 
 **Epic #570 -- Simple IaC + CI/CD**: 3 of 5 features done
 
 - Bicep IaC, GitHub Actions PR Validation, Docker Local Dev Environment
 
-### Remaining Work (8 features across 3 epics)
+### Remaining Work (20 features across 4 epics)
 
-- **Epic #577**: 2 features remaining (#620 in progress, #621 planned)
+- **Epic #577**: 1 feature remaining (#621 SignalR)
+- **Epic #552 API Completion**: 13 NEW features across 4 waves (40 stories) — see `api-completion-features.md`
 - **Epic #570**: 2 features remaining (#644, #646)
 - **Epic #565**: 4 features (all new)
 
@@ -322,10 +387,9 @@ The precise order for completing the 4 active epics (560 -> 577 -> 570 -> 565):
 
 ### What's NOT in Scope (Future Extensions)
 
-- ❌ Products/Production/Purchasing domains (focus on Sales + HR only)
+- ❌ Full Products/Production/Purchasing CRUD (lookup endpoints ARE in scope via Wave 4; full CRUD is future)
 - ❌ PWA/Offline capabilities
 - ❌ Mobile apps (responsive web only)
-- ❌ Advanced search/filtering (basic pagination only)
 - ❌ Multi-region deployment (single Azure region)
 - ❌ Comprehensive E2E test coverage (only critical user paths)
 - ❌ Complex Docker orchestration (Kubernetes, service mesh, etc.)
@@ -357,7 +421,8 @@ This section documents significant deviations from the v1.0 plan (2026-01-17).
 
 - Original "Week-by-Week Plan" timelines were aspirational. Real delivery is feature-by-feature, not week-locked.
 - Azure Functions (Epic #569) moved to future phases, replacing the 3 original scenarios with a more ambitious 9-feature polyglot architecture.
-- Sales CRUD UI, HR CRUD UI, and Real-Time Dashboard epics have not yet been broken down in ADO. They follow after Epics #560 and #577 are complete.
+- Sales CRUD UI, HR CRUD UI, and Real-Time Dashboard epics have not yet been broken down in ADO. They follow after API Completion.
+- **API Completion pivot (2026-03-20)**: Original plan said "Products/Production/Purchasing not in scope." Revised to round out the API _before_ building UI, so the Angular screens have rich data to work with. Added Phase 2.5 with 4 waves: Store Manager enrichment (analytics, sub-resource CRUD, sales person assignment history), HR gap closure (department transfers, pay management, headcount reporting), Person foundation (email/phone CRUD, directory search), and lookup endpoints across Production + Sales schemas. This adds 13 Features / 40 Stories but enables a significantly more lovable UI. One new DB table (`Sales.StoreSalesPersonHistory`) via DbUp migration.
 
 ---
 
@@ -371,6 +436,7 @@ All work breakdown documents are in: `docs/theBigPlan/`
 docs/theBigPlan/
 ├── README.md                                      # Overview and navigation guide
 ├── TheBigPlan.md                                  # This file - complete plan
+├── api-completion-features.md                     # Phase 2.5: 13 Features, 40 Stories (4 waves)
 ├── initiatives/
 │   ├── 01-sales-hr-web-application.md              # Initiative 1 complete details
 │   └── 02-event-driven-microservices-infrastructure.md  # Initiative 2 complete details
@@ -425,6 +491,6 @@ Each markdown file follows this structure:
 
 ---
 
-**Document Version**: 2.1
+**Document Version**: 2.2
 **Last Updated**: 2026-03-20
-**Status**: Active Execution - Epic #560 complete, #577 in progress, #570 60% complete (#643/#645/#647 done), #565 planned
+**Status**: Active Execution - Epic #560 complete, #577 83% complete (#620 done, #621 remaining), #552 API Completion planned (13 features/40 stories), #570 60% complete (#643/#645/#647 done), #565 planned

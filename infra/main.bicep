@@ -73,6 +73,7 @@ module apiAppService 'modules/appService.bicep' = {
     appSettings: [
       { name: 'APPLICATIONINSIGHTS_CONNECTION_STRING', value: appInsights.outputs.connectionString }
       { name: 'ASPNETCORE_ENVIRONMENT', value: environment == 'prod' ? 'Production' : 'Development' }
+      { name: 'KeyVault__VaultUri', value: 'https://${keyVaultName}${az.environment().suffixes.keyvaultDns}/' }
     ]
     tags: tags
   }
