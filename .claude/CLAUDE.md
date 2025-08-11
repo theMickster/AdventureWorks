@@ -166,6 +166,15 @@ When documentation is needed:
 - Ports: API 5000, Web 4200
 - Full docs in `DOCKER.md` at repo root
 
+### Infrastructure as Code
+
+- `infra/` directory at repo root contains modular Bicep templates
+- `main.bicep` orchestrator + 6 modules under `modules/` (appServicePlan, appService, sqlServer, sqlDatabase, keyVault, appInsights)
+- `parameters.dev.json` and `parameters.prod.json` for environment-specific values -- no secrets in param files (passwords passed at deploy time)
+- Validate with: `az bicep build --file infra/main.bicep`
+- Deploy strategy: same resource group for dev + prod; shared plan/SQL/Key Vault/App Insights, env-specific App Services
+- Budget: ~$18/mo (B1 Linux plan + Basic 5 DTU SQL on MSDN subscription)
+
 ## Technology Stack
 
 ### Current
@@ -205,6 +214,12 @@ AdventureWorks/
 ├── database/
 │   ├── dbup/                        # Database migrations
 │   └── scripts/                     # SQL scripts
+│
+├── infra/
+│   ├── main.bicep                   # Bicep orchestrator
+│   ├── modules/                     # 6 resource modules
+│   ├── parameters.dev.json          # Dev environment params
+│   └── parameters.prod.json         # Prod environment params
 │
 ├── docs/                            # Shared documentation
 ├── docker-compose.yml               # Local dev: API + Web containers

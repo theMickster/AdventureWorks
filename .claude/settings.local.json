@@ -18,7 +18,9 @@
       "WebFetch(domain:daisyui.com)",
       "Bash(az boards:*)",
       "Bash(az boards work-item show)`",
-      "Bash(npx prettier:*)"
+      "Bash(npx prettier:*)",
+      "Bash(az bicep:*)",
+      "Bash(2)"
     ],
     "deny": [],
     "ask": []
@@ -26,12 +28,22 @@
   "hooks": {
     "Stop": [
       {
-        "type": "prompt",
-        "prompt": "Before ending: Did you complete any ADO work items (user stories, features, epics) during this session? If so, remind the user to update them in Azure DevOps (move to Done + add completion comment). List the specific work item IDs and suggested comments."
+        "matcher": "",
+        "hooks": [
+          {
+            "type": "prompt",
+            "prompt": "Before ending: Did you complete any ADO work items (user stories, features, epics) during this session? If so, remind the user to update them in Azure DevOps (move to Done + add completion comment). List the specific work item IDs and suggested comments."
+          }
+        ]
       },
       {
-        "type": "prompt",
-        "prompt": "Before ending: Did the work in this session change the status of any features, epics, or milestones? If so, remind the user that docs/theBigPlan/TheBigPlan.md and .claude MEMORY.md may need progress updates."
+        "matcher": "",
+        "hooks": [
+          {
+            "type": "prompt",
+            "prompt": "Before ending: Did the work in this session change the status of any features, epics, or milestones? If so, remind the user that docs/theBigPlan/TheBigPlan.md and .claude MEMORY.md may need progress updates."
+          }
+        ]
       }
     ]
   }
