@@ -5,6 +5,8 @@ import { ENVIRONMENT } from '@adventureworks-web/shared/util';
 import { SalesApiService } from './sales-api.service';
 import type { Store, StoreCreate, StoreUpdate } from '../models/store.model';
 import type { SalesPerson, SalesPersonCreate, SalesPersonUpdate } from '../models/sales-person.model';
+import type { StoreSearchBody } from '../models/store-search.model';
+import type { SalesPersonSearchBody } from '../models/sales-person-search.model';
 import type { SearchResult } from '@adventureworks-web/shared/data-access';
 
 const mockEnvironment = {
@@ -146,6 +148,37 @@ describe('SalesApiService', () => {
       expect(req.request.method).toBe('PUT');
       expect(req.request.body).toEqual(body);
       req.flush(mockResponse);
+    });
+
+    it('should POST to search stores with query params', () => {
+      const body: StoreSearchBody = { name: 'Bike' };
+      const mockData: SearchResult<Store> = {
+        pageNumber: 1,
+        pageSize: 10,
+        totalPages: 1,
+        hasPreviousPage: false,
+        hasNextPage: false,
+        totalRecords: 2,
+        results: [
+          {
+            id: 1,
+            name: 'Bike World',
+            modifiedDate: '2024-01-01T00:00:00',
+            storeAddresses: [],
+            storeContacts: [],
+            salesPerson: null,
+          },
+        ],
+      };
+
+      service.searchStores({ pageNumber: 1, pageSize: 10 }, body).subscribe((result) => {
+        expect(result).toEqual(mockData);
+      });
+
+      const req = httpTesting.expectOne(`${BASE_URL}/v1/stores/search?pageNumber=1&pageSize=10`);
+      expect(req.request.method).toBe('POST');
+      expect(req.request.body).toEqual(body);
+      req.flush(mockData);
     });
   });
 
@@ -318,6 +351,44 @@ describe('SalesApiService', () => {
       expect(req.request.method).toBe('PUT');
       expect(req.request.body).toEqual(body);
       req.flush(mockResponse);
+    });
+
+    it('should POST to search sales persons with query params', () => {
+      const body: SalesPersonSearchBody = { lastName: 'Saraiva' };
+      const mockData: SearchResult<SalesPerson> = {
+        pageNumber: 1,
+        pageSize: 10,
+        totalPages: 1,
+        hasPreviousPage: false,
+        hasNextPage: false,
+        totalRecords: 1,
+        results: [
+          {
+            id: 282,
+            title: 'Mr.',
+            firstName: 'José',
+            middleName: null,
+            lastName: 'Saraiva',
+            suffix: null,
+            jobTitle: 'Sales Representative',
+            emailAddress: 'josé0@adventure-works.com',
+            territoryId: 7,
+            salesQuota: 250000,
+            bonus: 5000,
+            commissionPct: 0.012,
+            modifiedDate: '2024-01-01T00:00:00',
+          },
+        ],
+      };
+
+      service.searchSalesPersons({ orderBy: 'lastName' }, body).subscribe((result) => {
+        expect(result).toEqual(mockData);
+      });
+
+      const req = httpTesting.expectOne(`${BASE_URL}/v1/salespersons/search?orderBy=lastName`);
+      expect(req.request.method).toBe('POST');
+      expect(req.request.body).toEqual(body);
+      req.flush(mockData);
     });
   });
 });

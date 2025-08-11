@@ -18,7 +18,8 @@
       "@adventureworks-web/shared/util": ["libs/shared/util/src/index.ts"],
       "@adventureworks-web/shared/app-layout": ["libs/shared/app-layout/src/index.ts"],
       "@adventureworks-web/shared/data-access": ["libs/shared/data-access/src/index.ts"],
-      "@adventureworks-web/sales/data-access": ["libs/sales/data-access/src/index.ts"]
+      "@adventureworks-web/sales/data-access": ["libs/sales/data-access/src/index.ts"],
+      "@adventureworks-web/hr/data-access": ["libs/hr/data-access/src/index.ts"]
     }
   },
   "exclude": ["node_modules", "tmp"]
