@@ -1,0 +1,86 @@
+# Build .NET API: restore, build, test, publish artifact.
+# Called as a job template from the main pipeline.
+
+parameters:
+  - name: solution
+    type: string
+    default: 'apps/api-dotnet/AdventureWorks.sln'
+  - name: project
+    type: string
+    default: 'apps/api-dotnet/src/AdventureWorks.API/AdventureWorks.API.csproj'
+  - name: testProject
+    type: string
+    default: 'apps/api-dotnet/tests/AdventureWorks.UnitTests/AdventureWorks.UnitTests.csproj'
+  - name: buildConfiguration
+    type: string
+    default: 'Release'
+  - name: dotNetSdkVersion
+    type: string
+    default: '10.0.x'
+  - name: artifactName
+    type: string
+    default: 'api-artifact'
+
+steps:
+  - task: UseDotNet@2
+    displayName: 'Install .NET SDK ${{ parameters.dotNetSdkVersion }}'
+    inputs:
+      packageType: sdk
+      version: '${{ parameters.dotNetSdkVersion }}'
+
+  - task: Cache@2
+    displayName: 'Cache NuGet packages'
+    inputs:
+      key: 'nuget | "$(Agent.OS)" | apps/api-dotnet/**/*.csproj'
+      restoreKeys: 'nuget | "$(Agent.OS)"'
+      path: '$(HOME)/.nuget/packages'
+
+  - task: DotNetCoreCLI@2
+    displayName: 'Restore NuGet packages'
+    inputs:
+      command: restore
+      projects: '${{ parameters.solution }}'
+
+  - task: DotNetCoreCLI@2
+    displayName: 'Build solution'
+    inputs:
+      command: build
+      projects: '${{ parameters.solution }}'
+      arguments: '--configuration ${{ parameters.buildConfiguration }} --no-restore'
+
+  - script: dotnet list ${{ parameters.solution }} package --vulnerable --include-transitive
+    displayName: 'Security scan (vulnerable packages)'
+    continueOnError: true
+
+  - task: DotNetCoreCLI@2
+    displayName: 'Run unit tests'
+    inputs:
+      command: test
+      projects: '${{ parameters.testProject }}'
+      testRunTitle: 'AdventureWorks UnitTests - $(Build.BuildNumber)'
+      publishTestResults: true
+      arguments: '--configuration ${{ parameters.buildConfiguration }} --no-build --collect "XPlat Code Coverage"'
+    env:
+      AutoMapperLicenseKey: $(AutoMapperLicenseKey)
+
+  - task: DotNetCoreCLI@2
+    displayName: 'Publish API'
+    inputs:
+      command: publish
+      publishWebProjects: false
+      projects: '${{ parameters.project }}'
+      arguments: '--configuration ${{ parameters.buildConfiguration }} --output $(Build.ArtifactStagingDirectory)/api'
+
+  - task: ArchiveFiles@2
+    displayName: 'Zip API output'
+    inputs:
+      rootFolderOrFile: '$(Build.ArtifactStagingDirectory)/api'
+      includeRootFolder: false
+      archiveType: zip
+      archiveFile: '$(Build.ArtifactStagingDirectory)/api.zip'
+
+  - task: PublishPipelineArtifact@1
+    displayName: 'Publish API artifact'
+    inputs:
+      targetPath: '$(Build.ArtifactStagingDirectory)/api.zip'
+      artifact: '${{ parameters.artifactName }}'

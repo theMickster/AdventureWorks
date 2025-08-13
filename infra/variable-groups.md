@@ -1,58 +1,88 @@
 # ADO Variable Groups — AdventureWorks
 
-Two variable groups supply environment-specific configuration to Azure Pipelines. Create these manually in Azure DevOps under **Pipelines → Library**.
+Four variable groups supply environment-specific configuration to Azure Pipelines. ADO does not support mixing plain text and Key Vault–linked variables in a single group, so each environment uses two groups: one for plain text config, one for Key Vault secrets.
 
-Key Vault–linked variables pull secrets at pipeline run time — no secrets stored in ADO.
+Create these manually in Azure DevOps under **Pipelines → Library**.
 
 ---
 
-## `AdventureWorks-Dev`
+## `AdventureWorks-Dev` (Plain Text)
 
-| Variable                      | Value                                                   | Source           |
-| ----------------------------- | ------------------------------------------------------- | ---------------- |
-| `appServiceNameApi`           | `mick-adventureworks-api-dev`                           | Plain text       |
-| `appServiceNameWeb`           | `mick-adventureworks-web-dev`                           | Plain text       |
-| `resourceGroup`               | `AdventureWorks-West-US-3`                              | Plain text       |
-| `environmentName`             | `Development`                                           | Plain text       |
-| `keyVaultUri`                 | `https://mick-aw-kv.vault.azure.net/`                   | Plain text       |
-| `appInsightsConnectionString` | _(from Key Vault)_                                      | Key Vault linked |
-| `sqlConnectionString`         | _(from Key Vault)_                                      | Key Vault linked |
-| `entraAuthority`              | `https://login.microsoftonline.com/{tenantId}`          | Plain text       |
-| `entraClientId`               | _(from Key Vault)_                                      | Key Vault linked |
-| `entraRedirectUri`            | `https://mick-adventureworks-web-dev.azurewebsites.net` | Plain text       |
-| `entraPostLogoutRedirectUri`  | `https://mick-adventureworks-web-dev.azurewebsites.net` | Plain text       |
-| `entraApiScope`               | `api://{clientId}/access_via_group_assignments`         | Plain text       |
-| `autoMapperLicenseKey`        | _(from Key Vault)_                                      | Key Vault linked |
+| Variable                     | Value                                                   |
+| ---------------------------- | ------------------------------------------------------- |
+| `appServiceNameApi`          | `mick-adventureworks-api-dev`                           |
+| `appServiceNameWeb`          | `mick-adventureworks-web-dev`                           |
+| `resourceGroup`              | `AdventureWorks-West-US-3`                              |
+| `environmentName`            | `Development`                                           |
+| `keyVaultUri`                | `https://mick-aw-kv.vault.azure.net/`                   |
+| `entraAuthority`             | `https://login.microsoftonline.com/{tenantId}`          |
+| `entraRedirectUri`           | `https://mick-adventureworks-web-dev.azurewebsites.net` |
+| `entraPostLogoutRedirectUri` | `https://mick-adventureworks-web-dev.azurewebsites.net` |
+| `entraApiScope`              | `api://{clientId}/access_via_group_assignments`         |
 
 > Replace `{tenantId}` and `{clientId}` with actual values when creating the group.
 
+## `AdventureWorks-Dev-Secrets` (Key Vault Linked)
+
+| Variable                      | Key Vault Secret |
+| ----------------------------- | ---------------- |
+| `appInsightsConnectionString` | *(see Key Vault mapping below)* |
+| `sqlConnectionString`         | *(see Key Vault mapping below)* |
+| `entraClientId`               | *(see Key Vault mapping below)* |
+| `autoMapperLicenseKey`        | *(see Key Vault mapping below)* |
+
 ---
 
-## `AdventureWorks-Prod`
+## `AdventureWorks-Prod` (Plain Text)
 
-| Variable                      | Value                                               | Source           |
-| ----------------------------- | --------------------------------------------------- | ---------------- |
-| `appServiceNameApi`           | `mick-adventureworks-api`                           | Plain text       |
-| `appServiceNameWeb`           | `mick-adventureworks-web`                           | Plain text       |
-| `resourceGroup`               | `AdventureWorks-West-US-3`                          | Plain text       |
-| `environmentName`             | `Production`                                        | Plain text       |
-| `keyVaultUri`                 | `https://mick-aw-kv.vault.azure.net/`               | Plain text       |
-| `appInsightsConnectionString` | _(from Key Vault)_                                  | Key Vault linked |
-| `sqlConnectionString`         | _(from Key Vault)_                                  | Key Vault linked |
-| `entraAuthority`              | `https://login.microsoftonline.com/{tenantId}`      | Plain text       |
-| `entraClientId`               | _(from Key Vault)_                                  | Key Vault linked |
-| `entraRedirectUri`            | `https://mick-adventureworks-web.azurewebsites.net` | Plain text       |
-| `entraPostLogoutRedirectUri`  | `https://mick-adventureworks-web.azurewebsites.net` | Plain text       |
-| `entraApiScope`               | `api://{clientId}/access_via_group_assignments`     | Plain text       |
-| `autoMapperLicenseKey`        | _(from Key Vault)_                                  | Key Vault linked |
+| Variable                     | Value                                               |
+| ---------------------------- | --------------------------------------------------- |
+| `appServiceNameApi`          | `mick-adventureworks-api`                           |
+| `appServiceNameWeb`          | `mick-adventureworks-web`                           |
+| `resourceGroup`              | `AdventureWorks-West-US-3`                          |
+| `environmentName`            | `Production`                                        |
+| `keyVaultUri`                | `https://mick-aw-kv.vault.azure.net/`               |
+| `entraAuthority`             | `https://login.microsoftonline.com/{tenantId}`      |
+| `entraRedirectUri`           | `https://mick-adventureworks-web.azurewebsites.net` |
+| `entraPostLogoutRedirectUri` | `https://mick-adventureworks-web.azurewebsites.net` |
+| `entraApiScope`              | `api://{clientId}/access_via_group_assignments`     |
 
 > Production App Service names have no `-dev` suffix. Replace `{tenantId}` and `{clientId}` with production values.
 
+## `AdventureWorks-Prod-Secrets` (Key Vault Linked)
+
+| Variable                      | Key Vault Secret |
+| ----------------------------- | ---------------- |
+| `appInsightsConnectionString` | *(see Key Vault mapping below)* |
+| `sqlConnectionString`         | *(see Key Vault mapping below)* |
+| `entraClientId`               | *(see Key Vault mapping below)* |
+| `autoMapperLicenseKey`        | *(see Key Vault mapping below)* |
+
 ---
+
+## Key Vault Secret Names → ADO Variable Mapping
+
+Key Vault: `mick-aw-kv`
+
+| ADO Variable Name (in `-Secrets` groups) | Key Vault Secret Name |
+| ---------------------------------------- | --------------------- |
+| `sqlConnectionString` | `adventureworks-sql-connection-string` |
+| `appInsightsConnectionString` | `adventureworks-aplication-insights-connection-string` |
+| `entraClientId` | `adventureworks-entra-client-id` |
+| `autoMapperLicenseKey` | `automapper-license-key` |
+
+When linking the `-Secrets` groups, ADO will show the Key Vault secret names. Select each one and ADO auto-creates a variable with the secret name. **Rename** the variable to match the ADO variable name in the left column (the pipeline YAML references these exact names).
 
 ## Key Vault Link Setup
 
-1. In each variable group, click **Link secrets from an Azure key vault as variables**
+For both `AdventureWorks-Dev-Secrets` and `AdventureWorks-Prod-Secrets`:
+
+1. Toggle **Link secrets from an Azure key vault as variables**
 2. Select the `mick-aw-kv` Key Vault
-3. Map the 4 Key Vault–linked variables above to their corresponding secret names
-4. The pipeline service connection needs **Key Vault Secrets User** role on the vault (already granted by Bicep for App Service identities — the pipeline service principal needs a separate role assignment)
+3. Add the 4 secrets listed above
+4. Rename each variable to match the ADO variable name (e.g., `adventureworks-sql-connection-string` → `sqlConnectionString`)
+5. The pipeline service connection needs **Key Vault Secrets User** role on the vault (already granted by Bicep for App Service identities — the pipeline service principal needs a separate role assignment)
+
+## Pipeline Authorization
+
+After creating all 4 groups, authorize the pipeline to access each one: **Library → group → Pipeline permissions → add pipeline**.

@@ -32,5 +32,14 @@ These values are baked into the Angular build as `__PLACEHOLDER__` tokens and re
 | Local Dev           | .NET User Secrets + `environment.development.ts`  | File system (gitignored)                            |
 | Docker              | Environment variables + `appsettings.Docker.json` | docker-compose `.env.docker`                        |
 | ADO Pipeline        | Key Vault linked variable groups                  | Pipeline variable expansion                         |
-| Azure Runtime (API) | Azure Key Vault                                   | Managed identity + `KeyVault__VaultUri` app setting |
+| Azure Runtime (API) | App Service settings (migrate to Key Vault later) | App settings / connection strings on App Service    |
 | Azure Runtime (Web) | N/A                                               | Values baked into JS bundle at deploy time          |
+
+## Key Vault Secrets (`mick-aw-kv`)
+
+| Key Vault Secret Name                                  | Value Source                          | Consumed By                     |
+| ------------------------------------------------------- | ------------------------------------- | ------------------------------- |
+| `adventureworks-sql-connection-string`                  | Same as App Service `DefaultConnection` | DbUp migrations (pipeline)    |
+| `adventureworks-aplication-insights-connection-string`  | App Service `APPLICATIONINSIGHTS_CONNECTION_STRING` | Angular token replacement |
+| `adventureworks-entra-client-id`                        | Entra app registration client ID      | Angular token replacement       |
+| `automapper-license-key`                                | AutoMapper license key                | .NET unit tests (build-time)    |

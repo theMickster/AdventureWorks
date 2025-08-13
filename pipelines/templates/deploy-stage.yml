@@ -1,0 +1,119 @@
+# Deploy stage: DbUp migrations, API deploy, Angular token replacement + deploy.
+# Called as a stage template from the main pipeline — parameterized for Dev and Prod.
+
+parameters:
+  - name: stageName
+    type: string
+  - name: displayName
+    type: string
+  - name: dependsOn
+    type: object
+  - name: condition
+    type: string
+    default: 'succeeded()'
+  - name: environmentName
+    type: string
+  - name: variableGroup
+    type: string
+  - name: secretsVariableGroup
+    type: string
+  - name: azureSubscription
+    type: string
+  - name: dotNetSdkVersion
+    type: string
+    default: '10.0.x'
+  - name: apiArtifactName
+    type: string
+    default: 'api-artifact'
+  - name: angularArtifactName
+    type: string
+    default: 'angular-artifact'
+
+stages:
+  - stage: ${{ parameters.stageName }}
+    displayName: '${{ parameters.displayName }}'
+    dependsOn: ${{ parameters.dependsOn }}
+    condition: ${{ parameters.condition }}
+    variables:
+      - group: ${{ parameters.variableGroup }}
+      - group: ${{ parameters.secretsVariableGroup }}
+    jobs:
+      - deployment: Deploy
+        displayName: 'Deploy to ${{ parameters.environmentName }}'
+        environment: '${{ parameters.environmentName }}'
+        strategy:
+          runOnce:
+            deploy:
+              steps:
+                # DbUp needs source checkout for the migration project
+                - checkout: self
+
+                # --- 1. Database Migrations (DbUp) ---
+                - task: UseDotNet@2
+                  displayName: 'Install .NET SDK'
+                  inputs:
+                    packageType: sdk
+                    version: '${{ parameters.dotNetSdkVersion }}'
+
+                - script: dotnet run --project $(Build.SourcesDirectory)/database/dbup/AdventureWorks.DbUp/AdventureWorks.DbUp.csproj --no-launch-profile --configuration Release
+                  displayName: 'Run DbUp migrations'
+                  env:
+                    ConnectionStrings__AdventureWorks: $(sqlConnectionString)
+
+                # --- 2. API Deployment ---
+                - task: DownloadPipelineArtifact@2
+                  displayName: 'Download API artifact'
+                  inputs:
+                    artifact: '${{ parameters.apiArtifactName }}'
+                    path: '$(System.ArtifactsDirectory)/${{ parameters.apiArtifactName }}'
+
+                - task: AzureRmWebAppDeployment@4
+                  displayName: 'Deploy API to App Service'
+                  inputs:
+                    ConnectionType: AzureRM
+                    azureSubscription: '${{ parameters.azureSubscription }}'
+                    appType: webAppLinux
+                    WebAppName: $(appServiceNameApi)
+                    ResourceGroupName: $(resourceGroup)
+                    package: '$(System.ArtifactsDirectory)/${{ parameters.apiArtifactName }}/api.zip'
+
+                # --- 3. Angular Deployment ---
+                - task: DownloadPipelineArtifact@2
+                  displayName: 'Download Angular artifact'
+                  inputs:
+                    artifact: '${{ parameters.angularArtifactName }}'
+                    path: '$(System.ArtifactsDirectory)/${{ parameters.angularArtifactName }}'
+
+                - task: ExtractFiles@1
+                  displayName: 'Extract Angular artifact'
+                  inputs:
+                    archiveFilePatterns: '$(System.ArtifactsDirectory)/${{ parameters.angularArtifactName }}/angular.zip'
+                    destinationFolder: '$(System.ArtifactsDirectory)/angular-dist'
+
+                - script: bash $(Build.SourcesDirectory)/infra/scripts/replace-tokens.sh $(System.ArtifactsDirectory)/angular-dist
+                  displayName: 'Replace Angular placeholder tokens'
+                  env:
+                    APP_INSIGHTS_CONNECTION_STRING: $(appInsightsConnectionString)
+                    ENTRA_AUTHORITY: $(entraAuthority)
+                    ENTRA_CLIENT_ID: $(entraClientId)
+                    ENTRA_REDIRECT_URI: $(entraRedirectUri)
+                    ENTRA_POST_LOGOUT_REDIRECT_URI: $(entraPostLogoutRedirectUri)
+                    ENTRA_API_SCOPE: $(entraApiScope)
+
+                - task: ArchiveFiles@2
+                  displayName: 'Re-zip Angular after token replacement'
+                  inputs:
+                    rootFolderOrFile: '$(System.ArtifactsDirectory)/angular-dist'
+                    includeRootFolder: false
+                    archiveType: zip
+                    archiveFile: '$(System.ArtifactsDirectory)/angular-deploy.zip'
+
+                - task: AzureRmWebAppDeployment@4
+                  displayName: 'Deploy Angular to App Service'
+                  inputs:
+                    ConnectionType: AzureRM
+                    azureSubscription: '${{ parameters.azureSubscription }}'
+                    appType: webAppLinux
+                    WebAppName: $(appServiceNameWeb)
+                    ResourceGroupName: $(resourceGroup)
+                    package: '$(System.ArtifactsDirectory)/angular-deploy.zip'

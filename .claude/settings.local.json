@@ -20,7 +20,8 @@
       "Bash(az boards work-item show)`",
       "Bash(npx prettier:*)",
       "Bash(az bicep:*)",
-      "Bash(2)"
+      "Bash(2)",
+      "Bash(node:*)"
     ],
     "deny": [],
     "ask": []

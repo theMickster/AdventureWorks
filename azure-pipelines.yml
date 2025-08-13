@@ -1,147 +1,66 @@
-# AdventureWorks API - Build and test ASP.NET projects.
-# https://docs.microsoft.com/azure/devops/pipelines/apps/aspnet/build-aspnet-4
+# AdventureWorks — Full-Stack CI/CD Pipeline
+# Builds API + Angular in parallel, deploys DbUp → API → Angular per environment.
 
 trigger:
   - main
 
 pool:
-  vmImage: "ubuntu-latest"
+  vmImage: ubuntu-latest
 
 variables:
-  solution: "apps/api-dotnet/AdventureWorks.sln"
-  projectName: "apps/api-dotnet/src/AdventureWorks.API/AdventureWorks.API.csproj"
-  unitTestProjectName: "apps/api-dotnet/tests/AdventureWorks.UnitTests/AdventureWorks.UnitTests.csproj"
-  dotNetSdkVersion: "10.0.x"
-  buildPlatform: "Any CPU"
-  buildConfiguration: "Release"
-  azureSubscriptionConnectionName: "KS - AdventureWorks - Azure Connection"
-  azureAppResourceGroup: "AdventureWorks-West-US-3"
-  webApplicationNameProd: "mick-adventureworks-api"
-  webApplicationNameDev: "mick-adventureworks-api-dev"
+  dotNetSdkVersion: '10.0.x'
+  buildConfiguration: 'Release'
+  azureSubscription: 'KS - AdventureWorks - Azure Connection'
 
 stages:
-  - stage: "BuildApplication"
-    displayName: "Build Adventure Works App"
+  # --- Build (parallel) ---
 
+  - stage: BuildAPI
+    displayName: 'Build API'
+    dependsOn: []
     jobs:
-      - job: BuildAdventureWorksApi
-        displayName: "Build Adventure Works API"
-
+      - job: BuildDotNetAPI
+        displayName: 'Build .NET API'
         steps:
-          - script: set
-            displayName: "Print All YAML Build Pipleline Variables"
+          - template: pipelines/templates/build-api.yml
+            parameters:
+              dotNetSdkVersion: $(dotNetSdkVersion)
+              buildConfiguration: $(buildConfiguration)
 
-          - task: UseDotNet@2
-            displayName: "Install .NET SDK $(dotNetSdkVersion)"
-            inputs:
-              packageType: "sdk"
-              version: "$(dotNetSdkVersion)"
-
-          - task: DotNetCoreCLI@2
-            name: "DotNetRestore"
-            displayName: "Restore NuGet Packages"
-            inputs:
-              command: "restore"
-              projects: "$(solution)"
-
-          - task: DotNetCoreCLI@2
-            name: "BuildSolution"
-            displayName: "Build Adventure Works Solution (dotnet build)"
-            inputs:
-              command: "build"
-              projects: "$(solution)"
-              arguments: '--configuration $(buildConfiguration) /p:EnvironmentName=Production /p:PackageLocation="$(build.artifactStagingDirectory)"'
-
-          - task: DotNetCoreCLI@2
-            name: "ExecuteUnitTests"
-            displayName: "Execute Adventure Works Unit Tests"
-            inputs:
-              command: "test"
-              projects: "$(unitTestProjectName)"
-              testRunTitle: "AdventureWorks UnitTests - $(Build.BuildNumber)"
-              publishTestResults: true
-              arguments: '--configuration $(buildConfiguration) --collect "Code coverage"'
-            env:
-              AutoMapperLicenseKey: $(AutoMapperLicenseKey)
-
-          - task: DotNetCoreCLI@2
-            name: "Publish"
-            displayName: "Publish Adventure Works API Artifacts"
-            inputs:
-              command: publish
-              publishWebProjects: false
-              projects: "$(projectName)"
-              arguments: "--configuration $(BuildConfiguration) --output $(Build.ArtifactStagingDirectory) "
-
-          - task: PublishBuildArtifacts@1
-            name: "PublishBuildArtifacts"
-            displayName: "Publish AdventureWorks Build Artifacts"
-            inputs:
-              ArtifactName: "AdventureWorks"
-
-  - stage: "DeployToDev"
-    displayName: "Deploy Adventure Works Api to Development"
-    dependsOn: "BuildApplication"
-    condition: and(succeeded('BuildApplication'), eq(variables['build.sourceBranch'], 'refs/heads/develop'))
+  - stage: BuildAngular
+    displayName: 'Build Angular'
+    dependsOn: []
     jobs:
-      - deployment: DeployAdventureWorksApi
-        displayName: "Deploy Adventure Works Api to Development"
-        environment: "AdventureWorks-API-Dev"
-        strategy:
-          runOnce:
-            deploy:
-              steps:
-                - script: set
-                  displayName: "Print All YAML Release Pipleline Variables"
+      - job: BuildAngularWeb
+        displayName: 'Build Angular Web'
+        steps:
+          - template: pipelines/templates/build-angular.yml
 
-                - task: DownloadBuildArtifacts@1
-                  displayName: "Download Build Artifacts Prior to Deployment"
-                  inputs:
-                    buildType: "current"
-                    downloadType: "single"
-                    artifactName: "AdventureWorks"
-                    downloadPath: "$(System.ArtifactsDirectory)"
+  # --- Deploy Dev (auto on every main build) ---
 
-                - task: AzureRmWebAppDeployment@4
-                  displayName: "Deploy Adventure Works Api"
-                  inputs:
-                    ConnectionType: "AzureRM"
-                    azureSubscription: $(azureSubscriptionConnectionName)
-                    appType: "webApp"
-                    WebAppName: $(webApplicationNameDev)
-                    ResourceGroupName: $(azureAppResourceGroup)
-                    package: "$(System.ArtifactsDirectory)/**/*.zip"
+  - template: pipelines/templates/deploy-stage.yml
+    parameters:
+      stageName: DeployDev
+      displayName: 'Deploy to Development'
+      dependsOn:
+        - BuildAPI
+        - BuildAngular
+      environmentName: 'AdventureWorks-Dev'
+      variableGroup: 'AdventureWorks-Dev'
+      secretsVariableGroup: 'AdventureWorks-Dev-Secrets'
+      azureSubscription: $(azureSubscription)
+      dotNetSdkVersion: $(dotNetSdkVersion)
 
-  - stage: "DeployToProd"
-    displayName: "Deploy Adventure Works Api to Production"
-    dependsOn:
-      - "BuildApplication"
-      - "DeployToDev"
-    jobs:
-      - deployment: DeployAdventureWorksApi
-        displayName: "Deploy Adventure Works API to Production"
-        environment: "AdventureWorks-API-Production"
-        strategy:
-          runOnce:
-            deploy:
-              steps:
-                - script: set
-                  displayName: "Print All YAML Release Pipleline Variables"
+  # --- Deploy Prod (requires approval gate) ---
 
-                - task: DownloadBuildArtifacts@1
-                  displayName: "Download Build Artifacts Prior to Deployment"
-                  inputs:
-                    buildType: "current"
-                    downloadType: "single"
-                    artifactName: "AdventureWorks"
-                    downloadPath: "$(System.ArtifactsDirectory)"
-
-                - task: AzureRmWebAppDeployment@4
-                  displayName: "Deploy Adventure Works Api"
-                  inputs:
-                    ConnectionType: "AzureRM"
-                    azureSubscription: $(azureSubscriptionConnectionName)
-                    appType: "webApp"
-                    WebAppName: $(webApplicationNameProd)
-                    ResourceGroupName: $(azureAppResourceGroup)
-                    package: "$(System.ArtifactsDirectory)/**/*.zip"
+  - template: pipelines/templates/deploy-stage.yml
+    parameters:
+      stageName: DeployProd
+      displayName: 'Deploy to Production'
+      dependsOn:
+        - DeployDev
+      environmentName: 'AdventureWorks-Production'
+      variableGroup: 'AdventureWorks-Prod'
+      secretsVariableGroup: 'AdventureWorks-Prod-Secrets'
+      azureSubscription: $(azureSubscription)
+      dotNetSdkVersion: $(dotNetSdkVersion)

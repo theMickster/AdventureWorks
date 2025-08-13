@@ -9,7 +9,7 @@
   "cSpell.words": ["adventureworks", "nameof", "Rowguid", "VSTS", "wiql"],
   "material-icon-theme.folders.associations": {
     ".vs": "Vscode",
-    "entities": "database",
+    "entities": "element",
     "data": "Core",
     "_test_": "Test",
     "fixtures": "Snippet",
@@ -26,7 +26,9 @@
     "AdventureWorks.UnitTests": "Test",
     "AdventureWorks.Infrastructure.Persistence": "Database",
     "AdventureWorks.Models": "Public",
-    "AdventureWorks.Application": "Container"
+    "AdventureWorks.Application": "Container",
+    "Entities": "element",
+    "obj": "trash"
   },
   "material-icon-theme.files.associations": {
     "*.query.ts": "Sequelize",
@@ -46,10 +48,46 @@
       "folderNames": ["angular-web"] // The folder(s) that should use this new icon
     },
     {
+      "name": "purple-database", // Give your custom clone a name
+      "base": "database", // The existing icon you want to clone
+      "color": "purple-500", // The material palette color you want (e.g., purple-400, purple-500, #A259FF)
+      "folderNames": ["dbup"] // The folder(s) that should use this new icon
+    },
+    {
+      "name": "red-database", // Give your custom clone a name
+      "base": "database", // The existing icon you want to clone
+      "color": "red-500", // The material palette color you want (e.g., purple-400, purple-500, #A259FF)
+      "folderNames": ["sql-change-automation"] // The folder(s) that should use this new icon
+    },
+    {
       "name": "blue-mojo", // Give your custom clone a name
       "base": "mojo", // The existing icon you want to clone
       "color": "blue-500", // The material palette color you want (e.g., purple-400, purple-500, #A259FF)
       "folderNames": ["api-dotnet"] // The folder(s) that should use this new icon
+    },
+    {
+      "name": "blue-bicep", // Give your custom clone a name
+      "base": "bicep", // The existing icon you want to clone
+      "color": "blue-500", // The material palette color you want (e.g., purple-400, purple-500, #A259FF)
+      "folderNames": ["architecture"] // The folder(s) that should use this new icon
+    },
+    {
+      "name": "green-server", // Give your custom clone a name
+      "base": "server", // The existing icon you want to clone
+      "color": "green-500", // The material palette color you want (e.g., purple-400, purple-500, #A259FF)
+      "folderNames": ["deployment"] // The folder(s) that should use this new icon
+    },
+    {
+      "name": "orange-server", // Give your custom clone a name
+      "base": "rules", // The existing icon you want to clone
+      "color": "orange-500", // The material palette color you want (e.g., purple-400, purple-500, #A259FF)
+      "folderNames": ["troubleshooting"] // The folder(s) that should use this new icon
+    },
+    {
+      "name": "purple-license", // Give your custom clone a name
+      "base": "license", // The existing icon you want to clone
+      "color": "purple-500", // The material palette color you want (e.g., purple-400, purple-500, #A259FF)
+      "folderNames": ["theBigPlan"] // The folder(s) that should use this new icon
     },
     {
       "name": "teal-core", // Give your custom clone a name
