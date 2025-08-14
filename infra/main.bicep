@@ -1,7 +1,5 @@
-// Deployment strategy: Deploy once per environment (dev/prod) to the SAME resource group.
-// Shared resources (plan, SQL, Key Vault, App Insights) have no env suffix — they are
-// created on first deploy and reused on subsequent deploys. App Services are env-specific.
-// Two deployments to one RG yield 4 App Services on 1 shared plan, as intended.
+// Deployment strategy: Creates App Service Plan + 4 App Services (dev + prod API and Web).
+// References existing App Insights (same RG) and Key Vault (cross-RG). SQL is not managed here.
 targetScope = 'resourceGroup'
 
 @allowed(['dev', 'prod'])
@@ -14,32 +12,41 @@ param location string
 @description('Project name used for tagging')
 param projectName string
 
-@description('Object ID of the Entra admin for SQL Server')
-param sqlAdminObjectId string
+@description('Name of the existing Application Insights resource (same RG)')
+param appInsightsName string
 
-@description('SQL admin login name')
-param sqlAdminLogin string
+@description('Name of the existing Key Vault')
+param keyVaultName string
 
-@secure()
-@description('SQL admin password')
-param sqlAdminPassword string
+@description('Resource group containing the existing Key Vault')
+param keyVaultResourceGroup string
+
+@description('Base name prefix for App Service Plan and App Services')
+param namingPrefix string = 'mick-adventureworks'
+
+@description('.NET runtime stack for API App Services')
+param apiRuntimeStack string = 'DOTNETCORE|10.0'
+
+@description('Node runtime stack for Web App Services')
+param webRuntimeStack string = 'NODE|24-lts'
 
 // --- Naming ---
 var envSuffix = environment == 'prod' ? '' : '-${environment}'
-var apiAppName = 'mick-adventureworks-api${envSuffix}'
-var webAppName = 'mick-adventureworks-web${envSuffix}'
-var planName = 'mick-adventureworks-plan'
-var sqlServerName = 'mick-adventureworks-sql'
-var sqlDatabaseName = 'AdventureWorks'
-var keyVaultName = 'mick-aw-kv'
-var appInsightsName = 'mick-adventureworks-insights'
-var logAnalyticsName = 'mick-adventureworks-logs'
+var apiAppName = '${namingPrefix}-api${envSuffix}'
+var webAppName = '${namingPrefix}-web${envSuffix}'
+var planName = '${namingPrefix}-plan'
 
 // --- Tags ---
 var tags = {
   Environment: environment
   Project: projectName
   ManagedBy: 'Bicep'
+}
+
+// --- Existing Resources ---
+
+resource appInsights 'Microsoft.Insights/components@2020-02-02' existing = {
+  name: appInsightsName
 }
 
 // --- Modules ---
@@ -53,25 +60,15 @@ module appServicePlan 'modules/appServicePlan.bicep' = {
   }
 }
 
-module appInsights 'modules/appInsights.bicep' = {
-  name: 'appInsights'
-  params: {
-    name: appInsightsName
-    location: location
-    logAnalyticsWorkspaceName: logAnalyticsName
-    tags: tags
-  }
-}
-
 module apiAppService 'modules/appService.bicep' = {
   name: 'apiAppService'
   params: {
     name: apiAppName
     location: location
     appServicePlanId: appServicePlan.outputs.id
-    runtimeStack: 'DOTNETCORE|10.0'
+    runtimeStack: apiRuntimeStack
     appSettings: [
-      { name: 'APPLICATIONINSIGHTS_CONNECTION_STRING', value: appInsights.outputs.connectionString }
+      { name: 'APPLICATIONINSIGHTS_CONNECTION_STRING', value: appInsights.properties.ConnectionString }
       { name: 'ASPNETCORE_ENVIRONMENT', value: environment == 'prod' ? 'Production' : 'Development' }
       { name: 'KeyVault__VaultUri', value: 'https://${keyVaultName}${az.environment().suffixes.keyvaultDns}/' }
     ]
@@ -85,48 +82,23 @@ module webAppService 'modules/appService.bicep' = {
     name: webAppName
     location: location
     appServicePlanId: appServicePlan.outputs.id
-    runtimeStack: 'NODE|24-lts'
+    runtimeStack: webRuntimeStack
     appSettings: [
-      { name: 'APPLICATIONINSIGHTS_CONNECTION_STRING', value: appInsights.outputs.connectionString }
+      { name: 'APPLICATIONINSIGHTS_CONNECTION_STRING', value: appInsights.properties.ConnectionString }
     ]
     tags: tags
   }
 }
 
-module sqlServer 'modules/sqlServer.bicep' = {
-  name: 'sqlServer'
+// Grant App Service managed identities access to the existing Key Vault (cross-RG)
+module keyVaultAccess 'modules/keyVaultAccess.bicep' = {
+  name: 'keyVaultAccess-${environment}'
+  scope: resourceGroup(keyVaultResourceGroup)
   params: {
-    name: sqlServerName
-    location: location
-    adminLogin: sqlAdminLogin
-    adminPassword: sqlAdminPassword
-    entraAdminObjectId: sqlAdminObjectId
-    entraAdminDisplayName: '${projectName} SQL Admins'
-    tags: tags
-  }
-}
-
-module sqlDatabase 'modules/sqlDatabase.bicep' = {
-  name: 'sqlDatabase'
-  params: {
-    name: sqlDatabaseName
-    serverName: sqlServer.outputs.name
-    location: location
-    tags: tags
-  }
-}
-
-module keyVault 'modules/keyVault.bicep' = {
-  name: 'keyVault'
-  params: {
-    name: keyVaultName
-    location: location
-    tenantId: tenant().tenantId
+    keyVaultName: keyVaultName
     principalIds: [
       apiAppService.outputs.principalId
-      webAppService.outputs.principalId
     ]
-    tags: tags
   }
 }
 
@@ -135,6 +107,4 @@ output apiAppServiceName string = apiAppService.outputs.name
 output apiAppServiceHostName string = apiAppService.outputs.defaultHostName
 output webAppServiceName string = webAppService.outputs.name
 output webAppServiceHostName string = webAppService.outputs.defaultHostName
-output sqlServerFqdn string = sqlServer.outputs.fullyQualifiedDomainName
-output sqlDatabaseName string = sqlDatabase.outputs.name
-output keyVaultUri string = keyVault.outputs.uri
+output keyVaultUri string = 'https://${keyVaultName}${az.environment().suffixes.keyvaultDns}/'

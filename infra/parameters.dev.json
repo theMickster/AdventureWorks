@@ -5,6 +5,8 @@
     "environment": { "value": "dev" },
     "location": { "value": "westus3" },
     "projectName": { "value": "AdventureWorks" },
-    "sqlAdminLogin": { "value": "aw-dbadmin-dev" }
+    "appInsightsName": { "value": "mick-adventureworks" },
+    "keyVaultName": { "value": "MickKeyVaultWestUS" },
+    "keyVaultResourceGroup": { "value": "Mick-West-US-DotNetDevTest" }
   }
 }
