@@ -6,11 +6,11 @@ Single reference for how every configuration value flows across environments.
 
 | Config Key                     | Local Dev                     | Docker                             | ADO Pipeline (Dev)                | ADO Pipeline (Prod)              | Azure Runtime                                             |
 | ------------------------------ | ----------------------------- | ---------------------------------- | --------------------------------- | -------------------------------- | --------------------------------------------------------- |
-| SQL Connection String          | User Secrets                  | `CONNECTION_STRING` env var        | Key Vault linked var              | Key Vault linked var             | Key Vault via managed identity                            |
+| SQL Connection String          | User Secrets                  | `CONNECTION_STRING` env var        | Key Vault linked var              | Key Vault linked var             | Pipeline `AzureAppServiceSettings@1` (from Key Vault linked var group) |
 | Key Vault URI                  | User Secrets                  | Dummy in `appsettings.Docker.json` | `keyVaultUri` pipeline var        | `keyVaultUri` pipeline var       | `KeyVault__VaultUri` Bicep app setting                    |
 | App Insights Connection String | User Secrets                  | Dummy in `appsettings.Docker.json` | Key Vault linked var              | Key Vault linked var             | `APPLICATIONINSIGHTS_CONNECTION_STRING` Bicep app setting |
 | ASPNETCORE_ENVIRONMENT         | VS Code `launch.json` env var | `Docker` (docker-compose)          | Bicep app setting (`Development`) | Bicep app setting (`Production`) | Bicep app setting                                         |
-| AutoMapper License Key         | User Secrets                  | N/A                                | Key Vault linked var / GH Secret  | Key Vault linked var             | N/A (build-time only)                                     |
+| AutoMapper License Key         | User Secrets                  | N/A                                | Key Vault linked var / GH Secret  | Key Vault linked var             | Pipeline `AzureAppServiceSettings@1` (from Key Vault linked var group) |
 
 ## Angular Configuration (Frontend)
 
@@ -35,7 +35,7 @@ These values are baked into the Angular build as `__PLACEHOLDER__` tokens and re
 | Azure Runtime (API) | App Service settings (migrate to Key Vault later) | App settings / connection strings on App Service    |
 | Azure Runtime (Web) | N/A                                               | Values baked into JS bundle at deploy time          |
 
-## Key Vault Secrets (`mick-aw-kv`)
+## Key Vault Secrets (`MickKeyVaultWestUS`)
 
 | Key Vault Secret Name                                  | Value Source                          | Consumed By                     |
 | ------------------------------------------------------- | ------------------------------------- | ------------------------------- |

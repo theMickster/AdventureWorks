@@ -77,6 +77,22 @@ stages:
                     ResourceGroupName: $(resourceGroup)
                     package: '$(System.ArtifactsDirectory)/${{ parameters.apiArtifactName }}/api.zip'
 
+                - task: AzureAppServiceSettings@1
+                  displayName: 'Configure API app settings and connection strings'
+                  inputs:
+                    azureSubscription: '${{ parameters.azureSubscription }}'
+                    appName: $(appServiceNameApi)
+                    resourceGroupName: $(resourceGroup)
+                    appSettings: |
+                      [
+                        { "name": "AutoMapperLicenseKey", "value": "$(autoMapperLicenseKey)", "slotSetting": false }
+                      ]
+                    connectionStrings: |
+                      [
+                        { "name": "DefaultConnection", "value": "$(sqlConnectionString)", "type": "SQLAzure", "slotSetting": false },
+                        { "name": "SqlAzureConnection", "value": "$(sqlConnectionString)", "type": "SQLAzure", "slotSetting": false }
+                      ]
+
                 # --- 3. Angular Deployment ---
                 - task: DownloadPipelineArtifact@2
                   displayName: 'Download Angular artifact'
@@ -117,3 +133,4 @@ stages:
                     WebAppName: $(appServiceNameWeb)
                     ResourceGroupName: $(resourceGroup)
                     package: '$(System.ArtifactsDirectory)/angular-deploy.zip'
+                    StartupCommand: 'pm2 serve /home/site/wwwroot --no-daemon --spa --port 8080'

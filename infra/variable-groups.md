@@ -14,7 +14,7 @@ Create these manually in Azure DevOps under **Pipelines → Library**.
 | `appServiceNameWeb`          | `mick-adventureworks-web-dev`                           |
 | `resourceGroup`              | `AdventureWorks-West-US-3`                              |
 | `environmentName`            | `Development`                                           |
-| `keyVaultUri`                | `https://mick-aw-kv.vault.azure.net/`                   |
+| `keyVaultUri`                | `https://MickKeyVaultWestUS.vault.azure.net/`                   |
 | `entraAuthority`             | `https://login.microsoftonline.com/{tenantId}`          |
 | `entraRedirectUri`           | `https://mick-adventureworks-web-dev.azurewebsites.net` |
 | `entraPostLogoutRedirectUri` | `https://mick-adventureworks-web-dev.azurewebsites.net` |
@@ -41,7 +41,7 @@ Create these manually in Azure DevOps under **Pipelines → Library**.
 | `appServiceNameWeb`          | `mick-adventureworks-web`                           |
 | `resourceGroup`              | `AdventureWorks-West-US-3`                          |
 | `environmentName`            | `Production`                                        |
-| `keyVaultUri`                | `https://mick-aw-kv.vault.azure.net/`               |
+| `keyVaultUri`                | `https://MickKeyVaultWestUS.vault.azure.net/`               |
 | `entraAuthority`             | `https://login.microsoftonline.com/{tenantId}`      |
 | `entraRedirectUri`           | `https://mick-adventureworks-web.azurewebsites.net` |
 | `entraPostLogoutRedirectUri` | `https://mick-adventureworks-web.azurewebsites.net` |
@@ -62,7 +62,7 @@ Create these manually in Azure DevOps under **Pipelines → Library**.
 
 ## Key Vault Secret Names → ADO Variable Mapping
 
-Key Vault: `mick-aw-kv`
+Key Vault: `MickKeyVaultWestUS`
 
 | ADO Variable Name (in `-Secrets` groups) | Key Vault Secret Name |
 | ---------------------------------------- | --------------------- |
@@ -78,7 +78,7 @@ When linking the `-Secrets` groups, ADO will show the Key Vault secret names. Se
 For both `AdventureWorks-Dev-Secrets` and `AdventureWorks-Prod-Secrets`:
 
 1. Toggle **Link secrets from an Azure key vault as variables**
-2. Select the `mick-aw-kv` Key Vault
+2. Select the `MickKeyVaultWestUS` Key Vault
 3. Add the 4 secrets listed above
 4. Rename each variable to match the ADO variable name (e.g., `adventureworks-sql-connection-string` → `sqlConnectionString`)
 5. The pipeline service connection needs **Key Vault Secrets User** role on the vault (already granted by Bicep for App Service identities — the pipeline service principal needs a separate role assignment)
