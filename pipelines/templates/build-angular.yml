@@ -49,8 +49,8 @@ steps:
     displayName: 'Build (production)'
     workingDirectory: '${{ parameters.workingDirectory }}'
 
-  - script: npx nx test adventureworks-web --buildTarget=adventureworks-web:build:production
-    displayName: 'Run unit tests'
+  - script: npx nx run-many -t test --all
+    displayName: 'Run all unit tests'
     workingDirectory: '${{ parameters.workingDirectory }}'
 
   - task: ArchiveFiles@2
