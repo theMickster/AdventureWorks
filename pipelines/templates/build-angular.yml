@@ -49,17 +49,9 @@ steps:
     displayName: 'Build (production)'
     workingDirectory: '${{ parameters.workingDirectory }}'
 
-  - script: npx nx test adventureworks-web -- --reporter=junit --outputFile=test-results/results.xml
+  - script: npx nx test adventureworks-web
     displayName: 'Run unit tests'
     workingDirectory: '${{ parameters.workingDirectory }}'
-
-  - task: PublishTestResults@2
-    displayName: 'Publish Angular test results'
-    condition: succeededOrFailed()
-    inputs:
-      testResultsFormat: JUnit
-      testResultsFiles: '${{ parameters.workingDirectory }}/test-results/results.xml'
-      testRunTitle: 'Angular Tests - $(Build.BuildNumber)'
 
   - task: ArchiveFiles@2
     displayName: 'Zip Angular output'
