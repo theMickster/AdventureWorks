@@ -49,7 +49,7 @@ steps:
     displayName: 'Build (production)'
     workingDirectory: '${{ parameters.workingDirectory }}'
 
-  - script: npx nx test adventureworks-web
+  - script: npx nx test adventureworks-web --buildTarget=adventureworks-web:build:production
     displayName: 'Run unit tests'
     workingDirectory: '${{ parameters.workingDirectory }}'
 
