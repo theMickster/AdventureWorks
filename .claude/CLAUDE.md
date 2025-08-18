@@ -247,8 +247,40 @@ AdventureWorks/
 
 **Pattern:** Always read the application's CLAUDE.md + relevant guide files when starting work in that application.
 
+## CI/CD and Infrastructure Rules
+
+### Before Using Any CLI Flag or Task Input
+Verify it exists — read the schema, run `--help`, or check `project.json` executor options. Never assume a flag works.
+
+### Gitignored Files Do Not Exist in CI
+`environment.development.ts` and similar dev files are gitignored. CI commands must use explicit `--configuration` flags or `--exclude` to avoid referencing them.
+
+### Read the Source Before Writing Mocks
+Read the actual service/component to get exact property names and `inject()` dependencies. Never guess signal names or method signatures.
+
+### Nx Tests: App ≠ Workspace
+`nx test <app>` runs ONE project's tests. Use `nx run-many -t test` to run all libraries. Always verify the test count, not just pass/fail.
+
+### CI Cache Keys Must Hit
+Never put commit SHA or build ID in primary cache keys. For npm, cache `~/.npm`, not `node_modules` (`npm ci` deletes it).
+
+### Azure Pipelines
+- Use `PublishPipelineArtifact@1` / `DownloadPipelineArtifact@2` (not deprecated v1)
+- Use `continueOnError: true` on tasks, never `|| true` in scripts
+- Deployment jobs: use `$(Build.SourcesDirectory)` for absolute paths, not relative
+- Cross-RG deployment names: `{name}-${environment}` to avoid collisions
+
+### Verify Azure Resource Names
+Run `az resource list` before writing Bicep or docs. Never assume names follow a convention.
+
+### Root Cause First
+If a fix produces the same category of failure, stop. State the root cause, find all instances, fix them in one pass.
+
+### Always Use the Dev Team
+For non-trivial changes: implement → security review → code review → fix findings → iterate until clean. Never skip code review.
+
 ---
 
-**Version**: Monorepo Structure v1.1
-**Last Updated**: 2026-02-22
+**Version**: Monorepo Structure v1.2
+**Last Updated**: 2026-03-23
 **Primary Application**: .NET 10.0 REST API (Clean Architecture with CQRS)
