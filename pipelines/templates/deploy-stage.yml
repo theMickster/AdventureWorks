@@ -55,8 +55,9 @@ stages:
                     packageType: sdk
                     version: '${{ parameters.dotNetSdkVersion }}'
 
-                - script: dotnet run --project $(Build.SourcesDirectory)/database/dbup/AdventureWorks.DbUp/AdventureWorks.DbUp.csproj --no-launch-profile --configuration Release
+                - script: dotnet run --no-launch-profile --configuration Release
                   displayName: 'Run DbUp migrations'
+                  workingDirectory: '$(Build.SourcesDirectory)/database/dbup/AdventureWorks.DbUp'
                   env:
                     ConnectionStrings__AdventureWorks: $(sqlConnectionString)
 
