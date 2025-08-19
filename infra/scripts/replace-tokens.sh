@@ -23,12 +23,14 @@ for token in "${!TOKENS[@]}"; do
   echo "Replaced ${token}"
 done
 
-# Fail if any placeholder tokens remain in the output
-remaining=$(grep -rl '__[A-Z_]\{2,\}__' "$DIST_DIR" --include="*.js" --include="*.html" || true)
-if [ -n "$remaining" ]; then
-  echo "ERROR: Unreplaced placeholder tokens found in:" >&2
-  grep -rh '__[A-Z_]\{2,\}__' "$DIST_DIR" --include="*.js" --include="*.html" | sort -u >&2
-  exit 1
-fi
+# Fail if any of OUR placeholder tokens remain (Angular internals use __ too)
+for token in "${!TOKENS[@]}"; do
+  remaining=$(grep -rl "${token}" "$DIST_DIR" --include="*.js" --include="*.html" || true)
+  if [ -n "$remaining" ]; then
+    echo "ERROR: Unreplaced token ${token} found in:" >&2
+    echo "$remaining" >&2
+    exit 1
+  fi
+done
 
 echo "Token replacement complete."
