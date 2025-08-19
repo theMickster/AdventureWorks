@@ -10,7 +10,7 @@ pool:
 variables:
   dotNetSdkVersion: '10.0.x'
   buildConfiguration: 'Release'
-  azureSubscription: 'KS - AdventureWorks - Azure Connection'
+  azureSubscription: 'AdventureWorks-AzureDevOps-ServiceConnection'
 
 stages:
   # --- Build (parallel) ---
