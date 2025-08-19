@@ -24,12 +24,12 @@ Create these manually in Azure DevOps under **Pipelines → Library**.
 
 ## `AdventureWorks-Dev-Secrets` (Key Vault Linked)
 
-| Variable                      | Key Vault Secret |
-| ----------------------------- | ---------------- |
-| `appInsightsConnectionString` | *(see Key Vault mapping below)* |
-| `sqlConnectionString`         | *(see Key Vault mapping below)* |
-| `entraClientId`               | *(see Key Vault mapping below)* |
-| `autoMapperLicenseKey`        | *(see Key Vault mapping below)* |
+| Variable (Key Vault Secret Name)                         |
+| -------------------------------------------------------- |
+| `adventureworks-sql-connection-string`                   |
+| `adventureworks-aplication-insights-connection-string`   |
+| `adventureworks-entra-client-id`                         |
+| `automapper-license-key`                                 |
 
 ---
 
@@ -51,27 +51,27 @@ Create these manually in Azure DevOps under **Pipelines → Library**.
 
 ## `AdventureWorks-Prod-Secrets` (Key Vault Linked)
 
-| Variable                      | Key Vault Secret |
-| ----------------------------- | ---------------- |
-| `appInsightsConnectionString` | *(see Key Vault mapping below)* |
-| `sqlConnectionString`         | *(see Key Vault mapping below)* |
-| `entraClientId`               | *(see Key Vault mapping below)* |
-| `autoMapperLicenseKey`        | *(see Key Vault mapping below)* |
+| Variable (Key Vault Secret Name)                         |
+| -------------------------------------------------------- |
+| `adventureworks-sql-connection-string`                   |
+| `adventureworks-aplication-insights-connection-string`   |
+| `adventureworks-entra-client-id`                         |
+| `automapper-license-key`                                 |
 
 ---
 
-## Key Vault Secret Names → ADO Variable Mapping
+## Key Vault Secret Names
 
 Key Vault: `MickKeyVaultWestUS`
 
-| ADO Variable Name (in `-Secrets` groups) | Key Vault Secret Name |
-| ---------------------------------------- | --------------------- |
-| `sqlConnectionString` | `adventureworks-sql-connection-string` |
-| `appInsightsConnectionString` | `adventureworks-aplication-insights-connection-string` |
-| `entraClientId` | `adventureworks-entra-client-id` |
-| `autoMapperLicenseKey` | `automapper-license-key` |
+The pipeline YAML references these secrets by their **exact Key Vault names** — no renaming needed in ADO.
 
-When linking the `-Secrets` groups, ADO will show the Key Vault secret names. Select each one and ADO auto-creates a variable with the secret name. **Rename** the variable to match the ADO variable name in the left column (the pipeline YAML references these exact names).
+| Key Vault Secret Name                                    | Used For |
+| -------------------------------------------------------- | -------- |
+| `adventureworks-sql-connection-string`                   | DbUp migrations, API connection strings |
+| `adventureworks-aplication-insights-connection-string`    | Angular token replacement |
+| `adventureworks-entra-client-id`                         | Angular token replacement |
+| `automapper-license-key`                                 | API app setting |
 
 ## Key Vault Link Setup
 
@@ -79,9 +79,9 @@ For both `AdventureWorks-Dev-Secrets` and `AdventureWorks-Prod-Secrets`:
 
 1. Toggle **Link secrets from an Azure key vault as variables**
 2. Select the `MickKeyVaultWestUS` Key Vault
-3. Add the 4 secrets listed above
-4. Rename each variable to match the ADO variable name (e.g., `adventureworks-sql-connection-string` → `sqlConnectionString`)
-5. The pipeline service connection needs **Key Vault Secrets User** role on the vault (already granted by Bicep for App Service identities — the pipeline service principal needs a separate role assignment)
+3. Add the 4 secrets listed above — ADO creates variables with the Key Vault secret names
+4. No renaming needed — the pipeline YAML uses the Key Vault names directly
+5. The pipeline service connection needs **Key Vault Secrets User** role on the vault
 
 ## Pipeline Authorization
 

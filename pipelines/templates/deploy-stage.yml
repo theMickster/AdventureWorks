@@ -59,7 +59,7 @@ stages:
                   displayName: 'Run DbUp migrations'
                   workingDirectory: '$(Build.SourcesDirectory)/database/dbup/AdventureWorks.DbUp'
                   env:
-                    ConnectionStrings__AdventureWorks: $(sqlConnectionString)
+                    ConnectionStrings__AdventureWorks: $(adventureworks-sql-connection-string)
 
                 # --- 2. API Deployment ---
                 - task: DownloadPipelineArtifact@2
@@ -86,12 +86,12 @@ stages:
                     resourceGroupName: $(resourceGroup)
                     appSettings: |
                       [
-                        { "name": "AutoMapperLicenseKey", "value": "$(autoMapperLicenseKey)", "slotSetting": false }
+                        { "name": "AutoMapperLicenseKey", "value": "$(automapper-license-key)", "slotSetting": false }
                       ]
                     connectionStrings: |
                       [
-                        { "name": "DefaultConnection", "value": "$(sqlConnectionString)", "type": "SQLAzure", "slotSetting": false },
-                        { "name": "SqlAzureConnection", "value": "$(sqlConnectionString)", "type": "SQLAzure", "slotSetting": false }
+                        { "name": "DefaultConnection", "value": "$(adventureworks-sql-connection-string)", "type": "SQLAzure", "slotSetting": false },
+                        { "name": "SqlAzureConnection", "value": "$(adventureworks-sql-connection-string)", "type": "SQLAzure", "slotSetting": false }
                       ]
 
                 # --- 3. Angular Deployment ---
@@ -110,9 +110,9 @@ stages:
                 - script: bash $(Build.SourcesDirectory)/infra/scripts/replace-tokens.sh $(System.ArtifactsDirectory)/angular-dist
                   displayName: 'Replace Angular placeholder tokens'
                   env:
-                    APP_INSIGHTS_CONNECTION_STRING: $(appInsightsConnectionString)
+                    APP_INSIGHTS_CONNECTION_STRING: $(adventureworks-aplication-insights-connection-string)
                     ENTRA_AUTHORITY: $(entraAuthority)
-                    ENTRA_CLIENT_ID: $(entraClientId)
+                    ENTRA_CLIENT_ID: $(adventureworks-entra-client-id)
                     ENTRA_REDIRECT_URI: $(entraRedirectUri)
                     ENTRA_POST_LOGOUT_REDIRECT_URI: $(entraPostLogoutRedirectUri)
                     ENTRA_API_SCOPE: $(entraApiScope)
