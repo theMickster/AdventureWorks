@@ -53,9 +53,28 @@ steps:
     displayName: 'Run library unit tests'
     workingDirectory: '${{ parameters.workingDirectory }}'
 
+  - task: PublishTestResults@2
+    displayName: 'Publish library test results'
+    condition: always()
+    inputs:
+      testResultsFormat: JUnit
+      testResultsFiles: 'libs/**/test-results/junit.xml'
+      searchFolder: '${{ parameters.workingDirectory }}'
+      testRunTitle: 'Angular Library Tests - $(Build.BuildNumber)'
+      mergeTestResults: true
+
   - script: npx nx test adventureworks-web --buildTarget=adventureworks-web:build:production
     displayName: 'Run app unit tests'
     workingDirectory: '${{ parameters.workingDirectory }}'
+
+  - task: PublishTestResults@2
+    displayName: 'Publish app test results'
+    condition: always()
+    inputs:
+      testResultsFormat: JUnit
+      testResultsFiles: 'apps/adventureworks-web/test-results/junit.xml'
+      searchFolder: '${{ parameters.workingDirectory }}'
+      testRunTitle: 'Angular App Tests - $(Build.BuildNumber)'
 
   - task: ArchiveFiles@2
     displayName: 'Zip Angular output'

@@ -91,7 +91,9 @@
     },
     "test": {
       "executor": "@angular/build:unit-test",
-      "options": {}
+      "options": {
+        "reporters": [["junit", { "outputFile": "test-results/junit.xml" }], "default"]
+      }
     },
     "serve-static": {
       "continuous": true,
