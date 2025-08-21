@@ -1,0 +1,119 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<testsuites name="vitest tests" tests="49" failures="0" errors="0" time="0.102676332">
+    <testsuite name="libs/shared/util/src/lib/auth/msal-config.spec.ts" timestamp="2026-03-29T13:56:10.509Z" hostname="Obiwankenobi.local" tests="4" failures="0" errors="0" skipped="0" time="0.00235025">
+        <testcase classname="libs/shared/util/src/lib/auth/msal-config.spec.ts" name="msalInterceptorConfigFactory &gt; should map single API to global scopes" time="0.000981667">
+        </testcase>
+        <testcase classname="libs/shared/util/src/lib/auth/msal-config.spec.ts" name="msalInterceptorConfigFactory &gt; should map multiple APIs each to their own scopes" time="0.000417291">
+        </testcase>
+        <testcase classname="libs/shared/util/src/lib/auth/msal-config.spec.ts" name="msalInterceptorConfigFactory &gt; should fall back to global auth scopes when API has no scopes" time="0.000176375">
+        </testcase>
+        <testcase classname="libs/shared/util/src/lib/auth/msal-config.spec.ts" name="msalInterceptorConfigFactory &gt; should always use Redirect interaction type" time="0.00025675">
+        </testcase>
+    </testsuite>
+    <testsuite name="libs/shared/util/src/lib/confirm/confirm.service.spec.ts" timestamp="2026-03-29T13:56:10.509Z" hostname="Obiwankenobi.local" tests="8" failures="0" errors="0" skipped="0" time="0.011629583">
+        <testcase classname="libs/shared/util/src/lib/confirm/confirm.service.spec.ts" name="ConfirmService &gt; should be created" time="0.006149292">
+        </testcase>
+        <testcase classname="libs/shared/util/src/lib/confirm/confirm.service.spec.ts" name="ConfirmService &gt; should have initial state with visible false" time="0.001369125">
+        </testcase>
+        <testcase classname="libs/shared/util/src/lib/confirm/confirm.service.spec.ts" name="ConfirmService &gt; should set state to visible with options when confirm is called" time="0.000774792">
+        </testcase>
+        <testcase classname="libs/shared/util/src/lib/confirm/confirm.service.spec.ts" name="ConfirmService &gt; should resolve promise with true when resolve(true) is called" time="0.000772583">
+        </testcase>
+        <testcase classname="libs/shared/util/src/lib/confirm/confirm.service.spec.ts" name="ConfirmService &gt; should resolve promise with false when resolve(false) is called" time="0.000564125">
+        </testcase>
+        <testcase classname="libs/shared/util/src/lib/confirm/confirm.service.spec.ts" name="ConfirmService &gt; should reset state when resolve is called" time="0.000491958">
+        </testcase>
+        <testcase classname="libs/shared/util/src/lib/confirm/confirm.service.spec.ts" name="ConfirmService &gt; should have undefined confirmLabel and cancelLabel by default" time="0.000437167">
+        </testcase>
+        <testcase classname="libs/shared/util/src/lib/confirm/confirm.service.spec.ts" name="ConfirmService &gt; should preserve custom labels in options" time="0.000497042">
+        </testcase>
+    </testsuite>
+    <testsuite name="libs/shared/util/src/lib/forms/create-control-value-accessor.spec.ts" timestamp="2026-03-29T13:56:10.510Z" hostname="Obiwankenobi.local" tests="9" failures="0" errors="0" skipped="0" time="0.003700167">
+        <testcase classname="libs/shared/util/src/lib/forms/create-control-value-accessor.spec.ts" name="createControlValueAccessor &gt; should set the default value on creation" time="0.0009555">
+        </testcase>
+        <testcase classname="libs/shared/util/src/lib/forms/create-control-value-accessor.spec.ts" name="createControlValueAccessor &gt; should set disabled to false by default" time="0.000270375">
+        </testcase>
+        <testcase classname="libs/shared/util/src/lib/forms/create-control-value-accessor.spec.ts" name="createControlValueAccessor &gt; writeValue should set the value signal" time="0.000162416">
+        </testcase>
+        <testcase classname="libs/shared/util/src/lib/forms/create-control-value-accessor.spec.ts" name="createControlValueAccessor &gt; registerOnChange + emitChange should call the registered onChange function" time="0.00082425">
+        </testcase>
+        <testcase classname="libs/shared/util/src/lib/forms/create-control-value-accessor.spec.ts" name="createControlValueAccessor &gt; registerOnTouched + markAsTouched should call the registered onTouched function" time="0.000228042">
+        </testcase>
+        <testcase classname="libs/shared/util/src/lib/forms/create-control-value-accessor.spec.ts" name="createControlValueAccessor &gt; setDisabledState should set the disabled signal" time="0.000063125">
+        </testcase>
+        <testcase classname="libs/shared/util/src/lib/forms/create-control-value-accessor.spec.ts" name="createControlValueAccessor &gt; emitChange should both update the value signal and call onChange" time="0.000145958">
+        </testcase>
+        <testcase classname="libs/shared/util/src/lib/forms/create-control-value-accessor.spec.ts" name="createControlValueAccessor &gt; emitChange should not throw when no onChange is registered" time="0.00026125">
+        </testcase>
+        <testcase classname="libs/shared/util/src/lib/forms/create-control-value-accessor.spec.ts" name="createControlValueAccessor &gt; markAsTouched should not throw when no onTouched is registered" time="0.00013325">
+        </testcase>
+    </testsuite>
+    <testsuite name="libs/shared/util/src/lib/http/api.service.spec.ts" timestamp="2026-03-29T13:56:10.511Z" hostname="Obiwankenobi.local" tests="9" failures="0" errors="0" skipped="0" time="0.016731333">
+        <testcase classname="libs/shared/util/src/lib/http/api.service.spec.ts" name="ApiService &gt; should use primary baseUrl by default for get" time="0.007724333">
+        </testcase>
+        <testcase classname="libs/shared/util/src/lib/http/api.service.spec.ts" name="ApiService &gt; should resolve named API key for get" time="0.00137975">
+        </testcase>
+        <testcase classname="libs/shared/util/src/lib/http/api.service.spec.ts" name="ApiService &gt; should throw for nonexistent API key" time="0.00102225">
+        </testcase>
+        <testcase classname="libs/shared/util/src/lib/http/api.service.spec.ts" name="ApiService &gt; should use primary baseUrl by default for post" time="0.001464541">
+        </testcase>
+        <testcase classname="libs/shared/util/src/lib/http/api.service.spec.ts" name="ApiService &gt; should resolve named API key for post" time="0.000766208">
+        </testcase>
+        <testcase classname="libs/shared/util/src/lib/http/api.service.spec.ts" name="ApiService &gt; should use primary baseUrl by default for put" time="0.000646709">
+        </testcase>
+        <testcase classname="libs/shared/util/src/lib/http/api.service.spec.ts" name="ApiService &gt; should use primary baseUrl by default for patch" time="0.000740125">
+        </testcase>
+        <testcase classname="libs/shared/util/src/lib/http/api.service.spec.ts" name="ApiService &gt; should use primary baseUrl by default for delete" time="0.000934">
+        </testcase>
+        <testcase classname="libs/shared/util/src/lib/http/api.service.spec.ts" name="ApiService &gt; should resolve named API key for delete" time="0.001333334">
+        </testcase>
+    </testsuite>
+    <testsuite name="libs/shared/util/src/lib/http/error.interceptor.spec.ts" timestamp="2026-03-29T13:56:10.511Z" hostname="Obiwankenobi.local" tests="9" failures="0" errors="0" skipped="0" time="0.015708292">
+        <testcase classname="libs/shared/util/src/lib/http/error.interceptor.spec.ts" name="errorInterceptor &gt; should throw ApiValidationError for 400 with array body" time="0.0073385">
+        </testcase>
+        <testcase classname="libs/shared/util/src/lib/http/error.interceptor.spec.ts" name="errorInterceptor &gt; should throw ApiEmptyResultError for 400 with string body" time="0.001177209">
+        </testcase>
+        <testcase classname="libs/shared/util/src/lib/http/error.interceptor.spec.ts" name="errorInterceptor &gt; should show warning toast and trigger login for 401 when not authenticated" time="0.001254708">
+        </testcase>
+        <testcase classname="libs/shared/util/src/lib/http/error.interceptor.spec.ts" name="errorInterceptor &gt; should show warning toast but NOT trigger login for 401 when already authenticated" time="0.000841291">
+        </testcase>
+        <testcase classname="libs/shared/util/src/lib/http/error.interceptor.spec.ts" name="errorInterceptor &gt; should show error toast for 403" time="0.000717708">
+        </testcase>
+        <testcase classname="libs/shared/util/src/lib/http/error.interceptor.spec.ts" name="errorInterceptor &gt; should re-throw 404 without toast" time="0.000591084">
+        </testcase>
+        <testcase classname="libs/shared/util/src/lib/http/error.interceptor.spec.ts" name="errorInterceptor &gt; should track to App Insights and show toast for 500" time="0.001086708">
+        </testcase>
+        <testcase classname="libs/shared/util/src/lib/http/error.interceptor.spec.ts" name="errorInterceptor &gt; should show network error toast for status 0" time="0.000761459">
+        </testcase>
+        <testcase classname="libs/shared/util/src/lib/http/error.interceptor.spec.ts" name="errorInterceptor &gt; should track all non-400 errors to App Insights with correlationId" time="0.001362375">
+        </testcase>
+    </testsuite>
+    <testsuite name="libs/shared/util/src/lib/http/loading.interceptor.spec.ts" timestamp="2026-03-29T13:56:10.511Z" hostname="Obiwankenobi.local" tests="4" failures="0" errors="0" skipped="0" time="0.012286583">
+        <testcase classname="libs/shared/util/src/lib/http/loading.interceptor.spec.ts" name="loadingInterceptor &gt; should call start on request and stop on success" time="0.007964">
+        </testcase>
+        <testcase classname="libs/shared/util/src/lib/http/loading.interceptor.spec.ts" name="loadingInterceptor &gt; should call stop on HTTP error via finalize" time="0.001352417">
+        </testcase>
+        <testcase classname="libs/shared/util/src/lib/http/loading.interceptor.spec.ts" name="loadingInterceptor &gt; should skip loading for X-Silent-Request header" time="0.001384625">
+        </testcase>
+        <testcase classname="libs/shared/util/src/lib/http/loading.interceptor.spec.ts" name="loadingInterceptor &gt; should strip X-Silent-Request header from outgoing request" time="0.00103575">
+        </testcase>
+    </testsuite>
+    <testsuite name="libs/shared/util/src/lib/routing/aw-title-strategy.spec.ts" timestamp="2026-03-29T13:56:10.512Z" hostname="Obiwankenobi.local" tests="2" failures="0" errors="0" skipped="0" time="0.016390833">
+        <testcase classname="libs/shared/util/src/lib/routing/aw-title-strategy.spec.ts" name="AwTitleStrategy &gt; should set title to &quot;{page} | AdventureWorks&quot; when route has a title" time="0.013142792">
+        </testcase>
+        <testcase classname="libs/shared/util/src/lib/routing/aw-title-strategy.spec.ts" name="AwTitleStrategy &gt; should set title to &quot;AdventureWorks&quot; when route has no title" time="0.002429583">
+        </testcase>
+    </testsuite>
+    <testsuite name="libs/shared/util/src/lib/routing/unsaved-changes.guard.spec.ts" timestamp="2026-03-29T13:56:10.512Z" hostname="Obiwankenobi.local" tests="3" failures="0" errors="0" skipped="0" time="0.00881425">
+        <testcase classname="libs/shared/util/src/lib/routing/unsaved-changes.guard.spec.ts" name="unsavedChangesGuard &gt; should allow navigation when component has no unsaved changes" time="0.006313542">
+        </testcase>
+        <testcase classname="libs/shared/util/src/lib/routing/unsaved-changes.guard.spec.ts" name="unsavedChangesGuard &gt; should prompt via ConfirmService when component has unsaved changes" time="0.001305542">
+        </testcase>
+        <testcase classname="libs/shared/util/src/lib/routing/unsaved-changes.guard.spec.ts" name="unsavedChangesGuard &gt; should block navigation when user cancels the dialog" time="0.000669208">
+        </testcase>
+    </testsuite>
+    <testsuite name="libs/shared/util/src/lib/shared-util/shared-util.spec.ts" timestamp="2026-03-29T13:56:10.512Z" hostname="Obiwankenobi.local" tests="1" failures="0" errors="0" skipped="0" time="0.015065041">
+        <testcase classname="libs/shared/util/src/lib/shared-util/shared-util.spec.ts" name="SharedUtilComponent &gt; should create" time="0.014506458">
+        </testcase>
+    </testsuite>
+</testsuites>

@@ -93,7 +93,7 @@
       "executor": "@angular/build:unit-test",
       "options": {
         "reporters": ["junit", "default"],
-        "outputFile": "test-results/junit.xml"
+        "outputFile": "apps/adventureworks-web/test-results/junit.xml"
       }
     },
     "serve-static": {
