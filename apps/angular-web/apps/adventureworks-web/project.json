@@ -53,6 +53,19 @@
               "with": "apps/adventureworks-web/src/environments/environment.development.ts"
             }
           ]
+        },
+        "docker": {
+          "sourceMap": false,
+          "optimization": true,
+          "namedChunks": false,
+          "extractLicenses": true,
+          "outputHashing": "all",
+          "fileReplacements": [
+            {
+              "replace": "apps/adventureworks-web/src/environments/environment.ts",
+              "with": "apps/adventureworks-web/src/environments/environment.docker.ts"
+            }
+          ]
         }
       },
       "defaultConfiguration": "production"

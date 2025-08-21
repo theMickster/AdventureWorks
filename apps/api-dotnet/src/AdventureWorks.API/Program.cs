@@ -41,11 +41,17 @@ builder.Configuration
     .AddUserSecrets<Program>()
     .Build();
 
-builder.Configuration.RegisterApplicationConfiguration();
+if (!environment.IsEnvironment("Docker"))
+{
+    builder.Configuration.RegisterApplicationConfiguration();
+}
 
 builder.Services.AddAdventureWorksLogging(builder.Configuration);
 
-builder.RegisterCommonSettings();
+if (!environment.IsEnvironment("Docker"))
+{
+    builder.RegisterCommonSettings();
+}
 
 builder.Services.AddDefaultHealthCheck();
 

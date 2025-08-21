@@ -1,0 +1,28 @@
+services:
+  api:
+    build:
+      context: ./apps/api-dotnet
+      dockerfile: src/AdventureWorks.API/Dockerfile
+    container_name: aw-api
+    environment:
+      ASPNETCORE_ENVIRONMENT: "Docker"
+      ConnectionStrings__DefaultConnection: "${CONNECTION_STRING}"
+    ports:
+      - "5000:8080"
+    healthcheck:
+      test: ["CMD-SHELL", "curl -f http://localhost:8080/health || exit 1"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+      start_period: 15s
+
+  web:
+    build:
+      context: ./apps/angular-web
+      dockerfile: Dockerfile
+    container_name: aw-web
+    ports:
+      - "4200:8080"
+    depends_on:
+      api:
+        condition: service_healthy

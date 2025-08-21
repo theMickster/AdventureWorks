@@ -152,6 +152,20 @@ When documentation is needed:
 - `appsettings.Production.json` for environment config
 - Managed identities where possible
 
+### Docker Local Development
+
+- `docker-compose.yml` at repo root — 2 services: `api` (.NET 10.0) and `web` (Angular/nginx)
+- Database is NOT containerized — developers point the API at their existing SQL Server via `CONNECTION_STRING` env var
+- API Dockerfile: `apps/api-dotnet/src/AdventureWorks.API/Dockerfile` — 4-stage multi-stage build, `aspnet:10.0` runtime with curl for healthcheck, non-root
+- Angular Dockerfile: `apps/angular-web/Dockerfile` — `node:24-alpine` build, `nginxinc/nginx-unprivileged:alpine` serve
+- nginx.conf at `apps/angular-web/nginx.conf` — reverse proxies `/api/` to the API container, SPA fallback, security headers, CSP
+- `appsettings.Docker.json` — skips Key Vault, dummy App Insights, loaded when `ASPNETCORE_ENVIRONMENT=Docker`
+- `environment.docker.ts` — no auth block (MSAL disabled), `baseUrl: '/api'`
+- `docker` build configuration in Angular `project.json`
+- `.env.docker.example` committed, `.env.docker` gitignored
+- Ports: API 5000, Web 4200
+- Full docs in `DOCKER.md` at repo root
+
 ## Technology Stack
 
 ### Current
@@ -192,7 +206,9 @@ AdventureWorks/
 │   ├── dbup/                        # Database migrations
 │   └── scripts/                     # SQL scripts
 │
-└── docs/                            # Shared documentation
+├── docs/                            # Shared documentation
+├── docker-compose.yml               # Local dev: API + Web containers
+└── DOCKER.md                        # Docker local development guide
 ```
 
 ## Getting Started
