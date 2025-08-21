@@ -24,7 +24,8 @@
     "test": {
       "executor": "@nx/angular:unit-test",
       "options": {
-        "reporters": [["junit", { "outputFile": "test-results/junit.xml" }], "default"]
+        "reporters": ["junit", "default"],
+        "outputFile": "test-results/junit.xml"
       }
     },
     "lint": {

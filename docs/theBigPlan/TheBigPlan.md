@@ -196,14 +196,14 @@
 
 ### Epics (Initiative 2)
 
-#### Epic #570 -- Simple IaC + CI/CD (3/5 features complete)
+#### Epic #570 -- Simple IaC + CI/CD ✅ COMPLETE (2026-03-29)
 
 | Order | ID   | Feature                           | Status     |
 | ----- | ---- | --------------------------------- | ---------- |
 | --    | #643 | IaC with Bicep                    | ✅ Done    |
-| 6     | #644 | Environment & Secrets Management  | 📋 Planned |
+| --    | #644 | Environment & Secrets Management  | ✅ Done    |
 | --    | #645 | GitHub Actions PR Validation      | ✅ Done    |
-| 8     | #646 | Azure Pipelines CI/CD Enhancement | 📋 Planned |
+| --    | #646 | Azure Pipelines CI/CD Enhancement | ✅ Done    |
 | --    | #647 | Docker Local Dev Environment      | ✅ Done    |
 
 > **Pivot**: Epic #566 (Docker Basics) has been superseded by Feature #647 within this epic. User will close #566 manually.
@@ -325,12 +325,12 @@ The precise order for completing remaining work (577 → 552 API Completion → 
 
 > **Full story details**: `docs/theBigPlan/api-completion-features.md`
 
-### Phase 3: Simple IaC + CI/CD (Epic #570)
+### Phase 3: Simple IaC + CI/CD (Epic #570) ✅ COMPLETE
 
 | #   | Epic | Feature                                        | Status         | Depends On           |
 | --- | ---- | ---------------------------------------------- | -------------- | -------------------- |
-| 18  | #570 | Environment & Secrets Management #644          | 📋 Planned     | #643 (Bicep)         |
-| 19  | #570 | Azure Pipelines CI/CD Enhancement #646         | 📋 Planned     | #643, #644           |
+| 18  | #570 | Environment & Secrets Management #644          | ✅ Done        | #643 (Bicep)         |
+| 19  | #570 | Azure Pipelines CI/CD Enhancement #646         | ✅ Done        | #643, #644           |
 
 ### Phase 4: Testing Foundation (Epic #565)
 
@@ -362,15 +362,14 @@ The precise order for completing remaining work (577 → 552 API Completion → 
 
 - Shared Data Models, API Contract Corrections, Enhanced HTTP Pipeline, NgRx SignalStore Foundation, Domain Data Access Libraries (Sales & HR)
 
-**Epic #570 -- Simple IaC + CI/CD**: 3 of 5 features done
+**Epic #570 -- Simple IaC + CI/CD**: ✅ ALL 5 features done (2026-03-29)
 
-- Bicep IaC, GitHub Actions PR Validation, Docker Local Dev Environment
+- Bicep IaC, Environment & Secrets Management, GitHub Actions PR Validation, Azure Pipelines CI/CD Enhancement, Docker Local Dev Environment
 
-### Remaining Work (20 features across 4 epics)
+### Remaining Work (18 features across 3 epics)
 
 - **Epic #577**: 1 feature remaining (#621 SignalR)
 - **Epic #552 API Completion**: 13 NEW features across 4 waves (40 stories) — see `api-completion-features.md`
-- **Epic #570**: 2 features remaining (#644, #646)
 - **Epic #565**: 4 features (all new)
 
 ### Success Criteria for "Done"
@@ -491,6 +490,6 @@ Each markdown file follows this structure:
 
 ---
 
-**Document Version**: 2.2
-**Last Updated**: 2026-03-20
-**Status**: Active Execution - Epic #560 complete, #577 83% complete (#620 done, #621 remaining), #552 API Completion planned (13 features/40 stories), #570 60% complete (#643/#645/#647 done), #565 planned
+**Document Version**: 2.3
+**Last Updated**: 2026-03-29
+**Status**: Active Execution - Epic #560 complete, #577 83% complete (#620 done, #621 remaining), #552 API Completion planned (13 features/40 stories), #570 complete (all 5 features done), #565 planned
