@@ -193,4 +193,45 @@ public sealed class ReadStoreListQueryHandlerTests : UnitTestBase
         }
     }
 
+    [Fact]
+    public async Task Handle_skips_contact_fetch_when_IncludeContacts_is_falseAsync()
+    {
+        _mockStoreRepository.Setup(x => x.GetStoresAsync(It.IsAny<StoreParameter>()))
+            .ReturnsAsync((SalesDomainFixtures.GetMockStores().ToList(), 3));
+
+        var param = new StoreParameter { PageNumber = 1, PageSize = 30, IncludeContacts = false };
+
+        await _sut.Handle(new ReadStoreListQuery { Parameters = param }, CancellationToken.None);
+
+        _mockContactEntityRepository.Verify(x => x.GetContactsByStoreIdsAsync(It.IsAny<List<int>>()), Times.Never);
+    }
+
+    [Fact]
+    public async Task Handle_returns_empty_StoreContacts_when_IncludeContacts_is_falseAsync()
+    {
+        _mockStoreRepository.Setup(x => x.GetStoresAsync(It.IsAny<StoreParameter>()))
+            .ReturnsAsync((SalesDomainFixtures.GetMockStores().ToList(), 3));
+
+        var param = new StoreParameter { PageNumber = 1, PageSize = 30, IncludeContacts = false };
+
+        var result = await _sut.Handle(new ReadStoreListQuery { Parameters = param }, CancellationToken.None);
+
+        result.Results.Should().AllSatisfy(s => s.StoreContacts.Should().BeEmpty());
+    }
+
+    [Fact]
+    public async Task Handle_returns_empty_StoreAddresses_when_IncludeAddresses_is_falseAsync()
+    {
+        _mockStoreRepository.Setup(x => x.GetStoresAsync(It.IsAny<StoreParameter>()))
+            .ReturnsAsync((SalesDomainFixtures.GetMockStores().ToList(), 3));
+
+        _mockContactEntityRepository.Setup(x => x.GetContactsByStoreIdsAsync(It.IsAny<List<int>>()))
+            .ReturnsAsync(SalesDomainFixtures.GetMockContactEntities().ToList());
+
+        var param = new StoreParameter { PageNumber = 1, PageSize = 30, IncludeAddresses = false };
+
+        var result = await _sut.Handle(new ReadStoreListQuery { Parameters = param }, CancellationToken.None);
+
+        result.Results.Should().AllSatisfy(s => s.StoreAddresses.Should().BeEmpty());
+    }
 }

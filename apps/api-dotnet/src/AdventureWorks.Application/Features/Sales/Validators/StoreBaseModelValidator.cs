@@ -1,4 +1,4 @@
-﻿using AdventureWorks.Models.Features.Sales;
+using AdventureWorks.Models.Features.Sales;
 using FluentValidation;
 
 namespace AdventureWorks.Application.Features.Sales.Validators;
@@ -10,7 +10,7 @@ public class StoreBaseModelValidator<T> : AbstractValidator<T> where T : StoreBa
         RuleFor(a => a.Name)
             .NotEmpty()
             .WithErrorCode("Rule-01").WithMessage(MessageStoreNameEmpty)
-            .MaximumLength(60)
+            .MaximumLength(50)
             .WithErrorCode("Rule-02").WithMessage(MessageStoreNameLength);
     }
 

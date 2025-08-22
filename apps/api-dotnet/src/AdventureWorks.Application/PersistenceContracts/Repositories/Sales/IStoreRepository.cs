@@ -1,4 +1,5 @@
 ﻿using AdventureWorks.Common.Filtering;
+using AdventureWorks.Domain.Entities.Person;
 using AdventureWorks.Domain.Entities.Sales;
 
 namespace AdventureWorks.Application.PersistenceContracts.Repositories.Sales;
@@ -25,5 +26,12 @@ public interface IStoreRepository : IAsyncRepository<StoreEntity>
     /// <param name="storeSearchModel"></param>
     /// <returns></returns>
     Task<(IReadOnlyList<StoreEntity>, int)> SearchStoresAsync(StoreParameter parameters, StoreSearchModel storeSearchModel);
+
+    /// <summary>
+    /// Retrieves the list of addresses for a given store (business entity) id
+    /// </summary>
+    /// <param name="storeId">the unique store identifier</param>
+    /// <returns>List of business entity address entities for the store, or an empty list if none exist.</returns>
+    Task<List<BusinessEntityAddressEntity>> GetAddressesByStoreIdAsync(int storeId);
 
 }

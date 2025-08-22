@@ -16,23 +16,18 @@ internal static class SetupMiddlewarePipeline
         var isDevelopment = app.Environment.IsDevelopment() || Environment.GetEnvironmentVariable("ASPNETCORE_ENVIRONMENT")!.ToLowerInvariant().Contains("dev")
                                                             || app.Environment.EnvironmentName.EndsWith("dev") || app.Environment.EnvironmentName.EndsWith("local");
 
-        if (isDevelopment)
-        {
-            app.UseDeveloperExceptionPage();
-        }
-
         // Register correlation ID middleware FIRST to ensure all subsequent middleware and requests have access
         app.UseCorrelationId();
 
         app.ConfigureApplicatonHeaders(isDevelopment, _swaggerNonceString);
-
-        app.UseResponseCompression();
 
         app.UseCors("AdventureWorksCorsPolicy");
 
         app.UseHsts();
 
         app.UseAdventureWorksExceptionHandler();
+
+        app.UseResponseCompression();
 
         app.UseHttpsRedirection();
 

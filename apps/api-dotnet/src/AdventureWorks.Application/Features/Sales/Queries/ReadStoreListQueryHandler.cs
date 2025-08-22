@@ -1,4 +1,4 @@
-﻿using AdventureWorks.Application.PersistenceContracts.Repositories.Person;
+using AdventureWorks.Application.PersistenceContracts.Repositories.Person;
 using AdventureWorks.Application.PersistenceContracts.Repositories.Sales;
 using AdventureWorks.Domain.Entities.Sales;
 using AdventureWorks.Models.Features.Sales;
@@ -42,7 +42,7 @@ public sealed class ReadStoreListQueryHandler(
             return result;
         }
 
-        var stores = await CraftStoreModelsAsync(storeEntities);
+        var stores = await CraftStoreModelsAsync(storeEntities, request.Parameters.IncludeContacts, request.Parameters.IncludeAddresses);
 
         result.Results = stores;
         result.TotalRecords = totalRecords;
@@ -56,20 +56,35 @@ public sealed class ReadStoreListQueryHandler(
     /// Create store models from store entities and store contact entities
     /// </summary>
     /// <param name="storeEntities">the list of store entities from the data access layer</param>
+    /// <param name="includeContacts">whether to populate store contacts</param>
+    /// <param name="includeAddresses">whether to populate store addresses</param>
     /// <returns></returns>
-    private async Task<List<StoreModel>> CraftStoreModelsAsync(IReadOnlyList<StoreEntity> storeEntities)
+    private async Task<List<StoreModel>> CraftStoreModelsAsync(
+        IReadOnlyList<StoreEntity> storeEntities,
+        bool includeContacts,
+        bool includeAddresses)
     {
-        var contactModels = _mapper.Map<List<StoreContactModel>>(await _beceRepository
-            .GetContactsByStoreIdsAsync(storeEntities.Select(x => x.BusinessEntityId).ToList()).ConfigureAwait(false));
-
         var stores = _mapper.Map<List<StoreModel>>(storeEntities);
 
-        stores.ForEach(y => { y.StoreContacts = contactModels.Where(x => x.StoreId == y.Id).ToList(); });
+        if (includeContacts)
+        {
+            var contactModels = _mapper.Map<List<StoreContactModel>>(await _beceRepository
+                .GetContactsByStoreIdsAsync(storeEntities.Select(x => x.BusinessEntityId).ToList()).ConfigureAwait(false));
+
+            stores.ForEach(y => { y.StoreContacts = contactModels.Where(x => x.StoreId == y.Id).ToList(); });
+        }
+        else
+        {
+            stores.ForEach(y => { y.StoreContacts = []; });
+        }
+
+        if (!includeAddresses)
+        {
+            stores.ForEach(y => { y.StoreAddresses = []; });
+        }
 
         return stores;
     }
 
     #endregion Private Methods
-
-
 }

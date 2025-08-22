@@ -49,14 +49,22 @@ public sealed class ReadStoreController : ControllerBase
     [ProducesResponseType(StatusCodes.Status200OK, Type = typeof(StoreModel))]
     [ProducesResponseType(StatusCodes.Status404NotFound)]
     [ProducesResponseType(StatusCodes.Status400BadRequest)]
-    public async Task<IActionResult> GetByIdAsync(int storeId)
+    public async Task<IActionResult> GetByIdAsync(
+        int storeId,
+        [FromQuery] bool includeAddresses = true,
+        [FromQuery] bool includeContacts = true)
     {
         if (storeId <= 0)
         {
             return BadRequest("A valid store id must be specified.");
         }
 
-        var model = await _mediator.Send(new ReadStoreQuery { Id = storeId });
+        var model = await _mediator.Send(new ReadStoreQuery
+        {
+            Id = storeId,
+            IncludeAddresses = includeAddresses,
+            IncludeContacts = includeContacts
+        });
 
         return model is null ? NotFound("Unable to locate the store.") : Ok(model);
     }

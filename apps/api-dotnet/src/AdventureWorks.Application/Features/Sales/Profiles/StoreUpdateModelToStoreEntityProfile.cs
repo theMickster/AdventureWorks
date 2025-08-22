@@ -1,4 +1,4 @@
-﻿using AdventureWorks.Domain.Entities.Sales;
+using AdventureWorks.Domain.Entities.Sales;
 using AdventureWorks.Models.Features.Sales;
 using AutoMapper;
 
@@ -14,13 +14,10 @@ public sealed class StoreUpdateModelToStoreEntityProfile : Profile
             .ForMember(x => x.BusinessEntityId, options => options.MapFrom(y => y.Id))
 
             .ForMember(x => x.ModifiedDate, o => o.Ignore())
-            .ForMember(x => x.BusinessEntityId, o => o.Ignore())
             .ForMember(x => x.Rowguid, o => o.Ignore())
             .ForMember(x => x.Customers, o => o.Ignore())
             .ForMember(x => x.Demographics, o => o.Ignore())
             .ForMember(x => x.PrimarySalesPerson, o => o.Ignore())
-            .ForMember(x => x.StoreBusinessEntity, o => o.Ignore())
-        
-            .ReverseMap();
+            .ForMember(x => x.StoreBusinessEntity, o => o.Ignore());
     }
 }

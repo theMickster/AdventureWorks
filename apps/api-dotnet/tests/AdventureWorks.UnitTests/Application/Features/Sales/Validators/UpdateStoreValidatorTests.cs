@@ -28,9 +28,17 @@ public sealed class UpdateStoreValidatorTests : UnitTestBase
     [Fact]
     public void Validator_fails_when_store_name_is_too_long()
     {
-        var model = new StoreUpdateModel { Name = new string('a', 61) };
+        var model = new StoreUpdateModel { Name = new string('a', 51) };
         var result = _sut.TestValidate(model);
         result.ShouldHaveValidationErrorFor(x => x.Name);
+    }
+
+    [Fact]
+    public void Validator_succeeds_when_store_name_is_exactly_50_characters()
+    {
+        var model = new StoreUpdateModel { Name = new string('a', 50) };
+        var result = _sut.TestValidate(model);
+        result.ShouldNotHaveValidationErrorFor(x => x.Name);
     }
 
     [Fact]

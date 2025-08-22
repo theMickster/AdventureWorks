@@ -1,4 +1,4 @@
-﻿using AdventureWorks.Application.PersistenceContracts.Repositories.Person;
+using AdventureWorks.Application.PersistenceContracts.Repositories.Person;
 using AdventureWorks.Application.PersistenceContracts.Repositories.Sales;
 using AdventureWorks.Models.Features.Sales;
 using AutoMapper;
@@ -24,10 +24,23 @@ public sealed class ReadStoreQueryHandler (
             return null;
         }
 
-        var storeContacts = await _beceRepository.GetContactsByIdAsync(request.Id);
-        var contactModels = _mapper.Map<List<StoreContactModel>>(storeContacts);
         var storeModel = _mapper.Map<StoreModel>(storeEntity);
-        storeModel.StoreContacts = contactModels;
+
+        if (request.IncludeContacts)
+        {
+            var storeContacts = await _beceRepository.GetContactsByIdAsync(request.Id);
+            storeModel.StoreContacts = _mapper.Map<List<StoreContactModel>>(storeContacts);
+        }
+        else
+        {
+            storeModel.StoreContacts = [];
+        }
+
+        if (!request.IncludeAddresses)
+        {
+            storeModel.StoreAddresses = [];
+        }
+
         return storeModel;
     }
 }

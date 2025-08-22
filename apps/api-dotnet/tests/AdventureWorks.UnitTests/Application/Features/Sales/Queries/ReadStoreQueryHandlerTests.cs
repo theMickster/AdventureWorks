@@ -95,5 +95,44 @@ public sealed class ReadStoreQueryHandlerTests : UnitTestBase
         }
     }
 
+    [Fact]
+    public async Task Handle_skips_contact_fetch_when_IncludeContacts_is_falseAsync()
+    {
+        const int storeId = 2534;
 
+        var entity = SalesDomainFixtures.GetMockStores().First(x => x.BusinessEntityId == storeId);
+
+        _mockStoreRepository.Setup(x => x.GetStoreByIdAsync(storeId))
+            .ReturnsAsync(entity);
+
+        var result = await _sut.Handle(new ReadStoreQuery { Id = storeId, IncludeContacts = false }, CancellationToken.None);
+
+        _mockContactEntityRepository.Verify(x => x.GetContactsByIdAsync(It.IsAny<int>()), Times.Never);
+    }
+
+    [Fact]
+    public async Task Handle_returns_empty_StoreAddresses_when_IncludeAddresses_is_falseAsync()
+    {
+        const int storeId = 2534;
+
+        var entity = SalesDomainFixtures.GetMockStores().First(x => x.BusinessEntityId == storeId);
+
+        var storeContacts =
+            SalesDomainFixtures.GetMockContactEntities().Where(x => x.BusinessEntityId == storeId).ToList();
+
+        _mockStoreRepository.Setup(x => x.GetStoreByIdAsync(storeId))
+            .ReturnsAsync(entity);
+
+        _mockContactEntityRepository.Setup(x => x.GetContactsByIdAsync(storeId))
+            .ReturnsAsync(storeContacts);
+
+        var result = await _sut.Handle(new ReadStoreQuery { Id = storeId, IncludeAddresses = false }, CancellationToken.None);
+
+        using (new AssertionScope())
+        {
+            result!.Should().NotBeNull();
+            result!.StoreAddresses.Should().BeEmpty();
+            result.StoreContacts.Should().HaveCount(2);
+        }
+    }
 }

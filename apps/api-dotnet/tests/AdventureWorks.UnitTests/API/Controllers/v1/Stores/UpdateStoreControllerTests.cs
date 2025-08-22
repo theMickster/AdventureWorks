@@ -5,6 +5,7 @@ using AdventureWorks.Models.Features.Sales;
 using FluentValidation;
 using FluentValidation.Results;
 using MediatR;
+using Microsoft.AspNetCore.JsonPatch;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
 using System.Net;
@@ -74,27 +75,18 @@ public sealed class UpdateStoreControllerTests : UnitTestBase
     [Fact]
     public async Task PutAsync_zero_id_should_return_bad_requestAsync()
     {
-        // This test documents current behavior where storeId=0 is allowed
-        // Based on line 55: if (storeId < 0) - note: should probably be <= 0
         var input = new StoreUpdateModel { Id = 0, Name = "Test Store" };
-
-        var storeModel = new StoreModel
-        {
-            Id = 0,
-            Name = "Test Store",
-            ModifiedDate = DateTime.UtcNow
-        };
-
-        _mockMediator.Setup(x => x.Send(It.IsAny<UpdateStoreCommand>(), CancellationToken.None));
-        _mockMediator.Setup(x => x.Send(It.IsAny<ReadStoreQuery>(), It.IsAny<CancellationToken>()))
-            .ReturnsAsync(storeModel);
 
         var result = await _sut.PutAsync(0, input);
 
-        // Current implementation allows 0, but this is likely a bug
-        // The error message says "must be a positive integer" but 0 is not positive
-        var objectResult = result as OkObjectResult;
-        objectResult.Should().NotBeNull("because current implementation allows storeId=0");
+        var objectResult = result as BadRequestObjectResult;
+
+        using (new AssertionScope())
+        {
+            objectResult.Should().NotBeNull();
+            objectResult!.StatusCode.Should().Be((int)HttpStatusCode.BadRequest);
+            objectResult!.Value!.ToString().Should().Be("The store id must be a positive integer.");
+        }
     }
 
     [Fact]
@@ -108,7 +100,7 @@ public sealed class UpdateStoreControllerTests : UnitTestBase
         {
             objectResult.Should().NotBeNull();
             objectResult!.StatusCode.Should().Be((int)HttpStatusCode.BadRequest);
-            objectResult!.Value!.ToString().Should().Be("The store id parameter must match the id of the address update request payload.");
+            objectResult!.Value!.ToString().Should().Be("The store id parameter must match the id of the store update request payload.");
         }
     }
 
@@ -167,6 +159,135 @@ public sealed class UpdateStoreControllerTests : UnitTestBase
             outputModel.Should().NotBeNull();
             outputModel!.Id.Should().Be(storeId);
             outputModel!.Name.Should().Be("Updated Adventure Works Store");
+        }
+    }
+
+    [Fact]
+    public async Task PatchAsync_null_patch_document_returns_BadRequestAsync()
+    {
+        var result = await _sut.PatchAsync(2534, null);
+
+        var objectResult = result as BadRequestObjectResult;
+
+        using (new AssertionScope())
+        {
+            objectResult.Should().NotBeNull();
+            objectResult!.StatusCode.Should().Be((int)HttpStatusCode.BadRequest);
+            objectResult!.Value!.ToString().Should().Be("The patch document cannot be null.");
+        }
+    }
+
+    [Theory]
+    [InlineData(0)]
+    [InlineData(-1)]
+    [InlineData(-999)]
+    public async Task PatchAsync_invalid_storeId_returns_BadRequestAsync(int storeId)
+    {
+        var patchDoc = new JsonPatchDocument<StoreUpdateModel>();
+        patchDoc.Replace(x => x.Name, "New Name");
+
+        var result = await _sut.PatchAsync(storeId, patchDoc);
+
+        var objectResult = result as BadRequestObjectResult;
+
+        using (new AssertionScope())
+        {
+            objectResult.Should().NotBeNull();
+            objectResult!.StatusCode.Should().Be((int)HttpStatusCode.BadRequest);
+            objectResult!.Value!.ToString().Should().Be("A valid store id must be specified.");
+        }
+    }
+
+    [Fact]
+    public async Task PatchAsync_succeeds_and_returns_okAsync()
+    {
+        const int storeId = 2534;
+
+        var patchDoc = new JsonPatchDocument<StoreUpdateModel>();
+        patchDoc.Replace(x => x.Name, "Patched Store");
+
+        var storeModel = new StoreModel
+        {
+            Id = storeId,
+            Name = "Patched Store",
+            ModifiedDate = DateTime.UtcNow
+        };
+
+        _mockMediator.Setup(x => x.Send(It.IsAny<PatchStoreCommand>(), It.IsAny<CancellationToken>()))
+            .ReturnsAsync(MediatR.Unit.Value);
+
+        _mockMediator.Setup(x => x.Send(It.IsAny<ReadStoreQuery>(), It.IsAny<CancellationToken>()))
+            .ReturnsAsync(storeModel);
+
+        var result = await _sut.PatchAsync(storeId, patchDoc);
+
+        var objectResult = result as OkObjectResult;
+        var outputModel = objectResult!.Value! as StoreModel;
+
+        using (new AssertionScope())
+        {
+            objectResult.Should().NotBeNull();
+            objectResult!.StatusCode.Should().Be((int)HttpStatusCode.OK);
+
+            outputModel.Should().NotBeNull();
+            outputModel!.Id.Should().Be(storeId);
+            outputModel!.Name.Should().Be("Patched Store");
+        }
+    }
+
+    [Fact]
+    public void PatchAsync_handles_ValidationException()
+    {
+        var patchDoc = new JsonPatchDocument<StoreUpdateModel>();
+        patchDoc.Replace(x => x.Name, "");
+
+        _mockMediator
+            .Setup(x => x.Send(It.IsAny<PatchStoreCommand>(), It.IsAny<CancellationToken>()))
+            .ThrowsAsync(new ValidationException(new List<ValidationFailure>
+                { new() { PropertyName = "Name", ErrorCode = "Rule-01", ErrorMessage = "Store name is required" } }));
+
+        Func<Task> act = async () => await _sut.PatchAsync(2534, patchDoc);
+
+        _ = act.Should().ThrowAsync<ValidationException>();
+    }
+
+    [Fact]
+    public async Task PutAsync_returns_not_found_when_store_not_found_after_updateAsync()
+    {
+        var input = new StoreUpdateModel { Id = 2534, Name = "Test Store" };
+
+        _mockMediator.Setup(x => x.Send(It.IsAny<UpdateStoreCommand>(), It.IsAny<CancellationToken>()));
+        _mockMediator.Setup(x => x.Send(It.IsAny<ReadStoreQuery>(), It.IsAny<CancellationToken>()))
+            .ReturnsAsync((StoreModel)null!);
+
+        var result = await _sut.PutAsync(2534, input);
+
+        var objectResult = result as NotFoundObjectResult;
+        using (new AssertionScope())
+        {
+            objectResult.Should().NotBeNull();
+            objectResult!.StatusCode.Should().Be((int)HttpStatusCode.NotFound);
+            objectResult!.Value!.ToString().Should().Be("Unable to locate the store.");
+        }
+    }
+
+    [Fact]
+    public async Task PatchAsync_returns_not_found_when_store_not_found_after_patchAsync()
+    {
+        var patchDoc = new JsonPatchDocument<StoreUpdateModel>();
+
+        _mockMediator.Setup(x => x.Send(It.IsAny<PatchStoreCommand>(), It.IsAny<CancellationToken>()));
+        _mockMediator.Setup(x => x.Send(It.IsAny<ReadStoreQuery>(), It.IsAny<CancellationToken>()))
+            .ReturnsAsync((StoreModel)null!);
+
+        var result = await _sut.PatchAsync(2534, patchDoc);
+
+        var objectResult = result as NotFoundObjectResult;
+        using (new AssertionScope())
+        {
+            objectResult.Should().NotBeNull();
+            objectResult!.StatusCode.Should().Be((int)HttpStatusCode.NotFound);
+            objectResult!.Value!.ToString().Should().Be("Unable to locate the store.");
         }
     }
 }

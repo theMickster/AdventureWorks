@@ -1,4 +1,4 @@
-﻿using AdventureWorks.Common.Constants;
+using AdventureWorks.Common.Constants;
 using AdventureWorks.Common.Filtering.Base;
 
 namespace AdventureWorks.Common.Filtering;
@@ -27,4 +27,8 @@ public sealed class StoreParameter : QueryStringParamsBase
             _orderBy = value?.Trim().ToLower() == StoreIdField ? StoreIdField
                         : value?.Trim().ToLower() == StoreNameField ? StoreNameField : StoreIdField;
     }
+
+    public bool IncludeAddresses { get; init; } = true;
+
+    public bool IncludeContacts { get; init; } = true;
 }
