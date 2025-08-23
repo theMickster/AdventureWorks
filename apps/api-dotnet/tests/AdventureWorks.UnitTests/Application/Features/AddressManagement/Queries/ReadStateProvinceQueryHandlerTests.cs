@@ -43,7 +43,7 @@ public sealed class ReadStateProvinceQueryHandlerTests : UnitTestBase
     [Fact]
     public async Task GetByIdAsync_returns_null_Async()
     {
-        _mockStateProvinceRepository.Setup(x => x.GetByIdAsync(It.IsAny<int>()))
+        _mockStateProvinceRepository.Setup(x => x.GetByIdAsync(It.IsAny<int>(), It.IsAny<CancellationToken>()))
             .ReturnsAsync((StateProvinceEntity)null!);
 
         var result = await _sut.Handle(new ReadStateProvinceQuery{Id = 12}, CancellationToken.None);
@@ -54,7 +54,7 @@ public sealed class ReadStateProvinceQueryHandlerTests : UnitTestBase
     [Fact]
     public async Task GetByIdAsync_returns_correctly_Async()
     {
-        _mockStateProvinceRepository.Setup(x => x.GetByIdAsync(It.IsAny<int>()))
+        _mockStateProvinceRepository.Setup(x => x.GetByIdAsync(It.IsAny<int>(), It.IsAny<CancellationToken>()))
             .ReturnsAsync(new StateProvinceEntity
                 { StateProvinceId = 1, Name = "A State", CountryRegionCode = "UK", TerritoryId = 7, IsOnlyStateProvinceFlag = false });
 

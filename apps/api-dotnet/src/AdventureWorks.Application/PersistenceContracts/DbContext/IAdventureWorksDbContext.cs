@@ -10,6 +10,22 @@ public interface IAdventureWorksDbContext
 {
     DbSet<Product> Products { get; set; }
 
+    DbSet<ProductCategory> ProductCategories { get; set; }
+
+    DbSet<ProductCostHistory> ProductCostHistories { get; set; }
+
+    DbSet<ProductInventory> ProductInventories { get; set; }
+
+    DbSet<ProductListPriceHistory> ProductListPriceHistories { get; set; }
+
+    DbSet<ProductModel> ProductModels { get; set; }
+
+    DbSet<ProductPhoto> ProductPhotos { get; set; }
+
+    DbSet<ProductProductPhoto> ProductProductPhotos { get; set; }
+
+    DbSet<ProductSubcategory> ProductSubcategories { get; set; }
+
     DbSet<AddressEntity> Addresses { get; set; }
 
     DbSet<AddressTypeEntity> AddressTypes { get; set; }

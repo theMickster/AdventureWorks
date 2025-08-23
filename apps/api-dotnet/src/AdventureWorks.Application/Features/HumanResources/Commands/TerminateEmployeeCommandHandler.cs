@@ -93,7 +93,7 @@ public sealed class TerminateEmployeeCommandHandler(
             employee.SickLeaveHours = 0;
         }
 
-        await _employeeRepository.UpdateAsync(employee);
+        await _employeeRepository.UpdateAsync(employee, cancellationToken);
 
         _logger.LogInformation(
             "Employee {EmployeeId} terminated successfully on {TerminationDate}. Reason: {Reason}, Type: {Type}, EligibleForRehire: {EligibleForRehire}",

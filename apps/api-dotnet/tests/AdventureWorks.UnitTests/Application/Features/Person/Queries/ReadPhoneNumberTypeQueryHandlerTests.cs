@@ -43,7 +43,7 @@ public sealed class ReadPhoneNumberTypeQueryHandlerTests : UnitTestBase
     [Fact]
     public async Task Handle_returns_null_Async()
     {
-        _mockRepository.Setup(x => x.GetByIdAsync(It.IsAny<int>()))
+        _mockRepository.Setup(x => x.GetByIdAsync(It.IsAny<int>(), It.IsAny<CancellationToken>()))
             .ReturnsAsync((PhoneNumberTypeEntity)null!);
 
         var result = await _sut.Handle(new ReadPhoneNumberTypeQuery { Id = 12 }, CancellationToken.None);
@@ -54,7 +54,7 @@ public sealed class ReadPhoneNumberTypeQueryHandlerTests : UnitTestBase
     [Fact]
     public async Task Handle_returns_correctly_Async()
     {
-        _mockRepository.Setup(x => x.GetByIdAsync(1))
+        _mockRepository.Setup(x => x.GetByIdAsync(1, It.IsAny<CancellationToken>()))
             .ReturnsAsync(new PhoneNumberTypeEntity { PhoneNumberTypeId = 1, Name = "Cell", ModifiedDate = DateTime.UtcNow });
 
         var result = await _sut.Handle(new ReadPhoneNumberTypeQuery { Id = 1 }, CancellationToken.None);

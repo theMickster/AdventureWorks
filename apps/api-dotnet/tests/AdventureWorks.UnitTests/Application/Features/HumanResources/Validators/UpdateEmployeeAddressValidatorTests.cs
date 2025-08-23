@@ -21,11 +21,11 @@ public sealed class UpdateEmployeeAddressValidatorTests : UnitTestBase
 
         // Setup default mocks
         _mockAddressRepository
-            .Setup(x => x.GetByIdAsync(It.IsAny<int>()))
+            .Setup(x => x.GetByIdAsync(It.IsAny<int>(), It.IsAny<CancellationToken>()))
             .ReturnsAsync(HumanResourcesDomainFixtures.GetValidAddressEntity());
 
         _mockStateProvinceRepository
-            .Setup(x => x.GetByIdAsync(It.IsAny<int>()))
+            .Setup(x => x.GetByIdAsync(It.IsAny<int>(), It.IsAny<CancellationToken>()))
             .ReturnsAsync(new StateProvinceEntity { StateProvinceId = 79, Name = "Washington" });
     }
 
@@ -68,7 +68,7 @@ public sealed class UpdateEmployeeAddressValidatorTests : UnitTestBase
         var model = HumanResourcesDomainFixtures.GetValidEmployeeAddressUpdateModel(999);
 
         _mockAddressRepository
-            .Setup(x => x.GetByIdAsync(999))
+            .Setup(x => x.GetByIdAsync(999, It.IsAny<CancellationToken>()))
             .ReturnsAsync((AddressEntity?)null);
 
         var result = await _sut.TestValidateAsync(model);
@@ -162,7 +162,7 @@ public sealed class UpdateEmployeeAddressValidatorTests : UnitTestBase
         model.StateProvinceId = 999;
 
         _mockStateProvinceRepository
-            .Setup(x => x.GetByIdAsync(999))
+            .Setup(x => x.GetByIdAsync(999, It.IsAny<CancellationToken>()))
             .ReturnsAsync((StateProvinceEntity?)null);
 
         var result = await _sut.TestValidateAsync(model);

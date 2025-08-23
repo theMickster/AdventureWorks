@@ -174,7 +174,7 @@ public sealed class PatchEmployeeAddressCommandHandlerTests : UnitTestBase
             .ReturnsAsync(HumanResourcesDomainFixtures.GetValidBusinessEntityAddress());
 
         _mockAddressRepository
-            .Setup(x => x.GetByIdAsync(1))
+            .Setup(x => x.GetByIdAsync(1, It.IsAny<CancellationToken>()))
             .ReturnsAsync((AddressEntity?)null);
 
         Func<Task> act = async () => await _sut.Handle(command, CancellationToken.None);
@@ -216,7 +216,7 @@ public sealed class PatchEmployeeAddressCommandHandlerTests : UnitTestBase
             .ReturnsAsync(HumanResourcesDomainFixtures.GetValidBusinessEntityAddress());
 
         _mockAddressRepository
-            .Setup(x => x.GetByIdAsync(1))
+            .Setup(x => x.GetByIdAsync(1, It.IsAny<CancellationToken>()))
             .ReturnsAsync(HumanResourcesDomainFixtures.GetValidAddressEntity());
 
         Func<Task> act = async () => await _sut.Handle(command, CancellationToken.None);
@@ -259,11 +259,11 @@ public sealed class PatchEmployeeAddressCommandHandlerTests : UnitTestBase
             .ReturnsAsync(HumanResourcesDomainFixtures.GetValidBusinessEntityAddress());
 
         _mockAddressRepository
-            .Setup(x => x.GetByIdAsync(1))
+            .Setup(x => x.GetByIdAsync(1, It.IsAny<CancellationToken>()))
             .ReturnsAsync(addressEntity);
 
         _mockAddressRepository
-            .Setup(x => x.UpdateAsync(It.IsAny<AddressEntity>()))
+            .Setup(x => x.UpdateAsync(It.IsAny<AddressEntity>(), It.IsAny<CancellationToken>()))
             .Returns(Task.CompletedTask);
 
         await _sut.Handle(command, CancellationToken.None);
@@ -276,7 +276,7 @@ public sealed class PatchEmployeeAddressCommandHandlerTests : UnitTestBase
         }
 
         _mockAddressRepository.Verify(
-            x => x.UpdateAsync(addressEntity),
+            x => x.UpdateAsync(addressEntity, It.IsAny<CancellationToken>()),
             Times.Once);
     }
 
@@ -317,11 +317,11 @@ public sealed class PatchEmployeeAddressCommandHandlerTests : UnitTestBase
             .ReturnsAsync(HumanResourcesDomainFixtures.GetValidBusinessEntityAddress());
 
         _mockAddressRepository
-            .Setup(x => x.GetByIdAsync(1))
+            .Setup(x => x.GetByIdAsync(1, It.IsAny<CancellationToken>()))
             .ReturnsAsync(addressEntity);
 
         _mockAddressRepository
-            .Setup(x => x.UpdateAsync(It.IsAny<AddressEntity>()))
+            .Setup(x => x.UpdateAsync(It.IsAny<AddressEntity>(), It.IsAny<CancellationToken>()))
             .Returns(Task.CompletedTask);
 
         await _sut.Handle(command, CancellationToken.None);
@@ -366,11 +366,11 @@ public sealed class PatchEmployeeAddressCommandHandlerTests : UnitTestBase
             .ReturnsAsync(HumanResourcesDomainFixtures.GetValidBusinessEntityAddress());
 
         _mockAddressRepository
-            .Setup(x => x.GetByIdAsync(1))
+            .Setup(x => x.GetByIdAsync(1, It.IsAny<CancellationToken>()))
             .ReturnsAsync(addressEntity);
 
         _mockAddressRepository
-            .Setup(x => x.UpdateAsync(It.IsAny<AddressEntity>()))
+            .Setup(x => x.UpdateAsync(It.IsAny<AddressEntity>(), It.IsAny<CancellationToken>()))
             .Returns(Task.CompletedTask);
 
         var result = await _sut.Handle(command, CancellationToken.None);
@@ -408,11 +408,11 @@ public sealed class PatchEmployeeAddressCommandHandlerTests : UnitTestBase
             .ReturnsAsync(HumanResourcesDomainFixtures.GetValidBusinessEntityAddress());
 
         _mockAddressRepository
-            .Setup(x => x.GetByIdAsync(1))
+            .Setup(x => x.GetByIdAsync(1, It.IsAny<CancellationToken>()))
             .ReturnsAsync(addressEntity);
 
         _mockAddressRepository
-            .Setup(x => x.UpdateAsync(It.IsAny<AddressEntity>()))
+            .Setup(x => x.UpdateAsync(It.IsAny<AddressEntity>(), It.IsAny<CancellationToken>()))
             .Returns(Task.CompletedTask);
 
         await _sut.Handle(command, CancellationToken.None);

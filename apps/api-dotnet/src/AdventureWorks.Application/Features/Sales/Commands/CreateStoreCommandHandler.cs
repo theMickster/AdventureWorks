@@ -31,7 +31,7 @@ public sealed class CreateStoreCommandHandler(
         inputEntity.Rowguid = request.RowGuid;
         inputEntity.StoreBusinessEntity = new BusinessEntity { Rowguid = Guid.NewGuid(), ModifiedDate = request.ModifiedDate };
 
-        var outputEntity = await _storeRepository.AddAsync(inputEntity);
+        var outputEntity = await _storeRepository.AddAsync(inputEntity, cancellationToken);
 
         return outputEntity.BusinessEntityId;
     }

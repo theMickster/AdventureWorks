@@ -43,7 +43,7 @@ public sealed class ReadCountryRegionListQueryHandlerTests : UnitTestBase
     [Fact]
     public async Task GetListAsync_returns_empty_listAsync()
     {
-        _mockCountryRegionRepository.Setup(x => x.ListAllAsync())
+        _mockCountryRegionRepository.Setup(x => x.ListAllAsync(It.IsAny<CancellationToken>()))
             .ReturnsAsync((IReadOnlyList<CountryRegionEntity>)null!);
 
         var result = await _sut.Handle( new ReadCountryRegionListQuery(), CancellationToken.None );
@@ -51,7 +51,7 @@ public sealed class ReadCountryRegionListQueryHandlerTests : UnitTestBase
 
         _mockCountryRegionRepository.Reset();
 
-        _mockCountryRegionRepository.Setup(x => x.ListAllAsync())
+        _mockCountryRegionRepository.Setup(x => x.ListAllAsync(It.IsAny<CancellationToken>()))
             .ReturnsAsync(new List<CountryRegionEntity>());
 
         result = await _sut.Handle(new ReadCountryRegionListQuery(), CancellationToken.None);
@@ -61,7 +61,7 @@ public sealed class ReadCountryRegionListQueryHandlerTests : UnitTestBase
     [Fact]
     public async Task GetListAsync_returns_valid_listAsync()
     {
-        _mockCountryRegionRepository.Setup(x => x.ListAllAsync())
+        _mockCountryRegionRepository.Setup(x => x.ListAllAsync(It.IsAny<CancellationToken>()))
             .ReturnsAsync(new List<CountryRegionEntity>
             {
                 new (){Name = "France", CountryRegionCode = "FR"}

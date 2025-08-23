@@ -14,20 +14,21 @@ public sealed class DepartmentRepository : ReadOnlyEfRepository<DepartmentEntity
     {
     }
 
-    public override async Task<IReadOnlyList<DepartmentEntity>> ListAllAsync()
+    public override async Task<IReadOnlyList<DepartmentEntity>> ListAllAsync(CancellationToken cancellationToken = default)
     {
         return await DbContext.Departments
-            .ToListAsync();
+            .ToListAsync(cancellationToken);
     }
 
     /// <summary>
     /// Retrieve a department entity by its unique identifier
     /// </summary>
     /// <param name="id"></param>
+    /// <param name="cancellationToken"></param>
     /// <returns></returns>
-    public override async Task<DepartmentEntity?> GetByIdAsync(int id)
+    public override async Task<DepartmentEntity?> GetByIdAsync(int id, CancellationToken cancellationToken = default)
     {
         return await DbContext.Departments
-            .FirstOrDefaultAsync(s => s.DepartmentId == id);
+            .FirstOrDefaultAsync(s => s.DepartmentId == id, cancellationToken);
     }
 }

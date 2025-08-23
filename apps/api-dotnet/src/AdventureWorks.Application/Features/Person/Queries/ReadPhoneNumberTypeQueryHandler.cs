@@ -15,6 +15,6 @@ public sealed class ReadPhoneNumberTypeQueryHandler(
 
     public async Task<PhoneNumberTypeModel> Handle(ReadPhoneNumberTypeQuery request, CancellationToken cancellationToken)
     {
-        return _mapper.Map<PhoneNumberTypeModel>(await _repository.GetByIdAsync(request.Id));
+        return _mapper.Map<PhoneNumberTypeModel>(await _repository.GetByIdAsync(request.Id, cancellationToken));
     }
 }

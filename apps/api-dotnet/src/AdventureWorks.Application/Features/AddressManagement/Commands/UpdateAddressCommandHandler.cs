@@ -22,10 +22,10 @@ public sealed class UpdateAddressCommandHandler(
         ArgumentNullException.ThrowIfNull(request.Model);
 
         await _validator.ValidateAndThrowAsync(request.Model, cancellationToken);
-        var currentEntity = await _addressRepository.GetByIdAsync(request.Model.Id);
+        var currentEntity = await _addressRepository.GetByIdAsync(request.Model.Id, cancellationToken);
         ArgumentNullException.ThrowIfNull(currentEntity);
         _mapper.Map(request.Model, currentEntity);
         currentEntity.ModifiedDate = request.ModifiedDate;
-        await _addressRepository.UpdateAsync(currentEntity);
+        await _addressRepository.UpdateAsync(currentEntity, cancellationToken);
     }
 }

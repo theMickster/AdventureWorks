@@ -146,7 +146,7 @@ public sealed class RehireEmployeeCommandHandler(
             request.Model.PayRate,
             request.Model.PayFrequency);
 
-        await _employeeRepository.UpdateAsync(employee);
+        await _employeeRepository.UpdateAsync(employee, cancellationToken);
 
         _logger.LogInformation(
             "Employee {EmployeeId} rehired successfully on {RehireDate} to department {DepartmentId}",

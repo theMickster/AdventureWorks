@@ -14,6 +14,6 @@ public sealed class ReadContactTypeQueryHandler(
 
     public async Task<ContactTypeModel> Handle(ReadContactTypeQuery request, CancellationToken cancellationToken)
     {
-        return _mapper.Map<ContactTypeModel>(await _contactTypeRepository.GetByIdAsync(request.Id));
+        return _mapper.Map<ContactTypeModel>(await _contactTypeRepository.GetByIdAsync(request.Id, cancellationToken));
     }
 }

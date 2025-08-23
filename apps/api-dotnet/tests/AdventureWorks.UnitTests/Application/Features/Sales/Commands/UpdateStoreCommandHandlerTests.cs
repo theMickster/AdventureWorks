@@ -77,7 +77,7 @@ public sealed class UpdateStoreCommandHandlerTests : UnitTestBase
         _mockValidator.Setup(x => x.ValidateAsync(It.IsAny<StoreUpdateModel>(), It.IsAny<CancellationToken>()))
             .ReturnsAsync(new FluentValidation.Results.ValidationResult { Errors = [] });
 
-        _mockStoreRepository.Setup(x => x.GetByIdAsync(5678))
+        _mockStoreRepository.Setup(x => x.GetByIdAsync(5678, It.IsAny<CancellationToken>()))
             .ReturnsAsync(new StoreEntity
             {
                 BusinessEntityId = 5678,
@@ -86,15 +86,15 @@ public sealed class UpdateStoreCommandHandlerTests : UnitTestBase
                 ModifiedDate = DateTime.MinValue
             });
 
-        _mockStoreRepository.Setup(x => x.UpdateAsync(It.IsAny<StoreEntity>()))
+        _mockStoreRepository.Setup(x => x.UpdateAsync(It.IsAny<StoreEntity>(), It.IsAny<CancellationToken>()))
             .Returns(Task.CompletedTask);
 
         await _sut.Handle(command, CancellationToken.None);
 
         using (new AssertionScope())
         {
-            _mockStoreRepository.Verify(x => x.GetByIdAsync(5678), Times.Once);
-            _mockStoreRepository.Verify(x => x.UpdateAsync(It.IsAny<StoreEntity>()), Times.Once);
+            _mockStoreRepository.Verify(x => x.GetByIdAsync(5678, It.IsAny<CancellationToken>()), Times.Once);
+            _mockStoreRepository.Verify(x => x.UpdateAsync(It.IsAny<StoreEntity>(), It.IsAny<CancellationToken>()), Times.Once);
         }
     }
 }

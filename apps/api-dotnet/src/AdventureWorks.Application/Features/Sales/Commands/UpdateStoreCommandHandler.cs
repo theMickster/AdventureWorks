@@ -22,10 +22,10 @@ public sealed class UpdateStoreCommandHandler(
         ArgumentNullException.ThrowIfNull(request.Model);
 
         await _validator.ValidateAndThrowAsync(request.Model, cancellationToken);
-        var currentEntity = await _storeRepository.GetByIdAsync(request.Model.Id);
+        var currentEntity = await _storeRepository.GetByIdAsync(request.Model.Id, cancellationToken);
         ArgumentNullException.ThrowIfNull(currentEntity);
         _mapper.Map(request.Model, currentEntity);
         currentEntity.ModifiedDate = request.ModifiedDate;
-        await _storeRepository.UpdateAsync(currentEntity);
+        await _storeRepository.UpdateAsync(currentEntity, cancellationToken);
     }
 }

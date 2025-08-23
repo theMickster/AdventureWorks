@@ -43,7 +43,7 @@ public sealed class ReadPersonTypeListQueryHandlerTests
     [Fact]
     public async Task Handle_returns_empty_listAsync()
     {
-        _mockRepository.Setup(x => x.ListAllAsync())
+        _mockRepository.Setup(x => x.ListAllAsync(It.IsAny<CancellationToken>()))
             .ReturnsAsync((IReadOnlyList<PersonTypeEntity>)null!);
 
         var result = await _sut.Handle(new ReadPersonTypeListQuery(), CancellationToken.None);
@@ -51,7 +51,7 @@ public sealed class ReadPersonTypeListQueryHandlerTests
 
         _mockRepository.Reset();
 
-        _mockRepository.Setup(x => x.ListAllAsync())
+        _mockRepository.Setup(x => x.ListAllAsync(It.IsAny<CancellationToken>()))
             .ReturnsAsync(new List<PersonTypeEntity>());
 
         result = await _sut.Handle(new ReadPersonTypeListQuery(), CancellationToken.None);
@@ -61,7 +61,7 @@ public sealed class ReadPersonTypeListQueryHandlerTests
     [Fact]
     public async Task Handle_returns_valid_listAsync()
     {
-        _mockRepository.Setup(x => x.ListAllAsync())
+        _mockRepository.Setup(x => x.ListAllAsync(It.IsAny<CancellationToken>()))
             .ReturnsAsync(new List<PersonTypeEntity>
             {
                 new() {PersonTypeId = 1, PersonTypeName = "Home", PersonTypeDescription = "test"}

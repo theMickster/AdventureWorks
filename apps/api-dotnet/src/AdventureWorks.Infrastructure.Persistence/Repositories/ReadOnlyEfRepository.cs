@@ -10,13 +10,13 @@ public class ReadOnlyEfRepository<T>(AdventureWorksDbContext dbContext) : IReadO
 {
     protected readonly AdventureWorksDbContext DbContext = dbContext;
 
-    public virtual async Task<T?> GetByIdAsync(int id)
+    public virtual async Task<T?> GetByIdAsync(int id, CancellationToken cancellationToken = default)
     {
-        return await DbContext.Set<T>().FindAsync(id);
+        return await DbContext.Set<T>().FindAsync([id], cancellationToken);
     }
 
-    public virtual async Task<IReadOnlyList<T>> ListAllAsync()
+    public virtual async Task<IReadOnlyList<T>> ListAllAsync(CancellationToken cancellationToken = default)
     {
-        return await DbContext.Set<T>().ToListAsync();
+        return await DbContext.Set<T>().ToListAsync(cancellationToken);
     }
 }

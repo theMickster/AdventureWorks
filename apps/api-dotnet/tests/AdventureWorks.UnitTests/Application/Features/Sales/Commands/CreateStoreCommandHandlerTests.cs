@@ -77,7 +77,7 @@ public sealed class CreateStoreCommandHandlerTests : UnitTestBase
         _mockValidator.Setup(x => x.ValidateAsync(It.IsAny<StoreCreateModel>(), It.IsAny<CancellationToken>()))
             .ReturnsAsync(new FluentValidation.Results.ValidationResult { Errors = [] });
 
-        _mockStoreRepository.Setup(x => x.AddAsync(It.IsAny<StoreEntity>()))
+        _mockStoreRepository.Setup(x => x.AddAsync(It.IsAny<StoreEntity>(), It.IsAny<CancellationToken>()))
             .ReturnsAsync(new StoreEntity
             {
                 BusinessEntityId = 1234,

@@ -29,7 +29,7 @@ public sealed class CreateAddressCommandHandler (
         inputEntity.ModifiedDate = request.ModifiedDate;
         inputEntity.Rowguid = request.RowGuid;
 
-        var outputEntity = await _addressRepository.AddAsync(inputEntity);
+        var outputEntity = await _addressRepository.AddAsync(inputEntity, cancellationToken);
         
         return outputEntity.AddressId;
     }

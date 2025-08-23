@@ -43,7 +43,7 @@ public sealed class ReadDepartmentListQueryHandlerTests : UnitTestBase
     [Fact]
     public async Task GetListAsync_returns_empty_listAsync()
     {
-        _mockRepository.Setup(x => x.ListAllAsync())
+        _mockRepository.Setup(x => x.ListAllAsync(It.IsAny<CancellationToken>()))
             .ReturnsAsync((IReadOnlyList<DepartmentEntity>)null!);
 
         var result = await _sut.Handle(new ReadDepartmentListQuery(), CancellationToken.None);
@@ -51,7 +51,7 @@ public sealed class ReadDepartmentListQueryHandlerTests : UnitTestBase
 
         _mockRepository.Reset();
 
-        _mockRepository.Setup(x => x.ListAllAsync())
+        _mockRepository.Setup(x => x.ListAllAsync(It.IsAny<CancellationToken>()))
             .ReturnsAsync(new List<DepartmentEntity>());
 
         result = await _sut.Handle(new ReadDepartmentListQuery(), CancellationToken.None);
@@ -61,7 +61,7 @@ public sealed class ReadDepartmentListQueryHandlerTests : UnitTestBase
     [Fact]
     public async Task GetListAsync_returns_valid_listAsync()
     {
-        _mockRepository.Setup(x => x.ListAllAsync())
+        _mockRepository.Setup(x => x.ListAllAsync(It.IsAny<CancellationToken>()))
             .ReturnsAsync(new List<DepartmentEntity>
             {
                 new() { DepartmentId = 1, Name = "Engineering", GroupName = "Research and Development" }

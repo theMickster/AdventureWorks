@@ -15,7 +15,7 @@ public sealed class ReadContactTypeListQueryHandler(
 
     public async Task<List<ContactTypeModel>> Handle(ReadContactTypeListQuery request, CancellationToken cancellationToken)
     {
-        var entities = await _contactTypeRepository.ListAllAsync();
+        var entities = await _contactTypeRepository.ListAllAsync(cancellationToken);
 
         return entities is not { Count: > 0 } ? [] : _mapper.Map<List<ContactTypeModel>>(entities);
     }

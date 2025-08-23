@@ -15,6 +15,6 @@ public sealed class ReadSalesTerritoryQueryHandler(
 
     public async Task<SalesTerritoryModel> Handle(ReadSalesTerritoryQuery request, CancellationToken cancellationToken)
     {
-        return _mapper.Map<SalesTerritoryModel>(await _repository.GetByIdAsync(request.Id));
+        return _mapper.Map<SalesTerritoryModel>(await _repository.GetByIdAsync(request.Id, cancellationToken));
     }
 }

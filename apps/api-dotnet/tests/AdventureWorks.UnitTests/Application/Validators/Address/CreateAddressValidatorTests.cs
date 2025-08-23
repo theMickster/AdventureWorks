@@ -38,7 +38,7 @@ public sealed class CreateAddressValidatorTests : UnitTestBase
     {
         const int stateId = 7;
 
-        _mockStateProvinceRepository.Setup(x => x.GetByIdAsync(stateId))
+        _mockStateProvinceRepository.Setup(x => x.GetByIdAsync(stateId, It.IsAny<CancellationToken>()))
             .ReturnsAsync(new StateProvinceEntity { StateProvinceId = stateId, Name = "Colorado" });
 
         var validAddress = new AddressCreateModel
@@ -63,7 +63,7 @@ public sealed class CreateAddressValidatorTests : UnitTestBase
     public async Task Validator_when_address_is_invalidAsync()
     {
         _mockStateProvinceRepository
-            .Setup(x => x.GetByIdAsync(It.IsAny<int>()))!
+            .Setup(x => x.GetByIdAsync(It.IsAny<int>(), It.IsAny<CancellationToken>()))!
             .ReturnsAsync((StateProvinceEntity)null!);
 
         using (new AssertionScope())
@@ -103,7 +103,7 @@ public sealed class CreateAddressValidatorTests : UnitTestBase
     public async Task Validator_when_address_state_does_not_exists_is_invalidAsync()
     {
         _mockStateProvinceRepository
-            .Setup(x => x.GetByIdAsync(It.IsAny<int>()))!
+            .Setup(x => x.GetByIdAsync(It.IsAny<int>(), It.IsAny<CancellationToken>()))!
             .ReturnsAsync((StateProvinceEntity)null!);
 
         using (new AssertionScope())

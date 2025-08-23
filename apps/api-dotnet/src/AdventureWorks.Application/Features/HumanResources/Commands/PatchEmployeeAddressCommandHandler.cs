@@ -47,7 +47,7 @@ public sealed class PatchEmployeeAddressCommandHandler(
         }
 
         // Get the address entity with tracking enabled
-        var addressEntity = await _addressRepository.GetByIdAsync(request.AddressId);
+        var addressEntity = await _addressRepository.GetByIdAsync(request.AddressId, cancellationToken);
 
         if (addressEntity == null)
         {
@@ -79,7 +79,7 @@ public sealed class PatchEmployeeAddressCommandHandler(
         addressEntity.PostalCode = addressUpdateModel.PostalCode;
         addressEntity.ModifiedDate = request.ModifiedDate;
 
-        await _addressRepository.UpdateAsync(addressEntity);
+        await _addressRepository.UpdateAsync(addressEntity, cancellationToken);
 
         return Unit.Value;
     }

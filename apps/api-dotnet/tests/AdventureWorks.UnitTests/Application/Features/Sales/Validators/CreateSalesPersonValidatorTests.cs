@@ -25,15 +25,15 @@ public sealed class CreateSalesPersonValidatorTests : UnitTestBase
 
         // Setup default mocks to return valid entities
         _mockPhoneNumberTypeRepository
-            .Setup(x => x.GetByIdAsync(It.IsAny<int>()))
+            .Setup(x => x.GetByIdAsync(It.IsAny<int>(), It.IsAny<CancellationToken>()))
             .ReturnsAsync(new PhoneNumberTypeEntity { PhoneNumberTypeId = 1, Name = "Cell" });
 
         _mockStateProvinceRepository
-            .Setup(x => x.GetByIdAsync(It.IsAny<int>()))
+            .Setup(x => x.GetByIdAsync(It.IsAny<int>(), It.IsAny<CancellationToken>()))
             .ReturnsAsync(new StateProvinceEntity { StateProvinceId = 79, Name = "Washington" });
 
         _mockAddressTypeRepository
-            .Setup(x => x.GetByIdAsync(It.IsAny<int>()))
+            .Setup(x => x.GetByIdAsync(It.IsAny<int>(), It.IsAny<CancellationToken>()))
             .ReturnsAsync(new AddressTypeEntity { AddressTypeId = 2, Name = "Work" });
     }
 

@@ -16,7 +16,7 @@ public sealed class ReadAddressTypeListQueryHandler(
 
     public async Task<List<AddressTypeModel>> Handle(ReadAddressTypeListQuery request, CancellationToken cancellationToken)
     {
-        var entities = await _repository.ListAllAsync();
+        var entities = await _repository.ListAllAsync(cancellationToken);
         return entities is not { Count: > 0 } ? [] : _mapper.Map<List<AddressTypeModel>>(entities);
     }
 }

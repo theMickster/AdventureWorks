@@ -43,7 +43,7 @@ public sealed class ReadDepartmentQueryHandlerTests : UnitTestBase
     [Fact]
     public async Task Handle_returns_null_Async()
     {
-        _mockRepository.Setup(x => x.GetByIdAsync(It.IsAny<int>()))
+        _mockRepository.Setup(x => x.GetByIdAsync(It.IsAny<int>(), It.IsAny<CancellationToken>()))
             .ReturnsAsync((DepartmentEntity)null!);
 
         var result = await _sut.Handle(new ReadDepartmentQuery { Id = 12 }, CancellationToken.None);
@@ -54,7 +54,7 @@ public sealed class ReadDepartmentQueryHandlerTests : UnitTestBase
     [Fact]
     public async Task Handle_returns_correctly_Async()
     {
-        _mockRepository.Setup(x => x.GetByIdAsync(1))
+        _mockRepository.Setup(x => x.GetByIdAsync(1, It.IsAny<CancellationToken>()))
             .ReturnsAsync(new DepartmentEntity { DepartmentId = 1, Name = "Engineering", GroupName = "Research and Development" });
 
         var result = await _sut.Handle(new ReadDepartmentQuery { Id = 1 }, CancellationToken.None);

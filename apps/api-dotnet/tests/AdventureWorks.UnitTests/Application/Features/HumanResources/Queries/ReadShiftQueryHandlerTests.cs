@@ -43,7 +43,7 @@ public sealed class ReadShiftQueryHandlerTests : UnitTestBase
     [Fact]
     public async Task Handle_returns_null_Async()
     {
-        _mockRepository.Setup(x => x.GetByIdAsync(It.IsAny<int>()))
+        _mockRepository.Setup(x => x.GetByIdAsync(It.IsAny<int>(), It.IsAny<CancellationToken>()))
             .ReturnsAsync((ShiftEntity)null!);
 
         var result = await _sut.Handle(new ReadShiftQuery { Id = 12 }, CancellationToken.None);
@@ -54,7 +54,7 @@ public sealed class ReadShiftQueryHandlerTests : UnitTestBase
     [Fact]
     public async Task Handle_returns_correctly_Async()
     {
-        _mockRepository.Setup(x => x.GetByIdAsync(1))
+        _mockRepository.Setup(x => x.GetByIdAsync(1, It.IsAny<CancellationToken>()))
             .ReturnsAsync(new ShiftEntity { ShiftId = 1, Name = "Day", StartTime = new TimeSpan(7, 0, 0), EndTime = new TimeSpan(15, 0, 0) });
 
         var result = await _sut.Handle(new ReadShiftQuery { Id = 1 }, CancellationToken.None);

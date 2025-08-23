@@ -18,7 +18,7 @@ public sealed class EmployeePhoneValidatorTests : UnitTestBase
 
         // Setup default mock to return valid entity
         _mockPhoneNumberTypeRepository
-            .Setup(x => x.GetByIdAsync(It.IsAny<int>()))
+            .Setup(x => x.GetByIdAsync(It.IsAny<int>(), It.IsAny<CancellationToken>()))
             .ReturnsAsync(new PhoneNumberTypeEntity { PhoneNumberTypeId = 1, Name = "Cell" });
     }
 
@@ -52,7 +52,7 @@ public sealed class EmployeePhoneValidatorTests : UnitTestBase
     public async Task Validator_should_have_phone_number_type_id_exists_error_when_not_foundAsync()
     {
         _mockPhoneNumberTypeRepository
-            .Setup(x => x.GetByIdAsync(999))
+            .Setup(x => x.GetByIdAsync(999, It.IsAny<CancellationToken>()))
             .ReturnsAsync((PhoneNumberTypeEntity?)null);
 
         var model = HumanResourcesDomainFixtures.GetValidPhoneModel(phoneNumberTypeId: 999);

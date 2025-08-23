@@ -43,7 +43,7 @@ public sealed class ReadAddressTypeQueryHandlerTests : UnitTestBase
     [Fact]
     public async Task GetByIdAsync_returns_null_Async()
     {
-        _mockRepository.Setup(x => x.GetByIdAsync(It.IsAny<int>()))
+        _mockRepository.Setup(x => x.GetByIdAsync(It.IsAny<int>(), It.IsAny<CancellationToken>()))
             .ReturnsAsync((AddressTypeEntity)null!);
 
         var result = await _sut.Handle(new ReadAddressTypeQuery{Id = 12}, CancellationToken.None);
@@ -54,7 +54,7 @@ public sealed class ReadAddressTypeQueryHandlerTests : UnitTestBase
     [Fact]
     public async Task GetByIdAsync_returns_correctly_Async()
     {
-        _mockRepository.Setup(x => x.GetByIdAsync(1))
+        _mockRepository.Setup(x => x.GetByIdAsync(1, It.IsAny<CancellationToken>()))
             .ReturnsAsync(new AddressTypeEntity { AddressTypeId = 1, Name = "Home" });
 
         var result = await _sut.Handle(new ReadAddressTypeQuery { Id = 1 }, CancellationToken.None);

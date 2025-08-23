@@ -25,15 +25,15 @@ public sealed class CreateEmployeeValidatorTests : UnitTestBase
 
         // Setup default mocks to return valid entities
         _mockPhoneNumberTypeRepository
-            .Setup(x => x.GetByIdAsync(It.IsAny<int>()))
+            .Setup(x => x.GetByIdAsync(It.IsAny<int>(), It.IsAny<CancellationToken>()))
             .ReturnsAsync(new PhoneNumberTypeEntity { PhoneNumberTypeId = 1, Name = "Cell" });
 
         _mockStateProvinceRepository
-            .Setup(x => x.GetByIdAsync(It.IsAny<int>()))
+            .Setup(x => x.GetByIdAsync(It.IsAny<int>(), It.IsAny<CancellationToken>()))
             .ReturnsAsync(new StateProvinceEntity { StateProvinceId = 79, Name = "Washington" });
 
         _mockAddressTypeRepository
-            .Setup(x => x.GetByIdAsync(It.IsAny<int>()))
+            .Setup(x => x.GetByIdAsync(It.IsAny<int>(), It.IsAny<CancellationToken>()))
             .ReturnsAsync(new AddressTypeEntity { AddressTypeId = 2, Name = "Work" });
     }
 
@@ -156,7 +156,7 @@ public sealed class CreateEmployeeValidatorTests : UnitTestBase
     public async Task Validator_should_have_address_type_id_exists_error_when_not_foundAsync()
     {
         _mockAddressTypeRepository
-            .Setup(x => x.GetByIdAsync(999))
+            .Setup(x => x.GetByIdAsync(999, It.IsAny<CancellationToken>()))
             .ReturnsAsync((AddressTypeEntity?)null);
 
         var model = HumanResourcesDomainFixtures.GetValidEmployeeCreateModel();

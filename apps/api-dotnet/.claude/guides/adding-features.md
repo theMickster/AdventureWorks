@@ -308,3 +308,16 @@ public sealed class CreateCustomerCommandHandlerTests : UnitTestBase
 | 9 | Controller | `API/Controllers/v1/{Feature}/` |
 | 10 | Unit Tests | `UnitTests/Application/Features/{Domain}/` |
 | 11 | Documentation | Update CLAUDE.md |
+
+---
+
+## Known Naming Exceptions
+
+### `ProductModel` Domain Entity vs. DTO Convention
+
+The Production domain's `ProductModel` entity (`Domain/Entities/Production/ProductModel.cs`) conflicts
+with the project's standard `*Model` DTO suffix. The read DTO for this entity is named `ProductModelInfoModel`
+(`Models/Features/Production/ProductModelInfoModel.cs`).
+
+When adding features that reference `ProductModel`, use `ProductModelInfoModel` as the DTO name to avoid
+ambiguity between the domain entity and the DTO layer.

@@ -84,7 +84,7 @@ public sealed class CreateAddressCommandHandlerTests : UnitTestBase
                 It.IsAny<CancellationToken>()))
             .ReturnsAsync(new ValidationResult { Errors = new List<ValidationFailure>() });
 
-        _mockAddressRepository.Setup(x => x.AddAsync(It.IsAny<AddressEntity>()))
+        _mockAddressRepository.Setup(x => x.AddAsync(It.IsAny<AddressEntity>(), It.IsAny<CancellationToken>()))
             .ReturnsAsync(new AddressEntity
             {
                 AddressId = 8768,

@@ -1,4 +1,6 @@
-﻿namespace AdventureWorks.Common.Filtering.Base;
+﻿using System.ComponentModel.DataAnnotations;
+
+namespace AdventureWorks.Common.Filtering.Base;
 
 public abstract class SearchModelBase
 {
@@ -8,8 +10,9 @@ public abstract class SearchModelBase
     public int? Id { get; set; }
 
     /// <summary>
-    /// The search string to search the name of the resource 
+    /// The search string to search the name of the resource
     /// </summary>
+    [MaxLength(50)]
     public string Name { get; set; } = string.Empty;
 
 }

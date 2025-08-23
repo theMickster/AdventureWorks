@@ -15,7 +15,7 @@ public sealed class ReadShiftListQueryHandler(
 
     public async Task<List<ShiftModel>> Handle(ReadShiftListQuery request, CancellationToken cancellationToken)
     {
-        var entities = await _repository.ListAllAsync();
+        var entities = await _repository.ListAllAsync(cancellationToken);
         return entities is not { Count: > 0 } ? [] : _mapper.Map<List<ShiftModel>>(entities);
     }
 }

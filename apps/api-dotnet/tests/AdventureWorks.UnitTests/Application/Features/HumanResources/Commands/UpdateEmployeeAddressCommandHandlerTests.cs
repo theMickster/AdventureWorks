@@ -163,7 +163,7 @@ public sealed class UpdateEmployeeAddressCommandHandlerTests : UnitTestBase
             .ReturnsAsync(HumanResourcesDomainFixtures.GetValidBusinessEntityAddress());
 
         _mockAddressRepository
-            .Setup(x => x.GetByIdAsync(model.AddressId))
+            .Setup(x => x.GetByIdAsync(model.AddressId, It.IsAny<CancellationToken>()))
             .ReturnsAsync((AddressEntity?)null);
 
         Func<Task> act = async () => await _sut.Handle(command, CancellationToken.None);
@@ -198,11 +198,11 @@ public sealed class UpdateEmployeeAddressCommandHandlerTests : UnitTestBase
             .ReturnsAsync(HumanResourcesDomainFixtures.GetValidBusinessEntityAddress());
 
         _mockAddressRepository
-            .Setup(x => x.GetByIdAsync(model.AddressId))
+            .Setup(x => x.GetByIdAsync(model.AddressId, It.IsAny<CancellationToken>()))
             .ReturnsAsync(addressEntity);
 
         _mockAddressRepository
-            .Setup(x => x.UpdateAsync(It.IsAny<AddressEntity>()))
+            .Setup(x => x.UpdateAsync(It.IsAny<AddressEntity>(), It.IsAny<CancellationToken>()))
             .Returns(Task.CompletedTask);
 
         await _sut.Handle(command, CancellationToken.None);
@@ -218,7 +218,7 @@ public sealed class UpdateEmployeeAddressCommandHandlerTests : UnitTestBase
         }
 
         _mockAddressRepository.Verify(
-            x => x.UpdateAsync(addressEntity),
+            x => x.UpdateAsync(addressEntity, It.IsAny<CancellationToken>()),
             Times.Once);
     }
 
@@ -248,11 +248,11 @@ public sealed class UpdateEmployeeAddressCommandHandlerTests : UnitTestBase
             .ReturnsAsync(HumanResourcesDomainFixtures.GetValidBusinessEntityAddress());
 
         _mockAddressRepository
-            .Setup(x => x.GetByIdAsync(model.AddressId))
+            .Setup(x => x.GetByIdAsync(model.AddressId, It.IsAny<CancellationToken>()))
             .ReturnsAsync(addressEntity);
 
         _mockAddressRepository
-            .Setup(x => x.UpdateAsync(It.IsAny<AddressEntity>()))
+            .Setup(x => x.UpdateAsync(It.IsAny<AddressEntity>(), It.IsAny<CancellationToken>()))
             .Returns(Task.CompletedTask);
 
         var result = await _sut.Handle(command, CancellationToken.None);

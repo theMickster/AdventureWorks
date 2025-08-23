@@ -43,7 +43,7 @@ public sealed class ReadContactTypeQueryHandlerTests
     [Fact]
     public async Task Handle_returns_null_Async()
     {
-        _mockRepository.Setup(x => x.GetByIdAsync(It.IsAny<int>()))
+        _mockRepository.Setup(x => x.GetByIdAsync(It.IsAny<int>(), It.IsAny<CancellationToken>()))
             .ReturnsAsync((ContactTypeEntity)null!);
 
         var result = await _sut.Handle(new ReadContactTypeQuery { Id = 12 }, CancellationToken.None);
@@ -54,7 +54,7 @@ public sealed class ReadContactTypeQueryHandlerTests
     [Fact]
     public async Task Handle_returns_correctly_Async()
     {
-        _mockRepository.Setup(x => x.GetByIdAsync(1))
+        _mockRepository.Setup(x => x.GetByIdAsync(1, It.IsAny<CancellationToken>()))
             .ReturnsAsync(new ContactTypeEntity { ContactTypeId = 1, Name = "Home" });
 
         var result = await _sut.Handle( new ReadContactTypeQuery { Id = 1 }, CancellationToken.None);

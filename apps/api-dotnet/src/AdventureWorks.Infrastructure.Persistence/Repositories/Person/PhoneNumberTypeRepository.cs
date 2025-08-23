@@ -10,20 +10,21 @@ namespace AdventureWorks.Infrastructure.Persistence.Repositories.Person;
 public sealed class PhoneNumberTypeRepository(AdventureWorksDbContext dbContext)
     : ReadOnlyEfRepository<PhoneNumberTypeEntity>(dbContext), IPhoneNumberTypeRepository
 {
-    public override async Task<IReadOnlyList<PhoneNumberTypeEntity>> ListAllAsync()
+    public override async Task<IReadOnlyList<PhoneNumberTypeEntity>> ListAllAsync(CancellationToken cancellationToken = default)
     {
         return await DbContext.PhoneNumberTypes
-            .ToListAsync();
+            .ToListAsync(cancellationToken);
     }
 
     /// <summary>
     /// Retrieve a phone number type entity by its unique identifier
     /// </summary>
     /// <param name="id"></param>
+    /// <param name="cancellationToken"></param>
     /// <returns></returns>
-    public override async Task<PhoneNumberTypeEntity?> GetByIdAsync(int id)
+    public override async Task<PhoneNumberTypeEntity?> GetByIdAsync(int id, CancellationToken cancellationToken = default)
     {
         return await DbContext.PhoneNumberTypes
-            .FirstOrDefaultAsync(s => s.PhoneNumberTypeId == id);
+            .FirstOrDefaultAsync(s => s.PhoneNumberTypeId == id, cancellationToken);
     }
 }

@@ -15,6 +15,6 @@ public sealed class ReadDepartmentQueryHandler(
 
     public async Task<DepartmentModel> Handle(ReadDepartmentQuery request, CancellationToken cancellationToken)
     {
-        return _mapper.Map<DepartmentModel>(await _repository.GetByIdAsync(request.Id));
+        return _mapper.Map<DepartmentModel>(await _repository.GetByIdAsync(request.Id, cancellationToken));
     }
 }

@@ -15,6 +15,6 @@ public sealed class ReadAddressTypeQueryHandler(
 
     public async Task<AddressTypeModel> Handle(ReadAddressTypeQuery request, CancellationToken cancellationToken)
     {
-        return _mapper.Map<AddressTypeModel>(await _repository.GetByIdAsync(request.Id));
+        return _mapper.Map<AddressTypeModel>(await _repository.GetByIdAsync(request.Id, cancellationToken));
     }
 }

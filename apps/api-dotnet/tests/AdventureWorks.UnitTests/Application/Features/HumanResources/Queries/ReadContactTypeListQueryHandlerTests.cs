@@ -43,7 +43,7 @@ public sealed class ReadContactTypeListQueryHandlerTests
     [Fact]
     public async Task Handle_returns_empty_listAsync()
     {
-        _mockRepository.Setup(x => x.ListAllAsync())
+        _mockRepository.Setup(x => x.ListAllAsync(It.IsAny<CancellationToken>()))
             .ReturnsAsync((IReadOnlyList<ContactTypeEntity>)null!);
 
         var result = await _sut.Handle(new ReadContactTypeListQuery(), CancellationToken.None);
@@ -51,7 +51,7 @@ public sealed class ReadContactTypeListQueryHandlerTests
 
         _mockRepository.Reset();
 
-        _mockRepository.Setup(x => x.ListAllAsync())
+        _mockRepository.Setup(x => x.ListAllAsync(It.IsAny<CancellationToken>()))
             .ReturnsAsync(new List<ContactTypeEntity>());
 
         result = await _sut.Handle(new ReadContactTypeListQuery(), CancellationToken.None);
@@ -61,7 +61,7 @@ public sealed class ReadContactTypeListQueryHandlerTests
     [Fact]
     public async Task Handle_returns_valid_listAsync()
     {
-        _mockRepository.Setup(x => x.ListAllAsync())
+        _mockRepository.Setup(x => x.ListAllAsync(It.IsAny<CancellationToken>()))
             .ReturnsAsync(new List<ContactTypeEntity>
             {
                 new() {ContactTypeId = 1, Name = "Home"}

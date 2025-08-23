@@ -43,7 +43,7 @@ public sealed class ReadSalesTerritoryListQueryHandlerTests : UnitTestBase
     [Fact]
     public async Task GetListAsync_returns_empty_listAsync()
     {
-        _mockRepository.Setup(x => x.ListAllAsync())
+        _mockRepository.Setup(x => x.ListAllAsync(It.IsAny<CancellationToken>()))
             .ReturnsAsync((IReadOnlyList<SalesTerritoryEntity>)null!);
 
         var result = await _sut.Handle( new ReadSalesTerritoryListQuery(), CancellationToken.None );
@@ -51,7 +51,7 @@ public sealed class ReadSalesTerritoryListQueryHandlerTests : UnitTestBase
 
         _mockRepository.Reset();
 
-        _mockRepository.Setup(x => x.ListAllAsync())
+        _mockRepository.Setup(x => x.ListAllAsync(It.IsAny<CancellationToken>()))
             .ReturnsAsync(new List<SalesTerritoryEntity>());
 
         result = await _sut.Handle(new ReadSalesTerritoryListQuery(), CancellationToken.None);
@@ -61,7 +61,7 @@ public sealed class ReadSalesTerritoryListQueryHandlerTests : UnitTestBase
     [Fact]
     public async Task GetListAsync_returns_valid_listAsync()
     {
-        _mockRepository.Setup(x => x.ListAllAsync())
+        _mockRepository.Setup(x => x.ListAllAsync(It.IsAny<CancellationToken>()))
             .ReturnsAsync(new List<SalesTerritoryEntity>
             {
                 new() {TerritoryId = 1, Name = "Central"}

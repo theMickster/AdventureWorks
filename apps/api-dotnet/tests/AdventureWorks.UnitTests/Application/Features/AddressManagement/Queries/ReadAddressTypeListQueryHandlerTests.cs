@@ -43,7 +43,7 @@ public sealed class ReadAddressTypeListQueryHandlerTests : UnitTestBase
     [Fact]
     public async Task GetListAsync_returns_empty_listAsync()
     {
-        _mockRepository.Setup(x => x.ListAllAsync())
+        _mockRepository.Setup(x => x.ListAllAsync(It.IsAny<CancellationToken>()))
             .ReturnsAsync((IReadOnlyList<AddressTypeEntity>)null!);
 
         var result = await _sut.Handle(new ReadAddressTypeListQuery(), CancellationToken.None) ;
@@ -51,7 +51,7 @@ public sealed class ReadAddressTypeListQueryHandlerTests : UnitTestBase
 
         _mockRepository.Reset();
 
-        _mockRepository.Setup(x => x.ListAllAsync())
+        _mockRepository.Setup(x => x.ListAllAsync(It.IsAny<CancellationToken>()))
             .ReturnsAsync(new List<AddressTypeEntity>());
 
         result = await _sut.Handle(new ReadAddressTypeListQuery(), CancellationToken.None);
@@ -61,7 +61,7 @@ public sealed class ReadAddressTypeListQueryHandlerTests : UnitTestBase
     [Fact]
     public async Task GetListAsync_returns_valid_listAsync()
     {
-        _mockRepository.Setup(x => x.ListAllAsync())
+        _mockRepository.Setup(x => x.ListAllAsync(It.IsAny<CancellationToken>()))
             .ReturnsAsync(new List<AddressTypeEntity>
             {
                 new() {AddressTypeId = 1, Name = "Home"}

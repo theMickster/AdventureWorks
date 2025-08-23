@@ -43,7 +43,7 @@ public sealed class ReadStateProvinceListQueryHandlerTests : UnitTestBase
     [Fact]
     public async Task GetListAsync_returns_empty_listAsync()
     {
-        _mockStateProvinceRepository.Setup(x => x.ListAllAsync())
+        _mockStateProvinceRepository.Setup(x => x.ListAllAsync(It.IsAny<CancellationToken>()))
             .ReturnsAsync((IReadOnlyList<StateProvinceEntity>)null!);
 
         var result = await _sut.Handle(new ReadStateProvinceListQuery(), CancellationToken.None);
@@ -51,7 +51,7 @@ public sealed class ReadStateProvinceListQueryHandlerTests : UnitTestBase
 
         _mockStateProvinceRepository.Reset();
 
-        _mockStateProvinceRepository.Setup(x => x.ListAllAsync())
+        _mockStateProvinceRepository.Setup(x => x.ListAllAsync(It.IsAny<CancellationToken>()))
             .ReturnsAsync(new List<StateProvinceEntity>());
 
         result = await _sut.Handle(new ReadStateProvinceListQuery(), CancellationToken.None);
@@ -61,7 +61,7 @@ public sealed class ReadStateProvinceListQueryHandlerTests : UnitTestBase
     [Fact]
     public async Task GetListAsync_returns_valid_listAsync()
     {
-        _mockStateProvinceRepository.Setup(x => x.ListAllAsync())
+        _mockStateProvinceRepository.Setup(x => x.ListAllAsync(It.IsAny<CancellationToken>()))
             .ReturnsAsync(new List<StateProvinceEntity>
             {
                 new (){ StateProvinceId = 1, Name = "France", CountryRegionCode = "FR", TerritoryId = 7, IsOnlyStateProvinceFlag = false}

@@ -150,7 +150,7 @@ public sealed class PatchEmployeeCommandHandlerTests : UnitTestBase
             .ReturnsAsync(employeeEntity);
 
         _mockEmployeeRepository
-            .Setup(x => x.UpdateAsync(It.IsAny<EmployeeEntity>()))
+            .Setup(x => x.UpdateAsync(It.IsAny<EmployeeEntity>(), It.IsAny<CancellationToken>()))
             .Returns(Task.CompletedTask);
 
         await _sut.Handle(command, CancellationToken.None);
@@ -204,7 +204,7 @@ public sealed class PatchEmployeeCommandHandlerTests : UnitTestBase
             .ReturnsAsync(employeeEntity);
 
         _mockEmployeeRepository
-            .Setup(x => x.UpdateAsync(It.IsAny<EmployeeEntity>()))
+            .Setup(x => x.UpdateAsync(It.IsAny<EmployeeEntity>(), It.IsAny<CancellationToken>()))
             .Returns(Task.CompletedTask);
 
         await _sut.Handle(command, CancellationToken.None);
@@ -247,7 +247,7 @@ public sealed class PatchEmployeeCommandHandlerTests : UnitTestBase
             .ReturnsAsync(employeeEntity);
 
         _mockEmployeeRepository
-            .Setup(x => x.UpdateAsync(It.IsAny<EmployeeEntity>()))
+            .Setup(x => x.UpdateAsync(It.IsAny<EmployeeEntity>(), It.IsAny<CancellationToken>()))
             .Returns(Task.CompletedTask);
 
         var result = await _sut.Handle(command, CancellationToken.None);
@@ -280,7 +280,7 @@ public sealed class PatchEmployeeCommandHandlerTests : UnitTestBase
             .ReturnsAsync(employeeEntity);
 
         _mockEmployeeRepository
-            .Setup(x => x.UpdateAsync(It.IsAny<EmployeeEntity>()))
+            .Setup(x => x.UpdateAsync(It.IsAny<EmployeeEntity>(), It.IsAny<CancellationToken>()))
             .Returns(Task.CompletedTask);
 
         await _sut.Handle(command, CancellationToken.None);
@@ -317,7 +317,7 @@ public sealed class PatchEmployeeCommandHandlerTests : UnitTestBase
             .ReturnsAsync(employeeEntity);
 
         _mockEmployeeRepository
-            .Setup(x => x.UpdateAsync(It.IsAny<EmployeeEntity>()))
+            .Setup(x => x.UpdateAsync(It.IsAny<EmployeeEntity>(), It.IsAny<CancellationToken>()))
             .Returns(Task.CompletedTask);
 
         await _sut.Handle(command, CancellationToken.None);
@@ -363,7 +363,7 @@ public sealed class PatchEmployeeCommandHandlerTests : UnitTestBase
             .ReturnsAsync(employeeEntity);
 
         _mockEmployeeRepository
-            .Setup(x => x.UpdateAsync(It.IsAny<EmployeeEntity>()))
+            .Setup(x => x.UpdateAsync(It.IsAny<EmployeeEntity>(), It.IsAny<CancellationToken>()))
             .Returns(Task.CompletedTask);
 
         await _sut.Handle(command, CancellationToken.None);
@@ -405,7 +405,7 @@ public sealed class PatchEmployeeCommandHandlerTests : UnitTestBase
             .ReturnsAsync(employeeEntity);
 
         _mockEmployeeRepository
-            .Setup(x => x.UpdateAsync(It.IsAny<EmployeeEntity>()))
+            .Setup(x => x.UpdateAsync(It.IsAny<EmployeeEntity>(), It.IsAny<CancellationToken>()))
             .Returns(Task.CompletedTask);
 
         await _sut.Handle(command, CancellationToken.None);
@@ -443,7 +443,7 @@ public sealed class PatchEmployeeCommandHandlerTests : UnitTestBase
             .ReturnsAsync(employeeEntity);
 
         _mockEmployeeRepository
-            .Setup(x => x.UpdateAsync(It.IsAny<EmployeeEntity>()))
+            .Setup(x => x.UpdateAsync(It.IsAny<EmployeeEntity>(), It.IsAny<CancellationToken>()))
             .Returns(Task.CompletedTask);
 
         await _sut.Handle(command, CancellationToken.None);
@@ -477,7 +477,7 @@ public sealed class PatchEmployeeCommandHandlerTests : UnitTestBase
             .ReturnsAsync(employeeEntity);
 
         _mockEmployeeRepository
-            .Setup(x => x.UpdateAsync(It.IsAny<EmployeeEntity>()))
+            .Setup(x => x.UpdateAsync(It.IsAny<EmployeeEntity>(), It.IsAny<CancellationToken>()))
             .Returns(Task.CompletedTask);
 
         await _sut.Handle(command, CancellationToken.None);

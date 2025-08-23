@@ -76,17 +76,17 @@ public sealed class UpdateAddressCommandHandlerTests : UnitTestBase
                 It.IsAny<CancellationToken>()))
             .ReturnsAsync(new ValidationResult { Errors = new List<ValidationFailure>() });
 
-        _mockAddressRepository.Setup(x => x.GetByIdAsync(12))
+        _mockAddressRepository.Setup(x => x.GetByIdAsync(12, It.IsAny<CancellationToken>()))
             .ReturnsAsync(new AddressEntity { AddressId = 12 });
 
-        _mockAddressRepository.Setup(x => x.UpdateAsync(It.IsAny<AddressEntity>()));
+        _mockAddressRepository.Setup(x => x.UpdateAsync(It.IsAny<AddressEntity>(), It.IsAny<CancellationToken>()));
 
         await _sut.Handle(command, CancellationToken.None);
 
         using (new AssertionScope())
         {
-            _mockAddressRepository.Verify(x => x.GetByIdAsync(12), Times.Once);
-            _mockAddressRepository.Verify(x => x.UpdateAsync(It.IsAny<AddressEntity>()), Times.Once);
+            _mockAddressRepository.Verify(x => x.GetByIdAsync(12, It.IsAny<CancellationToken>()), Times.Once);
+            _mockAddressRepository.Verify(x => x.UpdateAsync(It.IsAny<AddressEntity>(), It.IsAny<CancellationToken>()), Times.Once);
         }
     }
 

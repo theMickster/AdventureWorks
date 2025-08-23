@@ -13,20 +13,21 @@ public sealed class ShiftRepository : ReadOnlyEfRepository<ShiftEntity>, IShiftR
     {
     }
 
-    public override async Task<IReadOnlyList<ShiftEntity>> ListAllAsync()
+    public override async Task<IReadOnlyList<ShiftEntity>> ListAllAsync(CancellationToken cancellationToken = default)
     {
         return await DbContext.Shifts
-            .ToListAsync();
+            .ToListAsync(cancellationToken);
     }
 
     /// <summary>
     /// Retrieve a shift entity by its unique identifier
     /// </summary>
     /// <param name="id"></param>
+    /// <param name="cancellationToken"></param>
     /// <returns></returns>
-    public override async Task<ShiftEntity?> GetByIdAsync(int id)
+    public override async Task<ShiftEntity?> GetByIdAsync(int id, CancellationToken cancellationToken = default)
     {
         return await DbContext.Shifts
-            .FirstOrDefaultAsync(s => s.ShiftId == id);
+            .FirstOrDefaultAsync(s => s.ShiftId == id, cancellationToken);
     }
 }

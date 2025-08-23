@@ -71,7 +71,7 @@ public sealed class PatchEmployeeCommandHandler(
         employeeEntity.Gender = employeeUpdateModel.Gender;
         employeeEntity.ModifiedDate = request.ModifiedDate;
 
-        await _employeeRepository.UpdateAsync(employeeEntity);
+        await _employeeRepository.UpdateAsync(employeeEntity, cancellationToken);
 
         return Unit.Value;
     }

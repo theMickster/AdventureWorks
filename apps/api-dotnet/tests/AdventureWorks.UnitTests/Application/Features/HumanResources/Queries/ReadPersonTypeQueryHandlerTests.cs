@@ -43,7 +43,7 @@ public sealed class ReadPersonTypeQueryHandlerTests : UnitTestBase
     [Fact]
     public async Task Handle_returns_null_Async()
     {
-        _mockRepository.Setup(x => x.GetByIdAsync(It.IsAny<int>()))
+        _mockRepository.Setup(x => x.GetByIdAsync(It.IsAny<int>(), It.IsAny<CancellationToken>()))
             .ReturnsAsync((PersonTypeEntity)null!);
 
         var result = await _sut.Handle(new ReadPersonTypeQuery{Id = 12}, CancellationToken.None);
@@ -54,7 +54,7 @@ public sealed class ReadPersonTypeQueryHandlerTests : UnitTestBase
     [Fact]
     public async Task Handle_returns_correctly_Async()
     {
-        _mockRepository.Setup(x => x.GetByIdAsync(1))
+        _mockRepository.Setup(x => x.GetByIdAsync(1, It.IsAny<CancellationToken>()))
             .ReturnsAsync(new PersonTypeEntity { PersonTypeId = 1, PersonTypeName = "Home", PersonTypeCode = "hello", PersonTypeDescription = "hello world" });
 
         var result = await _sut.Handle(new ReadPersonTypeQuery { Id = 1 }, CancellationToken.None);

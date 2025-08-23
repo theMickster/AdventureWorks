@@ -15,6 +15,6 @@ public sealed class ReadStateProvinceQueryHandler (
 
     public async Task<StateProvinceModel> Handle(ReadStateProvinceQuery request, CancellationToken cancellationToken)
     {
-        return _mapper.Map<StateProvinceModel>(await _repository.GetByIdAsync(request.Id));
+        return _mapper.Map<StateProvinceModel>(await _repository.GetByIdAsync(request.Id, cancellationToken));
     }
 }

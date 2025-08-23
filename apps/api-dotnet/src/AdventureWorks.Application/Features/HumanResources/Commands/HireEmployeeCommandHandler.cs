@@ -28,7 +28,7 @@ public sealed class HireEmployeeCommandHandler(
 
         await _validator.ValidateAndThrowAsync(request.Model, cancellationToken);
 
-        var employee = await _employeeRepository.GetByIdAsync(request.Model.EmployeeId);
+        var employee = await _employeeRepository.GetByIdAsync(request.Model.EmployeeId, cancellationToken);
         if (employee == null)
         {
             _logger.LogError("Employee with ID {EmployeeId} not found", request.Model.EmployeeId);
@@ -93,7 +93,7 @@ public sealed class HireEmployeeCommandHandler(
             request.Model.InitialPayRate,
             request.Model.PayFrequency);
 
-        await _employeeRepository.UpdateAsync(employee);
+        await _employeeRepository.UpdateAsync(employee, cancellationToken);
 
         _logger.LogInformation(
             "Employee {EmployeeId} hired successfully on {HireDate} to department {DepartmentId}",

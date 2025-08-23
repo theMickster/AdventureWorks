@@ -15,6 +15,6 @@ public sealed class ReadShiftQueryHandler(
 
     public async Task<ShiftModel> Handle(ReadShiftQuery request, CancellationToken cancellationToken)
     {
-        return _mapper.Map<ShiftModel>(await _repository.GetByIdAsync(request.Id));
+        return _mapper.Map<ShiftModel>(await _repository.GetByIdAsync(request.Id, cancellationToken));
     }
 }

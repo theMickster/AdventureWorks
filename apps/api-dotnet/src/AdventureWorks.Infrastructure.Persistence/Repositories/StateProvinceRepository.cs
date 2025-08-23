@@ -16,25 +16,25 @@ public sealed class StateProvinceRepository : ReadOnlyEfRepository<StateProvince
     {
     }
 
-    public override async Task<IReadOnlyList<StateProvinceEntity>> ListAllAsync()
+    public override async Task<IReadOnlyList<StateProvinceEntity>> ListAllAsync(CancellationToken cancellationToken = default)
     {
         return await DbContext.StateProvinces
             .Include(x => x.CountryRegion)
             .Include(y => y.SalesTerritory)
-            .ToListAsync();
+            .ToListAsync(cancellationToken);
     }
-
 
     /// <summary>
     /// Retrieve a state-province entity by its unique identifier
     /// </summary>
     /// <param name="id"></param>
+    /// <param name="cancellationToken"></param>
     /// <returns></returns>
-    public override async Task<StateProvinceEntity?> GetByIdAsync(int id)
+    public override async Task<StateProvinceEntity?> GetByIdAsync(int id, CancellationToken cancellationToken = default)
     {
         return await DbContext.StateProvinces
             .Include(x => x.CountryRegion)
             .Include(y => y.SalesTerritory)
-            .FirstOrDefaultAsync(s => s.StateProvinceId == id);
+            .FirstOrDefaultAsync(s => s.StateProvinceId == id, cancellationToken);
     }
 }

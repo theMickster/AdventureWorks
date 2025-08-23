@@ -27,6 +27,22 @@ public class AdventureWorksDbContext : DbContext, IAdventureWorksDbContext
         
     public DbSet<Product> Products { get; set; }
 
+    public DbSet<ProductCategory> ProductCategories { get; set; }
+
+    public DbSet<ProductCostHistory> ProductCostHistories { get; set; }
+
+    public DbSet<ProductInventory> ProductInventories { get; set; }
+
+    public DbSet<ProductListPriceHistory> ProductListPriceHistories { get; set; }
+
+    public DbSet<ProductModel> ProductModels { get; set; }
+
+    public DbSet<ProductPhoto> ProductPhotos { get; set; }
+
+    public DbSet<ProductProductPhoto> ProductProductPhotos { get; set; }
+
+    public DbSet<ProductSubcategory> ProductSubcategories { get; set; }
+
     public DbSet<AddressEntity> Addresses { get; set; }
 
     public DbSet<AddressTypeEntity> AddressTypes { get; set; }

@@ -15,7 +15,7 @@ public sealed class ReadPersonTypeListQueryHandler(
 
     public async Task<List<PersonTypeModel>> Handle(ReadPersonTypeListQuery request, CancellationToken cancellationToken)
     {
-        var entities = await _personTypeRepository.ListAllAsync();
+        var entities = await _personTypeRepository.ListAllAsync(cancellationToken);
 
         return entities is not { Count: > 0 } ? [] : _mapper.Map<List<PersonTypeModel>>(entities);
     }
