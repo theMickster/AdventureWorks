@@ -192,7 +192,10 @@ public sealed class PatchStoreCommandHandlerTests : UnitTestBase
         _mockStoreRepository.Setup(x => x.GetByIdAsync(storeId))
             .ReturnsAsync(entity);
 
-        var realValidator = new UpdateStoreValidator();
+        var mockSalesPersonRepo = new Mock<ISalesPersonRepository>();
+        mockSalesPersonRepo.Setup(x => x.ExistsAsync(It.IsAny<int>(), It.IsAny<CancellationToken>()))
+            .ReturnsAsync(true);
+        var realValidator = new UpdateStoreValidator(mockSalesPersonRepo.Object);
         var sut = new PatchStoreCommandHandler(_mockStoreRepository.Object, realValidator);
 
         var act = async () => await sut.Handle(command, CancellationToken.None);

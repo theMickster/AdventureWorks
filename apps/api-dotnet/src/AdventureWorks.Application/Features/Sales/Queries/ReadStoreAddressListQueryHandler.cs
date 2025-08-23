@@ -25,11 +25,11 @@ public sealed class ReadStoreAddressListQueryHandler(
     {
         ArgumentNullException.ThrowIfNull(request);
 
-        var addresses = await _storeRepository.GetAddressesByStoreIdAsync(request.StoreId);
+        var addresses = await _storeRepository.GetAddressesByStoreIdAsync(request.StoreId, cancellationToken);
 
         if (addresses is null or { Count: 0 })
         {
-            return new List<BusinessEntityAddressModel>();
+            return [];
         }
 
         return _mapper.Map<List<BusinessEntityAddressModel>>(addresses);

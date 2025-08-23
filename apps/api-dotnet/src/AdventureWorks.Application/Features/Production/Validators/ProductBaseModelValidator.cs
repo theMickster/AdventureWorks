@@ -5,6 +5,10 @@ namespace AdventureWorks.Application.Features.Production.Validators;
 
 public class ProductBaseModelValidator<T> : AbstractValidator<T> where T : ProductBaseModel
 {
+    private static readonly HashSet<string?> ValidProductLines = ["R", "M", "T", "S", null];
+    private static readonly HashSet<string?> ValidClasses = ["H", "M", "L", null];
+    private static readonly HashSet<string?> ValidStyles = ["U", "M", "W", null];
+
     public ProductBaseModelValidator()
     {
         RuleFor(a => a.Name)
@@ -45,15 +49,15 @@ public class ProductBaseModelValidator<T> : AbstractValidator<T> where T : Produ
             .WithErrorCode("Rule-10").WithMessage(MessageWeightInvalid);
 
         RuleFor(a => a.ProductLine)
-            .Must(x => new[] { "R", "M", "T", "S", null }.Contains(x))
+            .Must(ValidProductLines.Contains)
             .WithErrorCode("Rule-11").WithMessage(MessageProductLineInvalid);
 
         RuleFor(a => a.Class)
-            .Must(x => new[] { "H", "M", "L", null }.Contains(x))
+            .Must(ValidClasses.Contains)
             .WithErrorCode("Rule-12").WithMessage(MessageClassInvalid);
 
         RuleFor(a => a.Style)
-            .Must(x => new[] { "U", "M", "W", null }.Contains(x))
+            .Must(ValidStyles.Contains)
             .WithErrorCode("Rule-13").WithMessage(MessageStyleInvalid);
 
         RuleFor(a => a.SellEndDate)

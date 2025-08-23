@@ -10,28 +10,33 @@ public interface IStoreRepository : IAsyncRepository<StoreEntity>
     /// Retrieve a store by id along with its related entities
     /// </summary>
     /// <param name="storeId">the unique store identifier</param>
-    /// <returns></returns>
-    Task<StoreEntity?> GetStoreByIdAsync(int storeId);
+    /// <param name="includeAddresses">when false, address navigation properties are not loaded</param>
+    /// <param name="cancellationToken">token to cancel the operation</param>
+    Task<StoreEntity?> GetStoreByIdAsync(int storeId, bool includeAddresses = true, CancellationToken cancellationToken = default);
 
     /// <summary>
     /// Retrieves a paginated list of stores and the total count of stores in the database.
     /// </summary>
     /// <param name="parameters">the input paging parameters</param>
-    Task<(IReadOnlyList<StoreEntity>, int)> GetStoresAsync(StoreParameter parameters);
+    /// <param name="includeAddresses">when false, address navigation properties are not loaded</param>
+    /// <param name="cancellationToken">token to cancel the operation</param>
+    Task<(IReadOnlyList<StoreEntity>, int)> GetStoresAsync(StoreParameter parameters, bool includeAddresses = true, CancellationToken cancellationToken = default);
 
     /// <summary>
     /// Retrieves a paged list of stores that is filtered using the <paramref name="storeSearchModel"/> input parameter.
     /// </summary>
     /// <param name="parameters"></param>
     /// <param name="storeSearchModel"></param>
-    /// <returns></returns>
-    Task<(IReadOnlyList<StoreEntity>, int)> SearchStoresAsync(StoreParameter parameters, StoreSearchModel storeSearchModel);
+    /// <param name="includeAddresses">when false, address navigation properties are not loaded</param>
+    /// <param name="cancellationToken">token to cancel the operation</param>
+    Task<(IReadOnlyList<StoreEntity>, int)> SearchStoresAsync(StoreParameter parameters, StoreSearchModel storeSearchModel, bool includeAddresses = true, CancellationToken cancellationToken = default);
 
     /// <summary>
     /// Retrieves the list of addresses for a given store (business entity) id
     /// </summary>
     /// <param name="storeId">the unique store identifier</param>
+    /// <param name="cancellationToken">token to cancel the operation</param>
     /// <returns>List of business entity address entities for the store, or an empty list if none exist.</returns>
-    Task<List<BusinessEntityAddressEntity>> GetAddressesByStoreIdAsync(int storeId);
+    Task<List<BusinessEntityAddressEntity>> GetAddressesByStoreIdAsync(int storeId, CancellationToken cancellationToken = default);
 
 }

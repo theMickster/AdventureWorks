@@ -1,3 +1,7 @@
+---
+applyTo: "apps/angular-web/**/*"
+---
+
 # AdventureWorks Angular Web Copilot Instructions
 
 **Applies to:** `apps/angular-web/**`

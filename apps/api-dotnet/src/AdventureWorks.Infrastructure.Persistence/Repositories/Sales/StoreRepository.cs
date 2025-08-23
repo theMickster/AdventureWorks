@@ -2,6 +2,7 @@
 using AdventureWorks.Common.Attributes;
 using AdventureWorks.Common.Constants;
 using AdventureWorks.Common.Filtering;
+using AdventureWorks.Common.Helpers;
 using AdventureWorks.Domain.Entities.Person;
 using AdventureWorks.Domain.Entities.Sales;
 using AdventureWorks.Infrastructure.Persistence.DbContexts;
@@ -18,49 +19,25 @@ public sealed class StoreRepository(AdventureWorksDbContext dbContext)
     /// Retrieve a store by id along with its related entities
     /// </summary>
     /// <param name="storeId">the unique store identifier</param>
-    /// <returns></returns>
-    public async Task<StoreEntity?> GetStoreByIdAsync(int storeId)
+    /// <param name="includeAddresses">when false, address navigation properties are not loaded</param>
+    /// <param name="cancellationToken">token to cancel the operation</param>
+    public async Task<StoreEntity?> GetStoreByIdAsync(int storeId, bool includeAddresses = true, CancellationToken cancellationToken = default)
     {
-        return await DbContext.Stores
-            .AsNoTracking()
-            .Include(x => x.StoreBusinessEntity)
-                .ThenInclude(y => y.BusinessEntityAddresses)
-                .ThenInclude(y => y.AddressType)
-            .Include(x => x.StoreBusinessEntity)
-                .ThenInclude(y => y.BusinessEntityAddresses)
-                .ThenInclude(z => z.Address)
-                .ThenInclude(ab => ab.StateProvince)
-                .ThenInclude(abc => abc.CountryRegion)
-            .Include(x => x.PrimarySalesPerson)
-                .ThenInclude(y => y.Employee)
-                .ThenInclude(z => z.PersonBusinessEntity)
-                .ThenInclude(e => e.EmailAddresses)
-            .FirstOrDefaultAsync(x => x.BusinessEntityId == storeId);
+        return await BuildBaseStoreQuery(includeAddresses)
+            .FirstOrDefaultAsync(x => x.BusinessEntityId == storeId, cancellationToken);
     }
 
     /// <summary>
     /// Retrieves a paginated list of stores and the total count of stores in the database.
     /// </summary>
     /// <param name="parameters">the input paging parameters</param>
-    public async Task<(IReadOnlyList<StoreEntity>, int)> GetStoresAsync(StoreParameter parameters)
+    /// <param name="includeAddresses">when false, address navigation properties are not loaded</param>
+    /// <param name="cancellationToken">token to cancel the operation</param>
+    public async Task<(IReadOnlyList<StoreEntity>, int)> GetStoresAsync(StoreParameter parameters, bool includeAddresses = true, CancellationToken cancellationToken = default)
     {
-        var totalCount = await DbContext.Stores.CountAsync();
+        var totalCount = await DbContext.Stores.CountAsync(cancellationToken);
 
-        var storeQuery = DbContext.Stores
-            .AsNoTracking()
-            .Include(x => x.StoreBusinessEntity)
-                .ThenInclude(y => y.BusinessEntityAddresses)
-                .ThenInclude(y => y.AddressType)
-            .Include(x => x.StoreBusinessEntity)
-                .ThenInclude(y => y.BusinessEntityAddresses)
-                .ThenInclude(z => z.Address)
-                .ThenInclude(ab => ab.StateProvince)
-                .ThenInclude(abc => abc.CountryRegion)
-            .Include(x => x.PrimarySalesPerson)
-                .ThenInclude(y => y.Employee)
-                .ThenInclude(z => z.PersonBusinessEntity)
-                .ThenInclude(e => e.EmailAddresses)
-            .AsQueryable();
+        var storeQuery = BuildBaseStoreQuery(includeAddresses);
 
         switch (parameters.OrderBy)
         {
@@ -78,7 +55,7 @@ public sealed class StoreRepository(AdventureWorksDbContext dbContext)
 
         storeQuery = storeQuery.Skip(parameters.GetRecordsToSkip()).Take(parameters.PageSize);
 
-        var results = await storeQuery.ToListAsync();
+        var results = await storeQuery.ToListAsync(cancellationToken);
 
         return (results.AsReadOnly(), totalCount);
     }
@@ -88,26 +65,15 @@ public sealed class StoreRepository(AdventureWorksDbContext dbContext)
     /// </summary>
     /// <param name="parameters"></param>
     /// <param name="storeSearchModel"></param>
-    /// <returns></returns>
+    /// <param name="includeAddresses">when false, address navigation properties are not loaded</param>
+    /// <param name="cancellationToken">token to cancel the operation</param>
     public async Task<(IReadOnlyList<StoreEntity>, int)> SearchStoresAsync(
         StoreParameter parameters,
-        StoreSearchModel storeSearchModel)
+        StoreSearchModel storeSearchModel,
+        bool includeAddresses = true,
+        CancellationToken cancellationToken = default)
     {
-        var storeQuery = DbContext.Stores
-            .AsNoTracking()
-            .Include(x => x.StoreBusinessEntity)
-                .ThenInclude(y => y.BusinessEntityAddresses)
-                .ThenInclude(y => y.AddressType)
-            .Include(x => x.StoreBusinessEntity)
-                .ThenInclude(y => y.BusinessEntityAddresses)
-                .ThenInclude(z => z.Address)
-                .ThenInclude(ab => ab.StateProvince)
-                .ThenInclude(abc => abc.CountryRegion)
-            .Include(x => x.PrimarySalesPerson)
-                .ThenInclude(y => y.Employee)
-                .ThenInclude(z => z.PersonBusinessEntity)
-                .ThenInclude(e => e.EmailAddresses)
-            .AsQueryable();
+        var storeQuery = BuildBaseStoreQuery(includeAddresses);
 
         if (storeSearchModel != null)
         {
@@ -118,7 +84,7 @@ public sealed class StoreRepository(AdventureWorksDbContext dbContext)
 
             if (!string.IsNullOrWhiteSpace(storeSearchModel.Name))
             {
-                storeQuery = storeQuery.Where(y => y.Name.ToLower().Contains(storeSearchModel.Name.Trim().ToLower()));
+                storeQuery = storeQuery.Where(y => EF.Functions.Like(y.Name, $"%{LikePatternHelper.EscapeLikePattern(storeSearchModel.Name.Trim())}%"));
             }
         }
 
@@ -133,21 +99,52 @@ public sealed class StoreRepository(AdventureWorksDbContext dbContext)
             _ => storeQuery
         };
 
-        var totalCount = await storeQuery.CountAsync();
+        var totalCount = await storeQuery.CountAsync(cancellationToken);
 
         storeQuery = storeQuery.Skip(parameters.GetRecordsToSkip()).Take(parameters.PageSize);
 
-        var results = await storeQuery.ToListAsync();
+        var results = await storeQuery.ToListAsync(cancellationToken);
 
         return (results.AsReadOnly(), totalCount);
+    }
+
+    /// <summary>
+    /// Builds the base store query with SalesPerson includes and optionally address includes.
+    /// </summary>
+    /// <param name="includeAddresses">when false, address navigation properties are not loaded</param>
+    private IQueryable<StoreEntity> BuildBaseStoreQuery(bool includeAddresses = true)
+    {
+        var query = DbContext.Stores
+            .AsNoTracking()
+            .Include(x => x.PrimarySalesPerson)
+                .ThenInclude(y => y.Employee)
+                .ThenInclude(z => z.PersonBusinessEntity)
+                .ThenInclude(e => e.EmailAddresses)
+            .AsQueryable();
+
+        if (includeAddresses)
+        {
+            query = query
+                .Include(x => x.StoreBusinessEntity)
+                    .ThenInclude(y => y.BusinessEntityAddresses)
+                    .ThenInclude(y => y.AddressType)
+                .Include(x => x.StoreBusinessEntity)
+                    .ThenInclude(y => y.BusinessEntityAddresses)
+                    .ThenInclude(z => z.Address)
+                    .ThenInclude(ab => ab.StateProvince)
+                    .ThenInclude(abc => abc.CountryRegion);
+        }
+
+        return query;
     }
 
     /// <summary>
     /// Retrieves the list of addresses for a given store (business entity) id
     /// </summary>
     /// <param name="storeId">the unique store identifier</param>
+    /// <param name="cancellationToken">token to cancel the operation</param>
     /// <returns>List of business entity address entities for the store, or an empty list if none exist.</returns>
-    public async Task<List<BusinessEntityAddressEntity>> GetAddressesByStoreIdAsync(int storeId)
+    public async Task<List<BusinessEntityAddressEntity>> GetAddressesByStoreIdAsync(int storeId, CancellationToken cancellationToken = default)
     {
         return await DbContext.BusinessEntityAddresses
             .AsNoTracking()
@@ -156,7 +153,7 @@ public sealed class StoreRepository(AdventureWorksDbContext dbContext)
             .Include(x => x.Address)
                 .ThenInclude(a => a.StateProvince)
                 .ThenInclude(s => s.CountryRegion)
-            .ToListAsync();
+            .ToListAsync(cancellationToken);
     }
 }
 

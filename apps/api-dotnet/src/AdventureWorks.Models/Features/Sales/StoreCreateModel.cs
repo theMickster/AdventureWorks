@@ -2,5 +2,4 @@
 
 public sealed class StoreCreateModel : StoreBaseModel
 {
-    public int? SalesPersonId { get; set; }
 }

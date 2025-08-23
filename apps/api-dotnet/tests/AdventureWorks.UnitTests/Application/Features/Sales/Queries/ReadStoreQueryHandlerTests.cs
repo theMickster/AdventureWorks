@@ -2,6 +2,7 @@
 using AdventureWorks.Application.Features.Sales.Queries;
 using AdventureWorks.Application.PersistenceContracts.Repositories.Person;
 using AdventureWorks.Application.PersistenceContracts.Repositories.Sales;
+using AdventureWorks.Domain.Entities.Person;
 using AdventureWorks.Domain.Entities.Sales;
 using AdventureWorks.UnitTests.Setup.Fixtures;
 
@@ -55,7 +56,7 @@ public sealed class ReadStoreQueryHandlerTests : UnitTestBase
     [Fact]
     public async Task Handle_returns_null_Async()
     {
-        _mockStoreRepository.Setup(x => x.GetStoreByIdAsync(It.IsAny<int>()))
+        _mockStoreRepository.Setup(x => x.GetStoreByIdAsync(It.IsAny<int>(), It.IsAny<bool>(), It.IsAny<CancellationToken>()))
             .ReturnsAsync((StoreEntity)null!);
 
         var result = await _sut.Handle( new ReadStoreQuery{Id =22}, CancellationToken.None);
@@ -73,7 +74,7 @@ public sealed class ReadStoreQueryHandlerTests : UnitTestBase
         var storeContacts =
             SalesDomainFixtures.GetMockContactEntities().Where(x => x.BusinessEntityId == storeId).ToList();
 
-        _mockStoreRepository.Setup(x => x.GetStoreByIdAsync(storeId))
+        _mockStoreRepository.Setup(x => x.GetStoreByIdAsync(storeId, It.IsAny<bool>(), It.IsAny<CancellationToken>()))
             .ReturnsAsync(entity);
 
         _mockContactEntityRepository.Setup(x => x.GetContactsByIdAsync(storeId))
@@ -102,7 +103,7 @@ public sealed class ReadStoreQueryHandlerTests : UnitTestBase
 
         var entity = SalesDomainFixtures.GetMockStores().First(x => x.BusinessEntityId == storeId);
 
-        _mockStoreRepository.Setup(x => x.GetStoreByIdAsync(storeId))
+        _mockStoreRepository.Setup(x => x.GetStoreByIdAsync(storeId, It.IsAny<bool>(), It.IsAny<CancellationToken>()))
             .ReturnsAsync(entity);
 
         var result = await _sut.Handle(new ReadStoreQuery { Id = storeId, IncludeContacts = false }, CancellationToken.None);
@@ -115,13 +116,26 @@ public sealed class ReadStoreQueryHandlerTests : UnitTestBase
     {
         const int storeId = 2534;
 
-        var entity = SalesDomainFixtures.GetMockStores().First(x => x.BusinessEntityId == storeId);
+        var fullEntity = SalesDomainFixtures.GetMockStores().First(x => x.BusinessEntityId == storeId);
+        var entityWithoutAddresses = new StoreEntity
+        {
+            BusinessEntityId = fullEntity.BusinessEntityId,
+            Name = fullEntity.Name,
+            SalesPersonId = fullEntity.SalesPersonId,
+            PrimarySalesPerson = fullEntity.PrimarySalesPerson,
+            ModifiedDate = fullEntity.ModifiedDate,
+            StoreBusinessEntity = new BusinessEntity
+            {
+                BusinessEntityId = storeId,
+                BusinessEntityAddresses = []
+            }
+        };
 
         var storeContacts =
             SalesDomainFixtures.GetMockContactEntities().Where(x => x.BusinessEntityId == storeId).ToList();
 
-        _mockStoreRepository.Setup(x => x.GetStoreByIdAsync(storeId))
-            .ReturnsAsync(entity);
+        _mockStoreRepository.Setup(x => x.GetStoreByIdAsync(storeId, false, It.IsAny<CancellationToken>()))
+            .ReturnsAsync(entityWithoutAddresses);
 
         _mockContactEntityRepository.Setup(x => x.GetContactsByIdAsync(storeId))
             .ReturnsAsync(storeContacts);

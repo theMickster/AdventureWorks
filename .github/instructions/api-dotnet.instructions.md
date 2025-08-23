@@ -1,3 +1,7 @@
+---
+applyTo: "apps/api-dotnet/**/*"
+---
+
 # AdventureWorks API Copilot Instructions
 
 **Applies to:** `apps/api-dotnet/**`
@@ -48,12 +52,20 @@ Use this file together with:
 - Read queries default to `AsNoTracking()` unless mutation requires tracking.
 - Include/filter flags must shape the repository query itself. Do not eagerly load full graphs and then clear collections after mapping.
 - Avoid unnecessary eager loading, duplicate include graphs, or result-shaping that wastes query work.
+- When two or more repository methods share the same `Include` chain or paging execution, extract to a `private IQueryable<T> Build{Name}Query(...)` helper — do not duplicate the include graph across methods.
 - Never use `.Result` or `.Wait()`.
+- User input embedded in `EF.Functions.Like(...)` patterns must have SQL LIKE wildcards (`%`, `_`, `[`, `]`) escaped before interpolation. Use a shared `EscapeLikePattern(string input)` utility. This is a correctness and DoS risk; severity is higher on unauthenticated endpoints.
+  - ❌ `EF.Functions.Like(p.Name, $"%{input}%")`
+  - ✅ `EF.Functions.Like(p.Name, $"%{EscapeLikePattern(input)}%")`
+
+## Validator Implementation Rules
+
+- Fixed domain code sets (e.g., ProductLine, Class, Style allowed values) must be `private static readonly HashSet<string?>` fields, not inline `new[] { ... }` inside `Must(...)` predicates.
 
 ## Logging and Constants
 
 - Use structured logging.
-- Keep verb-specific logging/error constants aligned with the endpoint verb and behavior.
+- Use `AppLoggingConstants.Http{Verb}RequestErrorCode` matching the HTTP verb of the endpoint — `HttpGetRequestErrorCode` for GET, `HttpPostRequestErrorCode` for POST, etc. Never copy-paste a logging line from a controller with a different verb.
 - Do not log secrets, tokens, or sensitive identifiers beyond existing project norms.
 
 ## Minimum Test Expectations

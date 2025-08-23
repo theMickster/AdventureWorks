@@ -40,20 +40,30 @@ public interface ISalesPersonRepository : IAsyncRepository<SalesPersonEntity>
     /// Retrieve a sales person by id along with their related entities
     /// </summary>
     /// <param name="salesPersonId">the unique sales person identifier</param>
+    /// <param name="cancellationToken">token to cancel the operation</param>
     /// <returns></returns>
-    Task<SalesPersonEntity?> GetSalesPersonByIdAsync(int salesPersonId);
+    Task<SalesPersonEntity?> GetSalesPersonByIdAsync(int salesPersonId, CancellationToken cancellationToken = default);
 
     /// <summary>
     /// Retrieves a paginated list of sales persons and the total count of sales persons in the database.
     /// </summary>
     /// <param name="parameters">the input paging parameters</param>
-    Task<(IReadOnlyList<SalesPersonEntity>, int)> GetSalesPersonsAsync(SalesPersonParameter parameters);
+    /// <param name="cancellationToken">token to cancel the operation</param>
+    Task<(IReadOnlyList<SalesPersonEntity>, int)> GetSalesPersonsAsync(SalesPersonParameter parameters, CancellationToken cancellationToken = default);
 
     /// <summary>
     /// Retrieves a paged list of sales persons that is filtered using the <paramref name="salesPersonSearchModel"/> input parameter.
     /// </summary>
     /// <param name="parameters"></param>
     /// <param name="salesPersonSearchModel"></param>
+    /// <param name="cancellationToken">token to cancel the operation</param>
     /// <returns></returns>
-    Task<(IReadOnlyList<SalesPersonEntity>, int)> SearchSalesPersonsAsync(SalesPersonParameter parameters, SalesPersonSearchModel salesPersonSearchModel);
+    Task<(IReadOnlyList<SalesPersonEntity>, int)> SearchSalesPersonsAsync(SalesPersonParameter parameters, SalesPersonSearchModel salesPersonSearchModel, CancellationToken cancellationToken = default);
+
+    /// <summary>
+    /// Returns true if a sales person with the given id exists.
+    /// </summary>
+    /// <param name="id">the sales person business entity id</param>
+    /// <param name="cancellationToken">token to cancel the operation</param>
+    Task<bool> ExistsAsync(int id, CancellationToken cancellationToken = default);
 }

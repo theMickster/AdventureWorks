@@ -56,7 +56,7 @@ public sealed class ReadStoreListQueryHandlerTests : UnitTestBase
     [Fact]
     public async Task Handle_list_returns_correct_null_resultAsync()
     {
-        _mockStoreRepository.Setup(x => x.GetStoresAsync(It.IsAny<StoreParameter>()))
+        _mockStoreRepository.Setup(x => x.GetStoresAsync(It.IsAny<StoreParameter>(), It.IsAny<bool>(), It.IsAny<CancellationToken>()))
             .ReturnsAsync((null!, 0));
 
         var result = await _sut.Handle(new ReadStoreListQuery{Parameters = new StoreParameter()}, CancellationToken.None);
@@ -74,7 +74,7 @@ public sealed class ReadStoreListQueryHandlerTests : UnitTestBase
     public async Task Handle_list_returns_correct_empty_resultAsync()
     {
         var readOnlyList = new List<StoreEntity>().AsReadOnly();
-        _mockStoreRepository.Setup(x => x.GetStoresAsync(It.IsAny<StoreParameter>()))
+        _mockStoreRepository.Setup(x => x.GetStoresAsync(It.IsAny<StoreParameter>(), It.IsAny<bool>(), It.IsAny<CancellationToken>()))
             .ReturnsAsync((readOnlyList, 0));
 
         var result = await _sut.Handle(new ReadStoreListQuery { Parameters = new StoreParameter() }, CancellationToken.None);
@@ -91,10 +91,10 @@ public sealed class ReadStoreListQueryHandlerTests : UnitTestBase
     [Fact]
     public async Task Handle_list_returns_valid_paged_model_Async()
     {
-        _mockStoreRepository.Setup(x => x.GetStoresAsync(It.IsAny<StoreParameter>()))
+        _mockStoreRepository.Setup(x => x.GetStoresAsync(It.IsAny<StoreParameter>(), It.IsAny<bool>(), It.IsAny<CancellationToken>()))
             .ReturnsAsync((SalesDomainFixtures.GetMockStores().ToList(), 3));
 
-        _mockContactEntityRepository.Setup(x => x.GetContactsByStoreIdsAsync(It.IsAny<List<int>>()))
+        _mockContactEntityRepository.Setup(x => x.GetContactsByStoreIdsAsync(It.IsAny<List<int>>(), It.IsAny<CancellationToken>()))
             .ReturnsAsync(SalesDomainFixtures.GetMockContactEntities().ToList());
         var param = new StoreParameter { PageNumber = 1, OrderBy = "Name", PageSize = 30, SortOrder = "DESCENDING" };
 
@@ -127,7 +127,7 @@ public sealed class ReadStoreListQueryHandlerTests : UnitTestBase
     [Fact]
     public async Task Handle_search_returns_correct_null_resultAsync()
     {
-        _mockStoreRepository.Setup(x => x.SearchStoresAsync(It.IsAny<StoreParameter>(), It.IsAny<StoreSearchModel>()))
+        _mockStoreRepository.Setup(x => x.SearchStoresAsync(It.IsAny<StoreParameter>(), It.IsAny<StoreSearchModel>(), It.IsAny<bool>(), It.IsAny<CancellationToken>()))
             .ReturnsAsync((null!, 0));
 
         var result = await _sut.Handle(new ReadStoreListQuery { Parameters = new StoreParameter(), SearchModel = new StoreSearchModel()}, CancellationToken.None);
@@ -145,7 +145,7 @@ public sealed class ReadStoreListQueryHandlerTests : UnitTestBase
     public async Task Handle_search_returns_correct_empty_resultAsync()
     {
         var readOnlyList = new List<StoreEntity>().AsReadOnly();
-        _mockStoreRepository.Setup(x => x.SearchStoresAsync(It.IsAny<StoreParameter>(), It.IsAny<StoreSearchModel>()))
+        _mockStoreRepository.Setup(x => x.SearchStoresAsync(It.IsAny<StoreParameter>(), It.IsAny<StoreSearchModel>(), It.IsAny<bool>(), It.IsAny<CancellationToken>()))
             .ReturnsAsync((readOnlyList, 0));
 
         var result = await _sut.Handle(new ReadStoreListQuery { Parameters = new StoreParameter(), SearchModel = new StoreSearchModel() }, CancellationToken.None);
@@ -162,10 +162,10 @@ public sealed class ReadStoreListQueryHandlerTests : UnitTestBase
     [Fact]
     public async Task Handle_search_returns_valid_paged_model_Async()
     {
-        _mockStoreRepository.Setup(x => x.SearchStoresAsync(It.IsAny<StoreParameter>(), It.IsAny<StoreSearchModel>()))
+        _mockStoreRepository.Setup(x => x.SearchStoresAsync(It.IsAny<StoreParameter>(), It.IsAny<StoreSearchModel>(), It.IsAny<bool>(), It.IsAny<CancellationToken>()))
             .ReturnsAsync((SalesDomainFixtures.GetMockStores().Where(x => x.BusinessEntityId == 2535).ToList(), 1));
 
-        _mockContactEntityRepository.Setup(x => x.GetContactsByStoreIdsAsync(It.IsAny<List<int>>()))
+        _mockContactEntityRepository.Setup(x => x.GetContactsByStoreIdsAsync(It.IsAny<List<int>>(), It.IsAny<CancellationToken>()))
             .ReturnsAsync(SalesDomainFixtures.GetMockContactEntities().ToList());
 
         var queryParam = new StoreParameter { PageNumber = 1, OrderBy = "Name", PageSize = 10, SortOrder = "ASC" };
@@ -196,20 +196,20 @@ public sealed class ReadStoreListQueryHandlerTests : UnitTestBase
     [Fact]
     public async Task Handle_skips_contact_fetch_when_IncludeContacts_is_falseAsync()
     {
-        _mockStoreRepository.Setup(x => x.GetStoresAsync(It.IsAny<StoreParameter>()))
+        _mockStoreRepository.Setup(x => x.GetStoresAsync(It.IsAny<StoreParameter>(), It.IsAny<bool>(), It.IsAny<CancellationToken>()))
             .ReturnsAsync((SalesDomainFixtures.GetMockStores().ToList(), 3));
 
         var param = new StoreParameter { PageNumber = 1, PageSize = 30, IncludeContacts = false };
 
         await _sut.Handle(new ReadStoreListQuery { Parameters = param }, CancellationToken.None);
 
-        _mockContactEntityRepository.Verify(x => x.GetContactsByStoreIdsAsync(It.IsAny<List<int>>()), Times.Never);
+        _mockContactEntityRepository.Verify(x => x.GetContactsByStoreIdsAsync(It.IsAny<List<int>>(), It.IsAny<CancellationToken>()), Times.Never);
     }
 
     [Fact]
     public async Task Handle_returns_empty_StoreContacts_when_IncludeContacts_is_falseAsync()
     {
-        _mockStoreRepository.Setup(x => x.GetStoresAsync(It.IsAny<StoreParameter>()))
+        _mockStoreRepository.Setup(x => x.GetStoresAsync(It.IsAny<StoreParameter>(), It.IsAny<bool>(), It.IsAny<CancellationToken>()))
             .ReturnsAsync((SalesDomainFixtures.GetMockStores().ToList(), 3));
 
         var param = new StoreParameter { PageNumber = 1, PageSize = 30, IncludeContacts = false };
@@ -222,10 +222,13 @@ public sealed class ReadStoreListQueryHandlerTests : UnitTestBase
     [Fact]
     public async Task Handle_returns_empty_StoreAddresses_when_IncludeAddresses_is_falseAsync()
     {
-        _mockStoreRepository.Setup(x => x.GetStoresAsync(It.IsAny<StoreParameter>()))
-            .ReturnsAsync((SalesDomainFixtures.GetMockStores().ToList(), 3));
+        var storesWithoutAddresses = SalesDomainFixtures.GetMockStores().ToList();
+        storesWithoutAddresses.ForEach(s => s.StoreBusinessEntity.BusinessEntityAddresses.Clear());
 
-        _mockContactEntityRepository.Setup(x => x.GetContactsByStoreIdsAsync(It.IsAny<List<int>>()))
+        _mockStoreRepository.Setup(x => x.GetStoresAsync(It.IsAny<StoreParameter>(), false, It.IsAny<CancellationToken>()))
+            .ReturnsAsync((storesWithoutAddresses.AsReadOnly(), 3));
+
+        _mockContactEntityRepository.Setup(x => x.GetContactsByStoreIdsAsync(It.IsAny<List<int>>(), It.IsAny<CancellationToken>()))
             .ReturnsAsync(SalesDomainFixtures.GetMockContactEntities().ToList());
 
         var param = new StoreParameter { PageNumber = 1, PageSize = 30, IncludeAddresses = false };

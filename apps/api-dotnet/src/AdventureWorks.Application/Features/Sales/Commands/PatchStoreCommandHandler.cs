@@ -28,7 +28,7 @@ public sealed class PatchStoreCommandHandler(
         ArgumentNullException.ThrowIfNull(request);
         ArgumentNullException.ThrowIfNull(request.PatchDocument);
 
-        var entity = await _storeRepository.GetByIdAsync(request.StoreId);
+        var entity = await _storeRepository.GetByIdAsync(request.StoreId, cancellationToken);
 
         if (entity == null)
         {
@@ -61,7 +61,7 @@ public sealed class PatchStoreCommandHandler(
         entity.SalesPersonId = model.SalesPersonId;
         entity.ModifiedDate = request.ModifiedDate;
 
-        await _storeRepository.UpdateAsync(entity);
+        await _storeRepository.UpdateAsync(entity, cancellationToken);
 
         return Unit.Value;
     }

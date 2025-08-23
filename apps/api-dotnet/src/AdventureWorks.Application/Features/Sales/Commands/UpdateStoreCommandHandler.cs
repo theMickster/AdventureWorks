@@ -23,7 +23,10 @@ public sealed class UpdateStoreCommandHandler(
 
         await _validator.ValidateAndThrowAsync(request.Model, cancellationToken);
         var currentEntity = await _storeRepository.GetByIdAsync(request.Model.Id, cancellationToken);
-        ArgumentNullException.ThrowIfNull(currentEntity);
+        if (currentEntity is null)
+        {
+            throw new KeyNotFoundException($"Store with ID {request.Model.Id} not found.");
+        }
         _mapper.Map(request.Model, currentEntity);
         currentEntity.ModifiedDate = request.ModifiedDate;
         await _storeRepository.UpdateAsync(currentEntity, cancellationToken);

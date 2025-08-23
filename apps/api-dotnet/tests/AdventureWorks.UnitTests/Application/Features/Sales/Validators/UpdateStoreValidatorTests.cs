@@ -1,4 +1,5 @@
-﻿using AdventureWorks.Application.Features.Sales.Validators;
+using AdventureWorks.Application.Features.Sales.Validators;
+using AdventureWorks.Application.PersistenceContracts.Repositories.Sales;
 using AdventureWorks.Models.Features.Sales;
 using FluentValidation.TestHelper;
 
@@ -6,7 +7,13 @@ namespace AdventureWorks.UnitTests.Application.Features.Sales.Validators;
 
 public sealed class UpdateStoreValidatorTests : UnitTestBase
 {
-    private readonly UpdateStoreValidator _sut = new();
+    private readonly Mock<ISalesPersonRepository> _mockSalesPersonRepository = new();
+    private readonly UpdateStoreValidator _sut;
+
+    public UpdateStoreValidatorTests()
+    {
+        _sut = new UpdateStoreValidator(_mockSalesPersonRepository.Object);
+    }
 
     [Fact]
     public void Validator_error_messages_are_correct()
@@ -18,34 +25,71 @@ public sealed class UpdateStoreValidatorTests : UnitTestBase
     [Theory]
     [InlineData("")]
     [InlineData("   ")]
-    public void Validator_should_have_store_name_errors(string name)
+    public async Task Validator_should_have_store_name_errors(string name)
     {
         var model = new StoreUpdateModel { Name = name };
-        var result = _sut.TestValidate(model);
+        var result = await _sut.TestValidateAsync(model);
         result.ShouldHaveValidationErrorFor(x => x.Name);
     }
 
     [Fact]
-    public void Validator_fails_when_store_name_is_too_long()
+    public async Task Validator_fails_when_store_name_is_too_long()
     {
         var model = new StoreUpdateModel { Name = new string('a', 51) };
-        var result = _sut.TestValidate(model);
+        var result = await _sut.TestValidateAsync(model);
         result.ShouldHaveValidationErrorFor(x => x.Name);
     }
 
     [Fact]
-    public void Validator_succeeds_when_store_name_is_exactly_50_characters()
+    public async Task Validator_succeeds_when_store_name_is_exactly_50_characters()
     {
         var model = new StoreUpdateModel { Name = new string('a', 50) };
-        var result = _sut.TestValidate(model);
+        var result = await _sut.TestValidateAsync(model);
         result.ShouldNotHaveValidationErrorFor(x => x.Name);
     }
 
     [Fact]
-    public void Validator_succeeds_when_all_data_is_valid()
+    public async Task Validator_succeeds_when_all_data_is_valid()
     {
         var model = new StoreUpdateModel { Name = "Valid Store Name" };
-        var result = _sut.TestValidate(model);
+        var result = await _sut.TestValidateAsync(model);
         result.ShouldNotHaveValidationErrorFor(x => x.Name);
+    }
+
+    [Fact]
+    public async Task ValidateAsync_Fails_When_SalesPersonId_DoesNotExist()
+    {
+        _mockSalesPersonRepository
+            .Setup(x => x.ExistsAsync(It.IsAny<int>(), It.IsAny<CancellationToken>()))
+            .ReturnsAsync(false);
+        var model = new StoreUpdateModel { Name = "Valid Store Name", SalesPersonId = 1 };
+
+        var result = await _sut.TestValidateAsync(model);
+
+        result.ShouldHaveValidationErrorFor(x => x.SalesPersonId)
+              .WithErrorCode("Rule-03");
+    }
+
+    [Fact]
+    public async Task ValidateAsync_Succeeds_When_SalesPersonId_IsValid()
+    {
+        _mockSalesPersonRepository
+            .Setup(x => x.ExistsAsync(It.IsAny<int>(), It.IsAny<CancellationToken>()))
+            .ReturnsAsync(true);
+        var model = new StoreUpdateModel { Name = "Valid Store Name", SalesPersonId = 1 };
+
+        var result = await _sut.TestValidateAsync(model);
+
+        result.ShouldNotHaveValidationErrorFor(x => x.SalesPersonId);
+    }
+
+    [Fact]
+    public async Task ValidateAsync_Succeeds_When_SalesPersonId_IsNull()
+    {
+        var model = new StoreUpdateModel { Name = "Valid Store Name", SalesPersonId = null };
+
+        var result = await _sut.TestValidateAsync(model);
+
+        result.ShouldNotHaveValidationErrorFor(x => x.SalesPersonId);
     }
 }

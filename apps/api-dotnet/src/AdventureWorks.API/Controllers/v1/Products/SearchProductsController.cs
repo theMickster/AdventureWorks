@@ -4,6 +4,7 @@ using AdventureWorks.Common.Filtering;
 using AdventureWorks.Models.Features.Production;
 using Asp.Versioning;
 using MediatR;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
 namespace AdventureWorks.API.Controllers.v1.Products;
@@ -11,13 +12,8 @@ namespace AdventureWorks.API.Controllers.v1.Products;
 /// <summary>
 /// The controller that coordinates searching for products with filter criteria.
 /// </summary>
-/// <remarks>
-/// This controller uses POST to accept a search body but performs a read-only query.
-/// It is intentionally unauthenticated as product catalog data is public.
-/// Per project security policy exception: POST verbs used purely for query filtering
-/// (no state mutation) do not require authorization.
-/// </remarks>
 [ApiController]
+[Authorize]
 [ApiVersion("1.0")]
 [ApiExplorerSettings(GroupName = "Products")]
 [Produces("application/json")]
@@ -40,7 +36,7 @@ public sealed class SearchProductsController : ControllerBase
         _mediator = mediator;
     }
 
-    /// <summary>Searches products using the provided filter criteria. Read-only; no authentication required.</summary>
+    /// <summary>Searches products using the provided filter criteria.</summary>
     /// <param name="parameters">product pagination query string</param>
     /// <param name="searchModel">the product search input model</param>
     /// <param name="cancellationToken">cancellation token</param>
@@ -58,7 +54,7 @@ public sealed class SearchProductsController : ControllerBase
                 "No results found for product search. Status={Status} Operation={Operation} ErrCode={ErrCode} ServiceId={ServiceId} {@Parameters}",
                 AppLoggingConstants.StatusNotFound,
                 "ProductSearchAsync",
-                AppLoggingConstants.HttpGetRequestErrorCode,
+                AppLoggingConstants.HttpPostRequestErrorCode,
                 "AdventureWorksApi",
                 parameters);
         }

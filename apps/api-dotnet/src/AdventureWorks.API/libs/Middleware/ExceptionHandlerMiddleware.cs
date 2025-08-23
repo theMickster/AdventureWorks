@@ -65,6 +65,15 @@ internal class ExceptionHandlerMiddleware(RequestDelegate next, ILogger<Exceptio
                 });
                 result = JsonSerializer.Serialize(errors, CamelCaseOptions);
                 break;
+            case KeyNotFoundException keyNotFoundException:
+                httpStatusCode = HttpStatusCode.NotFound;
+                result = JsonSerializer.Serialize(new
+                {
+                    error = keyNotFoundException.Message,
+                    correlationId = correlationId,
+                    timestamp = DateTime.UtcNow
+                });
+                break;
         }
 
         context.Response.StatusCode = (int)httpStatusCode;

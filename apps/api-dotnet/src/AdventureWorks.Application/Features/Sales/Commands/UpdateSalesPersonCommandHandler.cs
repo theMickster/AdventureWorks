@@ -24,7 +24,7 @@ public sealed class UpdateSalesPersonCommandHandler(
         await _validator.ValidateAndThrowAsync(request.Model, cancellationToken);
 
         // Fetch existing entity WITH related data (Employee and Person)
-        var currentEntity = await _salesPersonRepository.GetSalesPersonByIdAsync(request.Model.Id);
+        var currentEntity = await _salesPersonRepository.GetSalesPersonByIdAsync(request.Model.Id, cancellationToken);
         ArgumentNullException.ThrowIfNull(currentEntity);
         ArgumentNullException.ThrowIfNull(currentEntity.Employee);
         ArgumentNullException.ThrowIfNull(currentEntity.Employee.PersonBusinessEntity);

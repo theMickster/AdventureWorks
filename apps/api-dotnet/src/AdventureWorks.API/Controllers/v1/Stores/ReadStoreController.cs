@@ -52,7 +52,8 @@ public sealed class ReadStoreController : ControllerBase
     public async Task<IActionResult> GetByIdAsync(
         int storeId,
         [FromQuery] bool includeAddresses = true,
-        [FromQuery] bool includeContacts = true)
+        [FromQuery] bool includeContacts = true,
+        CancellationToken cancellationToken = default)
     {
         if (storeId <= 0)
         {
@@ -64,7 +65,7 @@ public sealed class ReadStoreController : ControllerBase
             Id = storeId,
             IncludeAddresses = includeAddresses,
             IncludeContacts = includeContacts
-        });
+        }, cancellationToken);
 
         return model is null ? NotFound("Unable to locate the store.") : Ok(model);
     }
@@ -77,9 +78,9 @@ public sealed class ReadStoreController : ControllerBase
     [HttpGet]
     [ProducesResponseType(StatusCodes.Status200OK, Type = typeof(StoreSearchResultModel))]
     [ProducesResponseType(StatusCodes.Status400BadRequest)]
-    public async Task<IActionResult> GetStoreListAsync([FromQuery] StoreParameter parameters)
+    public async Task<IActionResult> GetStoreListAsync([FromQuery] StoreParameter parameters, CancellationToken cancellationToken = default)
     {
-        var searchResult = await _mediator.Send( new ReadStoreListQuery{Parameters = parameters});
+        var searchResult = await _mediator.Send( new ReadStoreListQuery{Parameters = parameters}, cancellationToken);
 
         if (searchResult.Results is null or { Count: 0 })
         {
@@ -110,9 +111,9 @@ public sealed class ReadStoreController : ControllerBase
     [Route("search", Name = "SearchStoresAsync")]
     [ProducesResponseType(StatusCodes.Status200OK, Type = typeof(StoreSearchResultModel))]
     [ProducesResponseType(StatusCodes.Status400BadRequest)]
-    public async Task<IActionResult> SearchStoresAsync([FromQuery] StoreParameter parameters, [FromBody] StoreSearchModel storeSearchModel)
+    public async Task<IActionResult> SearchStoresAsync([FromQuery] StoreParameter parameters, [FromBody] StoreSearchModel storeSearchModel, CancellationToken cancellationToken = default)
     {
-        var searchResult = await _mediator.Send(new ReadStoreListQuery { Parameters = parameters, SearchModel = storeSearchModel});
+        var searchResult = await _mediator.Send(new ReadStoreListQuery { Parameters = parameters, SearchModel = storeSearchModel}, cancellationToken);
 
         if (searchResult.Results is null or { Count: 0 })
         {

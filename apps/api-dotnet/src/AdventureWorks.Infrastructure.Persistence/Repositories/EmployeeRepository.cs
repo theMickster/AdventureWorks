@@ -2,6 +2,7 @@ using AdventureWorks.Application.PersistenceContracts.Repositories;
 using AdventureWorks.Common.Attributes;
 using AdventureWorks.Common.Constants;
 using AdventureWorks.Common.Filtering;
+using AdventureWorks.Common.Helpers;
 using AdventureWorks.Domain.Entities.HumanResources;
 using AdventureWorks.Domain.Entities.Person;
 using AdventureWorks.Infrastructure.Persistence.DbContexts;
@@ -194,38 +195,38 @@ public sealed class EmployeeRepository(AdventureWorksDbContext dbContext)
             if (!string.IsNullOrWhiteSpace(employeeSearchModel.FirstName))
             {
                 employeeQuery = employeeQuery.Where(e =>
-                    e.PersonBusinessEntity.FirstName.ToLower().Contains(employeeSearchModel.FirstName.Trim().ToLower()));
+                    EF.Functions.Like(e.PersonBusinessEntity.FirstName, $"%{LikePatternHelper.EscapeLikePattern(employeeSearchModel.FirstName.Trim())}%"));
             }
 
             if (!string.IsNullOrWhiteSpace(employeeSearchModel.LastName))
             {
                 employeeQuery = employeeQuery.Where(e =>
-                    e.PersonBusinessEntity.LastName.ToLower().Contains(employeeSearchModel.LastName.Trim().ToLower()));
+                    EF.Functions.Like(e.PersonBusinessEntity.LastName, $"%{LikePatternHelper.EscapeLikePattern(employeeSearchModel.LastName.Trim())}%"));
             }
 
             if (!string.IsNullOrWhiteSpace(employeeSearchModel.JobTitle))
             {
                 employeeQuery = employeeQuery.Where(e =>
-                    e.JobTitle.ToLower().Contains(employeeSearchModel.JobTitle.Trim().ToLower()));
+                    EF.Functions.Like(e.JobTitle, $"%{LikePatternHelper.EscapeLikePattern(employeeSearchModel.JobTitle.Trim())}%"));
             }
 
             if (!string.IsNullOrWhiteSpace(employeeSearchModel.EmailAddress))
             {
                 employeeQuery = employeeQuery.Where(e =>
                     e.PersonBusinessEntity.EmailAddresses.Any(email =>
-                        email.EmailAddressName.ToLower().Contains(employeeSearchModel.EmailAddress.Trim().ToLower())));
+                        EF.Functions.Like(email.EmailAddressName, $"%{LikePatternHelper.EscapeLikePattern(employeeSearchModel.EmailAddress.Trim())}%")));
             }
 
             if (!string.IsNullOrWhiteSpace(employeeSearchModel.NationalIdNumber))
             {
                 employeeQuery = employeeQuery.Where(e =>
-                    e.NationalIdnumber.ToLower().Contains(employeeSearchModel.NationalIdNumber.Trim().ToLower()));
+                    EF.Functions.Like(e.NationalIdnumber, $"%{LikePatternHelper.EscapeLikePattern(employeeSearchModel.NationalIdNumber.Trim())}%"));
             }
 
             if (!string.IsNullOrWhiteSpace(employeeSearchModel.LoginId))
             {
                 employeeQuery = employeeQuery.Where(e =>
-                    e.LoginId.ToLower().Contains(employeeSearchModel.LoginId.Trim().ToLower()));
+                    EF.Functions.Like(e.LoginId, $"%{LikePatternHelper.EscapeLikePattern(employeeSearchModel.LoginId.Trim())}%"));
             }
         }
 

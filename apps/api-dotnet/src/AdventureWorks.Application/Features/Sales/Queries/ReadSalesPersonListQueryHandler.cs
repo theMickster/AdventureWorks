@@ -28,11 +28,11 @@ public sealed class ReadSalesPersonListQueryHandler(
 
         if (request.SearchModel is null)
         {
-            (salesPersonEntities, totalRecords) = await _salesPersonRepository.GetSalesPersonsAsync(request.Parameters);
+            (salesPersonEntities, totalRecords) = await _salesPersonRepository.GetSalesPersonsAsync(request.Parameters, cancellationToken);
         }
         else
         {
-            (salesPersonEntities, totalRecords) = await _salesPersonRepository.SearchSalesPersonsAsync(request.Parameters, request.SearchModel);
+            (salesPersonEntities, totalRecords) = await _salesPersonRepository.SearchSalesPersonsAsync(request.Parameters, request.SearchModel, cancellationToken);
         }
 
         if (salesPersonEntities is null or { Count: 0 })

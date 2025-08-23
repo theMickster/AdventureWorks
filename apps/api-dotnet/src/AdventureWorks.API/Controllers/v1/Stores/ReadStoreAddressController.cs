@@ -43,7 +43,7 @@ public sealed class ReadStoreAddressController : ControllerBase
     [ProducesResponseType(typeof(List<BusinessEntityAddressModel>), StatusCodes.Status200OK)]
     [ProducesResponseType(StatusCodes.Status400BadRequest)]
     [ProducesResponseType(StatusCodes.Status500InternalServerError)]
-    public async Task<IActionResult> GetAllAsync(int storeId)
+    public async Task<IActionResult> GetAllAsync(int storeId, CancellationToken cancellationToken = default)
     {
         if (storeId <= 0)
         {
@@ -54,7 +54,7 @@ public sealed class ReadStoreAddressController : ControllerBase
 
         var query = new ReadStoreAddressListQuery { StoreId = storeId };
 
-        var addresses = await _mediator.Send(query);
+        var addresses = await _mediator.Send(query, cancellationToken);
 
         _logger.LogInformation("Retrieved {Count} addresses for store {StoreId}", addresses.Count, storeId);
 

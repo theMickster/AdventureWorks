@@ -21,8 +21,8 @@ public sealed class ReadProductPriceHistoryQueryHandler(
         var costTask = _productRepository.GetCostHistoryByProductIdAsync(request.ProductId, cancellationToken);
         await Task.WhenAll(listPriceTask, costTask);
 
-        var listPriceModels = _mapper.Map<List<ProductPriceHistoryModel>>(listPriceTask.Result);
-        var costModels = _mapper.Map<List<ProductPriceHistoryModel>>(costTask.Result);
+        var listPriceModels = _mapper.Map<List<ProductPriceHistoryModel>>(await listPriceTask);
+        var costModels = _mapper.Map<List<ProductPriceHistoryModel>>(await costTask);
 
         var combined = listPriceModels.Concat(costModels)
             .OrderBy(h => h.StartDate)

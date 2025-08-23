@@ -30,11 +30,11 @@ public sealed class ReadStoreListQueryHandler(
 
         if (request.SearchModel is null)
         {
-            (storeEntities, totalRecords) = await _storeRepository.GetStoresAsync(request.Parameters);
+            (storeEntities, totalRecords) = await _storeRepository.GetStoresAsync(request.Parameters, request.Parameters.IncludeAddresses, cancellationToken);
         }
         else
         {
-            (storeEntities, totalRecords) = await _storeRepository.SearchStoresAsync(request.Parameters, request.SearchModel);
+            (storeEntities, totalRecords) = await _storeRepository.SearchStoresAsync(request.Parameters, request.SearchModel, request.Parameters.IncludeAddresses, cancellationToken);
         }
 
         if (storeEntities is null or { Count: 0 })
@@ -42,7 +42,7 @@ public sealed class ReadStoreListQueryHandler(
             return result;
         }
 
-        var stores = await CraftStoreModelsAsync(storeEntities, request.Parameters.IncludeContacts, request.Parameters.IncludeAddresses);
+        var stores = await CraftStoreModelsAsync(storeEntities, request.Parameters.IncludeContacts, cancellationToken);
 
         result.Results = stores;
         result.TotalRecords = totalRecords;
@@ -57,30 +57,24 @@ public sealed class ReadStoreListQueryHandler(
     /// </summary>
     /// <param name="storeEntities">the list of store entities from the data access layer</param>
     /// <param name="includeContacts">whether to populate store contacts</param>
-    /// <param name="includeAddresses">whether to populate store addresses</param>
     /// <returns></returns>
     private async Task<List<StoreModel>> CraftStoreModelsAsync(
         IReadOnlyList<StoreEntity> storeEntities,
         bool includeContacts,
-        bool includeAddresses)
+        CancellationToken cancellationToken)
     {
         var stores = _mapper.Map<List<StoreModel>>(storeEntities);
 
         if (includeContacts)
         {
             var contactModels = _mapper.Map<List<StoreContactModel>>(await _beceRepository
-                .GetContactsByStoreIdsAsync(storeEntities.Select(x => x.BusinessEntityId).ToList()).ConfigureAwait(false));
+                .GetContactsByStoreIdsAsync(storeEntities.Select(x => x.BusinessEntityId).ToList(), cancellationToken).ConfigureAwait(false));
 
             stores.ForEach(y => { y.StoreContacts = contactModels.Where(x => x.StoreId == y.Id).ToList(); });
         }
         else
         {
             stores.ForEach(y => { y.StoreContacts = []; });
-        }
-
-        if (!includeAddresses)
-        {
-            stores.ForEach(y => { y.StoreAddresses = []; });
         }
 
         return stores;

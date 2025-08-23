@@ -15,7 +15,7 @@ public sealed class ReadSalesPersonQueryHandler(
 
     public async Task<SalesPersonModel?> Handle(ReadSalesPersonQuery request, CancellationToken cancellationToken)
     {
-        var salesPersonEntity = await _repository.GetSalesPersonByIdAsync(request.Id);
+        var salesPersonEntity = await _repository.GetSalesPersonByIdAsync(request.Id, cancellationToken);
 
         if (salesPersonEntity == null)
         {

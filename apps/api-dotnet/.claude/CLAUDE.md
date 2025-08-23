@@ -206,6 +206,7 @@ See **[guides/adding-features.md](guides/adding-features.md)** for complete code
 - Read flags such as include/exclude options must change query shape, not just clear mapped collections after loading.
 - Keep reads `AsNoTracking()` unless mutation requires tracking.
 - Never use `.Result` or `.Wait()`, even after `Task.WhenAll(...)`.
+- User input in `EF.Functions.Like(...)` patterns must have `%`, `_`, `[`, `]` escaped via `EscapeLikePattern(input)` before interpolation; unescaped wildcards bypass all filtering and are a DoS risk on public endpoints.
 
 ## Auth Intent Guardrails
 
@@ -291,6 +292,7 @@ Before finishing an API task, verify all of the following:
 - Track entities for read queries
 - Organize by technical layer
 - Reference Infrastructure from Application
+- Use inline `new[] { "A", "B" }` inside `Must(...)` validator predicates for bounded domain code sets — use `private static readonly HashSet<string?>`
 
 ---
 

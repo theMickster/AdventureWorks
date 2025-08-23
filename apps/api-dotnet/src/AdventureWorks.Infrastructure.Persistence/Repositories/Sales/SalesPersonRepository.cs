@@ -2,6 +2,7 @@
 using AdventureWorks.Common.Attributes;
 using AdventureWorks.Common.Constants;
 using AdventureWorks.Common.Filtering;
+using AdventureWorks.Common.Helpers;
 using AdventureWorks.Domain.Entities.HumanResources;
 using AdventureWorks.Domain.Entities.Person;
 using AdventureWorks.Domain.Entities.Sales;
@@ -176,7 +177,7 @@ public sealed class SalesPersonRepository(AdventureWorksDbContext dbContext)
     /// </summary>
     /// <param name="salesPersonId">the unique sales person identifier</param>
     /// <returns></returns>
-    public async Task<SalesPersonEntity?> GetSalesPersonByIdAsync(int salesPersonId)
+    public async Task<SalesPersonEntity?> GetSalesPersonByIdAsync(int salesPersonId, CancellationToken cancellationToken = default)
     {
         return await DbContext.SalesPersons
             .AsNoTracking()
@@ -184,16 +185,16 @@ public sealed class SalesPersonRepository(AdventureWorksDbContext dbContext)
                 .ThenInclude(y => y.PersonBusinessEntity)
                 .ThenInclude(z => z.EmailAddresses)
             .Include(x => x.SalesTerritory)
-            .FirstOrDefaultAsync(x => x.BusinessEntityId == salesPersonId);
+            .FirstOrDefaultAsync(x => x.BusinessEntityId == salesPersonId, cancellationToken);
     }
 
     /// <summary>
     /// Retrieves a paginated list of sales persons and the total count of sales persons in the database.
     /// </summary>
     /// <param name="parameters">the input paging parameters</param>
-    public async Task<(IReadOnlyList<SalesPersonEntity>, int)> GetSalesPersonsAsync(SalesPersonParameter parameters)
+    public async Task<(IReadOnlyList<SalesPersonEntity>, int)> GetSalesPersonsAsync(SalesPersonParameter parameters, CancellationToken cancellationToken = default)
     {
-        var totalCount = await DbContext.SalesPersons.CountAsync();
+        var totalCount = await DbContext.SalesPersons.CountAsync(cancellationToken);
 
         var salesPersonQuery = DbContext.SalesPersons
             .AsNoTracking()
@@ -224,7 +225,7 @@ public sealed class SalesPersonRepository(AdventureWorksDbContext dbContext)
 
         salesPersonQuery = salesPersonQuery.Skip(parameters.GetRecordsToSkip()).Take(parameters.PageSize);
 
-        var results = await salesPersonQuery.ToListAsync();
+        var results = await salesPersonQuery.ToListAsync(cancellationToken);
 
         return (results.AsReadOnly(), totalCount);
     }
@@ -234,10 +235,12 @@ public sealed class SalesPersonRepository(AdventureWorksDbContext dbContext)
     /// </summary>
     /// <param name="parameters"></param>
     /// <param name="salesPersonSearchModel"></param>
+    /// <param name="cancellationToken">token to cancel the operation</param>
     /// <returns></returns>
     public async Task<(IReadOnlyList<SalesPersonEntity>, int)> SearchSalesPersonsAsync(
         SalesPersonParameter parameters,
-        SalesPersonSearchModel salesPersonSearchModel)
+        SalesPersonSearchModel salesPersonSearchModel,
+        CancellationToken cancellationToken = default)
     {
         var salesPersonQuery = DbContext.SalesPersons
             .AsNoTracking()
@@ -257,13 +260,13 @@ public sealed class SalesPersonRepository(AdventureWorksDbContext dbContext)
             if (!string.IsNullOrWhiteSpace(salesPersonSearchModel.FirstName))
             {
                 salesPersonQuery = salesPersonQuery.Where(y =>
-                    y.Employee.PersonBusinessEntity.FirstName.ToLower().Contains(salesPersonSearchModel.FirstName.Trim().ToLower()));
+                    EF.Functions.Like(y.Employee.PersonBusinessEntity.FirstName, $"%{LikePatternHelper.EscapeLikePattern(salesPersonSearchModel.FirstName.Trim())}%"));
             }
 
             if (!string.IsNullOrWhiteSpace(salesPersonSearchModel.LastName))
             {
                 salesPersonQuery = salesPersonQuery.Where(y =>
-                    y.Employee.PersonBusinessEntity.LastName.ToLower().Contains(salesPersonSearchModel.LastName.Trim().ToLower()));
+                    EF.Functions.Like(y.Employee.PersonBusinessEntity.LastName, $"%{LikePatternHelper.EscapeLikePattern(salesPersonSearchModel.LastName.Trim())}%"));
             }
 
             if (salesPersonSearchModel.SalesTerritoryId != null)
@@ -275,21 +278,21 @@ public sealed class SalesPersonRepository(AdventureWorksDbContext dbContext)
             {
                 salesPersonQuery = salesPersonQuery.Where(y =>
                     y.SalesTerritory != null &&
-                    y.SalesTerritory.Name.ToLower().Contains(salesPersonSearchModel.SalesTerritoryName.Trim().ToLower()));
+                    EF.Functions.Like(y.SalesTerritory.Name, $"%{LikePatternHelper.EscapeLikePattern(salesPersonSearchModel.SalesTerritoryName.Trim())}%"));
             }
 
             if (!string.IsNullOrWhiteSpace(salesPersonSearchModel.SalesTerritoryGroupName))
             {
                 salesPersonQuery = salesPersonQuery.Where(y =>
                     y.SalesTerritory != null &&
-                    y.SalesTerritory.Group.ToLower().Contains(salesPersonSearchModel.SalesTerritoryGroupName.Trim().ToLower()));
+                    EF.Functions.Like(y.SalesTerritory.Group, $"%{LikePatternHelper.EscapeLikePattern(salesPersonSearchModel.SalesTerritoryGroupName.Trim())}%"));
             }
 
             if (!string.IsNullOrWhiteSpace(salesPersonSearchModel.EmailAddress))
             {
                 salesPersonQuery = salesPersonQuery.Where(y =>
                     y.Employee.PersonBusinessEntity.EmailAddresses.Any(e =>
-                        e.EmailAddressName.ToLower().Contains(salesPersonSearchModel.EmailAddress.Trim().ToLower())));
+                        EF.Functions.Like(e.EmailAddressName, $"%{LikePatternHelper.EscapeLikePattern(salesPersonSearchModel.EmailAddress.Trim())}%")));
             }
         }
 
@@ -307,12 +310,22 @@ public sealed class SalesPersonRepository(AdventureWorksDbContext dbContext)
             _ => salesPersonQuery
         };
 
-        var totalCount = await salesPersonQuery.CountAsync();
+        var totalCount = await salesPersonQuery.CountAsync(cancellationToken);
 
         salesPersonQuery = salesPersonQuery.Skip(parameters.GetRecordsToSkip()).Take(parameters.PageSize);
 
-        var results = await salesPersonQuery.ToListAsync();
+        var results = await salesPersonQuery.ToListAsync(cancellationToken);
 
         return (results.AsReadOnly(), totalCount);
+    }
+
+    /// <summary>
+    /// Returns true if a sales person with the given id exists.
+    /// </summary>
+    /// <param name="id">the sales person business entity id</param>
+    /// <param name="cancellationToken">token to cancel the operation</param>
+    public async Task<bool> ExistsAsync(int id, CancellationToken cancellationToken = default)
+    {
+        return await DbContext.SalesPersons.AnyAsync(x => x.BusinessEntityId == id, cancellationToken);
     }
 }

@@ -66,6 +66,6 @@ public sealed class UpdateProductController : ControllerBase
         await _mediator.Send(cmd, cancellationToken);
         var model = await _mediator.Send(new ReadProductQuery { Id = id }, cancellationToken);
 
-        return Ok(model);
+        return model is null ? NotFound(new { Message = $"Product with ID {id} not found." }) : Ok(model);
     }
 }

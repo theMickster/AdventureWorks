@@ -18,7 +18,7 @@ public sealed class ReadStoreQueryHandler (
 
     public async Task<StoreModel?> Handle(ReadStoreQuery request, CancellationToken cancellationToken)
     {
-        var storeEntity = await _storeRepository.GetStoreByIdAsync(request.Id);
+        var storeEntity = await _storeRepository.GetStoreByIdAsync(request.Id, request.IncludeAddresses, cancellationToken);
         if (storeEntity == null)
         {
             return null;
@@ -28,17 +28,12 @@ public sealed class ReadStoreQueryHandler (
 
         if (request.IncludeContacts)
         {
-            var storeContacts = await _beceRepository.GetContactsByIdAsync(request.Id);
+            var storeContacts = await _beceRepository.GetContactsByIdAsync(request.Id, cancellationToken);
             storeModel.StoreContacts = _mapper.Map<List<StoreContactModel>>(storeContacts);
         }
         else
         {
             storeModel.StoreContacts = [];
-        }
-
-        if (!request.IncludeAddresses)
-        {
-            storeModel.StoreAddresses = [];
         }
 
         return storeModel;

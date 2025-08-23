@@ -2,6 +2,7 @@ using AdventureWorks.Application.PersistenceContracts.Repositories.Production;
 using AdventureWorks.Common.Attributes;
 using AdventureWorks.Common.Constants;
 using AdventureWorks.Common.Filtering;
+using AdventureWorks.Common.Helpers;
 using AdventureWorks.Domain.Entities.Production;
 using AdventureWorks.Infrastructure.Persistence.DbContexts;
 using Microsoft.EntityFrameworkCore;
@@ -39,12 +40,7 @@ public sealed class ProductRepository(AdventureWorksDbContext dbContext)
     /// <param name="parameters">the input paging parameters</param>
     public async Task<(IReadOnlyList<Product>, int)> GetProductsAsync(ProductParameter parameters, CancellationToken cancellationToken = default)
     {
-        var query = DbContext.Products
-            .AsNoTracking()
-            .Include(p => p.ProductSubcategory)
-                .ThenInclude(sc => sc.ProductCategory)
-            .Include(p => p.ProductModel)
-            .AsQueryable();
+        var query = BuildProductListQuery();
 
         query = ApplySorting(query, parameters);
 
@@ -65,12 +61,7 @@ public sealed class ProductRepository(AdventureWorksDbContext dbContext)
         ProductSearchModel searchModel,
         CancellationToken cancellationToken = default)
     {
-        var query = DbContext.Products
-            .AsNoTracking()
-            .Include(p => p.ProductSubcategory)
-                .ThenInclude(sc => sc.ProductCategory)
-            .Include(p => p.ProductModel)
-            .AsQueryable();
+        var query = BuildProductListQuery();
 
         if (searchModel != null)
         {
@@ -81,14 +72,14 @@ public sealed class ProductRepository(AdventureWorksDbContext dbContext)
 
             if (!string.IsNullOrWhiteSpace(searchModel.Name))
             {
-                var nameTrimmed = searchModel.Name.Trim();
-                query = query.Where(p => EF.Functions.Like(p.Name, $"%{nameTrimmed}%"));
+                var pattern = $"%{EscapeLikePattern(searchModel.Name.Trim())}%";
+                query = query.Where(p => EF.Functions.Like(p.Name, pattern));
             }
 
             if (!string.IsNullOrWhiteSpace(searchModel.ProductNumber))
             {
-                var productNumberTrimmed = searchModel.ProductNumber.Trim();
-                query = query.Where(p => EF.Functions.Like(p.ProductNumber, $"%{productNumberTrimmed}%"));
+                var pattern = $"%{EscapeLikePattern(searchModel.ProductNumber.Trim())}%";
+                query = query.Where(p => EF.Functions.Like(p.ProductNumber, pattern));
             }
 
             if (searchModel.CategoryId != null)
@@ -104,9 +95,9 @@ public sealed class ProductRepository(AdventureWorksDbContext dbContext)
 
             if (!string.IsNullOrWhiteSpace(searchModel.Color))
             {
-                var colorTrimmed = searchModel.Color.Trim();
+                var pattern = $"%{EscapeLikePattern(searchModel.Color.Trim())}%";
                 query = query.Where(p => p.Color != null
-                    && EF.Functions.Like(p.Color, $"%{colorTrimmed}%"));
+                    && EF.Functions.Like(p.Color, pattern));
             }
 
             if (searchModel.MinListPrice != null)
@@ -214,6 +205,21 @@ public sealed class ProductRepository(AdventureWorksDbContext dbContext)
     }
 
     #region Private Methods
+
+    /// <summary>
+    /// Builds the base product list query with standard includes for list and search operations.
+    /// </summary>
+    private IQueryable<Product> BuildProductListQuery()
+    {
+        return DbContext.Products
+            .AsNoTracking()
+            .Include(p => p.ProductSubcategory)
+                .ThenInclude(sc => sc.ProductCategory)
+            .Include(p => p.ProductModel)
+            .AsQueryable();
+    }
+
+    private static string EscapeLikePattern(string value) => LikePatternHelper.EscapeLikePattern(value);
 
     private static IQueryable<Product> ApplySorting(IQueryable<Product> query, ProductParameter parameters)
     {

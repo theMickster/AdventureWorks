@@ -21,15 +21,16 @@ public sealed class BusinessEntityContactEntityRepository : EfRepository<Busines
     /// Retrieve the list of business contacts for a given store (business entity) id
     /// </summary>
     /// <param name="businessEntityId">the unique business entity (store) identifier</param>
+    /// <param name="cancellationToken">token to cancel the operation</param>
     /// <returns></returns>
-    public async Task<List<BusinessEntityContactEntity>> GetContactsByIdAsync(int businessEntityId)
+    public async Task<List<BusinessEntityContactEntity>> GetContactsByIdAsync(int businessEntityId, CancellationToken cancellationToken = default)
     {
         return await DbContext.BusinessEntityContacts
             .Include(x => x.ContactType)
             .Include(x => x.Person)
             .ThenInclude(x => x.PersonType)
             .Where(x => x.BusinessEntityId == businessEntityId)
-            .ToListAsync();
+            .ToListAsync(cancellationToken);
     }
 
     /// <summary>
@@ -37,13 +38,13 @@ public sealed class BusinessEntityContactEntityRepository : EfRepository<Busines
     /// </summary>
     /// <param name="businessEntityIds">the list of business entity (store) identifiers</param>
     /// <returns></returns>
-    public async Task<List<BusinessEntityContactEntity>> GetContactsByStoreIdsAsync(List<int> businessEntityIds)
+    public async Task<List<BusinessEntityContactEntity>> GetContactsByStoreIdsAsync(List<int> businessEntityIds, CancellationToken cancellationToken = default)
     {
         return await DbContext.BusinessEntityContacts
             .Include(x => x.ContactType)
             .Include(x => x.Person)
             .ThenInclude(x => x.PersonType)
             .Where(x => businessEntityIds.Contains(x.BusinessEntityId))
-            .ToListAsync();
+            .ToListAsync(cancellationToken);
     }
 }

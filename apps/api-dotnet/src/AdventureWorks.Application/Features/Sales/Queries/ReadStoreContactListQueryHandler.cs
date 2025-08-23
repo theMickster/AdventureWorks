@@ -25,11 +25,11 @@ public sealed class ReadStoreContactListQueryHandler(
     {
         ArgumentNullException.ThrowIfNull(request);
 
-        var contacts = await _beceRepository.GetContactsByIdAsync(request.StoreId);
+        var contacts = await _beceRepository.GetContactsByIdAsync(request.StoreId, cancellationToken);
 
         if (contacts is null or { Count: 0 })
         {
-            return new List<StoreContactModel>();
+            return [];
         }
 
         return _mapper.Map<List<StoreContactModel>>(contacts);
