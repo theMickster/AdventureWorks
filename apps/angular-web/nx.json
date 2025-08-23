@@ -20,7 +20,10 @@
     },
     "@nx/eslint:lint": {
       "cache": true,
-      "inputs": ["default", "{workspaceRoot}/eslint.config.mjs"]
+      "inputs": ["default", "{workspaceRoot}/eslint.config.mjs"],
+      "options": {
+        "maxWarnings": 0
+      }
     },
     "@nx/vitest:test": {
       "cache": true,
