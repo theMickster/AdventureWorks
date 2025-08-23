@@ -10,7 +10,7 @@ export { LanguageService } from './lib/i18n/language.service';
 export { LoadingService } from './lib/loading/loading.service';
 export { NotificationService } from './lib/notification/notification.service';
 export type { Notification, NotificationType } from './lib/notification/notification.service';
-export { AppInsightsService, appInsightsErrorHandler } from './lib/telemetry/app-insights.service';
+export { AppInsightsService, AppInsightsErrorHandler } from './lib/telemetry/app-insights.service';
 export type { AuthUser } from './lib/auth/auth.model';
 export { AuthService } from './lib/auth/auth.service';
 export { msalInstanceFactory, msalInterceptorConfigFactory, msalGuardConfigFactory } from './lib/auth/msal-config';

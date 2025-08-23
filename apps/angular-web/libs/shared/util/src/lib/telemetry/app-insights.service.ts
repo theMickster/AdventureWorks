@@ -1,56 +1,88 @@
+import type { ApplicationInsights } from '@microsoft/applicationinsights-web';
 import { ErrorHandler, inject, Injectable } from '@angular/core';
 import { Router } from '@angular/router';
-import {
-  AngularPlugin,
-  ApplicationinsightsAngularpluginErrorService,
-} from '@microsoft/applicationinsights-angularplugin-js';
-import { ApplicationInsights } from '@microsoft/applicationinsights-web';
 import { ENVIRONMENT } from '../environment/environment.token';
+
+type PendingCall =
+  | { type: 'event'; name: string; properties?: Record<string, string> }
+  | { type: 'exception'; error: Error };
 
 /** Initializes Azure Application Insights with the Angular plugin for page view tracking and exception logging. */
 @Injectable({ providedIn: 'root' })
 export class AppInsightsService {
-  private readonly appInsights: ApplicationInsights | null = null;
+  private readonly env = inject(ENVIRONMENT);
+  private readonly router = inject(Router);
+  private sdk: ApplicationInsights | null = null;
+  private readonly pending: PendingCall[] = [];
 
-  constructor() {
-    const env = inject(ENVIRONMENT);
-    const router = inject(Router);
-
-    if (!env.appInsights?.connectionString || env.appInsights.connectionString.startsWith('__')) {
+  /** Dynamically loads the App Insights SDK and flushes any queued events. Idempotent — safe to call more than once. */
+  async initialize(): Promise<void> {
+    if (this.sdk) {
       return;
     }
 
-    const angularPlugin = new AngularPlugin();
+    const appInsights = this.env.appInsights;
+    if (!appInsights?.connectionString || appInsights.connectionString.startsWith('__')) {
+      return;
+    }
 
-    this.appInsights = new ApplicationInsights({
+    const [{ ApplicationInsights }, { AngularPlugin }] = await Promise.all([
+      import('@microsoft/applicationinsights-web'),
+      import('@microsoft/applicationinsights-angularplugin-js'),
+    ]);
+
+    const angularPlugin = new AngularPlugin();
+    this.sdk = new ApplicationInsights({
       config: {
-        connectionString: env.appInsights.connectionString,
+        connectionString: appInsights.connectionString,
         extensions: [angularPlugin],
-        extensionConfig: {
-          [angularPlugin.identifier]: { router },
-        },
+        extensionConfig: { [angularPlugin.identifier]: { router: this.router } },
       },
     });
 
-    this.appInsights.loadAppInsights();
-
-    this.appInsights.addTelemetryInitializer((envelope) => {
+    this.sdk.loadAppInsights();
+    this.sdk.addTelemetryInitializer((envelope) => {
       if (envelope.tags) {
-        envelope.tags['ai.cloud.role'] = env.appInsights!.cloudRoleName;
+        envelope.tags['ai.cloud.role'] = appInsights.cloudRoleName;
       }
     });
+
+    for (const call of this.pending) {
+      if (call.type === 'event') {
+        this.sdk.trackEvent({ name: call.name }, call.properties);
+      } else {
+        this.sdk.trackException({ exception: call.error });
+      }
+    }
+    this.pending.length = 0;
   }
 
-  /** Track a custom event. */
+  /** Track a custom event. Queued if called before initialize() completes. */
   trackEvent(name: string, properties?: Record<string, string>): void {
-    this.appInsights?.trackEvent({ name }, properties);
+    if (this.sdk) {
+      this.sdk.trackEvent({ name }, properties);
+    } else {
+      this.pending.push({ type: 'event', name, properties });
+    }
   }
 
-  /** Track an exception. */
+  /** Track an exception. Queued if called before initialize() completes. */
   trackException(error: Error): void {
-    this.appInsights?.trackException({ exception: error });
+    if (this.sdk) {
+      this.sdk.trackException({ exception: error });
+    } else {
+      this.pending.push({ type: 'exception', error });
+    }
   }
 }
 
-/** Angular ErrorHandler that reports unhandled exceptions to Application Insights. */
-export const appInsightsErrorHandler: ErrorHandler = new ApplicationinsightsAngularpluginErrorService();
+/** Angular ErrorHandler that routes unhandled exceptions to App Insights without a static SDK import. */
+@Injectable()
+export class AppInsightsErrorHandler implements ErrorHandler {
+  private readonly appInsights = inject(AppInsightsService);
+
+  handleError(error: unknown): void {
+    this.appInsights.trackException(error instanceof Error ? error : new Error(String(error)));
+    console.error(error);
+  }
+}

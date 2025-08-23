@@ -1,7 +1,11 @@
 import { describe, it, expect, beforeEach } from 'vitest';
 import { TestBed } from '@angular/core/testing';
+import { ActivatedRouteSnapshot, RouterStateSnapshot } from '@angular/router';
 import { ConfirmService } from '../confirm/confirm.service';
 import { HasUnsavedChanges, unsavedChangesGuard } from './unsaved-changes.guard';
+
+const nullRoute = null as unknown as ActivatedRouteSnapshot;
+const nullState = null as unknown as RouterStateSnapshot;
 
 describe('unsavedChangesGuard', () => {
   let confirmService: ConfirmService;
@@ -14,7 +18,7 @@ describe('unsavedChangesGuard', () => {
   it('should allow navigation when component has no unsaved changes', () => {
     const component: HasUnsavedChanges = { hasUnsavedChanges: () => false };
 
-    const result = TestBed.runInInjectionContext(() => unsavedChangesGuard(component, null!, null!, null!));
+    const result = TestBed.runInInjectionContext(() => unsavedChangesGuard(component, nullRoute, nullState, nullState));
 
     expect(result).toBe(true);
   });
@@ -23,7 +27,7 @@ describe('unsavedChangesGuard', () => {
     const component: HasUnsavedChanges = { hasUnsavedChanges: () => true };
 
     const result = TestBed.runInInjectionContext(() =>
-      unsavedChangesGuard(component, null!, null!, null!),
+      unsavedChangesGuard(component, nullRoute, nullState, nullState),
     ) as Promise<boolean>;
 
     // ConfirmService should now be visible with the unsaved changes dialog
@@ -39,7 +43,7 @@ describe('unsavedChangesGuard', () => {
     const component: HasUnsavedChanges = { hasUnsavedChanges: () => true };
 
     const result = TestBed.runInInjectionContext(() =>
-      unsavedChangesGuard(component, null!, null!, null!),
+      unsavedChangesGuard(component, nullRoute, nullState, nullState),
     ) as Promise<boolean>;
 
     confirmService.resolve(false);
