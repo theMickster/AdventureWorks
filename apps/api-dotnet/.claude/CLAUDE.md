@@ -75,7 +75,7 @@ tests/AdventureWorks.UnitTests/      # xUnit tests (handlers, controllers, repos
 - Handler: IMapper, IRepository -> Fetch (AsNoTracking) -> Map -> Return DTO
 
 **Controller Pattern**: Thin, delegates to MediatR
-- Attributes: `[ApiController]`, `[Authorize]`, `[ApiVersion("1.0")]`
+- Attributes: `[ApiController]`, `[ApiVersion("1.0")]`, plus explicit auth intent (`[Authorize]` for protected endpoints, `[AllowAnonymous]` only for deliberate public exceptions)
 - Commands: `CreatedAtRoute()` | Queries: `Ok(model)`
 
 #### FluentValidation Pattern
@@ -97,6 +97,7 @@ Ignore audit fields (ModifiedDate, Rowguid, Id). Use `ForPath()` for nested mapp
 #### Exception Handling Middleware
 
 ValidationException -> 400 with error details. All responses include `X-Correlation-Id`.
+Any new expected exception type used for normal API flows must be translated in middleware or handled explicitly in the controller in the same change.
 See: `AdventureWorks.API/libs/Middleware/ExceptionHandlerMiddleware.cs`
 
 ---
@@ -142,11 +143,12 @@ See **[guides/adding-features.md](guides/adding-features.md)** for complete code
 
 ### Security Rules (MANDATORY)
 
-1. **JWT Required**: Write endpoints (POST/PUT/DELETE) MUST have `[Authorize]`
+1. **JWT Required**: Write endpoints (POST/PUT/PATCH/DELETE) MUST have `[Authorize]`
 2. **Never Expose Entities**: Return DTOs only
 3. **Validate All Input**: Every command needs FluentValidation
 4. **No Secrets in Code**: Use Key Vault (Prod) or User Secrets (Dev)
 5. **CorrelationId**: Middleware handles automatically
+6. **Public Endpoint Exceptions**: A semantically read-only public endpoint is allowed only when it is explicitly marked and justified (`[AllowAnonymous]` + short rationale)
 
 ### Security Functions
 
@@ -170,8 +172,57 @@ See **[guides/adding-features.md](guides/adding-features.md)** for complete code
 ### Authentication
 
 - JWT Bearer via Microsoft Identity Web (`.AddMicrosoftIdentityWebApi()`)
-- `[Authorize]` attribute on controllers
+- Protected endpoints use `[Authorize]`; intentionally public endpoints opt out explicitly with `[AllowAnonymous]`
 - CORS: Configure restrictively for Production
+
+---
+
+## Exception and Contract Policy
+
+- Documented HTTP responses must match actual runtime behavior.
+- Expected request failures are translated intentionally:
+  - missing resource -> `404`
+  - invalid input -> `400`
+  - auth failure -> framework auth response
+- If a controller advertises `404`, confirm the handler/controller/middleware path actually returns `404` and does not fall through to `500`.
+- Use one deliberate not-found strategy per flow:
+  - return `null` and translate to `NotFound(...)`, or
+  - throw a known exception type and map it intentionally
+- If you introduce a new expected exception type, update middleware/controller handling in the same change.
+- Do not rely on a follow-up read after a command to correct an exception path that already failed.
+- Do not expose raw exception text for expected client-facing failures.
+
+## Validation Guardrails
+
+- Validate FK-backed or externally referenced IDs when practical before persistence.
+- Do not rely on database constraints or `DbUpdateException` as the primary way to reject bad client input.
+- Patch flows must validate the patched model before saving.
+- Validators should cover more than required-field checks when the model controls relationships or constrained values.
+
+## Async and Query Guardrails
+
+- `CancellationToken` must be threaded end-to-end: controller -> MediatR -> handler -> repository -> EF async call.
+- New repository methods should accept `CancellationToken cancellationToken = default` unless there is a clear reason they cannot.
+- Read flags such as include/exclude options must change query shape, not just clear mapped collections after loading.
+- Keep reads `AsNoTracking()` unless mutation requires tracking.
+- Never use `.Result` or `.Wait()`, even after `Task.WhenAll(...)`.
+
+## Auth Intent Guardrails
+
+- Write endpoints are protected by default.
+- If an endpoint is intentionally public, make that explicit in code with `[AllowAnonymous]` and add a short rationale.
+- If a read-only operation uses `POST`, do not leave its auth intent implicit.
+
+## Minimum Test Coverage for API Changes
+
+For new or changed API flows, cover the relevant combination of:
+
+- success path
+- bad request / validation failure
+- not-found read/update path
+- invalid referenced IDs
+- auth intent when an endpoint is protected or intentionally public
+- repository/query behavior when include flags change loaded data
 
 ---
 
@@ -202,6 +253,19 @@ dotnet test --filter "FullyQualifiedName~CreateStore"  # Filtered
 
 ### Comments
 - XML docs for public APIs | Inline only when non-obvious | No TODOs (use issues)
+
+---
+
+## AI Done Gate
+
+Before finishing an API task, verify all of the following:
+
+- controller attributes, XML docs, and response behavior agree
+- expected exceptions are mapped intentionally in controller or middleware
+- validators cover referenced IDs and update/patch edge cases
+- new async methods accept and forward `CancellationToken`
+- include/filter flags affect data access, not only final mapped output
+- tests cover both the main happy path and the important failure paths
 
 ---
 
