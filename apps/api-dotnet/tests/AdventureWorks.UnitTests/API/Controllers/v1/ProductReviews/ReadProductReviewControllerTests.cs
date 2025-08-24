@@ -46,7 +46,7 @@ public sealed class ReadProductReviewControllerTests : UnitTestBase
             });
 
         var result = await _sut.GetProductReviewListAsync(937, new ProductReviewParameter());
-        var objectResult = result as ObjectResult;
+        var objectResult = result as OkObjectResult;
 
         using (new AssertionScope())
         {

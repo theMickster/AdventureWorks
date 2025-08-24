@@ -15,7 +15,7 @@ namespace AdventureWorks.API.Controllers.v1.ProductReviews;
 [ApiVersion("1.0")]
 [ApiExplorerSettings(GroupName = "ProductReview")]
 [Produces("application/json")]
-[Route("api/v{version:apiVersion}/product-reviews")]
+[Route("api/v{version:apiVersion}/product-reviews", Name = "CreateProductReviewControllerV1")]
 public sealed class CreateProductReviewController : ControllerBase
 {
     private readonly ILogger<CreateProductReviewController> _logger;
@@ -57,8 +57,7 @@ public sealed class CreateProductReviewController : ControllerBase
         var cmd = new CreateProductReviewCommand
         {
             Model = model,
-            ModifiedDate = DateTime.UtcNow,
-            ReviewDate = DateTime.UtcNow
+            ModifiedDate = DateTime.UtcNow
         };
 
         var newId = await _mediator.Send(cmd, cancellationToken);

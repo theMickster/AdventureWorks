@@ -43,7 +43,7 @@ public sealed class ProductReviewRepository(AdventureWorksDbContext dbContext)
             SortedResultConstants.ReviewDate => parameters.SortOrder == SortedResultConstants.Ascending
                 ? query.OrderBy(x => x.ReviewDate)
                 : query.OrderByDescending(x => x.ReviewDate),
-            _ => query
+            _ => query.OrderBy(x => x.ProductReviewId)
         };
 
         query = query.Skip(parameters.GetRecordsToSkip()).Take(parameters.PageSize);
@@ -54,17 +54,19 @@ public sealed class ProductReviewRepository(AdventureWorksDbContext dbContext)
     }
 
     /// <summary>
-    /// Retrieves all ratings for a given product.
+    /// Retrieves rating distribution for a given product as a SQL GROUP BY aggregate.
     /// </summary>
     /// <param name="productId">the unique product identifier</param>
     /// <param name="cancellationToken">token to cancel the operation</param>
-    public async Task<IReadOnlyList<int>> GetRatingsByProductIdAsync(int productId, CancellationToken cancellationToken = default)
+    public async Task<IReadOnlyDictionary<int, int>> GetRatingDistributionByProductIdAsync(int productId, CancellationToken cancellationToken = default)
     {
-        var ratings = await DbContext.ProductReviews
+        var raw = await DbContext.ProductReviews
             .AsNoTracking()
             .Where(x => x.ProductId == productId)
-            .Select(x => x.Rating)
-            .ToListAsync(cancellationToken);
-        return ratings.AsReadOnly();
+            .GroupBy(x => x.Rating)
+            .Select(g => new { Rating = g.Key, Count = g.Count() })
+            .ToDictionaryAsync(x => x.Rating, x => x.Count, cancellationToken);
+
+        return raw;
     }
 }

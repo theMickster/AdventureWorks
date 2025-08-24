@@ -33,8 +33,8 @@ public sealed class ReadProductReviewStatisticsQueryHandlerTests : UnitTestBase
     public async Task Handle_returns_zero_stats_when_no_reviews_exist_Async()
     {
         _mockProductReviewRepository
-            .Setup(x => x.GetRatingsByProductIdAsync(It.IsAny<int>(), It.IsAny<CancellationToken>()))
-            .ReturnsAsync(new List<int>().AsReadOnly());
+            .Setup(x => x.GetRatingDistributionByProductIdAsync(It.IsAny<int>(), It.IsAny<CancellationToken>()))
+            .ReturnsAsync((IReadOnlyDictionary<int, int>)new Dictionary<int, int>());
 
         var result = await _sut.Handle(
             new ReadProductReviewStatisticsQuery { ProductId = 937 },
@@ -54,12 +54,10 @@ public sealed class ReadProductReviewStatisticsQueryHandlerTests : UnitTestBase
     [Fact]
     public async Task Handle_returns_correct_statistics_Async()
     {
-        // ratings: 5, 5, 3, 1, 5  => avg = 3.8, total = 5
-        var ratings = new List<int> { 5, 5, 3, 1, 5 }.AsReadOnly();
-
+        // ratings: 5, 5, 3, 1, 5  => distribution {1:1, 3:1, 5:3} => avg = 3.8, total = 5
         _mockProductReviewRepository
-            .Setup(x => x.GetRatingsByProductIdAsync(It.IsAny<int>(), It.IsAny<CancellationToken>()))
-            .ReturnsAsync(ratings);
+            .Setup(x => x.GetRatingDistributionByProductIdAsync(It.IsAny<int>(), It.IsAny<CancellationToken>()))
+            .ReturnsAsync((IReadOnlyDictionary<int, int>)new Dictionary<int, int> { { 1, 1 }, { 3, 1 }, { 5, 3 } });
 
         var result = await _sut.Handle(
             new ReadProductReviewStatisticsQuery { ProductId = 937 },

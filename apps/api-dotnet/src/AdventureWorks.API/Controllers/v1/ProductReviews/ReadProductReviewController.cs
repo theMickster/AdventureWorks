@@ -47,6 +47,7 @@ public sealed class ReadProductReviewController : ControllerBase
     [HttpGet]
     [ProducesResponseType(StatusCodes.Status200OK, Type = typeof(ProductReviewSearchResultModel))]
     [ProducesResponseType(StatusCodes.Status400BadRequest)]
+    [ProducesResponseType(StatusCodes.Status401Unauthorized)]
     public async Task<IActionResult> GetProductReviewListAsync(
         int productId,
         [FromQuery] ProductReviewParameter parameters,

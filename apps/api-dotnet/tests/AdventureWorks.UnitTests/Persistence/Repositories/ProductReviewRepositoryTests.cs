@@ -91,6 +91,60 @@ public sealed class ProductReviewRepositoryTests : PersistenceUnitTestBase
         }
     }
 
+    [Fact]
+    public async Task GetRatingDistributionByProductIdAsync_returns_empty_dictionary_when_no_reviews_exist_Async()
+    {
+        var result = await _sut.GetRatingDistributionByProductIdAsync(9999);
+
+        result.Should().NotBeNull();
+        result.Should().BeEmpty();
+    }
+
+    [Fact]
+    public async Task GetRatingDistributionByProductIdAsync_returns_correct_counts_per_rating_Async()
+    {
+        // Seed 5 extra reviews: ratings 5, 5, 3, 1, 5 for product 100
+        DbContext.ProductReviews.AddRange(new List<ProductReview>
+        {
+            new() { ProductReviewId = 10, ProductId = 100, ReviewerName = "U1", ReviewDate = StandardModifiedDate, EmailAddress = "u1@test.com", Rating = 5, ModifiedDate = StandardModifiedDate },
+            new() { ProductReviewId = 11, ProductId = 100, ReviewerName = "U2", ReviewDate = StandardModifiedDate, EmailAddress = "u2@test.com", Rating = 5, ModifiedDate = StandardModifiedDate },
+            new() { ProductReviewId = 12, ProductId = 100, ReviewerName = "U3", ReviewDate = StandardModifiedDate, EmailAddress = "u3@test.com", Rating = 3, ModifiedDate = StandardModifiedDate },
+            new() { ProductReviewId = 13, ProductId = 100, ReviewerName = "U4", ReviewDate = StandardModifiedDate, EmailAddress = "u4@test.com", Rating = 1, ModifiedDate = StandardModifiedDate },
+            new() { ProductReviewId = 14, ProductId = 100, ReviewerName = "U5", ReviewDate = StandardModifiedDate, EmailAddress = "u5@test.com", Rating = 5, ModifiedDate = StandardModifiedDate }
+        });
+        await DbContext.SaveChangesAsync();
+
+        var result = await _sut.GetRatingDistributionByProductIdAsync(100);
+
+        using (new AssertionScope())
+        {
+            result.Should().NotBeNull();
+            result[5].Should().Be(3);
+            result[3].Should().Be(1);
+            result[1].Should().Be(1);
+        }
+    }
+
+    [Fact]
+    public async Task GetRatingDistributionByProductIdAsync_excludes_reviews_for_other_products_Async()
+    {
+        DbContext.ProductReviews.AddRange(new List<ProductReview>
+        {
+            new() { ProductReviewId = 20, ProductId = 937, ReviewerName = "P1", ReviewDate = StandardModifiedDate, EmailAddress = "p1@test.com", Rating = 4, ModifiedDate = StandardModifiedDate },
+            new() { ProductReviewId = 21, ProductId = 938, ReviewerName = "P2", ReviewDate = StandardModifiedDate, EmailAddress = "p2@test.com", Rating = 2, ModifiedDate = StandardModifiedDate }
+        });
+        await DbContext.SaveChangesAsync();
+
+        var result = await _sut.GetRatingDistributionByProductIdAsync(937);
+
+        using (new AssertionScope())
+        {
+            result.Should().NotBeNull();
+            result.Should().NotContainKey(2);
+            result.Values.Should().AllSatisfy(v => v.Should().BeGreaterThan(0));
+        }
+    }
+
     private void LoadMockProductReviews()
     {
         DbContext.ProductReviews.AddRange(new List<ProductReview>

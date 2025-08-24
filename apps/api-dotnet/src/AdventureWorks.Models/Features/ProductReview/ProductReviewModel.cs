@@ -17,7 +17,7 @@ public sealed class ProductReviewModel
 
     public int Rating { get; set; }
 
-    public string Comments { get; set; }
+    public string? Comments { get; set; }
 
     public DateTime ModifiedDate { get; set; }
 }

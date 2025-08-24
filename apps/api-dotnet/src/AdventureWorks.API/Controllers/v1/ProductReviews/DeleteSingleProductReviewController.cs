@@ -14,7 +14,7 @@ namespace AdventureWorks.API.Controllers.v1.ProductReviews;
 [ApiVersion("1.0")]
 [ApiExplorerSettings(GroupName = "ProductReview")]
 [Produces("application/json")]
-[Route("api/v{version:apiVersion}/product-reviews/{reviewId:int}")]
+[Route("api/v{version:apiVersion}/product-reviews/{reviewId:int}", Name = "DeleteSingleProductReviewControllerV1")]
 public sealed class DeleteSingleProductReviewController : ControllerBase
 {
     private readonly ILogger<DeleteSingleProductReviewController> _logger;

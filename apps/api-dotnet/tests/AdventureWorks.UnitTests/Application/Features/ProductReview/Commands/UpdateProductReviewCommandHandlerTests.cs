@@ -148,9 +148,12 @@ public sealed class UpdateProductReviewCommandHandlerTests : UnitTestBase
         _mockProductReviewRepository.Setup(x => x.GetByIdAsync(1, It.IsAny<CancellationToken>()))
             .ReturnsAsync(existingEntity);
 
+        AdventureWorks.Domain.Entities.Production.ProductReview? capturedEntity = null;
+
         _mockProductReviewRepository.Setup(x => x.UpdateAsync(
                 It.IsAny<AdventureWorks.Domain.Entities.Production.ProductReview>(),
                 It.IsAny<CancellationToken>()))
+            .Callback<AdventureWorks.Domain.Entities.Production.ProductReview, CancellationToken>((entity, _) => capturedEntity = entity)
             .Returns(Task.CompletedTask);
 
         await _sut.Handle(command, CancellationToken.None);
@@ -158,5 +161,7 @@ public sealed class UpdateProductReviewCommandHandlerTests : UnitTestBase
         _mockProductReviewRepository.Verify(
             x => x.UpdateAsync(It.IsAny<AdventureWorks.Domain.Entities.Production.ProductReview>(), It.IsAny<CancellationToken>()),
             Times.Once);
+
+        capturedEntity!.ProductId.Should().Be(937);
     }
 }

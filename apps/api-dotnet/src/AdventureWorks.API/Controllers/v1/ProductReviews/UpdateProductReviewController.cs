@@ -16,7 +16,7 @@ namespace AdventureWorks.API.Controllers.v1.ProductReviews;
 [ApiVersion("1.0")]
 [ApiExplorerSettings(GroupName = "ProductReview")]
 [Produces("application/json")]
-[Route("api/v{version:apiVersion}/product-reviews/{reviewId:int}")]
+[Route("api/v{version:apiVersion}/product-reviews/{reviewId:int}", Name = "UpdateProductReviewControllerV1")]
 public sealed class UpdateProductReviewController : ControllerBase
 {
     private readonly ILogger<UpdateProductReviewController> _logger;
@@ -45,13 +45,11 @@ public sealed class UpdateProductReviewController : ControllerBase
     /// <response code="200">Product review updated successfully</response>
     /// <response code="400">Invalid review ID or payload</response>
     /// <response code="401">Unauthorized</response>
-    /// <response code="404">Product review not found</response>
     [HttpPut]
     [Consumes("application/json")]
     [ProducesResponseType(StatusCodes.Status200OK, Type = typeof(ProductReviewModel))]
     [ProducesResponseType(StatusCodes.Status400BadRequest)]
     [ProducesResponseType(StatusCodes.Status401Unauthorized)]
-    [ProducesResponseType(StatusCodes.Status404NotFound)]
     public async Task<IActionResult> UpdateProductReviewAsync(
         int reviewId,
         [FromBody] ProductReviewUpdateModel? model,
@@ -74,6 +72,6 @@ public sealed class UpdateProductReviewController : ControllerBase
 
         var result = await _mediator.Send(new ReadProductReviewQuery { Id = reviewId }, cancellationToken);
 
-        return result is null ? NotFound("Unable to locate the product review.") : Ok(result);
+        return Ok(result);
     }
 }

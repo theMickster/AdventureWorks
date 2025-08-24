@@ -110,6 +110,16 @@ public sealed class CreateProductReviewValidatorTests : UnitTestBase
     }
 
     [Fact]
+    public async Task Validator_passes_when_comments_are_null_Async()
+    {
+        var model = GetValidModel();
+        model.Comments = null;
+
+        var result = await _sut.TestValidateAsync(model);
+        result.ShouldNotHaveValidationErrorFor(x => x.Comments);
+    }
+
+    [Fact]
     public async Task Validator_fails_Rule07_when_comments_exceed_3850_chars_Async()
     {
         var model = GetValidModel();
@@ -119,11 +129,13 @@ public sealed class CreateProductReviewValidatorTests : UnitTestBase
         result.ShouldHaveValidationErrorFor(x => x.Comments).WithErrorCode("Rule-07");
     }
 
-    [Fact]
-    public async Task Validator_fails_Rule08_when_product_id_is_zero_Async()
+    [Theory]
+    [InlineData(0)]
+    [InlineData(-1)]
+    public async Task Validator_fails_Rule08_when_product_id_is_invalid_Async(int productId)
     {
         var model = GetValidModel();
-        model.ProductId = 0;
+        model.ProductId = productId;
 
         var result = await _sut.TestValidateAsync(model);
         result.ShouldHaveValidationErrorFor(x => x.ProductId).WithErrorCode("Rule-08");

@@ -17,9 +17,9 @@ public interface IProductReviewRepository : IAsyncRepository<ProductReview>
     Task<(IReadOnlyList<ProductReview>, int)> GetProductReviewsByProductIdAsync(int productId, ProductReviewParameter parameters, CancellationToken cancellationToken = default);
 
     /// <summary>
-    /// Retrieves all ratings for a given product.
+    /// Retrieves rating distribution for a given product as a SQL GROUP BY aggregate.
     /// </summary>
     /// <param name="productId">the unique product identifier</param>
     /// <param name="cancellationToken">token to cancel the operation</param>
-    Task<IReadOnlyList<int>> GetRatingsByProductIdAsync(int productId, CancellationToken cancellationToken = default);
+    Task<IReadOnlyDictionary<int, int>> GetRatingDistributionByProductIdAsync(int productId, CancellationToken cancellationToken = default);
 }

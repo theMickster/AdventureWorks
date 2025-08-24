@@ -8,6 +8,4 @@ public sealed class CreateProductReviewCommand : IRequest<int>
     public required ProductReviewCreateModel Model { get; set; }
 
     public DateTime ModifiedDate { get; set; }
-
-    public DateTime ReviewDate { get; set; }
 }

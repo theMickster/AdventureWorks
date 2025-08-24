@@ -75,8 +75,7 @@ public sealed class CreateProductReviewCommandHandlerTests : UnitTestBase
         var command = new CreateProductReviewCommand
         {
             Model = null!,
-            ModifiedDate = DefaultAuditDate,
-            ReviewDate = DefaultAuditDate
+            ModifiedDate = DefaultAuditDate
         };
 
         Func<Task> act = async () => await _sut.Handle(command, CancellationToken.None);
@@ -90,8 +89,7 @@ public sealed class CreateProductReviewCommandHandlerTests : UnitTestBase
         var command = new CreateProductReviewCommand
         {
             Model = GetValidModel(),
-            ModifiedDate = DefaultAuditDate,
-            ReviewDate = DefaultAuditDate
+            ModifiedDate = DefaultAuditDate
         };
 
         var validator = new FakeFailureValidator<ProductReviewCreateModel>("ReviewerName", "Reviewer name is required");
@@ -111,8 +109,7 @@ public sealed class CreateProductReviewCommandHandlerTests : UnitTestBase
         var command = new CreateProductReviewCommand
         {
             Model = GetValidModel(),
-            ModifiedDate = DefaultAuditDate,
-            ReviewDate = DefaultAuditDate
+            ModifiedDate = DefaultAuditDate
         };
 
         _mockValidator.Setup(x => x.ValidateAsync(It.IsAny<ProductReviewCreateModel>(), It.IsAny<CancellationToken>()))

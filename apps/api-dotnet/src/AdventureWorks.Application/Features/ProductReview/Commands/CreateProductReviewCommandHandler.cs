@@ -32,7 +32,7 @@ public sealed class CreateProductReviewCommandHandler(
         await _validator.ValidateAndThrowAsync(request.Model, cancellationToken);
 
         var inputEntity = _mapper.Map<Domain.Entities.Production.ProductReview>(request.Model);
-        inputEntity.ReviewDate = request.ReviewDate;
+        inputEntity.ReviewDate = DateTime.UtcNow;
         inputEntity.ModifiedDate = request.ModifiedDate;
 
         var outputEntity = await _productReviewRepository.AddAsync(inputEntity, cancellationToken);
