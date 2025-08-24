@@ -22,4 +22,10 @@ public static class SortedResultConstants
     public const string ListPrice = "ListPrice";
 
     public const string StandardCost = "StandardCost";
+
+    public const string ProductReviewId = "ProductReviewId";
+
+    public const string Rating = "Rating";
+
+    public const string ReviewDate = "ReviewDate";
 }

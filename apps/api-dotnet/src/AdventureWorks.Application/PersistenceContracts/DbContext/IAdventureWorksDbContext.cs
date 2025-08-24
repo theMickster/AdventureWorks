@@ -10,6 +10,8 @@ public interface IAdventureWorksDbContext
 {
     DbSet<Product> Products { get; set; }
 
+    DbSet<ProductReview> ProductReviews { get; set; }
+
     DbSet<ProductCategory> ProductCategories { get; set; }
 
     DbSet<ProductCostHistory> ProductCostHistories { get; set; }

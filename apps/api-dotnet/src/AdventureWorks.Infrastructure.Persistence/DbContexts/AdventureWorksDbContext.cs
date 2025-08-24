@@ -27,6 +27,8 @@ public class AdventureWorksDbContext : DbContext, IAdventureWorksDbContext
         
     public DbSet<Product> Products { get; set; }
 
+    public DbSet<ProductReview> ProductReviews { get; set; }
+
     public DbSet<ProductCategory> ProductCategories { get; set; }
 
     public DbSet<ProductCostHistory> ProductCostHistories { get; set; }
