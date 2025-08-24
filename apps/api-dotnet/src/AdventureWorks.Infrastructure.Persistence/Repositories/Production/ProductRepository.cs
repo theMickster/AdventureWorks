@@ -204,6 +204,14 @@ public sealed class ProductRepository(AdventureWorksDbContext dbContext)
         return results.AsReadOnly();
     }
 
+    /// <summary>
+    /// Determines whether a product with the specified identifier exists.
+    /// </summary>
+    public async Task<bool> ExistsAsync(int productId, CancellationToken cancellationToken = default)
+    {
+        return await DbContext.Products.AsNoTracking().AnyAsync(x => x.ProductId == productId, cancellationToken);
+    }
+
     #region Private Methods
 
     /// <summary>

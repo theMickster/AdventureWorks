@@ -69,4 +69,12 @@ public interface IProductRepository : IAsyncRepository<Product>
     /// <param name="cancellationToken">Token to cancel the operation.</param>
     /// <returns>All cost history rows for the product, ordered by start date.</returns>
     Task<IReadOnlyList<ProductCostHistory>> GetCostHistoryByProductIdAsync(int productId, CancellationToken cancellationToken = default);
+
+    /// <summary>
+    /// Determines whether a product with the specified identifier exists.
+    /// </summary>
+    /// <param name="productId">The unique product identifier.</param>
+    /// <param name="cancellationToken">Token to cancel the operation.</param>
+    /// <returns><c>true</c> if the product exists; otherwise, <c>false</c>.</returns>
+    Task<bool> ExistsAsync(int productId, CancellationToken cancellationToken = default);
 }

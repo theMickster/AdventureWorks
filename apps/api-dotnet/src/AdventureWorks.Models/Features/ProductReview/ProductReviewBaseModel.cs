@@ -5,9 +5,9 @@ namespace AdventureWorks.Models.Features.ProductReview;
 /// </summary>
 public class ProductReviewBaseModel
 {
-    public string ReviewerName { get; set; }
+    public required string ReviewerName { get; set; }
 
-    public string EmailAddress { get; set; }
+    public required string EmailAddress { get; set; }
 
     public int Rating { get; set; }
 
