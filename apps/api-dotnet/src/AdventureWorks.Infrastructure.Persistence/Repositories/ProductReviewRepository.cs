@@ -52,4 +52,19 @@ public sealed class ProductReviewRepository(AdventureWorksDbContext dbContext)
 
         return (results.AsReadOnly(), totalCount);
     }
+
+    /// <summary>
+    /// Retrieves all ratings for a given product.
+    /// </summary>
+    /// <param name="productId">the unique product identifier</param>
+    /// <param name="cancellationToken">token to cancel the operation</param>
+    public async Task<IReadOnlyList<int>> GetRatingsByProductIdAsync(int productId, CancellationToken cancellationToken = default)
+    {
+        var ratings = await DbContext.ProductReviews
+            .AsNoTracking()
+            .Where(x => x.ProductId == productId)
+            .Select(x => x.Rating)
+            .ToListAsync(cancellationToken);
+        return ratings.AsReadOnly();
+    }
 }

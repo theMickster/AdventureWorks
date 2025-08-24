@@ -15,4 +15,11 @@ public interface IProductReviewRepository : IAsyncRepository<ProductReview>
     /// <param name="parameters">the input paging parameters</param>
     /// <param name="cancellationToken">token to cancel the operation</param>
     Task<(IReadOnlyList<ProductReview>, int)> GetProductReviewsByProductIdAsync(int productId, ProductReviewParameter parameters, CancellationToken cancellationToken = default);
+
+    /// <summary>
+    /// Retrieves all ratings for a given product.
+    /// </summary>
+    /// <param name="productId">the unique product identifier</param>
+    /// <param name="cancellationToken">token to cancel the operation</param>
+    Task<IReadOnlyList<int>> GetRatingsByProductIdAsync(int productId, CancellationToken cancellationToken = default);
 }
