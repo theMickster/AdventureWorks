@@ -1,8 +1,40 @@
 # API Completion -- Features & User Stories
 
-**Epic**: #552 (API Development)
-**Date**: 2026-03-20
+**Epic**: #873 (AdventureWorks API - Round 2: API Completion) — successor to closed Epic #552
+**Initiative parent**: #559 (AdventureWorks Web Application)
+**Date**: 2026-03-20 (planned), 2026-04-27 (created in ADO)
 **Scope**: 4 waves of API completion work -- Store Manager, HR Processes, Person Foundation, Lookup Endpoints
+
+## ADO IDs at a glance
+
+| Wave | Feature                          | ADO ID | Stories | Story IDs                               |
+| ---- | -------------------------------- | ------ | ------- | --------------------------------------- |
+| 1    | Store Contact Management         | #874   | 3       | #875-#877                               |
+| 1    | Store Address Management         | #878   | 3       | #879-#881                               |
+| 1    | Store Analytics & Insights       | #882   | 3       | #883-#885                               |
+| 1    | Sales Person Assignment Tracking | #886   | 3       | #887-#889                               |
+| 2    | Employee Department Transfer     | #890   | 1       | #891 (Story 2.2 → existing #751)        |
+| 2    | Employee Pay Management          | #892   | 1       | #893 (Story 2.4 → existing #750)        |
+| 2    | Department Reporting             | #894   | 3       | #895-#897                               |
+| 3    | Person Email Management          | #898   | 4       | #899-#902                               |
+| 3    | Person Phone Management          | #903   | 4       | #904-#907                               |
+| 3    | Person Directory & Search        | #908   | 2       | #909-#910                               |
+| 3    | PersonCreditCard DbContext Fix   | #911   | 1       | #912                                    |
+| 4    | Production Lookup Endpoints      | #913   | 4       | #914-#917 (Stories 4.1+4.2 → Done #699) |
+| 4    | Sales Lookup Endpoints           | #918   | 4       | #919-#922                               |
+
+**Reparented enabler Features** (now under #873, formerly under #561/#562):
+
+- #715 (Sales Database Views & Indexes) — 3 stories: #746-#748
+- #716 (HR Additional API Endpoints) — 5 stories: #749-#753
+- #722 (HR Database Views for Dashboard and Org Chart) — 2 stories: #771-#772
+
+**Skipped as duplicates:**
+
+- Story 2.2 (Get Employee Department History) → existing **#751** under Feature #716
+- Story 2.4 (Get Employee Pay History) → existing **#750** under Feature #716
+- Story 4.1 (ProductCategory Lookup) → already Done as **#699** under Feature #526
+- Story 4.2 (ProductSubcategory Lookup) → already Done as **#699** under Feature #526
 
 ---
 
@@ -10,7 +42,7 @@
 
 ### Feature: Store Contact Management
 
-**Parent**: Epic #552
+**Parent**: Epic #873 (closed Epic #552 superseded)
 **Description**: Expose CRUD operations for managing contact persons associated with a store. Contacts link a `PersonEntity` to a `StoreEntity` via the `BusinessEntityContactEntity` junction table with a `ContactTypeId` (e.g., Owner, Purchasing Agent). This enables the Angular UI to manage who the points of contact are for each store.
 
 **Technical scope**: New controllers under `Controllers/v1/Stores/`, new commands/queries under `Application/Features/Sales/`, repository methods on `BusinessEntityContactEntity`. All writes require `[Authorize]`.
@@ -115,7 +147,7 @@ Scenario: Authentication required
 
 ### Feature: Store Address Management
 
-**Parent**: Epic #552
+**Parent**: Epic #873 (closed Epic #552 superseded)
 **Description**: Expose CRUD operations for managing addresses associated with a store. Addresses link an `AddressEntity` to a `StoreEntity` via the `BusinessEntityAddressEntity` junction table with an `AddressTypeId` (e.g., Main Office, Shipping). This enables the Angular UI to display and manage store locations.
 
 **Technical scope**: New controllers under `Controllers/v1/Stores/`, new commands/queries under `Application/Features/Sales/`, repository methods on `BusinessEntityAddressEntity`. All writes require `[Authorize]`.
@@ -217,7 +249,7 @@ Scenario: Authentication required
 
 ### Feature: Store Analytics & Insights
 
-**Parent**: Epic #552
+**Parent**: Epic #873 (closed Epic #552 superseded)
 **Description**: Provide read-only analytical endpoints for stores that aggregate data from `SalesOrderHeader`, `CustomerEntity`, and the store's XML `Demographics` column. These power the Store Detail page dashboard panels in the Angular UI. No writes -- all queries use `.AsNoTracking()` with projection for performance.
 
 **Technical scope**: New query handlers under `Application/Features/Sales/Queries/`. New DTOs: `StorePerformanceModel`, `StoreDemographicsModel`, `StoreCustomerModel`. May require a new `IStoreAnalyticsRepository` or extension methods on the existing store repository for complex aggregations.
@@ -316,7 +348,7 @@ Scenario: Non-existent store returns 404
 
 ### Feature: Sales Person Assignment Tracking
 
-**Parent**: Epic #552
+**Parent**: Epic #873 (closed Epic #552 superseded)
 **Description**: Track historical sales person assignments for stores. Currently `StoreEntity.SalesPersonId` only records the current assignment with no history. This feature adds a mechanism to reassign a store's sales person while preserving the history of past assignments, enabling reporting on territory and personnel changes over time.
 
 **Technical scope**: This requires a new `StoreSalesPersonHistory` table (DbUp migration), a new entity, repository, commands, and queries. The reassignment command updates `StoreEntity.SalesPersonId` AND inserts a history record. The history query returns all past assignments with date ranges.
@@ -425,7 +457,7 @@ Scenario: Non-existent store returns 404
 
 ### Feature: Employee Department Transfer
 
-**Parent**: Epic #552
+**Parent**: Epic #873 (closed Epic #552 superseded)
 **Description**: Enable transferring an employee to a new department and/or shift. The `EmployeeDepartmentHistory` table tracks all department/shift assignments with `StartDate` and `EndDate`. A transfer closes the current open record (sets `EndDate`) and creates a new record with the target department and shift. The read endpoint exposes the full history for an employee.
 
 **Technical scope**: New commands/queries under `Application/Features/HumanResources/`. Repository operations on `EmployeeDepartmentHistory`. The transfer is a single transaction: close old record + open new record. All writes require `[Authorize]`.
@@ -509,7 +541,7 @@ Scenario: Non-existent employee returns 404
 
 ### Feature: Employee Pay Management
 
-**Parent**: Epic #552
+**Parent**: Epic #873 (closed Epic #552 superseded)
 **Description**: Expose endpoints for recording pay rate changes and viewing pay history. The `EmployeePayHistory` table stores rate changes with `RateChangeDate`, `Rate`, and `PayFrequency` (1=Monthly, 2=Biweekly). Recording a new pay change creates a new row; it does not update existing rows. The read endpoint returns the full history for compensation auditing.
 
 **Technical scope**: New commands/queries under `Application/Features/HumanResources/`. Repository operations on `EmployeePayHistory`. New DTOs: `EmployeePayHistoryModel`, `EmployeePayChangeCreateModel`. FluentValidation enforces Rate > 0, Rate <= 500, PayFrequency in {1, 2}.
@@ -585,7 +617,7 @@ Scenario: Non-existent employee returns 404
 
 ### Feature: Department Reporting
 
-**Parent**: Epic #552
+**Parent**: Epic #873 (closed Epic #552 superseded)
 **Description**: Provide department-level reporting endpoints for headcount and employee listings. These aggregate data from `EmployeeDepartmentHistory` (filtering for `EndDate IS NULL` to get current assignments) and `EmployeeEntity` (filtering for `CurrentFlag=true`). These power the HR dashboard in the Angular UI.
 
 **Technical scope**: New query handlers under `Application/Features/HumanResources/Queries/`. New DTOs: `DepartmentHeadcountModel`, `DepartmentHeadcountSummaryModel`. The employees-by-department query reuses the existing `EmployeeModel` DTO. All read-only, `.AsNoTracking()`.
@@ -669,7 +701,7 @@ Scenario: Non-existent department returns 404
 
 ### Feature: Person Email Management
 
-**Parent**: Epic #552
+**Parent**: Epic #873 (closed Epic #552 superseded)
 **Description**: Expose CRUD operations for managing email addresses associated with a person. The `EmailAddressEntity` table supports multiple emails per person with a sequential `EmailAddressId` per `BusinessEntityId`. This is a foundational capability needed by the Person Directory and by store/employee contact management screens.
 
 **Technical scope**: New controllers under `Controllers/v1/Persons/`, new commands/queries under `Application/Features/Person/`. Repository operations on `EmailAddressEntity`. New DTOs: `PersonEmailModel`, `PersonEmailCreateModel`, `PersonEmailUpdateModel`. All writes require `[Authorize]`.
@@ -801,7 +833,7 @@ Scenario: Authentication required
 
 ### Feature: Person Phone Management
 
-**Parent**: Epic #552
+**Parent**: Epic #873 (closed Epic #552 superseded)
 **Description**: Expose CRUD operations for managing phone numbers associated with a person. The `PersonPhone` table uses a composite key of `BusinessEntityId + PhoneNumber + PhoneNumberTypeId`. A person can have multiple phones but not duplicate phone+type combinations. This is foundational for contact management across the application.
 
 **Technical scope**: New controllers under `Controllers/v1/Persons/`, new commands/queries under `Application/Features/Person/`. Repository operations on `PersonPhone`. The composite key is `(BusinessEntityId, PhoneNumber, PhoneNumberTypeId)`. Updates and deletes use PhoneNumberTypeId as the route parameter. A validation rule enforces one phone number per type per person (prevents ambiguous lookups). New DTOs: `PersonPhoneModel`, `PersonPhoneCreateModel`, `PersonPhoneUpdateModel`. All writes require `[Authorize]`.
@@ -929,7 +961,7 @@ Scenario: Authentication required
 
 ### Feature: Person Directory & Search
 
-**Parent**: Epic #552
+**Parent**: Epic #873 (closed Epic #552 superseded)
 **Description**: Provide endpoints for searching and viewing persons. The search endpoint supports filtering by name, email, and person type with pagination. The detail endpoint returns a consolidated view of a person including their emails, phones, and person type context (whether they are an employee, store contact, individual customer, etc.). This is foundational for any UI that needs to look up a person by name or email.
 
 **Technical scope**: New query handlers under `Application/Features/Person/Queries/`. New DTOs: `PersonSearchModel`, `PersonSearchResultModel`, `PersonDetailModel`. The search uses `POST /persons/search` (matching the existing search pattern for stores/employees). The detail endpoint uses `.Include()` for emails and phones. All read-only.
@@ -993,7 +1025,7 @@ Scenario: Non-existent person returns 404
 
 ### Feature: PersonCreditCard DbContext Fix
 
-**Parent**: Epic #552
+**Parent**: Epic #873 (closed Epic #552 superseded)
 **Description**: Bug fix -- the `PersonCreditCard` entity is configured in EF Core model configuration but is missing as a `DbSet<PersonCreditCard>` on `AdventureWorksDbContext`. This prevents direct querying of the junction table. Add the missing DbSet property.
 
 **Technical scope**: Single-line change in `AdventureWorksDbContext.cs`. Verify with a build and confirm no EF model snapshot changes are needed (DbUp handles migrations, not EF migrations).
@@ -1026,7 +1058,7 @@ Scenario: DbSet property exists and is functional
 
 ### Feature: Production Lookup Endpoints
 
-**Parent**: Epic #552
+**Parent**: Epic #873 (closed Epic #552 superseded)
 **Description**: Expose read-only GET endpoints for production domain reference data. These are used by dropdowns, filters, and forms throughout the Angular UI. Each entity gets a "get by ID" and "get list" endpoint. All queries use `.AsNoTracking()` and return lightweight DTOs. All controllers use `[Authorize]` consistent with the existing lookup controller pattern.
 
 **Entities**: `ProductCategory`, `ProductSubcategory` (include parent category name), `ProductModel`, `UnitMeasure`, `Location`, `ScrapReason`.
@@ -1166,7 +1198,7 @@ Scenario: Get non-existent scrap reason returns 404
 
 ### Feature: Sales Lookup Endpoints
 
-**Parent**: Epic #552
+**Parent**: Epic #873 (closed Epic #552 superseded)
 **Description**: Expose read-only GET endpoints for sales domain reference data. These support dropdowns, filters, and display labels across sales-related Angular UI screens. `SpecialOffer` includes a computed active/expired status based on `StartDate`/`EndDate` vs. current date. All queries use `.AsNoTracking()`. All controllers use `[Authorize]` consistent with the existing lookup controller pattern.
 
 **Entities**: `SalesReason`, `Currency`, `SpecialOffer` (with active/expired status), `ShipMethod`.
@@ -1268,22 +1300,24 @@ Scenario: Get non-existent ship method returns 404
 
 ## Summary
 
-| Wave      | Feature                          | Stories        | Write Endpoints     | Read Endpoints       |
-| --------- | -------------------------------- | -------------- | ------------------- | -------------------- |
-| 1         | Store Contact Management         | 3              | POST, PATCH, DELETE | (via existing #691)  |
-| 1         | Store Address Management         | 3              | POST, PATCH, DELETE | (via existing #690)  |
-| 1         | Store Analytics & Insights       | 3              | --                  | GET x3               |
-| 1         | Sales Person Assignment Tracking | 3              | POST                | GET + DbUp migration |
-| 2         | Employee Department Transfer     | 2              | POST                | GET                  |
-| 2         | Employee Pay Management          | 2              | POST                | GET                  |
-| 2         | Department Reporting             | 3              | --                  | GET x3               |
-| 3         | Person Email Management          | 4              | POST, PUT, DELETE   | GET                  |
-| 3         | Person Phone Management          | 4              | POST, PUT, DELETE   | GET                  |
-| 3         | Person Directory & Search        | 2              | --                  | POST search, GET     |
-| 3         | PersonCreditCard DbContext Fix   | 1              | --                  | Bug fix              |
-| 4         | Production Lookup Endpoints      | 6              | --                  | GET x12              |
-| 4         | Sales Lookup Endpoints           | 4              | --                  | GET x8               |
-| **Total** | **13 Features**                  | **40 Stories** |                     |                      |
+| Wave                            | Feature                          | ADO  | Stories (created)              | Write Endpoints                   | Read Endpoints                    |
+| ------------------------------- | -------------------------------- | ---- | ------------------------------ | --------------------------------- | --------------------------------- |
+| 1                               | Store Contact Management         | #874 | 3 (#875-#877)                  | POST, PATCH, DELETE               | (via existing #691)               |
+| 1                               | Store Address Management         | #878 | 3 (#879-#881)                  | POST, PATCH, DELETE               | (via existing #690)               |
+| 1                               | Store Analytics & Insights       | #882 | 3 (#883-#885)                  | --                                | GET x3                            |
+| 1                               | Sales Person Assignment Tracking | #886 | 3 (#887-#889)                  | POST                              | GET + DbUp migration (#887)       |
+| 2                               | Employee Department Transfer     | #890 | 1 (#891) [2.2 → #751]          | POST                              | GET via #751                      |
+| 2                               | Employee Pay Management          | #892 | 1 (#893) [2.4 → #750]          | POST                              | GET via #750                      |
+| 2                               | Department Reporting             | #894 | 3 (#895-#897)                  | --                                | GET x3                            |
+| 3                               | Person Email Management          | #898 | 4 (#899-#902)                  | POST, PUT, DELETE                 | GET                               |
+| 3                               | Person Phone Management          | #903 | 4 (#904-#907)                  | POST, PUT, DELETE                 | GET                               |
+| 3                               | Person Directory & Search        | #908 | 2 (#909-#910)                  | --                                | POST search, GET                  |
+| 3                               | PersonCreditCard DbContext Fix   | #911 | 1 (#912)                       | --                                | Bug fix                           |
+| 4                               | Production Lookup Endpoints      | #913 | 4 (#914-#917) [4.1+4.2 → #699] | --                                | GET x8 (4 entities × 2 endpoints) |
+| 4                               | Sales Lookup Endpoints           | #918 | 4 (#919-#922)                  | --                                | GET x8                            |
+| **Total net-new**               |                                  |      | **13 Features / 36 Stories**   |                                   |                                   |
+| **Reparented**                  | #715, #716, #722                 | (3)  | **+10 Stories**                | (DB views/indexes + HR endpoints) |
+| **Grand total under Epic #873** |                                  |      | **16 Features / 46 Stories**   |                                   |                                   |
 
 ### Dependency Notes
 
