@@ -1,6 +1,6 @@
 {
   "info": {
-    "_postman_id": "e5efe7ce-c0b8-4364-8139-b606ad79040e",
+    "_postman_id": "59965b39-c6d6-452a-baec-0bbec84b158a",
     "name": "Development Tests",
     "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
     "_exporter_id": "2569631"
@@ -5580,6 +5580,329 @@
                     "stores",
                     "292",
                     "contacts"
+                  ]
+                }
+              },
+              "response": []
+            },
+            {
+              "name": "Get Store Contact",
+              "event": [
+                {
+                  "listen": "test",
+                  "script": {
+                    "exec": [
+                      "var storeId = Number(pm.request.url.path[3]);",
+                      "var personId = Number(pm.request.url.path[5]);",
+                      "var contactTypeId = Number(pm.request.url.path[6]);",
+                      "",
+                      "console.log(pm.request.url.path);",
+                      "",
+                      "pm.test(\"Status should be 200\", function () {",
+                      "    pm.response.to.have.status(200);",
+                      "});",
+                      "",
+                      "var response = pm.response.json();",
+                      "",
+                      "pm.test(\"Response should have correct shape\", function () {",
+                      "    pm.expect(response).to.exist;",
+                      "    pm.expect(response.id).to.eql(personId);",
+                      "    pm.expect(response.storeId).to.eql(storeId);",
+                      "    pm.expect(response.contactTypeId).to.eql(contactTypeId);",
+                      "    pm.expect(response.contactTypeName).to.exist;",
+                      "    pm.expect(response.firstName).to.exist;",
+                      "    pm.expect(response.lastName).to.exist;",
+                      "});"
+                    ],
+                    "type": "text/javascript",
+                    "packages": {},
+                    "requests": {}
+                  }
+                }
+              ],
+              "request": {
+                "method": "GET",
+                "header": [],
+                "url": {
+                  "raw": "{{adventureWorksApi}}/{{apiVersion}}/stores/:storeId/contacts/:personId/:contactTypeId",
+                  "host": [
+                    "{{adventureWorksApi}}"
+                  ],
+                  "path": [
+                    "{{apiVersion}}",
+                    "stores",
+                    ":storeId",
+                    "contacts",
+                    ":personId",
+                    ":contactTypeId"
+                  ],
+                  "variable": [
+                    {
+                      "key": "storeId",
+                      "value": "292"
+                    },
+                    {
+                      "key": "personId",
+                      "value": "291"
+                    },
+                    {
+                      "key": "contactTypeId",
+                      "value": "11"
+                    }
+                  ]
+                }
+              },
+              "response": [
+                {
+                  "name": "Get Store Contact",
+                  "originalRequest": {
+                    "method": "GET",
+                    "header": [],
+                    "url": {
+                      "raw": "{{adventureWorksApi}}/{{apiVersion}}/stores/:storeId/contacts/:personId/:contactTypeId",
+                      "host": [
+                        "{{adventureWorksApi}}"
+                      ],
+                      "path": [
+                        "{{apiVersion}}",
+                        "stores",
+                        ":storeId",
+                        "contacts",
+                        ":personId",
+                        ":contactTypeId"
+                      ],
+                      "variable": [
+                        {
+                          "key": "storeId",
+                          "value": "292"
+                        },
+                        {
+                          "key": "personId",
+                          "value": "275"
+                        },
+                        {
+                          "key": "contactTypeId",
+                          "value": "11"
+                        }
+                      ]
+                    }
+                  },
+                  "_postman_previewlanguage": "Text",
+                  "header": [],
+                  "cookie": [
+                    {
+                      "expires": "Invalid Date",
+                      "domain": "",
+                      "path": ""
+                    }
+                  ],
+                  "body": ""
+                }
+              ]
+            },
+            {
+              "name": "Create Store Contact",
+              "event": [
+                {
+                  "listen": "test",
+                  "script": {
+                    "exec": [
+                      "var storeId = Number(pm.request.url.variables.get(\"storeId\").value);",
+                      "var requestBody = JSON.parse(pm.request.body.raw);",
+                      "",
+                      "pm.test(\"Status should be 201\", function () {",
+                      "    pm.response.to.have.status(201);",
+                      "});",
+                      "",
+                      "var response = pm.response.json();",
+                      "",
+                      "pm.test(\"Response includes created contact details\", function () {",
+                      "    pm.expect(response.id).to.eql(requestBody.personId);",
+                      "    pm.expect(response.storeId).to.eql(storeId);",
+                      "    pm.expect(response.contactTypeId).to.eql(requestBody.contactTypeId);",
+                      "    pm.expect(response.contactTypeName).to.exist;",
+                      "});",
+                      "",
+                      "pm.test(\"Location header points at single-resource GET\", function () {",
+                      "    pm.expect(pm.response.headers.get(\"Location\")).to.exist;",
+                      "});",
+                      ""
+                    ],
+                    "type": "text/javascript",
+                    "packages": {},
+                    "requests": {}
+                  }
+                }
+              ],
+              "request": {
+                "method": "POST",
+                "header": [
+                  {
+                    "key": "Content-Type",
+                    "value": "application/json",
+                    "type": "text"
+                  }
+                ],
+                "body": {
+                  "mode": "raw",
+                  "raw": "{\n  \"personId\": 275,\n  \"contactTypeId\": 11\n}",
+                  "options": {
+                    "raw": {
+                      "language": "json"
+                    }
+                  }
+                },
+                "url": {
+                  "raw": "{{adventureWorksApi}}/{{apiVersion}}/stores/:storeId/contacts",
+                  "host": [
+                    "{{adventureWorksApi}}"
+                  ],
+                  "path": [
+                    "{{apiVersion}}",
+                    "stores",
+                    ":storeId",
+                    "contacts"
+                  ],
+                  "variable": [
+                    {
+                      "key": "storeId",
+                      "value": "292"
+                    }
+                  ]
+                }
+              },
+              "response": []
+            },
+            {
+              "name": "Update Store Contact Type",
+              "event": [
+                {
+                  "listen": "test",
+                  "script": {
+                    "exec": [
+                      "var storeId = Number(pm.request.url.variables.get(\"storeId\").value);",
+                      "var personId = Number(pm.request.url.variables.get(\"personId\").value);",
+                      "var requestBody = JSON.parse(pm.request.body.raw);",
+                      "",
+                      "pm.test(\"Status should be 200\", function () {",
+                      "    pm.response.to.have.status(200);",
+                      "});",
+                      "",
+                      "var response = pm.response.json();",
+                      "",
+                      "pm.test(\"Response reflects new contact type\", function () {",
+                      "    pm.expect(response.id).to.eql(personId);",
+                      "    pm.expect(response.storeId).to.eql(storeId);",
+                      "    pm.expect(response.contactTypeId).to.eql(requestBody.contactTypeId);",
+                      "});",
+                      ""
+                    ],
+                    "type": "text/javascript",
+                    "packages": {},
+                    "requests": {}
+                  }
+                }
+              ],
+              "request": {
+                "method": "PATCH",
+                "header": [
+                  {
+                    "key": "Content-Type",
+                    "value": "application/json",
+                    "type": "text"
+                  }
+                ],
+                "body": {
+                  "mode": "raw",
+                  "raw": "{\n  \"contactTypeId\": 17\n}",
+                  "options": {
+                    "raw": {
+                      "language": "json"
+                    }
+                  }
+                },
+                "url": {
+                  "raw": "{{adventureWorksApi}}/{{apiVersion}}/stores/:storeId/contacts/:personId/:contactTypeId",
+                  "host": [
+                    "{{adventureWorksApi}}"
+                  ],
+                  "path": [
+                    "{{apiVersion}}",
+                    "stores",
+                    ":storeId",
+                    "contacts",
+                    ":personId",
+                    ":contactTypeId"
+                  ],
+                  "variable": [
+                    {
+                      "key": "storeId",
+                      "value": "292"
+                    },
+                    {
+                      "key": "personId",
+                      "value": "275"
+                    },
+                    {
+                      "key": "contactTypeId",
+                      "value": "11"
+                    }
+                  ]
+                }
+              },
+              "response": []
+            },
+            {
+              "name": "Delete Store Contact",
+              "event": [
+                {
+                  "listen": "test",
+                  "script": {
+                    "exec": [
+                      "pm.test(\"Status should be 204\", function () {",
+                      "    pm.response.to.have.status(204);",
+                      "});",
+                      "",
+                      "pm.test(\"Response body is empty\", function () {",
+                      "    pm.expect(pm.response.text()).to.be.empty;",
+                      "});",
+                      ""
+                    ],
+                    "type": "text/javascript",
+                    "packages": {},
+                    "requests": {}
+                  }
+                }
+              ],
+              "request": {
+                "method": "DELETE",
+                "header": [],
+                "url": {
+                  "raw": "{{adventureWorksApi}}/{{apiVersion}}/stores/:storeId/contacts/:personId/:contactTypeId",
+                  "host": [
+                    "{{adventureWorksApi}}"
+                  ],
+                  "path": [
+                    "{{apiVersion}}",
+                    "stores",
+                    ":storeId",
+                    "contacts",
+                    ":personId",
+                    ":contactTypeId"
+                  ],
+                  "variable": [
+                    {
+                      "key": "storeId",
+                      "value": "292"
+                    },
+                    {
+                      "key": "personId",
+                      "value": "275"
+                    },
+                    {
+                      "key": "contactTypeId",
+                      "value": "17"
+                    }
                   ]
                 }
               },
