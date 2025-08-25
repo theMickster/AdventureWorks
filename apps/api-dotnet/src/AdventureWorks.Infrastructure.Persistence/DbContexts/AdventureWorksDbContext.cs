@@ -67,6 +67,8 @@ public class AdventureWorksDbContext : DbContext, IAdventureWorksDbContext
 
     public DbSet<PersonEntity> Persons { get; set; }
 
+    public DbSet<PersonCreditCard> PersonCreditCards { get; set; }
+
     public DbSet<PersonPhone> PersonPhones { get; set; }
 
     public DbSet<PersonTypeEntity> PersonTypes { get; set; }
