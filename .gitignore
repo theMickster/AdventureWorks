@@ -344,6 +344,10 @@ apps/angular-web/tmp/
 !.env.docker.example
 apps/angular-web/apps/adventureworks-web/src/environments/environment.development.ts
 
+# Postman: real environment files may contain client secrets — only .example templates are committed
+apps/api-dotnet/postman/environments/*.postman_environment.json
+!apps/api-dotnet/postman/environments/*.example.postman_environment.json
+
 # Claude local settings (machine-specific)
 .claude/settings.local.json
 

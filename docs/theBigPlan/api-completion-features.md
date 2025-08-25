@@ -9,7 +9,7 @@
 
 | Wave | Feature                          | ADO ID | Stories | Story IDs                               |
 | ---- | -------------------------------- | ------ | ------- | --------------------------------------- |
-| 1    | Store Contact Management         | #874   | 3       | #875-#877                               |
+| 1    | Store Contact Management         | #874   | 3       | #875-#877 — **Done 2026-04-27**         |
 | 1    | Store Address Management         | #878   | 3       | #879-#881                               |
 | 1    | Store Analytics & Insights       | #882   | 3       | #883-#885                               |
 | 1    | Sales Person Assignment Tracking | #886   | 3       | #887-#889                               |
@@ -40,9 +40,10 @@
 
 ## Wave 1: Store Manager Completion
 
-### Feature: Store Contact Management
+### Feature: Store Contact Management — **Done 2026-04-27**
 
 **Parent**: Epic #873 (closed Epic #552 superseded)
+**Status**: Done — Stories #875, #876, #877 completed and merged.
 **Description**: Expose CRUD operations for managing contact persons associated with a store. Contacts link a `PersonEntity` to a `StoreEntity` via the `BusinessEntityContactEntity` junction table with a `ContactTypeId` (e.g., Owner, Purchasing Agent). This enables the Angular UI to manage who the points of contact are for each store.
 
 **Technical scope**: New controllers under `Controllers/v1/Stores/`, new commands/queries under `Application/Features/Sales/`, repository methods on `BusinessEntityContactEntity`. All writes require `[Authorize]`.
@@ -55,7 +56,7 @@ Key invariants:
 - Duplicate PersonId+ContactTypeId on same store is rejected
 - Non-existent store, person, or contact type returns appropriate error
 
-#### Story 1.1: Add a Contact Person to a Store
+#### Story 1.1: Add a Contact Person to a Store — **Done 2026-04-27** (#875)
 
 **Description**: As an API consumer, I want to add a contact person to a store by posting a PersonId and ContactTypeId, so that the store's points of contact are tracked in the system.
 
@@ -93,7 +94,7 @@ Scenario: Authentication required
   Then a 401 Unauthorized is returned
 ```
 
-#### Story 1.2: Update a Store Contact's Type
+#### Story 1.2: Update a Store Contact's Type — **Done 2026-04-27** (#876)
 
 **Description**: As an API consumer, I want to change the contact type of an existing store contact, so that contact roles stay current when responsibilities shift. The route includes both PersonId and current ContactTypeId to uniquely identify the junction record (a person may hold multiple roles at one store).
 
@@ -120,7 +121,7 @@ Scenario: Authentication required
   Then a 401 Unauthorized is returned
 ```
 
-#### Story 1.3: Remove a Contact from a Store
+#### Story 1.3: Remove a Contact from a Store — **Done 2026-04-27** (#877)
 
 **Description**: As an API consumer, I want to remove a contact person from a store, so that outdated contact relationships are cleaned up. The route includes both PersonId and ContactTypeId to uniquely identify the junction record.
 

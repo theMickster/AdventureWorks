@@ -18,7 +18,7 @@ public sealed class PersonRepository(AdventureWorksDbContext dbContext)
     /// Performs checks: BusinessEntity.Rowguid matches, IsEntraUser=true, Person exists.
     /// </summary>
     public async Task<PersonEntity?> GetEntraLinkedPersonAsync(
-        Guid entraObjectId, 
+        Guid entraObjectId,
         CancellationToken cancellationToken = default)
     {
         return await DbContext.BusinessEntities
@@ -29,5 +29,13 @@ public sealed class PersonRepository(AdventureWorksDbContext dbContext)
             .Include(p => p.PersonType)
             .Include(p => p.EmailAddresses)
             .FirstOrDefaultAsync(cancellationToken);
+    }
+
+    /// <summary>
+    /// Returns true if a person with the given id exists.
+    /// </summary>
+    public async Task<bool> ExistsAsync(int id, CancellationToken cancellationToken = default)
+    {
+        return await DbContext.Persons.AnyAsync(x => x.BusinessEntityId == id, cancellationToken);
     }
 }

@@ -39,4 +39,11 @@ public interface IStoreRepository : IAsyncRepository<StoreEntity>
     /// <returns>List of business entity address entities for the store, or an empty list if none exist.</returns>
     Task<List<BusinessEntityAddressEntity>> GetAddressesByStoreIdAsync(int storeId, CancellationToken cancellationToken = default);
 
+    /// <summary>
+    /// Returns true if a store with the given id exists.
+    /// </summary>
+    /// <param name="id">the store business entity id</param>
+    /// <param name="cancellationToken">token to cancel the operation</param>
+    Task<bool> ExistsAsync(int id, CancellationToken cancellationToken = default);
+
 }

@@ -18,6 +18,13 @@ public interface IPersonRepository : IReadOnlyAsyncRepository<PersonEntity>
     /// or null if any validation check fails.
     /// </returns>
     Task<PersonEntity?> GetEntraLinkedPersonAsync(
-        Guid entraObjectId, 
+        Guid entraObjectId,
         CancellationToken cancellationToken = default);
+
+    /// <summary>
+    /// Returns true if a person with the given id exists.
+    /// </summary>
+    /// <param name="id">the person business entity id</param>
+    /// <param name="cancellationToken">token to cancel the operation</param>
+    Task<bool> ExistsAsync(int id, CancellationToken cancellationToken = default);
 }

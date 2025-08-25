@@ -47,4 +47,81 @@ public sealed class BusinessEntityContactEntityRepository : EfRepository<Busines
             .Where(x => businessEntityIds.Contains(x.BusinessEntityId))
             .ToListAsync(cancellationToken);
     }
+
+    /// <summary>
+    /// Returns true if a contact with the given composite key exists.
+    /// </summary>
+    public async Task<bool> ExistsAsync(int storeId, int personId, int contactTypeId, CancellationToken cancellationToken = default)
+    {
+        return await DbContext.BusinessEntityContacts.AnyAsync(
+            x => x.BusinessEntityId == storeId && x.PersonId == personId && x.ContactTypeId == contactTypeId,
+            cancellationToken);
+    }
+
+    /// <summary>
+    /// Retrieves a tracked contact by its composite key. Returns null when not found.
+    /// </summary>
+    public async Task<BusinessEntityContactEntity?> GetByCompositeKeyAsync(int storeId, int personId, int contactTypeId, CancellationToken cancellationToken = default)
+    {
+        return await DbContext.BusinessEntityContacts.FirstOrDefaultAsync(
+            x => x.BusinessEntityId == storeId && x.PersonId == personId && x.ContactTypeId == contactTypeId,
+            cancellationToken);
+    }
+
+    /// <summary>
+    /// Retrieves a contact (with ContactType and Person details) by its composite key. Read-only.
+    /// </summary>
+    public async Task<BusinessEntityContactEntity?> GetWithDetailsByCompositeKeyAsync(int storeId, int personId, int contactTypeId, CancellationToken cancellationToken = default)
+    {
+        return await DbContext.BusinessEntityContacts
+            .AsNoTracking()
+            .Include(x => x.ContactType)
+            .Include(x => x.Person)
+                .ThenInclude(p => p.PersonType)
+            .FirstOrDefaultAsync(
+                x => x.BusinessEntityId == storeId && x.PersonId == personId && x.ContactTypeId == contactTypeId,
+                cancellationToken);
+    }
+
+    /// <summary>
+    /// Replaces an existing contact's contact type by deleting the existing row and inserting a new one,
+    /// inside a single transaction. Required because the composite primary key includes ContactTypeId.
+    /// </summary>
+    public async Task<BusinessEntityContactEntity> ReplaceContactTypeAsync(
+        BusinessEntityContactEntity existing,
+        int newContactTypeId,
+        DateTime modifiedDate,
+        CancellationToken cancellationToken = default)
+    {
+        ArgumentNullException.ThrowIfNull(existing);
+
+        await using var transaction = await DbContext.Database.BeginTransactionAsync(cancellationToken);
+
+        try
+        {
+            DbContext.BusinessEntityContacts.Remove(existing);
+            await DbContext.SaveChangesAsync(cancellationToken);
+
+            var replacement = new BusinessEntityContactEntity
+            {
+                BusinessEntityId = existing.BusinessEntityId,
+                PersonId = existing.PersonId,
+                ContactTypeId = newContactTypeId,
+                Rowguid = Guid.NewGuid(),
+                ModifiedDate = modifiedDate
+            };
+
+            DbContext.BusinessEntityContacts.Add(replacement);
+            await DbContext.SaveChangesAsync(cancellationToken);
+
+            await transaction.CommitAsync(cancellationToken);
+
+            return replacement;
+        }
+        catch
+        {
+            await transaction.RollbackAsync(cancellationToken);
+            throw;
+        }
+    }
 }

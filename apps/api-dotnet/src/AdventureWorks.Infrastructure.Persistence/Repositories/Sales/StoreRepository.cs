@@ -155,5 +155,13 @@ public sealed class StoreRepository(AdventureWorksDbContext dbContext)
                 .ThenInclude(s => s.CountryRegion)
             .ToListAsync(cancellationToken);
     }
+
+    /// <summary>
+    /// Returns true if a store with the given id exists.
+    /// </summary>
+    public async Task<bool> ExistsAsync(int id, CancellationToken cancellationToken = default)
+    {
+        return await DbContext.Stores.AnyAsync(x => x.BusinessEntityId == id, cancellationToken);
+    }
 }
 

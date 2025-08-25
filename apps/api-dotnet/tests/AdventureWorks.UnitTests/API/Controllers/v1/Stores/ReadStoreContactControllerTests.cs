@@ -109,4 +109,88 @@ public sealed class ReadStoreContactControllerTests : UnitTestBase
             It.Is<ReadStoreContactListQuery>(q => q.StoreId == storeId),
             It.IsAny<CancellationToken>()), Times.Once);
     }
+
+    [Theory]
+    [InlineData(0, 100, 11, "A valid store id must be specified.")]
+    [InlineData(-1, 100, 11, "A valid store id must be specified.")]
+    [InlineData(2534, 0, 11, "A valid person id must be specified.")]
+    [InlineData(2534, -3, 11, "A valid person id must be specified.")]
+    [InlineData(2534, 100, 0, "A valid contact type id must be specified.")]
+    [InlineData(2534, 100, -7, "A valid contact type id must be specified.")]
+    public async Task GetByCompositeKeyAsync_invalid_route_values_return_bad_requestAsync(int storeId, int personId, int contactTypeId, string expectedMessage)
+    {
+        var result = await _sut.GetByCompositeKeyAsync(storeId, personId, contactTypeId);
+
+        var objectResult = result as BadRequestObjectResult;
+
+        using (new AssertionScope())
+        {
+            objectResult.Should().NotBeNull();
+            objectResult!.StatusCode.Should().Be((int)HttpStatusCode.BadRequest);
+            objectResult!.Value!.ToString().Should().Be(expectedMessage);
+        }
+    }
+
+    [Fact]
+    public async Task GetByCompositeKeyAsync_returns_not_found_when_query_returns_nullAsync()
+    {
+        _mockMediator.Setup(x => x.Send(It.IsAny<ReadStoreContactQuery>(), It.IsAny<CancellationToken>()))
+            .ReturnsAsync((StoreContactModel?)null);
+
+        var result = await _sut.GetByCompositeKeyAsync(2534, 100, 11);
+
+        var notFound = result as NotFoundObjectResult;
+
+        using (new AssertionScope())
+        {
+            notFound.Should().NotBeNull();
+            notFound!.StatusCode.Should().Be((int)HttpStatusCode.NotFound);
+        }
+    }
+
+    [Fact]
+    public async Task GetByCompositeKeyAsync_returns_ok_with_modelAsync()
+    {
+        var output = new StoreContactModel
+        {
+            Id = 100,
+            StoreId = 2534,
+            ContactTypeId = 11,
+            ContactTypeName = "Owner",
+            FirstName = "Pat",
+            LastName = "Smith"
+        };
+
+        _mockMediator.Setup(x => x.Send(It.IsAny<ReadStoreContactQuery>(), It.IsAny<CancellationToken>()))
+            .ReturnsAsync(output);
+
+        var result = await _sut.GetByCompositeKeyAsync(2534, 100, 11);
+
+        var okResult = result as OkObjectResult;
+
+        using (new AssertionScope())
+        {
+            okResult.Should().NotBeNull();
+            okResult!.StatusCode.Should().Be((int)HttpStatusCode.OK);
+            okResult.Value.Should().Be(output);
+        }
+    }
+
+    [Fact]
+    public async Task GetByCompositeKeyAsync_sends_correct_composite_key_to_mediatorAsync()
+    {
+        const int storeId = 2534;
+        const int personId = 100;
+        const int contactTypeId = 11;
+
+        _mockMediator.Setup(x => x.Send(It.IsAny<ReadStoreContactQuery>(), It.IsAny<CancellationToken>()))
+            .ReturnsAsync((StoreContactModel?)null);
+
+        await _sut.GetByCompositeKeyAsync(storeId, personId, contactTypeId);
+
+        _mockMediator.Verify(x => x.Send(
+            It.Is<ReadStoreContactQuery>(q =>
+                q.StoreId == storeId && q.PersonId == personId && q.ContactTypeId == contactTypeId),
+            It.IsAny<CancellationToken>()), Times.Once);
+    }
 }

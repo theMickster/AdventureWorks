@@ -100,6 +100,12 @@ ValidationException -> 400 with error details. All responses include `X-Correlat
 Any new expected exception type used for normal API flows must be translated in middleware or handled explicitly in the controller in the same change.
 See: `AdventureWorks.API/libs/Middleware/ExceptionHandlerMiddleware.cs`
 
+#### Composite-Key Rewrite Pattern (delete + insert in transaction)
+
+When a junction-table row needs to change a column that is part of its composite primary key, a true UPDATE is impossible. The handler must replace the row: open an EF transaction, delete the existing entity, insert a new entity with the new key values, and commit. The repository owns the transaction so handlers stay storage-agnostic.
+
+Reference implementation: `IBusinessEntityContactEntityRepository.ReplaceContactTypeAsync` (changes a store contact's `ContactTypeId`). The handler enforces uniqueness against the target composite key before calling the repository, and re-hydrates the row through `GetWithDetailsByCompositeKeyAsync` after the swap.
+
 ---
 
 ## Development Guide
