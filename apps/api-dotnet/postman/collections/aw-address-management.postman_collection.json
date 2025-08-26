@@ -1,0 +1,464 @@
+{
+  "info": {
+    "_postman_id": "58cca55a-0c02-4e4a-a762-ae9d90f0a9d8",
+    "name": "Address Management",
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
+    "_exporter_id": "2569631"
+  },
+  "item": [
+    {
+      "name": "Address",
+      "item": [
+        {
+          "name": "Create",
+          "item": [
+            {
+              "name": "Address - Null body",
+              "event": [
+                {
+                  "listen": "test",
+                  "script": {
+                    "exec": [
+                      "pm.test(\"Response should be 400 & have a body\", function () {\r",
+                      "     pm.response.to.be.badRequest;\r",
+                      "     pm.response.to.be.withBody;     \r",
+                      "});\r",
+                      "\r",
+                      "pm.test(\"Response contain correct error\", function() {    \r",
+                      "    var error = pm.response.text();\r",
+                      "    pm.expect(error).to.contain(\"The address input model cannot be null.\");\r",
+                      "});"
+                    ],
+                    "type": "text/javascript",
+                    "packages": {}
+                  }
+                }
+              ],
+              "request": {
+                "method": "POST",
+                "header": [],
+                "body": {
+                  "mode": "raw",
+                  "raw": "",
+                  "options": {
+                    "raw": {
+                      "language": "json"
+                    }
+                  }
+                },
+                "url": {
+                  "raw": "{{adventureWorksApi}}/{{apiVersion}}/addresses",
+                  "host": [
+                    "{{adventureWorksApi}}"
+                  ],
+                  "path": [
+                    "{{apiVersion}}",
+                    "addresses"
+                  ]
+                }
+              },
+              "response": []
+            },
+            {
+              "name": "Address - Null or empty validation errors",
+              "request": {
+                "method": "POST",
+                "header": [],
+                "body": {
+                  "mode": "raw",
+                  "raw": "{\r\n  \"addressLine1\": \"   \",\r\n  \"addressLine2\": \"unit 1B\",\r\n  \"city\": \"    \",\r\n  \"stateProvince\": {\r\n    \"id\": 7\r\n  }\r\n}",
+                  "options": {
+                    "raw": {
+                      "language": "json"
+                    }
+                  }
+                },
+                "url": {
+                  "raw": "{{adventureWorksApi}}/{{apiVersion}}/addresses",
+                  "host": [
+                    "{{adventureWorksApi}}"
+                  ],
+                  "path": [
+                    "{{apiVersion}}",
+                    "addresses"
+                  ]
+                }
+              },
+              "response": []
+            },
+            {
+              "name": "Address - Length validation errors",
+              "request": {
+                "method": "POST",
+                "header": [],
+                "body": {
+                  "mode": "raw",
+                  "raw": "{\r\n  \"addressLine1\": \"asdfasduioiuchduoas yhuiweit tgidcatgew7986etwq876twer t876t 87qwte6r76 tds78fa6 a79s6d f7as 6dgfa7s6dgf97asd6gf97asd6 gf97as6 g97g sbaisdf\",\r\n  \"addressLine2\": \"halihfi769w6g943w6h39nfvhcqwmx9n6a fvohcowchwo8ah78q7y49awh7ev8hawn8c9n7hn8awh7en8v23h963qgvqcnwah73649nwfv9aweh973q64na8vh7nwd9c6n48awvdh9w7t36nrvw7nc\",\r\n  \"city\": \"drop table hello_worldaldjsfdlksah fklasdjhflkasjfdhlka hsdflkjsah dlfkjhasidf7a6sd9t8asd 69fg 9asdfh6a9sdfhyasfd\",\r\n  \"stateProvince\": {\r\n    \"id\": 7\r\n  },\r\n  \"postalCode\": \"123456799876543216549871327945132467\"\r\n}",
+                  "options": {
+                    "raw": {
+                      "language": "json"
+                    }
+                  }
+                },
+                "url": {
+                  "raw": "{{adventureWorksApi}}/{{apiVersion}}/addresses",
+                  "host": [
+                    "{{adventureWorksApi}}"
+                  ],
+                  "path": [
+                    "{{apiVersion}}",
+                    "addresses"
+                  ]
+                }
+              },
+              "response": []
+            },
+            {
+              "name": "Address - Valid Address",
+              "request": {
+                "method": "POST",
+                "header": [],
+                "body": {
+                  "mode": "raw",
+                  "raw": "{\r\n  \"addressLine1\": \"956 N. University\",\r\n  \"city\": \"Portales\",\r\n  \"stateProvince\": {\r\n    \"id\": 48,\r\n    \"name\": \"New Mexico\",\r\n    \"code\": \"NM\"\r\n  },\r\n  \"postalCode\": \"88130\"\r\n}",
+                  "options": {
+                    "raw": {
+                      "language": "json"
+                    }
+                  }
+                },
+                "url": {
+                  "raw": "{{adventureWorksApi}}/{{apiVersion}}/addresses",
+                  "host": [
+                    "{{adventureWorksApi}}"
+                  ],
+                  "path": [
+                    "{{apiVersion}}",
+                    "addresses"
+                  ]
+                }
+              },
+              "response": []
+            }
+          ]
+        },
+        {
+          "name": "Update",
+          "item": [
+            {
+              "name": "Address - Mismatched Ids",
+              "request": {
+                "method": "PUT",
+                "header": [],
+                "body": {
+                  "mode": "raw",
+                  "raw": "{\r\n    \"id\": 651684156,\r\n    \"countryRegion\": {\r\n        \"countryRegionCode\": \"US\",\r\n        \"countryRegionName\": null\r\n    },\r\n    \"modifiedDate\": \"2023-01-19\",\r\n    \"addressLine1\": \"956 N. University\",\r\n    \"addressLine2\": \"Apt 001\",\r\n    \"city\": \"Portales\",\r\n    \"stateProvince\": {\r\n        \"id\": 48\r\n    },\r\n    \"postalCode\": \"88130\"\r\n}",
+                  "options": {
+                    "raw": {
+                      "language": "json"
+                    }
+                  }
+                },
+                "url": {
+                  "raw": "{{adventureWorksApi}}/{{apiVersion}}/addresses/32522",
+                  "host": [
+                    "{{adventureWorksApi}}"
+                  ],
+                  "path": [
+                    "{{apiVersion}}",
+                    "addresses",
+                    "32522"
+                  ]
+                }
+              },
+              "response": []
+            },
+            {
+              "name": "Address - Valid",
+              "protocolProfileBehavior": {
+                "protocolVersion": "http2"
+              },
+              "request": {
+                "method": "PUT",
+                "header": [],
+                "body": {
+                  "mode": "raw",
+                  "raw": "{\r\n    \"id\": 32522,\r\n    \"countryRegion\": {\r\n        \"code\": \"US\",\r\n        \"name\": \"United States\"\r\n    },    \r\n    \"addressLine1\": \"956 N. University\",\r\n    \"addressLine2\": null,\r\n    \"city\": \"Portales\",\r\n    \"stateProvince\": {\r\n        \"id\": 48,\r\n        \"name\": \"New Mexico\",\r\n        \"code\": \"NM\"\r\n    },\r\n    \"postalCode\": \"88130\"\r\n}",
+                  "options": {
+                    "raw": {
+                      "language": "json"
+                    }
+                  }
+                },
+                "url": {
+                  "raw": "{{adventureWorksApi}}/{{apiVersion}}/addresses/:addressId",
+                  "host": [
+                    "{{adventureWorksApi}}"
+                  ],
+                  "path": [
+                    "{{apiVersion}}",
+                    "addresses",
+                    ":addressId"
+                  ],
+                  "variable": [
+                    {
+                      "key": "addressId",
+                      "value": "32522"
+                    }
+                  ]
+                }
+              },
+              "response": []
+            }
+          ]
+        },
+        {
+          "name": "Address by Id - Valid Id",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{adventureWorksApi}}/{{apiVersion}}/addresses/8",
+              "host": [
+                "{{adventureWorksApi}}"
+              ],
+              "path": [
+                "{{apiVersion}}",
+                "addresses",
+                "8"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Address by Id - Valid Id - 2",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{adventureWorksApi}}/{{apiVersion}}/addresses/32522",
+              "host": [
+                "{{adventureWorksApi}}"
+              ],
+              "path": [
+                "{{apiVersion}}",
+                "addresses",
+                "32522"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Address by Id - Invalid Id",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test(\"Status should be bad request\", function () {\r",
+                  "    pm.response.to.have.status(400);\r",
+                  "});\r",
+                  "\r",
+                  "var response = pm.response.text();\r",
+                  "\r",
+                  "pm.test(\"Body should be correct\", function () {\r",
+                  "  pm.response.to.have.body(\"A valid address id must be specified.\");\r",
+                  "});"
+                ],
+                "type": "text/javascript"
+              }
+            }
+          ],
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{adventureWorksApi}}/{{apiVersion}}/addresses/-7",
+              "host": [
+                "{{adventureWorksApi}}"
+              ],
+              "path": [
+                "{{apiVersion}}",
+                "addresses",
+                "-7"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Address by Id - Max Integer Not Found",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test(\"Status should be not found\", function () {\r",
+                  "    pm.response.to.have.status(404);\r",
+                  "});\r",
+                  "\r",
+                  "var response = pm.response.text();\r",
+                  "\r",
+                  "pm.test(\"Body should be correct\", function () {\r",
+                  "  pm.response.to.have.body(\"Unable to locate the Address.\");\r",
+                  "});"
+                ],
+                "type": "text/javascript",
+                "packages": {}
+              }
+            }
+          ],
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{adventureWorksApi}}/{{apiVersion}}/addresses/2147483647",
+              "host": [
+                "{{adventureWorksApi}}"
+              ],
+              "path": [
+                "{{apiVersion}}",
+                "addresses",
+                "2147483647"
+              ]
+            }
+          },
+          "response": []
+        }
+      ]
+    }
+  ],
+  "auth": {
+    "type": "oauth2",
+    "oauth2": [
+      {
+        "key": "accessTokenUrl",
+        "value": "https://login.microsoftonline.com/{{tenantId}}/oauth2/v2.0/token",
+        "type": "string"
+      },
+      {
+        "key": "authUrl",
+        "value": "https://login.microsoftonline.com/{{tenantId}}/oauth2/v2.0/authorize",
+        "type": "string"
+      },
+      {
+        "key": "scope",
+        "value": "{{scope}}",
+        "type": "string"
+      },
+      {
+        "key": "clientSecret",
+        "value": "{{clientSecret}}",
+        "type": "string"
+      },
+      {
+        "key": "clientId",
+        "value": "{{clientId}}",
+        "type": "string"
+      },
+      {
+        "key": "redirect_uri",
+        "value": "{{callbackUrl}}",
+        "type": "string"
+      },
+      {
+        "key": "client_authentication",
+        "value": "header",
+        "type": "string"
+      },
+      {
+        "key": "tokenName",
+        "value": "AdventureWorks",
+        "type": "string"
+      },
+      {
+        "key": "useBrowser",
+        "value": false,
+        "type": "boolean"
+      },
+      {
+        "key": "grant_type",
+        "value": "authorization_code",
+        "type": "string"
+      },
+      {
+        "key": "refreshRequestParams",
+        "value": [],
+        "type": "any"
+      },
+      {
+        "key": "tokenRequestParams",
+        "value": [],
+        "type": "any"
+      },
+      {
+        "key": "authRequestParams",
+        "value": [],
+        "type": "any"
+      },
+      {
+        "key": "challengeAlgorithm",
+        "value": "S256",
+        "type": "string"
+      },
+      {
+        "key": "addTokenTo",
+        "value": "header",
+        "type": "string"
+      }
+    ]
+  },
+  "event": [
+    {
+      "listen": "prerequest",
+      "script": {
+        "type": "text/javascript",
+        "requests": {},
+        "exec": [
+          "var moment = require('moment');\r",
+          "pm.collectionVariables.set('currentDateTime', moment().format( (\"YYYYMMDD_hhmmss\")));\r",
+          "pm.collectionVariables.set('currentDate', moment().format( (\"YYYY-MM-DD\")));\r",
+          ""
+        ]
+      }
+    },
+    {
+      "listen": "test",
+      "script": {
+        "type": "text/javascript",
+        "requests": {},
+        "exec": [
+          ""
+        ]
+      }
+    }
+  ],
+  "variable": [
+    {
+      "key": "currentDateTime",
+      "value": ""
+    },
+    {
+      "key": "currentDate",
+      "value": ""
+    },
+    {
+      "key": "randomString",
+      "value": ""
+    },
+    {
+      "key": "lastCreatedEmployeeId",
+      "value": ""
+    },
+    {
+      "key": "updateEmployeeId",
+      "value": ""
+    },
+    {
+      "key": "lifecycleEmployeeId",
+      "value": ""
+    }
+  ]
+}

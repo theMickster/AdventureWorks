@@ -5,6 +5,7 @@ Enterprise application demonstrating modern software architecture patterns acros
 ## Repository Overview
 
 This monorepo contains:
+
 - **.NET 10.0 REST API** (`apps/api-dotnet/`) - Clean Architecture with CQRS
 - **Angular Web Application** (`apps/angular-web/`) - Angular 21.2.4 + Nx 22.5.2 monorepo
 - **Microservices** (`apps/microservices/`) - Coming soon
@@ -19,6 +20,7 @@ Each application/service has its own CLAUDE.md with technology-specific instruct
 - **For Microservices**: See `apps/microservices/{service}/.claude/CLAUDE.md` (future)
 
 **When starting work in a specific application:**
+
 1. Navigate to that application's directory
 2. Read its CLAUDE.md file for context-specific instructions
 3. Follow technology-specific patterns and conventions
@@ -28,12 +30,14 @@ Each application/service has its own CLAUDE.md with technology-specific instruct
 ### Git Workflow
 
 **Branch Strategy:**
+
 - `main` - Production-ready code
 - `develop` - Integration branch (future)
 - `feature/*` - Feature branches
 - `bugfix/*` - Bug fix branches
 
 **Commit Message Format:**
+
 ```
 <type>(<scope>): <subject>
 
@@ -46,6 +50,7 @@ Co-Authored-By: Claude Sonnet 4.5 <noreply@anthropic.com>
 **Scopes**: `api`, `web`, `db`, `auth`, `sales`, etc.
 
 **Example:**
+
 ```
 feat(api): add customer CRUD endpoints
 
@@ -66,6 +71,7 @@ Co-Authored-By: Claude Sonnet 4.5 <noreply@anthropic.com>
 5. Run `git status` after commit to verify
 
 **NEVER:**
+
 - Use `git commit --amend` unless explicitly requested
 - Use `--no-verify` or `--no-gpg-sign` flags
 - Force push to `main`/`master`
@@ -79,32 +85,39 @@ Co-Authored-By: Claude Sonnet 4.5 <noreply@anthropic.com>
 2. Review ALL commits that will be included (not just latest)
 3. Draft PR summary covering all changes
 4. Use format:
+
    ```markdown
    ## Summary
+
    - Bullet points of changes
 
    ## Test plan
+
    - [ ] Checklist of testing steps
 
    🤖 Generated with [Claude Code](https://claude.com/claude-code)
    ```
+
 5. Create PR: `gh pr create --title "..." --body "$(cat <<'EOF' ... EOF)"`
 
 ### Naming Conventions
 
 **General Rules:**
+
 - `PascalCase` - Classes, interfaces, public members, constants
 - `camelCase` - Private fields, parameters, local variables
 - `_camelCase` - Private readonly fields (underscore prefix)
 - `kebab-case` - File names (except C# which uses PascalCase)
 
 **Directory Structure:**
+
 - Feature-based organization over layer-based
 - Group by domain/feature, not by technical type
 
 ### Code Quality Standards
 
 **Required:**
+
 - ✅ Async/await for all I/O operations (never `.Result` or `.Wait()`)
 - ✅ Null checks at method boundaries (`ArgumentNullException.ThrowIfNull`)
 - ✅ Explicit error handling (no silent catch blocks)
@@ -113,6 +126,7 @@ Co-Authored-By: Claude Sonnet 4.5 <noreply@anthropic.com>
 - ✅ No secrets in code - use environment variables/Key Vault
 
 **Forbidden:**
+
 - ❌ Hardcoded credentials, connection strings, API keys
 - ❌ Blocking async code (`.Result`, `.Wait()`, `Task.Run` for I/O)
 - ❌ Empty catch blocks that swallow exceptions
@@ -131,9 +145,10 @@ Co-Authored-By: Claude Sonnet 4.5 <noreply@anthropic.com>
 
 ### Documentation Standards
 
-**NEVER proactively create documentation files (*.md, README, etc.) unless explicitly requested.**
+**NEVER proactively create documentation files (\*.md, README, etc.) unless explicitly requested.**
 
 When documentation is needed:
+
 - Use concise, technical language
 - Focus on "why" over "what"
 - Include code references with file paths and line numbers
@@ -143,11 +158,13 @@ When documentation is needed:
 ### Environment Configuration
 
 **Development:**
+
 - Local User Secrets for sensitive configuration
 - `appsettings.Development.json` for non-sensitive overrides
 - Local SQL Server / Docker containers
 
 **Production:**
+
 - Azure Key Vault for all secrets
 - `appsettings.Production.json` for environment config
 - Managed identities where possible
@@ -178,6 +195,7 @@ When documentation is needed:
 ## Technology Stack
 
 ### Current
+
 - **.NET 10.0** - Backend API
 - **Entity Framework Core** - ORM
 - **SQL Server** - Database
@@ -189,6 +207,7 @@ When documentation is needed:
 - **Nx 22** - Angular monorepo tooling
 
 ### Future
+
 - **Docker** - Containerization
 - **Kubernetes** - Orchestration (maybe)
 - **Azure Services** - Cloud infrastructure
@@ -240,43 +259,52 @@ AdventureWorks/
 
 **Claude should load additional context based on the task:**
 
-- **"Add a feature to the API"** → Read `apps/api-dotnet/.claude/CLAUDE.md` + `guides/adding-features.md`
-- **"Write tests for the API"** → Read `apps/api-dotnet/.claude/CLAUDE.md` + `guides/testing-guide.md`
-- **"Create a new microservice"** → Read `apps/microservices/.claude/CLAUDE.md` (future)
-- **"Build an Angular component"** → Read `apps/angular-web/.claude/CLAUDE.md`
-
-**Pattern:** Always read the application's CLAUDE.md + relevant guide files when starting work in that application.
+| Working on                   | Triggers                                                                                                                                                                        | Load                                                                                                   |
+| ---------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | ------------------------------------------------------------------------------------------------------ |
+| **.NET REST API**            | Adding an endpoint, writing a controller, MediatR command/query handler, FluentValidation validator, AutoMapper profile, EF Core repository, anything Clean Architecture / CQRS | [`apps/api-dotnet/.claude/CLAUDE.md`](../apps/api-dotnet/.claude/CLAUDE.md)                            |
+| **Angular Web**              | Building a component, generating an Nx library, wiring an NgRx SignalStore, MSAL / Entra auth, Tailwind / DaisyUI / Alpine Circuit styling, anything signals-based              | [`apps/angular-web/.claude/CLAUDE.md`](../apps/angular-web/.claude/CLAUDE.md)                          |
+| **Database Migrations**      | Schema change, new migration, creating or updating a stored procedure, making DDL/DML idempotent, ordering DbUp scripts                                                         | [`database/dbup/.claude/CLAUDE.md`](../database/dbup/.claude/CLAUDE.md)                                |
+| **Microservices** _(future)_ | Anything under `apps/microservices/`                                                                                                                                            | `apps/microservices/{service}/.claude/CLAUDE.md` (when added)                                          |
 
 ## CI/CD and Infrastructure Rules
 
 ### Before Using Any CLI Flag or Task Input
+
 Verify it exists — read the schema, run `--help`, or check `project.json` executor options. Never assume a flag works.
 
 ### Gitignored Files Do Not Exist in CI
+
 `environment.development.ts` and similar dev files are gitignored. CI commands must use explicit `--configuration` flags or `--exclude` to avoid referencing them.
 
 ### Read the Source Before Writing Mocks
+
 Read the actual service/component to get exact property names and `inject()` dependencies. Never guess signal names or method signatures.
 
 ### Nx Tests: App ≠ Workspace
+
 `nx test <app>` runs ONE project's tests. Use `nx run-many -t test` to run all libraries. Always verify the test count, not just pass/fail.
 
 ### CI Cache Keys Must Hit
+
 Never put commit SHA or build ID in primary cache keys. For npm, cache `~/.npm`, not `node_modules` (`npm ci` deletes it).
 
 ### Azure Pipelines
+
 - Use `PublishPipelineArtifact@1` / `DownloadPipelineArtifact@2` (not deprecated v1)
 - Use `continueOnError: true` on tasks, never `|| true` in scripts
 - Deployment jobs: use `$(Build.SourcesDirectory)` for absolute paths, not relative
 - Cross-RG deployment names: `{name}-${environment}` to avoid collisions
 
 ### Verify Azure Resource Names
+
 Run `az resource list` before writing Bicep or docs. Never assume names follow a convention.
 
 ### Root Cause First
+
 If a fix produces the same category of failure, stop. State the root cause, find all instances, fix them in one pass.
 
 ### Always Use the Dev Team
+
 For non-trivial changes: implement → security review → code review → fix findings → iterate until clean. Never skip code review.
 
 ---

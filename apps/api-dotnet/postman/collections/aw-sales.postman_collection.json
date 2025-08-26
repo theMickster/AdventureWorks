@@ -1,0 +1,2548 @@
+{
+  "info": {
+    "_postman_id": "622e8e28-92ff-4b51-99e0-97336cb49b74",
+    "name": "Sales",
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
+    "_exporter_id": "2569631"
+  },
+  "item": [
+    {
+      "name": "Sales Person",
+      "item": [
+        {
+          "name": "List",
+          "item": [
+            {
+              "name": "SalesPersons List - Negative Page Number",
+              "event": [
+                {
+                  "listen": "test",
+                  "script": {
+                    "exec": [
+                      "pm.test(\"Status should be OK request\", function () {\r",
+                      "    pm.response.to.have.status(200);\r",
+                      "});\r",
+                      "\r",
+                      "var response = pm.response.json();\r",
+                      "\r",
+                      "pm.test(\"Response should have correct structure\", function() {    \r",
+                      "    pm.expect(response).to.exist;\r",
+                      "    pm.expect(response.results).to.exist;\r",
+                      "    pm.expect(response.pageNumber).to.exist;\r",
+                      "    pm.expect(response.pageSize).to.exist;\r",
+                      "    pm.expect(response.totalPages).to.exist;\r",
+                      "    pm.expect(response.totalRecords).to.exist;\r",
+                      "});\r",
+                      "\r",
+                      "pm.test(\"Response should include correct paging information\", function(){\r",
+                      "    pm.expect(response.pageNumber).to.eq(1);\r",
+                      "    pm.expect(response.pageSize).to.eq(10);\r",
+                      "    pm.expect(response.totalPages > 50);\r",
+                      "    pm.expect(response.totalRecords > 700);\r",
+                      "});"
+                    ],
+                    "type": "text/javascript",
+                    "packages": {},
+                    "requests": {}
+                  }
+                }
+              ],
+              "request": {
+                "method": "GET",
+                "header": [],
+                "url": {
+                  "raw": "{{adventureWorksApi}}/{{apiVersion}}/salesPersons?PageNumber=-10",
+                  "host": [
+                    "{{adventureWorksApi}}"
+                  ],
+                  "path": [
+                    "{{apiVersion}}",
+                    "salesPersons"
+                  ],
+                  "query": [
+                    {
+                      "key": "PageNumber",
+                      "value": "-10"
+                    }
+                  ]
+                }
+              },
+              "response": []
+            },
+            {
+              "name": "SalesPersons List - Page Number Out of Bounds",
+              "event": [
+                {
+                  "listen": "test",
+                  "script": {
+                    "exec": [
+                      "pm.test(\"Status should be Bad request\", function () {\r",
+                      "    pm.response.to.have.status(400);\r",
+                      "});\r",
+                      "\r",
+                      "pm.test(\"Body should be correct\", function () {\r",
+                      "    pm.expect(pm.response.text()).to.include(\"Unable to locate results based upon input query parameters\");\r",
+                      "});"
+                    ],
+                    "type": "text/javascript",
+                    "packages": {},
+                    "requests": {}
+                  }
+                }
+              ],
+              "request": {
+                "method": "GET",
+                "header": [],
+                "url": {
+                  "raw": "{{adventureWorksApi}}/{{apiVersion}}/salesPersons?PageNumber=1500&PageSize=50",
+                  "host": [
+                    "{{adventureWorksApi}}"
+                  ],
+                  "path": [
+                    "{{apiVersion}}",
+                    "salesPersons"
+                  ],
+                  "query": [
+                    {
+                      "key": "PageNumber",
+                      "value": "1500"
+                    },
+                    {
+                      "key": "PageSize",
+                      "value": "50"
+                    }
+                  ]
+                }
+              },
+              "response": []
+            },
+            {
+              "name": "SalesPersons List - Zero Params",
+              "event": [
+                {
+                  "listen": "test",
+                  "script": {
+                    "exec": [
+                      "pm.test(\"Status should be OK request\", function () {\r",
+                      "    pm.response.to.have.status(200);\r",
+                      "});\r",
+                      "\r",
+                      "var response = pm.response.json();\r",
+                      "\r",
+                      "pm.test(\"Response should have correct structure\", function() {    \r",
+                      "    pm.expect(response).to.exist;\r",
+                      "    pm.expect(response.results).to.exist;\r",
+                      "    pm.expect(response.pageNumber).to.exist;\r",
+                      "    pm.expect(response.pageSize).to.exist;\r",
+                      "    pm.expect(response.totalPages).to.exist;\r",
+                      "    pm.expect(response.totalRecords).to.exist;\r",
+                      "    pm.expect(response.hasPreviousPage).to.exist;\r",
+                      "    pm.expect(response.hasNextPage).to.exist;\r",
+                      "});\r",
+                      "\r",
+                      "pm.test(\"Response should include correct paging information\", function(){\r",
+                      "    pm.expect(response.pageNumber).to.eq(1);\r",
+                      "    pm.expect(response.pageSize).to.eq(10);\r",
+                      "    pm.expect(response.totalPages > 50);\r",
+                      "    pm.expect(response.totalRecords > 700);\r",
+                      "    pm.expect(response.hasPreviousPage).to.be.false;\r",
+                      "    pm.expect(response.hasNextPage).to.be.true;\r",
+                      "});"
+                    ],
+                    "type": "text/javascript",
+                    "packages": {},
+                    "requests": {}
+                  }
+                }
+              ],
+              "request": {
+                "method": "GET",
+                "header": [],
+                "url": {
+                  "raw": "{{adventureWorksApi}}/{{apiVersion}}/salesPersons",
+                  "host": [
+                    "{{adventureWorksApi}}"
+                  ],
+                  "path": [
+                    "{{apiVersion}}",
+                    "salesPersons"
+                  ]
+                }
+              },
+              "response": []
+            },
+            {
+              "name": "SalesPersons List - Name Sort Descending Page 5",
+              "event": [
+                {
+                  "listen": "test",
+                  "script": {
+                    "exec": [
+                      "pm.test(\"Status should be OK request\", function () {\r",
+                      "    pm.response.to.have.status(200);\r",
+                      "});\r",
+                      "\r",
+                      "var response = pm.response.json();\r",
+                      "\r",
+                      "pm.test(\"Response should have correct structure\", function() {    \r",
+                      "    pm.expect(response).to.exist;\r",
+                      "    pm.expect(response.results).to.exist;\r",
+                      "    pm.expect(response.pageNumber).to.exist;\r",
+                      "    pm.expect(response.pageSize).to.exist;\r",
+                      "    pm.expect(response.totalPages).to.exist;\r",
+                      "    pm.expect(response.totalRecords).to.exist;\r",
+                      "    pm.expect(response.hasPreviousPage).to.exist;\r",
+                      "    pm.expect(response.hasNextPage).to.exist;\r",
+                      "});\r",
+                      "\r",
+                      "pm.test(\"Response should include correct paging information\", function(){\r",
+                      "    pm.expect(response.pageNumber).to.eq(5);\r",
+                      "    pm.expect(response.pageSize).to.eq(50);\r",
+                      "    pm.expect(response.totalPages > 14);\r",
+                      "    pm.expect(response.totalRecords > 700);\r",
+                      "    pm.expect(response.hasPreviousPage).to.be.true;\r",
+                      "    pm.expect(response.hasNextPage).to.be.true;\r",
+                      "});"
+                    ],
+                    "type": "text/javascript",
+                    "packages": {},
+                    "requests": {}
+                  }
+                }
+              ],
+              "request": {
+                "method": "GET",
+                "header": [],
+                "url": {
+                  "raw": "{{adventureWorksApi}}/{{apiVersion}}/salesPersons?OrderBy=Name&PageNumber=3&PageSize=5&SortOrder=desc",
+                  "host": [
+                    "{{adventureWorksApi}}"
+                  ],
+                  "path": [
+                    "{{apiVersion}}",
+                    "salesPersons"
+                  ],
+                  "query": [
+                    {
+                      "key": "OrderBy",
+                      "value": "Name"
+                    },
+                    {
+                      "key": "PageNumber",
+                      "value": "3"
+                    },
+                    {
+                      "key": "PageSize",
+                      "value": "5"
+                    },
+                    {
+                      "key": "SortOrder",
+                      "value": "desc"
+                    }
+                  ]
+                }
+              },
+              "response": []
+            },
+            {
+              "name": "SalesPersons List - Id Sort Ascending Page 15 (last page)",
+              "event": [
+                {
+                  "listen": "test",
+                  "script": {
+                    "exec": [
+                      "pm.test(\"Status should be OK request\", function () {\r",
+                      "    pm.response.to.have.status(200);\r",
+                      "});\r",
+                      "\r",
+                      "var response = pm.response.json();\r",
+                      "\r",
+                      "pm.test(\"Response should have correct structure\", function() {    \r",
+                      "    pm.expect(response).to.exist;\r",
+                      "    pm.expect(response.results).to.exist;\r",
+                      "    pm.expect(response.pageNumber).to.exist;\r",
+                      "    pm.expect(response.pageSize).to.exist;\r",
+                      "    pm.expect(response.totalPages).to.exist;\r",
+                      "    pm.expect(response.totalRecords).to.exist;\r",
+                      "    pm.expect(response.hasPreviousPage).to.exist;\r",
+                      "    pm.expect(response.hasNextPage).to.exist;\r",
+                      "});\r",
+                      "\r",
+                      "pm.test(\"Response should include correct paging information\", function(){\r",
+                      "    pm.expect(response.pageNumber).to.eq(15);\r",
+                      "    pm.expect(response.pageSize).to.eq(50);\r",
+                      "    pm.expect(response.totalPages > 14);\r",
+                      "    pm.expect(response.totalRecords > 700);\r",
+                      "    pm.expect(response.hasPreviousPage).to.be.true;\r",
+                      "    pm.expect(response.hasNextPage).to.be.false;\r",
+                      "});"
+                    ],
+                    "type": "text/javascript",
+                    "packages": {},
+                    "requests": {}
+                  }
+                }
+              ],
+              "request": {
+                "method": "GET",
+                "header": [],
+                "url": {
+                  "raw": "{{adventureWorksApi}}/{{apiVersion}}/salesPersons?OrderBy=id&PageNumber=2&PageSize=10&SortOrder=asc",
+                  "host": [
+                    "{{adventureWorksApi}}"
+                  ],
+                  "path": [
+                    "{{apiVersion}}",
+                    "salesPersons"
+                  ],
+                  "query": [
+                    {
+                      "key": "OrderBy",
+                      "value": "id"
+                    },
+                    {
+                      "key": "PageNumber",
+                      "value": "2"
+                    },
+                    {
+                      "key": "PageSize",
+                      "value": "10"
+                    },
+                    {
+                      "key": "SortOrder",
+                      "value": "asc"
+                    }
+                  ]
+                }
+              },
+              "response": []
+            }
+          ]
+        },
+        {
+          "name": "Sales Person by Id",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test(\"Status should be OK request\", function () {\r",
+                  "    pm.response.to.have.status(200);\r",
+                  "});\r",
+                  "\r",
+                  "  var response = pm.response.json();\r",
+                  "\r",
+                  "  pm.test(\"Response should have sales person data\", function() {\r",
+                  "      pm.expect(response).to.exist;\r",
+                  "      pm.expect(response.id).to.be.a('number');\r",
+                  "      pm.expect(response.firstName).to.exist;\r",
+                  "      pm.expect(response.lastName).to.exist;\r",
+                  "      pm.expect(response.jobTitle).to.exist;\r",
+                  "      pm.expect(response.commissionPct).to.be.a('number');\r",
+                  "      pm.expect(response.bonus).to.be.a('number');\r",
+                  "  });\r",
+                  "\r",
+                  "  pm.test(\"Sales person has person details\", function() {\r",
+                  "      pm.expect(response.firstName).to.not.be.null;\r",
+                  "      pm.expect(response.lastName).to.not.be.null;\r",
+                  "      pm.expect(response.emailAddress).to.exist;\r",
+                  "  });"
+                ],
+                "type": "text/javascript",
+                "packages": {},
+                "requests": {}
+              }
+            }
+          ],
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{adventureWorksApi}}/{{apiVersion}}/salesPersons/:id",
+              "host": [
+                "{{adventureWorksApi}}"
+              ],
+              "path": [
+                "{{apiVersion}}",
+                "salesPersons",
+                ":id"
+              ],
+              "variable": [
+                {
+                  "key": "id",
+                  "value": "275"
+                }
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Sales Person by Id - Not Found",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test(\"Status should be Not Found request\", function () {\r",
+                  "    pm.response.to.have.status(404);\r",
+                  "});\r",
+                  "\r",
+                  "pm.test(\"Response should have error message\", function() {\r",
+                  "      var response = pm.response.text();\r",
+                  "      pm.expect(response).to.include(\"Unable to locate the sales person\");\r",
+                  "  });"
+                ],
+                "type": "text/javascript",
+                "packages": {},
+                "requests": {}
+              }
+            }
+          ],
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{adventureWorksApi}}/{{apiVersion}}/salesPersons/:id",
+              "host": [
+                "{{adventureWorksApi}}"
+              ],
+              "path": [
+                "{{apiVersion}}",
+                "salesPersons",
+                ":id"
+              ],
+              "variable": [
+                {
+                  "key": "id",
+                  "value": "1"
+                }
+              ]
+            }
+          },
+          "response": []
+        }
+      ]
+    },
+    {
+      "name": "Sales Territory",
+      "item": [
+        {
+          "name": "Sales Territory List",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test(\"Status should be bad request\", function () {\r",
+                  "    pm.response.to.have.status(200);\r",
+                  "});\r",
+                  "\r",
+                  "var responseList = pm.response.json();\r",
+                  "const count = 10;\r",
+                  "\r",
+                  "pm.test(\"Should return correct count of results\", function() {    \r",
+                  "    pm.expect(responseList.length == count).to.equal(true);\r",
+                  "});\r",
+                  "\r",
+                  "var item01 = responseList.find(x => x.id == 1);\r",
+                  "var item02 = responseList.find(x => x.id == 2);\r",
+                  "var item03 = responseList.find(x => x.id == 3);\r",
+                  "\r",
+                  "pm.test(\"Item 1 should exist (Northwest)\", function(){   \r",
+                  "    pm.expect(item01.name).to.eql(\"Northwest\");\r",
+                  "});\r",
+                  "\r",
+                  "pm.test(\"Item 2 should exist (Northeast)\", function(){   \r",
+                  "    pm.expect(item02.name).to.eql(\"Northeast\");\r",
+                  "});\r",
+                  "\r",
+                  "pm.test(\"Item 3 should exist (Central)\", function(){   \r",
+                  "    pm.expect(item03.name).to.eql(\"Central\");\r",
+                  "});\r",
+                  "\r",
+                  ""
+                ],
+                "type": "text/javascript"
+              }
+            }
+          ],
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{adventureWorksApi}}/{{apiVersion}}/territories",
+              "host": [
+                "{{adventureWorksApi}}"
+              ],
+              "path": [
+                "{{apiVersion}}",
+                "territories"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Sales Territory by Id - Northwest",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test(\"Status should be bad request\", function () {\r",
+                  "    pm.response.to.have.status(200);\r",
+                  "});\r",
+                  "\r",
+                  "const id = 1\r",
+                  "const name = \"Northwest\"\r",
+                  "var response = pm.response.json();\r",
+                  "\r",
+                  "pm.test(\"Should return correct response object\", function() {   \r",
+                  "    pm.expect(response.id).to.eql(id);\r",
+                  "    pm.expect(response.name).to.eql(name);\r",
+                  "});"
+                ],
+                "type": "text/javascript"
+              }
+            }
+          ],
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{adventureWorksApi}}/{{apiVersion}}/territories/1",
+              "host": [
+                "{{adventureWorksApi}}"
+              ],
+              "path": [
+                "{{apiVersion}}",
+                "territories",
+                "1"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Sales Territory by Id -Southwest",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test(\"Status should be bad request\", function () {\r",
+                  "    pm.response.to.have.status(200);\r",
+                  "});\r",
+                  "\r",
+                  "const id = 4\r",
+                  "const name = \"Southwest\"\r",
+                  "var response = pm.response.json();\r",
+                  "\r",
+                  "pm.test(\"Should return correct response object\", function() {   \r",
+                  "    pm.expect(response.id).to.eql(id);\r",
+                  "    pm.expect(response.name).to.eql(name);\r",
+                  "});"
+                ],
+                "type": "text/javascript"
+              }
+            }
+          ],
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{adventureWorksApi}}/{{apiVersion}}/territories/4",
+              "host": [
+                "{{adventureWorksApi}}"
+              ],
+              "path": [
+                "{{apiVersion}}",
+                "territories",
+                "4"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Sales Territory by Id - Invalid",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test(\"Status should be bad request\", function () {\r",
+                  "    pm.response.to.have.status(400);\r",
+                  "});\r",
+                  "\r",
+                  "var response = pm.response.text();\r",
+                  "\r",
+                  "pm.test(\"Body should be correct\", function () {\r",
+                  "  pm.response.to.have.body(\"A valid sales territory id must be specified.\");\r",
+                  "});"
+                ],
+                "type": "text/javascript"
+              }
+            }
+          ],
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{adventureWorksApi}}/{{apiVersion}}/territories/-1",
+              "host": [
+                "{{adventureWorksApi}}"
+              ],
+              "path": [
+                "{{apiVersion}}",
+                "territories",
+                "-1"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Sales Territory by Id - Not Found",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test(\"Status should be not found\", function () {\r",
+                  "    pm.response.to.have.status(404);\r",
+                  "});\r",
+                  "\r",
+                  "var response = pm.response.text();\r",
+                  "\r",
+                  "pm.test(\"Body should be correct\", function () {\r",
+                  "  pm.response.to.have.body(\"Unable to locate the sales territory.\");\r",
+                  "});"
+                ],
+                "type": "text/javascript"
+              }
+            }
+          ],
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{adventureWorksApi}}/{{apiVersion}}/territories/2147483647",
+              "host": [
+                "{{adventureWorksApi}}"
+              ],
+              "path": [
+                "{{apiVersion}}",
+                "territories",
+                "2147483647"
+              ]
+            }
+          },
+          "response": []
+        }
+      ]
+    },
+    {
+      "name": "Stores",
+      "item": [
+        {
+          "name": "List",
+          "item": [
+            {
+              "name": "Stores List - Negative Page Number",
+              "event": [
+                {
+                  "listen": "test",
+                  "script": {
+                    "exec": [
+                      "pm.test(\"Status should be OK request\", function () {\r",
+                      "    pm.response.to.have.status(200);\r",
+                      "});\r",
+                      "\r",
+                      "var response = pm.response.json();\r",
+                      "\r",
+                      "pm.test(\"Response should have correct structure\", function() {    \r",
+                      "    pm.expect(response).to.exist;\r",
+                      "    pm.expect(response.results).to.exist;\r",
+                      "    pm.expect(response.pageNumber).to.exist;\r",
+                      "    pm.expect(response.pageSize).to.exist;\r",
+                      "    pm.expect(response.totalPages).to.exist;\r",
+                      "    pm.expect(response.totalRecords).to.exist;\r",
+                      "});\r",
+                      "\r",
+                      "pm.test(\"Response should include correct paging information\", function(){\r",
+                      "    pm.expect(response.pageNumber).to.eq(1);\r",
+                      "    pm.expect(response.pageSize).to.eq(10);\r",
+                      "    pm.expect(response.totalPages > 50);\r",
+                      "    pm.expect(response.totalRecords > 700);\r",
+                      "});"
+                    ],
+                    "type": "text/javascript"
+                  }
+                }
+              ],
+              "request": {
+                "method": "GET",
+                "header": [],
+                "url": {
+                  "raw": "{{adventureWorksApi}}/{{apiVersion}}/stores?PageNumber=-10",
+                  "host": [
+                    "{{adventureWorksApi}}"
+                  ],
+                  "path": [
+                    "{{apiVersion}}",
+                    "stores"
+                  ],
+                  "query": [
+                    {
+                      "key": "PageNumber",
+                      "value": "-10"
+                    }
+                  ]
+                }
+              },
+              "response": []
+            },
+            {
+              "name": "Stores List - Page Number Out of Bounds",
+              "event": [
+                {
+                  "listen": "test",
+                  "script": {
+                    "exec": [
+                      "pm.test(\"Status should be Bad request\", function () {\r",
+                      "    pm.response.to.have.status(400);\r",
+                      "});\r",
+                      "\r",
+                      "pm.test(\"Body should be correct\", function () {\r",
+                      "    pm.expect(pm.response.text()).to.include(\"Unable to locate results based upon input query parameters\");\r",
+                      "});"
+                    ],
+                    "type": "text/javascript"
+                  }
+                }
+              ],
+              "request": {
+                "method": "GET",
+                "header": [],
+                "url": {
+                  "raw": "{{adventureWorksApi}}/{{apiVersion}}/stores?PageNumber=1500&PageSize=50",
+                  "host": [
+                    "{{adventureWorksApi}}"
+                  ],
+                  "path": [
+                    "{{apiVersion}}",
+                    "stores"
+                  ],
+                  "query": [
+                    {
+                      "key": "PageNumber",
+                      "value": "1500"
+                    },
+                    {
+                      "key": "PageSize",
+                      "value": "50"
+                    }
+                  ]
+                }
+              },
+              "response": []
+            },
+            {
+              "name": "Stores List - Zero Params",
+              "event": [
+                {
+                  "listen": "test",
+                  "script": {
+                    "exec": [
+                      "pm.test(\"Status should be OK request\", function () {\r",
+                      "    pm.response.to.have.status(200);\r",
+                      "});\r",
+                      "\r",
+                      "var response = pm.response.json();\r",
+                      "\r",
+                      "pm.test(\"Response should have correct structure\", function() {    \r",
+                      "    pm.expect(response).to.exist;\r",
+                      "    pm.expect(response.results).to.exist;\r",
+                      "    pm.expect(response.pageNumber).to.exist;\r",
+                      "    pm.expect(response.pageSize).to.exist;\r",
+                      "    pm.expect(response.totalPages).to.exist;\r",
+                      "    pm.expect(response.totalRecords).to.exist;\r",
+                      "    pm.expect(response.hasPreviousPage).to.exist;\r",
+                      "    pm.expect(response.hasNextPage).to.exist;\r",
+                      "});\r",
+                      "\r",
+                      "pm.test(\"Response should include correct paging information\", function(){\r",
+                      "    pm.expect(response.pageNumber).to.eq(1);\r",
+                      "    pm.expect(response.pageSize).to.eq(10);\r",
+                      "    pm.expect(response.totalPages > 50);\r",
+                      "    pm.expect(response.totalRecords > 700);\r",
+                      "    pm.expect(response.hasPreviousPage).to.be.false;\r",
+                      "    pm.expect(response.hasNextPage).to.be.true;\r",
+                      "});"
+                    ],
+                    "type": "text/javascript"
+                  }
+                }
+              ],
+              "request": {
+                "method": "GET",
+                "header": [],
+                "url": {
+                  "raw": "{{adventureWorksApi}}/{{apiVersion}}/stores",
+                  "host": [
+                    "{{adventureWorksApi}}"
+                  ],
+                  "path": [
+                    "{{apiVersion}}",
+                    "stores"
+                  ]
+                }
+              },
+              "response": []
+            },
+            {
+              "name": "Stores List - Name Sort Descending Page 5",
+              "event": [
+                {
+                  "listen": "test",
+                  "script": {
+                    "exec": [
+                      "pm.test(\"Status should be OK request\", function () {\r",
+                      "    pm.response.to.have.status(200);\r",
+                      "});\r",
+                      "\r",
+                      "var response = pm.response.json();\r",
+                      "\r",
+                      "pm.test(\"Response should have correct structure\", function() {    \r",
+                      "    pm.expect(response).to.exist;\r",
+                      "    pm.expect(response.results).to.exist;\r",
+                      "    pm.expect(response.pageNumber).to.exist;\r",
+                      "    pm.expect(response.pageSize).to.exist;\r",
+                      "    pm.expect(response.totalPages).to.exist;\r",
+                      "    pm.expect(response.totalRecords).to.exist;\r",
+                      "    pm.expect(response.hasPreviousPage).to.exist;\r",
+                      "    pm.expect(response.hasNextPage).to.exist;\r",
+                      "});\r",
+                      "\r",
+                      "pm.test(\"Response should include correct paging information\", function(){\r",
+                      "    pm.expect(response.pageNumber).to.eq(5);\r",
+                      "    pm.expect(response.pageSize).to.eq(50);\r",
+                      "    pm.expect(response.totalPages > 14);\r",
+                      "    pm.expect(response.totalRecords > 700);\r",
+                      "    pm.expect(response.hasPreviousPage).to.be.true;\r",
+                      "    pm.expect(response.hasNextPage).to.be.true;\r",
+                      "});"
+                    ],
+                    "type": "text/javascript"
+                  }
+                }
+              ],
+              "request": {
+                "method": "GET",
+                "header": [],
+                "url": {
+                  "raw": "{{adventureWorksApi}}/{{apiVersion}}/stores?OrderBy=Name&PageNumber=5&PageSize=50&SortOrder=desc",
+                  "host": [
+                    "{{adventureWorksApi}}"
+                  ],
+                  "path": [
+                    "{{apiVersion}}",
+                    "stores"
+                  ],
+                  "query": [
+                    {
+                      "key": "OrderBy",
+                      "value": "Name"
+                    },
+                    {
+                      "key": "PageNumber",
+                      "value": "5"
+                    },
+                    {
+                      "key": "PageSize",
+                      "value": "50"
+                    },
+                    {
+                      "key": "SortOrder",
+                      "value": "desc"
+                    }
+                  ]
+                }
+              },
+              "response": []
+            },
+            {
+              "name": "Stores List - Id Sort Ascending Page 15 (last page)",
+              "event": [
+                {
+                  "listen": "test",
+                  "script": {
+                    "exec": [
+                      "pm.test(\"Status should be OK request\", function () {\r",
+                      "    pm.response.to.have.status(200);\r",
+                      "});\r",
+                      "\r",
+                      "var response = pm.response.json();\r",
+                      "\r",
+                      "pm.test(\"Response should have correct structure\", function() {    \r",
+                      "    pm.expect(response).to.exist;\r",
+                      "    pm.expect(response.results).to.exist;\r",
+                      "    pm.expect(response.pageNumber).to.exist;\r",
+                      "    pm.expect(response.pageSize).to.exist;\r",
+                      "    pm.expect(response.totalPages).to.exist;\r",
+                      "    pm.expect(response.totalRecords).to.exist;\r",
+                      "    pm.expect(response.hasPreviousPage).to.exist;\r",
+                      "    pm.expect(response.hasNextPage).to.exist;\r",
+                      "});\r",
+                      "\r",
+                      "pm.test(\"Response should include correct paging information\", function(){\r",
+                      "    pm.expect(response.pageNumber).to.eq(15);\r",
+                      "    pm.expect(response.pageSize).to.eq(50);\r",
+                      "    pm.expect(response.totalPages > 14);\r",
+                      "    pm.expect(response.totalRecords > 700);\r",
+                      "    pm.expect(response.hasPreviousPage).to.be.true;\r",
+                      "    pm.expect(response.hasNextPage).to.be.false;\r",
+                      "});"
+                    ],
+                    "type": "text/javascript"
+                  }
+                }
+              ],
+              "request": {
+                "method": "GET",
+                "header": [],
+                "url": {
+                  "raw": "{{adventureWorksApi}}/{{apiVersion}}/stores?OrderBy=id&PageNumber=15&PageSize=50&SortOrder=asc",
+                  "host": [
+                    "{{adventureWorksApi}}"
+                  ],
+                  "path": [
+                    "{{apiVersion}}",
+                    "stores"
+                  ],
+                  "query": [
+                    {
+                      "key": "OrderBy",
+                      "value": "id"
+                    },
+                    {
+                      "key": "PageNumber",
+                      "value": "15"
+                    },
+                    {
+                      "key": "PageSize",
+                      "value": "50"
+                    },
+                    {
+                      "key": "SortOrder",
+                      "value": "asc"
+                    }
+                  ]
+                }
+              },
+              "response": []
+            }
+          ]
+        },
+        {
+          "name": "Search",
+          "item": [
+            {
+              "name": "Search Stores by Id",
+              "event": [
+                {
+                  "listen": "test",
+                  "script": {
+                    "exec": [
+                      "pm.test(\"Status should be OK request\", function () {\r",
+                      "    pm.response.to.have.status(200);\r",
+                      "});\r",
+                      "\r",
+                      "var response = pm.response.json();\r",
+                      "\r",
+                      "pm.test(\"Response should have correct structure\", function() {    \r",
+                      "    pm.expect(response).to.exist;\r",
+                      "    pm.expect(response.results).to.exist;\r",
+                      "    pm.expect(response.pageNumber).to.exist;\r",
+                      "    pm.expect(response.pageSize).to.exist;\r",
+                      "    pm.expect(response.totalPages).to.exist;\r",
+                      "    pm.expect(response.totalRecords).to.exist;\r",
+                      "});\r",
+                      "\r",
+                      "pm.test(\"Response should include correct paging information\", function(){\r",
+                      "    pm.expect(response.pageNumber).to.eq(1);\r",
+                      "    pm.expect(response.pageSize).to.eq(10);\r",
+                      "    pm.expect(response.totalPages).to.eq(1);\r",
+                      "    pm.expect(response.totalRecords).to.eq(1);\r",
+                      "});"
+                    ],
+                    "type": "text/javascript"
+                  }
+                }
+              ],
+              "request": {
+                "method": "POST",
+                "header": [],
+                "body": {
+                  "mode": "raw",
+                  "raw": "{\r\n    \"id\": 644\r\n}",
+                  "options": {
+                    "raw": {
+                      "language": "json"
+                    }
+                  }
+                },
+                "url": {
+                  "raw": "{{adventureWorksApi}}/{{apiVersion}}/stores/search",
+                  "host": [
+                    "{{adventureWorksApi}}"
+                  ],
+                  "path": [
+                    "{{apiVersion}}",
+                    "stores",
+                    "search"
+                  ]
+                }
+              },
+              "response": []
+            },
+            {
+              "name": "Search Stores by Name = \"Exercise\"",
+              "event": [
+                {
+                  "listen": "test",
+                  "script": {
+                    "exec": [
+                      "pm.test(\"Status should be OK request\", function () {\r",
+                      "    pm.response.to.have.status(200);\r",
+                      "});\r",
+                      "\r",
+                      "var response = pm.response.json();\r",
+                      "\r",
+                      "pm.test(\"Response should have correct structure\", function() {    \r",
+                      "    pm.expect(response).to.exist;\r",
+                      "    pm.expect(response.results).to.exist;\r",
+                      "    pm.expect(response.pageNumber).to.exist;\r",
+                      "    pm.expect(response.pageSize).to.exist;\r",
+                      "    pm.expect(response.totalPages).to.exist;\r",
+                      "    pm.expect(response.totalRecords).to.exist;\r",
+                      "});\r",
+                      "\r",
+                      "pm.test(\"Response should include correct paging information\", function(){\r",
+                      "    pm.expect(response.pageNumber).to.eq(1);\r",
+                      "    pm.expect(response.pageSize).to.eq(10);\r",
+                      "    pm.expect(response.totalPages > 50);\r",
+                      "    pm.expect(response.totalRecords > 700);\r",
+                      "});"
+                    ],
+                    "type": "text/javascript"
+                  }
+                }
+              ],
+              "request": {
+                "method": "POST",
+                "header": [],
+                "body": {
+                  "mode": "raw",
+                  "raw": "{\r\n    \"Name\": \"Exercise\"\r\n}",
+                  "options": {
+                    "raw": {
+                      "language": "json"
+                    }
+                  }
+                },
+                "url": {
+                  "raw": "{{adventureWorksApi}}/{{apiVersion}}/stores/search",
+                  "host": [
+                    "{{adventureWorksApi}}"
+                  ],
+                  "path": [
+                    "{{apiVersion}}",
+                    "stores",
+                    "search"
+                  ]
+                }
+              },
+              "response": []
+            },
+            {
+              "name": "Search Stores by Name = \"Bike\"",
+              "event": [
+                {
+                  "listen": "test",
+                  "script": {
+                    "exec": [
+                      "pm.test(\"Status should be OK request\", function () {\r",
+                      "    pm.response.to.have.status(200);\r",
+                      "});\r",
+                      "\r",
+                      "var response = pm.response.json();\r",
+                      "\r",
+                      "pm.test(\"Response should have correct structure\", function() {    \r",
+                      "    pm.expect(response).to.exist;\r",
+                      "    pm.expect(response.results).to.exist;\r",
+                      "    pm.expect(response.pageNumber).to.exist;\r",
+                      "    pm.expect(response.pageSize).to.exist;\r",
+                      "    pm.expect(response.totalPages).to.exist;\r",
+                      "    pm.expect(response.totalRecords).to.exist;\r",
+                      "});\r",
+                      "\r",
+                      "pm.test(\"Response should include correct paging information\", function(){\r",
+                      "    pm.expect(response.pageNumber).to.eq(1);\r",
+                      "    pm.expect(response.pageSize).to.eq(10);\r",
+                      "    pm.expect(response.totalPages > 50);\r",
+                      "    pm.expect(response.totalRecords > 700);\r",
+                      "});"
+                    ],
+                    "type": "text/javascript"
+                  }
+                }
+              ],
+              "request": {
+                "method": "POST",
+                "header": [],
+                "body": {
+                  "mode": "raw",
+                  "raw": "{\r\n    \"Name\": \"bike\"\r\n}",
+                  "options": {
+                    "raw": {
+                      "language": "json"
+                    }
+                  }
+                },
+                "url": {
+                  "raw": "{{adventureWorksApi}}/{{apiVersion}}/stores/search?OrderBy=Name&PageNumber=1&PageSize=50&SortOrder=ascending",
+                  "host": [
+                    "{{adventureWorksApi}}"
+                  ],
+                  "path": [
+                    "{{apiVersion}}",
+                    "stores",
+                    "search"
+                  ],
+                  "query": [
+                    {
+                      "key": "OrderBy",
+                      "value": "Name"
+                    },
+                    {
+                      "key": "PageNumber",
+                      "value": "1"
+                    },
+                    {
+                      "key": "PageSize",
+                      "value": "50"
+                    },
+                    {
+                      "key": "SortOrder",
+                      "value": "ascending"
+                    }
+                  ]
+                }
+              },
+              "response": []
+            }
+          ]
+        },
+        {
+          "name": "Create",
+          "item": [
+            {
+              "name": "Create Store",
+              "request": {
+                "method": "POST",
+                "header": [],
+                "body": {
+                  "mode": "raw",
+                  "raw": "{\r\n    \"name\": \"a fancy store number 2\"\r\n}",
+                  "options": {
+                    "raw": {
+                      "language": "json"
+                    }
+                  }
+                },
+                "url": {
+                  "raw": "{{adventureWorksApi}}/{{apiVersion}}/stores/",
+                  "host": [
+                    "{{adventureWorksApi}}"
+                  ],
+                  "path": [
+                    "{{apiVersion}}",
+                    "stores",
+                    ""
+                  ]
+                }
+              },
+              "response": []
+            }
+          ]
+        },
+        {
+          "name": "Update - Patch",
+          "item": [
+            {
+              "name": "Update Store Name",
+              "event": [
+                {
+                  "listen": "test",
+                  "script": {
+                    "exec": [
+                      "pm.test(\"Status should be 200\", function () {",
+                      "    pm.response.to.have.status(200);",
+                      "});",
+                      "",
+                      "var response = pm.response.json();",
+                      "",
+                      "pm.test(\"Response should have correct structure\", function () {",
+                      "    pm.expect(response).to.exist;",
+                      "    pm.expect(response.id).to.exist;",
+                      "    pm.expect(response.name).to.exist;",
+                      "});",
+                      "",
+                      "pm.test(\"Response id should match requested store\", function () {",
+                      "    pm.expect(response.id).to.eql(292);",
+                      "});",
+                      "",
+                      "pm.test(\"Name should be updated\", function () {",
+                      "    pm.expect(response.name).to.eql(\"Updated Store Name\");",
+                      "});"
+                    ],
+                    "type": "text/javascript",
+                    "packages": {},
+                    "requests": {}
+                  }
+                }
+              ],
+              "request": {
+                "method": "PATCH",
+                "header": [
+                  {
+                    "key": "Content-Type",
+                    "value": "application/json-patch+json",
+                    "type": "text"
+                  }
+                ],
+                "body": {
+                  "mode": "raw",
+                  "raw": "[\n    {\n        \"op\": \"replace\",\n        \"path\": \"/name\",\n        \"value\": \"Updated Store Name\"\n    }\n]",
+                  "options": {
+                    "raw": {
+                      "language": "json"
+                    }
+                  }
+                },
+                "url": {
+                  "raw": "{{adventureWorksApi}}/{{apiVersion}}/stores/292",
+                  "host": [
+                    "{{adventureWorksApi}}"
+                  ],
+                  "path": [
+                    "{{apiVersion}}",
+                    "stores",
+                    "292"
+                  ]
+                }
+              },
+              "response": []
+            },
+            {
+              "name": "Update Store ID Fails",
+              "event": [
+                {
+                  "listen": "test",
+                  "script": {
+                    "exec": [
+                      "pm.test(\"Status should be 200\", function () {",
+                      "    pm.response.to.have.status(200);",
+                      "});",
+                      "",
+                      "var response = pm.response.json();",
+                      "",
+                      "pm.test(\"Response id should be unchanged\", function () {",
+                      "    pm.expect(response.id).to.eql(292);",
+                      "});",
+                      "",
+                      "pm.test(\"id should not reflect the patched value\", function () {",
+                      "    pm.expect(response.id).to.not.eql(99999);",
+                      "});"
+                    ],
+                    "type": "text/javascript",
+                    "packages": {},
+                    "requests": {}
+                  }
+                }
+              ],
+              "request": {
+                "method": "PATCH",
+                "header": [
+                  {
+                    "key": "Content-Type",
+                    "value": "application/json-patch+json",
+                    "type": "text"
+                  }
+                ],
+                "body": {
+                  "mode": "raw",
+                  "raw": "[\n    {\n        \"op\": \"replace\",\n        \"path\": \"/id\",\n        \"value\": 99999\n    }\n]",
+                  "options": {
+                    "raw": {
+                      "language": "json"
+                    }
+                  }
+                },
+                "url": {
+                  "raw": "{{adventureWorksApi}}/{{apiVersion}}/stores/292",
+                  "host": [
+                    "{{adventureWorksApi}}"
+                  ],
+                  "path": [
+                    "{{apiVersion}}",
+                    "stores",
+                    "292"
+                  ]
+                }
+              },
+              "response": []
+            },
+            {
+              "name": "Update Store Invalid Field Fails",
+              "event": [
+                {
+                  "listen": "test",
+                  "script": {
+                    "exec": [
+                      "  pm.test(\"Status should be 400\", function () {",
+                      "      pm.response.to.have.status(400);",
+                      "  });",
+                      "",
+                      "  var response = pm.response.json();",
+                      "",
+                      "  pm.test(\"Response should contain error details\", function () {",
+                      "      pm.expect(response).to.be.an(\"array\");",
+                      "      pm.expect(response.length).to.be.above(0);",
+                      "      pm.expect(response[0].errorMessage).to.exist;",
+                      "  });"
+                    ],
+                    "type": "text/javascript",
+                    "packages": {},
+                    "requests": {}
+                  }
+                }
+              ],
+              "request": {
+                "method": "PATCH",
+                "header": [
+                  {
+                    "key": "Content-Type",
+                    "value": "application/json-patch+json",
+                    "type": "text"
+                  }
+                ],
+                "body": {
+                  "mode": "raw",
+                  "raw": "[\n    {\n        \"op\": \"replace\",\n        \"path\": \"/nonExistentField\",\n        \"value\": \"something\"\n    }\n]",
+                  "options": {
+                    "raw": {
+                      "language": "json"
+                    }
+                  }
+                },
+                "url": {
+                  "raw": "{{adventureWorksApi}}/{{apiVersion}}/stores/292",
+                  "host": [
+                    "{{adventureWorksApi}}"
+                  ],
+                  "path": [
+                    "{{apiVersion}}",
+                    "stores",
+                    "292"
+                  ]
+                }
+              },
+              "response": []
+            },
+            {
+              "name": "Update Store Invalid Store Fails",
+              "event": [
+                {
+                  "listen": "test",
+                  "script": {
+                    "exec": [
+                      "  pm.test(\"Status should be 404\", function () {",
+                      "      pm.response.to.have.status(404);",
+                      "  });",
+                      "",
+                      "  var response = pm.response.json();",
+                      "",
+                      "  pm.test(\"Response should contain error details\", function () {",
+                      "      pm.expect(response).to.exist;",
+                      "  });"
+                    ],
+                    "type": "text/javascript",
+                    "packages": {},
+                    "requests": {}
+                  }
+                }
+              ],
+              "request": {
+                "method": "PATCH",
+                "header": [
+                  {
+                    "key": "Content-Type",
+                    "value": "application/json-patch+json",
+                    "type": "text"
+                  }
+                ],
+                "body": {
+                  "mode": "raw",
+                  "raw": "[\n    {\n        \"op\": \"replace\",\n        \"path\": \"/name\",\n        \"value\": \"Ghost Store\"\n    }\n]",
+                  "options": {
+                    "raw": {
+                      "language": "json"
+                    }
+                  }
+                },
+                "url": {
+                  "raw": "{{adventureWorksApi}}/{{apiVersion}}/stores/99999999",
+                  "host": [
+                    "{{adventureWorksApi}}"
+                  ],
+                  "path": [
+                    "{{apiVersion}}",
+                    "stores",
+                    "99999999"
+                  ]
+                }
+              },
+              "response": []
+            }
+          ]
+        },
+        {
+          "name": "Update",
+          "item": [
+            {
+              "name": "Update Store",
+              "request": {
+                "method": "PUT",
+                "header": [],
+                "body": {
+                  "mode": "raw",
+                  "raw": "{\r\n    \"id\": 1000032,    \r\n    \"storeAddresses\": [],\r\n    \"storeContacts\": [],\r\n    \"name\": \"Number 2 a fancy store\"\r\n}",
+                  "options": {
+                    "raw": {
+                      "language": "json"
+                    }
+                  }
+                },
+                "url": {
+                  "raw": "{{adventureWorksApi}}/{{apiVersion}}/stores/1000032",
+                  "host": [
+                    "{{adventureWorksApi}}"
+                  ],
+                  "path": [
+                    "{{apiVersion}}",
+                    "stores",
+                    "1000032"
+                  ]
+                }
+              },
+              "response": []
+            },
+            {
+              "name": "Update Store Fails Name Too Long",
+              "event": [
+                {
+                  "listen": "test",
+                  "script": {
+                    "exec": [
+                      "  pm.test(\"Status should be 400\", function () {",
+                      "      pm.response.to.have.status(400);",
+                      "  });",
+                      "",
+                      "  var response = pm.response.json();",
+                      "",
+                      "  pm.test(\"Response should contain validation errors\", function () {",
+                      "      pm.expect(response).to.be.an(\"array\");",
+                      "      pm.expect(response.length).to.be.above(0);",
+                      "  });",
+                      "",
+                      "  pm.test(\"Error should reference the Name field with correct error code\", function () {",
+                      "      var nameError = response.find(function (e) {",
+                      "          return e.propertyName === \"Name\";",
+                      "      });",
+                      "      pm.expect(nameError).to.exist;",
+                      "      pm.expect(nameError.errorCode).to.eql(\"Rule-02\");",
+                      "  });"
+                    ],
+                    "type": "text/javascript",
+                    "packages": {},
+                    "requests": {}
+                  }
+                }
+              ],
+              "request": {
+                "method": "PUT",
+                "header": [],
+                "body": {
+                  "mode": "raw",
+                  "raw": "{\r\n    \"id\": 292,\r\n    \"name\": \"AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA\"\r\n}",
+                  "options": {
+                    "raw": {
+                      "language": "json"
+                    }
+                  }
+                },
+                "url": {
+                  "raw": "{{adventureWorksApi}}/{{apiVersion}}/stores/292",
+                  "host": [
+                    "{{adventureWorksApi}}"
+                  ],
+                  "path": [
+                    "{{apiVersion}}",
+                    "stores",
+                    "292"
+                  ]
+                }
+              },
+              "response": []
+            },
+            {
+              "name": "Update Store 292",
+              "event": [
+                {
+                  "listen": "test",
+                  "script": {
+                    "exec": [
+                      "pm.test(\"Status should be 200\", function () {",
+                      "    pm.response.to.have.status(200);",
+                      "});",
+                      "",
+                      "var response = pm.response.json();",
+                      "",
+                      "pm.test(\"Response should have correct structure\", function () {",
+                      "    pm.expect(response).to.exist;",
+                      "    pm.expect(response.id).to.exist;",
+                      "    pm.expect(response.name).to.exist;",
+                      "});",
+                      "",
+                      "pm.test(\"Response id should match requested store\", function () {",
+                      "    pm.expect(response.id).to.eql(292);",
+                      "});",
+                      "",
+                      "pm.test(\"Response id should not be zero (AutoMapper fix verification)\", function () {",
+                      "    pm.expect(response.id).to.not.eql(0);",
+                      "});",
+                      "",
+                      "pm.test(\"Name should match submitted value\", function () {",
+                      "    pm.expect(response.name).to.eql(\"Next-Door Bike Store\");",
+                      "});"
+                    ],
+                    "type": "text/javascript",
+                    "packages": {},
+                    "requests": {}
+                  }
+                }
+              ],
+              "request": {
+                "method": "PUT",
+                "header": [],
+                "body": {
+                  "mode": "raw",
+                  "raw": "{\r\n    \"id\": 292,\r\n    \"name\": \"Next-Door Bike Store\"\r\n}",
+                  "options": {
+                    "raw": {
+                      "language": "json"
+                    }
+                  }
+                },
+                "url": {
+                  "raw": "{{adventureWorksApi}}/{{apiVersion}}/stores/292",
+                  "host": [
+                    "{{adventureWorksApi}}"
+                  ],
+                  "path": [
+                    "{{apiVersion}}",
+                    "stores",
+                    "292"
+                  ]
+                }
+              },
+              "response": []
+            }
+          ]
+        },
+        {
+          "name": "By Id",
+          "item": [
+            {
+              "name": "Stores by Id - Not Found",
+              "event": [
+                {
+                  "listen": "test",
+                  "script": {
+                    "exec": [
+                      "  pm.test(\"Status should be 404\", function () {\r",
+                      "      pm.response.to.have.status(404);\r",
+                      "  });\r",
+                      ""
+                    ],
+                    "type": "text/javascript",
+                    "packages": {},
+                    "requests": {}
+                  }
+                }
+              ],
+              "request": {
+                "method": "GET",
+                "header": [],
+                "url": {
+                  "raw": "{{adventureWorksApi}}/{{apiVersion}}/stores/:id",
+                  "host": [
+                    "{{adventureWorksApi}}"
+                  ],
+                  "path": [
+                    "{{apiVersion}}",
+                    "stores",
+                    ":id"
+                  ],
+                  "variable": [
+                    {
+                      "key": "id",
+                      "value": "111111111111"
+                    }
+                  ]
+                }
+              },
+              "response": []
+            },
+            {
+              "name": "Stores by Id (644)",
+              "event": [
+                {
+                  "listen": "test",
+                  "script": {
+                    "exec": [
+                      "pm.test(\"Status should be OK request\", function () {\r",
+                      "    pm.response.to.have.status(200);\r",
+                      "});\r",
+                      "\r",
+                      "\r",
+                      "var response = pm.response.json();\r",
+                      "\r",
+                      "pm.test(\"Response should have correct structure\", function() {    \r",
+                      "    pm.expect(response).to.exist;\r",
+                      "    pm.expect(response.storeAddresses).to.exist;\r",
+                      "    pm.expect(response.storeContacts).to.exist;\r",
+                      "});\r",
+                      "\r",
+                      "pm.test(\"Response should have one address\", function() {    \r",
+                      "    let counter = response.storeAddresses.length;\r",
+                      "    pm.expect(counter).to.eql(1);\r",
+                      "});\r",
+                      "\r",
+                      "pm.test(\"Response should have two contacts\", function() {    \r",
+                      "    let counter = response.storeContacts.length;\r",
+                      "    pm.expect(counter).to.eql(2);\r",
+                      "});\r",
+                      "\r",
+                      "\r",
+                      ""
+                    ],
+                    "type": "text/javascript"
+                  }
+                }
+              ],
+              "request": {
+                "method": "GET",
+                "header": [],
+                "url": {
+                  "raw": "{{adventureWorksApi}}/{{apiVersion}}/stores/644",
+                  "host": [
+                    "{{adventureWorksApi}}"
+                  ],
+                  "path": [
+                    "{{apiVersion}}",
+                    "stores",
+                    "644"
+                  ]
+                }
+              },
+              "response": []
+            },
+            {
+              "name": "Stores by Id (1204)",
+              "event": [
+                {
+                  "listen": "test",
+                  "script": {
+                    "exec": [
+                      "pm.test(\"Status should be OK request\", function () {\r",
+                      "    pm.response.to.have.status(200);\r",
+                      "});\r",
+                      "\r",
+                      "\r",
+                      "var response = pm.response.json();\r",
+                      "\r",
+                      "pm.test(\"Response should have correct structure\", function() {    \r",
+                      "    pm.expect(response).to.exist;\r",
+                      "    pm.expect(response.storeAddresses).to.exist;\r",
+                      "    pm.expect(response.storeContacts).to.exist;\r",
+                      "});\r",
+                      "\r",
+                      "pm.test(\"Response should have two addresses\", function() {    \r",
+                      "    let counter = response.storeAddresses.length;\r",
+                      "    pm.expect(counter).to.eql(2);\r",
+                      "});\r",
+                      "\r",
+                      "pm.test(\"Response should have one contact\", function() {    \r",
+                      "    let counter = response.storeContacts.length;\r",
+                      "    pm.expect(counter).to.eql(1);\r",
+                      "});\r",
+                      "\r",
+                      "\r",
+                      "\r",
+                      ""
+                    ],
+                    "type": "text/javascript"
+                  }
+                }
+              ],
+              "request": {
+                "method": "GET",
+                "header": [],
+                "url": {
+                  "raw": "{{adventureWorksApi}}/{{apiVersion}}/stores/1204",
+                  "host": [
+                    "{{adventureWorksApi}}"
+                  ],
+                  "path": [
+                    "{{apiVersion}}",
+                    "stores",
+                    "1204"
+                  ]
+                }
+              },
+              "response": []
+            },
+            {
+              "name": "Stores by Id (292)",
+              "event": [
+                {
+                  "listen": "test",
+                  "script": {
+                    "exec": [
+                      "pm.test(\"Status should be OK request\", function () {\r",
+                      "    pm.response.to.have.status(200);\r",
+                      "});\r",
+                      "\r",
+                      "var response = pm.response.json();\r",
+                      "\r",
+                      "pm.test(\"Response should have correct structure\", function() {    \r",
+                      "    pm.expect(response).to.exist;\r",
+                      "    pm.expect(response.storeAddresses).to.exist;\r",
+                      "    pm.expect(response.storeContacts).to.exist;\r",
+                      "});\r",
+                      "\r",
+                      "pm.test(\"Response should have one address\", function() {    \r",
+                      "    let counter = response.storeAddresses.length;\r",
+                      "    pm.expect(counter).to.eql(1);\r",
+                      "});\r",
+                      "\r",
+                      "pm.test(\"Response should have one contact\", function() {    \r",
+                      "    let counter = response.storeContacts.length;\r",
+                      "    pm.expect(counter).to.eql(1);\r",
+                      "});"
+                    ],
+                    "type": "text/javascript"
+                  }
+                }
+              ],
+              "request": {
+                "method": "GET",
+                "header": [],
+                "url": {
+                  "raw": "{{adventureWorksApi}}/{{apiVersion}}/stores/292",
+                  "host": [
+                    "{{adventureWorksApi}}"
+                  ],
+                  "path": [
+                    "{{apiVersion}}",
+                    "stores",
+                    "292"
+                  ]
+                }
+              },
+              "response": []
+            },
+            {
+              "name": "Stores by Id (292) - Exclude Addresses",
+              "event": [
+                {
+                  "listen": "test",
+                  "script": {
+                    "exec": [
+                      "pm.test(\"Status should be 200\", function () {\r",
+                      "    pm.response.to.have.status(200);\r",
+                      "});\r",
+                      "\r",
+                      "var response = pm.response.json();\r",
+                      "\r",
+                      "pm.test(\"Response should have correct structure\", function () {\r",
+                      "    pm.expect(response).to.exist;\r",
+                      "    pm.expect(response.id).to.exist;\r",
+                      "    pm.expect(response.name).to.exist;\r",
+                      "    pm.expect(response.storeAddresses).to.exist;\r",
+                      "    pm.expect(response.storeContacts).to.exist;\r",
+                      "});\r",
+                      "\r",
+                      "pm.test(\"Response id should match requested store\", function () {\r",
+                      "    pm.expect(response.id).to.eql(292);\r",
+                      "});\r",
+                      "\r",
+                      "pm.test(\"storeAddresses should be empty when excluded\", function () {\r",
+                      "    pm.expect(response.storeAddresses.length).to.eql(0);\r",
+                      "});\r",
+                      "\r",
+                      "pm.test(\"storeContacts should still be populated\", function () {\r",
+                      "    pm.expect(response.storeContacts.length).to.be.above(0);\r",
+                      "});"
+                    ],
+                    "type": "text/javascript",
+                    "packages": {},
+                    "requests": {}
+                  }
+                }
+              ],
+              "request": {
+                "method": "GET",
+                "header": [],
+                "url": {
+                  "raw": "{{adventureWorksApi}}/{{apiVersion}}/stores/292?includeAddresses=false",
+                  "host": [
+                    "{{adventureWorksApi}}"
+                  ],
+                  "path": [
+                    "{{apiVersion}}",
+                    "stores",
+                    "292"
+                  ],
+                  "query": [
+                    {
+                      "key": "includeAddresses",
+                      "value": "false"
+                    }
+                  ]
+                }
+              },
+              "response": []
+            },
+            {
+              "name": "Stores by Id (292) - Exclude Contacts",
+              "event": [
+                {
+                  "listen": "test",
+                  "script": {
+                    "exec": [
+                      "pm.test(\"Status should be 200\", function () {\r",
+                      "    pm.response.to.have.status(200);\r",
+                      "});\r",
+                      "\r",
+                      "var response = pm.response.json();\r",
+                      "\r",
+                      "pm.test(\"Response should have correct structure\", function () {\r",
+                      "    pm.expect(response).to.exist;\r",
+                      "    pm.expect(response.id).to.exist;\r",
+                      "    pm.expect(response.name).to.exist;\r",
+                      "    pm.expect(response.storeAddresses).to.exist;\r",
+                      "    pm.expect(response.storeContacts).to.exist;\r",
+                      "});\r",
+                      "\r",
+                      "pm.test(\"Response id should match requested store\", function () {\r",
+                      "    pm.expect(response.id).to.eql(292);\r",
+                      "});\r",
+                      "\r",
+                      "pm.test(\"storeContacts should be empty when excluded\", function () {\r",
+                      "    pm.expect(response.storeContacts.length).to.eql(0);\r",
+                      "});\r",
+                      "\r",
+                      "pm.test(\"storeAddresses should still be populated\", function () {\r",
+                      "    pm.expect(response.storeAddresses.length).to.be.above(0);\r",
+                      "});"
+                    ],
+                    "type": "text/javascript",
+                    "packages": {},
+                    "requests": {}
+                  }
+                }
+              ],
+              "request": {
+                "method": "GET",
+                "header": [],
+                "url": {
+                  "raw": "{{adventureWorksApi}}/{{apiVersion}}/stores/292?includeContacts=false",
+                  "host": [
+                    "{{adventureWorksApi}}"
+                  ],
+                  "path": [
+                    "{{apiVersion}}",
+                    "stores",
+                    "292"
+                  ],
+                  "query": [
+                    {
+                      "key": "includeContacts",
+                      "value": "false"
+                    }
+                  ]
+                }
+              },
+              "response": []
+            },
+            {
+              "name": "Stores by Id (292) - Exclude Address and Contacts",
+              "event": [
+                {
+                  "listen": "test",
+                  "script": {
+                    "exec": [
+                      "pm.test(\"Status should be 200\", function () {\r",
+                      "    pm.response.to.have.status(200);\r",
+                      "});\r",
+                      "\r",
+                      "var response = pm.response.json();\r",
+                      "\r",
+                      "pm.test(\"Response should have correct structure\", function () {\r",
+                      "    pm.expect(response).to.exist;\r",
+                      "    pm.expect(response.id).to.exist;\r",
+                      "    pm.expect(response.name).to.exist;\r",
+                      "    pm.expect(response.storeAddresses).to.exist;\r",
+                      "    pm.expect(response.storeContacts).to.exist;\r",
+                      "});\r",
+                      "\r",
+                      "pm.test(\"Response id should match requested store\", function () {\r",
+                      "    pm.expect(response.id).to.eql(292);\r",
+                      "});\r",
+                      "\r",
+                      "pm.test(\"storeAddresses should be empty when excluded\", function () {\r",
+                      "    pm.expect(response.storeAddresses.length).to.eql(0);\r",
+                      "});\r",
+                      "\r",
+                      "pm.test(\"storeContacts should be empty when excluded\", function () {\r",
+                      "    pm.expect(response.storeContacts.length).to.eql(0);\r",
+                      "});"
+                    ],
+                    "type": "text/javascript",
+                    "packages": {},
+                    "requests": {}
+                  }
+                }
+              ],
+              "request": {
+                "method": "GET",
+                "header": [],
+                "url": {
+                  "raw": "{{adventureWorksApi}}/{{apiVersion}}/stores/292?includeAddresses=false&includeContacts=false",
+                  "host": [
+                    "{{adventureWorksApi}}"
+                  ],
+                  "path": [
+                    "{{apiVersion}}",
+                    "stores",
+                    "292"
+                  ],
+                  "query": [
+                    {
+                      "key": "includeAddresses",
+                      "value": "false"
+                    },
+                    {
+                      "key": "includeContacts",
+                      "value": "false"
+                    }
+                  ]
+                }
+              },
+              "response": []
+            }
+          ]
+        },
+        {
+          "name": "Addresses",
+          "item": [
+            {
+              "name": "Store Addresses",
+              "event": [
+                {
+                  "listen": "test",
+                  "script": {
+                    "exec": [
+                      "pm.test(\"Status should be 200\", function () {",
+                      "    pm.response.to.have.status(200);",
+                      "});",
+                      "",
+                      "var response = pm.response.json();",
+                      "",
+                      "pm.test(\"Response should be an array\", function () {",
+                      "    pm.expect(response).to.be.an(\"array\");",
+                      "});",
+                      "",
+                      "pm.test(\"Response should have at least one address\", function () {",
+                      "    pm.expect(response.length).to.be.above(0);",
+                      "});",
+                      "",
+                      "pm.test(\"Each address should have correct structure\", function () {",
+                      "    response.forEach(function (address) {",
+                      "        pm.expect(address.address).to.exist;",
+                      "        pm.expect(address.addressType).to.exist;",
+                      "    });",
+                      "});"
+                    ],
+                    "type": "text/javascript",
+                    "packages": {},
+                    "requests": {}
+                  }
+                }
+              ],
+              "request": {
+                "method": "GET",
+                "header": [],
+                "url": {
+                  "raw": "{{adventureWorksApi}}/{{apiVersion}}/stores/292/addresses",
+                  "host": [
+                    "{{adventureWorksApi}}"
+                  ],
+                  "path": [
+                    "{{apiVersion}}",
+                    "stores",
+                    "292",
+                    "addresses"
+                  ]
+                }
+              },
+              "response": []
+            }
+          ]
+        },
+        {
+          "name": "Contacts",
+          "item": [
+            {
+              "name": "Store Contacts",
+              "event": [
+                {
+                  "listen": "test",
+                  "script": {
+                    "exec": [
+                      "pm.test(\"Status should be 200\", function () {",
+                      "    pm.response.to.have.status(200);",
+                      "});",
+                      "",
+                      "var response = pm.response.json();",
+                      "",
+                      "pm.test(\"Response should be an array\", function () {",
+                      "    pm.expect(response).to.be.an(\"array\");",
+                      "});",
+                      "",
+                      "pm.test(\"Response should have at least one contact\", function () {",
+                      "    pm.expect(response.length).to.be.above(0);",
+                      "});",
+                      "",
+                      "pm.test(\"Each contact should have correct structure\", function () {",
+                      "    response.forEach(function (contact) {",
+                      "        pm.expect(contact.id).to.exist;",
+                      "        pm.expect(contact.firstName).to.exist;",
+                      "        pm.expect(contact.lastName).to.exist;",
+                      "        pm.expect(contact.contactTypeId).to.exist;",
+                      "        pm.expect(contact.contactTypeName).to.exist;",
+                      "        pm.expect(contact.storeId).to.eql(292);",
+                      "    });",
+                      "});",
+                      ""
+                    ],
+                    "type": "text/javascript",
+                    "packages": {},
+                    "requests": {}
+                  }
+                }
+              ],
+              "request": {
+                "method": "GET",
+                "header": [],
+                "url": {
+                  "raw": "{{adventureWorksApi}}/{{apiVersion}}/stores/292/contacts",
+                  "host": [
+                    "{{adventureWorksApi}}"
+                  ],
+                  "path": [
+                    "{{apiVersion}}",
+                    "stores",
+                    "292",
+                    "contacts"
+                  ]
+                }
+              },
+              "response": []
+            },
+            {
+              "name": "Get Store Contact",
+              "event": [
+                {
+                  "listen": "test",
+                  "script": {
+                    "exec": [
+                      "var storeId = Number(pm.request.url.path[3]);",
+                      "var personId = Number(pm.request.url.path[5]);",
+                      "var contactTypeId = Number(pm.request.url.path[6]);",
+                      "",
+                      "console.log(pm.request.url.path);",
+                      "",
+                      "pm.test(\"Status should be 200\", function () {",
+                      "    pm.response.to.have.status(200);",
+                      "});",
+                      "",
+                      "var response = pm.response.json();",
+                      "",
+                      "pm.test(\"Response should have correct shape\", function () {",
+                      "    pm.expect(response).to.exist;",
+                      "    pm.expect(response.id).to.eql(personId);",
+                      "    pm.expect(response.storeId).to.eql(storeId);",
+                      "    pm.expect(response.contactTypeId).to.eql(contactTypeId);",
+                      "    pm.expect(response.contactTypeName).to.exist;",
+                      "    pm.expect(response.firstName).to.exist;",
+                      "    pm.expect(response.lastName).to.exist;",
+                      "});"
+                    ],
+                    "type": "text/javascript",
+                    "packages": {},
+                    "requests": {}
+                  }
+                }
+              ],
+              "request": {
+                "method": "GET",
+                "header": [],
+                "url": {
+                  "raw": "{{adventureWorksApi}}/{{apiVersion}}/stores/:storeId/contacts/:personId/:contactTypeId",
+                  "host": [
+                    "{{adventureWorksApi}}"
+                  ],
+                  "path": [
+                    "{{apiVersion}}",
+                    "stores",
+                    ":storeId",
+                    "contacts",
+                    ":personId",
+                    ":contactTypeId"
+                  ],
+                  "variable": [
+                    {
+                      "key": "storeId",
+                      "value": "292"
+                    },
+                    {
+                      "key": "personId",
+                      "value": "291"
+                    },
+                    {
+                      "key": "contactTypeId",
+                      "value": "11"
+                    }
+                  ]
+                }
+              },
+              "response": [
+                {
+                  "name": "Get Store Contact",
+                  "originalRequest": {
+                    "method": "GET",
+                    "header": [],
+                    "url": {
+                      "raw": "{{adventureWorksApi}}/{{apiVersion}}/stores/:storeId/contacts/:personId/:contactTypeId",
+                      "host": [
+                        "{{adventureWorksApi}}"
+                      ],
+                      "path": [
+                        "{{apiVersion}}",
+                        "stores",
+                        ":storeId",
+                        "contacts",
+                        ":personId",
+                        ":contactTypeId"
+                      ],
+                      "variable": [
+                        {
+                          "key": "storeId",
+                          "value": "292"
+                        },
+                        {
+                          "key": "personId",
+                          "value": "275"
+                        },
+                        {
+                          "key": "contactTypeId",
+                          "value": "11"
+                        }
+                      ]
+                    }
+                  },
+                  "_postman_previewlanguage": "Text",
+                  "header": [],
+                  "cookie": [
+                    {
+                      "expires": "Invalid Date",
+                      "domain": "",
+                      "path": ""
+                    }
+                  ],
+                  "body": ""
+                }
+              ]
+            },
+            {
+              "name": "Create Store Contact",
+              "event": [
+                {
+                  "listen": "test",
+                  "script": {
+                    "exec": [
+                      "var storeId = Number(pm.request.url.variables.get(\"storeId\").value);",
+                      "var requestBody = JSON.parse(pm.request.body.raw);",
+                      "",
+                      "pm.test(\"Status should be 201\", function () {",
+                      "    pm.response.to.have.status(201);",
+                      "});",
+                      "",
+                      "var response = pm.response.json();",
+                      "",
+                      "pm.test(\"Response includes created contact details\", function () {",
+                      "    pm.expect(response.id).to.eql(requestBody.personId);",
+                      "    pm.expect(response.storeId).to.eql(storeId);",
+                      "    pm.expect(response.contactTypeId).to.eql(requestBody.contactTypeId);",
+                      "    pm.expect(response.contactTypeName).to.exist;",
+                      "});",
+                      "",
+                      "pm.test(\"Location header points at single-resource GET\", function () {",
+                      "    pm.expect(pm.response.headers.get(\"Location\")).to.exist;",
+                      "});",
+                      ""
+                    ],
+                    "type": "text/javascript",
+                    "packages": {},
+                    "requests": {}
+                  }
+                }
+              ],
+              "request": {
+                "method": "POST",
+                "header": [
+                  {
+                    "key": "Content-Type",
+                    "value": "application/json",
+                    "type": "text"
+                  }
+                ],
+                "body": {
+                  "mode": "raw",
+                  "raw": "{\n  \"personId\": 275,\n  \"contactTypeId\": 11\n}",
+                  "options": {
+                    "raw": {
+                      "language": "json"
+                    }
+                  }
+                },
+                "url": {
+                  "raw": "{{adventureWorksApi}}/{{apiVersion}}/stores/:storeId/contacts",
+                  "host": [
+                    "{{adventureWorksApi}}"
+                  ],
+                  "path": [
+                    "{{apiVersion}}",
+                    "stores",
+                    ":storeId",
+                    "contacts"
+                  ],
+                  "variable": [
+                    {
+                      "key": "storeId",
+                      "value": "292"
+                    }
+                  ]
+                }
+              },
+              "response": []
+            },
+            {
+              "name": "Update Store Contact Type",
+              "event": [
+                {
+                  "listen": "test",
+                  "script": {
+                    "exec": [
+                      "var storeId = Number(pm.request.url.variables.get(\"storeId\").value);",
+                      "var personId = Number(pm.request.url.variables.get(\"personId\").value);",
+                      "var requestBody = JSON.parse(pm.request.body.raw);",
+                      "",
+                      "pm.test(\"Status should be 200\", function () {",
+                      "    pm.response.to.have.status(200);",
+                      "});",
+                      "",
+                      "var response = pm.response.json();",
+                      "",
+                      "pm.test(\"Response reflects new contact type\", function () {",
+                      "    pm.expect(response.id).to.eql(personId);",
+                      "    pm.expect(response.storeId).to.eql(storeId);",
+                      "    pm.expect(response.contactTypeId).to.eql(requestBody.contactTypeId);",
+                      "});",
+                      ""
+                    ],
+                    "type": "text/javascript",
+                    "packages": {},
+                    "requests": {}
+                  }
+                }
+              ],
+              "request": {
+                "method": "PATCH",
+                "header": [
+                  {
+                    "key": "Content-Type",
+                    "value": "application/json",
+                    "type": "text"
+                  }
+                ],
+                "body": {
+                  "mode": "raw",
+                  "raw": "{\n  \"contactTypeId\": 17\n}",
+                  "options": {
+                    "raw": {
+                      "language": "json"
+                    }
+                  }
+                },
+                "url": {
+                  "raw": "{{adventureWorksApi}}/{{apiVersion}}/stores/:storeId/contacts/:personId/:contactTypeId",
+                  "host": [
+                    "{{adventureWorksApi}}"
+                  ],
+                  "path": [
+                    "{{apiVersion}}",
+                    "stores",
+                    ":storeId",
+                    "contacts",
+                    ":personId",
+                    ":contactTypeId"
+                  ],
+                  "variable": [
+                    {
+                      "key": "storeId",
+                      "value": "292"
+                    },
+                    {
+                      "key": "personId",
+                      "value": "275"
+                    },
+                    {
+                      "key": "contactTypeId",
+                      "value": "11"
+                    }
+                  ]
+                }
+              },
+              "response": []
+            },
+            {
+              "name": "Delete Store Contact",
+              "event": [
+                {
+                  "listen": "test",
+                  "script": {
+                    "exec": [
+                      "pm.test(\"Status should be 204\", function () {",
+                      "    pm.response.to.have.status(204);",
+                      "});",
+                      "",
+                      "pm.test(\"Response body is empty\", function () {",
+                      "    pm.expect(pm.response.text()).to.be.empty;",
+                      "});",
+                      ""
+                    ],
+                    "type": "text/javascript",
+                    "packages": {},
+                    "requests": {}
+                  }
+                }
+              ],
+              "request": {
+                "method": "DELETE",
+                "header": [],
+                "url": {
+                  "raw": "{{adventureWorksApi}}/{{apiVersion}}/stores/:storeId/contacts/:personId/:contactTypeId",
+                  "host": [
+                    "{{adventureWorksApi}}"
+                  ],
+                  "path": [
+                    "{{apiVersion}}",
+                    "stores",
+                    ":storeId",
+                    "contacts",
+                    ":personId",
+                    ":contactTypeId"
+                  ],
+                  "variable": [
+                    {
+                      "key": "storeId",
+                      "value": "292"
+                    },
+                    {
+                      "key": "personId",
+                      "value": "275"
+                    },
+                    {
+                      "key": "contactTypeId",
+                      "value": "17"
+                    }
+                  ]
+                }
+              },
+              "response": []
+            }
+          ]
+        }
+      ]
+    }
+  ],
+  "auth": {
+    "type": "oauth2",
+    "oauth2": [
+      {
+        "key": "accessTokenUrl",
+        "value": "https://login.microsoftonline.com/{{tenantId}}/oauth2/v2.0/token",
+        "type": "string"
+      },
+      {
+        "key": "authUrl",
+        "value": "https://login.microsoftonline.com/{{tenantId}}/oauth2/v2.0/authorize",
+        "type": "string"
+      },
+      {
+        "key": "scope",
+        "value": "{{scope}}",
+        "type": "string"
+      },
+      {
+        "key": "clientSecret",
+        "value": "{{clientSecret}}",
+        "type": "string"
+      },
+      {
+        "key": "clientId",
+        "value": "{{clientId}}",
+        "type": "string"
+      },
+      {
+        "key": "redirect_uri",
+        "value": "{{callbackUrl}}",
+        "type": "string"
+      },
+      {
+        "key": "client_authentication",
+        "value": "header",
+        "type": "string"
+      },
+      {
+        "key": "tokenName",
+        "value": "AdventureWorks",
+        "type": "string"
+      },
+      {
+        "key": "useBrowser",
+        "value": false,
+        "type": "boolean"
+      },
+      {
+        "key": "grant_type",
+        "value": "authorization_code",
+        "type": "string"
+      },
+      {
+        "key": "refreshRequestParams",
+        "value": [],
+        "type": "any"
+      },
+      {
+        "key": "tokenRequestParams",
+        "value": [],
+        "type": "any"
+      },
+      {
+        "key": "authRequestParams",
+        "value": [],
+        "type": "any"
+      },
+      {
+        "key": "challengeAlgorithm",
+        "value": "S256",
+        "type": "string"
+      },
+      {
+        "key": "addTokenTo",
+        "value": "header",
+        "type": "string"
+      }
+    ]
+  },
+  "event": [
+    {
+      "listen": "prerequest",
+      "script": {
+        "type": "text/javascript",
+        "requests": {},
+        "exec": [
+          "var moment = require('moment');\r",
+          "pm.collectionVariables.set('currentDateTime', moment().format( (\"YYYYMMDD_hhmmss\")));\r",
+          "pm.collectionVariables.set('currentDate', moment().format( (\"YYYY-MM-DD\")));\r",
+          ""
+        ]
+      }
+    },
+    {
+      "listen": "test",
+      "script": {
+        "type": "text/javascript",
+        "requests": {},
+        "exec": [
+          ""
+        ]
+      }
+    }
+  ],
+  "variable": [
+    {
+      "key": "currentDateTime",
+      "value": ""
+    },
+    {
+      "key": "currentDate",
+      "value": ""
+    },
+    {
+      "key": "randomString",
+      "value": ""
+    },
+    {
+      "key": "lastCreatedEmployeeId",
+      "value": ""
+    },
+    {
+      "key": "updateEmployeeId",
+      "value": ""
+    },
+    {
+      "key": "lifecycleEmployeeId",
+      "value": ""
+    }
+  ]
+}

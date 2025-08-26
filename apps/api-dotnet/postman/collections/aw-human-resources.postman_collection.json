@@ -1,0 +1,2605 @@
+{
+  "info": {
+    "_postman_id": "4064b9cc-2070-468e-8ab5-945e1e758d22",
+    "name": "Human Resources",
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
+    "_exporter_id": "2569631"
+  },
+  "item": [
+    {
+      "name": "Departments",
+      "item": [
+        {
+          "name": "List",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test(\"Status should be bad request\", function () {\r",
+                  "    pm.response.to.have.status(200);\r",
+                  "});"
+                ],
+                "type": "text/javascript",
+                "packages": {},
+                "requests": {}
+              }
+            }
+          ],
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{adventureWorksApi}}/{{apiVersion}}/departments",
+              "host": [
+                "{{adventureWorksApi}}"
+              ],
+              "path": [
+                "{{apiVersion}}",
+                "departments"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "By Id - Engineering",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test(\"Status should be bad request\", function () {\r",
+                  "    pm.response.to.have.status(200);\r",
+                  "});\r",
+                  "\r",
+                  "const id = 1\r",
+                  "const name = \"Engineering\"\r",
+                  "var response = pm.response.json();\r",
+                  "\r",
+                  "pm.test(\"Should return correct response object\", function() {   \r",
+                  "    pm.expect(response.id).to.eql(id);\r",
+                  "    pm.expect(response.name).to.eql(name);\r",
+                  "});"
+                ],
+                "type": "text/javascript",
+                "packages": {},
+                "requests": {}
+              }
+            }
+          ],
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{adventureWorksApi}}/{{apiVersion}}/departments/1",
+              "host": [
+                "{{adventureWorksApi}}"
+              ],
+              "path": [
+                "{{apiVersion}}",
+                "departments",
+                "1"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "By Id - Not Found",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test(\"Status should be not found\", function () {\r",
+                  "    pm.response.to.have.status(404);\r",
+                  "});\r",
+                  "\r",
+                  "var response = pm.response.text();\r",
+                  "\r",
+                  "pm.test(\"Body should be correct\", function () {\r",
+                  "  pm.response.to.have.body(\"Unable to locate the department.\");\r",
+                  "});"
+                ],
+                "type": "text/javascript",
+                "packages": {},
+                "requests": {}
+              }
+            }
+          ],
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{adventureWorksApi}}/{{apiVersion}}/departments/2147",
+              "host": [
+                "{{adventureWorksApi}}"
+              ],
+              "path": [
+                "{{apiVersion}}",
+                "departments",
+                "2147"
+              ]
+            }
+          },
+          "response": []
+        }
+      ]
+    },
+    {
+      "name": "Employee",
+      "item": [
+        {
+          "name": "List",
+          "item": [
+            {
+              "name": "List - Zero Params",
+              "event": [
+                {
+                  "listen": "test",
+                  "script": {
+                    "exec": [
+                      "pm.test(\"Status should be OK request\", function () {\r",
+                      "    pm.response.to.have.status(200);\r",
+                      "});\r",
+                      "\r",
+                      "var response = pm.response.json();\r",
+                      "\r",
+                      "pm.test(\"Response should have correct structure\", function() {    \r",
+                      "    pm.expect(response).to.exist;\r",
+                      "    pm.expect(response.results).to.exist;\r",
+                      "    pm.expect(response.pageNumber).to.exist;\r",
+                      "    pm.expect(response.pageSize).to.exist;\r",
+                      "    pm.expect(response.totalPages).to.exist;\r",
+                      "    pm.expect(response.totalRecords).to.exist;\r",
+                      "    pm.expect(response.hasPreviousPage).to.exist;\r",
+                      "    pm.expect(response.hasNextPage).to.exist;\r",
+                      "});\r",
+                      "\r",
+                      "pm.test(\"Response should include correct paging information\", function(){\r",
+                      "    pm.expect(response.pageNumber).to.eq(1);\r",
+                      "    pm.expect(response.pageSize).to.eq(10);\r",
+                      "    pm.expect(response.totalPages > 50);\r",
+                      "    pm.expect(response.totalRecords > 700);\r",
+                      "    pm.expect(response.hasPreviousPage).to.be.false;\r",
+                      "    pm.expect(response.hasNextPage).to.be.true;\r",
+                      "});"
+                    ],
+                    "type": "text/javascript",
+                    "packages": {},
+                    "requests": {}
+                  }
+                }
+              ],
+              "request": {
+                "method": "GET",
+                "header": [],
+                "url": {
+                  "raw": "{{adventureWorksApi}}/{{apiVersion}}/employees",
+                  "host": [
+                    "{{adventureWorksApi}}"
+                  ],
+                  "path": [
+                    "{{apiVersion}}",
+                    "employees"
+                  ]
+                }
+              },
+              "response": []
+            },
+            {
+              "name": "List - Negative Page Number",
+              "event": [
+                {
+                  "listen": "test",
+                  "script": {
+                    "exec": [
+                      "pm.test(\"Status should be OK request\", function () {\r",
+                      "    pm.response.to.have.status(200);\r",
+                      "});\r",
+                      "\r",
+                      "var response = pm.response.json();\r",
+                      "\r",
+                      "pm.test(\"Response should have correct structure\", function() {    \r",
+                      "    pm.expect(response).to.exist;\r",
+                      "    pm.expect(response.results).to.exist;\r",
+                      "    pm.expect(response.pageNumber).to.exist;\r",
+                      "    pm.expect(response.pageSize).to.exist;\r",
+                      "    pm.expect(response.totalPages).to.exist;\r",
+                      "    pm.expect(response.totalRecords).to.exist;\r",
+                      "});\r",
+                      "\r",
+                      "pm.test(\"Response should include correct paging information\", function(){\r",
+                      "    pm.expect(response.pageNumber).to.eq(1);\r",
+                      "    pm.expect(response.pageSize).to.eq(10);\r",
+                      "    pm.expect(response.totalPages > 50);\r",
+                      "    pm.expect(response.totalRecords > 700);\r",
+                      "});"
+                    ],
+                    "type": "text/javascript",
+                    "packages": {},
+                    "requests": {}
+                  }
+                }
+              ],
+              "request": {
+                "method": "GET",
+                "header": [],
+                "url": {
+                  "raw": "{{adventureWorksApi}}/{{apiVersion}}/employees?PageNumber=-10",
+                  "host": [
+                    "{{adventureWorksApi}}"
+                  ],
+                  "path": [
+                    "{{apiVersion}}",
+                    "employees"
+                  ],
+                  "query": [
+                    {
+                      "key": "PageNumber",
+                      "value": "-10"
+                    }
+                  ]
+                }
+              },
+              "response": []
+            },
+            {
+              "name": "List - Page Number Out of Bounds",
+              "event": [
+                {
+                  "listen": "test",
+                  "script": {
+                    "exec": [
+                      "pm.test(\"Status should be Bad request\", function () {\r",
+                      "    pm.response.to.have.status(400);\r",
+                      "});\r",
+                      "\r",
+                      "pm.test(\"Body should be correct\", function () {\r",
+                      "    pm.expect(pm.response.text()).to.include(\"Unable to locate results based upon input query parameters\");\r",
+                      "});"
+                    ],
+                    "type": "text/javascript",
+                    "packages": {},
+                    "requests": {}
+                  }
+                }
+              ],
+              "request": {
+                "method": "GET",
+                "header": [],
+                "url": {
+                  "raw": "{{adventureWorksApi}}/{{apiVersion}}/employees?PageNumber=1500&PageSize=50",
+                  "host": [
+                    "{{adventureWorksApi}}"
+                  ],
+                  "path": [
+                    "{{apiVersion}}",
+                    "employees"
+                  ],
+                  "query": [
+                    {
+                      "key": "PageNumber",
+                      "value": "1500"
+                    },
+                    {
+                      "key": "PageSize",
+                      "value": "50"
+                    }
+                  ]
+                }
+              },
+              "response": []
+            },
+            {
+              "name": "List - Name Sort Descending Page 5",
+              "event": [
+                {
+                  "listen": "test",
+                  "script": {
+                    "exec": [
+                      "pm.test(\"Status should be OK request\", function () {\r",
+                      "    pm.response.to.have.status(200);\r",
+                      "});\r",
+                      "\r",
+                      "var response = pm.response.json();\r",
+                      "\r",
+                      "pm.test(\"Response should have correct structure\", function() {    \r",
+                      "    pm.expect(response).to.exist;\r",
+                      "    pm.expect(response.results).to.exist;\r",
+                      "    pm.expect(response.pageNumber).to.exist;\r",
+                      "    pm.expect(response.pageSize).to.exist;\r",
+                      "    pm.expect(response.totalPages).to.exist;\r",
+                      "    pm.expect(response.totalRecords).to.exist;\r",
+                      "    pm.expect(response.hasPreviousPage).to.exist;\r",
+                      "    pm.expect(response.hasNextPage).to.exist;\r",
+                      "});\r",
+                      "\r",
+                      "pm.test(\"Response should include correct paging information\", function(){\r",
+                      "    pm.expect(response.pageNumber).to.eq(5);\r",
+                      "    pm.expect(response.pageSize).to.eq(50);\r",
+                      "    pm.expect(response.totalPages > 14);\r",
+                      "    pm.expect(response.totalRecords > 700);\r",
+                      "    pm.expect(response.hasPreviousPage).to.be.true;\r",
+                      "    pm.expect(response.hasNextPage).to.be.true;\r",
+                      "});"
+                    ],
+                    "type": "text/javascript",
+                    "packages": {},
+                    "requests": {}
+                  }
+                }
+              ],
+              "request": {
+                "method": "GET",
+                "header": [],
+                "url": {
+                  "raw": "{{adventureWorksApi}}/{{apiVersion}}/employees?OrderBy=Name&PageNumber=3&PageSize=5&SortOrder=desc",
+                  "host": [
+                    "{{adventureWorksApi}}"
+                  ],
+                  "path": [
+                    "{{apiVersion}}",
+                    "employees"
+                  ],
+                  "query": [
+                    {
+                      "key": "OrderBy",
+                      "value": "Name"
+                    },
+                    {
+                      "key": "PageNumber",
+                      "value": "3"
+                    },
+                    {
+                      "key": "PageSize",
+                      "value": "5"
+                    },
+                    {
+                      "key": "SortOrder",
+                      "value": "desc"
+                    }
+                  ]
+                }
+              },
+              "response": []
+            },
+            {
+              "name": "List - Id Sort Ascending Page 15 (last page)",
+              "event": [
+                {
+                  "listen": "test",
+                  "script": {
+                    "exec": [
+                      "pm.test(\"Status should be OK request\", function () {\r",
+                      "    pm.response.to.have.status(200);\r",
+                      "});\r",
+                      "\r",
+                      "var response = pm.response.json();\r",
+                      "\r",
+                      "pm.test(\"Response should have correct structure\", function() {    \r",
+                      "    pm.expect(response).to.exist;\r",
+                      "    pm.expect(response.results).to.exist;\r",
+                      "    pm.expect(response.pageNumber).to.exist;\r",
+                      "    pm.expect(response.pageSize).to.exist;\r",
+                      "    pm.expect(response.totalPages).to.exist;\r",
+                      "    pm.expect(response.totalRecords).to.exist;\r",
+                      "    pm.expect(response.hasPreviousPage).to.exist;\r",
+                      "    pm.expect(response.hasNextPage).to.exist;\r",
+                      "});\r",
+                      "\r",
+                      "pm.test(\"Response should include correct paging information\", function(){\r",
+                      "    pm.expect(response.pageSize).to.eq(10);\r",
+                      "    pm.expect(response.totalPages > 10);\r",
+                      "    pm.expect(response.totalRecords > 200);\r",
+                      "    pm.expect(response.hasPreviousPage).to.be.true;\r",
+                      "});"
+                    ],
+                    "type": "text/javascript",
+                    "packages": {},
+                    "requests": {}
+                  }
+                }
+              ],
+              "request": {
+                "method": "GET",
+                "header": [],
+                "url": {
+                  "raw": "{{adventureWorksApi}}/{{apiVersion}}/employees?OrderBy=id&PageNumber=2&PageSize=10&SortOrder=asc",
+                  "host": [
+                    "{{adventureWorksApi}}"
+                  ],
+                  "path": [
+                    "{{apiVersion}}",
+                    "employees"
+                  ],
+                  "query": [
+                    {
+                      "key": "OrderBy",
+                      "value": "id"
+                    },
+                    {
+                      "key": "PageNumber",
+                      "value": "2"
+                    },
+                    {
+                      "key": "PageSize",
+                      "value": "10"
+                    },
+                    {
+                      "key": "SortOrder",
+                      "value": "asc"
+                    }
+                  ]
+                }
+              },
+              "response": []
+            }
+          ]
+        },
+        {
+          "name": "Create",
+          "item": [
+            {
+              "name": "Employee Fails - 01 - Missing FirstName",
+              "event": [
+                {
+                  "listen": "prerequest",
+                  "script": {
+                    "exec": [
+                      "const uuid = pm.variables.replaceIn('{{$guid}}');\r",
+                      "const last12 = uuid.slice(-12);\r",
+                      "const randomString = last12.toUpperCase();\r",
+                      "pm.collectionVariables.set('randomString', randomString);"
+                    ],
+                    "type": "text/javascript",
+                    "packages": {},
+                    "requests": {}
+                  }
+                },
+                {
+                  "listen": "test",
+                  "script": {
+                    "exec": [
+                      "pm.test(\"Status code is 400 Bad Request for missing required field\", function () {\r",
+                      "    pm.response.to.have.status(400);\r",
+                      "});\r",
+                      "\r",
+                      "pm.test(\"Invalid model sent\", function () {\r",
+                      "    const responseText = pm.response.text();\r",
+                      "    pm.expect(responseText).to.include(\"The employee input model cannot be null.\");\r",
+                      "});"
+                    ],
+                    "type": "text/javascript",
+                    "packages": {},
+                    "requests": {}
+                  }
+                }
+              ],
+              "request": {
+                "method": "POST",
+                "header": [],
+                "body": {
+                  "mode": "raw",
+                  "raw": "{\r\n    \"lastName\": \"Johnson\",\r\n    \"nationalIdNumber\": \"123456789\",\r\n    \"loginId\": \"adventure-works\\\\test.user\",\r\n    \"jobTitle\": \"Software Engineer\",\r\n    \"birthDate\": \"1990-05-15T00:00:00Z\",\r\n    \"hireDate\": \"2024-01-15T00:00:00Z\",\r\n    \"maritalStatus\": \"S\",\r\n    \"gender\": \"F\",\r\n    \"phone\": {\r\n        \"phoneNumber\": \"555-123-4567\",\r\n        \"phoneNumberTypeId\": 1\r\n    },\r\n    \"emailAddress\": \"test@adventure-works.com\",\r\n    \"address\": {\r\n        \"addressLine1\": \"123 Main Street\",\r\n        \"city\": \"Seattle\",\r\n        \"stateProvince\": {\r\n            \"id\": 79,\r\n            \"name\": \"Washington\",\r\n            \"code\": \"WA\"\r\n        },\r\n        \"postalCode\": \"98101\"\r\n    },\r\n    \"addressTypeId\": 2\r\n}",
+                  "options": {
+                    "raw": {
+                      "language": "json"
+                    }
+                  }
+                },
+                "url": {
+                  "raw": "{{adventureWorksApi}}/{{apiVersion}}/employees",
+                  "host": [
+                    "{{adventureWorksApi}}"
+                  ],
+                  "path": [
+                    "{{apiVersion}}",
+                    "employees"
+                  ]
+                }
+              },
+              "response": []
+            },
+            {
+              "name": "Employee Fails - 02 - Empty First Name",
+              "event": [
+                {
+                  "listen": "prerequest",
+                  "script": {
+                    "exec": [
+                      "const uuid = pm.variables.replaceIn('{{$guid}}');\r",
+                      "const last12 = uuid.slice(-12);\r",
+                      "const randomString = last12.toUpperCase();\r",
+                      "pm.collectionVariables.set('randomString', randomString);"
+                    ],
+                    "type": "text/javascript",
+                    "packages": {},
+                    "requests": {}
+                  }
+                },
+                {
+                  "listen": "test",
+                  "script": {
+                    "exec": [
+                      "pm.test(\"Status code is 400 Bad Request for missing required field\", function () {\r",
+                      "    pm.response.to.have.status(400);\r",
+                      "});\r",
+                      "\r",
+                      "pm.test(\"Validation error mentions FirstName\", function () {\r",
+                      "    const responseText = pm.response.text();\r",
+                      "    pm.expect(responseText.toLowerCase()).to.include('firstname');\r",
+                      "});"
+                    ],
+                    "type": "text/javascript",
+                    "packages": {},
+                    "requests": {}
+                  }
+                }
+              ],
+              "request": {
+                "method": "POST",
+                "header": [],
+                "body": {
+                  "mode": "raw",
+                  "raw": "{\r\n    \"firstName\": \"\",\r\n    \"lastName\": \"Johnson\",\r\n    \"nationalIdNumber\": \"123456789\",\r\n    \"loginId\": \"adventure-works\\\\test.user\",\r\n    \"jobTitle\": \"Software Engineer\",\r\n    \"birthDate\": \"1990-05-15T00:00:00Z\",\r\n    \"hireDate\": \"2024-01-15T00:00:00Z\",\r\n    \"maritalStatus\": \"S\",\r\n    \"gender\": \"F\",\r\n    \"phone\": {\r\n      \"phoneNumber\": \"555-123-4567\",\r\n      \"phoneNumberTypeId\": 1\r\n    },\r\n    \"emailAddress\": \"test@adventure-works.com\",\r\n    \"address\": {\r\n      \"addressLine1\": \"123 Main Street\",\r\n      \"city\": \"Seattle\",\r\n      \"stateProvince\": { \"id\": 79, \"name\": \"Washington\", \"code\": \"WA\" },\r\n      \"postalCode\": \"98101\"\r\n    },\r\n    \"addressTypeId\": 2\r\n  }",
+                  "options": {
+                    "raw": {
+                      "language": "json"
+                    }
+                  }
+                },
+                "url": {
+                  "raw": "{{adventureWorksApi}}/{{apiVersion}}/employees",
+                  "host": [
+                    "{{adventureWorksApi}}"
+                  ],
+                  "path": [
+                    "{{apiVersion}}",
+                    "employees"
+                  ]
+                }
+              },
+              "response": []
+            },
+            {
+              "name": "Employee Fails - 03 - FirstName too Long",
+              "event": [
+                {
+                  "listen": "prerequest",
+                  "script": {
+                    "exec": [
+                      "const uuid = pm.variables.replaceIn('{{$guid}}');\r",
+                      "const last12 = uuid.slice(-12);\r",
+                      "const randomString = last12.toUpperCase();\r",
+                      "pm.collectionVariables.set('randomString', randomString);"
+                    ],
+                    "type": "text/javascript",
+                    "packages": {},
+                    "requests": {}
+                  }
+                },
+                {
+                  "listen": "test",
+                  "script": {
+                    "exec": [
+                      "pm.test(\"Status code is 400 Bad Request for FirstName too long\", function () {\r",
+                      "    pm.response.to.have.status(400);\r",
+                      "});\r",
+                      "\r",
+                      "pm.test(\"Validation error mentions FirstName length\", function () {\r",
+                      "    const responseText = pm.response.text();\r",
+                      "    pm.expect(responseText.toLowerCase()).to.match(/firstname.*50|50.*character/);\r",
+                      "});"
+                    ],
+                    "type": "text/javascript",
+                    "packages": {},
+                    "requests": {}
+                  }
+                }
+              ],
+              "request": {
+                "method": "POST",
+                "header": [],
+                "body": {
+                  "mode": "raw",
+                  "raw": "{\r\n    \"firstName\": \"ThisFirstNameIsWayTooLongAndExceedsTheFiftyCharacterMaximumLengthLimit\",\r\n    \"lastName\": \"Johnson\",\r\n    \"nationalIdNumber\": \"123456789\",\r\n    \"loginId\": \"adventure-works\\\\test.user\",\r\n    \"jobTitle\": \"Software Engineer\",\r\n    \"birthDate\": \"1990-05-15T00:00:00Z\",\r\n    \"hireDate\": \"2024-01-15T00:00:00Z\",\r\n    \"maritalStatus\": \"S\",\r\n    \"gender\": \"F\",\r\n    \"phone\": {\r\n      \"phoneNumber\": \"555-123-4567\",\r\n      \"phoneNumberTypeId\": 1\r\n    },\r\n    \"emailAddress\": \"test@adventure-works.com\",\r\n    \"address\": {\r\n      \"addressLine1\": \"123 Main Street\",\r\n      \"city\": \"Seattle\",\r\n      \"stateProvince\": { \"id\": 79, \"name\": \"Washington\", \"code\": \"WA\" },\r\n      \"postalCode\": \"98101\"\r\n    },\r\n    \"addressTypeId\": 2\r\n  }",
+                  "options": {
+                    "raw": {
+                      "language": "json"
+                    }
+                  }
+                },
+                "url": {
+                  "raw": "{{adventureWorksApi}}/{{apiVersion}}/employees",
+                  "host": [
+                    "{{adventureWorksApi}}"
+                  ],
+                  "path": [
+                    "{{apiVersion}}",
+                    "employees"
+                  ]
+                }
+              },
+              "response": []
+            },
+            {
+              "name": "Employee Fails - 04 - Invalid Email Format",
+              "event": [
+                {
+                  "listen": "prerequest",
+                  "script": {
+                    "exec": [
+                      "const uuid = pm.variables.replaceIn('{{$guid}}');\r",
+                      "const last12 = uuid.slice(-12);\r",
+                      "const randomString = last12.toUpperCase();\r",
+                      "pm.collectionVariables.set('randomString', randomString);"
+                    ],
+                    "type": "text/javascript",
+                    "packages": {},
+                    "requests": {}
+                  }
+                },
+                {
+                  "listen": "test",
+                  "script": {
+                    "exec": [
+                      "pm.test(\"Status code is 400 Bad Request for invalid email\", function () {\r",
+                      "    pm.response.to.have.status(400);\r",
+                      "});\r",
+                      "\r",
+                      "pm.test(\"Error message mentions email validation\", function () {\r",
+                      "    const responseText = pm.response.text();\r",
+                      "    pm.expect(responseText.toLowerCase()).to.include('email');\r",
+                      "});"
+                    ],
+                    "type": "text/javascript",
+                    "packages": {},
+                    "requests": {}
+                  }
+                }
+              ],
+              "request": {
+                "method": "POST",
+                "header": [],
+                "body": {
+                  "mode": "raw",
+                  "raw": "{\r\n    \"firstName\": \"Sarah\",\r\n    \"lastName\": \"Johnson\",\r\n    \"nationalIdNumber\": \"123456789\",\r\n    \"loginId\": \"adventure-works\\\\sarah.johnson\",\r\n    \"jobTitle\": \"Software Engineer\",\r\n    \"birthDate\": \"1990-05-15T00:00:00Z\",\r\n    \"hireDate\": \"2024-01-15T00:00:00Z\",\r\n    \"maritalStatus\": \"S\",\r\n    \"gender\": \"F\",\r\n    \"phone\": {\r\n        \"phoneNumber\": \"555-123-4567\",\r\n        \"phoneNumberTypeId\": 1\r\n    },\r\n    \"emailAddress\": \"not-a-valid-email\",\r\n    \"address\": {\r\n        \"addressLine1\": \"123 Main Street\",\r\n        \"city\": \"Seattle\",\r\n        \"stateProvince\": {\r\n            \"id\": 79,\r\n            \"name\": \"Washington\",\r\n            \"code\": \"WA\"\r\n        },\r\n        \"postalCode\": \"98101\"\r\n    },\r\n    \"addressTypeId\": 2\r\n}",
+                  "options": {
+                    "raw": {
+                      "language": "json"
+                    }
+                  }
+                },
+                "url": {
+                  "raw": "{{adventureWorksApi}}/{{apiVersion}}/employees",
+                  "host": [
+                    "{{adventureWorksApi}}"
+                  ],
+                  "path": [
+                    "{{apiVersion}}",
+                    "employees"
+                  ]
+                }
+              },
+              "response": []
+            },
+            {
+              "name": "Employee Fails - 05 - Future Hire Date",
+              "event": [
+                {
+                  "listen": "prerequest",
+                  "script": {
+                    "exec": [
+                      "const uuid = pm.variables.replaceIn('{{$guid}}');\r",
+                      "const last12 = uuid.slice(-12);\r",
+                      "const randomString = last12.toUpperCase();\r",
+                      "pm.collectionVariables.set('randomString', randomString);"
+                    ],
+                    "type": "text/javascript",
+                    "packages": {},
+                    "requests": {}
+                  }
+                },
+                {
+                  "listen": "test",
+                  "script": {
+                    "exec": [
+                      "pm.test(\"Status code is 400 Bad Request for future hire date\", function () {\r",
+                      "    pm.response.to.have.status(400);\r",
+                      "});\r",
+                      "\r",
+                      "pm.test(\"Error message mentions hire date validation\", function () {\r",
+                      "    const responseText = pm.response.text();\r",
+                      "    pm.expect(responseText.toLowerCase()).to.match(/hire.*date|future/);\r",
+                      "});"
+                    ],
+                    "type": "text/javascript",
+                    "packages": {},
+                    "requests": {}
+                  }
+                }
+              ],
+              "request": {
+                "method": "POST",
+                "header": [],
+                "body": {
+                  "mode": "raw",
+                  "raw": "{\r\n    \"firstName\": \"Sarah\",\r\n    \"lastName\": \"Johnson\",\r\n    \"nationalIdNumber\": \"123456789\",\r\n    \"loginId\": \"adventure-works\\\\sarah.johnson\",\r\n    \"jobTitle\": \"Software Engineer\",\r\n    \"birthDate\": \"1990-05-15T00:00:00Z\",\r\n    \"hireDate\": \"2030-12-31T00:00:00Z\",\r\n    \"maritalStatus\": \"S\",\r\n    \"gender\": \"F\",\r\n    \"phone\": {\r\n        \"phoneNumber\": \"555-123-4567\",\r\n        \"phoneNumberTypeId\": 1\r\n    },\r\n    \"emailAddress\": \"sarah@adventure-works.com\",\r\n    \"address\": {\r\n        \"addressLine1\": \"123 Main Street\",\r\n        \"city\": \"Seattle\",\r\n        \"stateProvince\": {\r\n            \"id\": 79,\r\n            \"name\": \"Washington\",\r\n            \"code\": \"WA\"\r\n        },\r\n        \"postalCode\": \"98101\"\r\n    },\r\n    \"addressTypeId\": 2\r\n}",
+                  "options": {
+                    "raw": {
+                      "language": "json"
+                    }
+                  }
+                },
+                "url": {
+                  "raw": "{{adventureWorksApi}}/{{apiVersion}}/employees",
+                  "host": [
+                    "{{adventureWorksApi}}"
+                  ],
+                  "path": [
+                    "{{apiVersion}}",
+                    "employees"
+                  ]
+                }
+              },
+              "response": []
+            },
+            {
+              "name": "Employee Fails - 06 - Employee Too Young",
+              "event": [
+                {
+                  "listen": "prerequest",
+                  "script": {
+                    "exec": [
+                      "const uuid = pm.variables.replaceIn('{{$guid}}');\r",
+                      "const last12 = uuid.slice(-12);\r",
+                      "const randomString = last12.toUpperCase();\r",
+                      "pm.collectionVariables.set('randomString', randomString);"
+                    ],
+                    "type": "text/javascript",
+                    "packages": {},
+                    "requests": {}
+                  }
+                },
+                {
+                  "listen": "test",
+                  "script": {
+                    "exec": [
+                      "pm.test(\"Status code is 400 Bad Request for underage employee\", function () {\r",
+                      "    pm.response.to.have.status(400);\r",
+                      "});\r",
+                      "\r",
+                      "pm.test(\"Error message mentions age or birth date requirement\", function () {\r",
+                      "    const responseText = pm.response.text();\r",
+                      "    pm.expect(responseText.toLowerCase()).to.match(/birth|age|18/);\r",
+                      "});"
+                    ],
+                    "type": "text/javascript",
+                    "packages": {},
+                    "requests": {}
+                  }
+                }
+              ],
+              "request": {
+                "method": "POST",
+                "header": [],
+                "body": {
+                  "mode": "raw",
+                  "raw": "{\r\n    \"firstName\": \"Sarah\",\r\n    \"lastName\": \"Johnson\",\r\n    \"nationalIdNumber\": \"123456789\",\r\n    \"loginId\": \"adventure-works\\\\sarah.johnson\",\r\n    \"jobTitle\": \"Software Engineer\",\r\n    \"birthDate\": \"2015-01-01T00:00:00Z\",\r\n    \"hireDate\": \"2024-01-15T00:00:00Z\",\r\n    \"maritalStatus\": \"S\",\r\n    \"gender\": \"F\",\r\n    \"phone\": {\r\n        \"phoneNumber\": \"555-123-4567\",\r\n        \"phoneNumberTypeId\": 1\r\n    },\r\n    \"emailAddress\": \"sarah@adventure-works.com\",\r\n    \"address\": {\r\n        \"addressLine1\": \"123 Main Street\",\r\n        \"city\": \"Seattle\",\r\n        \"stateProvince\": {\r\n            \"id\": 79,\r\n            \"name\": \"Washington\",\r\n            \"code\": \"WA\"\r\n        },\r\n        \"postalCode\": \"98101\"\r\n    },\r\n    \"addressTypeId\": 2\r\n}",
+                  "options": {
+                    "raw": {
+                      "language": "json"
+                    }
+                  }
+                },
+                "url": {
+                  "raw": "{{adventureWorksApi}}/{{apiVersion}}/employees",
+                  "host": [
+                    "{{adventureWorksApi}}"
+                  ],
+                  "path": [
+                    "{{apiVersion}}",
+                    "employees"
+                  ]
+                }
+              },
+              "response": []
+            },
+            {
+              "name": "Employee Fails - 07 - Invalid Gender",
+              "event": [
+                {
+                  "listen": "prerequest",
+                  "script": {
+                    "exec": [
+                      "const uuid = pm.variables.replaceIn('{{$guid}}');\r",
+                      "const last12 = uuid.slice(-12);\r",
+                      "const randomString = last12.toUpperCase();\r",
+                      "pm.collectionVariables.set('randomString', randomString);"
+                    ],
+                    "type": "text/javascript",
+                    "packages": {},
+                    "requests": {}
+                  }
+                },
+                {
+                  "listen": "test",
+                  "script": {
+                    "exec": [
+                      "pm.test(\"Status code is 400 Bad Request for invalid gender\", function () {\r",
+                      "    pm.response.to.have.status(400);\r",
+                      "});\r",
+                      "\r",
+                      "pm.test(\"Error message mentions gender validation\", function () {\r",
+                      "    const responseText = pm.response.text();\r",
+                      "    pm.expect(responseText.toLowerCase()).to.include('gender');\r",
+                      "});"
+                    ],
+                    "type": "text/javascript",
+                    "packages": {},
+                    "requests": {}
+                  }
+                }
+              ],
+              "request": {
+                "method": "POST",
+                "header": [],
+                "body": {
+                  "mode": "raw",
+                  "raw": "{\r\n    \"firstName\": \"Sarah\",\r\n    \"lastName\": \"Johnson\",\r\n    \"nationalIdNumber\": \"123456789\",\r\n    \"loginId\": \"adventure-works\\\\sarah.johnson\",\r\n    \"jobTitle\": \"Software Engineer\",\r\n    \"birthDate\": \"1990-05-15T00:00:00Z\",\r\n    \"hireDate\": \"2024-01-15T00:00:00Z\",\r\n    \"maritalStatus\": \"S\",\r\n    \"gender\": \"X\",\r\n    \"phone\": {\r\n        \"phoneNumber\": \"555-123-4567\",\r\n        \"phoneNumberTypeId\": 1\r\n    },\r\n    \"emailAddress\": \"sarah@adventure-works.com\",\r\n    \"address\": {\r\n        \"addressLine1\": \"123 Main Street\",\r\n        \"city\": \"Seattle\",\r\n        \"stateProvince\": {\r\n            \"id\": 79,\r\n            \"name\": \"Washington\",\r\n            \"code\": \"WA\"\r\n        },\r\n        \"postalCode\": \"98101\"\r\n    },\r\n    \"addressTypeId\": 2\r\n}",
+                  "options": {
+                    "raw": {
+                      "language": "json"
+                    }
+                  }
+                },
+                "url": {
+                  "raw": "{{adventureWorksApi}}/{{apiVersion}}/employees",
+                  "host": [
+                    "{{adventureWorksApi}}"
+                  ],
+                  "path": [
+                    "{{apiVersion}}",
+                    "employees"
+                  ]
+                }
+              },
+              "response": []
+            },
+            {
+              "name": "Valid Employee",
+              "event": [
+                {
+                  "listen": "prerequest",
+                  "script": {
+                    "exec": [
+                      "const uuid = pm.variables.replaceIn('{{$guid}}');\r",
+                      "const last12 = uuid.slice(-12);\r",
+                      "const randomString = last12.toUpperCase();\r",
+                      "pm.collectionVariables.set('randomString', randomString);"
+                    ],
+                    "type": "text/javascript",
+                    "packages": {},
+                    "requests": {}
+                  }
+                },
+                {
+                  "listen": "test",
+                  "script": {
+                    "exec": [
+                      "// Test 1: HTTP Status Code is 201 Created\r",
+                      "pm.test(\"Status code is 201 Created\", function () {\r",
+                      "    pm.response.to.have.status(201);\r",
+                      "});\r",
+                      "\r",
+                      "// Test 2: Response time is acceptable (< 2 seconds)\r",
+                      "pm.test(\"Response time is less than 2000ms\", function () {\r",
+                      "    pm.expect(pm.response.responseTime).to.be.below(2000);\r",
+                      "});\r",
+                      "\r",
+                      "// Test 3: Response body exists and is valid JSON\r",
+                      "pm.test(\"Response has valid JSON body\", function () {\r",
+                      "    pm.response.to.be.json;\r",
+                      "    pm.expect(pm.response.json()).to.be.an('object');\r",
+                      "});\r",
+                      "\r",
+                      "// Test 4: Response contains employee ID (positive integer)\r",
+                      "pm.test(\"Response contains valid employee ID\", function () {\r",
+                      "    const jsonData = pm.response.json();\r",
+                      "    pm.expect(jsonData).to.have.property('id');\r",
+                      "    pm.expect(jsonData.id).to.be.a('number');\r",
+                      "    pm.expect(jsonData.id).to.be.above(0);\r",
+                      "});\r",
+                      "\r",
+                      "// Test 5: Response contains required employee fields\r",
+                      "pm.test(\"Response contains required employee fields\", function () {\r",
+                      "    const jsonData = pm.response.json();\r",
+                      "    pm.expect(jsonData).to.have.property('firstName');\r",
+                      "    pm.expect(jsonData).to.have.property('lastName');\r",
+                      "    pm.expect(jsonData).to.have.property('jobTitle');\r",
+                      "    pm.expect(jsonData).to.have.property('emailAddress');\r",
+                      "    pm.expect(jsonData).to.have.property('modifiedDate');\r",
+                      "});\r",
+                      "\r",
+                      "// Test 6: Response data matches request data\r",
+                      "pm.test(\"Response data matches request data\", function () {\r",
+                      "    const requestBody = JSON.parse(pm.request.body.raw);\r",
+                      "    const responseBody = pm.response.json();\r",
+                      "\r",
+                      "    pm.expect(responseBody.firstName).to.eql(requestBody.firstName);\r",
+                      "    pm.expect(responseBody.lastName).to.eql(requestBody.lastName);\r",
+                      "    pm.expect(responseBody.jobTitle).to.eql(requestBody.jobTitle);\r",
+                      "    pm.expect(responseBody.emailAddress).to.eql(requestBody.emailAddress);\r",
+                      "});\r",
+                      "\r",
+                      "// Test that marital status is valid\r",
+                      "pm.test(\"Marital status is valid\", function () {\r",
+                      "    const jsonData = pm.response.json();\r",
+                      "    pm.expect(jsonData.maritalStatus).to.match(/^[MS]$/);\r",
+                      "});\r",
+                      "\r",
+                      "// Test that gender is valid\r",
+                      "pm.test(\"Gender is valid\", function () {\r",
+                      "    const jsonData = pm.response.json();\r",
+                      "    pm.expect(jsonData.gender).to.match(/^[MF]$/);\r",
+                      "});\r",
+                      "\r",
+                      "// Test that modifiedDate is recent (within last 5 minutes)\r",
+                      "pm.test(\"ModifiedDate is recent\", function () {\r",
+                      "    const jsonData = pm.response.json();\r",
+                      "    const modifiedDate = new Date(jsonData.modifiedDate);\r",
+                      "    const now = new Date();\r",
+                      "    const diffMinutes = (now - modifiedDate) / 1000 / 60;\r",
+                      "    pm.expect(diffMinutes).to.be.below(5);\r",
+                      "});\r",
+                      "\r",
+                      "pm.test(\"Store employee ID for future requests\", function () {\r",
+                      "    const jsonData = pm.response.json();\r",
+                      "    if (jsonData.id) {\r",
+                      "        pm.collectionVariables.set('lastCreatedEmployeeId', jsonData.id);\r",
+                      "        console.log('Stored employee ID:', jsonData.id);\r",
+                      "    }\r",
+                      "});"
+                    ],
+                    "type": "text/javascript",
+                    "packages": {},
+                    "requests": {}
+                  }
+                }
+              ],
+              "request": {
+                "method": "POST",
+                "header": [],
+                "body": {
+                  "mode": "raw",
+                  "raw": "{\r\n    \"firstName\": \"Jake\",\r\n    \"lastName\": \"Johnson\",\r\n    \"middleName\": null,\r\n    \"title\":  null,\r\n    \"suffix\": null,\r\n    \"nationalIdNumber\": \"{{randomString}}\",\r\n    \"loginId\": \"sarah.{{randomString}}@adventure-works.com\",\r\n    \"jobTitle\": \"Software Engineer\",\r\n    \"birthDate\": \"1990-05-15T00:00:00Z\",\r\n    \"hireDate\": \"2024-01-15T00:00:00Z\",\r\n    \"maritalStatus\": \"S\",\r\n    \"gender\": \"F\",\r\n    \"salariedFlag\": true,\r\n    \"organizationLevel\": 2,\r\n    \"phone\": {\r\n        \"phoneNumber\": \"555-123-4567\",\r\n        \"phoneNumberTypeId\": 1\r\n    },\r\n    \"emailAddress\": \"sarah.{{randomString}}@adventure-works.com\",\r\n    \"address\": {\r\n        \"addressLine1\": \"{{randomString}} - 123 Main Street\",\r\n        \"addressLine2\": \"Apt 4B\",\r\n        \"city\": \"Seattle\",\r\n        \"stateProvince\": {\r\n            \"id\": 79,\r\n            \"name\": \"Washington\",\r\n            \"code\": \"WA\"\r\n        },\r\n        \"postalCode\": \"98101\"\r\n    },\r\n    \"addressTypeId\": 2\r\n}",
+                  "options": {
+                    "raw": {
+                      "language": "json"
+                    }
+                  }
+                },
+                "url": {
+                  "raw": "{{adventureWorksApi}}/{{apiVersion}}/employees",
+                  "host": [
+                    "{{adventureWorksApi}}"
+                  ],
+                  "path": [
+                    "{{apiVersion}}",
+                    "employees"
+                  ]
+                }
+              },
+              "response": []
+            },
+            {
+              "name": "Valid Last Employee Created",
+              "event": [
+                {
+                  "listen": "prerequest",
+                  "script": {
+                    "exec": [
+                      "const uuid = pm.variables.replaceIn('{{$guid}}');\r",
+                      "const last12 = uuid.slice(-12);\r",
+                      "const randomString = last12.toUpperCase();\r",
+                      "pm.collectionVariables.set('randomString', randomString);"
+                    ],
+                    "type": "text/javascript",
+                    "packages": {},
+                    "requests": {}
+                  }
+                },
+                {
+                  "listen": "test",
+                  "script": {
+                    "exec": [
+                      "pm.test(\"Status code is correct\", function () {\r",
+                      "    pm.response.to.have.status(200);\r",
+                      "});\r",
+                      "\r",
+                      "pm.test(\"Response has valid JSON body\", function () {\r",
+                      "    pm.response.to.be.json;\r",
+                      "    pm.expect(pm.response.json()).to.be.an('object');\r",
+                      "});\r",
+                      "\r",
+                      "// Test 4: Response contains employee ID (positive integer)\r",
+                      "pm.test(\"Response contains valid employee ID\", function () {\r",
+                      "    const jsonData = pm.response.json();\r",
+                      "    pm.expect(jsonData).to.have.property('id');\r",
+                      "    pm.expect(jsonData.id).to.be.a('number');\r",
+                      "    pm.expect(jsonData.id).to.be.above(0);\r",
+                      "});\r",
+                      "\r",
+                      "pm.test(\"Response contains required employee fields\", function () {\r",
+                      "    const jsonData = pm.response.json();\r",
+                      "    pm.expect(jsonData).to.have.property('firstName');\r",
+                      "    pm.expect(jsonData).to.have.property('lastName');\r",
+                      "    pm.expect(jsonData).to.have.property('jobTitle');\r",
+                      "    pm.expect(jsonData).to.have.property('emailAddress');\r",
+                      "    pm.expect(jsonData).to.have.property('modifiedDate');\r",
+                      "});\r",
+                      "\r",
+                      ""
+                    ],
+                    "type": "text/javascript",
+                    "packages": {},
+                    "requests": {}
+                  }
+                }
+              ],
+              "request": {
+                "method": "GET",
+                "header": [],
+                "url": {
+                  "raw": "{{adventureWorksApi}}/{{apiVersion}}/employees/{{lastCreatedEmployeeId}}",
+                  "host": [
+                    "{{adventureWorksApi}}"
+                  ],
+                  "path": [
+                    "{{apiVersion}}",
+                    "employees",
+                    "{{lastCreatedEmployeeId}}"
+                  ]
+                }
+              },
+              "response": []
+            }
+          ]
+        },
+        {
+          "name": "Search",
+          "item": [
+            {
+              "name": "Search - First name",
+              "request": {
+                "method": "POST",
+                "header": [],
+                "body": {
+                  "mode": "raw",
+                  "raw": "{\r\n    \"firstName\": \"Tom\"\r\n}",
+                  "options": {
+                    "raw": {
+                      "language": "json"
+                    }
+                  }
+                },
+                "url": {
+                  "raw": "{{adventureWorksApi}}/{{apiVersion}}/employees/search",
+                  "host": [
+                    "{{adventureWorksApi}}"
+                  ],
+                  "path": [
+                    "{{apiVersion}}",
+                    "employees",
+                    "search"
+                  ]
+                }
+              },
+              "response": []
+            },
+            {
+              "name": "Search - Last name",
+              "request": {
+                "method": "POST",
+                "header": [],
+                "body": {
+                  "mode": "raw",
+                  "raw": "{\r\n    \"lastName\": \"sm\"\r\n}",
+                  "options": {
+                    "raw": {
+                      "language": "json"
+                    }
+                  }
+                },
+                "url": {
+                  "raw": "{{adventureWorksApi}}/{{apiVersion}}/employees/search",
+                  "host": [
+                    "{{adventureWorksApi}}"
+                  ],
+                  "path": [
+                    "{{apiVersion}}",
+                    "employees",
+                    "search"
+                  ]
+                }
+              },
+              "response": []
+            }
+          ]
+        },
+        {
+          "name": "Update",
+          "item": [
+            {
+              "name": "Valid Employee",
+              "event": [
+                {
+                  "listen": "prerequest",
+                  "script": {
+                    "exec": [
+                      "const uuid = pm.variables.replaceIn('{{$guid}}');\r",
+                      "const last12 = uuid.slice(-12);\r",
+                      "const randomString = last12.toUpperCase();\r",
+                      "pm.collectionVariables.set('randomString', randomString);"
+                    ],
+                    "type": "text/javascript",
+                    "packages": {},
+                    "requests": {}
+                  }
+                },
+                {
+                  "listen": "test",
+                  "script": {
+                    "exec": [
+                      "pm.test(\"Status code is correct\", function () {\r",
+                      "    pm.response.to.have.status(200);\r",
+                      "});\r",
+                      "\r",
+                      "pm.test(\"Response has valid JSON body\", function () {\r",
+                      "    pm.response.to.be.json;\r",
+                      "    pm.expect(pm.response.json()).to.be.an('object');\r",
+                      "});\r",
+                      "\r",
+                      "// Test 4: Response contains employee ID (positive integer)\r",
+                      "pm.test(\"Response contains valid employee ID\", function () {\r",
+                      "    const jsonData = pm.response.json();\r",
+                      "    pm.expect(jsonData).to.have.property('id');\r",
+                      "    pm.expect(jsonData.id).to.be.a('number');\r",
+                      "    pm.expect(jsonData.id).to.be.above(0);\r",
+                      "});\r",
+                      "\r",
+                      "pm.test(\"Response contains required employee fields\", function () {\r",
+                      "    const jsonData = pm.response.json();\r",
+                      "    pm.expect(jsonData).to.have.property('firstName');\r",
+                      "    pm.expect(jsonData).to.have.property('lastName');\r",
+                      "    pm.expect(jsonData).to.have.property('jobTitle');\r",
+                      "    pm.expect(jsonData).to.have.property('emailAddress');\r",
+                      "    pm.expect(jsonData).to.have.property('modifiedDate');\r",
+                      "});\r",
+                      "\r",
+                      ""
+                    ],
+                    "type": "text/javascript",
+                    "packages": {},
+                    "requests": {}
+                  }
+                }
+              ],
+              "request": {
+                "method": "GET",
+                "header": [],
+                "url": {
+                  "raw": "{{adventureWorksApi}}/{{apiVersion}}/employees/{{updateEmployeeId}}",
+                  "host": [
+                    "{{adventureWorksApi}}"
+                  ],
+                  "path": [
+                    "{{apiVersion}}",
+                    "employees",
+                    "{{updateEmployeeId}}"
+                  ]
+                }
+              },
+              "response": []
+            },
+            {
+              "name": "Valid Employee",
+              "event": [
+                {
+                  "listen": "prerequest",
+                  "script": {
+                    "exec": [
+                      "const uuid = pm.variables.replaceIn('{{$guid}}');\r",
+                      "const last12 = uuid.slice(-12);\r",
+                      "const randomString = last12.toUpperCase();\r",
+                      "pm.collectionVariables.set('randomString', randomString);"
+                    ],
+                    "type": "text/javascript",
+                    "packages": {},
+                    "requests": {}
+                  }
+                },
+                {
+                  "listen": "test",
+                  "script": {
+                    "exec": [
+                      "pm.test(\"Status code is correct\", function () {\r",
+                      "    pm.response.to.have.status(200);\r",
+                      "});\r",
+                      "\r",
+                      "pm.test(\"Response has valid JSON body\", function () {\r",
+                      "    pm.response.to.be.json;\r",
+                      "    pm.expect(pm.response.json()).to.be.an('object');\r",
+                      "});\r",
+                      "\r",
+                      "// Test 4: Response contains employee ID (positive integer)\r",
+                      "pm.test(\"Response contains valid employee ID\", function () {\r",
+                      "    const jsonData = pm.response.json();\r",
+                      "    pm.expect(jsonData).to.have.property('id');\r",
+                      "    pm.expect(jsonData.id).to.be.a('number');\r",
+                      "    pm.expect(jsonData.id).to.be.above(0);\r",
+                      "});\r",
+                      "\r",
+                      "pm.test(\"Response contains required employee fields\", function () {\r",
+                      "    const jsonData = pm.response.json();\r",
+                      "    pm.expect(jsonData).to.have.property('firstName');\r",
+                      "    pm.expect(jsonData).to.have.property('lastName');\r",
+                      "    pm.expect(jsonData).to.have.property('jobTitle');\r",
+                      "    pm.expect(jsonData).to.have.property('emailAddress');\r",
+                      "    pm.expect(jsonData).to.have.property('modifiedDate');\r",
+                      "});\r",
+                      "\r",
+                      " pm.test(\"Content-Type header is correct\", function () {\r",
+                      "      pm.expect(pm.request.headers.get(\"Content-Type\")).to.include(\"application/json\");\r",
+                      "  });\r",
+                      "\r",
+                      ""
+                    ],
+                    "type": "text/javascript",
+                    "packages": {},
+                    "requests": {}
+                  }
+                }
+              ],
+              "request": {
+                "method": "PUT",
+                "header": [],
+                "body": {
+                  "mode": "raw",
+                  "raw": "{\r\n    \r\n    \"id\": {{updateEmployeeId}},\r\n    \"firstName\": \"Jack\",\r\n    \"lastName\": \"Doe\",\r\n    \"maritalStatus\": \"S\",\r\n    \"gender\": \"M\"\r\n  \r\n}",
+                  "options": {
+                    "raw": {
+                      "language": "json"
+                    }
+                  }
+                },
+                "url": {
+                  "raw": "{{adventureWorksApi}}/{{apiVersion}}/employees/{{updateEmployeeId}}",
+                  "host": [
+                    "{{adventureWorksApi}}"
+                  ],
+                  "path": [
+                    "{{apiVersion}}",
+                    "employees",
+                    "{{updateEmployeeId}}"
+                  ]
+                }
+              },
+              "response": []
+            },
+            {
+              "name": "Invalid Employee - Mismatched IDs",
+              "event": [
+                {
+                  "listen": "prerequest",
+                  "script": {
+                    "exec": [
+                      "const uuid = pm.variables.replaceIn('{{$guid}}');\r",
+                      "const last12 = uuid.slice(-12);\r",
+                      "const randomString = last12.toUpperCase();\r",
+                      "pm.collectionVariables.set('randomString', randomString);"
+                    ],
+                    "type": "text/javascript",
+                    "packages": {},
+                    "requests": {}
+                  }
+                },
+                {
+                  "listen": "test",
+                  "script": {
+                    "exec": [
+                      "pm.test(\"Status code is 400 Bad Request for mismatched IDs\", function () {\r",
+                      "    pm.response.to.have.status(400);\r",
+                      "});\r",
+                      "\r",
+                      "pm.test(\"Error message indicates ID mismatch\", function () {\r",
+                      "    pm.expect(pm.response.text()).to.include(\"ID in the route must match the ID in the request body\");\r",
+                      "});"
+                    ],
+                    "type": "text/javascript",
+                    "packages": {},
+                    "requests": {}
+                  }
+                }
+              ],
+              "request": {
+                "method": "PUT",
+                "header": [],
+                "body": {
+                  "mode": "raw",
+                  "raw": "{\r\n    \r\n    \"id\": 1,\r\n    \"firstName\": \"Jack\",\r\n    \"lastName\": \"Doe\",\r\n    \"maritalStatus\": \"S\",\r\n    \"gender\": \"M\"\r\n  \r\n}",
+                  "options": {
+                    "raw": {
+                      "language": "json"
+                    }
+                  }
+                },
+                "url": {
+                  "raw": "{{adventureWorksApi}}/{{apiVersion}}/employees/{{updateEmployeeId}}",
+                  "host": [
+                    "{{adventureWorksApi}}"
+                  ],
+                  "path": [
+                    "{{apiVersion}}",
+                    "employees",
+                    "{{updateEmployeeId}}"
+                  ]
+                }
+              },
+              "response": []
+            },
+            {
+              "name": "Invalid Employee - Missing FirstName",
+              "event": [
+                {
+                  "listen": "prerequest",
+                  "script": {
+                    "exec": [
+                      "const uuid = pm.variables.replaceIn('{{$guid}}');\r",
+                      "const last12 = uuid.slice(-12);\r",
+                      "const randomString = last12.toUpperCase();\r",
+                      "pm.collectionVariables.set('randomString', randomString);"
+                    ],
+                    "type": "text/javascript",
+                    "packages": {},
+                    "requests": {}
+                  }
+                },
+                {
+                  "listen": "test",
+                  "script": {
+                    "exec": [
+                      "pm.test(\"Status code is 400 Bad Request for missing required field\", function () {\r",
+                      "    pm.response.to.have.status(400);\r",
+                      "});\r",
+                      "\r",
+                      "pm.test(\"Error message indicates ID mismatch\", function () {\r",
+                      "    pm.expect(pm.response.text()).to.include(\"The employee input model cannot be null.\");\r",
+                      "});"
+                    ],
+                    "type": "text/javascript",
+                    "packages": {},
+                    "requests": {}
+                  }
+                }
+              ],
+              "request": {
+                "method": "PUT",
+                "header": [],
+                "body": {
+                  "mode": "raw",
+                  "raw": "{\r\n    \r\n    \"id\": {{updateEmployeeId}},\r\n    \"lastName\": \"Doe\",\r\n    \"maritalStatus\": \"S\",\r\n    \"gender\": \"M\"\r\n  \r\n}",
+                  "options": {
+                    "raw": {
+                      "language": "json"
+                    }
+                  }
+                },
+                "url": {
+                  "raw": "{{adventureWorksApi}}/{{apiVersion}}/employees/{{updateEmployeeId}}",
+                  "host": [
+                    "{{adventureWorksApi}}"
+                  ],
+                  "path": [
+                    "{{apiVersion}}",
+                    "employees",
+                    "{{updateEmployeeId}}"
+                  ]
+                }
+              },
+              "response": []
+            },
+            {
+              "name": "Invalid Employee - Invalid Marital Status",
+              "event": [
+                {
+                  "listen": "test",
+                  "script": {
+                    "exec": [
+                      "pm.test(\"Status code is 400 Bad Request for missing required field\", function () {\r",
+                      "    pm.response.to.have.status(400);\r",
+                      "});\r",
+                      "\r",
+                      "var errorList = pm.response.json();\r",
+                      "var isResponseArray = Array.isArray(errorList)\r",
+                      "\r",
+                      "pm.test(\"Response body is an array\", function () {\r",
+                      "    pm.expect(errorList).to.be.an('array');\r",
+                      "    pm.expect(errorList.length).to.be.above(0);\r",
+                      "});\r",
+                      "\r",
+                      "pm.test(\"MaritalStatus validation error exists with Rule-10\", function () {\r",
+                      "    var maritalStatusError = errorList.find(e => e.PropertyName === \"MaritalStatus\");\r",
+                      "\r",
+                      "    pm.expect(maritalStatusError).to.exist;\r",
+                      "    pm.expect(maritalStatusError.ErrorCode).to.eql(\"Rule-10\");\r",
+                      "    pm.expect(maritalStatusError.ErrorMessage).to.include(\"Marital status must be\");\r",
+                      "});"
+                    ],
+                    "type": "text/javascript",
+                    "packages": {},
+                    "requests": {}
+                  }
+                },
+                {
+                  "listen": "prerequest",
+                  "script": {
+                    "exec": [
+                      "const uuid = pm.variables.replaceIn('{{$guid}}');\r",
+                      "const last12 = uuid.slice(-12);\r",
+                      "const randomString = last12.toUpperCase();\r",
+                      "pm.collectionVariables.set('randomString', randomString);"
+                    ],
+                    "type": "text/javascript",
+                    "packages": {},
+                    "requests": {}
+                  }
+                }
+              ],
+              "request": {
+                "method": "PUT",
+                "header": [],
+                "body": {
+                  "mode": "raw",
+                  "raw": "{\r\n    \r\n    \"id\": {{updateEmployeeId}},\r\n    \"firstName\": \"Jake\",\r\n    \"lastName\": \"Doe\",\r\n    \"maritalStatus\": \"X\",\r\n    \"gender\": \"M\"\r\n  \r\n}",
+                  "options": {
+                    "raw": {
+                      "language": "json"
+                    }
+                  }
+                },
+                "url": {
+                  "raw": "{{adventureWorksApi}}/{{apiVersion}}/employees/{{updateEmployeeId}}",
+                  "host": [
+                    "{{adventureWorksApi}}"
+                  ],
+                  "path": [
+                    "{{apiVersion}}",
+                    "employees",
+                    "{{updateEmployeeId}}"
+                  ]
+                }
+              },
+              "response": []
+            },
+            {
+              "name": "Invalid Employee - Invalid Marital Status",
+              "event": [
+                {
+                  "listen": "test",
+                  "script": {
+                    "exec": [
+                      "pm.test(\"Status code is 400 Bad Request for missing required field\", function () {\r",
+                      "    pm.response.to.have.status(400);\r",
+                      "});\r",
+                      "\r",
+                      "var errorList = pm.response.json();\r",
+                      "var isResponseArray = Array.isArray(errorList)\r",
+                      "\r",
+                      "pm.test(\"Response body is an array\", function () {\r",
+                      "    pm.expect(errorList).to.be.an('array');\r",
+                      "    pm.expect(errorList.length).to.be.above(0);\r",
+                      "});\r",
+                      "\r",
+                      "pm.test(\"MaritalStatus validation error exists with Rule-10\", function () {\r",
+                      "    var maritalStatusError = errorList.find(e => e.PropertyName === \"MaritalStatus\");\r",
+                      "\r",
+                      "    pm.expect(maritalStatusError).to.exist;\r",
+                      "    pm.expect(maritalStatusError.ErrorCode).to.eql(\"Rule-10\");\r",
+                      "    pm.expect(maritalStatusError.ErrorMessage).to.include(\"Marital status must be\");\r",
+                      "});"
+                    ],
+                    "type": "text/javascript",
+                    "packages": {},
+                    "requests": {}
+                  }
+                },
+                {
+                  "listen": "prerequest",
+                  "script": {
+                    "exec": [
+                      "const uuid = pm.variables.replaceIn('{{$guid}}');\r",
+                      "const last12 = uuid.slice(-12);\r",
+                      "const randomString = last12.toUpperCase();\r",
+                      "pm.collectionVariables.set('randomString', randomString);"
+                    ],
+                    "type": "text/javascript",
+                    "packages": {},
+                    "requests": {}
+                  }
+                }
+              ],
+              "protocolProfileBehavior": {
+                "disabledSystemHeaders": {
+                  "content-type": true
+                }
+              },
+              "request": {
+                "method": "PATCH",
+                "header": [
+                  {
+                    "key": "Content-Type",
+                    "value": "application/json-patch+json",
+                    "type": "text"
+                  }
+                ],
+                "body": {
+                  "mode": "raw",
+                  "raw": "[\r\n    {\r\n        \"op\": \"replace\",\r\n        \"path\": \"/MaritalStatus\",\r\n        \"value\": \"X\"\r\n    }\r\n]",
+                  "options": {
+                    "raw": {
+                      "language": "json"
+                    }
+                  }
+                },
+                "url": {
+                  "raw": "{{adventureWorksApi}}/{{apiVersion}}/employees/{{updateEmployeeId}}",
+                  "host": [
+                    "{{adventureWorksApi}}"
+                  ],
+                  "path": [
+                    "{{apiVersion}}",
+                    "employees",
+                    "{{updateEmployeeId}}"
+                  ]
+                }
+              },
+              "response": []
+            },
+            {
+              "name": "Invalid Employee - Invalid First Name",
+              "event": [
+                {
+                  "listen": "test",
+                  "script": {
+                    "exec": [
+                      "pm.test(\"Status code is 400 Bad Request for missing required field\", function () {\r",
+                      "    pm.response.to.have.status(400);\r",
+                      "});\r",
+                      "\r",
+                      "var errorList = pm.response.json();\r",
+                      "var isResponseArray = Array.isArray(errorList)\r",
+                      "\r",
+                      "pm.test(\"Response body is an array\", function () {\r",
+                      "    pm.expect(errorList).to.be.an('array');\r",
+                      "    pm.expect(errorList.length).to.be.above(0);\r",
+                      "});\r",
+                      "\r",
+                      "pm.test(\"MaritalStatus validation error exists\", function () {\r",
+                      "    var maritalStatusError = errorList.find(e => e.PropertyName === \"FirstName\");\r",
+                      "\r",
+                      "    pm.expect(maritalStatusError).to.exist;\r",
+                      "    pm.expect(maritalStatusError.ErrorMessage).to.include(\"First name is required\");\r",
+                      "});"
+                    ],
+                    "type": "text/javascript",
+                    "packages": {},
+                    "requests": {}
+                  }
+                },
+                {
+                  "listen": "prerequest",
+                  "script": {
+                    "exec": [
+                      "const uuid = pm.variables.replaceIn('{{$guid}}');\r",
+                      "const last12 = uuid.slice(-12);\r",
+                      "const randomString = last12.toUpperCase();\r",
+                      "pm.collectionVariables.set('randomString', randomString);"
+                    ],
+                    "type": "text/javascript",
+                    "packages": {},
+                    "requests": {}
+                  }
+                }
+              ],
+              "protocolProfileBehavior": {
+                "disabledSystemHeaders": {
+                  "content-type": true
+                }
+              },
+              "request": {
+                "method": "PATCH",
+                "header": [
+                  {
+                    "key": "Content-Type",
+                    "value": "application/json-patch+json",
+                    "type": "text"
+                  }
+                ],
+                "body": {
+                  "mode": "raw",
+                  "raw": "[\r\n      {\r\n          \"op\": \"replace\",\r\n          \"path\": \"/FirstName\",\r\n          \"value\": \"\"\r\n      }\r\n  ]",
+                  "options": {
+                    "raw": {
+                      "language": "json"
+                    }
+                  }
+                },
+                "url": {
+                  "raw": "{{adventureWorksApi}}/{{apiVersion}}/employees/{{updateEmployeeId}}",
+                  "host": [
+                    "{{adventureWorksApi}}"
+                  ],
+                  "path": [
+                    "{{apiVersion}}",
+                    "employees",
+                    "{{updateEmployeeId}}"
+                  ]
+                }
+              },
+              "response": []
+            },
+            {
+              "name": "Valid Employee - First and Last Name",
+              "event": [
+                {
+                  "listen": "test",
+                  "script": {
+                    "exec": [
+                      "pm.test(\"Status code is 400 Bad Request for missing required field\", function () {\r",
+                      "    pm.response.to.have.status(400);\r",
+                      "});\r",
+                      "\r",
+                      "var errorList = pm.response.json();\r",
+                      "var isResponseArray = Array.isArray(errorList)\r",
+                      "\r",
+                      "pm.test(\"Response body is an array\", function () {\r",
+                      "    pm.expect(errorList).to.be.an('array');\r",
+                      "    pm.expect(errorList.length).to.be.above(0);\r",
+                      "});\r",
+                      "\r",
+                      "pm.test(\"MaritalStatus validation error exists\", function () {\r",
+                      "    var maritalStatusError = errorList.find(e => e.PropertyName === \"FirstName\");\r",
+                      "\r",
+                      "    pm.expect(maritalStatusError).to.exist;\r",
+                      "    pm.expect(maritalStatusError.ErrorMessage).to.include(\"First name is required\");\r",
+                      "});"
+                    ],
+                    "type": "text/javascript",
+                    "packages": {},
+                    "requests": {}
+                  }
+                },
+                {
+                  "listen": "prerequest",
+                  "script": {
+                    "exec": [
+                      "const uuid = pm.variables.replaceIn('{{$guid}}');\r",
+                      "const last12 = uuid.slice(-12);\r",
+                      "const randomString = last12.toUpperCase();\r",
+                      "pm.collectionVariables.set('randomString', randomString);"
+                    ],
+                    "type": "text/javascript",
+                    "packages": {},
+                    "requests": {}
+                  }
+                }
+              ],
+              "protocolProfileBehavior": {
+                "disabledSystemHeaders": {
+                  "content-type": true
+                }
+              },
+              "request": {
+                "method": "PATCH",
+                "header": [
+                  {
+                    "key": "Content-Type",
+                    "value": "application/json-patch+json",
+                    "type": "text"
+                  }
+                ],
+                "body": {
+                  "mode": "raw",
+                  "raw": "[\r\n      {\r\n          \"op\": \"replace\",\r\n          \"path\": \"/FirstName\",\r\n          \"value\": \"Steve\"\r\n      },\r\n      {\r\n          \"op\": \"replace\",\r\n          \"path\": \"/LastName\",\r\n          \"value\": \"Jones\"\r\n      }\r\n  ]",
+                  "options": {
+                    "raw": {
+                      "language": "json"
+                    }
+                  }
+                },
+                "url": {
+                  "raw": "{{adventureWorksApi}}/{{apiVersion}}/employees/{{updateEmployeeId}}",
+                  "host": [
+                    "{{adventureWorksApi}}"
+                  ],
+                  "path": [
+                    "{{apiVersion}}",
+                    "employees",
+                    "{{updateEmployeeId}}"
+                  ]
+                }
+              },
+              "response": []
+            }
+          ],
+          "event": [
+            {
+              "listen": "prerequest",
+              "script": {
+                "type": "text/javascript",
+                "packages": {},
+                "requests": {},
+                "exec": [
+                  "pm.collectionVariables.set('updateEmployeeId', '20778');\r",
+                  ""
+                ]
+              }
+            },
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "packages": {},
+                "requests": {},
+                "exec": [
+                  ""
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "Lifecycle",
+          "item": [
+            {
+              "name": "Valid Employee",
+              "event": [
+                {
+                  "listen": "prerequest",
+                  "script": {
+                    "exec": [
+                      "const uuid = pm.variables.replaceIn('{{$guid}}');\r",
+                      "const last12 = uuid.slice(-12);\r",
+                      "const randomString = last12.toUpperCase();\r",
+                      "pm.collectionVariables.set('randomString', randomString);"
+                    ],
+                    "type": "text/javascript",
+                    "packages": {},
+                    "requests": {}
+                  }
+                },
+                {
+                  "listen": "test",
+                  "script": {
+                    "exec": [
+                      "// Test 1: HTTP Status Code is 201 Created\r",
+                      "pm.test(\"Status code is 201 Created\", function () {\r",
+                      "    pm.response.to.have.status(201);\r",
+                      "});\r",
+                      "\r",
+                      "// Test 2: Response time is acceptable (< 2 seconds)\r",
+                      "pm.test(\"Response time is less than 2000ms\", function () {\r",
+                      "    pm.expect(pm.response.responseTime).to.be.below(2000);\r",
+                      "});\r",
+                      "\r",
+                      "// Test 3: Response body exists and is valid JSON\r",
+                      "pm.test(\"Response has valid JSON body\", function () {\r",
+                      "    pm.response.to.be.json;\r",
+                      "    pm.expect(pm.response.json()).to.be.an('object');\r",
+                      "});\r",
+                      "\r",
+                      "// Test 4: Response contains employee ID (positive integer)\r",
+                      "pm.test(\"Response contains valid employee ID\", function () {\r",
+                      "    const jsonData = pm.response.json();\r",
+                      "    pm.expect(jsonData).to.have.property('id');\r",
+                      "    pm.expect(jsonData.id).to.be.a('number');\r",
+                      "    pm.expect(jsonData.id).to.be.above(0);\r",
+                      "});\r",
+                      "\r",
+                      "// Test 5: Response contains required employee fields\r",
+                      "pm.test(\"Response contains required employee fields\", function () {\r",
+                      "    const jsonData = pm.response.json();\r",
+                      "    pm.expect(jsonData).to.have.property('firstName');\r",
+                      "    pm.expect(jsonData).to.have.property('lastName');\r",
+                      "    pm.expect(jsonData).to.have.property('jobTitle');\r",
+                      "    pm.expect(jsonData).to.have.property('emailAddress');\r",
+                      "    pm.expect(jsonData).to.have.property('modifiedDate');\r",
+                      "});\r",
+                      "\r",
+                      "// Test 6: Response data matches request data\r",
+                      "pm.test(\"Response data matches request data\", function () {\r",
+                      "    const requestBody = JSON.parse(pm.request.body.raw);\r",
+                      "    const responseBody = pm.response.json();\r",
+                      "\r",
+                      "    pm.expect(responseBody.firstName).to.eql(requestBody.firstName);\r",
+                      "    pm.expect(responseBody.lastName).to.eql(requestBody.lastName);\r",
+                      "    pm.expect(responseBody.jobTitle).to.eql(requestBody.jobTitle);\r",
+                      "    pm.expect(responseBody.emailAddress).to.eql(requestBody.emailAddress);\r",
+                      "});\r",
+                      "\r",
+                      "// Test that marital status is valid\r",
+                      "pm.test(\"Marital status is valid\", function () {\r",
+                      "    const jsonData = pm.response.json();\r",
+                      "    pm.expect(jsonData.maritalStatus).to.match(/^[MS]$/);\r",
+                      "});\r",
+                      "\r",
+                      "// Test that gender is valid\r",
+                      "pm.test(\"Gender is valid\", function () {\r",
+                      "    const jsonData = pm.response.json();\r",
+                      "    pm.expect(jsonData.gender).to.match(/^[MF]$/);\r",
+                      "});\r",
+                      "\r",
+                      "// Test that modifiedDate is recent (within last 5 minutes)\r",
+                      "pm.test(\"ModifiedDate is recent\", function () {\r",
+                      "    const jsonData = pm.response.json();\r",
+                      "    const modifiedDate = new Date(jsonData.modifiedDate);\r",
+                      "    const now = new Date();\r",
+                      "    const diffMinutes = (now - modifiedDate) / 1000 / 60;\r",
+                      "    pm.expect(diffMinutes).to.be.below(5);\r",
+                      "});\r",
+                      "\r",
+                      "pm.test(\"Store employee ID for future requests\", function () {\r",
+                      "    const jsonData = pm.response.json();\r",
+                      "    if (jsonData.id) {\r",
+                      "        pm.collectionVariables.set('lastCreatedEmployeeId', jsonData.id);\r",
+                      "        console.log('Stored employee ID:', jsonData.id);\r",
+                      "    }\r",
+                      "});"
+                    ],
+                    "type": "text/javascript",
+                    "packages": {},
+                    "requests": {}
+                  }
+                }
+              ],
+              "request": {
+                "method": "POST",
+                "header": [],
+                "body": {
+                  "mode": "raw",
+                  "raw": "{\r\n    \"firstName\": \"Jake\",\r\n    \"lastName\": \"Johnson\",\r\n    \"middleName\": null,\r\n    \"title\":  null,\r\n    \"suffix\": null,\r\n    \"nationalIdNumber\": \"{{randomString}}\",\r\n    \"loginId\": \"j.{{randomString}}@adventure-works.com\",\r\n    \"jobTitle\": \"Software Engineer\",\r\n    \"birthDate\": \"1990-05-15T00:00:00Z\",\r\n    \"hireDate\": null,\r\n    \"maritalStatus\": \"S\",\r\n    \"gender\": \"F\",\r\n    \"salariedFlag\": true,\r\n    \"organizationLevel\": 2,\r\n    \"phone\": {\r\n        \"phoneNumber\": \"555-123-4567\",\r\n        \"phoneNumberTypeId\": 1\r\n    },\r\n    \"emailAddress\": \"j.{{randomString}}@adventure-works.com\",\r\n    \"address\": {\r\n        \"addressLine1\": \"{{randomString}} - 123 Main Street\",\r\n        \"addressLine2\": \"Apt {{randomString}}\",\r\n        \"city\": \"Seattle\",\r\n        \"stateProvince\": {\r\n            \"id\": 79,\r\n            \"name\": \"Washington\",\r\n            \"code\": \"WA\"\r\n        },\r\n        \"postalCode\": \"98101\"\r\n    },\r\n    \"addressTypeId\": 2\r\n}",
+                  "options": {
+                    "raw": {
+                      "language": "json"
+                    }
+                  }
+                },
+                "url": {
+                  "raw": "{{adventureWorksApi}}/{{apiVersion}}/employees",
+                  "host": [
+                    "{{adventureWorksApi}}"
+                  ],
+                  "path": [
+                    "{{apiVersion}}",
+                    "employees"
+                  ]
+                }
+              },
+              "response": []
+            },
+            {
+              "name": "Valid Employee",
+              "event": [
+                {
+                  "listen": "prerequest",
+                  "script": {
+                    "exec": [
+                      "const uuid = pm.variables.replaceIn('{{$guid}}');\r",
+                      "const last12 = uuid.slice(-12);\r",
+                      "const randomString = last12.toUpperCase();\r",
+                      "pm.collectionVariables.set('randomString', randomString);"
+                    ],
+                    "type": "text/javascript",
+                    "packages": {},
+                    "requests": {}
+                  }
+                },
+                {
+                  "listen": "test",
+                  "script": {
+                    "exec": [
+                      "pm.test(\"Status code is correct\", function () {\r",
+                      "    pm.response.to.have.status(200);\r",
+                      "});\r",
+                      "\r",
+                      "pm.test(\"Response has valid JSON body\", function () {\r",
+                      "    pm.response.to.be.json;\r",
+                      "    pm.expect(pm.response.json()).to.be.an('object');\r",
+                      "});\r",
+                      "\r",
+                      "// Test 4: Response contains employee ID (positive integer)\r",
+                      "pm.test(\"Response contains valid employee ID\", function () {\r",
+                      "    const jsonData = pm.response.json();\r",
+                      "    pm.expect(jsonData).to.have.property('id');\r",
+                      "    pm.expect(jsonData.id).to.be.a('number');\r",
+                      "    pm.expect(jsonData.id).to.be.above(0);\r",
+                      "});\r",
+                      "\r",
+                      "pm.test(\"Response contains required employee fields\", function () {\r",
+                      "    const jsonData = pm.response.json();\r",
+                      "    pm.expect(jsonData).to.have.property('firstName');\r",
+                      "    pm.expect(jsonData).to.have.property('lastName');\r",
+                      "    pm.expect(jsonData).to.have.property('jobTitle');\r",
+                      "    pm.expect(jsonData).to.have.property('emailAddress');\r",
+                      "    pm.expect(jsonData).to.have.property('modifiedDate');\r",
+                      "});\r",
+                      "\r",
+                      ""
+                    ],
+                    "type": "text/javascript",
+                    "packages": {},
+                    "requests": {}
+                  }
+                }
+              ],
+              "request": {
+                "method": "GET",
+                "header": [],
+                "url": {
+                  "raw": "{{adventureWorksApi}}/{{apiVersion}}/employees/{{lastCreatedEmployeeId}}",
+                  "host": [
+                    "{{adventureWorksApi}}"
+                  ],
+                  "path": [
+                    "{{apiVersion}}",
+                    "employees",
+                    "{{lastCreatedEmployeeId}}"
+                  ]
+                }
+              },
+              "response": []
+            },
+            {
+              "name": "Valid Employee Lifecycle Status",
+              "event": [
+                {
+                  "listen": "prerequest",
+                  "script": {
+                    "exec": [
+                      "const uuid = pm.variables.replaceIn('{{$guid}}');\r",
+                      "const last12 = uuid.slice(-12);\r",
+                      "const randomString = last12.toUpperCase();\r",
+                      "pm.collectionVariables.set('randomString', randomString);"
+                    ],
+                    "type": "text/javascript",
+                    "packages": {},
+                    "requests": {}
+                  }
+                },
+                {
+                  "listen": "test",
+                  "script": {
+                    "exec": [
+                      "pm.test(\"Status code is correct\", function () {\r",
+                      "    pm.response.to.have.status(200);\r",
+                      "});\r",
+                      "\r",
+                      "pm.test(\"Response has valid JSON body\", function () {\r",
+                      "    pm.response.to.be.json;\r",
+                      "    pm.expect(pm.response.json()).to.be.an('object');\r",
+                      "});\r",
+                      "\r",
+                      "// Test 4: Response contains employee ID (positive integer)\r",
+                      "pm.test(\"Response contains valid employee ID\", function () {\r",
+                      "    const jsonData = pm.response.json();\r",
+                      "    pm.expect(jsonData).to.have.property('employeeId');\r",
+                      "    pm.expect(jsonData.id).to.be.a('number');\r",
+                      "    pm.expect(jsonData.id).to.be.above(0);\r",
+                      "});\r",
+                      "\r",
+                      "pm.test(\"Response contains required lifecycle fields\", function () {\r",
+                      "    const jsonData = pm.response.json();\r",
+                      "    pm.expect(jsonData).to.have.property('fullName');\r",
+                      "    pm.expect(jsonData).to.have.property('employmentStatus');\r",
+                      "});\r",
+                      "\r",
+                      ""
+                    ],
+                    "type": "text/javascript",
+                    "packages": {},
+                    "requests": {}
+                  }
+                }
+              ],
+              "request": {
+                "method": "GET",
+                "header": [],
+                "url": {
+                  "raw": "{{adventureWorksApi}}/{{apiVersion}}/employees/{{lastCreatedEmployeeId}}/lifecycle/status",
+                  "host": [
+                    "{{adventureWorksApi}}"
+                  ],
+                  "path": [
+                    "{{apiVersion}}",
+                    "employees",
+                    "{{lastCreatedEmployeeId}}",
+                    "lifecycle",
+                    "status"
+                  ]
+                }
+              },
+              "response": []
+            },
+            {
+              "name": "Valid Employee Lifecycle Hire",
+              "event": [
+                {
+                  "listen": "prerequest",
+                  "script": {
+                    "exec": [
+                      "const uuid = pm.variables.replaceIn('{{$guid}}');\r",
+                      "const last12 = uuid.slice(-12);\r",
+                      "const randomString = last12.toUpperCase();\r",
+                      "pm.collectionVariables.set('randomString', randomString);"
+                    ],
+                    "type": "text/javascript",
+                    "packages": {},
+                    "requests": {}
+                  }
+                },
+                {
+                  "listen": "test",
+                  "script": {
+                    "exec": [
+                      "pm.test(\"Status code is correct\", function () {\r",
+                      "    pm.response.to.have.status(200);\r",
+                      "});\r",
+                      "\r",
+                      "pm.test(\"Response has valid JSON body\", function () {\r",
+                      "    pm.response.to.be.json;\r",
+                      "    pm.expect(pm.response.json()).to.be.an('object');\r",
+                      "});\r",
+                      "\r",
+                      "// Test 4: Response contains employee ID (positive integer)\r",
+                      "pm.test(\"Response contains valid employee ID\", function () {\r",
+                      "    const jsonData = pm.response.json();\r",
+                      "    pm.expect(jsonData).to.have.property('employeeId');\r",
+                      "    pm.expect(jsonData.id).to.be.a('number');\r",
+                      "    pm.expect(jsonData.id).to.be.above(0);\r",
+                      "});\r",
+                      "\r",
+                      "pm.test(\"Response contains required lifecycle fields\", function () {\r",
+                      "    const jsonData = pm.response.json();\r",
+                      "    pm.expect(jsonData).to.have.property('fullName');\r",
+                      "    pm.expect(jsonData).to.have.property('employmentStatus');\r",
+                      "});\r",
+                      "\r",
+                      ""
+                    ],
+                    "type": "text/javascript",
+                    "packages": {},
+                    "requests": {}
+                  }
+                }
+              ],
+              "request": {
+                "method": "POST",
+                "header": [],
+                "body": {
+                  "mode": "raw",
+                  "raw": "{\r\n  \"employeeId\": {{lifecycleEmployeeId}},\r\n  \"hireDate\": \"2025-12-02\",\r\n  \"departmentId\": 0,\r\n  \"shiftId\": 0,\r\n  \"initialPayRate\": 0,\r\n  \"payFrequency\": 0,\r\n  \"managerId\": 0,\r\n  \"initialVacationHours\": 0,\r\n  \"initialSickLeaveHours\": 0,\r\n  \"notes\": \"string\"\r\n}",
+                  "options": {
+                    "raw": {
+                      "language": "json"
+                    }
+                  }
+                },
+                "url": {
+                  "raw": "{{adventureWorksApi}}/{{apiVersion}}/employees/{{lifecycleEmployeeId}}/lifecycle/hire",
+                  "host": [
+                    "{{adventureWorksApi}}"
+                  ],
+                  "path": [
+                    "{{apiVersion}}",
+                    "employees",
+                    "{{lifecycleEmployeeId}}",
+                    "lifecycle",
+                    "hire"
+                  ]
+                }
+              },
+              "response": []
+            },
+            {
+              "name": "Valid Employee Lifecycle Terminate",
+              "event": [
+                {
+                  "listen": "prerequest",
+                  "script": {
+                    "exec": [
+                      "const uuid = pm.variables.replaceIn('{{$guid}}');\r",
+                      "const last12 = uuid.slice(-12);\r",
+                      "const randomString = last12.toUpperCase();\r",
+                      "pm.collectionVariables.set('randomString', randomString);"
+                    ],
+                    "type": "text/javascript",
+                    "packages": {},
+                    "requests": {}
+                  }
+                },
+                {
+                  "listen": "test",
+                  "script": {
+                    "exec": [
+                      "pm.test(\"Status code is correct\", function () {\r",
+                      "    pm.response.to.have.status(200);\r",
+                      "});\r",
+                      "\r",
+                      "pm.test(\"Response has valid JSON body\", function () {\r",
+                      "    pm.response.to.be.json;\r",
+                      "    pm.expect(pm.response.json()).to.be.an('object');\r",
+                      "});\r",
+                      "\r",
+                      "// Test 4: Response contains employee ID (positive integer)\r",
+                      "pm.test(\"Response contains valid employee ID\", function () {\r",
+                      "    const jsonData = pm.response.json();\r",
+                      "    pm.expect(jsonData).to.have.property('employeeId');\r",
+                      "    pm.expect(jsonData.id).to.be.a('number');\r",
+                      "    pm.expect(jsonData.id).to.be.above(0);\r",
+                      "});\r",
+                      "\r",
+                      "pm.test(\"Response contains required lifecycle fields\", function () {\r",
+                      "    const jsonData = pm.response.json();\r",
+                      "    pm.expect(jsonData).to.have.property('fullName');\r",
+                      "    pm.expect(jsonData).to.have.property('employmentStatus');\r",
+                      "});\r",
+                      "\r",
+                      ""
+                    ],
+                    "type": "text/javascript",
+                    "packages": {},
+                    "requests": {}
+                  }
+                }
+              ],
+              "request": {
+                "method": "POST",
+                "header": [],
+                "body": {
+                  "mode": "raw",
+                  "raw": "",
+                  "options": {
+                    "raw": {
+                      "language": "json"
+                    }
+                  }
+                },
+                "url": {
+                  "raw": "{{adventureWorksApi}}/{{apiVersion}}/employees/{{lifecycleEmployeeId}}/lifecycle/terminate",
+                  "host": [
+                    "{{adventureWorksApi}}"
+                  ],
+                  "path": [
+                    "{{apiVersion}}",
+                    "employees",
+                    "{{lifecycleEmployeeId}}",
+                    "lifecycle",
+                    "terminate"
+                  ]
+                }
+              },
+              "response": []
+            },
+            {
+              "name": "Valid Employee Lifecycle Rehire",
+              "event": [
+                {
+                  "listen": "prerequest",
+                  "script": {
+                    "exec": [
+                      "const uuid = pm.variables.replaceIn('{{$guid}}');\r",
+                      "const last12 = uuid.slice(-12);\r",
+                      "const randomString = last12.toUpperCase();\r",
+                      "pm.collectionVariables.set('randomString', randomString);"
+                    ],
+                    "type": "text/javascript",
+                    "packages": {},
+                    "requests": {}
+                  }
+                },
+                {
+                  "listen": "test",
+                  "script": {
+                    "exec": [
+                      "pm.test(\"Status code is correct\", function () {\r",
+                      "    pm.response.to.have.status(200);\r",
+                      "});\r",
+                      "\r",
+                      "pm.test(\"Response has valid JSON body\", function () {\r",
+                      "    pm.response.to.be.json;\r",
+                      "    pm.expect(pm.response.json()).to.be.an('object');\r",
+                      "});\r",
+                      "\r",
+                      "// Test 4: Response contains employee ID (positive integer)\r",
+                      "pm.test(\"Response contains valid employee ID\", function () {\r",
+                      "    const jsonData = pm.response.json();\r",
+                      "    pm.expect(jsonData).to.have.property('employeeId');\r",
+                      "    pm.expect(jsonData.id).to.be.a('number');\r",
+                      "    pm.expect(jsonData.id).to.be.above(0);\r",
+                      "});\r",
+                      "\r",
+                      "pm.test(\"Response contains required lifecycle fields\", function () {\r",
+                      "    const jsonData = pm.response.json();\r",
+                      "    pm.expect(jsonData).to.have.property('fullName');\r",
+                      "    pm.expect(jsonData).to.have.property('employmentStatus');\r",
+                      "});\r",
+                      "\r",
+                      ""
+                    ],
+                    "type": "text/javascript",
+                    "packages": {},
+                    "requests": {}
+                  }
+                }
+              ],
+              "request": {
+                "method": "POST",
+                "header": [],
+                "body": {
+                  "mode": "raw",
+                  "raw": "",
+                  "options": {
+                    "raw": {
+                      "language": "json"
+                    }
+                  }
+                },
+                "url": {
+                  "raw": "{{adventureWorksApi}}/{{apiVersion}}/employees/{{lifecycleEmployeeId}}/lifecycle/rehire",
+                  "host": [
+                    "{{adventureWorksApi}}"
+                  ],
+                  "path": [
+                    "{{apiVersion}}",
+                    "employees",
+                    "{{lifecycleEmployeeId}}",
+                    "lifecycle",
+                    "rehire"
+                  ]
+                }
+              },
+              "response": []
+            }
+          ]
+        },
+        {
+          "name": "Valid Employee",
+          "event": [
+            {
+              "listen": "prerequest",
+              "script": {
+                "exec": [
+                  "const uuid = pm.variables.replaceIn('{{$guid}}');\r",
+                  "const last12 = uuid.slice(-12);\r",
+                  "const randomString = last12.toUpperCase();\r",
+                  "pm.collectionVariables.set('randomString', randomString);"
+                ],
+                "type": "text/javascript",
+                "packages": {},
+                "requests": {}
+              }
+            },
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test(\"Status code is correct\", function () {\r",
+                  "    pm.response.to.have.status(200);\r",
+                  "});\r",
+                  "\r",
+                  "pm.test(\"Response has valid JSON body\", function () {\r",
+                  "    pm.response.to.be.json;\r",
+                  "    pm.expect(pm.response.json()).to.be.an('object');\r",
+                  "});\r",
+                  "\r",
+                  "// Test 4: Response contains employee ID (positive integer)\r",
+                  "pm.test(\"Response contains valid employee ID\", function () {\r",
+                  "    const jsonData = pm.response.json();\r",
+                  "    pm.expect(jsonData).to.have.property('id');\r",
+                  "    pm.expect(jsonData.id).to.be.a('number');\r",
+                  "    pm.expect(jsonData.id).to.be.above(0);\r",
+                  "});\r",
+                  "\r",
+                  "pm.test(\"Response contains required employee fields\", function () {\r",
+                  "    const jsonData = pm.response.json();\r",
+                  "    pm.expect(jsonData).to.have.property('firstName');\r",
+                  "    pm.expect(jsonData).to.have.property('lastName');\r",
+                  "    pm.expect(jsonData).to.have.property('jobTitle');\r",
+                  "    pm.expect(jsonData).to.have.property('emailAddress');\r",
+                  "    pm.expect(jsonData).to.have.property('modifiedDate');\r",
+                  "});\r",
+                  "\r",
+                  ""
+                ],
+                "type": "text/javascript",
+                "packages": {},
+                "requests": {}
+              }
+            }
+          ],
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{adventureWorksApi}}/{{apiVersion}}/employees/5",
+              "host": [
+                "{{adventureWorksApi}}"
+              ],
+              "path": [
+                "{{apiVersion}}",
+                "employees",
+                "5"
+              ]
+            }
+          },
+          "response": []
+        }
+      ]
+    },
+    {
+      "name": "Shifts",
+      "item": [
+        {
+          "name": "List",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test(\"Status should be bad request\", function () {\r",
+                  "    pm.response.to.have.status(200);\r",
+                  "});"
+                ],
+                "type": "text/javascript",
+                "packages": {},
+                "requests": {}
+              }
+            }
+          ],
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{adventureWorksApi}}/{{apiVersion}}/shifts",
+              "host": [
+                "{{adventureWorksApi}}"
+              ],
+              "path": [
+                "{{apiVersion}}",
+                "shifts"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "By Id - Evening",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test(\"Status should be bad request\", function () {\r",
+                  "    pm.response.to.have.status(200);\r",
+                  "});\r",
+                  "\r",
+                  "const id = 1\r",
+                  "const name = \"Evening\"\r",
+                  "var response = pm.response.json();\r",
+                  "\r",
+                  "pm.test(\"Should return correct response object\", function() {   \r",
+                  "    pm.expect(response.id).to.eql(id);\r",
+                  "    pm.expect(response.name).to.eql(name);\r",
+                  "});"
+                ],
+                "type": "text/javascript",
+                "packages": {},
+                "requests": {}
+              }
+            }
+          ],
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{adventureWorksApi}}/{{apiVersion}}/shifts/2",
+              "host": [
+                "{{adventureWorksApi}}"
+              ],
+              "path": [
+                "{{apiVersion}}",
+                "shifts",
+                "2"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "By Id - Not Found",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test(\"Status should be not found\", function () {\r",
+                  "    pm.response.to.have.status(404);\r",
+                  "});\r",
+                  "\r",
+                  "var response = pm.response.text();\r",
+                  "\r",
+                  "pm.test(\"Body should be correct\", function () {\r",
+                  "  pm.response.to.have.body(\"Unable to locate the shift.\");\r",
+                  "});"
+                ],
+                "type": "text/javascript",
+                "packages": {},
+                "requests": {}
+              }
+            }
+          ],
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{adventureWorksApi}}/{{apiVersion}}/shifts/99",
+              "host": [
+                "{{adventureWorksApi}}"
+              ],
+              "path": [
+                "{{apiVersion}}",
+                "shifts",
+                "99"
+              ]
+            }
+          },
+          "response": []
+        }
+      ]
+    }
+  ],
+  "auth": {
+    "type": "oauth2",
+    "oauth2": [
+      {
+        "key": "accessTokenUrl",
+        "value": "https://login.microsoftonline.com/{{tenantId}}/oauth2/v2.0/token",
+        "type": "string"
+      },
+      {
+        "key": "authUrl",
+        "value": "https://login.microsoftonline.com/{{tenantId}}/oauth2/v2.0/authorize",
+        "type": "string"
+      },
+      {
+        "key": "scope",
+        "value": "{{scope}}",
+        "type": "string"
+      },
+      {
+        "key": "clientSecret",
+        "value": "{{clientSecret}}",
+        "type": "string"
+      },
+      {
+        "key": "clientId",
+        "value": "{{clientId}}",
+        "type": "string"
+      },
+      {
+        "key": "redirect_uri",
+        "value": "{{callbackUrl}}",
+        "type": "string"
+      },
+      {
+        "key": "client_authentication",
+        "value": "header",
+        "type": "string"
+      },
+      {
+        "key": "tokenName",
+        "value": "AdventureWorks",
+        "type": "string"
+      },
+      {
+        "key": "useBrowser",
+        "value": false,
+        "type": "boolean"
+      },
+      {
+        "key": "grant_type",
+        "value": "authorization_code",
+        "type": "string"
+      },
+      {
+        "key": "refreshRequestParams",
+        "value": [],
+        "type": "any"
+      },
+      {
+        "key": "tokenRequestParams",
+        "value": [],
+        "type": "any"
+      },
+      {
+        "key": "authRequestParams",
+        "value": [],
+        "type": "any"
+      },
+      {
+        "key": "challengeAlgorithm",
+        "value": "S256",
+        "type": "string"
+      },
+      {
+        "key": "addTokenTo",
+        "value": "header",
+        "type": "string"
+      }
+    ]
+  },
+  "event": [
+    {
+      "listen": "prerequest",
+      "script": {
+        "type": "text/javascript",
+        "requests": {},
+        "exec": [
+          "var moment = require('moment');\r",
+          "pm.collectionVariables.set('currentDateTime', moment().format( (\"YYYYMMDD_hhmmss\")));\r",
+          "pm.collectionVariables.set('currentDate', moment().format( (\"YYYY-MM-DD\")));\r",
+          ""
+        ]
+      }
+    },
+    {
+      "listen": "test",
+      "script": {
+        "type": "text/javascript",
+        "requests": {},
+        "exec": [
+          ""
+        ]
+      }
+    }
+  ],
+  "variable": [
+    {
+      "key": "currentDateTime",
+      "value": ""
+    },
+    {
+      "key": "currentDate",
+      "value": ""
+    },
+    {
+      "key": "randomString",
+      "value": ""
+    },
+    {
+      "key": "lastCreatedEmployeeId",
+      "value": ""
+    },
+    {
+      "key": "updateEmployeeId",
+      "value": ""
+    },
+    {
+      "key": "lifecycleEmployeeId",
+      "value": ""
+    }
+  ]
+}

@@ -20,11 +20,12 @@ Enterprise-grade RESTful API built with .NET 10.0 implementing Clean Architectur
 
 ## Progressive Context Loading
 
-**When adding/implementing features:** Read `guides/adding-features.md` for complete walkthrough with full code examples
-
-**When writing tests:** Read `guides/testing-guide.md` for Handler, Controller, and Validator test templates
-
-**When in doubt:** Read the relevant guide file first - they contain complete implementations you can copy/adapt
+| Task                                                               | Guide                                                  |
+| ------------------------------------------------------------------ | ------------------------------------------------------ |
+| Adding or implementing a feature / endpoint                        | [`guides/adding-features.md`](guides/adding-features.md) |
+| Writing tests (handler / controller / validator)                   | [`guides/testing-guide.md`](guides/testing-guide.md)     |
+| Editing Postman collections, environments, or scripts — **required reading before any edit under `apps/api-dotnet/postman/`** | [`guides/postman-guide.md`](guides/postman-guide.md)     |
+| Configuring the VS Code debugger (FluentValidation / KeyNotFound exception filters) | [`guides/debugging-guide.md`](guides/debugging-guide.md) |
 
 ---
 
@@ -331,7 +332,7 @@ docker build -t adventureworks-api:latest . && docker run -p 8080:80 adventurewo
 ## Troubleshooting
 
 ### Common Issues
-- **VS Debugger breaks on ValidationException**: Import `.vs/ExceptionSettings.xml` in Exception Settings
+- **VS Code breaks on `FluentValidation.ValidationException` / `KeyNotFoundException`**: These are caught by `ExceptionHandlerMiddleware` and translated to 400/404. See [guides/debugging-guide.md](guides/debugging-guide.md) to add them to the User-Unhandled exception ignore list.
 - **N+1 Queries**: Use `.Include()` or `.Select(x => new Model {...})`
 - **Connection String Not Found**: `dotnet user-secrets set "ConnectionStrings:DefaultConnection" "..."`
 - **JWT 401 Errors**: Verify `AzureAd` config (Instance, TenantId, ClientId)
@@ -346,7 +347,7 @@ docker build -t adventureworks-api:latest . && docker run -p 8080:80 adventurewo
 
 ## References
 
-- [Adding Features Guide](guides/adding-features.md) | [Testing Guide](guides/testing-guide.md)
+- [Adding Features Guide](guides/adding-features.md) | [Testing Guide](guides/testing-guide.md) | [Postman Guide](guides/postman-guide.md) | [Debugging Guide](guides/debugging-guide.md)
 - [.NET 10.0](https://learn.microsoft.com/en-us/dotnet/core/whats-new/dotnet-10) | [ASP.NET Core](https://learn.microsoft.com/en-us/aspnet/core/) | [EF Core](https://learn.microsoft.com/en-us/ef/core/)
 - [MediatR](https://github.com/jbogard/MediatR/wiki) | [FluentValidation](https://docs.fluentvalidation.net/) | [AutoMapper](https://docs.automapper.org/)
 
