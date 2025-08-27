@@ -10,7 +10,7 @@
 | Wave | Feature                          | ADO ID | Stories | Story IDs                               |
 | ---- | -------------------------------- | ------ | ------- | --------------------------------------- |
 | 1    | Store Contact Management         | #874   | 3       | #875-#877 — **Done 2026-04-27**         |
-| 1    | Store Address Management         | #878   | 3       | #879-#881                               |
+| 1    | Store Address Management         | #878   | 3       | #879-#881 — **Done 2026-04-29**         |
 | 1    | Store Analytics & Insights       | #882   | 3       | #883-#885                               |
 | 1    | Sales Person Assignment Tracking | #886   | 3       | #887-#889                               |
 | 2    | Employee Department Transfer     | #890   | 1       | #891 (Story 2.2 → existing #751)        |
@@ -19,7 +19,7 @@
 | 3    | Person Email Management          | #898   | 4       | #899-#902                               |
 | 3    | Person Phone Management          | #903   | 4       | #904-#907                               |
 | 3    | Person Directory & Search        | #908   | 2       | #909-#910                               |
-| 3    | PersonCreditCard DbContext Fix   | #911   | 1       | #912                                    |
+| 3    | PersonCreditCard DbContext Fix   | #911   | 1       | #912 — **Done 2026-04-27**              |
 | 4    | Production Lookup Endpoints      | #913   | 4       | #914-#917 (Stories 4.1+4.2 → Done #699) |
 | 4    | Sales Lookup Endpoints           | #918   | 4       | #919-#922                               |
 
@@ -146,9 +146,10 @@ Scenario: Authentication required
 
 ---
 
-### Feature: Store Address Management
+### Feature: Store Address Management — **Done 2026-04-29**
 
 **Parent**: Epic #873 (closed Epic #552 superseded)
+**Status**: Done — Stories #879, #880, #881 completed and merged.
 **Description**: Expose CRUD operations for managing addresses associated with a store. Addresses link an `AddressEntity` to a `StoreEntity` via the `BusinessEntityAddressEntity` junction table with an `AddressTypeId` (e.g., Main Office, Shipping). This enables the Angular UI to display and manage store locations.
 
 **Technical scope**: New controllers under `Controllers/v1/Stores/`, new commands/queries under `Application/Features/Sales/`, repository methods on `BusinessEntityAddressEntity`. All writes require `[Authorize]`.
@@ -161,7 +162,7 @@ Key invariants:
 - Duplicate AddressId+AddressTypeId on same store is rejected
 - Non-existent store, address, or address type returns appropriate error
 
-#### Story 1.4: Add an Address to a Store
+#### Story 1.4: Add an Address to a Store — **Done 2026-04-29** (#879)
 
 **Description**: As an API consumer, I want to add an address to a store by posting an AddressId and AddressTypeId, so that store locations are recorded in the system.
 
@@ -198,7 +199,7 @@ Scenario: Authentication required
   Then a 401 Unauthorized is returned
 ```
 
-#### Story 1.5: Update a Store Address Type
+#### Story 1.5: Update a Store Address Type — **Done 2026-04-29** (#880)
 
 **Description**: As an API consumer, I want to change the address type of an existing store address, so that address classifications remain accurate.
 
@@ -224,7 +225,7 @@ Scenario: Authentication required
   Then a 401 Unauthorized is returned
 ```
 
-#### Story 1.6: Remove an Address from a Store
+#### Story 1.6: Remove an Address from a Store — **Done 2026-04-29** (#881)
 
 **Description**: As an API consumer, I want to remove an address from a store, so that obsolete location records are cleaned up.
 
@@ -1024,9 +1025,10 @@ Scenario: Non-existent person returns 404
 
 ---
 
-### Feature: PersonCreditCard DbContext Fix
+### Feature: PersonCreditCard DbContext Fix — **Done 2026-04-27**
 
 **Parent**: Epic #873 (closed Epic #552 superseded)
+**Status**: Done — Story #912 completed and merged.
 **Description**: Bug fix -- the `PersonCreditCard` entity is configured in EF Core model configuration but is missing as a `DbSet<PersonCreditCard>` on `AdventureWorksDbContext`. This prevents direct querying of the junction table. Add the missing DbSet property.
 
 **Technical scope**: Single-line change in `AdventureWorksDbContext.cs`. Verify with a build and confirm no EF model snapshot changes are needed (DbUp handles migrations, not EF migrations).
@@ -1038,7 +1040,7 @@ Key invariants:
 - `DbSet<PersonCreditCard>` is queryable on `AdventureWorksDbContext`
 - Existing `OnModelCreating` configuration for PersonCreditCard is unchanged
 
-#### Story 3.11: Add PersonCreditCard DbSet to DbContext
+#### Story 3.11: Add PersonCreditCard DbSet to DbContext — **Done 2026-04-27** (#912)
 
 **Description**: As a developer, I want the `PersonCreditCard` entity registered as a `DbSet` on `AdventureWorksDbContext`, so that the junction table is queryable without workarounds.
 
