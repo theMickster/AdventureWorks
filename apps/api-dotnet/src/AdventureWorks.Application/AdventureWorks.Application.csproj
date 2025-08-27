@@ -43,5 +43,4 @@
 		<ProjectReference Include="..\AdventureWorks.Models\AdventureWorks.Models.csproj" />
 	</ItemGroup>
 
-
 </Project>

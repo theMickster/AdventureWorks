@@ -260,7 +260,7 @@ Scenario: Authentication required
 See Stories 1.7-1.9 for detailed acceptance criteria.
 Key invariants:
 
-- All endpoints are read-only (no `[Authorize]` required beyond existing store access)
+- All endpoints are read-only and require [Authorize] consistent with every other Store read endpoint
 - Stores with no data return zero/null/empty (never 500)
 - Non-existent store returns 404
 
@@ -290,7 +290,7 @@ Scenario: Non-existent store returns 404
   Then a 404 Not Found is returned
 ```
 
-#### Story 1.8: Get Store Demographics
+#### Story 1.8: Get Store Demographics — **Done 2026-04-30** (#884)
 
 **Description**: As an API consumer, I want to retrieve a store's demographics parsed from the XML column into a typed DTO, so that the store detail page can show demographic insights.
 
@@ -302,8 +302,12 @@ Scenario: Parse demographics XML into structured response
   When GET /api/v1.0/stores/292/demographics is called
   Then a 200 OK is returned with a StoreDemographicsModel containing:
     AND annualSales, annualRevenue, yearOpened, specialty, squareFeet
-    AND internetSales flag, numberOfEmployees, brands
+    AND internet (connectivity descriptor: 56kb | ISDN | DSL | T1 | T2 | T3), numberOfEmployees, brands
+```
 
+> **Correction (2026-04-30, #884):** the original AC labelled this field `internetSales flag`. The actual `Sales.StoreSurveySchemaCollection` XSD declares `Internet` as a connectivity-class enum (`56kb`, `ISDN`, `DSL`, `T1`, `T2`, `T3`), not a boolean — the model surfaces it as a nullable string.
+
+```gherkin
 Scenario: Store with null Demographics returns empty model
   Given store 800 exists with Demographics = NULL
   When GET /api/v1.0/stores/800/demographics is called

@@ -144,5 +144,23 @@ public sealed class StoreRepository(AdventureWorksDbContext dbContext)
     {
         return await DbContext.Stores.AnyAsync(x => x.BusinessEntityId == id, cancellationToken);
     }
+
+    /// <summary>
+    /// Retrieves a narrow projection (BusinessEntityId, Name, Demographics XML) for the given store
+    /// without loading navigation properties. Returns <c>null</c> when the store does not exist.
+    /// </summary>
+    public async Task<StoreDemographicsProjection?> GetDemographicsAsync(int storeId, CancellationToken cancellationToken = default)
+    {
+        return await DbContext.Stores
+            .AsNoTracking()
+            .Where(x => x.BusinessEntityId == storeId)
+            .Select(x => new StoreDemographicsProjection
+            {
+                BusinessEntityId = x.BusinessEntityId,
+                Name = x.Name,
+                Demographics = x.Demographics
+            })
+            .FirstOrDefaultAsync(cancellationToken);
+    }
 }
 
