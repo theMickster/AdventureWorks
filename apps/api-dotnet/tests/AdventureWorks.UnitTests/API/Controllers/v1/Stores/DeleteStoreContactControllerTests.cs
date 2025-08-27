@@ -82,4 +82,22 @@ public sealed class DeleteStoreContactControllerTests : UnitTestBase
             noContent!.StatusCode.Should().Be((int)HttpStatusCode.NoContent);
         }
     }
+
+    [Fact]
+    public async Task DeleteAsync_threads_cancellation_token_to_mediatorAsync()
+    {
+        using var cts = new CancellationTokenSource();
+        var token = cts.Token;
+
+        _mockMediator
+            .Setup(x => x.Send(It.IsAny<DeleteStoreContactCommand>(), token))
+            .ReturnsAsync(Unit.Value);
+
+        await _sut.DeleteAsync(2534, 100, 11, token);
+
+        _mockMediator.Verify(x => x.Send(
+            It.Is<DeleteStoreContactCommand>(c =>
+                c.StoreId == 2534 && c.PersonId == 100 && c.ContactTypeId == 11),
+            token), Times.Once);
+    }
 }

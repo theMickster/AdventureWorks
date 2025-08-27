@@ -36,6 +36,7 @@ public sealed class DeleteStoreContactController : ControllerBase
     /// <param name="storeId">Store's BusinessEntityId.</param>
     /// <param name="personId">Person identifier.</param>
     /// <param name="contactTypeId">Contact type identifier.</param>
+    /// <param name="cancellationToken">Token to cancel the operation.</param>
     /// <returns>No content.</returns>
     /// <response code="204">Contact deleted successfully.</response>
     /// <response code="400">Invalid input.</response>
@@ -44,7 +45,7 @@ public sealed class DeleteStoreContactController : ControllerBase
     [ProducesResponseType(StatusCodes.Status204NoContent)]
     [ProducesResponseType(StatusCodes.Status400BadRequest)]
     [ProducesResponseType(StatusCodes.Status404NotFound)]
-    public async Task<IActionResult> DeleteAsync(int storeId, int personId, int contactTypeId)
+    public async Task<IActionResult> DeleteAsync(int storeId, int personId, int contactTypeId, CancellationToken cancellationToken = default)
     {
         if (storeId <= 0)
         {
@@ -70,7 +71,7 @@ public sealed class DeleteStoreContactController : ControllerBase
             StoreId = storeId,
             PersonId = personId,
             ContactTypeId = contactTypeId
-        });
+        }, cancellationToken);
 
         return NoContent();
     }
