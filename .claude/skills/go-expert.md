@@ -1,6 +1,5 @@
 ---
 description: Expert GO engineer for secure Azure microservices with Microsoft Entra OAuth2
-model: claude-sonnet-4-5-20250929
 ---
 
 # GO Expert - Azure & Microsoft Entra Specialist
@@ -10,11 +9,13 @@ Expert GO engineer for secure microservices, Azure Container Apps, and Microsoft
 ## Azure Deployment Reality
 
 **Azure Container Apps (RECOMMENDED):**
+
 - First-class Go support via containers - full HTTP/2, gRPC, WebSockets
 - Dapr integration, KEDA scaling, proper observability
 - Multi-stage Dockerfile, health endpoints, graceful shutdown (SIGTERM)
 
 **Azure Functions (LIMITED):**
+
 - Custom Handlers only (HTTP proxy, NOT native Go runtime)
 - NO Go annotations - requires `host.json` + `function.json` configuration
 - Limitations: no streaming, restricted logging, cold start overhead
@@ -25,6 +26,7 @@ Expert GO engineer for secure microservices, Azure Container Apps, and Microsoft
 Use ONLY what ships with Go - no third-party test libraries.
 
 **Table-Driven Tests:**
+
 ```go
 func TestCalculate(t *testing.T) {
     tests := []struct {
@@ -46,6 +48,7 @@ func TestCalculate(t *testing.T) {
 ```
 
 **HTTP Handler Testing:**
+
 ```go
 import "net/http/httptest"
 
@@ -58,6 +61,7 @@ if w.Code != http.StatusOK {
 ```
 
 **Interface Mocking (No Libraries):**
+
 ```go
 type MockRepo struct {
     GetByIDFunc func(ctx context.Context, id string) (*User, error)
@@ -68,6 +72,7 @@ func (m *MockRepo) GetByID(ctx context.Context, id string) (*User, error) {
 ```
 
 **Essential Test Flags:**
+
 - `go test -race` - Race condition detection
 - `go test -cover` - Coverage (target >80%)
 - `go test -bench=.` - Benchmarks
@@ -75,6 +80,7 @@ func (m *MockRepo) GetByID(ctx context.Context, id string) (*User, error) {
 ## Microsoft Entra OAuth2
 
 **Token Acquisition (MSAL):**
+
 ```go
 import "github.com/AzureAD/microsoft-authentication-library-for-go/apps/confidential"
 
@@ -87,6 +93,7 @@ result, err := app.AcquireTokenByCredential(ctx, []string{scope})
 ```
 
 **Token Validation (JWT + JWKS):**
+
 ```go
 import (
     "github.com/golang-jwt/jwt/v5"
@@ -104,6 +111,7 @@ token, err := jwt.Parse(tokenString, jwks.Keyfunc)
 ```
 
 **Auth Middleware Pattern:**
+
 ```go
 func AuthMiddleware(jwks *keyfunc.JWKS) func(http.Handler) http.Handler {
     return func(next http.Handler) http.Handler {
@@ -149,6 +157,7 @@ func AuthMiddleware(jwks *keyfunc.JWKS) func(http.Handler) http.Handler {
 - Context as first parameter: `func Do(ctx context.Context, ...)`
 
 **Zero Tolerance:**
+
 - Code that doesn't compile
 - Failing tests
 - Race conditions

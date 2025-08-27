@@ -259,12 +259,12 @@ AdventureWorks/
 
 **Claude should load additional context based on the task:**
 
-| Working on                   | Triggers                                                                                                                                                                        | Load                                                                                                   |
-| ---------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | ------------------------------------------------------------------------------------------------------ |
-| **.NET REST API**            | Adding an endpoint, writing a controller, MediatR command/query handler, FluentValidation validator, AutoMapper profile, EF Core repository, anything Clean Architecture / CQRS | [`apps/api-dotnet/.claude/CLAUDE.md`](../apps/api-dotnet/.claude/CLAUDE.md)                            |
-| **Angular Web**              | Building a component, generating an Nx library, wiring an NgRx SignalStore, MSAL / Entra auth, Tailwind / DaisyUI / Alpine Circuit styling, anything signals-based              | [`apps/angular-web/.claude/CLAUDE.md`](../apps/angular-web/.claude/CLAUDE.md)                          |
-| **Database Migrations**      | Schema change, new migration, creating or updating a stored procedure, making DDL/DML idempotent, ordering DbUp scripts                                                         | [`database/dbup/.claude/CLAUDE.md`](../database/dbup/.claude/CLAUDE.md)                                |
-| **Microservices** _(future)_ | Anything under `apps/microservices/`                                                                                                                                            | `apps/microservices/{service}/.claude/CLAUDE.md` (when added)                                          |
+| Working on                   | Triggers                                                                                                                                                                        | Load                                                                          |
+| ---------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | ----------------------------------------------------------------------------- |
+| **.NET REST API**            | Adding an endpoint, writing a controller, MediatR command/query handler, FluentValidation validator, AutoMapper profile, EF Core repository, anything Clean Architecture / CQRS | [`apps/api-dotnet/.claude/CLAUDE.md`](../apps/api-dotnet/.claude/CLAUDE.md)   |
+| **Angular Web**              | Building a component, generating an Nx library, wiring an NgRx SignalStore, MSAL / Entra auth, Tailwind / DaisyUI / Alpine Circuit styling, anything signals-based              | [`apps/angular-web/.claude/CLAUDE.md`](../apps/angular-web/.claude/CLAUDE.md) |
+| **Database Migrations**      | Schema change, new migration, creating or updating a stored procedure, making DDL/DML idempotent, ordering DbUp scripts                                                         | [`database/dbup/.claude/CLAUDE.md`](../database/dbup/.claude/CLAUDE.md)       |
+| **Microservices** _(future)_ | Anything under `apps/microservices/`                                                                                                                                            | `apps/microservices/{service}/.claude/CLAUDE.md` (when added)                 |
 
 ## CI/CD and Infrastructure Rules
 
