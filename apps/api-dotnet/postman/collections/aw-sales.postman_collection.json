@@ -3388,6 +3388,371 @@
               "response": []
             }
           ]
+        },
+        {
+          "name": "Customers",
+          "item": [
+            {
+              "name": "Get Store Customers",
+              "event": [
+                {
+                  "listen": "test",
+                  "script": {
+                    "exec": [
+                      "var storeId = Number(pm.request.url.path[3]);",
+                      "",
+                      "pm.test(\"Status should be 200\", function () {",
+                      "    pm.response.to.have.status(200);",
+                      "});",
+                      "",
+                      "var response = pm.response.json();",
+                      "",
+                      "pm.test(\"Response should have paginated shape\", function () {",
+                      "    pm.expect(response).to.exist;",
+                      "    pm.expect(response.results).to.be.an(\"array\");",
+                      "    pm.expect(response).to.have.property(\"totalRecords\");",
+                      "    pm.expect(response).to.have.property(\"pageNumber\");",
+                      "    pm.expect(response).to.have.property(\"pageSize\");",
+                      "});",
+                      "",
+                      "pm.test(\"PageNumber and PageSize should echo request\", function () {",
+                      "    pm.expect(response.pageNumber).to.eql(1);",
+                      "    pm.expect(response.pageSize).to.eql(10);",
+                      "});",
+                      "",
+                      "pm.test(\"Each customer should have all six fields\", function () {",
+                      "    if (response.results.length === 0) return;",
+                      "    var c = response.results[0];",
+                      "    pm.expect(c).to.have.property(\"customerId\");",
+                      "    pm.expect(c).to.have.property(\"accountNumber\");",
+                      "    pm.expect(c).to.have.property(\"personName\");",
+                      "    pm.expect(c).to.have.property(\"lifetimeSpend\");",
+                      "    pm.expect(c).to.have.property(\"orderCount\");",
+                      "    pm.expect(c).to.have.property(\"lastOrderDate\");",
+                      "});",
+                      "",
+                      "pm.test(\"Default sort is lifetimeSpend descending\", function () {",
+                      "    if (response.results.length < 2) return;",
+                      "    pm.expect(response.results[0].lifetimeSpend).to.be.at.least(response.results[1].lifetimeSpend);",
+                      "});"
+                    ],
+                    "type": "text/javascript",
+                    "packages": {},
+                    "requests": {}
+                  }
+                }
+              ],
+              "request": {
+                "method": "GET",
+                "header": [],
+                "url": {
+                  "raw": "{{adventureWorksApi}}/{{apiVersion}}/stores/:storeId/customers?pageNumber=1&pageSize=10",
+                  "host": [
+                    "{{adventureWorksApi}}"
+                  ],
+                  "path": [
+                    "{{apiVersion}}",
+                    "stores",
+                    ":storeId",
+                    "customers"
+                  ],
+                  "query": [
+                    {
+                      "key": "pageNumber",
+                      "value": "1"
+                    },
+                    {
+                      "key": "pageSize",
+                      "value": "10"
+                    }
+                  ],
+                  "variable": [
+                    {
+                      "key": "storeId",
+                      "value": "292"
+                    }
+                  ]
+                }
+              },
+              "response": []
+            },
+            {
+              "name": "Get Store Customers - Sort By PersonName Asc",
+              "event": [
+                {
+                  "listen": "test",
+                  "script": {
+                    "exec": [
+                      "pm.test(\"Status should be 200\", function () {",
+                      "    pm.response.to.have.status(200);",
+                      "});",
+                      "",
+                      "var response = pm.response.json();",
+                      "",
+                      "pm.test(\"Results sorted by personName ascending\", function () {",
+                      "    if (response.results.length < 2) return;",
+                      "    var a = (response.results[0].personName || \"\").toLowerCase();",
+                      "    var b = (response.results[1].personName || \"\").toLowerCase();",
+                      "    pm.expect(a <= b).to.be.true;",
+                      "});"
+                    ],
+                    "type": "text/javascript",
+                    "packages": {},
+                    "requests": {}
+                  }
+                }
+              ],
+              "request": {
+                "method": "GET",
+                "header": [],
+                "url": {
+                  "raw": "{{adventureWorksApi}}/{{apiVersion}}/stores/:storeId/customers?pageNumber=1&pageSize=10&orderBy=PersonName&sortOrder=asc",
+                  "host": [
+                    "{{adventureWorksApi}}"
+                  ],
+                  "path": [
+                    "{{apiVersion}}",
+                    "stores",
+                    ":storeId",
+                    "customers"
+                  ],
+                  "query": [
+                    {
+                      "key": "pageNumber",
+                      "value": "1"
+                    },
+                    {
+                      "key": "pageSize",
+                      "value": "10"
+                    },
+                    {
+                      "key": "orderBy",
+                      "value": "PersonName"
+                    },
+                    {
+                      "key": "sortOrder",
+                      "value": "asc"
+                    }
+                  ],
+                  "variable": [
+                    {
+                      "key": "storeId",
+                      "value": "292"
+                    }
+                  ]
+                }
+              },
+              "response": []
+            },
+            {
+              "name": "Get Store Customers - Page Size Clamp",
+              "event": [
+                {
+                  "listen": "test",
+                  "script": {
+                    "exec": [
+                      "pm.test(\"Status should be 200\", function () {",
+                      "    pm.response.to.have.status(200);",
+                      "});",
+                      "",
+                      "var response = pm.response.json();",
+                      "",
+                      "pm.test(\"PageSize clamps to 50 (MaxTake) when 999 requested\", function () {",
+                      "    pm.expect(response.pageSize).to.eql(50);",
+                      "});",
+                      "",
+                      "pm.test(\"Results array length does not exceed clamped pageSize\", function () {",
+                      "    pm.expect(response.results.length).to.be.at.most(50);",
+                      "});"
+                    ],
+                    "type": "text/javascript",
+                    "packages": {},
+                    "requests": {}
+                  }
+                }
+              ],
+              "request": {
+                "method": "GET",
+                "header": [],
+                "url": {
+                  "raw": "{{adventureWorksApi}}/{{apiVersion}}/stores/:storeId/customers?pageNumber=1&pageSize=999",
+                  "host": [
+                    "{{adventureWorksApi}}"
+                  ],
+                  "path": [
+                    "{{apiVersion}}",
+                    "stores",
+                    ":storeId",
+                    "customers"
+                  ],
+                  "query": [
+                    {
+                      "key": "pageNumber",
+                      "value": "1"
+                    },
+                    {
+                      "key": "pageSize",
+                      "value": "999"
+                    }
+                  ],
+                  "variable": [
+                    {
+                      "key": "storeId",
+                      "value": "292"
+                    }
+                  ]
+                }
+              },
+              "response": []
+            },
+            {
+              "name": "Get Store Customers - Not Found",
+              "event": [
+                {
+                  "listen": "test",
+                  "script": {
+                    "exec": [
+                      "pm.test(\"Status should be 404\", function () {",
+                      "    pm.response.to.have.status(404);",
+                      "});"
+                    ],
+                    "type": "text/javascript",
+                    "packages": {},
+                    "requests": {}
+                  }
+                }
+              ],
+              "request": {
+                "method": "GET",
+                "header": [],
+                "url": {
+                  "raw": "{{adventureWorksApi}}/{{apiVersion}}/stores/:storeId/customers",
+                  "host": [
+                    "{{adventureWorksApi}}"
+                  ],
+                  "path": [
+                    "{{apiVersion}}",
+                    "stores",
+                    ":storeId",
+                    "customers"
+                  ],
+                  "variable": [
+                    {
+                      "key": "storeId",
+                      "value": "9999999"
+                    }
+                  ]
+                }
+              },
+              "response": []
+            },
+            {
+              "name": "Get Store Customers - Invalid Id",
+              "event": [
+                {
+                  "listen": "test",
+                  "script": {
+                    "exec": [
+                      "pm.test(\"Status should be 400\", function () {",
+                      "    pm.response.to.have.status(400);",
+                      "});",
+                      "",
+                      "pm.test(\"Body should be correct\", function () {",
+                      "    pm.expect(pm.response.text()).to.include(\"A valid store id must be specified.\");",
+                      "});"
+                    ],
+                    "type": "text/javascript",
+                    "packages": {},
+                    "requests": {}
+                  }
+                }
+              ],
+              "request": {
+                "method": "GET",
+                "header": [],
+                "url": {
+                  "raw": "{{adventureWorksApi}}/{{apiVersion}}/stores/:storeId/customers",
+                  "host": [
+                    "{{adventureWorksApi}}"
+                  ],
+                  "path": [
+                    "{{apiVersion}}",
+                    "stores",
+                    ":storeId",
+                    "customers"
+                  ],
+                  "variable": [
+                    {
+                      "key": "storeId",
+                      "value": "0"
+                    }
+                  ]
+                }
+              },
+              "response": []
+            },
+            {
+              "name": "Get Store Customers - Empty Store",
+              "event": [
+                {
+                  "listen": "test",
+                  "script": {
+                    "exec": [
+                      "// NOTE: storeId 800 is a placeholder for a store with no customers — verify against",
+                      "// your seeded data and adjust if needed. If 800 has customers, this test will fail and",
+                      "// the storeId should be swapped for one with zero rows in Sales.Customer for that store.",
+                      "pm.test(\"Status should be 200\", function () {",
+                      "    pm.response.to.have.status(200);",
+                      "});",
+                      "",
+                      "var response = pm.response.json();",
+                      "",
+                      "pm.test(\"Empty store returns empty results array\", function () {",
+                      "    pm.expect(response.results).to.be.an(\"array\").that.is.empty;",
+                      "    pm.expect(response.totalRecords).to.eql(0);",
+                      "});"
+                    ],
+                    "type": "text/javascript",
+                    "packages": {},
+                    "requests": {}
+                  }
+                }
+              ],
+              "request": {
+                "method": "GET",
+                "header": [],
+                "url": {
+                  "raw": "{{adventureWorksApi}}/{{apiVersion}}/stores/:storeId/customers?pageNumber=1&pageSize=10",
+                  "host": [
+                    "{{adventureWorksApi}}"
+                  ],
+                  "path": [
+                    "{{apiVersion}}",
+                    "stores",
+                    ":storeId",
+                    "customers"
+                  ],
+                  "query": [
+                    {
+                      "key": "pageNumber",
+                      "value": "1"
+                    },
+                    {
+                      "key": "pageSize",
+                      "value": "10"
+                    }
+                  ],
+                  "variable": [
+                    {
+                      "key": "storeId",
+                      "value": "800"
+                    }
+                  ]
+                }
+              },
+              "response": []
+            }
+          ]
         }
       ]
     }

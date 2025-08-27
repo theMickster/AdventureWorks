@@ -7,7 +7,7 @@
 **Current Status Summary** (as of 2026-04-30):
 
 - ✅ Backend API Round 1: Epic #552 closed (Done) — Store Manager, Products Manager, ProductReview, CQRS foundation
-- 🔄 Backend API Round 2: Epic #873 (API Completion) in progress — 3 of 16 Features Done (#874 Store Contact Mgmt, #878 Store Address Mgmt, #911 PersonCreditCard fix); 13 Features remaining
+- 🔄 Backend API Round 2: Epic #873 (API Completion) in progress — 4 of 16 Features Done (#874 Store Contact Mgmt, #878 Store Address Mgmt, #882 Store Analytics & Insights, #911 PersonCreditCard fix); 12 Features remaining
 - ✅ Frontend Foundation: Angular Foundation (Epic #560) complete — all 9 features done
 - ✅ Frontend Data Layer: Data Interaction Layer (Epic #577) 83% complete — Feature #620 done, #621 (SignalR) remaining
 - ❌ Azure Functions: Planned as Epic #569 (Polyglot Azure Functions Architecture) - not yet started
@@ -41,7 +41,7 @@
 
 **Phase 2.5 - API Completion** (Epic #873 — successor to closed #552) -- IN PROGRESS (2026-04-27 → ongoing):
 
-- 🔄 **Wave 1**: Store Manager Completion — ✅ #874 (Contact Mgmt, Done 2026-04-27), ✅ #878 (Address Mgmt, Done 2026-04-29), 🔄 #882 (Analytics, 2/3 done — #884, #883), 📋 #886 (Sales Person Assignment Tracking)
+- 🔄 **Wave 1**: Store Manager Completion — ✅ #874 (Contact Mgmt, Done 2026-04-27), ✅ #878 (Address Mgmt, Done 2026-04-29), ✅ #882 (Analytics, Done 2026-04-30), 📋 #886 (Sales Person Assignment Tracking)
 - 📋 **Wave 2**: HR Process Completion — Features #890 (Department Transfer), #892 (Pay Management), #894 (Department Reporting) — 5 stories (#891, #893, #895-#897). Stories 2.2, 2.4 covered by existing #751, #750.
 - 🔄 **Wave 3**: Person Foundation — 📋 #898 (Email Mgmt), 📋 #903 (Phone Mgmt), 📋 #908 (Directory & Search), ✅ #911 (PersonCreditCard fix, Done 2026-04-27) — 10 stories remaining
 - 📋 **Wave 4**: Lookup Endpoint Blitz — Features #913 (Production Lookups: 4 stories), #918 (Sales Lookups: 4 stories) — Stories 4.1, 4.2 covered by Done #699
@@ -498,6 +498,6 @@ Each markdown file follows this structure:
 
 ---
 
-**Document Version**: 2.5
+**Document Version**: 2.6
 **Last Updated**: 2026-04-30
-**Status**: Active Execution — Epic #560 complete, #570 complete, #577 83% complete (#621 SignalR remaining), #552 closed Done, **#873 API Completion in progress** — 3 of 16 Features Done (#874, #878, #911); next up is #882 Store Analytics & Insights to close out Wave 1; #565 planned
+**Status**: Active Execution — Epic #560 complete, #570 complete, #577 83% complete (#621 SignalR remaining), #552 closed Done, **#873 API Completion in progress** — 4 of 16 Features Done (#874, #878, #882, #911); next up is #886 Sales Person Assignment Tracking to close out Wave 1; #565 planned

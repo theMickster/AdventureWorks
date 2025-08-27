@@ -318,7 +318,7 @@ Scenario: Non-existent store returns 404
   Then a 404 Not Found is returned
 ```
 
-#### Story 1.9: Get Store Customer List
+#### Story 1.9: Get Store Customer List — **Done 2026-04-30** (#885)
 
 **Description**: As an API consumer, I want to retrieve a paginated list of customers associated with a store including their lifetime spend, so that the store detail page can show customer activity.
 
@@ -327,18 +327,18 @@ Scenario: Non-existent store returns 404
 ```gherkin
 Scenario: Return paginated customer list with spend data
   Given store 292 has customers with order history
-  When GET /api/v1.0/stores/292/customers?page=1&pageSize=20 is called
+  When GET /api/v1.0/stores/292/customers?pageNumber=1&pageSize=20 is called
   Then a 200 OK is returned with a paginated list
     AND each customer includes customerId, accountNumber, personName, lifetimeSpend, and orderCount
     AND the list is sorted by lifetimeSpend descending by default
 
-Scenario: Reject invalid pagination parameters
-  When page=0 or pageSize=0 is provided
-  Then a 400 Bad Request is returned
+Scenario: Pagination parameters are clamped to valid ranges
+  When pageNumber=0 or pageSize=0 is provided
+  Then pageNumber normalizes to 1 and pageSize to default. (Codebase convention.)
 
-Scenario: Reject excessive page size
-  When pageSize > 100 is provided
-  Then a 400 Bad Request is returned
+Scenario: Excessive page size is clamped
+  When pageSize > 50 is provided
+  Then pageSize clamps to 50. (Codebase convention; MaxTake=50 in QueryStringParamsBase.)
 
 Scenario: Store with no customers returns empty list
   Given store 800 exists but has no customers

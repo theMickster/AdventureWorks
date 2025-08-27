@@ -187,5 +187,61 @@ public sealed class StoreRepository(AdventureWorksDbContext dbContext)
             })
             .FirstOrDefaultAsync(cancellationToken);
     }
+
+    /// <summary>
+    /// Retrieves a paged list of customer projections for the given store. The caller is responsible
+    /// for verifying store existence (this method returns (empty, 0) for stores with no customers,
+    /// which is indistinguishable from a non-existent store at this layer).
+    /// </summary>
+    public async Task<(IReadOnlyList<StoreCustomerProjection>, int)> GetCustomersByStoreIdAsync(
+        int storeId, StoreCustomerParameter parameters, CancellationToken cancellationToken = default)
+    {
+        var totalCount = await DbContext.Set<CustomerEntity>()
+            .Where(c => c.StoreId == storeId)
+            .CountAsync(cancellationToken);
+
+        var customerQuery = DbContext.Set<CustomerEntity>()
+            .AsNoTracking()
+            .Where(c => c.StoreId == storeId)
+            .Select(c => new StoreCustomerProjection
+            {
+                CustomerId = c.CustomerId,
+                AccountNumber = c.AccountNumber ?? string.Empty,
+                PersonName = c.Person == null ? string.Empty : (c.Person.FirstName + " " + c.Person.LastName),
+                LifetimeSpend = c.SalesOrderHeaders.Sum(o => (decimal?)o.TotalDue) ?? 0m,
+                OrderCount = c.SalesOrderHeaders.Count(),
+                LastOrderDate = c.SalesOrderHeaders.Max(o => (DateTime?)o.OrderDate)
+            });
+
+        switch (parameters.OrderBy)
+        {
+            case StoreCustomerParameter.LifetimeSpend:
+                customerQuery = parameters.SortOrder == SortedResultConstants.Ascending ?
+                    customerQuery.OrderBy(x => x.LifetimeSpend) :
+                    customerQuery.OrderByDescending(x => x.LifetimeSpend);
+                break;
+            case StoreCustomerParameter.PersonName:
+                customerQuery = parameters.SortOrder == SortedResultConstants.Ascending ?
+                    customerQuery.OrderBy(x => x.PersonName) :
+                    customerQuery.OrderByDescending(x => x.PersonName);
+                break;
+            case StoreCustomerParameter.OrderCount:
+                customerQuery = parameters.SortOrder == SortedResultConstants.Ascending ?
+                    customerQuery.OrderBy(x => x.OrderCount) :
+                    customerQuery.OrderByDescending(x => x.OrderCount);
+                break;
+            case StoreCustomerParameter.LastOrderDate:
+                customerQuery = parameters.SortOrder == SortedResultConstants.Ascending ?
+                    customerQuery.OrderBy(x => x.LastOrderDate) :
+                    customerQuery.OrderByDescending(x => x.LastOrderDate);
+                break;
+        }
+
+        customerQuery = customerQuery.Skip(parameters.GetRecordsToSkip()).Take(parameters.PageSize);
+
+        var results = await customerQuery.ToListAsync(cancellationToken);
+
+        return (results.AsReadOnly(), totalCount);
+    }
 }
 

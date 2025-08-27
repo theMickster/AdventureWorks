@@ -3,7 +3,8 @@ using AdventureWorks.Domain.Entities.Sales;
 
 namespace AdventureWorks.Application.PersistenceContracts.Repositories.Sales;
 
-// Projection records are co-located with the interface; promote to a folder if more than three accumulate.
+// Projection records are co-located with the interface. Promote them to a dedicated folder
+// (Application/Features/Sales/Projections/ or similar) when adding a fourth — three is the limit.
 /// <summary>
 /// Lightweight projection of <see cref="StoreEntity"/> used by demographics reads.
 /// Carries only the columns required to populate
@@ -45,6 +46,32 @@ public sealed record StorePerformanceProjection
 
     /// <summary>Calendar year the aggregates cover (supplied by the caller).</summary>
     public required int Year { get; init; }
+}
+
+/// <summary>
+/// Lightweight projection of a store customer enriched with per-customer order aggregates
+/// (lifetime spend, order count, last order date). Carries only the columns required to
+/// populate <c>StoreCustomerModel</c> so EF emits a narrow SELECT.
+/// </summary>
+public sealed record StoreCustomerProjection
+{
+    /// <summary>The customer's unique identifier.</summary>
+    public required int CustomerId { get; init; }
+
+    /// <summary>The customer's account number.</summary>
+    public required string AccountNumber { get; init; }
+
+    /// <summary>Full name of the customer's contact person, or empty when the customer has no person record.</summary>
+    public required string PersonName { get; init; }
+
+    /// <summary>Sum of <c>SalesOrderHeader.TotalDue</c> across every order placed by this customer.</summary>
+    public required decimal LifetimeSpend { get; init; }
+
+    /// <summary>Total number of orders placed by this customer.</summary>
+    public required int OrderCount { get; init; }
+
+    /// <summary>Date of the customer's most recent order, or <c>null</c> when the customer has no orders.</summary>
+    public DateTime? LastOrderDate { get; init; }
 }
 
 public interface IStoreRepository : IAsyncRepository<StoreEntity>
@@ -102,4 +129,17 @@ public interface IStoreRepository : IAsyncRepository<StoreEntity>
     /// <param name="year">the calendar year the YTD aggregates cover</param>
     /// <param name="cancellationToken">token to cancel the operation</param>
     Task<StorePerformanceProjection?> GetPerformanceAsync(int storeId, int year, CancellationToken cancellationToken = default);
+
+    /// <summary>
+    /// Retrieves a paged list of <see cref="StoreCustomerProjection"/> rows for the given store
+    /// along with the total customer count. Each row carries per-customer order aggregates
+    /// (lifetime spend, order count, last order date) computed in-database via a narrow projection.
+    /// The caller must verify the store exists separately (e.g. <see cref="ExistsAsync"/>);
+    /// when the store has no customers this method returns an empty list and a total count of zero.
+    /// </summary>
+    /// <param name="storeId">the store business entity id</param>
+    /// <param name="parameters">paging, sort column, and sort order parameters</param>
+    /// <param name="cancellationToken">token to cancel the operation</param>
+    Task<(IReadOnlyList<StoreCustomerProjection>, int)> GetCustomersByStoreIdAsync(
+        int storeId, StoreCustomerParameter parameters, CancellationToken cancellationToken = default);
 }

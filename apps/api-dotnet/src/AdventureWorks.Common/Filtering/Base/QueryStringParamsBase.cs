@@ -44,9 +44,13 @@ public abstract class QueryStringParamsBase
     }
 
     /// <summary>
-    /// The direction in which to sort the list of results.
+    /// The direction in which to sort the list of results. Defaults to ascending.
     /// </summary>
-    public string SortOrder
+    /// <remarks>
+    /// <c>virtual</c> so subclasses can override the default direction (e.g.
+    /// <see cref="StoreCustomerParameter"/> defaults to descending).
+    /// </remarks>
+    public virtual string SortOrder
     {
         get => _sortOrder;
         init => _sortOrder = value == null ? SortedResultConstants.Ascending : value.Trim().ToLower()
