@@ -3,9 +3,7 @@ using AdventureWorks.Domain.Entities.Sales;
 
 namespace AdventureWorks.Application.PersistenceContracts.Repositories.Sales;
 
-// Projection records for repository read methods are co-located with the interface for now.
-// If more accumulate (Story #883/#885 may add StorePerformanceProjection / StoreCustomerProjection),
-// move all to a dedicated folder before then.
+// Projection records are co-located with the interface; promote to a folder if more than three accumulate.
 /// <summary>
 /// Lightweight projection of <see cref="StoreEntity"/> used by demographics reads.
 /// Carries only the columns required to populate
@@ -21,6 +19,32 @@ public sealed record StoreDemographicsProjection
 
     /// <summary>Raw <c>Sales.Store.Demographics</c> XML payload, or <c>null</c>.</summary>
     public string? Demographics { get; init; }
+}
+
+/// <summary>
+/// Lightweight projection used by store performance reads. Carries the aggregate columns required
+/// to populate <c>StorePerformanceModel</c>; <c>AverageOrderValue</c> is computed in the handler,
+/// not here.
+/// </summary>
+public sealed record StorePerformanceProjection
+{
+    /// <summary>The store's BusinessEntityId.</summary>
+    public required int BusinessEntityId { get; init; }
+
+    /// <summary>The store's display name.</summary>
+    public required string Name { get; init; }
+
+    /// <summary>Sum of <c>SalesOrderHeader.TotalDue</c> across the store's customers for the year.</summary>
+    public required decimal RevenueYtd { get; init; }
+
+    /// <summary>Number of <c>SalesOrderHeader</c> rows that contributed to <see cref="RevenueYtd"/>.</summary>
+    public required int OrderCount { get; init; }
+
+    /// <summary>Distinct customer count for the store, independent of order activity.</summary>
+    public required int CustomerCount { get; init; }
+
+    /// <summary>Calendar year the aggregates cover (supplied by the caller).</summary>
+    public required int Year { get; init; }
 }
 
 public interface IStoreRepository : IAsyncRepository<StoreEntity>
@@ -67,4 +91,15 @@ public interface IStoreRepository : IAsyncRepository<StoreEntity>
     /// <param name="cancellationToken">token to cancel the operation</param>
     Task<StoreDemographicsProjection?> GetDemographicsAsync(int storeId, CancellationToken cancellationToken = default);
 
+    /// <summary>
+    /// Retrieves a narrow performance aggregate (revenue, order count, customer count) for the
+    /// given store and calendar year. Returns <c>null</c> when the store does not exist.
+    /// When the store exists but has no customers/orders the projection is populated with zero
+    /// values so the caller can still render a model. The year is supplied by the caller so the
+    /// repository remains storage-only (no clock dependency).
+    /// </summary>
+    /// <param name="storeId">the store business entity id</param>
+    /// <param name="year">the calendar year the YTD aggregates cover</param>
+    /// <param name="cancellationToken">token to cancel the operation</param>
+    Task<StorePerformanceProjection?> GetPerformanceAsync(int storeId, int year, CancellationToken cancellationToken = default);
 }

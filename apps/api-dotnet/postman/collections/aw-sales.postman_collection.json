@@ -3228,6 +3228,166 @@
               "response": []
             }
           ]
+        },
+        {
+          "name": "Performance",
+          "item": [
+            {
+              "name": "Get Store Performance",
+              "event": [
+                {
+                  "listen": "test",
+                  "script": {
+                    "exec": [
+                      "var storeId = Number(pm.request.url.path[3]);",
+                      "",
+                      "pm.test(\"Status should be 200\", function () {",
+                      "    pm.response.to.have.status(200);",
+                      "});",
+                      "",
+                      "var response = pm.response.json();",
+                      "",
+                      "pm.test(\"Response should have correct shape\", function () {",
+                      "    pm.expect(response).to.exist;",
+                      "    pm.expect(response.storeId).to.eql(storeId);",
+                      "    pm.expect(response.storeName).to.exist;",
+                      "    pm.expect(response).to.have.property(\"revenueYtd\");",
+                      "    pm.expect(response).to.have.property(\"orderCount\");",
+                      "    pm.expect(response).to.have.property(\"averageOrderValue\");",
+                      "    pm.expect(response).to.have.property(\"customerCount\");",
+                      "    pm.expect(response).to.have.property(\"year\");",
+                      "});",
+                      "",
+                      "pm.test(\"RevenueYtd should be non-negative\", function () {",
+                      "    pm.expect(response.revenueYtd).to.be.at.least(0);",
+                      "});",
+                      "",
+                      "pm.test(\"AverageOrderValue should match revenueYtd / orderCount\", function () {",
+                      "    if (response.orderCount === 0) {",
+                      "        pm.expect(response.averageOrderValue).to.eql(0);",
+                      "    } else {",
+                      "        var expected = response.revenueYtd / response.orderCount;",
+                      "        pm.expect(Math.abs(response.averageOrderValue - expected)).to.be.below(0.01);",
+                      "    }",
+                      "});"
+                    ],
+                    "type": "text/javascript",
+                    "packages": {},
+                    "requests": {}
+                  }
+                }
+              ],
+              "request": {
+                "method": "GET",
+                "header": [],
+                "url": {
+                  "raw": "{{adventureWorksApi}}/{{apiVersion}}/stores/:storeId/performance",
+                  "host": [
+                    "{{adventureWorksApi}}"
+                  ],
+                  "path": [
+                    "{{apiVersion}}",
+                    "stores",
+                    ":storeId",
+                    "performance"
+                  ],
+                  "variable": [
+                    {
+                      "key": "storeId",
+                      "value": "292"
+                    }
+                  ]
+                }
+              },
+              "response": []
+            },
+            {
+              "name": "Get Store Performance - Not Found",
+              "event": [
+                {
+                  "listen": "test",
+                  "script": {
+                    "exec": [
+                      "pm.test(\"Status should be 404\", function () {",
+                      "    pm.response.to.have.status(404);",
+                      "});"
+                    ],
+                    "type": "text/javascript",
+                    "packages": {},
+                    "requests": {}
+                  }
+                }
+              ],
+              "request": {
+                "method": "GET",
+                "header": [],
+                "url": {
+                  "raw": "{{adventureWorksApi}}/{{apiVersion}}/stores/:storeId/performance",
+                  "host": [
+                    "{{adventureWorksApi}}"
+                  ],
+                  "path": [
+                    "{{apiVersion}}",
+                    "stores",
+                    ":storeId",
+                    "performance"
+                  ],
+                  "variable": [
+                    {
+                      "key": "storeId",
+                      "value": "9999999"
+                    }
+                  ]
+                }
+              },
+              "response": []
+            },
+            {
+              "name": "Get Store Performance - Invalid Id",
+              "event": [
+                {
+                  "listen": "test",
+                  "script": {
+                    "exec": [
+                      "pm.test(\"Status should be 400\", function () {",
+                      "    pm.response.to.have.status(400);",
+                      "});",
+                      "",
+                      "pm.test(\"Body should be correct\", function () {",
+                      "    pm.expect(pm.response.text()).to.include(\"A valid store id must be specified.\");",
+                      "});"
+                    ],
+                    "type": "text/javascript",
+                    "packages": {},
+                    "requests": {}
+                  }
+                }
+              ],
+              "request": {
+                "method": "GET",
+                "header": [],
+                "url": {
+                  "raw": "{{adventureWorksApi}}/{{apiVersion}}/stores/:storeId/performance",
+                  "host": [
+                    "{{adventureWorksApi}}"
+                  ],
+                  "path": [
+                    "{{apiVersion}}",
+                    "stores",
+                    ":storeId",
+                    "performance"
+                  ],
+                  "variable": [
+                    {
+                      "key": "storeId",
+                      "value": "0"
+                    }
+                  ]
+                }
+              },
+              "response": []
+            }
+          ]
         }
       ]
     }

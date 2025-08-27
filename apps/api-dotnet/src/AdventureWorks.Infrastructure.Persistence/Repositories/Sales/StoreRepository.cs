@@ -162,5 +162,30 @@ public sealed class StoreRepository(AdventureWorksDbContext dbContext)
             })
             .FirstOrDefaultAsync(cancellationToken);
     }
+
+    /// <summary>
+    /// Retrieves a narrow performance aggregate for the given store and calendar year.
+    /// Returns <c>null</c> when the store does not exist; otherwise returns a populated
+    /// projection (zero values when the store has no customers/orders).
+    /// </summary>
+    public async Task<StorePerformanceProjection?> GetPerformanceAsync(int storeId, int year, CancellationToken cancellationToken = default)
+    {
+        return await DbContext.Stores
+            .AsNoTracking()
+            .Where(s => s.BusinessEntityId == storeId)
+            .Select(s => new StorePerformanceProjection
+            {
+                BusinessEntityId = s.BusinessEntityId,
+                Name = s.Name,
+                Year = year,
+                RevenueYtd = s.Customers.SelectMany(c => c.SalesOrderHeaders)
+                    .Where(o => o.OrderDate.Year == year)
+                    .Sum(o => (decimal?)o.TotalDue) ?? 0m,
+                OrderCount = s.Customers.SelectMany(c => c.SalesOrderHeaders)
+                    .Count(o => o.OrderDate.Year == year),
+                CustomerCount = s.Customers.Count()
+            })
+            .FirstOrDefaultAsync(cancellationToken);
+    }
 }
 

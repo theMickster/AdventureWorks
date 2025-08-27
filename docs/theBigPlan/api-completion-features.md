@@ -264,7 +264,7 @@ Key invariants:
 - Stores with no data return zero/null/empty (never 500)
 - Non-existent store returns 404
 
-#### Story 1.7: Get Store Performance Summary
+#### Story 1.7: Get Store Performance Summary — **Done 2026-04-30** (#883)
 
 **Description**: As an API consumer, I want to retrieve a store's performance summary (revenue YTD, order count, average order value, customer count), so that the store detail page can display key business metrics.
 
