@@ -1,6 +1,4 @@
-﻿using AdventureWorks.Models.Features.AddressManagement;
-
-namespace AdventureWorks.Models.Features.Sales;
+﻿namespace AdventureWorks.Models.Features.Sales;
 
 public sealed class StoreModel : StoreBaseModel
 {
@@ -8,7 +6,7 @@ public sealed class StoreModel : StoreBaseModel
 
     public DateTime ModifiedDate { get; set; }
 
-    public List<BusinessEntityAddressModel> StoreAddresses { get; set; } = [];
+    public List<StoreAddressModel> StoreAddresses { get; set; } = [];
 
     public List<StoreContactModel> StoreContacts { get; set; } = [];
 

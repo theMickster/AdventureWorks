@@ -85,8 +85,8 @@ public sealed class StoreEntityToModelProfileTests : UnitTestBase
             result.ModifiedDate.Should().Be(entity.ModifiedDate);
 
             result.StoreAddresses.Count.Should().Be(1);
-            result.StoreAddresses[0].Address.Id.Should().Be(addressId);
-            result.StoreAddresses[0].AddressType.Id.Should().Be(addressTypeId);
+            result.StoreAddresses[0].Id.Should().Be(addressId);
+            result.StoreAddresses[0].AddressTypeId.Should().Be(addressTypeId);
 
             entity.Rowguid.Should().Be(aGuid);
         }

@@ -1,4 +1,4 @@
-using AdventureWorks.Models.Features.AddressManagement;
+using AdventureWorks.Models.Features.Sales;
 using MediatR;
 
 namespace AdventureWorks.Application.Features.Sales.Queries;
@@ -6,7 +6,7 @@ namespace AdventureWorks.Application.Features.Sales.Queries;
 /// <summary>
 /// Query to retrieve all addresses for a store.
 /// </summary>
-public sealed class ReadStoreAddressListQuery : IRequest<List<BusinessEntityAddressModel>>
+public sealed class ReadStoreAddressListQuery : IRequest<List<StoreAddressModel>>
 {
     /// <summary>
     /// Store's business entity identifier.

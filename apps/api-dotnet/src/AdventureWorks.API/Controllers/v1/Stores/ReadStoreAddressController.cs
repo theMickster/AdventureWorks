@@ -1,5 +1,5 @@
 using AdventureWorks.Application.Features.Sales.Queries;
-using AdventureWorks.Models.Features.AddressManagement;
+using AdventureWorks.Models.Features.Sales;
 using Asp.Versioning;
 using MediatR;
 using Microsoft.AspNetCore.Authorization;
@@ -40,7 +40,7 @@ public sealed class ReadStoreAddressController : ControllerBase
     /// <response code="400">Invalid store ID supplied</response>
     /// <response code="500">Internal server error</response>
     [HttpGet(Name = "GetStoreAddresses")]
-    [ProducesResponseType(typeof(List<BusinessEntityAddressModel>), StatusCodes.Status200OK)]
+    [ProducesResponseType(typeof(List<StoreAddressModel>), StatusCodes.Status200OK)]
     [ProducesResponseType(StatusCodes.Status400BadRequest)]
     [ProducesResponseType(StatusCodes.Status500InternalServerError)]
     public async Task<IActionResult> GetAllAsync(int storeId, CancellationToken cancellationToken = default)
@@ -59,5 +59,51 @@ public sealed class ReadStoreAddressController : ControllerBase
         _logger.LogInformation("Retrieved {Count} addresses for store {StoreId}", addresses.Count, storeId);
 
         return Ok(addresses);
+    }
+
+    /// <summary>
+    /// Retrieves a single store address by its composite key.
+    /// </summary>
+    /// <param name="storeId">Store's BusinessEntityId.</param>
+    /// <param name="addressId">Address identifier.</param>
+    /// <param name="addressTypeId">Address type identifier.</param>
+    /// <param name="cancellationToken">Token to cancel the operation.</param>
+    /// <returns>The store address matching the composite key.</returns>
+    /// <response code="200">Address retrieved successfully.</response>
+    /// <response code="400">Invalid input.</response>
+    /// <response code="404">Store address not found.</response>
+    [HttpGet("{addressId:int}/{addressTypeId:int}", Name = "GetStoreAddressByCompositeKey")]
+    [ProducesResponseType(typeof(StoreAddressModel), StatusCodes.Status200OK)]
+    [ProducesResponseType(StatusCodes.Status400BadRequest)]
+    [ProducesResponseType(StatusCodes.Status404NotFound)]
+    public async Task<IActionResult> GetByCompositeKeyAsync(
+        int storeId,
+        int addressId,
+        int addressTypeId,
+        CancellationToken cancellationToken = default)
+    {
+        if (storeId <= 0)
+        {
+            return BadRequest("A valid store id must be specified.");
+        }
+
+        if (addressId <= 0)
+        {
+            return BadRequest("A valid address id must be specified.");
+        }
+
+        if (addressTypeId <= 0)
+        {
+            return BadRequest("A valid address type id must be specified.");
+        }
+
+        var model = await _mediator.Send(new ReadStoreAddressQuery
+        {
+            StoreId = storeId,
+            AddressId = addressId,
+            AddressTypeId = addressTypeId
+        }, cancellationToken);
+
+        return model is null ? NotFound("Unable to locate the store address.") : Ok(model);
     }
 }

@@ -3,7 +3,6 @@ using AdventureWorks.Common.Attributes;
 using AdventureWorks.Common.Constants;
 using AdventureWorks.Common.Filtering;
 using AdventureWorks.Common.Helpers;
-using AdventureWorks.Domain.Entities.Person;
 using AdventureWorks.Domain.Entities.Sales;
 using AdventureWorks.Infrastructure.Persistence.DbContexts;
 using Microsoft.EntityFrameworkCore;
@@ -136,24 +135,6 @@ public sealed class StoreRepository(AdventureWorksDbContext dbContext)
         }
 
         return query;
-    }
-
-    /// <summary>
-    /// Retrieves the list of addresses for a given store (business entity) id
-    /// </summary>
-    /// <param name="storeId">the unique store identifier</param>
-    /// <param name="cancellationToken">token to cancel the operation</param>
-    /// <returns>List of business entity address entities for the store, or an empty list if none exist.</returns>
-    public async Task<List<BusinessEntityAddressEntity>> GetAddressesByStoreIdAsync(int storeId, CancellationToken cancellationToken = default)
-    {
-        return await DbContext.BusinessEntityAddresses
-            .AsNoTracking()
-            .Where(x => x.BusinessEntityId == storeId)
-            .Include(x => x.AddressType)
-            .Include(x => x.Address)
-                .ThenInclude(a => a.StateProvince)
-                .ThenInclude(s => s.CountryRegion)
-            .ToListAsync(cancellationToken);
     }
 
     /// <summary>

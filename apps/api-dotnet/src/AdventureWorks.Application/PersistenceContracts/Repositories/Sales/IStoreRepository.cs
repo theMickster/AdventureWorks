@@ -1,5 +1,4 @@
 ﻿using AdventureWorks.Common.Filtering;
-using AdventureWorks.Domain.Entities.Person;
 using AdventureWorks.Domain.Entities.Sales;
 
 namespace AdventureWorks.Application.PersistenceContracts.Repositories.Sales;
@@ -30,14 +29,6 @@ public interface IStoreRepository : IAsyncRepository<StoreEntity>
     /// <param name="includeAddresses">when false, address navigation properties are not loaded</param>
     /// <param name="cancellationToken">token to cancel the operation</param>
     Task<(IReadOnlyList<StoreEntity>, int)> SearchStoresAsync(StoreParameter parameters, StoreSearchModel storeSearchModel, bool includeAddresses = true, CancellationToken cancellationToken = default);
-
-    /// <summary>
-    /// Retrieves the list of addresses for a given store (business entity) id
-    /// </summary>
-    /// <param name="storeId">the unique store identifier</param>
-    /// <param name="cancellationToken">token to cancel the operation</param>
-    /// <returns>List of business entity address entities for the store, or an empty list if none exist.</returns>
-    Task<List<BusinessEntityAddressEntity>> GetAddressesByStoreIdAsync(int storeId, CancellationToken cancellationToken = default);
 
     /// <summary>
     /// Returns true if a store with the given id exists.
