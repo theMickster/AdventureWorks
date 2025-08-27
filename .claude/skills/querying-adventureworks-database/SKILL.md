@@ -11,7 +11,7 @@ hooks:
     - matcher: "Bash"
       hooks:
         - type: command
-          command: "bash ${CLAUDE_PROJECT_DIR}/hooks/block-mutating-sql.sh"
+          command: "bash ${CLAUDE_PROJECT_DIR}/.claude/hooks/block-mutating-sql.sh"
           timeout: 10
 ---
 

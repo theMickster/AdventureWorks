@@ -21,8 +21,9 @@ def debug_log(message):
         with open(DEBUG_LOG_FILE, "a") as f:
             f.write(f"[{timestamp}] {message}\n")
     except Exception as e:
-        # Silently ignore logging errors to avoid disrupting the hook
-        pass
+        # Surface logging failures to stderr so they aren't fully invisible,
+        # but never raise — the hook must not disrupt the tool call.
+        print(f"security_reminder_hook debug_log failed: {e}", file=sys.stderr)
 
 
 # State file to track warnings shown (session-scoped using session ID)
@@ -176,8 +177,8 @@ def save_state(session_id, shown_warnings):
         with open(state_file, "w") as f:
             json.dump(list(shown_warnings), f)
     except IOError as e:
+        # Fail silently if we can't save state — debug_log records the reason.
         debug_log(f"Failed to save state file: {e}")
-        pass  # Fail silently if we can't save state
 
 
 def check_patterns(file_path, content):
