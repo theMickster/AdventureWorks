@@ -1,0 +1,6 @@
+{
+  "ConnectionStrings": {
+    "AdventureWorksDev": "Server=YOUR_DEV_SQL;Database=AdventureWorks;User Id=YOUR_USER;Password=YOUR_PASSWORD;TrustServerCertificate=True;",
+    "AdventureWorksE2E": "Server=YOUR_DEV_SQL;Database=AdventureWorks_E2E;User Id=YOUR_USER;Password=YOUR_PASSWORD;TrustServerCertificate=True;"
+  }
+}
