@@ -4,13 +4,19 @@ using FluentValidation;
 using System.Net;
 using System.Text.Json;
 
-[assembly: InternalsVisibleTo("AdventureWorks.UnitTests")]
 namespace AdventureWorks.API.libs.Middleware;
 
 [ExcludeFromCodeCoverage]
-internal class ExceptionHandlerMiddleware(RequestDelegate next, ILogger<ExceptionHandlerMiddleware> logger)
+public sealed class ExceptionHandlerMiddleware(RequestDelegate next, ILogger<ExceptionHandlerMiddleware> logger)
 {
     private static readonly JsonSerializerOptions CamelCaseOptions = new() { PropertyNamingPolicy = JsonNamingPolicy.CamelCase };
+
+    /// <summary>
+    /// Sanitized error message returned in the 500 response body when an unhandled exception type reaches the fall-through branch.
+    /// Diagnostic detail is preserved in structured logs via LogError, not the response body.
+    /// </summary>
+    private const string GenericServerErrorMessage = "An unexpected error occurred.";
+
     private readonly RequestDelegate _next = next ?? throw new ArgumentNullException(nameof(next));
     private readonly ILogger<ExceptionHandlerMiddleware> _logger = logger ?? throw new ArgumentNullException(nameof(logger));
 
@@ -82,7 +88,7 @@ internal class ExceptionHandlerMiddleware(RequestDelegate next, ILogger<Exceptio
         {
             result = JsonSerializer.Serialize(new
             {
-                error = exception?.Message,
+                error = GenericServerErrorMessage,
                 correlationId = correlationId,
                 timestamp = DateTime.UtcNow
             });

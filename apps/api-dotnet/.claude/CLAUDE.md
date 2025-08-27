@@ -98,6 +98,7 @@ Ignore audit fields (ModifiedDate, Rowguid, Id). Use `ForPath()` for nested mapp
 #### Exception Handling Middleware
 
 ValidationException -> 400 with error details. All responses include `X-Correlation-Id`.
+Unhandled exception types fall through to a 500 with a sanitized generic message; the original `exception.Message` is intentionally not echoed in the response body and is captured in structured logs only.
 Any new expected exception type used for normal API flows must be translated in middleware or handled explicitly in the controller in the same change.
 See: `AdventureWorks.API/libs/Middleware/ExceptionHandlerMiddleware.cs`
 
