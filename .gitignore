@@ -356,3 +356,6 @@ apps/api-dotnet/postman/environments/*.postman_environment.json
 
 # DbReset.Console: dev config may contain real credentials
 tools/console-apps/AdventureWorks.DbReset.Console/appsettings.Development.json
+
+# Git worktrees
+.worktrees/
