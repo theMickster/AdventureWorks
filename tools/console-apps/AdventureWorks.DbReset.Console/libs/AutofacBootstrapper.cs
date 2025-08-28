@@ -1,6 +1,7 @@
 using AdventureWorks.DbReset.Console.Configuration;
 using AdventureWorks.DbReset.Console.Resolution;
 using AdventureWorks.DbReset.Console.Safety;
+using AdventureWorks.DbReset.Console.Verbs.Handlers;
 using Autofac;
 using Microsoft.Extensions.Logging;
 using NLog;
@@ -45,6 +46,14 @@ internal static class AutofacBootstrapper
             .SingleInstance();
         builder.RegisterType<RepoRootResolver>().AsSelf().SingleInstance();
         builder.RegisterType<TargetResolver>().AsSelf().SingleInstance();
+
+        // Verb handlers (Story #926). Stateless — singletons are fine.
+        builder.RegisterType<VerifyBaselineHandler>()
+            .As<IVerifyBaselineHandler>()
+            .SingleInstance();
+        builder.RegisterType<SnapshotHandler>()
+            .As<ISnapshotHandler>()
+            .SingleInstance();
 
         return builder.Build();
     }

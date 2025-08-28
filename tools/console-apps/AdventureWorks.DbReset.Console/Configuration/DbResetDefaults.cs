@@ -22,6 +22,15 @@ internal static class DbResetDefaults
     /// <summary>Exit code returned when <see cref="Resolution.RepoRootResolver"/> walks past the filesystem root without finding a marker.</summary>
     public const int ExitRepoRootMissing = 4;
 
+    /// <summary>Exit code returned by <c>verify-baseline</c> when the configured baseline file is missing or unreadable.</summary>
+    public const int ExitVerifyBaselineMissing = 10;
+
+    /// <summary>Exit code returned by <c>snapshot</c> when the configured <c>SnapshotSource</c> is unreachable (network / login / database missing).</summary>
+    public const int ExitSnapshotSourceUnreachable = 11;
+
+    /// <summary>Exit code returned by <c>snapshot</c> when SQL Server cannot write the .bak (filesystem permission denial — OS error 5).</summary>
+    public const int ExitSnapshotPermissionDenied = 12;
+
     /// <summary>Primary repo-root marker — a <c>.git</c> directory. Checked first because every clone has one.</summary>
     public const string RepoMarkerGitDir = ".git";
 

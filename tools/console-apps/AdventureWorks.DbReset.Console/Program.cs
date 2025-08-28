@@ -4,6 +4,7 @@ using AdventureWorks.DbReset.Console.Libs;
 using AdventureWorks.DbReset.Console.Resolution;
 using AdventureWorks.DbReset.Console.Safety;
 using AdventureWorks.DbReset.Console.Verbs;
+using AdventureWorks.DbReset.Console.Verbs.Handlers;
 using Autofac;
 using CommandLine;
 using Microsoft.Extensions.Configuration;
@@ -69,11 +70,11 @@ internal static class Program
         return Parser.Default.ParseArguments<
                 VerifyBaselineVerb, SnapshotVerb, RestoreVerb, MigrateVerb, ResetVerb>(args)
             .MapResult(
-                (VerifyBaselineVerb v) => Dispatch(container, options, connectionStrings, v),
-                (SnapshotVerb v) => Dispatch(container, options, connectionStrings, v),
-                (RestoreVerb v) => Dispatch(container, options, connectionStrings, v),
-                (MigrateVerb v) => Dispatch(container, options, connectionStrings, v),
-                (ResetVerb v) => Dispatch(container, options, connectionStrings, v),
+                (VerifyBaselineVerb v) => Dispatch(container, options, connectionStrings, v, cts.Token),
+                (SnapshotVerb v) => Dispatch(container, options, connectionStrings, v, cts.Token),
+                (RestoreVerb v) => Dispatch(container, options, connectionStrings, v, cts.Token),
+                (MigrateVerb v) => Dispatch(container, options, connectionStrings, v, cts.Token),
+                (ResetVerb v) => Dispatch(container, options, connectionStrings, v, cts.Token),
                 _ => DbResetDefaults.ExitParseError);
     }
 
@@ -81,7 +82,8 @@ internal static class Program
         IContainer container,
         DbResetOptions options,
         IReadOnlyDictionary<string, string?> connectionStrings,
-        TVerb verb)
+        TVerb verb,
+        CancellationToken ct)
         where TVerb : class
     {
         ArgumentNullException.ThrowIfNull(container);
@@ -93,18 +95,53 @@ internal static class Program
         var cliTarget = (verb as TargetableVerb)?.Target;
 
         var targetResolver = container.Resolve<TargetResolver>();
-        var safetyValidator = container.Resolve<DualRoleSafetyValidator>();
-
         var effectiveTarget = targetResolver.Resolve(cliTarget, options.DefaultTarget);
 
-        var outcome = safetyValidator.Validate(options, effectiveTarget, connectionStrings);
-        if (!outcome.Ok)
+        // Snapshot reads only from SnapshotSource — there's no target to safety-check. Every
+        // other verb writes to the target and must clear the dual-role validator first.
+        if (verb is not SnapshotVerb)
         {
-            System.Console.Error.WriteLine($"{outcome.FailedRule}: {outcome.Reason}");
-            return DbResetDefaults.ExitSafetyRefused;
+            var safetyValidator = container.Resolve<DualRoleSafetyValidator>();
+            var outcome = safetyValidator.Validate(options, effectiveTarget, connectionStrings);
+            if (!outcome.Ok)
+            {
+                System.Console.Error.WriteLine($"{outcome.FailedRule}: {outcome.Reason}");
+                return DbResetDefaults.ExitSafetyRefused;
+            }
         }
 
-        // #924 stub: real handlers land in stories #926-#928.
+        return verb switch
+        {
+            VerifyBaselineVerb => RunHandler(
+                () => container.Resolve<IVerifyBaselineHandler>().RunAsync(effectiveTarget, ct)),
+            SnapshotVerb => RunHandler(
+                () => container.Resolve<ISnapshotHandler>().RunAsync(ct)),
+            _ => RunStub(verbName, effectiveTarget),
+        };
+    }
+
+    /// <summary>
+    /// Bridges the synchronous CommandLineParser <c>MapResult</c> world to async handlers.
+    /// Handlers return a <see cref="VerbResult"/>; we print its streams here so handlers stay
+    /// free of any direct <see cref="System.Console"/> coupling.
+    /// </summary>
+    private static int RunHandler(Func<Task<VerbResult>> run)
+    {
+        var result = run().GetAwaiter().GetResult();
+        if (!string.IsNullOrEmpty(result.StdOut))
+        {
+            System.Console.Out.WriteLine(result.StdOut);
+        }
+        if (!string.IsNullOrEmpty(result.StdErr))
+        {
+            System.Console.Error.WriteLine(result.StdErr);
+        }
+        return result.ExitCode;
+    }
+
+    private static int RunStub(string verbName, string effectiveTarget)
+    {
+        // Remaining stubs land in stories #927 / #928.
         System.Console.WriteLine($"stub: {verbName} (target={effectiveTarget})");
         return DbResetDefaults.ExitOk;
     }
