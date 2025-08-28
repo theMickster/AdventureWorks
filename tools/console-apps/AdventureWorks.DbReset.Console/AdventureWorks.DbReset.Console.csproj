@@ -26,6 +26,8 @@
 
   <ItemGroup>
     <InternalsVisibleTo Include="AdventureWorks.DbReset.Console.Tests" />
+    <!-- Required for Moq's Castle DynamicProxy to mock internal interfaces (ISqlScriptExecutor). -->
+    <InternalsVisibleTo Include="DynamicProxyGenAssembly2" />
   </ItemGroup>
 
   <ItemGroup>

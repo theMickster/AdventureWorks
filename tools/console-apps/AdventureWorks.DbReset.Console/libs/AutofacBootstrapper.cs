@@ -36,7 +36,13 @@ internal static class AutofacBootstrapper
         // Services.
         builder.RegisterType<ConfigurationValidator>().AsSelf().SingleInstance();
         builder.RegisterType<DualRoleSafetyValidator>().AsSelf().SingleInstance();
+        builder.RegisterType<Snapshot.Internal.SqlScriptExecutor>()
+            .As<Snapshot.Internal.ISqlScriptExecutor>()
+            .SingleInstance();
         builder.RegisterType<SqlSourceMarkerProbe>().As<ISourceMarkerProbe>().SingleInstance();
+        builder.RegisterType<Snapshot.LocalSqlServerSnapshotProvider>()
+            .As<Snapshot.IDatabaseSnapshotProvider>()
+            .SingleInstance();
         builder.RegisterType<RepoRootResolver>().AsSelf().SingleInstance();
         builder.RegisterType<TargetResolver>().AsSelf().SingleInstance();
 
