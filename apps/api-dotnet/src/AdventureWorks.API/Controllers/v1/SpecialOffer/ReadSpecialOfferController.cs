@@ -66,6 +66,12 @@ public sealed class ReadSpecialOfferController : ControllerBase
     public async Task<IActionResult> GetListAsync(CancellationToken cancellationToken = default)
     {
         var model = await _mediator.Send(new ReadSpecialOfferListQuery(), cancellationToken);
+
+        if (model is not { Count: > 0 })
+        {
+            return NotFound("Unable to locate records in the special offer list.");
+        }
+
         return Ok(model);
     }
 }

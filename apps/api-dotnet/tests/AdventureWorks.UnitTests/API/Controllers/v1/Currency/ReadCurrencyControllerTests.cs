@@ -136,22 +136,21 @@ public sealed class ReadCurrencyControllerTests : UnitTestBase
     }
 
     [Fact]
-    public async Task GetList_returns_ok_with_empty_list_Async()
+    public async Task GetList_returns_not_found_with_empty_list_Async()
     {
         _mockMediator.Setup(
                 x => x.Send(It.IsAny<ReadCurrencyListQuery>(), It.IsAny<CancellationToken>()))
             .ReturnsAsync(new List<CurrencyModel>());
 
         var result = await _sut.GetListAsync();
-        var objectResult = result as OkObjectResult;
-        var outputModel = objectResult!.Value as List<CurrencyModel>;
+        var objectResult = result as NotFoundObjectResult;
+        var outputModel = objectResult!.Value as string;
 
         using (new AssertionScope())
         {
             objectResult.Should().NotBeNull();
-            objectResult!.StatusCode.Should().Be((int)HttpStatusCode.OK);
-            outputModel.Should().NotBeNull();
-            outputModel.Should().BeEmpty();
+            objectResult!.StatusCode.Should().Be((int)HttpStatusCode.NotFound);
+            outputModel.Should().Be("Unable to locate records in the currency list.");
         }
     }
 }

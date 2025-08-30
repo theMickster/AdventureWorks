@@ -66,6 +66,12 @@ public sealed class ReadSalesReasonController : ControllerBase
     public async Task<IActionResult> GetListAsync(CancellationToken cancellationToken = default)
     {
         var model = await _mediator.Send(new ReadSalesReasonListQuery(), cancellationToken);
+
+        if (model is not { Count: > 0 })
+        {
+            return NotFound("Unable to locate records in the sales reason list.");
+        }
+
         return Ok(model);
     }
 }

@@ -37,7 +37,7 @@ public sealed class SpecialOfferEntityToModelProfile : Profile
                 o => o.MapFrom(x => x.MaxQty))
 
             .ForPath(a => a.IsActive,
-                o => o.MapFrom(x => x.StartDate.Date <= DateTime.UtcNow.Date && x.EndDate.Date >= DateTime.UtcNow.Date))
+                o => o.MapFrom(x => x.StartDate.Date <= DateTime.Now.Date && x.EndDate.Date >= DateTime.Now.Date))
 
             .ForPath(a => a.ModifiedDate,
                 o => o.MapFrom(x => x.ModifiedDate));

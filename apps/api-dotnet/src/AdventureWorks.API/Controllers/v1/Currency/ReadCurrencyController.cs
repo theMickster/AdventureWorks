@@ -66,6 +66,12 @@ public sealed class ReadCurrencyController : ControllerBase
     public async Task<IActionResult> GetListAsync(CancellationToken cancellationToken = default)
     {
         var model = await _mediator.Send(new ReadCurrencyListQuery(), cancellationToken);
+
+        if (model is not { Count: > 0 })
+        {
+            return NotFound("Unable to locate records in the currency list.");
+        }
+
         return Ok(model);
     }
 }

@@ -111,7 +111,7 @@ public sealed class SpecialOfferEntityToModelProfileTests : UnitTestBase
     }
 
     [Fact]
-    public void Map_entities_to_model_sets_is_active_true_when_offer_ended_earlier_today()
+    public void Map_entities_to_model_sets_is_active_true_when_offer_end_date_is_today()
     {
         var now = DateTime.UtcNow;
         var entity = new SpecialOffer
@@ -133,5 +133,24 @@ public sealed class SpecialOfferEntityToModelProfileTests : UnitTestBase
         var result = _mapper.Map<SpecialOfferModel>(entity);
 
         result.IsActive.Should().BeTrue();
+    }
+
+    [Fact]
+    public void Map_entities_to_model_sets_is_active_false_when_offer_end_date_was_yesterday()
+    {
+        var yesterday = DateTime.Now.Date.AddDays(-1);
+
+        var entity = new SpecialOffer
+        {
+            StartDate = yesterday.AddDays(-7),
+            EndDate = yesterday,
+            Type = string.Empty,
+            Category = string.Empty,
+            Description = string.Empty
+        };
+
+        var result = _mapper.Map<SpecialOfferModel>(entity);
+
+        result.IsActive.Should().BeFalse();
     }
 }

@@ -66,6 +66,12 @@ public sealed class ReadShipMethodController : ControllerBase
     public async Task<IActionResult> GetListAsync(CancellationToken cancellationToken = default)
     {
         var model = await _mediator.Send(new ReadShipMethodListQuery(), cancellationToken);
+
+        if (model is not { Count: > 0 })
+        {
+            return NotFound("Unable to locate records in the ship method list.");
+        }
+
         return Ok(model);
     }
 }
