@@ -5,11 +5,13 @@ Enterprise-grade RESTful API built with .NET 10.0 implementing Clean Architectur
 ## Overview
 
 ### What This Project Does
+
 - Exposes RESTful APIs for Sales, HumanResources, and AddressManagement domains using Clean Architecture
 - Implements CQRS pattern via MediatR with FluentValidation and AutoMapper
 - JWT-based authentication with Microsoft Identity and Azure Key Vault for secrets
 
 ### Key Concepts
+
 - **Clean Architecture**: Dependency boundaries (Domain -> Application -> Infrastructure -> API)
 - **CQRS**: Commands handle writes (return IDs), Queries handle reads (return DTOs), via MediatR
 - **Entity Suffix Convention**: Domain objects use `*Entity` suffix to distinguish from DTOs
@@ -20,12 +22,13 @@ Enterprise-grade RESTful API built with .NET 10.0 implementing Clean Architectur
 
 ## Progressive Context Loading
 
-| Task                                                               | Guide                                                  |
-| ------------------------------------------------------------------ | ------------------------------------------------------ |
-| Adding or implementing a feature / endpoint                        | [`guides/adding-features.md`](guides/adding-features.md) |
-| Writing tests (handler / controller / validator)                   | [`guides/testing-guide.md`](guides/testing-guide.md)     |
-| Editing Postman collections, environments, or scripts — **required reading before any edit under `apps/api-dotnet/postman/`** | [`guides/postman-guide.md`](guides/postman-guide.md)     |
-| Configuring the VS Code debugger (FluentValidation / KeyNotFound exception filters) | [`guides/debugging-guide.md`](guides/debugging-guide.md) |
+| Task                                                                                                                          | Guide                                                                      |
+| ----------------------------------------------------------------------------------------------------------------------------- | -------------------------------------------------------------------------- |
+| Adding or implementing a feature / endpoint                                                                                   | [`guides/adding-features.md`](guides/adding-features.md)                   |
+| Writing tests (handler / controller / validator)                                                                              | [`guides/testing-guide.md`](guides/testing-guide.md)                       |
+| Editing Postman collections, environments, or scripts — **required reading before any edit under `apps/api-dotnet/postman/`** | [`guides/postman-guide.md`](guides/postman-guide.md)                       |
+| Configuring the VS Code debugger (FluentValidation / KeyNotFound exception filters)                                           | [`guides/debugging-guide.md`](guides/debugging-guide.md)                   |
+| Smoke-testing live endpoints with a dev token (curl)                                                                          | [`skills/smoke-testing-dotnet-api.md`](skills/smoke-testing-dotnet-api.md) |
 
 ---
 
@@ -62,6 +65,7 @@ tests/AdventureWorks.UnitTests/      # xUnit tests (handlers, controllers, repos
 ```
 
 ### Key Principles
+
 1. **Dependency Rule**: Dependencies point inward. Infrastructure accessed only via interfaces.
 2. **Async All The Way**: Every I/O uses async/await with `CancellationToken`. Never `.Result` or `.Wait()`.
 
@@ -70,29 +74,36 @@ tests/AdventureWorks.UnitTests/      # xUnit tests (handlers, controllers, repos
 #### CQRS via MediatR
 
 **Command Pattern**: `IRequest<int>` with Model, ModifiedDate, RowGuid properties
+
 - Handler: IMapper, IRepository, IValidator -> Validate -> Map -> Persist -> Return ID
 
 **Query Pattern**: `IRequest<TModel>` with Id or filter properties
+
 - Handler: IMapper, IRepository -> Fetch (AsNoTracking) -> Map -> Return DTO
 
 **Controller Pattern**: Thin, delegates to MediatR
+
 - Attributes: `[ApiController]`, `[ApiVersion("1.0")]`, plus explicit auth intent (`[Authorize]` for protected endpoints, `[AllowAnonymous]` only for deliberate public exceptions)
 - Commands: `CreatedAtRoute()` | Queries: `Ok(model)`
 
 #### FluentValidation Pattern
 
 Base validator with inheritance for Create/Update variants:
+
 ```csharp
 RuleFor(x => x.Name).NotEmpty().WithErrorCode("Rule-01").WithMessage(MessageStoreNameEmpty);
 ```
+
 Use error codes, static message properties, `ValidateAndThrowAsync()` in handlers.
 
 #### AutoMapper Profile Pattern
 
 One profile per mapping direction:
+
 ```csharp
 CreateMap<Source, Dest>().ForMember(x => x.Prop, o => o.Ignore());
 ```
+
 Ignore audit fields (ModifiedDate, Rowguid, Id). Use `ForPath()` for nested mappings.
 
 #### Exception Handling Middleware
@@ -117,6 +128,7 @@ Reference implementations: `IBusinessEntityContactEntityRepository.ReplaceContac
 See **[guides/adding-features.md](guides/adding-features.md)** for complete code examples.
 
 **Quick Checklist:**
+
 1. Entity (`Domain/Entities/{Domain}/`)
 2. DTOs (`Models/Features/{Domain}/`)
 3. Repository Interface (`Application/PersistenceContracts/`)
@@ -160,20 +172,20 @@ See **[guides/adding-features.md](guides/adding-features.md)** for complete code
 
 ### Security Functions
 
-| Function | Purpose |
-|----------|---------|
-| `[Authorize]` | JWT Bearer authentication on write operations |
-| `ExceptionHandlerMiddleware` | Sanitizes exceptions, adds correlation IDs |
-| `ArgumentNullException.ThrowIfNull()` | Fast-fail null checks |
-| `ValidateAndThrowAsync()` | FluentValidation in command handlers |
+| Function                              | Purpose                                       |
+| ------------------------------------- | --------------------------------------------- |
+| `[Authorize]`                         | JWT Bearer authentication on write operations |
+| `ExceptionHandlerMiddleware`          | Sanitizes exceptions, adds correlation IDs    |
+| `ArgumentNullException.ThrowIfNull()` | Fast-fail null checks                         |
+| `ValidateAndThrowAsync()`             | FluentValidation in command handlers          |
 
 ### Environment Configuration
 
-| Variable | Required | Description |
-|----------|----------|-------------|
-| `EntityFrameworkCoreSettings:CurrentConnectionStringName` | Yes | Database connection name |
-| `EntityFrameworkCoreSettings:CommandTimeout` | Yes | EF query timeout (seconds) |
-| `KeyVault:VaultUri` | Yes (Prod) | Azure Key Vault URL |
+| Variable                                                  | Required   | Description                |
+| --------------------------------------------------------- | ---------- | -------------------------- |
+| `EntityFrameworkCoreSettings:CurrentConnectionStringName` | Yes        | Database connection name   |
+| `EntityFrameworkCoreSettings:CommandTimeout`              | Yes        | EF query timeout (seconds) |
+| `KeyVault:VaultUri`                                       | Yes (Prod) | Azure Key Vault URL        |
 
 **Config Files:** `appsettings.json`, `appsettings.{Environment}.json`, User Secrets
 
@@ -252,15 +264,18 @@ dotnet test --filter "FullyQualifiedName~CreateStore"  # Filtered
 ## Code Style & Standards
 
 ### Naming Conventions
+
 - `PascalCase`: Classes, methods, properties | `camelCase`: parameters, locals | `_camelCase`: private fields
 - Suffixes: `*Entity`, `*Model`, `*Command`, `*Query`, `*Handler`, `*Validator`
 - Interfaces: `I*` prefix
 
 ### Formatting
+
 - EditorConfig in solution root | 4 spaces, CRLF | File-scoped namespaces
 - Imports: System first, then third-party, then project (alphabetical)
 
 ### Comments
+
 - XML docs for public APIs | Inline only when non-obvious | No TODOs (use issues)
 
 ---
@@ -281,6 +296,7 @@ Before finishing an API task, verify all of the following:
 ## Anti-Patterns
 
 ### DO
+
 - async/await throughout (never `.Result`/`.Wait()`)
 - Return DTOs from controllers
 - Use repositories (not DbContext) in handlers
@@ -293,6 +309,7 @@ Before finishing an API task, verify all of the following:
 - Feature folder organization
 
 ### DON'T
+
 - Skip input validation
 - Expose `*Entity` from controllers
 - Inject `DbContext` into Application layer
@@ -307,6 +324,7 @@ Before finishing an API task, verify all of the following:
 ## Deployment
 
 ### Building
+
 ```bash
 cd apps/api-dotnet/src/AdventureWorks.API
 dotnet restore && dotnet build --configuration Release
@@ -314,10 +332,12 @@ dotnet publish --configuration Release --output ./publish
 ```
 
 ### Versioning
+
 Semantic versioning: `MAJOR.MINOR.PATCH`
 API Version: `v1.0` via `Asp.Versioning` package
 
 ### Publishing
+
 ```bash
 # Azure App Service
 az webapp deploy --resource-group <rg> --name <app> --src-path ./publish --type zip
@@ -333,6 +353,7 @@ docker build -t adventureworks-api:latest . && docker run -p 8080:80 adventurewo
 ## Troubleshooting
 
 ### Common Issues
+
 - **VS Code breaks on `FluentValidation.ValidationException` / `KeyNotFoundException`**: These are caught by `ExceptionHandlerMiddleware` and translated to 400/404. See [guides/debugging-guide.md](guides/debugging-guide.md) to add them to the User-Unhandled exception ignore list.
 - **N+1 Queries**: Use `.Include()` or `.Select(x => new Model {...})`
 - **Connection String Not Found**: `dotnet user-secrets set "ConnectionStrings:DefaultConnection" "..."`
@@ -340,6 +361,7 @@ docker build -t adventureworks-api:latest . && docker run -p 8080:80 adventurewo
 - **AutoMapper Missing Map**: Add profile in `Features/{Domain}/Profiles/`
 
 ### Debug Tips
+
 - Verbose logging: `Logging:LogLevel:Default` = `Debug`
 - EF queries: `Microsoft.EntityFrameworkCore.Database.Command` = `Information`
 - Swagger: `/swagger` | Health: `/health`

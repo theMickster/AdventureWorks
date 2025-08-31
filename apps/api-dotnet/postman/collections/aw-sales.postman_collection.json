@@ -3860,6 +3860,679 @@
           ""
         ]
       }
+    },
+    {
+      "name": "SalesReason",
+      "item": [
+        {
+          "name": "SalesReason List",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test(\"Status should be OK\", function () {\r",
+                  "    pm.response.to.have.status(200);\r",
+                  "});\r",
+                  "\r",
+                  "pm.test(\"Response should include X-Correlation-Id header\", function () {\r",
+                  "    pm.response.to.have.header(\"X-Correlation-Id\");\r",
+                  "});\r",
+                  "\r",
+                  "var responseList = pm.response.json();\r",
+                  "\r",
+                  "pm.test(\"Response should be a non-empty array\", function () {\r",
+                  "    pm.expect(responseList).to.be.an(\"array\");\r",
+                  "    pm.expect(responseList.length).to.be.greaterThan(0);\r",
+                  "});\r",
+                  "\r",
+                  "pm.test(\"Each item should have salesReasonId field\", function () {\r",
+                  "    responseList.forEach(function (item) {\r",
+                  "        pm.expect(item.salesReasonId).to.exist;\r",
+                  "    });\r",
+                  "});"
+                ],
+                "type": "text/javascript"
+              }
+            }
+          ],
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{adventureWorksApi}}/{{apiVersion}}/sales-reasons",
+              "host": [
+                "{{adventureWorksApi}}"
+              ],
+              "path": [
+                "{{apiVersion}}",
+                "sales-reasons"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "SalesReason by Id",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test(\"Status should be OK\", function () {\r",
+                  "    pm.response.to.have.status(200);\r",
+                  "});\r",
+                  "\r",
+                  "pm.test(\"Response should include X-Correlation-Id header\", function () {\r",
+                  "    pm.response.to.have.header(\"X-Correlation-Id\");\r",
+                  "});\r",
+                  "\r",
+                  "var response = pm.response.json();\r",
+                  "\r",
+                  "pm.test(\"Should return correct salesReasonId\", function () {\r",
+                  "    pm.expect(response.salesReasonId).to.eql(1);\r",
+                  "});"
+                ],
+                "type": "text/javascript"
+              }
+            }
+          ],
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{adventureWorksApi}}/{{apiVersion}}/sales-reasons/1",
+              "host": [
+                "{{adventureWorksApi}}"
+              ],
+              "path": [
+                "{{apiVersion}}",
+                "sales-reasons",
+                "1"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "SalesReason by Id - Invalid",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test(\"Status should be Bad Request\", function () {\r",
+                  "    pm.response.to.have.status(400);\r",
+                  "});\r",
+                  "\r",
+                  "pm.test(\"Body should be correct\", function () {\r",
+                  "    pm.response.to.have.body(\"A valid sales reason id must be specified.\");\r",
+                  "});"
+                ],
+                "type": "text/javascript"
+              }
+            }
+          ],
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{adventureWorksApi}}/{{apiVersion}}/sales-reasons/-1",
+              "host": [
+                "{{adventureWorksApi}}"
+              ],
+              "path": [
+                "{{apiVersion}}",
+                "sales-reasons",
+                "-1"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "SalesReason by Id - Not Found",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test(\"Status should be Not Found\", function () {\r",
+                  "    pm.response.to.have.status(404);\r",
+                  "});\r",
+                  "\r",
+                  "pm.test(\"Body should be correct\", function () {\r",
+                  "    pm.response.to.have.body(\"Unable to locate the sales reason.\");\r",
+                  "});"
+                ],
+                "type": "text/javascript"
+              }
+            }
+          ],
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{adventureWorksApi}}/{{apiVersion}}/sales-reasons/2147483647",
+              "host": [
+                "{{adventureWorksApi}}"
+              ],
+              "path": [
+                "{{apiVersion}}",
+                "sales-reasons",
+                "2147483647"
+              ]
+            }
+          },
+          "response": []
+        }
+      ]
+    },
+    {
+      "name": "Currency",
+      "item": [
+        {
+          "name": "Currency List",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test(\"Status should be OK\", function () {\r",
+                  "    pm.response.to.have.status(200);\r",
+                  "});\r",
+                  "\r",
+                  "pm.test(\"Response should include X-Correlation-Id header\", function () {\r",
+                  "    pm.response.to.have.header(\"X-Correlation-Id\");\r",
+                  "});\r",
+                  "\r",
+                  "var responseList = pm.response.json();\r",
+                  "\r",
+                  "pm.test(\"Response should be a non-empty array\", function () {\r",
+                  "    pm.expect(responseList).to.be.an(\"array\");\r",
+                  "    pm.expect(responseList.length).to.be.greaterThan(0);\r",
+                  "});\r",
+                  "\r",
+                  "pm.test(\"Each item should have currencyCode field\", function () {\r",
+                  "    responseList.forEach(function (item) {\r",
+                  "        pm.expect(item.currencyCode).to.exist;\r",
+                  "    });\r",
+                  "});"
+                ],
+                "type": "text/javascript"
+              }
+            }
+          ],
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{adventureWorksApi}}/{{apiVersion}}/currencies",
+              "host": [
+                "{{adventureWorksApi}}"
+              ],
+              "path": [
+                "{{apiVersion}}",
+                "currencies"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Currency by Code (USD)",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test(\"Status should be OK\", function () {\r",
+                  "    pm.response.to.have.status(200);\r",
+                  "});\r",
+                  "\r",
+                  "pm.test(\"Response should include X-Correlation-Id header\", function () {\r",
+                  "    pm.response.to.have.header(\"X-Correlation-Id\");\r",
+                  "});\r",
+                  "\r",
+                  "var response = pm.response.json();\r",
+                  "\r",
+                  "pm.test(\"Should return correct currency with required fields\", function () {\r",
+                  "    pm.expect(response.currencyCode).to.eql(\"USD\");\r",
+                  "    pm.expect(response.name).to.exist;\r",
+                  "    pm.expect(response.modifiedDate).to.exist;\r",
+                  "});"
+                ],
+                "type": "text/javascript"
+              }
+            }
+          ],
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{adventureWorksApi}}/{{apiVersion}}/currencies/USD",
+              "host": [
+                "{{adventureWorksApi}}"
+              ],
+              "path": [
+                "{{apiVersion}}",
+                "currencies",
+                "USD"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Currency by Code - Bad Request",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test(\"Status should be Bad Request\", function () {\r",
+                  "    pm.response.to.have.status(400);\r",
+                  "});\r",
+                  "\r",
+                  "pm.test(\"Body should be correct\", function () {\r",
+                  "    pm.response.to.have.body(\"A valid currency code must be specified.\");\r",
+                  "});"
+                ],
+                "type": "text/javascript"
+              }
+            }
+          ],
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{adventureWorksApi}}/{{apiVersion}}/currencies/%20",
+              "host": [
+                "{{adventureWorksApi}}"
+              ],
+              "path": [
+                "{{apiVersion}}",
+                "currencies",
+                "%20"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Currency by Code - Not Found (ZZZ)",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test(\"Status should be Not Found\", function () {\r",
+                  "    pm.response.to.have.status(404);\r",
+                  "});\r",
+                  "\r",
+                  "pm.test(\"Body should be correct\", function () {\r",
+                  "    pm.response.to.have.body(\"Unable to locate the currency.\");\r",
+                  "});"
+                ],
+                "type": "text/javascript"
+              }
+            }
+          ],
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{adventureWorksApi}}/{{apiVersion}}/currencies/ZZZ",
+              "host": [
+                "{{adventureWorksApi}}"
+              ],
+              "path": [
+                "{{apiVersion}}",
+                "currencies",
+                "ZZZ"
+              ]
+            }
+          },
+          "response": []
+        }
+      ]
+    },
+    {
+      "name": "SpecialOffer",
+      "item": [
+        {
+          "name": "SpecialOffer List",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test(\"Status should be OK\", function () {\r",
+                  "    pm.response.to.have.status(200);\r",
+                  "});\r",
+                  "\r",
+                  "pm.test(\"Response should include X-Correlation-Id header\", function () {\r",
+                  "    pm.response.to.have.header(\"X-Correlation-Id\");\r",
+                  "});\r",
+                  "\r",
+                  "var responseList = pm.response.json();\r",
+                  "\r",
+                  "pm.test(\"Response should be a non-empty array\", function () {\r",
+                  "    pm.expect(responseList).to.be.an(\"array\");\r",
+                  "    pm.expect(responseList.length).to.be.greaterThan(0);\r",
+                  "});\r",
+                  "\r",
+                  "pm.test(\"Each item should have isActive field\", function () {\r",
+                  "    responseList.forEach(function (item) {\r",
+                  "        pm.expect(item).to.have.property(\"isActive\");\r",
+                  "    });\r",
+                  "});"
+                ],
+                "type": "text/javascript"
+              }
+            }
+          ],
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{adventureWorksApi}}/{{apiVersion}}/special-offers",
+              "host": [
+                "{{adventureWorksApi}}"
+              ],
+              "path": [
+                "{{apiVersion}}",
+                "special-offers"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "SpecialOffer by Id - Expired (id=1, No Discount)",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test(\"Status should be OK\", function () {\r",
+                  "    pm.response.to.have.status(200);\r",
+                  "});\r",
+                  "\r",
+                  "pm.test(\"Response should include X-Correlation-Id header\", function () {\r",
+                  "    pm.response.to.have.header(\"X-Correlation-Id\");\r",
+                  "});\r",
+                  "\r",
+                  "var response = pm.response.json();\r",
+                  "\r",
+                  "pm.test(\"Expired offer should have isActive = false\", function () {\r",
+                  "    pm.expect(response.isActive).to.be.false;\r",
+                  "});"
+                ],
+                "type": "text/javascript"
+              }
+            }
+          ],
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{adventureWorksApi}}/{{apiVersion}}/special-offers/1",
+              "host": [
+                "{{adventureWorksApi}}"
+              ],
+              "path": [
+                "{{apiVersion}}",
+                "special-offers",
+                "1"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "SpecialOffer by Id - Invalid",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test(\"Status should be Bad Request\", function () {\r",
+                  "    pm.response.to.have.status(400);\r",
+                  "});\r",
+                  "\r",
+                  "pm.test(\"Body should be correct\", function () {\r",
+                  "    pm.response.to.have.body(\"A valid special offer id must be specified.\");\r",
+                  "});"
+                ],
+                "type": "text/javascript"
+              }
+            }
+          ],
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{adventureWorksApi}}/{{apiVersion}}/special-offers/-1",
+              "host": [
+                "{{adventureWorksApi}}"
+              ],
+              "path": [
+                "{{apiVersion}}",
+                "special-offers",
+                "-1"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "SpecialOffer by Id - Not Found",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test(\"Status should be Not Found\", function () {\r",
+                  "    pm.response.to.have.status(404);\r",
+                  "});\r",
+                  "\r",
+                  "pm.test(\"Body should be correct\", function () {\r",
+                  "    pm.response.to.have.body(\"Unable to locate the special offer.\");\r",
+                  "});"
+                ],
+                "type": "text/javascript"
+              }
+            }
+          ],
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{adventureWorksApi}}/{{apiVersion}}/special-offers/2147483647",
+              "host": [
+                "{{adventureWorksApi}}"
+              ],
+              "path": [
+                "{{apiVersion}}",
+                "special-offers",
+                "2147483647"
+              ]
+            }
+          },
+          "response": []
+        }
+      ]
+    },
+    {
+      "name": "ShipMethod",
+      "item": [
+        {
+          "name": "ShipMethod List",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test(\"Status should be OK\", function () {\r",
+                  "    pm.response.to.have.status(200);\r",
+                  "});\r",
+                  "\r",
+                  "pm.test(\"Response should include X-Correlation-Id header\", function () {\r",
+                  "    pm.response.to.have.header(\"X-Correlation-Id\");\r",
+                  "});\r",
+                  "\r",
+                  "var responseList = pm.response.json();\r",
+                  "\r",
+                  "pm.test(\"Response should be a non-empty array\", function () {\r",
+                  "    pm.expect(responseList).to.be.an(\"array\");\r",
+                  "    pm.expect(responseList.length).to.be.greaterThan(0);\r",
+                  "});\r",
+                  "\r",
+                  "pm.test(\"Each item should have shipBase and shipRate fields\", function () {\r",
+                  "    responseList.forEach(function (item) {\r",
+                  "        pm.expect(item).to.have.property(\"shipBase\");\r",
+                  "        pm.expect(item).to.have.property(\"shipRate\");\r",
+                  "    });\r",
+                  "});"
+                ],
+                "type": "text/javascript"
+              }
+            }
+          ],
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{adventureWorksApi}}/{{apiVersion}}/ship-methods",
+              "host": [
+                "{{adventureWorksApi}}"
+              ],
+              "path": [
+                "{{apiVersion}}",
+                "ship-methods"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "ShipMethod by Id",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test(\"Status should be OK\", function () {\r",
+                  "    pm.response.to.have.status(200);\r",
+                  "});\r",
+                  "\r",
+                  "pm.test(\"Response should include X-Correlation-Id header\", function () {\r",
+                  "    pm.response.to.have.header(\"X-Correlation-Id\");\r",
+                  "});\r",
+                  "\r",
+                  "var response = pm.response.json();\r",
+                  "\r",
+                  "pm.test(\"Should return correct shipMethodId with rate fields\", function () {\r",
+                  "    pm.expect(response.shipMethodId).to.eql(1);\r",
+                  "    pm.expect(response).to.have.property(\"shipBase\");\r",
+                  "    pm.expect(response).to.have.property(\"shipRate\");\r",
+                  "});"
+                ],
+                "type": "text/javascript"
+              }
+            }
+          ],
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{adventureWorksApi}}/{{apiVersion}}/ship-methods/1",
+              "host": [
+                "{{adventureWorksApi}}"
+              ],
+              "path": [
+                "{{apiVersion}}",
+                "ship-methods",
+                "1"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "ShipMethod by Id - Invalid",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test(\"Status should be Bad Request\", function () {\r",
+                  "    pm.response.to.have.status(400);\r",
+                  "});\r",
+                  "\r",
+                  "pm.test(\"Body should be correct\", function () {\r",
+                  "    pm.response.to.have.body(\"A valid ship method id must be specified.\");\r",
+                  "});"
+                ],
+                "type": "text/javascript"
+              }
+            }
+          ],
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{adventureWorksApi}}/{{apiVersion}}/ship-methods/-1",
+              "host": [
+                "{{adventureWorksApi}}"
+              ],
+              "path": [
+                "{{apiVersion}}",
+                "ship-methods",
+                "-1"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "ShipMethod by Id - Not Found",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test(\"Status should be Not Found\", function () {\r",
+                  "    pm.response.to.have.status(404);\r",
+                  "});\r",
+                  "\r",
+                  "pm.test(\"Body should be correct\", function () {\r",
+                  "    pm.response.to.have.body(\"Unable to locate the ship method.\");\r",
+                  "});"
+                ],
+                "type": "text/javascript"
+              }
+            }
+          ],
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{adventureWorksApi}}/{{apiVersion}}/ship-methods/2147483647",
+              "host": [
+                "{{adventureWorksApi}}"
+              ],
+              "path": [
+                "{{apiVersion}}",
+                "ship-methods",
+                "2147483647"
+              ]
+            }
+          },
+          "response": []
+        }
+      ]
     }
   ],
   "variable": [

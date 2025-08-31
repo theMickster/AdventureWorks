@@ -21,7 +21,7 @@
 | 3    | Person Directory & Search        | #908   | 2       | #909-#910                               |
 | 3    | PersonCreditCard DbContext Fix   | #911   | 1       | #912 — **Done 2026-04-27**              |
 | 4    | Production Lookup Endpoints      | #913   | 4       | #914-#917 (Stories 4.1+4.2 → Done #699) |
-| 4    | Sales Lookup Endpoints           | #918   | 4       | #919-#922                               |
+| 4    | Sales Lookup Endpoints           | #918   | 4       | #919-#922 — **Done 2026-05-07**         |
 
 **Reparented enabler Features** (now under #873, formerly under #561/#562):
 
@@ -1203,7 +1203,7 @@ Scenario: Get non-existent scrap reason returns 404
 
 ---
 
-### Feature: Sales Lookup Endpoints
+### Feature: Sales Lookup Endpoints ✅ Done 2026-05-07
 
 **Parent**: Epic #873 (closed Epic #552 superseded)
 **Description**: Expose read-only GET endpoints for sales domain reference data. These support dropdowns, filters, and display labels across sales-related Angular UI screens. `SpecialOffer` includes a computed active/expired status based on `StartDate`/`EndDate` vs. current date. All queries use `.AsNoTracking()`. All controllers use `[Authorize]` consistent with the existing lookup controller pattern.
@@ -1321,7 +1321,7 @@ Scenario: Get non-existent ship method returns 404
 | 3                               | Person Directory & Search        | #908 | 2 (#909-#910)                  | --                                | POST search, GET                  |
 | 3                               | PersonCreditCard DbContext Fix   | #911 | 1 (#912)                       | --                                | Bug fix                           |
 | 4                               | Production Lookup Endpoints      | #913 | 4 (#914-#917) [4.1+4.2 → #699] | --                                | GET x8 (4 entities × 2 endpoints) |
-| 4                               | Sales Lookup Endpoints           | #918 | 4 (#919-#922)                  | --                                | GET x8                            |
+| 4                               | Sales Lookup Endpoints ✅        | #918 | 4 (#919-#922)                  | --                                | GET x8 — Done 2026-05-07         |
 | **Total net-new**               |                                  |      | **13 Features / 36 Stories**   |                                   |                                   |
 | **Reparented**                  | #715, #716, #722                 | (3)  | **+10 Stories**                | (DB views/indexes + HR endpoints) |
 | **Grand total under Epic #873** |                                  |      | **16 Features / 46 Stories**   |                                   |                                   |

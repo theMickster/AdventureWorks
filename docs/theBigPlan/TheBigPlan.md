@@ -44,7 +44,7 @@
 - 🔄 **Wave 1**: Store Manager Completion — ✅ #874 (Contact Mgmt, Done 2026-04-27), ✅ #878 (Address Mgmt, Done 2026-04-29), ✅ #882 (Analytics, Done 2026-04-30), 📋 #886 (Sales Person Assignment Tracking)
 - 📋 **Wave 2**: HR Process Completion — Features #890 (Department Transfer), #892 (Pay Management), #894 (Department Reporting) — 5 stories (#891, #893, #895-#897). Stories 2.2, 2.4 covered by existing #751, #750.
 - 🔄 **Wave 3**: Person Foundation — 📋 #898 (Email Mgmt), 📋 #903 (Phone Mgmt), 📋 #908 (Directory & Search), ✅ #911 (PersonCreditCard fix, Done 2026-04-27) — 10 stories remaining
-- 📋 **Wave 4**: Lookup Endpoint Blitz — Features #913 (Production Lookups: 4 stories), #918 (Sales Lookups: 4 stories) — Stories 4.1, 4.2 covered by Done #699
+- 📋 **Wave 4**: Lookup Endpoint Blitz — Features #913 (Production Lookups: 4 stories), ✅ #918 (Sales Lookups: 4 stories, Done 2026-05-07) — Stories 4.1, 4.2 covered by Done #699
 - 📋 **Reparented Enablers** (now under #873): #715 (Sales DB Views, 3 stories), #716 (HR API Endpoints, 5 stories), #722 (HR DB Views, 2 stories)
 - Full details: `docs/theBigPlan/api-completion-features.md`
 
@@ -319,7 +319,7 @@ The precise order for completing remaining work (577 → 552 API Completion → 
 | Feature                     | ID   | Stories       | Notes                       |
 | --------------------------- | ---- | ------------- | --------------------------- |
 | Production Lookup Endpoints | #913 | #914-#917 (4) | Stories 4.1+4.2 → Done #699 |
-| Sales Lookup Endpoints      | #918 | #919-#922 (4) | --                          |
+| Sales Lookup Endpoints      | #918 | #919-#922 (4) | ✅ Done 2026-05-07          |
 
 **Reparented Enabler Features** (moved from #561/#562 to #873)
 
