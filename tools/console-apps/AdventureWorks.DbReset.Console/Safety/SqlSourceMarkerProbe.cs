@@ -18,9 +18,12 @@ namespace AdventureWorks.DbReset.Console.Safety;
 /// <see cref="ISourceMarkerProbe.HasMarker"/> async and remove this bridge.
 /// </para>
 /// <para>
-/// <b>Fail-closed:</b> a <see cref="SqlException"/> propagates to the caller. The validator must
-/// not silently degrade to "no marker" — that would let a destructive verb run against a database
-/// whose marker we couldn't read.
+/// <b>Fail-closed:</b> a <see cref="SqlException"/> propagates to the caller — except for SQL
+/// error 4060 ("cannot open database"), which means the target database does not yet exist on
+/// this instance. A non-existent database cannot carry the source marker, so the method returns
+/// <c>false</c> and lets the restore proceed to create it. All other <see cref="SqlException"/>
+/// values propagate so the validator never silently degrades to "no marker" for ambiguous
+/// failures (network, permissions, timeouts).
 /// </para>
 /// </remarks>
 internal sealed class SqlSourceMarkerProbe : ISourceMarkerProbe
@@ -54,10 +57,21 @@ internal sealed class SqlSourceMarkerProbe : ISourceMarkerProbe
             new SqlParameter("@value", value),
         };
 
-        var scalar = _executor
-            .ScalarAsync(connectionString, sql, parameters, CommandTimeoutSeconds, CancellationToken.None)
-            .GetAwaiter()
-            .GetResult();
+        object? scalar;
+        try
+        {
+            scalar = _executor
+                .ScalarAsync(connectionString, sql, parameters, CommandTimeoutSeconds, CancellationToken.None)
+                .GetAwaiter()
+                .GetResult();
+        }
+        catch (SqlException ex) when (ex.Number == 4060)
+        {
+            // Target database does not exist on this instance. A non-existent DB cannot carry
+            // the source marker — return false so the validator clears Rule #5 and the restore
+            // proceeds to create the database.
+            return false;
+        }
 
         return scalar is not null and not DBNull;
     }

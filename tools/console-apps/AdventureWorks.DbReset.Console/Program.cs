@@ -116,6 +116,8 @@ internal static class Program
                 () => container.Resolve<IVerifyBaselineHandler>().RunAsync(effectiveTarget, ct)),
             SnapshotVerb => RunHandler(
                 () => container.Resolve<ISnapshotHandler>().RunAsync(ct)),
+            RestoreVerb => RunHandler(
+                () => container.Resolve<IRestoreHandler>().RunAsync(effectiveTarget, ct)),
             _ => RunStub(verbName, effectiveTarget),
         };
     }

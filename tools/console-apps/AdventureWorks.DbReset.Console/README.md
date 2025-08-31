@@ -18,12 +18,17 @@ CLI that resets a _test-target_ SQL Server database to a known baseline and reap
 
 ## Build & test
 
-From repo root:
+From the project directory (`tools/console-apps/AdventureWorks.DbReset.Console/`):
 
 ```bash
-dotnet build tools/console-apps/AdventureWorks.DbReset.Console/AdventureWorks.DbReset.Console.csproj
-dotnet test  tools/console-apps/AdventureWorks.DbReset.Console.Tests -- xUnit.MaxParallelThreads=1
-dotnet run   --project tools/console-apps/AdventureWorks.DbReset.Console -- --help
+dotnet build
+dotnet run -- --help
+```
+
+Tests live in the sibling project (`tools/console-apps/AdventureWorks.DbReset.Console.Tests/`):
+
+```bash
+dotnet test ../AdventureWorks.DbReset.Console.Tests -- xUnit.MaxParallelThreads=1
 ```
 
 The pre-existing `AdventureWorks.Testing.Console` and `AdventureWorks.UserSetup.Console` projects in this folder have unrelated NU1605 EF/BCrypt downgrade errors at the solution level; build the DbReset csprojs directly to bypass.
@@ -42,17 +47,17 @@ Source-marker stamping happens during `snapshot` (Story #926). Until then, Rule 
 
 ## Configuration
 
-`appsettings.json` contains placeholders only. Real values go in user secrets (`dotnet user-secrets`), `appsettings.Development.json` (gitignored), or environment variables.
+`appsettings.json` contains placeholders only. Real values go in user secrets (`dotnet user-secrets`) or environment variables.
 
 ```jsonc
 {
   "ConnectionStrings": {
     "AdventureWorksDev": "...", // SnapshotSource — read-only
-    "AdventureWorksE2E": "...", // a destructive target
+    "AdventureWorks_E2E": "...", // a destructive target
   },
   "DbReset": {
     "SnapshotSource": "AdventureWorksDev",
-    "DefaultTarget": "AdventureWorksE2E",
+    "DefaultTarget": "AdventureWorks_E2E",
     "BaselinePath": "/var/opt/mssql/backup/AdventureWorks_Baseline.bak",
     "TargetNamePattern": "^AdventureWorks_(E2E|Test|Load)([A-Za-z0-9_]*)?$",
     "DbUpProjectPath": "database/dbup/AdventureWorks.DbUp",

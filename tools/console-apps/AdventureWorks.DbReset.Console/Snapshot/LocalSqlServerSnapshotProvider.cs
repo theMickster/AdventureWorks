@@ -267,8 +267,11 @@ internal sealed class LocalSqlServerSnapshotProvider : IDatabaseSnapshotProvider
             connection = await _executor.OpenAsync(nonPooledMasterCs, ct);
 
             var fs = await ReadTargetFileSystemAsync(connection, ct);
-            await HealRestoringStateAsync(connection, targetDbQuoted, targetDbName, ct);
-            await LockSingleUserAsync(connection, targetDbQuoted, ct);
+            // dbState == -1 means the target DB does not exist yet (first restore on this instance).
+            // Skip SINGLE_USER — can't lock a non-existent database; RESTORE WITH REPLACE creates it.
+            var dbState = await HealRestoringStateAsync(connection, targetDbQuoted, targetDbName, ct);
+            if (dbState >= 0)
+                await LockSingleUserAsync(connection, targetDbQuoted, ct);
 
             var files = await ReadBaselineFileListAsync(connection, ct);
             fs = ApplyFilelistFallbackIfNeeded(fs, files);
@@ -296,7 +299,7 @@ internal sealed class LocalSqlServerSnapshotProvider : IDatabaseSnapshotProvider
         return sw.Elapsed;
     }
 
-    private async Task HealRestoringStateAsync(
+    private async Task<int> HealRestoringStateAsync(
         SqlConnection connection,
         string targetDbQuoted,
         string targetDbName,
@@ -307,6 +310,7 @@ internal sealed class LocalSqlServerSnapshotProvider : IDatabaseSnapshotProvider
         {
             await ExecAlterAsync(connection, $"RESTORE DATABASE {targetDbQuoted} WITH RECOVERY", ct);
         }
+        return state;
     }
 
     private Task LockSingleUserAsync(SqlConnection connection, string targetDbQuoted, CancellationToken ct)

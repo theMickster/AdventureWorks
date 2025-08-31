@@ -1,5 +1,6 @@
 using AdventureWorks.DbReset.Console.Safety;
 using AdventureWorks.DbReset.Console.Snapshot.Internal;
+using AdventureWorks.DbReset.Console.Tests.Verbs.Handlers;
 using FluentAssertions;
 using Microsoft.Data.SqlClient;
 using Moq;
@@ -214,5 +215,53 @@ public sealed class SqlSourceMarkerProbeTests
         Action act = () => probe.HasMarker(TargetCs, "dbreset.role", "source");
 
         act.Should().Throw<TimeoutException>().WithMessage("query timed out");
+    }
+
+    [Fact]
+    public void HasMarker_SqlException4060_TargetDbDoesNotExist_ReturnsFalse()
+    {
+        // SQL error 4060 = "Cannot open database requested by the login." This is the first-run
+        // scenario: the target DB has never been created on this instance. A non-existent DB
+        // cannot carry the source marker, so HasMarker returns false and lets restore proceed.
+        var executor = new Mock<ISqlScriptExecutor>(MockBehavior.Strict);
+        executor
+            .Setup(e => e.ScalarAsync(
+                It.IsAny<string>(),
+                It.IsAny<string>(),
+                It.IsAny<IReadOnlyList<SqlParameter>>(),
+                It.IsAny<int>(),
+                It.IsAny<CancellationToken>()))
+            .ThrowsAsync(SqlExceptionFactory.Create(4060, "Cannot open database 'AdventureWorks_E2E' requested by the login."));
+
+        var probe = BuildProbe(executor);
+
+        var result = probe.HasMarker(TargetCs, "dbreset.role", "source");
+
+        result.Should().BeFalse();
+    }
+
+    [Theory]
+    [InlineData(18456)]  // Login failed
+    [InlineData(53)]     // Network path not found
+    [InlineData(4064)]   // Cannot open user default database
+    public void HasMarker_OtherSqlException_FailClosed_Propagates(int errorNumber)
+    {
+        // Non-4060 SqlExceptions must still propagate — fail-closed semantics. We must not
+        // silently return false for auth failures or network errors.
+        var executor = new Mock<ISqlScriptExecutor>(MockBehavior.Strict);
+        executor
+            .Setup(e => e.ScalarAsync(
+                It.IsAny<string>(),
+                It.IsAny<string>(),
+                It.IsAny<IReadOnlyList<SqlParameter>>(),
+                It.IsAny<int>(),
+                It.IsAny<CancellationToken>()))
+            .ThrowsAsync(SqlExceptionFactory.Create(errorNumber, $"SQL error {errorNumber}"));
+
+        var probe = BuildProbe(executor);
+
+        Action act = () => probe.HasMarker(TargetCs, "dbreset.role", "source");
+
+        act.Should().Throw<SqlException>();
     }
 }

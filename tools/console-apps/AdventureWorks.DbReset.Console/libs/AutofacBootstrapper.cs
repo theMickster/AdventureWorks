@@ -54,6 +54,9 @@ internal static class AutofacBootstrapper
         builder.RegisterType<SnapshotHandler>()
             .As<ISnapshotHandler>()
             .SingleInstance();
+        builder.RegisterType<RestoreHandler>()
+            .As<IRestoreHandler>()
+            .SingleInstance();
 
         return builder.Build();
     }

@@ -31,6 +31,20 @@ internal static class DbResetDefaults
     /// <summary>Exit code returned by <c>snapshot</c> when SQL Server cannot write the .bak (filesystem permission denial — OS error 5).</summary>
     public const int ExitSnapshotPermissionDenied = 12;
 
+    /// <summary>Exit code returned by <c>restore</c> when the target DB instance is unreachable (network / login failure).</summary>
+    public const int ExitRestoreTargetUnreachable = 13;
+
+    /// <summary>Exit code returned by <c>restore</c> when SQL Server cannot read the .bak file (OS error 5).</summary>
+    public const int ExitRestorePermissionDenied = 14;
+
+    /// <summary>
+    /// Format string for the "baseline missing" stderr line. Shared by <c>verify-baseline</c>
+    /// and <c>restore</c> so operators see a consistent message from either verb.
+    /// Argument {0}: the configured baseline path.
+    /// </summary>
+    public const string BaselineMissingGuidanceFormat =
+        "Baseline missing or unreadable at {0}. Run: dotnet run -- snapshot";
+
     /// <summary>Primary repo-root marker — a <c>.git</c> directory. Checked first because every clone has one.</summary>
     public const string RepoMarkerGitDir = ".git";
 

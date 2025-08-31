@@ -99,6 +99,28 @@ internal static class SqlExceptionFactory
         return collection;
     }
 
+    /// <summary>
+    /// Creates a <see cref="SqlException"/> with <see cref="SqlException.Number"/> set to
+    /// <paramref name="number"/> and a non-null <see cref="Exception.InnerException"/>. Used to
+    /// exercise the <c>Number==0 &amp;&amp; InnerException is not null</c> transport-failure branch.
+    /// </summary>
+    public static SqlException CreateWithInner(int number, string message)
+    {
+        ArgumentNullException.ThrowIfNull(message);
+
+        var error = BuildError(number, message);
+        var collection = BuildCollection(error);
+        var ex = BuildException(collection);
+
+        var field = typeof(Exception).GetField(
+            "_innerException",
+            BindingFlags.NonPublic | BindingFlags.Instance)
+            ?? throw new InvalidOperationException("Exception._innerException field not found.");
+
+        field.SetValue(ex, new InvalidOperationException("transport failure"));
+        return ex;
+    }
+
     private static SqlException BuildException(SqlErrorCollection collection)
     {
         // CreateException(SqlErrorCollection errorCollection, string serverVersion)

@@ -46,7 +46,7 @@ internal sealed class VerifyBaselineHandler : IVerifyBaselineHandler
             // Single-line stderr: name the verb the operator should run next.
             var msg = string.Format(
                 CultureInfo.InvariantCulture,
-                "Baseline missing or unreadable at {0}. Run: dotnet run --project tools/console-apps/AdventureWorks.DbReset.Console -- snapshot",
+                DbResetDefaults.BaselineMissingGuidanceFormat,
                 status.Path);
             return VerbResult.Fail(DbResetDefaults.ExitVerifyBaselineMissing, msg);
         }
