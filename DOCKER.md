@@ -54,6 +54,32 @@ docker compose --env-file .env.docker down
 
 **Startup order:** API (healthy) -> Web
 
+## Database Backup Directory (DbReset.Console)
+
+The `tosk-mssql` SQL Server container stores backup files at this container-internal path:
+
+```
+/var/opt/mssql/backup/
+```
+
+The host path for the same directory (OrbStack) is:
+
+```
+~/OrbStack/docker/volumes/sql_tosk_mssql_2025_data/backup/
+```
+
+(OrbStack only — for Docker Desktop, find the volume in Docker Desktop's Volumes tab.)
+
+**One-time permission setup** — SQL Server runs as the `mssql` user (uid 10001) and cannot read files owned by root. Run this once after the container is first created, and again after each `snapshot` that writes new files:
+
+```bash
+docker exec --user root tosk-mssql chmod -R o+r /var/opt/mssql/backup/
+```
+
+**Target databases are auto-created on first restore** — `AdventureWorks_E2E` and any other target matching `DbReset:TargetNamePattern` do not need to be pre-created in SQL Server. The `restore` verb creates the database from the `.bak` automatically.
+
+See [tools/console-apps/AdventureWorks.DbReset.Console/README.md](tools/console-apps/AdventureWorks.DbReset.Console/README.md) for full setup and Getting Started instructions.
+
 ## Troubleshooting
 
 ### Port conflicts
