@@ -55,7 +55,7 @@ internal static class Program
             return DbResetDefaults.ExitRepoRootMissing;
         }
 
-        using var container = AutofacBootstrapper.Build(configuration, options);
+        using var container = AutofacBootstrapper.Build(configuration, options, repoRoot);
 
         // CancellationTokenSource + CancelKeyPress are wired so Story #927's restore handler can
         // thread the token through async SQL paths without refactoring scaffolding. #924 stubs do
@@ -118,6 +118,10 @@ internal static class Program
                 () => container.Resolve<ISnapshotHandler>().RunAsync(ct)),
             RestoreVerb => RunHandler(
                 () => container.Resolve<IRestoreHandler>().RunAsync(effectiveTarget, ct)),
+            MigrateVerb => RunHandler(
+                () => container.Resolve<IMigrateHandler>().RunAsync(effectiveTarget, ct)),
+            ResetVerb => RunHandler(
+                () => container.Resolve<IResetHandler>().RunAsync(effectiveTarget, ct)),
             _ => RunStub(verbName, effectiveTarget),
         };
     }
@@ -129,21 +133,28 @@ internal static class Program
     /// </summary>
     private static int RunHandler(Func<Task<VerbResult>> run)
     {
-        var result = run().GetAwaiter().GetResult();
-        if (!string.IsNullOrEmpty(result.StdOut))
+        try
         {
-            System.Console.Out.WriteLine(result.StdOut);
+            var result = run().GetAwaiter().GetResult();
+            if (!string.IsNullOrEmpty(result.StdOut))
+            {
+                System.Console.Out.WriteLine(result.StdOut);
+            }
+            if (!string.IsNullOrEmpty(result.StdErr))
+            {
+                System.Console.Error.WriteLine(result.StdErr);
+            }
+            return result.ExitCode;
         }
-        if (!string.IsNullOrEmpty(result.StdErr))
+        catch (OperationCanceledException)
         {
-            System.Console.Error.WriteLine(result.StdErr);
+            System.Console.Error.WriteLine("Operation cancelled.");
+            return DbResetDefaults.ExitCancelled;
         }
-        return result.ExitCode;
     }
 
     private static int RunStub(string verbName, string effectiveTarget)
     {
-        // Remaining stubs land in stories #927 / #928.
         System.Console.WriteLine($"stub: {verbName} (target={effectiveTarget})");
         return DbResetDefaults.ExitOk;
     }

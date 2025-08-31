@@ -37,6 +37,18 @@ internal static class DbResetDefaults
     /// <summary>Exit code returned by <c>restore</c> when SQL Server cannot read the .bak file (OS error 5).</summary>
     public const int ExitRestorePermissionDenied = 14;
 
+    /// <summary>Exit code returned by <c>migrate</c> when DbUp exits with a non-zero code.</summary>
+    public const int ExitMigrateFailed = 15;
+
+    /// <summary>Exit code returned when the user presses Ctrl+C and the operation is cancelled. Follows POSIX convention (128 + SIGINT).</summary>
+    public const int ExitCancelled = 130;
+
+    /// <summary>Environment variable key used to forward the target connection string to the DbUp child process. Maps to <c>ConnectionStrings:AdventureWorks</c> in .NET configuration.</summary>
+    public const string DbUpConnectionStringEnvVar = "ConnectionStrings__AdventureWorks";
+
+    /// <summary>Environment variable key used to forward the target database name to the DbUp child process banner.</summary>
+    public const string DbUpDatabaseNameEnvVar = "DatabaseName";
+
     /// <summary>
     /// Format string for the "baseline missing" stderr line. Shared by <c>verify-baseline</c>
     /// and <c>restore</c> so operators see a consistent message from either verb.

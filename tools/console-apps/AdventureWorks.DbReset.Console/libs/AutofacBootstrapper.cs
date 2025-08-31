@@ -1,8 +1,10 @@
 using AdventureWorks.DbReset.Console.Configuration;
+using AdventureWorks.DbReset.Console.Migration;
 using AdventureWorks.DbReset.Console.Resolution;
 using AdventureWorks.DbReset.Console.Safety;
 using AdventureWorks.DbReset.Console.Verbs.Handlers;
 using Autofac;
+using Autofac.Core;
 using Microsoft.Extensions.Logging;
 using NLog;
 using NLog.Extensions.Logging;
@@ -12,10 +14,11 @@ namespace AdventureWorks.DbReset.Console.Libs;
 
 internal static class AutofacBootstrapper
 {
-    public static IContainer Build(IConfiguration configuration, DbResetOptions options)
+    public static IContainer Build(IConfiguration configuration, DbResetOptions options, string repoRoot)
     {
         ArgumentNullException.ThrowIfNull(configuration);
         ArgumentNullException.ThrowIfNull(options);
+        ArgumentException.ThrowIfNullOrWhiteSpace(repoRoot);
 
         LogManager.Setup().LoadConfigurationFromFile(
             Path.Combine(AppContext.BaseDirectory, "nlog.config"),
@@ -56,6 +59,23 @@ internal static class AutofacBootstrapper
             .SingleInstance();
         builder.RegisterType<RestoreHandler>()
             .As<IRestoreHandler>()
+            .SingleInstance();
+
+        builder.RegisterInstance(repoRoot).Named<string>("repoRoot").SingleInstance();
+
+        builder.RegisterType<DbUpProcessRunner>()
+            .As<IDbUpProcessRunner>()
+            .SingleInstance();
+
+        builder.RegisterType<MigrateHandler>()
+            .As<IMigrateHandler>()
+            .SingleInstance()
+            .WithParameter(new ResolvedParameter(
+                (pi, _) => pi.ParameterType == typeof(string) && pi.Name == "repoRoot",
+                (_, ctx) => ctx.ResolveNamed<string>("repoRoot")));
+
+        builder.RegisterType<ResetHandler>()
+            .As<IResetHandler>()
             .SingleInstance();
 
         return builder.Build();
