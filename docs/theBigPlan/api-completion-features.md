@@ -12,7 +12,7 @@
 | 1    | Store Contact Management         | #874   | 3       | #875-#877 — **Done 2026-04-27**         |
 | 1    | Store Address Management         | #878   | 3       | #879-#881 — **Done 2026-04-29**         |
 | 1    | Store Analytics & Insights       | #882   | 3       | #883-#885                               |
-| 1    | Sales Person Assignment Tracking | #886   | 3       | #887-#889                               |
+| 1    | Sales Person Assignment Tracking | #886   | 3       | #887 — **Done 2026-05-10**, #888-#889   |
 | 2    | Employee Department Transfer     | #890   | 1       | #891 (Story 2.2 → existing #751)        |
 | 2    | Employee Pay Management          | #892   | 1       | #893 (Story 2.4 → existing #750)        |
 | 2    | Department Reporting             | #894   | 3       | #895-#897                               |
@@ -368,7 +368,7 @@ Key invariants:
 - Non-existent store or sales person returns appropriate error
 - All writes require `[Authorize]` (401 if unauthenticated)
 
-#### Story 1.10: Create DbUp Migration for StoreSalesPersonHistory
+#### Story 1.10: Create DbUp Migration for StoreSalesPersonHistory — **Done 2026-05-10** (#887)
 
 **Description**: As a developer, I want a new `Sales.StoreSalesPersonHistory` table created via DbUp migration, so that sales person assignment changes are tracked over time.
 

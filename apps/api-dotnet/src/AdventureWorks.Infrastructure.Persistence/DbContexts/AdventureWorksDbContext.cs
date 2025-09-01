@@ -82,6 +82,8 @@ public class AdventureWorksDbContext : DbContext, IAdventureWorksDbContext
     public DbSet<ShiftEntity> Shifts { get; set; }
     public DbSet<StoreEntity> Stores { get; set; }
 
+    public DbSet<StoreSalesPersonHistoryEntity> StoreSalesPersonHistories { get; set; }
+
     public DbSet<StateProvinceEntity> StateProvinces { get; set; }
     
     protected override void OnModelCreating(ModelBuilder modelBuilder)

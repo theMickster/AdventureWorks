@@ -61,4 +61,6 @@ public interface IAdventureWorksDbContext
     DbSet<StateProvinceEntity> StateProvinces { get; set; }
 
     DbSet<StoreEntity> Stores { get; set; }
+
+    DbSet<StoreSalesPersonHistoryEntity> StoreSalesPersonHistories { get; set; }
 }
