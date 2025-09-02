@@ -12,7 +12,7 @@
 | 1    | Store Contact Management         | #874   | 3       | #875-#877 — **Done 2026-04-27**         |
 | 1    | Store Address Management         | #878   | 3       | #879-#881 — **Done 2026-04-29**         |
 | 1    | Store Analytics & Insights       | #882   | 3       | #883-#885                               |
-| 1    | Sales Person Assignment Tracking | #886   | 3       | #887 — **Done 2026-05-10**, #888-#889   |
+| 1    | Sales Person Assignment Tracking | #886   | 3       | #887-#889 — **Done 2026-05-11**         |
 | 2    | Employee Department Transfer     | #890   | 1       | #891 (Story 2.2 → existing #751)        |
 | 2    | Employee Pay Management          | #892   | 1       | #893 (Story 2.4 → existing #750)        |
 | 2    | Department Reporting             | #894   | 3       | #895-#897                               |
@@ -352,9 +352,10 @@ Scenario: Non-existent store returns 404
 
 ---
 
-### Feature: Sales Person Assignment Tracking
+### Feature: Sales Person Assignment Tracking — **Done 2026-05-11**
 
 **Parent**: Epic #873 (closed Epic #552 superseded)
+**Status**: Done — Stories #887, #888, #889 completed and merged.
 **Description**: Track historical sales person assignments for stores. Currently `StoreEntity.SalesPersonId` only records the current assignment with no history. This feature adds a mechanism to reassign a store's sales person while preserving the history of past assignments, enabling reporting on territory and personnel changes over time.
 
 **Technical scope**: This requires a new `StoreSalesPersonHistory` table (DbUp migration), a new entity, repository, commands, and queries. The reassignment command updates `StoreEntity.SalesPersonId` AND inserts a history record. The history query returns all past assignments with date ranges.
@@ -388,7 +389,7 @@ Scenario: Migration creates the history table
     AND a composite primary key on (BusinessEntityId, SalesPersonId, StartDate)
 ```
 
-#### Story 1.11: Reassign a Store's Sales Person
+#### Story 1.11: Reassign a Store's Sales Person — **Done 2026-05-11** (#888)
 
 **Depends on**: Story 1.10 (DbUp migration must be applied first)
 
@@ -431,7 +432,7 @@ Scenario: Authentication required
   Then a 401 Unauthorized is returned
 ```
 
-#### Story 1.12: Get Sales Person Assignment History
+#### Story 1.12: Get Sales Person Assignment History — **Done 2026-05-11** (#889)
 
 **Depends on**: Story 1.10 (DbUp migration must be applied first)
 

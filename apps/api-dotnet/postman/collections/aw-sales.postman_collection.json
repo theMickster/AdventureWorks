@@ -3753,6 +3753,148 @@
               "response": []
             }
           ]
+        },
+        {
+          "name": "Sales Person Assignments",
+          "item": [
+            {
+              "name": "Get Store Sales Person Assignments",
+              "event": [
+                {
+                  "listen": "test",
+                  "script": {
+                    "exec": [
+                      "pm.test(\"Status should be 200\", function () {",
+                      "    pm.response.to.have.status(200);",
+                      "});",
+                      "",
+                      "var response = pm.response.json();",
+                      "",
+                      "pm.test(\"Response should be an array\", function () {",
+                      "    pm.expect(response).to.be.an(\"array\");",
+                      "});",
+                      "",
+                      "pm.test(\"Has X-Correlation-Id header\", function () {",
+                      "    pm.response.to.have.header(\"X-Correlation-Id\");",
+                      "});",
+                      "",
+                      "if (response.length > 0) {",
+                      "    pm.test(\"Each assignment has correct structure\", function () {",
+                      "        response.forEach(function (assignment) {",
+                      "            pm.expect(assignment.salesPersonId).to.be.a(\"number\");",
+                      "            pm.expect(assignment.salesPersonName).to.be.a(\"string\");",
+                      "            pm.expect(assignment.startDate).to.exist;",
+                      "        });",
+                      "    });",
+                      "}"
+                    ],
+                    "type": "text/javascript",
+                    "packages": {},
+                    "requests": {}
+                  }
+                }
+              ],
+              "request": {
+                "method": "GET",
+                "header": [],
+                "url": {
+                  "raw": "{{adventureWorksApi}}/{{apiVersion}}/stores/:storeId/sales-person-assignments",
+                  "host": [
+                    "{{adventureWorksApi}}"
+                  ],
+                  "path": [
+                    "{{apiVersion}}",
+                    "stores",
+                    ":storeId",
+                    "sales-person-assignments"
+                  ],
+                  "variable": [
+                    {
+                      "key": "storeId",
+                      "value": "292"
+                    }
+                  ]
+                }
+              },
+              "response": []
+            },
+            {
+              "name": "Reassign Store Sales Person",
+              "event": [
+                {
+                  "listen": "test",
+                  "script": {
+                    "exec": [
+                      "pm.test(\"Status should be 201\", function () {",
+                      "    pm.response.to.have.status(201);",
+                      "});",
+                      "",
+                      "var response = pm.response.json();",
+                      "",
+                      "pm.test(\"Response should be an array\", function () {",
+                      "    pm.expect(response).to.be.an(\"array\");",
+                      "});",
+                      "",
+                      "pm.test(\"Has X-Correlation-Id header\", function () {",
+                      "    pm.response.to.have.header(\"X-Correlation-Id\");",
+                      "});",
+                      "",
+                      "var requestBody = JSON.parse(pm.request.body.raw);",
+                      "pm.test(\"Open assignment reflects new sales person\", function () {",
+                      "    var open = response.find(function (a) { return a.endDate === null || a.endDate === undefined; });",
+                      "    pm.expect(open).to.exist;",
+                      "    pm.expect(open.salesPersonId).to.eql(requestBody.salesPersonId);",
+                      "});"
+                    ],
+                    "type": "text/javascript",
+                    "packages": {},
+                    "requests": {}
+                  }
+                }
+              ],
+              "request": {
+                "auth": {
+                  "type": "inherit"
+                },
+                "method": "POST",
+                "header": [
+                  {
+                    "key": "Content-Type",
+                    "value": "application/json",
+                    "type": "text"
+                  }
+                ],
+                "body": {
+                  "mode": "raw",
+                  "raw": "{\n  \"salesPersonId\": 276\n}",
+                  "options": {
+                    "raw": {
+                      "language": "json"
+                    }
+                  }
+                },
+                "url": {
+                  "raw": "{{adventureWorksApi}}/{{apiVersion}}/stores/:storeId/sales-person-assignments",
+                  "host": [
+                    "{{adventureWorksApi}}"
+                  ],
+                  "path": [
+                    "{{apiVersion}}",
+                    "stores",
+                    ":storeId",
+                    "sales-person-assignments"
+                  ],
+                  "variable": [
+                    {
+                      "key": "storeId",
+                      "value": "292"
+                    }
+                  ]
+                }
+              },
+              "response": []
+            }
+          ]
         }
       ]
     }

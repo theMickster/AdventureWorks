@@ -142,4 +142,11 @@ public interface IStoreRepository : IAsyncRepository<StoreEntity>
     /// <param name="cancellationToken">token to cancel the operation</param>
     Task<(IReadOnlyList<StoreCustomerProjection>, int)> GetCustomersByStoreIdAsync(
         int storeId, StoreCustomerParameter parameters, CancellationToken cancellationToken = default);
+
+    /// <summary>
+    /// Atomically closes the open StoreSalesPersonHistory row (or creates a synthetic outgoing record
+    /// when none exists and the store currently has a salesperson), inserts a new open history row,
+    /// and updates Store.SalesPersonId / ModifiedDate. The repository owns the EF transaction.
+    /// </summary>
+    Task ReassignSalesPersonAsync(int storeId, int newSalesPersonId, DateTime assignedDate, CancellationToken cancellationToken = default);
 }

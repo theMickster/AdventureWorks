@@ -41,7 +41,7 @@
 
 **Phase 2.5 - API Completion** (Epic #873 — successor to closed #552) -- IN PROGRESS (2026-04-27 → ongoing):
 
-- 🔄 **Wave 1**: Store Manager Completion — ✅ #874 (Contact Mgmt, Done 2026-04-27), ✅ #878 (Address Mgmt, Done 2026-04-29), ✅ #882 (Analytics, Done 2026-04-30), 🔄 #886 (Sales Person Assignment Tracking — #887 DbUp Done 2026-05-10, #888-#889 pending)
+- ✅ **Wave 1**: Store Manager Completion — ✅ #874 (Contact Mgmt, Done 2026-04-27), ✅ #878 (Address Mgmt, Done 2026-04-29), ✅ #882 (Analytics, Done 2026-04-30), ✅ #886 (Sales Person Assignment Tracking, Done 2026-05-11)
 - 📋 **Wave 2**: HR Process Completion — Features #890 (Department Transfer), #892 (Pay Management), #894 (Department Reporting) — 5 stories (#891, #893, #895-#897). Stories 2.2, 2.4 covered by existing #751, #750.
 - 🔄 **Wave 3**: Person Foundation — 📋 #898 (Email Mgmt), 📋 #903 (Phone Mgmt), 📋 #908 (Directory & Search), ✅ #911 (PersonCreditCard fix, Done 2026-04-27) — 10 stories remaining
 - 📋 **Wave 4**: Lookup Endpoint Blitz — Features #913 (Production Lookups: 4 stories), ✅ #918 (Sales Lookups: 4 stories, Done 2026-05-07) — Stories 4.1, 4.2 covered by Done #699
@@ -498,6 +498,6 @@ Each markdown file follows this structure:
 
 ---
 
-**Document Version**: 2.6
-**Last Updated**: 2026-04-30
-**Status**: Active Execution — Epic #560 complete, #570 complete, #577 83% complete (#621 SignalR remaining), #552 closed Done, **#873 API Completion in progress** — 4 of 16 Features Done (#874, #878, #882, #911); #886 Sales Person Assignment Tracking in progress (#887 DbUp Done 2026-05-10, #888-#889 next); #565 planned
+**Document Version**: 2.7
+**Last Updated**: 2026-05-11
+**Status**: Active Execution — Epic #560 complete, #570 complete, #577 83% complete (#621 SignalR remaining), #552 closed Done, **#873 API Completion in progress** — 5 of 16 Features Done (#874, #878, #882, #911, #886); Wave 1 Store Manager complete; #565 planned

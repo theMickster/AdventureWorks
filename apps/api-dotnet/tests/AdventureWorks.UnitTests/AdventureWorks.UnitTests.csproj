@@ -1,42 +1,43 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
 
-	<PropertyGroup>
-		<TargetFramework>net10.0</TargetFramework>
-		<ImplicitUsings>enable</ImplicitUsings>
-		<Nullable>enable</Nullable>
-		<IsPackable>false</IsPackable>
-		<EnableNETAnalyzers>true</EnableNETAnalyzers>
-		<AnalysisLevel>latest</AnalysisLevel>
-	</PropertyGroup>
+  <PropertyGroup>
+    <TargetFramework>net10.0</TargetFramework>
+    <ImplicitUsings>enable</ImplicitUsings>
+    <Nullable>enable</Nullable>
+    <IsPackable>false</IsPackable>
+    <EnableNETAnalyzers>true</EnableNETAnalyzers>
+    <AnalysisLevel>latest</AnalysisLevel>
+    <UserSecretsId>e09e9092-4173-4630-8c31-f32683ecf72c</UserSecretsId>
+  </PropertyGroup>
 
-	<ItemGroup>
-		<PackageReference Include="AutoMapper" Version="16.1.1" />
-		<PackageReference Include="Microsoft.CodeCoverage" Version="18.3.0" />
-		<PackageReference Include="Microsoft.EntityFrameworkCore.InMemory" Version="10.0.5" />
-		<PackageReference Include="Microsoft.Extensions.Configuration" Version="10.0.5" />
-		<PackageReference Include="Microsoft.Extensions.Configuration.Binder" Version="10.0.5" />
-		<PackageReference Include="Microsoft.Extensions.Configuration.EnvironmentVariables" Version="10.0.5" />
-		<PackageReference Include="Microsoft.Extensions.Configuration.FileExtensions" Version="10.0.5" />
-		<PackageReference Include="Microsoft.Extensions.Configuration.Json" Version="10.0.5" />
-		<PackageReference Include="Microsoft.NET.Test.Sdk" Version="18.3.0" />
-		<PackageReference Include="Moq" Version="4.20.72" />
-		<PackageReference Include="coverlet.collector" Version="8.0.0">
-			<IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
-			<PrivateAssets>all</PrivateAssets>
-		</PackageReference>
-		<PackageReference Include="xunit" Version="2.9.3" />
-		<PackageReference Include="xunit.runner.visualstudio" Version="3.1.5">
-			<PrivateAssets>all</PrivateAssets>
-			<IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
-		</PackageReference>
-	</ItemGroup>
+  <ItemGroup>
+    <PackageReference Include="AutoMapper" Version="16.1.1" />
+    <PackageReference Include="Microsoft.CodeCoverage" Version="18.3.0" />
+    <PackageReference Include="Microsoft.EntityFrameworkCore.InMemory" Version="10.0.5" />
+    <PackageReference Include="Microsoft.Extensions.Configuration" Version="10.0.5" />
+    <PackageReference Include="Microsoft.Extensions.Configuration.Binder" Version="10.0.5" />
+    <PackageReference Include="Microsoft.Extensions.Configuration.EnvironmentVariables" Version="10.0.5" />
+    <PackageReference Include="Microsoft.Extensions.Configuration.FileExtensions" Version="10.0.5" />
+    <PackageReference Include="Microsoft.Extensions.Configuration.Json" Version="10.0.5" />
+    <PackageReference Include="Microsoft.NET.Test.Sdk" Version="18.3.0" />
+    <PackageReference Include="Moq" Version="4.20.72" />
+    <PackageReference Include="coverlet.collector" Version="8.0.0">
+      <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
+      <PrivateAssets>all</PrivateAssets>
+    </PackageReference>
+    <PackageReference Include="xunit" Version="2.9.3" />
+    <PackageReference Include="xunit.runner.visualstudio" Version="3.1.5">
+      <PrivateAssets>all</PrivateAssets>
+      <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
+    </PackageReference>
+  </ItemGroup>
 
-	<ItemGroup>
-		<ProjectReference Include="..\..\src\AdventureWorks.API\AdventureWorks.API.csproj" />
-		<ProjectReference Include="..\..\src\AdventureWorks.Application\AdventureWorks.Application.csproj" />
-		<ProjectReference Include="..\..\src\AdventureWorks.Common\AdventureWorks.Common.csproj" />
-		<ProjectReference Include="..\..\src\AdventureWorks.Domain\AdventureWorks.Domain.csproj" />
-		<ProjectReference Include="..\AdventureWorks.Test.Common\AdventureWorks.Test.Common.csproj" />
-	</ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\..\src\AdventureWorks.API\AdventureWorks.API.csproj" />
+    <ProjectReference Include="..\..\src\AdventureWorks.Application\AdventureWorks.Application.csproj" />
+    <ProjectReference Include="..\..\src\AdventureWorks.Common\AdventureWorks.Common.csproj" />
+    <ProjectReference Include="..\..\src\AdventureWorks.Domain\AdventureWorks.Domain.csproj" />
+    <ProjectReference Include="..\AdventureWorks.Test.Common\AdventureWorks.Test.Common.csproj" />
+  </ItemGroup>
 
 </Project>

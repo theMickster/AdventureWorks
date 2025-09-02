@@ -1,4 +1,5 @@
-﻿using AdventureWorks.Application.PersistenceContracts.Repositories.Sales;
+﻿using System.Data;
+using AdventureWorks.Application.PersistenceContracts.Repositories.Sales;
 using AdventureWorks.Common.Attributes;
 using AdventureWorks.Common.Constants;
 using AdventureWorks.Common.Filtering;
@@ -186,6 +187,78 @@ public sealed class StoreRepository(AdventureWorksDbContext dbContext)
                 CustomerCount = s.Customers.Count()
             })
             .FirstOrDefaultAsync(cancellationToken);
+    }
+
+    /// <summary>
+    /// Atomically closes the open StoreSalesPersonHistory row (or creates a synthetic outgoing record
+    /// when none exists and the store currently has a salesperson), inserts a new open history row,
+    /// and updates Store.SalesPersonId / ModifiedDate. The repository owns the EF transaction.
+    /// </summary>
+    public async Task ReassignSalesPersonAsync(int storeId, int newSalesPersonId, DateTime assignedDate, CancellationToken cancellationToken = default)
+    {
+        await using var transaction = await DbContext.Database.BeginTransactionAsync(IsolationLevel.RepeatableRead, cancellationToken);
+        try
+        {
+            var store = await DbContext.Stores
+                .FirstOrDefaultAsync(x => x.BusinessEntityId == storeId, cancellationToken)
+                ?? throw new KeyNotFoundException($"Store with ID {storeId} was not found.");
+
+            // Authoritative same-person guard inside the transaction (prevents TOCTOU with handler pre-check)
+            if (store.SalesPersonId == newSalesPersonId)
+                throw new InvalidOperationException(SalesConstants.SameSalesPersonSentinel);
+
+            var historySet = DbContext.Set<StoreSalesPersonHistoryEntity>();
+
+            var openRecord = await historySet
+                .FirstOrDefaultAsync(x => x.BusinessEntityId == storeId && x.EndDate == null, cancellationToken);
+
+            if (openRecord is not null)
+            {
+                openRecord.EndDate = assignedDate;
+                openRecord.ModifiedDate = assignedDate;
+            }
+            else if (store.SalesPersonId.HasValue)
+            {
+                // Only create the synthetic outgoing record if the referenced salesperson still exists;
+                // guards against FK violation when the outgoing SP was deleted after the store was assigned.
+                var outgoingSpExists = await DbContext.Set<SalesPersonEntity>()
+                    .AnyAsync(sp => sp.BusinessEntityId == store.SalesPersonId.Value, cancellationToken);
+
+                if (outgoingSpExists)
+                {
+                    historySet.Add(new StoreSalesPersonHistoryEntity
+                    {
+                        BusinessEntityId = storeId,
+                        SalesPersonId = store.SalesPersonId.Value,
+                        StartDate = store.ModifiedDate,
+                        EndDate = assignedDate,
+                        ModifiedDate = assignedDate,
+                        Rowguid = Guid.NewGuid()
+                    });
+                }
+            }
+
+            historySet.Add(new StoreSalesPersonHistoryEntity
+            {
+                BusinessEntityId = storeId,
+                SalesPersonId = newSalesPersonId,
+                StartDate = assignedDate,
+                EndDate = null,
+                ModifiedDate = assignedDate,
+                Rowguid = Guid.NewGuid()
+            });
+
+            store.SalesPersonId = newSalesPersonId;
+            store.ModifiedDate = assignedDate;
+
+            await DbContext.SaveChangesAsync(cancellationToken);
+            await transaction.CommitAsync(cancellationToken);
+        }
+        catch
+        {
+            await transaction.RollbackAsync(cancellationToken);
+            throw;
+        }
     }
 
     /// <summary>
