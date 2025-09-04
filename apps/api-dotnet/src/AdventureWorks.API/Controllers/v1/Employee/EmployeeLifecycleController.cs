@@ -9,7 +9,7 @@ using Microsoft.AspNetCore.Mvc;
 namespace AdventureWorks.API.Controllers.v1.Employee;
 
 /// <summary>
-/// Controller for managing employee lifecycle operations (hire, terminate, rehire).
+/// Controller for managing employee lifecycle operations including hire, terminate, rehire, and department transfers.
 /// </summary>
 [ApiController]
 [ApiVersion("1.0")]
@@ -246,6 +246,64 @@ public sealed class EmployeeLifecycleController : ControllerBase
         {
             _logger.LogWarning(ex, "Business rule violation during rehire of employee {EmployeeId}: {Message}", employeeId, ex.Message);
             return BadRequest(ex.Message);
+        }
+    }
+
+    /// <summary>
+    /// Transfers an employee to a new department and/or shift.
+    /// Closes the current active assignment and creates a new one in a single atomic operation.
+    /// </summary>
+    /// <param name="employeeId">The employee's business entity identifier.</param>
+    /// <param name="model">The transfer request specifying the target department and shift.</param>
+    /// <param name="cancellationToken">Cancellation token.</param>
+    /// <returns>201 Created with location pointing to the employee's department history.</returns>
+    /// <response code="201">Transfer completed; location header points to department history.</response>
+    /// <response code="400">Invalid input or business rule violation (e.g., inactive employee, invalid department/shift, same assignment).</response>
+    /// <response code="401">Unauthorized - authentication required.</response>
+    /// <response code="404">Employee not found.</response>
+    /// <response code="409">No active department assignment found to close.</response>
+    [HttpPost("{employeeId:int}/department-transfers")]
+    [ProducesResponseType(StatusCodes.Status201Created)]
+    [ProducesResponseType(StatusCodes.Status400BadRequest)]
+    [ProducesResponseType(StatusCodes.Status401Unauthorized)]
+    [ProducesResponseType(StatusCodes.Status404NotFound)]
+    [ProducesResponseType(StatusCodes.Status409Conflict)]
+    public async Task<IActionResult> TransferAsync(
+        int employeeId,
+        [FromBody] EmployeeTransferModel? model,
+        CancellationToken cancellationToken)
+    {
+        if (employeeId <= 0)
+        {
+            return BadRequest("The employee identifier must be a positive integer.");
+        }
+
+        if (model is null)
+        {
+            return BadRequest("The transfer input model cannot be null.");
+        }
+
+        _logger.LogInformation("Department transfer request for employee {EmployeeId} to dept {DeptId} shift {ShiftId}.",
+            employeeId, model.DepartmentId, model.ShiftId);
+
+        try
+        {
+            var command = new TransferEmployeeDepartmentCommand
+            {
+                EmployeeId = employeeId,
+                Model = model,
+                ModifiedDate = DateTime.UtcNow,
+                TransferDate = DateTime.UtcNow.Date
+            };
+            await _mediator.Send(command, cancellationToken);
+
+            _logger.LogInformation("Employee {EmployeeId} transferred successfully.", employeeId);
+            return CreatedAtRoute("GetEmployeeDepartmentHistory", new { version = "1.0", employeeId }, null);
+        }
+        catch (KeyNotFoundException ex)
+        {
+            _logger.LogWarning(ex, "Employee {EmployeeId} not found during department transfer", employeeId);
+            return NotFound(ex.Message);
         }
     }
 

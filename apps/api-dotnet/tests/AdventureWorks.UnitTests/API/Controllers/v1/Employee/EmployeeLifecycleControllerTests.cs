@@ -1,4 +1,5 @@
 using AdventureWorks.API.Controllers.v1.Employee;
+using AdventureWorks.Application.Exceptions;
 using AdventureWorks.Application.Features.HumanResources.Commands;
 using AdventureWorks.Application.Features.HumanResources.Queries;
 using AdventureWorks.Models.Features.HumanResources;
@@ -6,6 +7,7 @@ using AdventureWorks.UnitTests.Setup.Fixtures;
 using FluentValidation;
 using FluentValidation.Results;
 using MediatR;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
 using System.Net;
@@ -442,6 +444,125 @@ public sealed class EmployeeLifecycleControllerTests : UnitTestBase
 
             businessEntityId.Should().Be(expectedBusinessEntityId);
             message.Should().Be("Employee rehired successfully");
+        }
+    }
+
+    #endregion
+
+    #region TransferAsync Tests
+
+    [Fact]
+    public void TransferAsync_controller_has_authorize_attribute()
+    {
+        var attribute = typeof(EmployeeLifecycleController)
+            .GetCustomAttributes(typeof(AuthorizeAttribute), inherit: false)
+            .FirstOrDefault() as AuthorizeAttribute;
+
+        attribute.Should().NotBeNull("because the controller must require authentication for all actions");
+    }
+
+    [Fact]
+    public async Task TransferAsync_returns_bad_request_when_employee_id_is_zeroAsync()
+    {
+        var result = await _sut.TransferAsync(0, new EmployeeTransferModel(), CancellationToken.None);
+
+        var objectResult = result as ObjectResult;
+
+        using (new AssertionScope())
+        {
+            objectResult.Should().NotBeNull();
+            objectResult!.StatusCode.Should().Be((int)HttpStatusCode.BadRequest);
+            objectResult.Value.Should().Be("The employee identifier must be a positive integer.");
+        }
+    }
+
+    [Fact]
+    public async Task TransferAsync_returns_bad_request_when_employee_id_is_negativeAsync()
+    {
+        var result = await _sut.TransferAsync(-1, new EmployeeTransferModel(), CancellationToken.None);
+
+        var objectResult = result as ObjectResult;
+
+        using (new AssertionScope())
+        {
+            objectResult.Should().NotBeNull();
+            objectResult!.StatusCode.Should().Be((int)HttpStatusCode.BadRequest);
+            objectResult.Value.Should().Be("The employee identifier must be a positive integer.");
+        }
+    }
+
+    [Fact]
+    public async Task TransferAsync_returns_bad_request_when_model_is_nullAsync()
+    {
+        var result = await _sut.TransferAsync(1, null, CancellationToken.None);
+
+        var objectResult = result as ObjectResult;
+
+        using (new AssertionScope())
+        {
+            objectResult.Should().NotBeNull();
+            objectResult!.StatusCode.Should().Be((int)HttpStatusCode.BadRequest);
+            objectResult.Value.Should().Be("The transfer input model cannot be null.");
+        }
+    }
+
+    [Fact]
+    public async Task TransferAsync_employee_not_found_returns_not_foundAsync()
+    {
+        _mockMediator
+            .Setup(x => x.Send(It.IsAny<TransferEmployeeDepartmentCommand>(), It.IsAny<CancellationToken>()))
+            .ThrowsAsync(new KeyNotFoundException("Employee with ID 1 not found."));
+
+        var model = new EmployeeTransferModel { DepartmentId = 3, ShiftId = 1 };
+
+        var result = await _sut.TransferAsync(1, model, CancellationToken.None);
+
+        var notFoundResult = result as NotFoundObjectResult;
+
+        using (new AssertionScope())
+        {
+            notFoundResult.Should().NotBeNull();
+            notFoundResult!.StatusCode.Should().Be((int)HttpStatusCode.NotFound);
+            notFoundResult.Value.Should().Be("Employee with ID 1 not found.");
+        }
+    }
+
+    [Fact]
+    public async Task TransferAsync_propagates_conflict_exception_for_middleware_to_handleAsync()
+    {
+        _mockMediator
+            .Setup(x => x.Send(It.IsAny<TransferEmployeeDepartmentCommand>(), It.IsAny<CancellationToken>()))
+            .ThrowsAsync(new ConflictException("Employee 1 has no active department assignment to close."));
+
+        var model = new EmployeeTransferModel { DepartmentId = 3, ShiftId = 1 };
+
+        Func<Task> act = async () => await _sut.TransferAsync(1, model, CancellationToken.None);
+
+        await act.Should().ThrowAsync<ConflictException>();
+    }
+
+    [Fact]
+    public async Task TransferAsync_returns_201_created_at_route_on_successAsync()
+    {
+        _mockMediator
+            .Setup(x => x.Send(It.IsAny<TransferEmployeeDepartmentCommand>(), It.IsAny<CancellationToken>()))
+            .ReturnsAsync(Unit.Value);
+
+        var model = new EmployeeTransferModel { DepartmentId = 3, ShiftId = 1 };
+
+        var result = await _sut.TransferAsync(1, model, CancellationToken.None);
+
+        var createdResult = result as CreatedAtRouteResult;
+
+        using (new AssertionScope())
+        {
+            createdResult.Should().NotBeNull();
+            createdResult!.StatusCode.Should().Be((int)HttpStatusCode.Created);
+            createdResult.RouteName.Should().Be("GetEmployeeDepartmentHistory");
+            createdResult.RouteValues.Should().ContainKey("version")
+                .WhoseValue.Should().Be("1.0");
+            createdResult.RouteValues.Should().ContainKey("employeeId")
+                .WhoseValue.Should().Be(1);
         }
     }
 

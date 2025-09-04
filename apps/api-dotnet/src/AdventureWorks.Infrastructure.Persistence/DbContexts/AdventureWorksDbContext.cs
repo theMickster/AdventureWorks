@@ -63,6 +63,8 @@ public class AdventureWorksDbContext : DbContext, IAdventureWorksDbContext
 
     public DbSet<EmailAddressEntity> EmailAddresses { get; set; }
 
+    public DbSet<EmployeeDepartmentHistory> EmployeeDepartmentHistories { get; set; }
+
     public DbSet<EmployeeEntity> Employees { get; set; }
 
     public DbSet<PersonEntity> Persons { get; set; }

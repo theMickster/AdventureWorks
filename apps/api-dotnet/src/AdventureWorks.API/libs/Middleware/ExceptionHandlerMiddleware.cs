@@ -1,4 +1,5 @@
-﻿using AdventureWorks.Application.Interfaces;
+﻿using AdventureWorks.Application.Exceptions;
+using AdventureWorks.Application.Interfaces;
 using AdventureWorks.Common.Constants;
 using FluentValidation;
 using System.Net;
@@ -76,6 +77,15 @@ public sealed class ExceptionHandlerMiddleware(RequestDelegate next, ILogger<Exc
                 result = JsonSerializer.Serialize(new
                 {
                     error = keyNotFoundException.Message,
+                    correlationId = correlationId,
+                    timestamp = DateTime.UtcNow
+                });
+                break;
+            case ConflictException conflictException:
+                httpStatusCode = HttpStatusCode.Conflict;
+                result = JsonSerializer.Serialize(new
+                {
+                    error = conflictException.Message,
                     correlationId = correlationId,
                     timestamp = DateTime.UtcNow
                 });

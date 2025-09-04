@@ -108,7 +108,7 @@ Ignore audit fields (ModifiedDate, Rowguid, Id). Use `ForPath()` for nested mapp
 
 #### Exception Handling Middleware
 
-ValidationException -> 400 with error details. All responses include `X-Correlation-Id`.
+ValidationException -> 400 with error details. ConflictException -> 409 Conflict. All responses include `X-Correlation-Id`.
 Unhandled exception types fall through to a 500 with a sanitized generic message; the original `exception.Message` is intentionally not echoed in the response body and is captured in structured logs only.
 Any new expected exception type used for normal API flows must be translated in middleware or handled explicitly in the controller in the same change.
 See: `AdventureWorks.API/libs/Middleware/ExceptionHandlerMiddleware.cs`
@@ -118,6 +118,8 @@ See: `AdventureWorks.API/libs/Middleware/ExceptionHandlerMiddleware.cs`
 When a junction-table row needs to change a column that is part of its composite primary key, a true UPDATE is impossible. The handler must replace the row: open an EF transaction, delete the existing entity, insert a new entity with the new key values, and commit. The repository owns the transaction so handlers stay storage-agnostic.
 
 Reference implementations: `IBusinessEntityContactEntityRepository.ReplaceContactTypeAsync` (changes a store contact's `ContactTypeId`) and `IBusinessEntityAddressRepository.ReplaceAddressTypeAsync` (changes a store address's `AddressTypeId`). Both follow the same shape — the handler enforces uniqueness against the target composite key before calling the repository, and re-hydrates the row through `GetWithDetailsByCompositeKeyAsync` after the swap.
+
+A close-and-insert variant of this pattern applies to temporal history tables: `IEmployeeRepository.TransferEmployeeDepartmentAsync` closes the active `EmployeeDepartmentHistory` record (sets `EndDate`) and inserts a new open record within a single transaction. Use a dedicated transactional repository method — not `UpdateAsync` + `AddAsync` separately — whenever atomicity across multiple history rows is required.
 
 ---
 

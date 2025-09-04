@@ -1,3 +1,4 @@
+using AdventureWorks.Application.Exceptions;
 using AdventureWorks.Application.PersistenceContracts.Repositories;
 using AdventureWorks.Common.Attributes;
 using AdventureWorks.Common.Constants;
@@ -309,6 +310,25 @@ public sealed class EmployeeRepository(AdventureWorksDbContext dbContext)
     }
 
     /// <summary>
+    /// Retrieves all department history records for an employee, ordered by StartDate descending.
+    /// Includes related Department and Shift entities.
+    /// </summary>
+    public async Task<IReadOnlyList<EmployeeDepartmentHistory>> GetEmployeeDepartmentHistoryAsync(
+        int businessEntityId,
+        CancellationToken cancellationToken = default)
+    {
+        var records = await DbContext.EmployeeDepartmentHistories
+            .AsNoTracking()
+            .Include(dh => dh.Department)
+            .Include(dh => dh.Shift)
+            .Where(dh => dh.BusinessEntityId == businessEntityId)
+            .OrderByDescending(dh => dh.StartDate)
+            .ToListAsync(cancellationToken);
+
+        return records.AsReadOnly();
+    }
+
+    /// <summary>
     /// Retrieves an employee by their BusinessEntityId with full lifecycle data.
     /// Includes Person, EmployeeDepartmentHistory (with Department and Shift), and EmployeePayHistory.
     /// Used by lifecycle status query to aggregate comprehensive employee information.
@@ -328,5 +348,71 @@ public sealed class EmployeeRepository(AdventureWorksDbContext dbContext)
             .Include(e => e.EmployeePayHistory)
             .Where(e => e.BusinessEntityId == businessEntityId)
             .FirstOrDefaultAsync(cancellationToken);
+    }
+
+    /// <summary>
+    /// Transfers an employee to a new department and/or shift within a single transaction.
+    /// Closes the active department assignment (sets EndDate) and inserts a new open record.
+    /// Re-fetches the active record inside the transaction to prevent stale-data races between
+    /// the handler's validation read and the actual write.
+    /// </summary>
+    public async Task TransferEmployeeDepartmentAsync(
+        int businessEntityId,
+        short newDepartmentId,
+        byte newShiftId,
+        DateTime transferDate,
+        DateTime modifiedDate,
+        CancellationToken cancellationToken = default)
+    {
+        await using var transaction = await DbContext.Database.BeginTransactionAsync(cancellationToken);
+
+        try
+        {
+            var existingConflict = await DbContext.EmployeeDepartmentHistories
+                .AnyAsync(dh => dh.BusinessEntityId == businessEntityId
+                             && dh.DepartmentId == newDepartmentId
+                             && dh.ShiftId == newShiftId
+                             && dh.StartDate == transferDate, cancellationToken);
+
+            if (existingConflict)
+            {
+                throw new ConflictException(
+                    $"A department history record already exists for employee {businessEntityId} " +
+                    $"in department {newDepartmentId} on {transferDate:yyyy-MM-dd}. " +
+                    "Cannot transfer more than once per day to the same department and shift.");
+            }
+
+            var activeRecord = await DbContext.EmployeeDepartmentHistories
+                .FirstOrDefaultAsync(
+                    dh => dh.BusinessEntityId == businessEntityId && dh.EndDate == null,
+                    cancellationToken);
+
+            if (activeRecord is null)
+            {
+                throw new ConflictException($"Employee {businessEntityId} has no active department assignment to close.");
+            }
+
+            activeRecord.EndDate = transferDate;
+            activeRecord.ModifiedDate = modifiedDate;
+
+            var newRecord = new EmployeeDepartmentHistory
+            {
+                BusinessEntityId = businessEntityId,
+                DepartmentId = newDepartmentId,
+                ShiftId = newShiftId,
+                StartDate = transferDate,
+                EndDate = null,
+                ModifiedDate = modifiedDate
+            };
+
+            DbContext.EmployeeDepartmentHistories.Add(newRecord);
+            await DbContext.SaveChangesAsync(cancellationToken);
+            await transaction.CommitAsync(cancellationToken);
+        }
+        catch
+        {
+            await transaction.RollbackAsync(cancellationToken);
+            throw;
+        }
     }
 }

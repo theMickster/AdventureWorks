@@ -44,6 +44,8 @@ public interface IAdventureWorksDbContext
 
     DbSet<EmailAddressEntity> EmailAddresses { get; set; }
 
+    DbSet<EmployeeDepartmentHistory> EmployeeDepartmentHistories { get; set; }
+
     DbSet<EmployeeEntity> Employees { get; set; }
 
     DbSet<PersonEntity> Persons { get; set; }

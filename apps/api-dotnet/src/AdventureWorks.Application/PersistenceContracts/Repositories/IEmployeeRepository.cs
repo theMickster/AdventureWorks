@@ -99,4 +99,34 @@ public interface IEmployeeRepository : IAsyncRepository<EmployeeEntity>
     /// <param name="cancellationToken">Cancellation token</param>
     /// <returns>Employee entity with full lifecycle data, or null if not found</returns>
     Task<EmployeeEntity?> GetEmployeeByIdWithLifecycleDataAsync(int businessEntityId, CancellationToken cancellationToken = default);
+
+    /// <summary>
+    /// Retrieves all department history records for an employee, ordered by StartDate descending.
+    /// Includes related Department and Shift entities.
+    /// </summary>
+    /// <param name="businessEntityId">The employee's business entity identifier.</param>
+    /// <param name="cancellationToken">Cancellation token.</param>
+    /// <returns>A read-only list of EmployeeDepartmentHistory ordered by StartDate descending.</returns>
+    Task<IReadOnlyList<EmployeeDepartmentHistory>> GetEmployeeDepartmentHistoryAsync(
+        int businessEntityId,
+        CancellationToken cancellationToken = default);
+
+    /// <summary>
+    /// Transfers an employee to a new department and/or shift within a single transaction.
+    /// Closes the current active department assignment and inserts a new open one.
+    /// Throws <see cref="ConflictException"/> if a record for the same key already exists on the transfer date.
+    /// </summary>
+    /// <param name="businessEntityId">The employee's business entity identifier.</param>
+    /// <param name="newDepartmentId">The target department ID.</param>
+    /// <param name="newShiftId">The target shift ID.</param>
+    /// <param name="transferDate">Date used as EndDate on the closed record and StartDate on the new record.</param>
+    /// <param name="modifiedDate">Audit timestamp.</param>
+    /// <param name="cancellationToken">Cancellation token.</param>
+    Task TransferEmployeeDepartmentAsync(
+        int businessEntityId,
+        short newDepartmentId,
+        byte newShiftId,
+        DateTime transferDate,
+        DateTime modifiedDate,
+        CancellationToken cancellationToken = default);
 }
