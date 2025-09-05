@@ -551,14 +551,14 @@ Scenario: Non-existent employee returns 404
 **Parent**: Epic #873 (closed Epic #552 superseded)
 **Description**: Expose endpoints for recording pay rate changes and viewing pay history. The `EmployeePayHistory` table stores rate changes with `RateChangeDate`, `Rate`, and `PayFrequency` (1=Monthly, 2=Biweekly). Recording a new pay change creates a new row; it does not update existing rows. The read endpoint returns the full history for compensation auditing.
 
-**Technical scope**: New commands/queries under `Application/Features/HumanResources/`. Repository operations on `EmployeePayHistory`. New DTOs: `EmployeePayHistoryModel`, `EmployeePayChangeCreateModel`. FluentValidation enforces Rate > 0, Rate <= 500, PayFrequency in {1, 2}.
+**Technical scope**: New commands/queries under `Application/Features/HumanResources/`. Repository operations on `EmployeePayHistory`. New DTOs: `EmployeePayHistoryModel`, `EmployeePayChangeCreateModel`. FluentValidation enforces Rate >= 6.50, Rate <= 200.00 (matching `CK_EmployeePayHistory_Rate` DB constraint), PayFrequency in {1, 2}.
 
 **Acceptance Criteria**:
 See Stories 2.3-2.4 for detailed acceptance criteria.
 Key invariants:
 
 - Pay changes create new rows (append-only, never update existing history)
-- Rate must be > 0 and <= 500; PayFrequency must be 1 (Monthly) or 2 (Biweekly)
+- Rate must be >= $6.50 and <= $200.00 (matching `CK_EmployeePayHistory_Rate` DB constraint); PayFrequency must be 1 (Monthly) or 2 (Bi-Weekly)
 - Inactive employees (CurrentFlag=false) cannot have pay changes recorded
 - All writes require `[Authorize]` (401 if unauthenticated)
 
@@ -580,7 +580,7 @@ Scenario: Reject pay change with zero or negative rate
   Then a 400 Bad Request is returned with error code "Rule-01"
 
 Scenario: Reject pay change with rate exceeding maximum
-  When rate exceeds 500
+  When rate exceeds 200.00
   Then a 400 Bad Request is returned with error code "Rule-02"
 
 Scenario: Reject pay change with invalid pay frequency
@@ -1314,8 +1314,8 @@ Scenario: Get non-existent ship method returns 404
 | 1                               | Store Address Management         | #878 | 3 (#879-#881)                  | POST, PATCH, DELETE               | (via existing #690)               |
 | 1                               | Store Analytics & Insights       | #882 | 3 (#883-#885)                  | --                                | GET x3                            |
 | 1                               | Sales Person Assignment Tracking | #886 | 3 (#887-#889)                  | POST                              | GET + DbUp migration (#887)       |
-| 2                               | Employee Department Transfer     | #890 | 1 (#891) [2.2 → #751]          | POST                              | GET via #751                      |
-| 2                               | Employee Pay Management          | #892 | 1 (#893) [2.4 → #750]          | POST                              | GET via #750                      |
+| 2                               | Employee Department Transfer ✅  | #890 | 1 (#891) [2.2 → #751]          | POST                              | GET via #751                      |
+| 2                               | Employee Pay Management ✅       | #892 | 1 (#893) [2.4 → #750]          | POST                              | GET via #750 — Done 2026-05-16    |
 | 2                               | Department Reporting             | #894 | 3 (#895-#897)                  | --                                | GET x3                            |
 | 3                               | Person Email Management          | #898 | 4 (#899-#902)                  | POST, PUT, DELETE                 | GET                               |
 | 3                               | Person Phone Management          | #903 | 4 (#904-#907)                  | POST, PUT, DELETE                 | GET                               |

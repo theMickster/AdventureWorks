@@ -46,6 +46,8 @@ public interface IAdventureWorksDbContext
 
     DbSet<EmployeeDepartmentHistory> EmployeeDepartmentHistories { get; set; }
 
+    DbSet<EmployeePayHistory> EmployeePayHistories { get; set; }
+
     DbSet<EmployeeEntity> Employees { get; set; }
 
     DbSet<PersonEntity> Persons { get; set; }

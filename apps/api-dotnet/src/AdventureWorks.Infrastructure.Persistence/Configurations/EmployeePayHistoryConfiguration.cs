@@ -13,6 +13,9 @@ public class EmployeePayHistoryConfiguration : IEntityTypeConfiguration<Employee
 
         builder.HasKey(a => new { a.BusinessEntityId, a.RateChangeDate });
 
+        builder.Property(a => a.RateChangeDate).HasColumnType("datetime");
+        builder.Property(a => a.ModifiedDate).HasColumnType("datetime");
+
         builder.HasOne(a => a.BusinessEntity)
             .WithMany(b => b.EmployeePayHistory)
             .HasForeignKey(a => a.BusinessEntityId);

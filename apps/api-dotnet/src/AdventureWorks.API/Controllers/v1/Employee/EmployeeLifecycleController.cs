@@ -9,7 +9,7 @@ using Microsoft.AspNetCore.Mvc;
 namespace AdventureWorks.API.Controllers.v1.Employee;
 
 /// <summary>
-/// Controller for managing employee lifecycle operations including hire, terminate, rehire, and department transfers.
+/// Controller for managing employee lifecycle operations including hire, terminate, rehire, department transfers, and pay changes.
 /// </summary>
 [ApiController]
 [ApiVersion("1.0")]
@@ -303,6 +303,57 @@ public sealed class EmployeeLifecycleController : ControllerBase
         catch (KeyNotFoundException ex)
         {
             _logger.LogWarning(ex, "Employee {EmployeeId} not found during department transfer", employeeId);
+            return NotFound(ex.Message);
+        }
+    }
+
+    /// <summary>
+    /// Records a pay change for an employee by inserting a new pay history record.
+    /// </summary>
+    /// <param name="employeeId">The employee's business entity identifier.</param>
+    /// <param name="model">The pay change details including rate and pay frequency.</param>
+    /// <param name="cancellationToken">Cancellation token.</param>
+    /// <returns>201 Created with location pointing to the employee's pay history.</returns>
+    /// <response code="201">Pay change recorded; location header points to pay history.</response>
+    /// <response code="400">Invalid input or business rule violation (e.g., rate out of range, invalid frequency, inactive employee).</response>
+    /// <response code="401">Unauthorized - authentication required.</response>
+    /// <response code="404">Employee not found.</response>
+    [HttpPost("{employeeId:int}/pay-changes")]
+    [ProducesResponseType(StatusCodes.Status201Created)]
+    [ProducesResponseType(StatusCodes.Status400BadRequest)]
+    [ProducesResponseType(StatusCodes.Status401Unauthorized)]
+    [ProducesResponseType(StatusCodes.Status404NotFound)]
+    public async Task<IActionResult> RecordPayChangeAsync(
+        int employeeId,
+        [FromBody] EmployeePayChangeCreateModel? model,
+        CancellationToken cancellationToken)
+    {
+        if (employeeId <= 0)
+            return BadRequest("The employee identifier must be a positive integer.");
+
+        if (model is null)
+            return BadRequest("The pay change input model cannot be null.");
+
+        _logger.LogInformation("Recording pay change for employee {EmployeeId}: Frequency={Frequency}.",
+            employeeId, model.PayFrequency);
+
+        try
+        {
+            var command = new RecordEmployeePayChangeCommand
+            {
+                EmployeeId = employeeId,
+                Model = model,
+                ModifiedDate = DateTime.UtcNow,
+                RateChangeDate = DateTime.UtcNow
+            };
+            await _mediator.Send(command, cancellationToken);
+
+            _logger.LogInformation("Pay change recorded for employee {EmployeeId}.", employeeId);
+            return CreatedAtRoute("GetEmployeePayHistory", new { version = "1.0", employeeId }, null);
+        }
+        catch (KeyNotFoundException ex)
+        {
+            _logger.LogWarning(ex, "Employee {EmployeeId} not found during pay change.", employeeId);
             return NotFound(ex.Message);
         }
     }

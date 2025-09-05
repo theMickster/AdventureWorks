@@ -416,6 +416,31 @@ internal sealed class HumanResourcesDomainFixtures : UnitTestFixtureBase
     }
 
     /// <summary>
+    /// Creates a valid EmployeePayChangeCreateModel with default values.
+    /// </summary>
+    internal static EmployeePayChangeCreateModel GetValidEmployeePayChangeCreateModel(
+        decimal rate = 50.00m,
+        byte payFrequency = HumanResourcesConstants.PayFrequencyBiWeekly) =>
+        new() { Rate = rate, PayFrequency = payFrequency };
+
+    /// <summary>
+    /// Creates a valid EmployeePayHistory entity for testing.
+    /// </summary>
+    internal static EmployeePayHistory GetValidEmployeePayHistoryEntity(
+        int businessEntityId = 100,
+        decimal rate = 50.00m,
+        byte payFrequency = HumanResourcesConstants.PayFrequencyBiWeekly,
+        DateTime? rateChangeDate = null) =>
+        new()
+        {
+            BusinessEntityId = businessEntityId,
+            RateChangeDate = rateChangeDate ?? HumanResourcesDefaultAuditDate,
+            Rate = rate,
+            PayFrequency = payFrequency,
+            ModifiedDate = HumanResourcesDefaultAuditDate
+        };
+
+    /// <summary>
     /// Creates an employee entity with department history for termination/rehire testing.
     /// </summary>
     internal static EmployeeEntity GetEmployeeWithDepartmentHistory(

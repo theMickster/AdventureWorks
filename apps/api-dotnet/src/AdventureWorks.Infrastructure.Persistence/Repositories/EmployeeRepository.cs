@@ -351,6 +351,33 @@ public sealed class EmployeeRepository(AdventureWorksDbContext dbContext)
     }
 
     /// <summary>
+    /// Retrieves all pay history records for an employee, ordered by RateChangeDate descending.
+    /// </summary>
+    public async Task<IReadOnlyList<EmployeePayHistory>> GetEmployeePayHistoryAsync(
+        int businessEntityId,
+        CancellationToken cancellationToken = default)
+    {
+        var records = await DbContext.EmployeePayHistories
+            .AsNoTracking()
+            .Where(x => x.BusinessEntityId == businessEntityId)
+            .OrderByDescending(x => x.RateChangeDate)
+            .ToListAsync(cancellationToken);
+
+        return records.AsReadOnly();
+    }
+
+    /// <summary>
+    /// Inserts a new pay history record and saves changes.
+    /// </summary>
+    public async Task RecordPayChangeAsync(
+        EmployeePayHistory record,
+        CancellationToken cancellationToken = default)
+    {
+        await DbContext.EmployeePayHistories.AddAsync(record, cancellationToken);
+        await DbContext.SaveChangesAsync(cancellationToken);
+    }
+
+    /// <summary>
     /// Transfers an employee to a new department and/or shift within a single transaction.
     /// Closes the active department assignment (sets EndDate) and inserts a new open record.
     /// Re-fetches the active record inside the transaction to prevent stale-data races between

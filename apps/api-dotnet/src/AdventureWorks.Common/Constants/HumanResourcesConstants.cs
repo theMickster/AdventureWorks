@@ -36,6 +36,16 @@ public static class HumanResourcesConstants
     public const decimal MaximumPayRate = 500.00m;
 
     /// <summary>
+    /// Minimum pay rate allowed when recording a pay history entry, matching the CK_EmployeePayHistory_Rate DB constraint.
+    /// </summary>
+    public const decimal PayHistoryMinimumRate = 6.50m;
+
+    /// <summary>
+    /// Maximum pay rate allowed when recording a pay history entry, matching the CK_EmployeePayHistory_Rate DB constraint.
+    /// </summary>
+    public const decimal PayHistoryMaximumRate = 200.00m;
+
+    /// <summary>
     /// Maximum days in the future a hire date can be scheduled.
     /// </summary>
     public const int MaximumFutureHireDays = 30;

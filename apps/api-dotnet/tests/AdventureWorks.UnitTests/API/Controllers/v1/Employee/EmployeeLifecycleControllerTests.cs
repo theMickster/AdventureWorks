@@ -568,6 +568,101 @@ public sealed class EmployeeLifecycleControllerTests : UnitTestBase
 
     #endregion
 
+    #region RecordPayChangeAsync Tests
+
+    [Fact]
+    public async Task RecordPayChange_employeeId_zero_returns_BadRequestAsync()
+    {
+        var result = await _sut.RecordPayChangeAsync(0, new EmployeePayChangeCreateModel(), CancellationToken.None);
+
+        var objectResult = result as ObjectResult;
+
+        using (new AssertionScope())
+        {
+            objectResult.Should().NotBeNull();
+            objectResult!.StatusCode.Should().Be((int)HttpStatusCode.BadRequest);
+            objectResult.Value.Should().Be("The employee identifier must be a positive integer.");
+        }
+    }
+
+    [Fact]
+    public async Task RecordPayChange_employeeId_negative_returns_BadRequestAsync()
+    {
+        var result = await _sut.RecordPayChangeAsync(-1, new EmployeePayChangeCreateModel(), CancellationToken.None);
+
+        var objectResult = result as ObjectResult;
+
+        using (new AssertionScope())
+        {
+            objectResult.Should().NotBeNull();
+            objectResult!.StatusCode.Should().Be((int)HttpStatusCode.BadRequest);
+            objectResult.Value.Should().Be("The employee identifier must be a positive integer.");
+        }
+    }
+
+    [Fact]
+    public async Task RecordPayChange_null_model_returns_BadRequestAsync()
+    {
+        var result = await _sut.RecordPayChangeAsync(1, null, CancellationToken.None);
+
+        var objectResult = result as ObjectResult;
+
+        using (new AssertionScope())
+        {
+            objectResult.Should().NotBeNull();
+            objectResult!.StatusCode.Should().Be((int)HttpStatusCode.BadRequest);
+            objectResult.Value.Should().Be("The pay change input model cannot be null.");
+        }
+    }
+
+    [Fact]
+    public async Task RecordPayChange_KeyNotFoundException_returns_NotFoundAsync()
+    {
+        const string message = "Employee with ID 999 not found.";
+
+        _mockMediator
+            .Setup(x => x.Send(It.IsAny<RecordEmployeePayChangeCommand>(), It.IsAny<CancellationToken>()))
+            .ThrowsAsync(new KeyNotFoundException(message));
+
+        var model = new EmployeePayChangeCreateModel { Rate = 50m, PayFrequency = 2 };
+        var result = await _sut.RecordPayChangeAsync(999, model, CancellationToken.None);
+
+        var notFoundResult = result as NotFoundObjectResult;
+
+        using (new AssertionScope())
+        {
+            notFoundResult.Should().NotBeNull();
+            notFoundResult!.StatusCode.Should().Be((int)HttpStatusCode.NotFound);
+            notFoundResult.Value.Should().Be(message);
+        }
+    }
+
+    [Fact]
+    public async Task RecordPayChange_happy_path_returns_201_with_correct_routeAsync()
+    {
+        _mockMediator
+            .Setup(x => x.Send(It.IsAny<RecordEmployeePayChangeCommand>(), It.IsAny<CancellationToken>()))
+            .ReturnsAsync(Unit.Value);
+
+        var model = new EmployeePayChangeCreateModel { Rate = 50m, PayFrequency = 2 };
+        var result = await _sut.RecordPayChangeAsync(1, model, CancellationToken.None);
+
+        var createdResult = result as CreatedAtRouteResult;
+
+        using (new AssertionScope())
+        {
+            createdResult.Should().NotBeNull();
+            createdResult!.StatusCode.Should().Be((int)HttpStatusCode.Created);
+            createdResult.RouteName.Should().Be("GetEmployeePayHistory");
+            createdResult.RouteValues.Should().ContainKey("version")
+                .WhoseValue.Should().Be("1.0");
+            createdResult.RouteValues.Should().ContainKey("employeeId")
+                .WhoseValue.Should().Be(1);
+        }
+    }
+
+    #endregion
+
     #region GetLifecycleStatusAsync Tests
 
     [Fact]

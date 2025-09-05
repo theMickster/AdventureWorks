@@ -129,4 +129,23 @@ public interface IEmployeeRepository : IAsyncRepository<EmployeeEntity>
         DateTime transferDate,
         DateTime modifiedDate,
         CancellationToken cancellationToken = default);
+
+    /// <summary>
+    /// Retrieves all pay history records for an employee, ordered by RateChangeDate descending.
+    /// </summary>
+    /// <param name="businessEntityId">The employee's business entity identifier.</param>
+    /// <param name="cancellationToken">Cancellation token.</param>
+    /// <returns>A read-only list of EmployeePayHistory ordered by RateChangeDate descending.</returns>
+    Task<IReadOnlyList<EmployeePayHistory>> GetEmployeePayHistoryAsync(
+        int businessEntityId,
+        CancellationToken cancellationToken = default);
+
+    /// <summary>
+    /// Inserts a new pay history record and saves changes.
+    /// </summary>
+    /// <param name="record">The pay history record to insert.</param>
+    /// <param name="cancellationToken">Cancellation token.</param>
+    Task RecordPayChangeAsync(
+        EmployeePayHistory record,
+        CancellationToken cancellationToken = default);
 }
