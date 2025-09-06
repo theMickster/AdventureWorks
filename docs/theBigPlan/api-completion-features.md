@@ -20,7 +20,7 @@
 | 3    | Person Phone Management          | #903   | 4       | #904-#907                               |
 | 3    | Person Directory & Search        | #908   | 2       | #909-#910                               |
 | 3    | PersonCreditCard DbContext Fix   | #911   | 1       | #912 — **Done 2026-04-27**              |
-| 4    | Production Lookup Endpoints      | #913   | 4       | #914-#917 (Stories 4.1+4.2 → Done #699) |
+| 4    | Production Lookup Endpoints      | #913   | 4       | #914-#917 — **Done 2026-05-17**          |
 | 4    | Sales Lookup Endpoints           | #918   | 4       | #919-#922 — **Done 2026-05-07**         |
 
 **Reparented enabler Features** (now under #873, formerly under #561/#562):
@@ -1064,9 +1064,10 @@ Scenario: DbSet property exists and is functional
 
 ## Wave 4: Lookup Endpoint Blitz
 
-### Feature: Production Lookup Endpoints
+### Feature: Production Lookup Endpoints — **Done 2026-05-17**
 
 **Parent**: Epic #873 (closed Epic #552 superseded)
+**Status**: Done — Stories #914, #915, #916, #917 completed and merged.
 **Description**: Expose read-only GET endpoints for production domain reference data. These are used by dropdowns, filters, and forms throughout the Angular UI. Each entity gets a "get by ID" and "get list" endpoint. All queries use `.AsNoTracking()` and return lightweight DTOs. All controllers use `[Authorize]` consistent with the existing lookup controller pattern.
 
 **Entities**: `ProductCategory`, `ProductSubcategory` (include parent category name), `ProductModel`, `UnitMeasure`, `Location`, `ScrapReason`.
@@ -1122,7 +1123,7 @@ Scenario: Get non-existent product subcategory returns 404
   Then a 404 Not Found is returned
 ```
 
-#### Story 4.3: ProductModel Lookup Endpoints
+#### Story 4.3: ProductModel Lookup Endpoints — **Done 2026-05-17** (#914)
 
 **Description**: As an API consumer, I want to retrieve product models (single and list), so that model dropdowns and filters are populated.
 
@@ -1142,7 +1143,7 @@ Scenario: Get non-existent product model returns 404
   Then a 404 Not Found is returned
 ```
 
-#### Story 4.4: UnitMeasure Lookup Endpoints
+#### Story 4.4: UnitMeasure Lookup Endpoints — **Done 2026-05-17** (#915)
 
 **Description**: As an API consumer, I want to retrieve unit measures (single and list), so that measurement type dropdowns are populated.
 
@@ -1162,7 +1163,7 @@ Scenario: Get non-existent unit measure returns 404
   Then a 404 Not Found is returned
 ```
 
-#### Story 4.5: Location Lookup Endpoints
+#### Story 4.5: Location Lookup Endpoints — **Done 2026-05-17** (#916)
 
 **Description**: As an API consumer, I want to retrieve manufacturing locations (single and list), so that location dropdowns are populated for inventory and work order screens.
 
@@ -1182,7 +1183,7 @@ Scenario: Get non-existent location returns 404
   Then a 404 Not Found is returned
 ```
 
-#### Story 4.6: ScrapReason Lookup Endpoints
+#### Story 4.6: ScrapReason Lookup Endpoints — **Done 2026-05-17** (#917)
 
 **Description**: As an API consumer, I want to retrieve scrap reasons (single and list), so that work order scrap tracking dropdowns are populated.
 
@@ -1321,7 +1322,7 @@ Scenario: Get non-existent ship method returns 404
 | 3                               | Person Phone Management          | #903 | 4 (#904-#907)                  | POST, PUT, DELETE                 | GET                               |
 | 3                               | Person Directory & Search        | #908 | 2 (#909-#910)                  | --                                | POST search, GET                  |
 | 3                               | PersonCreditCard DbContext Fix   | #911 | 1 (#912)                       | --                                | Bug fix                           |
-| 4                               | Production Lookup Endpoints      | #913 | 4 (#914-#917) [4.1+4.2 → #699] | --                                | GET x8 (4 entities × 2 endpoints) |
+| 4                               | Production Lookup Endpoints ✅   | #913 | 4 (#914-#917) [4.1+4.2 → #699] | --                                | GET x8 — Done 2026-05-17          |
 | 4                               | Sales Lookup Endpoints ✅        | #918 | 4 (#919-#922)                  | --                                | GET x8 — Done 2026-05-07         |
 | **Total net-new**               |                                  |      | **13 Features / 36 Stories**   |                                   |                                   |
 | **Reparented**                  | #715, #716, #722                 | (3)  | **+10 Stories**                | (DB views/indexes + HR endpoints) |
