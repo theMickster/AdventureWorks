@@ -36,4 +36,10 @@
 		<ProjectReference Include="..\AdventureWorks.Infrastructure.Persistence\AdventureWorks.Infrastructure.Persistence.csproj" />
 	</ItemGroup>
 
+	<ItemGroup>
+		<Content Update="appsettings.Testing.json">
+			<CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+		</Content>
+	</ItemGroup>
+
 </Project>

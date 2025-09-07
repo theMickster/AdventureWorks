@@ -23,6 +23,12 @@
 | 4    | Production Lookup Endpoints      | #913   | 4       | #914-#917 — **Done 2026-05-17**          |
 | 4    | Sales Lookup Endpoints           | #918   | 4       | #919-#922 — **Done 2026-05-07**         |
 
+**Enabler Features** (infrastructure / test tooling, tracked separately from Wave 1–4):
+
+| Feature                                              | ADO ID | Stories | Story IDs                               |
+| ---------------------------------------------------- | ------ | ------- | --------------------------------------- |
+| .NET API Integration Tests with WebApplicationFactory | #669   | 4       | #673-#676 — **Done 2026-05-18**         |
+
 **Reparented enabler Features** (now under #873, formerly under #561/#562):
 
 - #715 (Sales Database Views & Indexes) — 3 stories: #746-#748

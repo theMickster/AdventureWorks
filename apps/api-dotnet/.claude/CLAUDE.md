@@ -25,7 +25,8 @@ Enterprise-grade RESTful API built with .NET 10.0 implementing Clean Architectur
 | Task                                                                                                                          | Guide                                                                      |
 | ----------------------------------------------------------------------------------------------------------------------------- | -------------------------------------------------------------------------- |
 | Adding or implementing a feature / endpoint                                                                                   | [`guides/adding-features.md`](guides/adding-features.md)                   |
-| Writing tests (handler / controller / validator)                                                                              | [`guides/testing-guide.md`](guides/testing-guide.md)                       |
+| Writing unit tests (handler / controller / validator)                                                                         | [`guides/testing-guide.md`](guides/testing-guide.md)                       |
+| Writing integration tests (HTTP pipeline, middleware, auth gate)                                                              | [`guides/testing-guide.md`](guides/testing-guide.md) — Integration section |
 | Editing Postman collections, environments, or scripts — **required reading before any edit under `apps/api-dotnet/postman/`** | [`guides/postman-guide.md`](guides/postman-guide.md)                       |
 | Configuring the VS Code debugger (FluentValidation / KeyNotFound exception filters)                                           | [`guides/debugging-guide.md`](guides/debugging-guide.md)                   |
 | Smoke-testing live endpoints with a dev token (curl)                                                                          | [`skills/smoke-testing-dotnet-api.md`](skills/smoke-testing-dotnet-api.md) |
@@ -259,7 +260,9 @@ dotnet test --collect:"XPlat Code Coverage"   # With coverage
 dotnet test --filter "FullyQualifiedName~CreateStore"  # Filtered
 ```
 
-**Environment:** Moq, FluentAssertions, xUnit, EF Core In-Memory, `UnitTestBase` for fixtures
+**Unit tests** — `AdventureWorks.UnitTests`: Moq, FluentAssertions, xUnit, EF Core In-Memory, `UnitTestBase` for fixtures
+
+**Integration tests** — `AdventureWorks.IntegrationTests`: `WebApplicationFactory<Program>`, EF Core InMemory (per-factory-instance isolation), `IntegrationTestBase` + `CustomWebApplicationFactory`, xUnit collection fixture for shared factory lifecycle. Use integration tests to verify HTTP pipeline behavior (middleware, routing, auth gates, health/version endpoints) that unit tests cannot observe.
 
 ---
 

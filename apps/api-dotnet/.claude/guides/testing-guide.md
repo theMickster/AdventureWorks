@@ -21,6 +21,12 @@ tests/
 │   │   └── Repositories/             # Repository tests (in-memory DB)
 │   └── Common/                       # Utility/helper tests
 │
+├── AdventureWorks.IntegrationTests/  # In-process HTTP integration tests
+│   ├── Setup/                        # Factory, auth handler, seeder, base class
+│   ├── AuthGate/                     # Auth gate tests (401/200/201)
+│   ├── Middleware/                   # CorrelationId + ExceptionHandler middleware tests
+│   └── Endpoints/                    # Health check + version endpoint tests
+│
 └── AdventureWorks.Test.Common/       # Shared test utilities
     ├── Extensions/                   # Test helper extensions
     └── Setup/Fakes/                  # Mock/fake implementations
@@ -293,6 +299,65 @@ dotnet test --parallel
 
 ---
 
+## Integration Tests
+
+Integration tests live in `AdventureWorks.IntegrationTests` and verify the assembled HTTP pipeline — middleware ordering, routing, `[Authorize]` gates, and error serialization — behaviors that unit tests cannot observe.
+
+### When to write integration tests vs. unit tests
+
+- **Unit test**: handler logic, validator rules, AutoMapper profiles, repository queries.
+- **Integration test**: middleware behavior (correlation ID, exception handling), auth gate (401 vs 200), health/version endpoints, end-to-end HTTP contract.
+
+### Key types
+
+| Type | Purpose |
+|------|---------|
+| `CustomWebApplicationFactory` | Replaces SQL Server with EF Core InMemory; replaces JWT Bearer with `TestAuthHandler`. One instance shared per xUnit collection via `ICollectionFixture<T>`. |
+| `IntegrationTestBase` | Base class for all integration test classes. Provides `CreateAuthenticatedClient()`, `CreateAnonymousClient()`, `SeedAsync()`, and `DeserializeAsync<T>()`. |
+| `TestAuthHandler` | Returns `AuthenticateResult.Success` for normal requests. Returns `AuthenticateResult.NoResult` when the `X-Test-Anonymous` header is present, causing `[Authorize]` to emit 401. |
+| `TestDataSeeder` | Seeds a known `StoreEntity` (ID 292) into the InMemory DB at factory startup. |
+
+### Integration test template
+
+```csharp
+public sealed class MyFeatureTests : IntegrationTestBase
+{
+    public MyFeatureTests(CustomWebApplicationFactory factory) : base(factory) { }
+
+    [Fact]
+    public async Task Get_Authenticated_Returns200()
+    {
+        var client = CreateAuthenticatedClient();
+
+        var response = await client.GetAsync("/api/v1.0/stores/292");
+
+        response.StatusCode.Should().Be(HttpStatusCode.OK);
+    }
+
+    [Fact]
+    public async Task Get_Anonymous_Returns401()
+    {
+        var client = CreateAnonymousClient();
+
+        var response = await client.GetAsync("/api/v1.0/stores/292");
+
+        response.StatusCode.Should().Be(HttpStatusCode.Unauthorized);
+    }
+}
+```
+
+### Running integration tests
+
+```bash
+# Integration tests only
+dotnet test apps/api-dotnet/AdventureWorks.sln --filter "Project=AdventureWorks.IntegrationTests" -- xUnit.MaxParallelThreads=1
+
+# Full suite (unit + integration)
+dotnet test apps/api-dotnet/AdventureWorks.sln -- xUnit.MaxParallelThreads=1
+```
+
+---
+
 ## Test Environment
 
 | Component | Tool/Library | Purpose |
@@ -300,7 +365,8 @@ dotnet test --parallel
 | Test Framework | xUnit | `[Fact]` and `[Theory]` attributes |
 | Mocking | Moq 4.x | Repository/service mocks |
 | Assertions | FluentAssertions | Readable test assertions |
-| In-Memory DB | EF Core In-Memory | Repository integration tests |
-| Test Fixtures | `UnitTestBase` | Common test data (`DefaultAuditDate`) |
+| In-Memory DB | EF Core In-Memory | Repository integration tests + integration test host |
+| Test Fixtures | `UnitTestBase` | Common test data (`DefaultAuditDate`) for unit tests |
+| Integration Host | `WebApplicationFactory<Program>` | In-process HTTP server for integration tests |
 
 **Code Coverage Target**: 80%+ for handlers, validators, and critical business logic

@@ -41,14 +41,16 @@ builder.Configuration
     .AddUserSecrets<Program>()
     .Build();
 
-if (!environment.IsEnvironment("Docker"))
+var skipExternalConfig = !environment.IsEnvironment("Docker") && !environment.IsEnvironment("Testing");
+
+if (skipExternalConfig)
 {
     builder.Configuration.RegisterApplicationConfiguration();
 }
 
 builder.Services.AddAdventureWorksLogging(builder.Configuration);
 
-if (!environment.IsEnvironment("Docker"))
+if (skipExternalConfig)
 {
     builder.RegisterCommonSettings();
 }
