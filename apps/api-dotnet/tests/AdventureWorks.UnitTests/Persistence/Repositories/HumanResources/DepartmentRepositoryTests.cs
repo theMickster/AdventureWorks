@@ -64,4 +64,38 @@ public sealed class DepartmentRepositoryTests : PersistenceUnitTestBase
             result!.DepartmentId.Should().Be((short)id);
         }
     }
+
+    [Fact]
+    public async Task ExistsByNameAsync_returns_true_when_name_existsAsync()
+    {
+        var result = await _sut.ExistsByNameAsync("Engineering");
+
+        result.Should().BeTrue();
+    }
+
+    [Fact]
+    public async Task ExistsByNameAsync_returns_false_when_name_does_not_existAsync()
+    {
+        var result = await _sut.ExistsByNameAsync("NonExistentDepartment");
+
+        result.Should().BeFalse();
+    }
+
+    [Fact]
+    public async Task ExistsByNameExcludingIdAsync_returns_false_when_name_belongs_to_excluded_idAsync()
+    {
+        // "Engineering" is department ID 1; excluding ID 1 should return false
+        var result = await _sut.ExistsByNameExcludingIdAsync("Engineering", excludeId: 1);
+
+        result.Should().BeFalse();
+    }
+
+    [Fact]
+    public async Task ExistsByNameExcludingIdAsync_returns_true_when_name_belongs_to_different_departmentAsync()
+    {
+        // "Engineering" belongs to ID 1; excluding ID 2 means ID 1 still matches
+        var result = await _sut.ExistsByNameExcludingIdAsync("Engineering", excludeId: 2);
+
+        result.Should().BeTrue();
+    }
 }

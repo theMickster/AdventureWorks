@@ -7,6 +7,7 @@ using AdventureWorks.Common.Helpers;
 using AdventureWorks.Domain.Entities.HumanResources;
 using AdventureWorks.Domain.Entities.Person;
 using AdventureWorks.Infrastructure.Persistence.DbContexts;
+using AdventureWorks.Models.Features.HumanResources;
 using Microsoft.EntityFrameworkCore;
 
 namespace AdventureWorks.Infrastructure.Persistence.Repositories;
@@ -375,6 +376,57 @@ public sealed class EmployeeRepository(AdventureWorksDbContext dbContext)
     {
         await DbContext.EmployeePayHistories.AddAsync(record, cancellationToken);
         await DbContext.SaveChangesAsync(cancellationToken);
+    }
+
+    /// <summary>
+    /// Returns a flat org tree using raw SQL to access the hierarchyid column, which is not mapped to the entity.
+    /// Column aliases match EmployeeOrgTreeItemModel property names exactly for SqlQueryRaw projection.
+    /// </summary>
+    public async Task<IReadOnlyList<EmployeeOrgTreeItemModel>> GetOrgTreeAsync(
+        CancellationToken cancellationToken = default)
+    {
+        var results = await DbContext.Database
+            .SqlQueryRaw<EmployeeOrgTreeItemModel>(
+                """
+                SELECT
+                    e.BusinessEntityID      AS EmployeeId,
+                    p.FirstName + ' ' + p.LastName AS FullName,
+                    e.JobTitle              AS JobTitle,
+                    ISNULL(d.Name, '')      AS DepartmentName,
+                    e.OrganizationLevel     AS OrganizationLevel,
+                    parent_e.BusinessEntityID AS ParentEmployeeId
+                FROM HumanResources.Employee e
+                INNER JOIN Person.Person p
+                    ON e.BusinessEntityID = p.BusinessEntityID
+                LEFT JOIN HumanResources.EmployeeDepartmentHistory edh
+                    ON e.BusinessEntityID = edh.BusinessEntityID AND edh.EndDate IS NULL
+                LEFT JOIN HumanResources.Department d
+                    ON edh.DepartmentID = d.DepartmentID
+                LEFT JOIN HumanResources.Employee parent_e
+                    ON parent_e.OrganizationNode = e.OrganizationNode.GetAncestor(1)
+                WHERE e.CurrentFlag = 1
+                ORDER BY e.OrganizationLevel, e.BusinessEntityID
+                """)
+            .ToListAsync(cancellationToken);
+
+        return results.AsReadOnly();
+    }
+
+    /// <summary>
+    /// Returns all active employees with their current department assignment (filtered include) and full pay history.
+    /// </summary>
+    public async Task<IReadOnlyList<EmployeeEntity>> GetActiveEmployeesWithPayHistoryAsync(
+        CancellationToken cancellationToken = default)
+    {
+        var results = await DbContext.Employees
+            .AsNoTracking()
+            .Where(e => e.CurrentFlag)
+            .Include(e => e.EmployeeDepartmentHistory.Where(edh => edh.EndDate == null))
+                .ThenInclude(edh => edh.Department)
+            .Include(e => e.EmployeePayHistory)
+            .ToListAsync(cancellationToken);
+
+        return results.AsReadOnly();
     }
 
     /// <summary>

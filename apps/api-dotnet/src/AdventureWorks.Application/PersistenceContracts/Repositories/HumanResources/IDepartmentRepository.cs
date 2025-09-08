@@ -2,7 +2,7 @@ using AdventureWorks.Domain.Entities.HumanResources;
 
 namespace AdventureWorks.Application.PersistenceContracts.Repositories.HumanResources;
 
-public interface IDepartmentRepository : IReadOnlyAsyncRepository<DepartmentEntity>
+public interface IDepartmentRepository : IAsyncRepository<DepartmentEntity>
 {
     /// <summary>Returns the count of active employees with an open assignment in the specified department.</summary>
     Task<int> GetDepartmentHeadcountAsync(
@@ -19,4 +19,10 @@ public interface IDepartmentRepository : IReadOnlyAsyncRepository<DepartmentEnti
         int page,
         int pageSize,
         CancellationToken cancellationToken = default);
+
+    /// <summary>Returns true if a department with the given name already exists.</summary>
+    Task<bool> ExistsByNameAsync(string name, CancellationToken cancellationToken = default);
+
+    /// <summary>Returns true if a department with the given name already exists, excluding the specified department ID.</summary>
+    Task<bool> ExistsByNameExcludingIdAsync(string name, short excludeId, CancellationToken cancellationToken = default);
 }

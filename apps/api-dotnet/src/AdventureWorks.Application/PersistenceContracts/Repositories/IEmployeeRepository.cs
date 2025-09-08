@@ -1,6 +1,7 @@
 using AdventureWorks.Common.Filtering;
 using AdventureWorks.Domain.Entities.HumanResources;
 using AdventureWorks.Domain.Entities.Person;
+using AdventureWorks.Models.Features.HumanResources;
 
 namespace AdventureWorks.Application.PersistenceContracts.Repositories;
 
@@ -148,4 +149,17 @@ public interface IEmployeeRepository : IAsyncRepository<EmployeeEntity>
     Task RecordPayChangeAsync(
         EmployeePayHistory record,
         CancellationToken cancellationToken = default);
+
+    /// <summary>
+    /// Returns a flat list of all active employees with org hierarchy data.
+    /// ParentEmployeeId is null for the root (CEO) node.
+    /// Executed via raw SQL to access the hierarchyid column not mapped to the entity.
+    /// </summary>
+    Task<IReadOnlyList<EmployeeOrgTreeItemModel>> GetOrgTreeAsync(CancellationToken cancellationToken = default);
+
+    /// <summary>
+    /// Returns all active employees with their current department assignment and full pay history.
+    /// Used for computing HR dashboard aggregate statistics in memory.
+    /// </summary>
+    Task<IReadOnlyList<EmployeeEntity>> GetActiveEmployeesWithPayHistoryAsync(CancellationToken cancellationToken = default);
 }

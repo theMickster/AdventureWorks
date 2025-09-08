@@ -31,74 +31,10 @@ Each application/service has its own CLAUDE.md with technology-specific instruct
 
 **Branch Strategy:**
 
-- `main` - Production-ready code
-- `develop` - Integration branch (future)
-- `feature/*` - Feature branches
-- `bugfix/*` - Bug fix branches
-
-**Commit Message Format:**
-
-```
-<type>(<scope>): <subject>
-
-<body>
-
-Co-Authored-By: Claude Sonnet 4.5 <noreply@anthropic.com>
-```
-
-**Types**: `feat`, `fix`, `refactor`, `docs`, `test`, `chore`
-**Scopes**: `api`, `web`, `db`, `auth`, `sales`, etc.
-
-**Example:**
-
-```
-feat(api): add customer CRUD endpoints
-
-Implements Create, Read, Update, Delete operations for customers
-following Clean Architecture and CQRS patterns.
-
-Co-Authored-By: Claude Sonnet 4.5 <noreply@anthropic.com>
-```
-
-### Creating Commits
-
-**ONLY create commits when the user explicitly asks.** Follow these steps:
-
-1. Run `git status` and `git diff` (both staged and unstaged)
-2. Draft a commit message following the format above
-3. Add relevant files: `git add <files>`
-4. Create commit with Co-Authored-By trailer
-5. Run `git status` after commit to verify
-
-**NEVER:**
-
-- Use `git commit --amend` unless explicitly requested
-- Use `--no-verify` or `--no-gpg-sign` flags
-- Force push to `main`/`master`
-- Commit files with secrets (`.env`, `credentials.json`)
-
-### Creating Pull Requests
-
-**When the user asks to create a PR:**
-
-1. Run `git status`, `git diff`, and `git log` to understand full scope
-2. Review ALL commits that will be included (not just latest)
-3. Draft PR summary covering all changes
-4. Use format:
-
-   ```markdown
-   ## Summary
-
-   - Bullet points of changes
-
-   ## Test plan
-
-   - [ ] Checklist of testing steps
-
-   🤖 Generated with [Claude Code](https://claude.com/claude-code)
-   ```
-
-5. Create PR: `gh pr create --title "..." --body "$(cat <<'EOF' ... EOF)"`
+- `main` - We are working in a capstone project. Keep it simple and only work off of main for now.
+- **NEVER** create a feature branch nor worktree unless specifically asked to do so.
+- **NEVER** commit code nor suggest to commit code. Claude Code writes code. Humans commit
+- **NEVER** raise a pull-request nor suggest to raise a pull request. Humans do that work.
 
 ### Naming Conventions
 
@@ -302,13 +238,3 @@ Run `az resource list` before writing Bicep or docs. Never assume names follow a
 ### Root Cause First
 
 If a fix produces the same category of failure, stop. State the root cause, find all instances, fix them in one pass.
-
-### Always Use the Dev Team
-
-For non-trivial changes: implement → security review → code review → fix findings → iterate until clean. Never skip code review.
-
----
-
-**Version**: Monorepo Structure v1.2
-**Last Updated**: 2026-03-23
-**Primary Application**: .NET 10.0 REST API (Clean Architecture with CQRS)

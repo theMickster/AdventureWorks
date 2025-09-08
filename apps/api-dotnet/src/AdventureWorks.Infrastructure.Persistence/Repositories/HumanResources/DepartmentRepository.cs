@@ -8,7 +8,7 @@ using AdventureWorks.Domain.Entities.HumanResources;
 namespace AdventureWorks.Infrastructure.Persistence.Repositories.HumanResources;
 
 [ServiceLifetimeScoped]
-public sealed class DepartmentRepository : ReadOnlyEfRepository<DepartmentEntity>, IDepartmentRepository
+public sealed class DepartmentRepository : EfRepository<DepartmentEntity>, IDepartmentRepository
 {
     public DepartmentRepository(AdventureWorksDbContext dbContext) : base(dbContext)
     {
@@ -17,6 +17,7 @@ public sealed class DepartmentRepository : ReadOnlyEfRepository<DepartmentEntity
     public override async Task<IReadOnlyList<DepartmentEntity>> ListAllAsync(CancellationToken cancellationToken = default)
     {
         return await DbContext.Departments
+            .AsNoTracking()
             .ToListAsync(cancellationToken);
     }
 
@@ -29,6 +30,7 @@ public sealed class DepartmentRepository : ReadOnlyEfRepository<DepartmentEntity
     public override async Task<DepartmentEntity?> GetByIdAsync(int id, CancellationToken cancellationToken = default)
     {
         return await DbContext.Departments
+            .AsNoTracking()
             .FirstOrDefaultAsync(s => s.DepartmentId == id, cancellationToken);
     }
 
@@ -99,5 +101,19 @@ public sealed class DepartmentRepository : ReadOnlyEfRepository<DepartmentEntity
             .ToListAsync(cancellationToken);
 
         return (employees.AsReadOnly(), totalCount);
+    }
+
+    public async Task<bool> ExistsByNameAsync(string name, CancellationToken cancellationToken = default)
+    {
+        return await DbContext.Departments
+            .AsNoTracking()
+            .AnyAsync(d => d.Name == name, cancellationToken);
+    }
+
+    public async Task<bool> ExistsByNameExcludingIdAsync(string name, short excludeId, CancellationToken cancellationToken = default)
+    {
+        return await DbContext.Departments
+            .AsNoTracking()
+            .AnyAsync(d => d.Name == name && d.DepartmentId != excludeId, cancellationToken);
     }
 }
