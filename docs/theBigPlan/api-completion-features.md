@@ -16,7 +16,7 @@
 | 2    | Employee Department Transfer     | #890   | 1       | #891 (Story 2.2 → existing #751)        |
 | 2    | Employee Pay Management          | #892   | 1       | #893 (Story 2.4 → existing #750)        |
 | 2    | Department Reporting             | #894   | 3       | #895-#897                               |
-| 3    | Person Email Management          | #898   | 4       | #899-#902                               |
+| 3    | Person Email Management          | #898   | 4       | #899-#902 — **Done 2026-05-18**         |
 | 3    | Person Phone Management          | #903   | 4       | #904-#907                               |
 | 3    | Person Directory & Search        | #908   | 2       | #909-#910                               |
 | 3    | PersonCreditCard DbContext Fix   | #911   | 1       | #912 — **Done 2026-04-27**              |
@@ -712,9 +712,10 @@ Scenario: Non-existent department returns 404
 
 ## Wave 3: Person Foundation
 
-### Feature: Person Email Management
+### Feature: Person Email Management — **Done 2026-05-18**
 
 **Parent**: Epic #873 (closed Epic #552 superseded)
+**Status**: Done — Stories #899, #900, #901, #902 completed and merged.
 **Description**: Expose CRUD operations for managing email addresses associated with a person. The `EmailAddressEntity` table supports multiple emails per person with a sequential `EmailAddressId` per `BusinessEntityId`. This is a foundational capability needed by the Person Directory and by store/employee contact management screens.
 
 **Technical scope**: New controllers under `Controllers/v1/Persons/`, new commands/queries under `Application/Features/Person/`. Repository operations on `EmailAddressEntity`. New DTOs: `PersonEmailModel`, `PersonEmailCreateModel`, `PersonEmailUpdateModel`. All writes require `[Authorize]`.
@@ -727,7 +728,7 @@ Key invariants:
 - Email format is validated; duplicate emails per person are rejected
 - Non-existent person returns 404
 
-#### Story 3.1: List Emails for a Person
+#### Story 3.1: List Emails for a Person — **Done 2026-05-18** (#899)
 
 **Description**: As an API consumer, I want to list all email addresses for a person, so that contact information is accessible.
 
@@ -750,7 +751,7 @@ Scenario: Non-existent person returns 404
   Then a 404 Not Found is returned
 ```
 
-#### Story 3.2: Add Email to a Person
+#### Story 3.2: Add Email to a Person — **Done 2026-05-18** (#900)
 
 **Description**: As an API consumer, I want to add an email address to a person, so that contact information is expanded.
 
@@ -786,7 +787,7 @@ Scenario: Authentication required
   Then a 401 Unauthorized is returned
 ```
 
-#### Story 3.3: Update an Email
+#### Story 3.3: Update an Email — **Done 2026-05-18** (#901)
 
 **Description**: As an API consumer, I want to update an existing email address for a person, so that outdated contact info is corrected.
 
@@ -820,7 +821,7 @@ Scenario: Authentication required
   Then a 401 Unauthorized is returned
 ```
 
-#### Story 3.4: Delete an Email
+#### Story 3.4: Delete an Email — **Done 2026-05-18** (#902)
 
 **Description**: As an API consumer, I want to delete an email address from a person, so that obsolete contact information is removed.
 
@@ -1324,7 +1325,7 @@ Scenario: Get non-existent ship method returns 404
 | 2                               | Employee Department Transfer ✅  | #890 | 1 (#891) [2.2 → #751]          | POST                              | GET via #751                      |
 | 2                               | Employee Pay Management ✅       | #892 | 1 (#893) [2.4 → #750]          | POST                              | GET via #750 — Done 2026-05-16    |
 | 2                               | Department Reporting             | #894 | 3 (#895-#897)                  | --                                | GET x3                            |
-| 3                               | Person Email Management          | #898 | 4 (#899-#902)                  | POST, PUT, DELETE                 | GET                               |
+| 3                               | Person Email Management ✅       | #898 | 4 (#899-#902)                  | POST, PUT, DELETE                 | GET — Done 2026-05-18             |
 | 3                               | Person Phone Management          | #903 | 4 (#904-#907)                  | POST, PUT, DELETE                 | GET                               |
 | 3                               | Person Directory & Search        | #908 | 2 (#909-#910)                  | --                                | POST search, GET                  |
 | 3                               | PersonCreditCard DbContext Fix   | #911 | 1 (#912)                       | --                                | Bug fix                           |

@@ -7,7 +7,7 @@
 **Current Status Summary** (as of 2026-04-30):
 
 - ✅ Backend API Round 1: Epic #552 closed (Done) — Store Manager, Products Manager, ProductReview, CQRS foundation
-- 🔄 Backend API Round 2: Epic #873 (API Completion) in progress — 6 of 16 Features Done (#874 Store Contact Mgmt, #878 Store Address Mgmt, #882 Store Analytics & Insights, #911 PersonCreditCard fix, #886 Sales Person Assignment Tracking, #913 Production Lookup Endpoints); 10 Features remaining
+- 🔄 Backend API Round 2: Epic #873 (API Completion) in progress — 7 of 16 Features Done (#874 Store Contact Mgmt, #878 Store Address Mgmt, #882 Store Analytics & Insights, #911 PersonCreditCard fix, #886 Sales Person Assignment Tracking, #913 Production Lookup Endpoints, #898 Person Email Mgmt); 9 Features remaining
 - ✅ Frontend Foundation: Angular Foundation (Epic #560) complete — all 9 features done
 - ✅ Frontend Data Layer: Data Interaction Layer (Epic #577) 83% complete — Feature #620 done, #621 (SignalR) remaining
 - ❌ Azure Functions: Planned as Epic #569 (Polyglot Azure Functions Architecture) - not yet started
@@ -43,7 +43,7 @@
 
 - ✅ **Wave 1**: Store Manager Completion — ✅ #874 (Contact Mgmt, Done 2026-04-27), ✅ #878 (Address Mgmt, Done 2026-04-29), ✅ #882 (Analytics, Done 2026-04-30), ✅ #886 (Sales Person Assignment Tracking, Done 2026-05-11)
 - 📋 **Wave 2**: HR Process Completion — Features #890 (Department Transfer), #892 (Pay Management), #894 (Department Reporting) — 5 stories (#891, #893, #895-#897). Stories 2.2, 2.4 covered by existing #751, #750.
-- 🔄 **Wave 3**: Person Foundation — 📋 #898 (Email Mgmt), 📋 #903 (Phone Mgmt), 📋 #908 (Directory & Search), ✅ #911 (PersonCreditCard fix, Done 2026-04-27) — 10 stories remaining
+- 🔄 **Wave 3**: Person Foundation — ✅ #898 (Email Mgmt, Done 2026-05-18), 📋 #903 (Phone Mgmt), 📋 #908 (Directory & Search), ✅ #911 (PersonCreditCard fix, Done 2026-04-27) — 6 stories remaining
 - ✅ **Wave 4**: Lookup Endpoint Blitz — ✅ #913 (Production Lookups: 4 stories, Done 2026-05-17), ✅ #918 (Sales Lookups: 4 stories, Done 2026-05-07) — Stories 4.1, 4.2 covered by Done #699
 - 📋 **Reparented Enablers** (now under #873): #715 (Sales DB Views, 3 stories), #716 (HR API Endpoints, 5 stories), #722 (HR DB Views, 2 stories)
 - Full details: `docs/theBigPlan/api-completion-features.md`
@@ -309,7 +309,7 @@ The precise order for completing remaining work (577 → 552 API Completion → 
 
 | Feature                        | ID   | Stories       | Depends On   |
 | ------------------------------ | ---- | ------------- | ------------ |
-| Person Email Management        | #898 | #899-#902 (4) | --           |
+| Person Email Management        | #898 | #899-#902 (4) | ✅ Done 2026-05-18 |
 | Person Phone Management        | #903 | #904-#907 (4) | --           |
 | Person Directory & Search      | #908 | #909-#910 (2) | #898, #903   |
 | PersonCreditCard DbContext Fix | #911 | #912 (1)      | -- (bug fix) |
@@ -500,4 +500,4 @@ Each markdown file follows this structure:
 
 **Document Version**: 2.7
 **Last Updated**: 2026-05-11
-**Status**: Active Execution — Epic #560 complete, #570 complete, #577 83% complete (#621 SignalR remaining), #552 closed Done, **#873 API Completion in progress** — 6 of 16 Features Done (#874, #878, #882, #911, #886, #913); Wave 1 Store Manager complete, Wave 4 Lookup Blitz complete; #565 planned
+**Status**: Active Execution — Epic #560 complete, #570 complete, #577 83% complete (#621 SignalR remaining), #552 closed Done, **#873 API Completion in progress** — 7 of 16 Features Done (#874, #878, #882, #911, #886, #913, #898); Wave 1 Store Manager complete, Wave 4 Lookup Blitz complete, Wave 3 Email Mgmt complete; #565 planned

@@ -120,6 +120,8 @@ When a junction-table row needs to change a column that is part of its composite
 
 Reference implementations: `IBusinessEntityContactEntityRepository.ReplaceContactTypeAsync` (changes a store contact's `ContactTypeId`) and `IBusinessEntityAddressRepository.ReplaceAddressTypeAsync` (changes a store address's `AddressTypeId`). Both follow the same shape — the handler enforces uniqueness against the target composite key before calling the repository, and re-hydrates the row through `GetWithDetailsByCompositeKeyAsync` after the swap.
 
+**EF Core config for composite keys with an IDENTITY column**: When an IDENTITY column (e.g., `EmailAddressId`) is part of a composite primary key, you must call both `HasKey(composite)` AND `ValueGeneratedOnAdd()` on that column in `IEntityTypeConfiguration`. Without `ValueGeneratedOnAdd()`, EF Core does not recognise the column as database-generated and will try to insert the default value instead of letting SQL Server assign it. Reference: `EmailAddressConfiguration`.
+
 A close-and-insert variant of this pattern applies to temporal history tables: `IEmployeeRepository.TransferEmployeeDepartmentAsync` closes the active `EmployeeDepartmentHistory` record (sets `EndDate`) and inserts a new open record within a single transaction. Use a dedicated transactional repository method — not `UpdateAsync` + `AddAsync` separately — whenever atomicity across multiple history rows is required.
 
 ---

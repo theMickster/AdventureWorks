@@ -11,9 +11,10 @@ public class EmailAddressConfiguration : IEntityTypeConfiguration<EmailAddressEn
     {
         builder.ToTable("EmailAddress", "Person");
 
-        builder.Property(x => x.EmailAddressName).HasColumnName("EmailAddress");
+        builder.HasKey(a => new { a.BusinessEntityId, a.EmailAddressId });
 
-        builder.HasKey(a => a.EmailAddressId);
+        builder.Property(x => x.EmailAddressId).ValueGeneratedOnAdd();
+        builder.Property(x => x.EmailAddressName).HasColumnName("EmailAddress").HasMaxLength(50);
 
         builder.HasOne(a => a.BusinessEntity)
             .WithMany(b=>b.EmailAddresses)

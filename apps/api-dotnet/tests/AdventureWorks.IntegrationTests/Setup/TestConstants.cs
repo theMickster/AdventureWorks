@@ -31,4 +31,10 @@ internal static class TestConstants
     /// of the sales person record inserted by <see cref="TestDataSeeder"/>.
     /// </summary>
     internal const int SeededSalesPersonId = 279;
+
+    /// <summary>
+    /// <c>BusinessEntityId</c> of the <c>PersonEntity</c> seeded by <see cref="TestDataSeeder"/>.
+    /// Use this ID in tests that read or update email addresses for an existing person.
+    /// </summary>
+    internal const int SeededPersonId = 1001;
 }
