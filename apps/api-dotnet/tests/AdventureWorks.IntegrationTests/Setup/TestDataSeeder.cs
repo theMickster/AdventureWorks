@@ -60,6 +60,13 @@ internal static class TestDataSeeder
             ModifiedDate = AuditDate
         });
 
+        context.PhoneNumberTypes.Add(new PhoneNumberTypeEntity
+        {
+            PhoneNumberTypeId = TestConstants.SeededPhoneNumberTypeId,
+            Name = "Cell",
+            ModifiedDate = AuditDate
+        });
+
         await context.SaveChangesAsync();
     }
 }

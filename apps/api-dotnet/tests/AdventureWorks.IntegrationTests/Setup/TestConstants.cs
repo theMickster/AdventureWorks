@@ -37,4 +37,10 @@ internal static class TestConstants
     /// Use this ID in tests that read or update email addresses for an existing person.
     /// </summary>
     internal const int SeededPersonId = 1001;
+
+    /// <summary>
+    /// <c>PhoneNumberTypeId</c> of the <c>PhoneNumberTypeEntity</c> seeded by <see cref="TestDataSeeder"/>.
+    /// Use this ID in tests that create or update phone numbers for an existing person.
+    /// </summary>
+    internal const int SeededPhoneNumberTypeId = 1;
 }
