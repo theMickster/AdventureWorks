@@ -324,10 +324,10 @@ public sealed class PersonRepositoryTests : UnitTestBase
     }
 
     [Theory]
-    [InlineData("a1b2c3d4-e5f6-7890-abcd-ef1234567890")]
-    [InlineData("b2c3d4e5-f6a7-8901-bcde-f12345678901")]
-    [InlineData("c3d4e5f6-a7b8-9012-cdef-123456789012")]
-    public async Task GetEntraLinkedPersonAsync_WorksWithVariousGuids(string guidString)
+    [InlineData("a1b2c3d4-e5f6-7890-abcd-ef1234567890", 701)]
+    [InlineData("b2c3d4e5-f6a7-8901-bcde-f12345678901", 702)]
+    [InlineData("c3d4e5f6-a7b8-9012-cdef-123456789012", 703)]
+    public async Task GetEntraLinkedPersonAsync_WorksWithVariousGuids(string guidString, int id)
     {
         // Arrange
         var entraObjectId = Guid.Parse(guidString);
@@ -335,7 +335,7 @@ public sealed class PersonRepositoryTests : UnitTestBase
 
         var businessEntity = new BusinessEntity
         {
-            BusinessEntityId = 100 + guidString.GetHashCode() % 1000,
+            BusinessEntityId = id,
             Rowguid = entraObjectId,
             IsEntraUser = true,
             ModifiedDate = DefaultAuditDate
@@ -343,7 +343,7 @@ public sealed class PersonRepositoryTests : UnitTestBase
 
         var personType = new PersonTypeEntity
         {
-            PersonTypeId = 100 + guidString.GetHashCode() % 1000,
+            PersonTypeId = id,
             PersonTypeCode = "EM",
             PersonTypeName = "Employee",
             PersonTypeDescription = "Employee"
@@ -377,5 +377,164 @@ public sealed class PersonRepositoryTests : UnitTestBase
             result.Should().NotBeNull("because a valid entity exists for this GUID");
             result!.BusinessEntity.Rowguid.Should().Be(entraObjectId, "because Rowguid should match the search GUID");
         }
+    }
+
+    [Fact]
+    public async Task GetPersonDetailByIdAsync_ReturnsEntity_WithIncludedGraph()
+    {
+        await using var context = CreateInMemoryDbContext();
+
+        var personType = new PersonTypeEntity
+        {
+            PersonTypeId = 10,
+            PersonTypeCode = "EM",
+            PersonTypeName = "Employee",
+            PersonTypeDescription = "Employee"
+        };
+
+        var person = new PersonEntity
+        {
+            BusinessEntityId = 10,
+            PersonTypeId = 10,
+            FirstName = "Jane",
+            LastName = "Doe",
+            NameStyle = false,
+            EmailPromotion = 0,
+            Rowguid = Guid.NewGuid(),
+            ModifiedDate = DefaultAuditDate
+        };
+
+        var phoneNumberType = new PhoneNumberTypeEntity
+        {
+            PhoneNumberTypeId = 2,
+            Name = "Cell",
+            ModifiedDate = DefaultAuditDate
+        };
+
+        context.PersonTypes.Add(personType);
+        context.PhoneNumberTypes.Add(phoneNumberType);
+        context.Persons.Add(person);
+        context.EmailAddresses.Add(new EmailAddressEntity
+        {
+            BusinessEntityId = 10,
+            EmailAddressId = 1,
+            EmailAddressName = "jane.doe@example.com",
+            ModifiedDate = DefaultAuditDate
+        });
+        context.PersonPhones.Add(new PersonPhone
+        {
+            BusinessEntityId = 10,
+            PhoneNumber = "555-0101",
+            PhoneNumberTypeId = 2,
+            ModifiedDate = DefaultAuditDate
+        });
+        await context.SaveChangesAsync();
+
+        var repository = new PersonRepository(context);
+
+        var result = await repository.GetPersonDetailByIdAsync(10, CancellationToken.None);
+
+        using (new AssertionScope())
+        {
+            result.Should().NotBeNull();
+            result!.PersonType.Should().NotBeNull();
+            result.PersonType.PersonTypeName.Should().Be("Employee");
+            result.EmailAddresses.Should().ContainSingle(x => x.EmailAddressName == "jane.doe@example.com");
+            result.PersonPhones.Should().ContainSingle(x => x.PhoneNumber == "555-0101");
+            result.PersonPhones.Single().PhoneNumberType.Should().NotBeNull();
+            result.PersonPhones.Single().PhoneNumberType.Name.Should().Be("Cell");
+        }
+    }
+
+    [Fact]
+    public async Task GetPersonDetailByIdAsync_UsesNoTracking()
+    {
+        await using var context = CreateInMemoryDbContext();
+
+        var personType = new PersonTypeEntity
+        {
+            PersonTypeId = 20,
+            PersonTypeCode = "EM",
+            PersonTypeName = "Employee",
+            PersonTypeDescription = "Employee"
+        };
+
+        var person = new PersonEntity
+        {
+            BusinessEntityId = 20,
+            PersonTypeId = 20,
+            FirstName = "NoTrack",
+            LastName = "Person",
+            NameStyle = false,
+            EmailPromotion = 0,
+            Rowguid = Guid.NewGuid(),
+            ModifiedDate = DefaultAuditDate
+        };
+
+        context.PersonTypes.Add(personType);
+        context.Persons.Add(person);
+        await context.SaveChangesAsync();
+
+        var repository = new PersonRepository(context);
+
+        var result = await repository.GetPersonDetailByIdAsync(20, CancellationToken.None);
+
+        var personEntry = context.Entry(result!);
+        personEntry.State.Should().Be(EntityState.Detached);
+    }
+
+    [Fact]
+    public async Task GetPersonDetailByIdAsync_ReturnsNull_WhenPersonDoesNotExist()
+    {
+        await using var context = CreateInMemoryDbContext();
+        var repository = new PersonRepository(context);
+
+        var result = await repository.GetPersonDetailByIdAsync(9999, CancellationToken.None);
+
+        result.Should().BeNull();
+    }
+
+    [Fact]
+    public async Task ExistsAsync_ReturnsTrue_WhenPersonExists()
+    {
+        await using var context = CreateInMemoryDbContext();
+
+        context.PersonTypes.Add(new PersonTypeEntity
+        {
+            PersonTypeId = 1,
+            PersonTypeCode = "EM",
+            PersonTypeName = "Employee",
+            PersonTypeDescription = "Employee"
+        });
+
+        context.Persons.Add(new PersonEntity
+        {
+            BusinessEntityId = 55,
+            PersonTypeId = 1,
+            FirstName = "Exists",
+            LastName = "Person",
+            NameStyle = false,
+            EmailPromotion = 0,
+            Rowguid = Guid.NewGuid(),
+            ModifiedDate = DefaultAuditDate
+        });
+        await context.SaveChangesAsync();
+
+        var repository = new PersonRepository(context);
+
+        var exists = await repository.ExistsAsync(55, CancellationToken.None);
+
+        exists.Should().BeTrue();
+    }
+
+    [Fact]
+    public async Task ExistsAsync_ReturnsFalse_WhenPersonDoesNotExist()
+    {
+        await using var context = CreateInMemoryDbContext();
+        var repository = new PersonRepository(context);
+
+        var exists = await repository.ExistsAsync(12345, CancellationToken.None);
+
+        exists.Should().BeFalse();
     }
 }

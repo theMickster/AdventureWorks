@@ -47,13 +47,23 @@ internal static class TestDataSeeder
         context.BusinessEntities.Add(new BusinessEntity
         {
             BusinessEntityId = TestConstants.SeededPersonId,
-            Rowguid = new Guid("b3362804-959e-4fcf-ba0a-854804543415"),
+            Rowguid = new Guid(TestConstants.DefaultObjectId),
+            IsEntraUser = true,
             ModifiedDate = AuditDate
+        });
+
+        context.PersonTypes.Add(new PersonTypeEntity
+        {
+            PersonTypeId = 1,
+            PersonTypeCode = "EM",
+            PersonTypeName = "Employee",
+            PersonTypeDescription = "Integration test employee type"
         });
 
         context.Persons.Add(new PersonEntity
         {
             BusinessEntityId = TestConstants.SeededPersonId,
+            PersonTypeId = 1,
             FirstName = "Integration",
             LastName = "TestPerson",
             Rowguid = new Guid("c4473905-a60f-4fda-db1b-965905654526"),

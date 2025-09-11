@@ -28,7 +28,10 @@
     "AdventureWorks.Models": "Public",
     "AdventureWorks.Application": "Container",
     "Entities": "element",
-    "obj": "trash"
+    "obj": "trash",
+    "console-apps": "Console",
+    "AdventureWorks.DbReset.Console": "Database",
+    "AdventureWorks.DbReset.Console.Tests": "Test"
   },
   "material-icon-theme.files.associations": {
     "*.query.ts": "Sequelize",

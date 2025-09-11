@@ -12,7 +12,7 @@ namespace AdventureWorks.IntegrationTests.Setup;
 internal static class TestConstants
 {
     /// <summary>Object ID (<c>oid</c>) claim placed in the test principal by <see cref="TestAuthHandler"/>.</summary>
-    internal const string DefaultObjectId = "00000000-0000-0000-0000-000000000001";
+    internal const string DefaultObjectId = "b3362804-959e-4fcf-ba0a-854804543415";
 
     /// <summary>UPN (<c>preferred_username</c>) claim placed in the test principal.</summary>
     internal const string DefaultUpn = "testuser@adventureworks-test.local";

@@ -14,6 +14,24 @@ public sealed class PersonRepository(AdventureWorksDbContext dbContext)
     : ReadOnlyEfRepository<PersonEntity>(dbContext), IPersonRepository
 {
     /// <summary>
+    /// Retrieves a person and supporting detail graph by business entity id.
+    /// </summary>
+    /// <param name="personId">the person business entity id</param>
+    /// <param name="cancellationToken">token to cancel the operation</param>
+    public async Task<PersonEntity?> GetPersonDetailByIdAsync(
+        int personId,
+        CancellationToken cancellationToken = default)
+    {
+        return await DbContext.Persons
+            .AsNoTracking()
+            .Include(x => x.PersonType)
+            .Include(x => x.EmailAddresses)
+            .Include(x => x.PersonPhones)
+                .ThenInclude(x => x.PhoneNumberType)
+            .FirstOrDefaultAsync(x => x.BusinessEntityId == personId, cancellationToken);
+    }
+
+    /// <summary>
     /// Retrieves a Person entity linked to an Entra user with validation.
     /// Performs checks: BusinessEntity.Rowguid matches, IsEntraUser=true, Person exists.
     /// </summary>

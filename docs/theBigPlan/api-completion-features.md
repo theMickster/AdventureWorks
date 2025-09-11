@@ -18,7 +18,7 @@
 | 2    | Department Reporting             | #894   | 3       | #895-#897                               |
 | 3    | Person Email Management          | #898   | 4       | #899-#902 — **Done 2026-05-18**         |
 | 3    | Person Phone Management          | #903   | 4       | #904-#907                               |
-| 3    | Person Directory & Search        | #908   | 2       | #909-#910                               |
+| 3    | Person Directory & Search        | #908   | 2       | #909, #910 — **Story #910 Done 2026-05-21** |
 | 3    | PersonCreditCard DbContext Fix   | #911   | 1       | #912 — **Done 2026-04-27**              |
 | 4    | Production Lookup Endpoints      | #913   | 4       | #914-#917 — **Done 2026-05-17**          |
 | 4    | Sales Lookup Endpoints           | #918   | 4       | #919-#922 — **Done 2026-05-07**         |
@@ -973,7 +973,7 @@ Scenario: Authentication required
 
 ---
 
-### Feature: Person Directory & Search
+### Feature: Person Directory & Search — **In Progress**
 
 **Parent**: Epic #873 (closed Epic #552 superseded)
 **Description**: Provide endpoints for searching and viewing persons. The search endpoint supports filtering by name, email, and person type with pagination. The detail endpoint returns a consolidated view of a person including their emails, phones, and person type context (whether they are an employee, store contact, individual customer, etc.). This is foundational for any UI that needs to look up a person by name or email.
@@ -1034,6 +1034,15 @@ Scenario: Non-existent person returns 404
   When GET /api/v1.0/persons/999999 is called
   Then a 404 Not Found is returned
 ```
+
+**Implementation status (2026-05-21):** Done in API and tests.
+
+**Delivered endpoint details:**
+
+- Route: `GET /api/v1.0/persons/{personId}`
+- Response model: `PersonDetailModel`
+- Includes: person identity fields, person type name, email addresses, phone numbers, email promotion
+- Behavior covered by tests: `200`, `400`, `404`, `401`
 
 ---
 
