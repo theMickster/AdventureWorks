@@ -719,6 +719,194 @@
             }
           },
           "response": []
+        },
+        {
+          "name": "Person List - Search by First Name",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test(\"Status should be OK\", function () {\r",
+                  "    pm.response.to.have.status(200);\r",
+                  "});\r",
+                  "\r",
+                  "pm.test(\"Has X-Correlation-Id header\", function () {\r",
+                  "    pm.response.to.have.header(\"X-Correlation-Id\");\r",
+                  "});\r",
+                  "\r",
+                  "var response = pm.response.json();\r",
+                  "\r",
+                  "pm.test(\"Body should be a paginated person list\", function () {\r",
+                  "    var pageNumber = response.pageNumber ?? response.PageNumber;\r",
+                  "    var pageSize = response.pageSize ?? response.PageSize;\r",
+                  "    var totalCount = response.totalCount ?? response.TotalCount;\r",
+                  "\r",
+                  "    pm.expect(response.items).to.be.an(\"array\");\r",
+                  "    pm.expect(pageNumber).to.eql(1);\r",
+                  "    pm.expect(pageSize).to.eql(10);\r",
+                  "    pm.expect(totalCount).to.be.a(\"number\");\r",
+                  "});\r",
+                  "\r",
+                  "pm.test(\"All items contain matching firstName\", function () {\r",
+                  "    response.items.forEach(function(p) {\r",
+                  "        pm.expect(p.firstName.toLowerCase()).to.include(\"ken\");\r",
+                  "    });\r",
+                  "});"
+                ],
+                "type": "text/javascript"
+              }
+            }
+          ],
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{adventureWorksApi}}/{{apiVersion}}/persons?firstName=Ken&page=1&pageSize=10",
+              "host": [
+                "{{adventureWorksApi}}"
+              ],
+              "path": [
+                "{{apiVersion}}",
+                "persons"
+              ],
+              "query": [
+                { "key": "firstName", "value": "Ken" },
+                { "key": "page", "value": "1" },
+                { "key": "pageSize", "value": "10" }
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Person List - Search by Person Type",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test(\"Status should be OK\", function () {\r",
+                  "    pm.response.to.have.status(200);\r",
+                  "});\r",
+                  "\r",
+                  "var response = pm.response.json();\r",
+                  "\r",
+                  "pm.test(\"All items are Employees\", function () {\r",
+                  "    response.items.forEach(function(p) {\r",
+                  "        var personTypeName = p.personTypeName ?? p.PersonTypeName;\r",
+                  "        pm.expect(personTypeName).to.be.a(\"string\");\r",
+                  "        pm.expect(personTypeName.toLowerCase()).to.include(\"employee\");\r",
+                  "    });\r",
+                  "});"
+                ],
+                "type": "text/javascript"
+              }
+            }
+          ],
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{adventureWorksApi}}/{{apiVersion}}/persons?personTypeCode=EM&page=1&pageSize=10",
+              "host": [
+                "{{adventureWorksApi}}"
+              ],
+              "path": [
+                "{{apiVersion}}",
+                "persons"
+              ],
+              "query": [
+                { "key": "personTypeCode", "value": "EM" },
+                { "key": "page", "value": "1" },
+                { "key": "pageSize", "value": "10" }
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Person List - Search by First Name and Person Type",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test(\"Status should be OK\", function () {\r",
+                  "    pm.response.to.have.status(200);\r",
+                  "});\r",
+                  "\r",
+                  "var response = pm.response.json();\r",
+                  "\r",
+                  "pm.test(\"Items match all filters\", function () {\r",
+                  "    response.items.forEach(function(p) {\r",
+                  "        var personTypeName = p.personTypeName ?? p.PersonTypeName;\r",
+                  "        pm.expect(p.firstName.toLowerCase()).to.include(\"ken\");\r",
+                  "        pm.expect(personTypeName).to.be.a(\"string\");\r",
+                  "        pm.expect(personTypeName.toLowerCase()).to.include(\"employee\");\r",
+                  "    });\r",
+                  "});"
+                ],
+                "type": "text/javascript"
+              }
+            }
+          ],
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{adventureWorksApi}}/{{apiVersion}}/persons?firstName=Ken&personTypeCode=EM&page=1&pageSize=10",
+              "host": [
+                "{{adventureWorksApi}}"
+              ],
+              "path": [
+                "{{apiVersion}}",
+                "persons"
+              ],
+              "query": [
+                { "key": "firstName", "value": "Ken" },
+                { "key": "personTypeCode", "value": "EM" },
+                { "key": "page", "value": "1" },
+                { "key": "pageSize", "value": "10" }
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Person List - No Filter (400)",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test(\"Status should be 400 Bad Request\", function () {\r",
+                  "    pm.response.to.have.status(400);\r",
+                  "});"
+                ],
+                "type": "text/javascript"
+              }
+            }
+          ],
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{adventureWorksApi}}/{{apiVersion}}/persons?page=1&pageSize=10",
+              "host": [
+                "{{adventureWorksApi}}"
+              ],
+              "path": [
+                "{{apiVersion}}",
+                "persons"
+              ],
+              "query": [
+                { "key": "page", "value": "1" },
+                { "key": "pageSize", "value": "10" }
+              ]
+            }
+          },
+          "response": []
         }
       ]
     },

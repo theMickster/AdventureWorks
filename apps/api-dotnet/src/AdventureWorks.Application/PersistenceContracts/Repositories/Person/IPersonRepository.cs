@@ -35,4 +35,22 @@ public interface IPersonRepository : IReadOnlyAsyncRepository<PersonEntity>
     /// <param name="id">the person business entity id</param>
     /// <param name="cancellationToken">token to cancel the operation</param>
     Task<bool> ExistsAsync(int id, CancellationToken cancellationToken = default);
+
+    /// <summary>
+    /// Searches for persons using optional filters with pagination.
+    /// </summary>
+    /// <param name="firstName">Optional filter by first name (partial match).</param>
+    /// <param name="lastName">Optional filter by last name (partial match).</param>
+    /// <param name="personTypeCode">Optional filter by person type code (exact match).</param>
+    /// <param name="page">The page number (1-based).</param>
+    /// <param name="pageSize">The number of results per page.</param>
+    /// <param name="cancellationToken">Token to cancel the operation.</param>
+    /// <returns>A tuple containing the list of matching persons and the total count.</returns>
+    Task<(IEnumerable<PersonEntity> Persons, int TotalCount)> SearchAsync(
+        string? firstName,
+        string? lastName,
+        string? personTypeCode,
+        int page,
+        int pageSize,
+        CancellationToken cancellationToken = default);
 }

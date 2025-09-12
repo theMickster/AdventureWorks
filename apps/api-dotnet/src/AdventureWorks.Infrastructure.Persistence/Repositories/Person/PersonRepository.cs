@@ -56,4 +56,71 @@ public sealed class PersonRepository(AdventureWorksDbContext dbContext)
     {
         return await DbContext.Persons.AnyAsync(x => x.BusinessEntityId == id, cancellationToken);
     }
+
+    /// <summary>
+    /// Searches for persons using optional filters with pagination.
+    /// Applies AND logic across filter types and OR logic within partial name matches.
+    /// Escapes LIKE wildcard characters (%, _, [, ]) to prevent SQL injection.
+    /// </summary>
+    public async Task<(IEnumerable<PersonEntity> Persons, int TotalCount)> SearchAsync(
+        string? firstName,
+        string? lastName,
+        string? personTypeCode,
+        int page,
+        int pageSize,
+        CancellationToken cancellationToken = default)
+    {
+        IQueryable<PersonEntity> query = DbContext.Persons
+            .AsNoTracking()
+            .Include(x => x.PersonType)
+            .Include(x => x.EmailAddresses);
+
+        // Apply firstName filter (partial match with escaped wildcard characters)
+        if (!string.IsNullOrWhiteSpace(firstName))
+        {
+            var escapedFirstName = EscapeLikeMagicChars(firstName);
+            query = query.Where(x => EF.Functions.Like(x.FirstName, $"%{escapedFirstName}%", "\\"));
+        }
+
+        // Apply lastName filter (partial match with escaped wildcard characters)
+        if (!string.IsNullOrWhiteSpace(lastName))
+        {
+            var escapedLastName = EscapeLikeMagicChars(lastName);
+            query = query.Where(x => EF.Functions.Like(x.LastName, $"%{escapedLastName}%", "\\"));
+        }
+
+        // Apply personTypeCode filter (exact match)
+        if (!string.IsNullOrWhiteSpace(personTypeCode))
+        {
+            query = query.Where(x => x.PersonType != null && x.PersonType.PersonTypeCode == personTypeCode);
+        }
+
+        // Get total count before pagination
+        var totalCount = await query.CountAsync(cancellationToken);
+
+        // Apply pagination: skip = (page - 1) * pageSize, take = pageSize
+        var skip = (page - 1) * pageSize;
+        var persons = await query
+            .OrderBy(x => x.LastName)
+            .ThenBy(x => x.FirstName)
+            .Skip(skip)
+            .Take(pageSize)
+            .ToListAsync(cancellationToken);
+
+        return (persons, totalCount);
+    }
+
+    /// <summary>
+    /// Escapes LIKE magic characters (%, _, [, ]) in the input string to prevent SQL injection.
+    /// </summary>
+    /// <param name="input">The input string to escape.</param>
+    /// <returns>The escaped string with wildcard characters escaped by backslash.</returns>
+    private static string EscapeLikeMagicChars(string input)
+    {
+        return input
+            .Replace("\\", "\\\\")  // Escape backslash first
+            .Replace("%", "\\%")    // Escape percent
+            .Replace("_", "\\_")    // Escape underscore
+            .Replace("[", "\\[");   // Escape left bracket
+    }
 }

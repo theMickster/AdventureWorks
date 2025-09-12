@@ -18,7 +18,7 @@
 | 2    | Department Reporting             | #894   | 3       | #895-#897                               |
 | 3    | Person Email Management          | #898   | 4       | #899-#902 — **Done 2026-05-18**         |
 | 3    | Person Phone Management          | #903   | 4       | #904-#907                               |
-| 3    | Person Directory & Search        | #908   | 2       | #909, #910 — **Story #910 Done 2026-05-21** |
+| 3    | Person Directory & Search        | #908   | 2       | #909, #910 — **Done 2026-05-21**        |
 | 3    | PersonCreditCard DbContext Fix   | #911   | 1       | #912 — **Done 2026-04-27**              |
 | 4    | Production Lookup Endpoints      | #913   | 4       | #914-#917 — **Done 2026-05-17**          |
 | 4    | Sales Lookup Endpoints           | #918   | 4       | #919-#922 — **Done 2026-05-07**         |
@@ -973,7 +973,7 @@ Scenario: Authentication required
 
 ---
 
-### Feature: Person Directory & Search — **In Progress**
+### Feature: Person Directory & Search — **Done 2026-05-21**
 
 **Parent**: Epic #873 (closed Epic #552 superseded)
 **Description**: Provide endpoints for searching and viewing persons. The search endpoint supports filtering by name, email, and person type with pagination. The detail endpoint returns a consolidated view of a person including their emails, phones, and person type context (whether they are an employee, store contact, individual customer, etc.). This is foundational for any UI that needs to look up a person by name or email.
@@ -1012,6 +1012,17 @@ Scenario: Reject invalid pagination parameters
   When page=0 or pageSize=0 or pageSize > 100
   Then a 400 Bad Request is returned
 ```
+
+**Implementation status (2026-05-21):** Done in API and tests.
+
+**Delivered endpoint details:**
+- Route: `POST /api/v1.0/persons/search`
+- Query model: `SearchPersonsQuery`
+- Response model: `SearchPersonsQueryResult` containing paginated items of type `SearchPersonsModel`
+- Handler: `SearchPersonsQueryHandler` with AutoMapper projection
+- Repository: `PersonRepository.SearchAsync()` with LIKE escaping for SQL injection mitigation
+- Behavior covered by tests: validation (at least one filter required, page/pageSize bounds), filtering (firstName, lastName, personTypeCode), pagination, empty result set
+- Test coverage: 37 comprehensive tests
 
 #### Story 3.10: Get Person by ID
 
