@@ -4,6 +4,7 @@
 **Initiative parent**: #559 (AdventureWorks Web Application)
 **Date**: 2026-03-20 (planned), 2026-04-27 (created in ADO)
 **Scope**: 4 waves of API completion work -- Store Manager, HR Processes, Person Foundation, Lookup Endpoints
+**Status**: ✅ Done in ADO on 2026-05-22 (all 16 direct child Features are Done)
 
 ## ADO IDs at a glance
 
@@ -11,13 +12,13 @@
 | ---- | -------------------------------- | ------ | ------- | --------------------------------------- |
 | 1    | Store Contact Management         | #874   | 3       | #875-#877 — **Done 2026-04-27**         |
 | 1    | Store Address Management         | #878   | 3       | #879-#881 — **Done 2026-04-29**         |
-| 1    | Store Analytics & Insights       | #882   | 3       | #883-#885                               |
+| 1    | Store Analytics & Insights       | #882   | 3       | #883-#885 — **Done 2026-04-30**         |
 | 1    | Sales Person Assignment Tracking | #886   | 3       | #887-#889 — **Done 2026-05-11**         |
-| 2    | Employee Department Transfer     | #890   | 1       | #891 (Story 2.2 → existing #751)        |
-| 2    | Employee Pay Management          | #892   | 1       | #893 (Story 2.4 → existing #750)        |
-| 2    | Department Reporting             | #894   | 3       | #895-#897                               |
+| 2    | Employee Department Transfer     | #890   | 1       | #891 (Story 2.2 → existing #751) — **Done** |
+| 2    | Employee Pay Management          | #892   | 1       | #893 (Story 2.4 → existing #750) — **Done** |
+| 2    | Department Reporting             | #894   | 3       | #895-#897 — **Done**                    |
 | 3    | Person Email Management          | #898   | 4       | #899-#902 — **Done 2026-05-18**         |
-| 3    | Person Phone Management          | #903   | 4       | #904-#907                               |
+| 3    | Person Phone Management          | #903   | 4       | #904-#907 — **Done**                    |
 | 3    | Person Directory & Search        | #908   | 2       | #909, #910 — **Done 2026-05-21**        |
 | 3    | PersonCreditCard DbContext Fix   | #911   | 1       | #912 — **Done 2026-04-27**              |
 | 4    | Production Lookup Endpoints      | #913   | 4       | #914-#917 — **Done 2026-05-17**          |
@@ -31,9 +32,9 @@
 
 **Reparented enabler Features** (now under #873, formerly under #561/#562):
 
-- #715 (Sales Database Views & Indexes) — 3 stories: #746-#748
-- #716 (HR Additional API Endpoints) — 5 stories: #749-#753
-- #722 (HR Database Views for Dashboard and Org Chart) — 2 stories: #771-#772
+- #715 (Sales Database Views & Indexes) — 3 stories: #746-#748 — **Done**
+- #716 (HR Additional API Endpoints) — 5 stories: #749-#753 — **Done**
+- #722 (HR Database Views for Dashboard and Org Chart) — 2 stories: #771-#772 — **Done**
 
 **Skipped as duplicates:**
 
@@ -1344,11 +1345,11 @@ Scenario: Get non-existent ship method returns 404
 | 1                               | Sales Person Assignment Tracking | #886 | 3 (#887-#889)                  | POST                              | GET + DbUp migration (#887)       |
 | 2                               | Employee Department Transfer ✅  | #890 | 1 (#891) [2.2 → #751]          | POST                              | GET via #751                      |
 | 2                               | Employee Pay Management ✅       | #892 | 1 (#893) [2.4 → #750]          | POST                              | GET via #750 — Done 2026-05-16    |
-| 2                               | Department Reporting             | #894 | 3 (#895-#897)                  | --                                | GET x3                            |
+| 2                               | Department Reporting ✅          | #894 | 3 (#895-#897)                  | --                                | GET x3                            |
 | 3                               | Person Email Management ✅       | #898 | 4 (#899-#902)                  | POST, PUT, DELETE                 | GET — Done 2026-05-18             |
-| 3                               | Person Phone Management          | #903 | 4 (#904-#907)                  | POST, PUT, DELETE                 | GET                               |
-| 3                               | Person Directory & Search        | #908 | 2 (#909-#910)                  | --                                | POST search, GET                  |
-| 3                               | PersonCreditCard DbContext Fix   | #911 | 1 (#912)                       | --                                | Bug fix                           |
+| 3                               | Person Phone Management ✅       | #903 | 4 (#904-#907)                  | POST, PUT, DELETE                 | GET                               |
+| 3                               | Person Directory & Search ✅     | #908 | 2 (#909-#910)                  | --                                | POST search, GET                  |
+| 3                               | PersonCreditCard DbContext Fix ✅ | #911 | 1 (#912)                       | --                                | Bug fix                           |
 | 4                               | Production Lookup Endpoints ✅   | #913 | 4 (#914-#917) [4.1+4.2 → #699] | --                                | GET x8 — Done 2026-05-17          |
 | 4                               | Sales Lookup Endpoints ✅        | #918 | 4 (#919-#922)                  | --                                | GET x8 — Done 2026-05-07         |
 | **Total net-new**               |                                  |      | **13 Features / 36 Stories**   |                                   |                                   |
