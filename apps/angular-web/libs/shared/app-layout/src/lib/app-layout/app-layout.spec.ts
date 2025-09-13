@@ -2,7 +2,13 @@ import { signal } from '@angular/core';
 import { ComponentFixture, TestBed } from '@angular/core/testing';
 import { provideRouter } from '@angular/router';
 import { TranslateModule } from '@ngx-translate/core';
-import { AuthService, ThemeService, LoadingService, LanguageService, AppInsightsService } from '@adventureworks-web/shared/util';
+import {
+  AppInsightsService,
+  AuthService,
+  LanguageService,
+  LoadingService,
+  ThemeService,
+} from '@adventureworks-web/shared/util';
 import { AppLayoutComponent } from './app-layout';
 
 describe('AppLayoutComponent', () => {
@@ -64,5 +70,14 @@ describe('AppLayoutComponent', () => {
 
   it('should create', () => {
     expect(component).toBeTruthy();
+  });
+
+  it('logs out when user clicks sign out', async () => {
+    const authService = TestBed.inject(AuthService);
+
+    component['logout']();
+    await fixture.whenStable();
+
+    expect(authService.logout).toHaveBeenCalledOnce();
   });
 });

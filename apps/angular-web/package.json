@@ -33,6 +33,7 @@
     "@fortawesome/fontawesome-free": "^7.2.0",
     "@microsoft/applicationinsights-angularplugin-js": "^15.3.8",
     "@microsoft/applicationinsights-web": "^3.3.11",
+    "@microsoft/signalr": "^10.0.0",
     "@ngrx/signals": "^21.1.0",
     "@ngrx/store": "^21.1.0",
     "@ngrx/store-devtools": "^21.1.0",

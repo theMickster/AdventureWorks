@@ -4,6 +4,7 @@ import { InteractionStatus, RedirectRequest } from '@azure/msal-browser';
 import { MSAL_GUARD_CONFIG, MsalBroadcastService, MsalGuardConfiguration, MsalService } from '@azure/msal-angular';
 import { filter } from 'rxjs';
 import { AuthUser } from './auth.model';
+import { SignalrService } from '../signalr/signalr.service';
 
 /** Signal-based wrapper around MSAL services for authentication state management. */
 @Injectable({ providedIn: 'root' })
@@ -11,6 +12,7 @@ export class AuthService {
   private readonly msalService = inject(MsalService);
   private readonly msalBroadcastService = inject(MsalBroadcastService);
   private readonly guardConfig = inject<MsalGuardConfiguration>(MSAL_GUARD_CONFIG);
+  private readonly signalrService = inject(SignalrService);
 
   readonly isAuthenticated = signal(false);
   readonly user = signal<AuthUser | null>(null);
@@ -50,6 +52,7 @@ export class AuthService {
 
   /** Trigger a redirect logout flow. */
   logout(): void {
+    void this.signalrService.disconnect().catch(() => undefined);
     this.msalService.logoutRedirect().subscribe();
   }
 

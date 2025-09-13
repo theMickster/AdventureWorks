@@ -17,4 +17,7 @@ export const environment: Environment = {
     postLogoutRedirectUri: '__ENTRA_POST_LOGOUT_REDIRECT_URI__',
     scopes: ['__ENTRA_API_SCOPE__'],
   },
+  signalr: {
+    hubUrl: '__SIGNALR_HUB_URL__',
+  },
 };

@@ -87,6 +87,13 @@ Microsoft Entra ID authentication via `@azure/msal-angular` v5 (redirect flow).
 - **Token attachment**: `MsalInterceptor` (class-based, via `withInterceptorsFromDi()`) auto-attaches Bearer tokens to API calls
 - **Environment**: Auth settings in `environment.ts` use deployment placeholders (`__ENTRA_*__`); dev values in gitignored `environment.development.ts`
 
+## Real-time updates (SignalR)
+
+- **Service**: `libs/shared/util/src/lib/signalr/signalr.service.ts`
+- **Lifecycle wiring**: `apps/adventureworks-web/src/app/app.config.ts` reacts to auth state and connects/disconnects SignalR
+- **Logout cleanup**: `AuthService.logout()` disconnects SignalR before MSAL redirect logout
+- **Environment**: `environment.signalr.hubUrl` (placeholder `__SIGNALR_HUB_URL__` in non-dev configs)
+
 ## Commands
 
 ```bash

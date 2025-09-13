@@ -8,6 +8,18 @@ export interface ApiEndpoint {
   scopes?: string[];
 }
 
+/** SignalR hub configuration for real-time messaging. */
+export interface SignalRHubConfig {
+  /** Absolute or relative URL for the SignalR hub endpoint. */
+  hubUrl: string;
+  /** Optional allowlist of trusted origins for absolute hub URLs. */
+  trustedOrigins?: string[];
+  /** Optional per-hub OAuth scopes. Falls back to auth.scopes if not specified. */
+  scopes?: string[];
+  /** Retry delays (ms) used by SignalR automatic reconnect. */
+  reconnectDelaysMs?: number[];
+}
+
 /** Typed environment configuration consumed across the workspace. */
 export interface Environment {
   /** Whether the app is running in production mode. */
@@ -39,4 +51,6 @@ export interface Environment {
     /** OAuth 2.0 scopes to request (e.g., ['api://{clientId}/access_via_group_assignments']). */
     scopes: string[];
   };
+  /** Optional SignalR hub configuration. */
+  signalr?: SignalRHubConfig;
 }

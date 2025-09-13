@@ -12,6 +12,7 @@ Shared utilities for the AdventureWorks Angular workspace (`type:util`, `scope:s
 | i18n         | `lib/i18n/`         | `LanguageService` (ngx-translate)                                                   |
 | Loading      | `lib/loading/`      | `LoadingService` (ref-counted loading state)                                        |
 | Notification | `lib/notification/` | `NotificationService` (signal-based toast queue)                                    |
+| SignalR      | `lib/signalr/`      | `SignalrService` (MSAL-authenticated SignalR connection + lifecycle helpers)        |
 | Telemetry    | `lib/telemetry/`    | `AppInsightsService` (Azure Application Insights)                                   |
 | Theme        | `lib/theme/`        | `ThemeService` (light/dark toggle with localStorage)                                |
 

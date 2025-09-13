@@ -6,4 +6,7 @@ export const environment: Environment = {
   api: {
     primary: { baseUrl: '/api', name: 'AdventureWorks API' },
   },
+  signalr: {
+    hubUrl: '__SIGNALR_HUB_URL__',
+  },
 };

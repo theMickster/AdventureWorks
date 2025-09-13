@@ -86,6 +86,11 @@ export class AppLayoutComponent {
     this.userMenuTrigger()?.nativeElement.focus();
   }
 
+  protected logout(): void {
+    this.userMenuOpen.set(false);
+    this.authService.logout();
+  }
+
   private buildBreadcrumbs(): Breadcrumb[] {
     const crumbs: Breadcrumb[] = [];
     let route: ActivatedRoute | null = this.activatedRoute.root;

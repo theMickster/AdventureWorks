@@ -1,5 +1,7 @@
 import {
   ApplicationConfig,
+  effect,
+  EffectRef,
   ErrorHandler,
   inject,
   provideAppInitializer,
@@ -37,9 +39,37 @@ import {
   msalGuardConfigFactory,
   msalInstanceFactory,
   msalInterceptorConfigFactory,
+  SignalrService,
 } from '@adventureworks-web/shared/util';
 import { environment } from '../environments/environment';
 import { appRoutes } from './app.routes';
+
+export async function runSignalrLifecycleStep(
+  isAuthenticated: boolean,
+  signalrService: Pick<SignalrService, 'connect' | 'disconnect'>,
+  appInsightsService: Pick<AppInsightsService, 'trackException'>,
+): Promise<void> {
+  if (isAuthenticated) {
+    await signalrService.connect().catch((error: unknown) => {
+      appInsightsService.trackException(error instanceof Error ? error : new Error(String(error)));
+    });
+    return;
+  }
+
+  await signalrService.disconnect().catch((error: unknown) => {
+    appInsightsService.trackException(error instanceof Error ? error : new Error(String(error)));
+  });
+}
+
+export function initializeSignalrLifecycle(
+  authService: Pick<AuthService, 'isAuthenticated'> = inject(AuthService),
+  signalrService: Pick<SignalrService, 'connect' | 'disconnect'> = inject(SignalrService),
+  appInsightsService: Pick<AppInsightsService, 'trackException'> = inject(AppInsightsService),
+): EffectRef {
+  return effect(() => {
+    void runSignalrLifecycleStep(authService.isAuthenticated(), signalrService, appInsightsService);
+  }, { manualCleanup: true });
+}
 
 export const appConfig: ApplicationConfig = {
   providers: [
@@ -66,6 +96,9 @@ export const appConfig: ApplicationConfig = {
     MsalGuard,
     MsalBroadcastService,
     provideAppInitializer(() => inject(AuthService).initialize()),
+    provideAppInitializer(() => {
+      initializeSignalrLifecycle();
+    }),
     provideAppInitializer(() => inject(AppInsightsService).initialize()),
   ],
 };
