@@ -2,6 +2,7 @@ import { NgOptimizedImage } from '@angular/common';
 import {
   afterNextRender,
   ChangeDetectionStrategy,
+  computed,
   Component,
   DestroyRef,
   ElementRef,
@@ -18,6 +19,8 @@ import {
   AuthService,
   LanguageService,
   LoadingService,
+  SignalrService,
+  SignalRConnectionStatus,
   ThemeService,
 } from '@adventureworks-web/shared/util';
 import { filter, map, startWith } from 'rxjs';
@@ -48,12 +51,14 @@ export class AppLayoutComponent {
   protected readonly authService = inject(AuthService);
   protected readonly themeService = inject(ThemeService);
   protected readonly loadingService = inject(LoadingService);
+  protected readonly signalrService = inject(SignalrService);
   private readonly languageService = inject(LanguageService);
   private readonly appInsightsService = inject(AppInsightsService);
   protected readonly currentYear = new Date().getFullYear();
 
   protected readonly breadcrumbs = signal<Breadcrumb[]>([]);
   protected readonly userMenuOpen = signal(false);
+  protected readonly signalrStatusLabel = computed(() => this.getSignalrStatusLabel(this.signalrService.connectionStatus()));
 
   private readonly salesNav = viewChild<ElementRef<HTMLElement>>('salesNav');
   private readonly hrNav = viewChild<ElementRef<HTMLElement>>('hrNav');
@@ -117,4 +122,18 @@ export class AppLayoutComponent {
 
     return crumbs;
   }
+
+  private getSignalrStatusLabel(status: SignalRConnectionStatus): string {
+    switch (status) {
+      case 'connected':
+        return 'Connected';
+      case 'reconnecting':
+      case 'connecting':
+        return 'Reconnecting';
+      case 'disconnected':
+      default:
+        return 'Disconnected';
+    }
+  }
+
 }

@@ -61,6 +61,21 @@
 
         <!-- Theme toggle + user menu -->
         <div id="aw-navbar-end" class="flex-none flex items-center gap-1">
+          <div id="aw-connection-status" role="status" aria-live="polite" class="flex items-center gap-1 px-2 text-xs">
+            <i
+              class="fa-solid fa-circle text-[0.5rem]"
+              [class.text-success]="signalrService.connectionStatus() === 'connected'"
+              [class.text-warning]="
+                signalrService.connectionStatus() === 'reconnecting' ||
+                signalrService.connectionStatus() === 'connecting'
+              "
+              [class.text-error]="signalrService.connectionStatus() === 'disconnected'"
+              aria-hidden="true"
+            ></i>
+            <span id="aw-connection-status-text" aria-hidden="true">{{ signalrStatusLabel() }}</span>
+            <span class="sr-only">SignalR connection status: {{ signalrStatusLabel() }}</span>
+          </div>
+
           <!-- Theme toggle -->
           <button id="aw-theme-toggle" (click)="themeService.toggle()" class="btn btn-ghost btn-circle">
             @if (themeService.darkMode()) {

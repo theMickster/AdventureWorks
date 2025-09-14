@@ -141,6 +141,40 @@ describe('SalesPersonStore', () => {
     });
   });
 
+  describe('refresh', () => {
+    it('replays the last load page request', () => {
+      store.loadPage({ pageNumber: 2, pageSize: 5 });
+      const firstReq = httpTesting.expectOne('https://api.test.com/v1/salespersons?pageNumber=2&pageSize=5');
+      firstReq.flush({ ...mockSearchResult, pageNumber: 2, pageSize: 5 });
+
+      store.refresh();
+      const refreshReq = httpTesting.expectOne('https://api.test.com/v1/salespersons?pageNumber=2&pageSize=5');
+      expect(refreshReq.request.method).toBe('GET');
+      refreshReq.flush({ ...mockSearchResult, pageNumber: 2, pageSize: 5 });
+    });
+
+    it('captures the latest list/query request and replays it', () => {
+      store.loadPage({ pageNumber: 1, pageSize: 10 });
+      const loadReq = httpTesting.expectOne('https://api.test.com/v1/salespersons?pageNumber=1&pageSize=10');
+      loadReq.flush(mockSearchResult);
+
+      store.search({ params: { pageNumber: 3, pageSize: 20 }, body: { firstName: 'Sam' } });
+      const searchReq = httpTesting.expectOne('https://api.test.com/v1/salespersons/search?pageNumber=3&pageSize=20');
+      searchReq.flush({ ...mockSearchResult, pageNumber: 3, pageSize: 20 });
+
+      store.refresh();
+      const refreshReq = httpTesting.expectOne('https://api.test.com/v1/salespersons/search?pageNumber=3&pageSize=20');
+      expect(refreshReq.request.method).toBe('POST');
+      expect(refreshReq.request.body).toEqual({ firstName: 'Sam' });
+      refreshReq.flush({ ...mockSearchResult, pageNumber: 3, pageSize: 20 });
+    });
+
+    it('does not issue a request when no prior list/query request exists', () => {
+      store.refresh();
+      httpTesting.expectNone((request) => request.url.includes('/v1/salespersons'));
+    });
+  });
+
   describe('loadById', () => {
     it('should load a single entity', () => {
       store.loadById(1);

@@ -22,6 +22,10 @@ import type { EmployeeHire, EmployeeTerminate, EmployeeRehire } from '../models/
 import type { JsonPatchOperation } from '../models/json-patch.model';
 import { HrApiService } from '../services/hr-api.service';
 
+type EmployeeListRequest =
+  | { kind: 'loadPage'; params: EmployeeParams }
+  | { kind: 'search'; params: EmployeeParams; body: EmployeeSearchBody };
+
 /** Entity store for HumanResources.Employee with CRUD, patch, and lifecycle operations. */
 export const EmployeeStore = signalStore(
   { providedIn: 'root' },
@@ -29,10 +33,15 @@ export const EmployeeStore = signalStore(
   withEntities<Employee>(),
   withRequestStatus(),
   withPagination(),
-  withMethods((store, hrApi = inject(HrApiService)) => ({
-    loadPage: rxMethod<EmployeeParams>(
+  withMethods((store, hrApi = inject(HrApiService)) => {
+    let lastListRequest: EmployeeListRequest | null = null;
+
+    const loadPage = rxMethod<EmployeeParams>(
       pipe(
-        tap(() => patchState(store, setLoading())),
+        tap((params) => {
+          lastListRequest = { kind: 'loadPage', params: { ...params } };
+          patchState(store, setLoading());
+        }),
         switchMap((params) =>
           hrApi.getEmployees(params).pipe(
             tap((result) =>
@@ -50,11 +59,18 @@ export const EmployeeStore = signalStore(
           ),
         ),
       ),
-    ),
+    );
 
-    search: rxMethod<{ params: EmployeeParams; body: EmployeeSearchBody }>(
+    const search = rxMethod<{ params: EmployeeParams; body: EmployeeSearchBody }>(
       pipe(
-        tap(() => patchState(store, setLoading())),
+        tap(({ params, body }) => {
+          lastListRequest = {
+            kind: 'search',
+            params: { ...params },
+            body: { ...body },
+          };
+          patchState(store, setLoading());
+        }),
         switchMap(({ params, body }) =>
           hrApi.searchEmployees(params, body).pipe(
             tap((result) =>
@@ -72,9 +88,9 @@ export const EmployeeStore = signalStore(
           ),
         ),
       ),
-    ),
+    );
 
-    loadById: rxMethod<number>(
+    const loadById = rxMethod<number>(
       pipe(
         tap(() => patchState(store, setLoading())),
         exhaustMap((id) =>
@@ -88,9 +104,9 @@ export const EmployeeStore = signalStore(
           ),
         ),
       ),
-    ),
+    );
 
-    create: rxMethod<EmployeeCreate>(
+    const create = rxMethod<EmployeeCreate>(
       pipe(
         tap(() => patchState(store, setLoading())),
         exhaustMap((model) =>
@@ -104,9 +120,9 @@ export const EmployeeStore = signalStore(
           ),
         ),
       ),
-    ),
+    );
 
-    update: rxMethod<{ id: number; model: EmployeeUpdate }>(
+    const update = rxMethod<{ id: number; model: EmployeeUpdate }>(
       pipe(
         tap(() => patchState(store, setLoading())),
         exhaustMap(({ id, model }) =>
@@ -120,9 +136,9 @@ export const EmployeeStore = signalStore(
           ),
         ),
       ),
-    ),
+    );
 
-    patch: rxMethod<{ id: number; operations: JsonPatchOperation[] }>(
+    const patch = rxMethod<{ id: number; operations: JsonPatchOperation[] }>(
       pipe(
         tap(() => patchState(store, setLoading())),
         exhaustMap(({ id, operations }) =>
@@ -136,9 +152,9 @@ export const EmployeeStore = signalStore(
           ),
         ),
       ),
-    ),
+    );
 
-    hireEmployee: rxMethod<{ id: number; model: EmployeeHire }>(
+    const hireEmployee = rxMethod<{ id: number; model: EmployeeHire }>(
       pipe(
         tap(() => patchState(store, setLoading())),
         exhaustMap(({ id, model }) =>
@@ -160,9 +176,9 @@ export const EmployeeStore = signalStore(
           ),
         ),
       ),
-    ),
+    );
 
-    terminateEmployee: rxMethod<{ id: number; model: EmployeeTerminate }>(
+    const terminateEmployee = rxMethod<{ id: number; model: EmployeeTerminate }>(
       pipe(
         tap(() => patchState(store, setLoading())),
         exhaustMap(({ id, model }) =>
@@ -184,9 +200,9 @@ export const EmployeeStore = signalStore(
           ),
         ),
       ),
-    ),
+    );
 
-    rehireEmployee: rxMethod<{ id: number; model: EmployeeRehire }>(
+    const rehireEmployee = rxMethod<{ id: number; model: EmployeeRehire }>(
       pipe(
         tap(() => patchState(store, setLoading())),
         exhaustMap(({ id, model }) =>
@@ -208,6 +224,35 @@ export const EmployeeStore = signalStore(
           ),
         ),
       ),
-    ),
-  })),
+    );
+
+    const refresh = (): void => {
+      if (!lastListRequest) {
+        return;
+      }
+
+      if (lastListRequest.kind === 'loadPage') {
+        loadPage({ ...lastListRequest.params });
+        return;
+      }
+
+      search({
+        params: { ...lastListRequest.params },
+        body: { ...lastListRequest.body },
+      });
+    };
+
+    return {
+      loadPage,
+      search,
+      loadById,
+      create,
+      update,
+      patch,
+      hireEmployee,
+      terminateEmployee,
+      rehireEmployee,
+      refresh,
+    };
+  }),
 );

@@ -1,4 +1,4 @@
-import { signal } from '@angular/core';
+import { signal, WritableSignal } from '@angular/core';
 import { ComponentFixture, TestBed } from '@angular/core/testing';
 import { provideRouter } from '@angular/router';
 import { TranslateModule } from '@ngx-translate/core';
@@ -7,6 +7,8 @@ import {
   AuthService,
   LanguageService,
   LoadingService,
+  SignalrService,
+  SignalRConnectionStatus,
   ThemeService,
 } from '@adventureworks-web/shared/util';
 import { AppLayoutComponent } from './app-layout';
@@ -14,8 +16,11 @@ import { AppLayoutComponent } from './app-layout';
 describe('AppLayoutComponent', () => {
   let component: AppLayoutComponent;
   let fixture: ComponentFixture<AppLayoutComponent>;
+  let connectionStatus: WritableSignal<SignalRConnectionStatus>;
 
   beforeEach(async () => {
+    connectionStatus = signal<SignalRConnectionStatus>('connected');
+
     await TestBed.configureTestingModule({
       imports: [AppLayoutComponent, TranslateModule.forRoot()],
       providers: [
@@ -60,6 +65,12 @@ describe('AppLayoutComponent', () => {
             trackPageView: vi.fn(),
           },
         },
+        {
+          provide: SignalrService,
+          useValue: {
+            connectionStatus,
+          },
+        },
       ],
     }).compileComponents();
 
@@ -79,5 +90,25 @@ describe('AppLayoutComponent', () => {
     await fixture.whenStable();
 
     expect(authService.logout).toHaveBeenCalledOnce();
+  });
+
+  it('renders current SignalR connection status', () => {
+    fixture.detectChanges();
+
+    const statusText = fixture.nativeElement.querySelector('#aw-connection-status-text') as HTMLElement | null;
+    expect(statusText?.textContent?.trim()).toBe('Connected');
+  });
+
+  it('updates SignalR connection status when signal changes', () => {
+    connectionStatus.set('reconnecting');
+    fixture.detectChanges();
+
+    const statusText = fixture.nativeElement.querySelector('#aw-connection-status-text') as HTMLElement | null;
+    expect(statusText?.textContent?.trim()).toBe('Reconnecting');
+
+    connectionStatus.set('disconnected');
+    fixture.detectChanges();
+
+    expect(statusText?.textContent?.trim()).toBe('Disconnected');
   });
 });

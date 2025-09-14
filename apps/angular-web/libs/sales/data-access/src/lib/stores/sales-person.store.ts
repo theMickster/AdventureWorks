@@ -18,6 +18,10 @@ import type { SalesPersonSearchBody } from '../models/sales-person-search.model'
 import type { SalesPerson, SalesPersonCreate, SalesPersonUpdate } from '../models/sales-person.model';
 import { SalesApiService } from '../services/sales-api.service';
 
+type SalesPersonListRequest =
+  | { kind: 'loadPage'; params: SalesPersonParams }
+  | { kind: 'search'; params: SalesPersonParams; body: SalesPersonSearchBody };
+
 /** Entity store for Sales.SalesPerson with paginated list, search, and CRUD operations. */
 export const SalesPersonStore = signalStore(
   { providedIn: 'root' },
@@ -25,10 +29,15 @@ export const SalesPersonStore = signalStore(
   withEntities<SalesPerson>(),
   withRequestStatus(),
   withPagination(),
-  withMethods((store, salesApi = inject(SalesApiService)) => ({
-    loadPage: rxMethod<SalesPersonParams>(
+  withMethods((store, salesApi = inject(SalesApiService)) => {
+    let lastListRequest: SalesPersonListRequest | null = null;
+
+    const loadPage = rxMethod<SalesPersonParams>(
       pipe(
-        tap(() => patchState(store, setLoading())),
+        tap((params) => {
+          lastListRequest = { kind: 'loadPage', params: { ...params } };
+          patchState(store, setLoading());
+        }),
         switchMap((params) =>
           salesApi.getSalesPersons(params).pipe(
             tap((result) =>
@@ -46,11 +55,18 @@ export const SalesPersonStore = signalStore(
           ),
         ),
       ),
-    ),
+    );
 
-    search: rxMethod<{ params: SalesPersonParams; body: SalesPersonSearchBody }>(
+    const search = rxMethod<{ params: SalesPersonParams; body: SalesPersonSearchBody }>(
       pipe(
-        tap(() => patchState(store, setLoading())),
+        tap(({ params, body }) => {
+          lastListRequest = {
+            kind: 'search',
+            params: { ...params },
+            body: { ...body },
+          };
+          patchState(store, setLoading());
+        }),
         switchMap(({ params, body }) =>
           salesApi.searchSalesPersons(params, body).pipe(
             tap((result) =>
@@ -68,9 +84,9 @@ export const SalesPersonStore = signalStore(
           ),
         ),
       ),
-    ),
+    );
 
-    loadById: rxMethod<number>(
+    const loadById = rxMethod<number>(
       pipe(
         tap(() => patchState(store, setLoading())),
         exhaustMap((id) =>
@@ -84,9 +100,9 @@ export const SalesPersonStore = signalStore(
           ),
         ),
       ),
-    ),
+    );
 
-    create: rxMethod<SalesPersonCreate>(
+    const create = rxMethod<SalesPersonCreate>(
       pipe(
         tap(() => patchState(store, setLoading())),
         exhaustMap((model) =>
@@ -100,9 +116,9 @@ export const SalesPersonStore = signalStore(
           ),
         ),
       ),
-    ),
+    );
 
-    update: rxMethod<{ id: number; model: SalesPersonUpdate }>(
+    const update = rxMethod<{ id: number; model: SalesPersonUpdate }>(
       pipe(
         tap(() => patchState(store, setLoading())),
         exhaustMap(({ id, model }) =>
@@ -116,6 +132,31 @@ export const SalesPersonStore = signalStore(
           ),
         ),
       ),
-    ),
-  })),
+    );
+
+    const refresh = (): void => {
+      if (!lastListRequest) {
+        return;
+      }
+
+      if (lastListRequest.kind === 'loadPage') {
+        loadPage({ ...lastListRequest.params });
+        return;
+      }
+
+      search({
+        params: { ...lastListRequest.params },
+        body: { ...lastListRequest.body },
+      });
+    };
+
+    return {
+      loadPage,
+      search,
+      loadById,
+      create,
+      update,
+      refresh,
+    };
+  }),
 );

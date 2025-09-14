@@ -5,6 +5,7 @@ import { MSAL_GUARD_CONFIG, MsalBroadcastService, MsalGuardConfiguration, MsalSe
 import { filter } from 'rxjs';
 import { AuthUser } from './auth.model';
 import { SignalrService } from '../signalr/signalr.service';
+import { AppInsightsService } from '../telemetry/app-insights.service';
 
 /** Signal-based wrapper around MSAL services for authentication state management. */
 @Injectable({ providedIn: 'root' })
@@ -13,6 +14,8 @@ export class AuthService {
   private readonly msalBroadcastService = inject(MsalBroadcastService);
   private readonly guardConfig = inject<MsalGuardConfiguration>(MSAL_GUARD_CONFIG);
   private readonly signalrService = inject(SignalrService);
+  private readonly appInsightsService = inject(AppInsightsService);
+  private logoutExecution: Promise<void> | null = null;
 
   readonly isAuthenticated = signal(false);
   readonly user = signal<AuthUser | null>(null);
@@ -52,8 +55,20 @@ export class AuthService {
 
   /** Trigger a redirect logout flow. */
   logout(): void {
-    void this.signalrService.disconnect().catch(() => undefined);
-    this.msalService.logoutRedirect().subscribe();
+    if (this.logoutExecution) {
+      return;
+    }
+
+    this.logoutExecution = (async () => {
+      try {
+        await this.signalrService.disconnect();
+      } catch (error: unknown) {
+        this.appInsightsService.trackException(error instanceof Error ? error : new Error(String(error)));
+      } finally {
+        this.logoutExecution = null;
+        this.msalService.logoutRedirect().subscribe();
+      }
+    })();
   }
 
   private checkAndSetActiveAccount(): void {

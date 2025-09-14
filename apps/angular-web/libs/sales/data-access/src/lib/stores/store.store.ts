@@ -18,6 +18,10 @@ import type { StoreSearchBody } from '../models/store-search.model';
 import type { Store, StoreCreate, StoreUpdate } from '../models/store.model';
 import { SalesApiService } from '../services/sales-api.service';
 
+type StoreListRequest =
+  | { kind: 'loadPage'; params: StoreParams }
+  | { kind: 'search'; params: StoreParams; body: StoreSearchBody };
+
 /** Entity store for Sales.Store with paginated list, search, and CRUD operations. */
 export const StoreStore = signalStore(
   { providedIn: 'root' },
@@ -25,10 +29,15 @@ export const StoreStore = signalStore(
   withEntities<Store>(),
   withRequestStatus(),
   withPagination(),
-  withMethods((store, salesApi = inject(SalesApiService)) => ({
-    loadPage: rxMethod<StoreParams>(
+  withMethods((store, salesApi = inject(SalesApiService)) => {
+    let lastListRequest: StoreListRequest | null = null;
+
+    const loadPage = rxMethod<StoreParams>(
       pipe(
-        tap(() => patchState(store, setLoading())),
+        tap((params) => {
+          lastListRequest = { kind: 'loadPage', params: { ...params } };
+          patchState(store, setLoading());
+        }),
         switchMap((params) =>
           salesApi.getStores(params).pipe(
             tap((result) =>
@@ -46,11 +55,18 @@ export const StoreStore = signalStore(
           ),
         ),
       ),
-    ),
+    );
 
-    search: rxMethod<{ params: StoreParams; body: StoreSearchBody }>(
+    const search = rxMethod<{ params: StoreParams; body: StoreSearchBody }>(
       pipe(
-        tap(() => patchState(store, setLoading())),
+        tap(({ params, body }) => {
+          lastListRequest = {
+            kind: 'search',
+            params: { ...params },
+            body: { ...body },
+          };
+          patchState(store, setLoading());
+        }),
         switchMap(({ params, body }) =>
           salesApi.searchStores(params, body).pipe(
             tap((result) =>
@@ -68,9 +84,9 @@ export const StoreStore = signalStore(
           ),
         ),
       ),
-    ),
+    );
 
-    loadById: rxMethod<number>(
+    const loadById = rxMethod<number>(
       pipe(
         tap(() => patchState(store, setLoading())),
         exhaustMap((id) =>
@@ -84,9 +100,9 @@ export const StoreStore = signalStore(
           ),
         ),
       ),
-    ),
+    );
 
-    create: rxMethod<StoreCreate>(
+    const create = rxMethod<StoreCreate>(
       pipe(
         tap(() => patchState(store, setLoading())),
         exhaustMap((model) =>
@@ -100,9 +116,9 @@ export const StoreStore = signalStore(
           ),
         ),
       ),
-    ),
+    );
 
-    update: rxMethod<{ id: number; model: StoreUpdate }>(
+    const update = rxMethod<{ id: number; model: StoreUpdate }>(
       pipe(
         tap(() => patchState(store, setLoading())),
         exhaustMap(({ id, model }) =>
@@ -116,6 +132,31 @@ export const StoreStore = signalStore(
           ),
         ),
       ),
-    ),
-  })),
+    );
+
+    const refresh = (): void => {
+      if (!lastListRequest) {
+        return;
+      }
+
+      if (lastListRequest.kind === 'loadPage') {
+        loadPage({ ...lastListRequest.params });
+        return;
+      }
+
+      search({
+        params: { ...lastListRequest.params },
+        body: { ...lastListRequest.body },
+      });
+    };
+
+    return {
+      loadPage,
+      search,
+      loadById,
+      create,
+      update,
+      refresh,
+    };
+  }),
 );

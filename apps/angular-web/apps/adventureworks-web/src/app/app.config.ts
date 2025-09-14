@@ -39,8 +39,11 @@ import {
   msalGuardConfigFactory,
   msalInstanceFactory,
   msalInterceptorConfigFactory,
+  SignalRConnectionStatus,
   SignalrService,
 } from '@adventureworks-web/shared/util';
+import { EmployeeStore } from '@adventureworks-web/hr/data-access';
+import { SalesPersonStore, StoreStore } from '@adventureworks-web/sales/data-access';
 import { environment } from '../environments/environment';
 import { appRoutes } from './app.routes';
 
@@ -71,6 +74,41 @@ export function initializeSignalrLifecycle(
   }, { manualCleanup: true });
 }
 
+export function runStoreRefreshOnReconnectStep(
+  previousStatus: SignalRConnectionStatus | undefined,
+  currentStatus: SignalRConnectionStatus,
+  stores: {
+    storeStore: { refresh: () => void };
+    salesPersonStore: { refresh: () => void };
+    employeeStore: { refresh: () => void };
+  },
+): SignalRConnectionStatus {
+  if (previousStatus === 'reconnecting' && currentStatus === 'connected') {
+    stores.storeStore.refresh();
+    stores.salesPersonStore.refresh();
+    stores.employeeStore.refresh();
+  }
+
+  return currentStatus;
+}
+
+export function initializeSignalrReconnectRefresh(
+  signalrService: Pick<SignalrService, 'connectionStatus'> = inject(SignalrService),
+  storeStore: { refresh: () => void } = inject(StoreStore),
+  salesPersonStore: { refresh: () => void } = inject(SalesPersonStore),
+  employeeStore: { refresh: () => void } = inject(EmployeeStore),
+): EffectRef {
+  let previousStatus: SignalRConnectionStatus | undefined;
+
+  return effect(() => {
+    previousStatus = runStoreRefreshOnReconnectStep(previousStatus, signalrService.connectionStatus(), {
+      storeStore,
+      salesPersonStore,
+      employeeStore,
+    });
+  }, { manualCleanup: true });
+}
+
 export const appConfig: ApplicationConfig = {
   providers: [
     provideBrowserGlobalErrorListeners(),
@@ -98,6 +136,7 @@ export const appConfig: ApplicationConfig = {
     provideAppInitializer(() => inject(AuthService).initialize()),
     provideAppInitializer(() => {
       initializeSignalrLifecycle();
+      initializeSignalrReconnectRefresh();
     }),
     provideAppInitializer(() => inject(AppInsightsService).initialize()),
   ],
