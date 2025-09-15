@@ -109,6 +109,10 @@
     "express-rate-limit": ">=8.5.1",
     "axios": ">=1.16.0",
     "fast-uri": ">=3.1.2",
-    "@babel/plugin-transform-modules-systemjs": ">=7.29.4"
+    "@babel/plugin-transform-modules-systemjs": ">=7.29.4",
+    "@nevware21/ts-utils": ">=0.14.0",
+    "qs": ">=6.15.2",
+    "uuid": ">=11.1.1",
+    "webpack-dev-server": ">=5.2.4"
   }
 }
