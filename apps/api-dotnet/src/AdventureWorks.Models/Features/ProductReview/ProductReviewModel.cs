@@ -9,11 +9,11 @@ public sealed class ProductReviewModel
 
     public int ProductId { get; set; }
 
-    public string ReviewerName { get; set; }
+    public required string ReviewerName { get; set; }
 
     public DateTime ReviewDate { get; set; }
 
-    public string EmailAddress { get; set; }
+    public required string EmailAddress { get; set; }
 
     public int Rating { get; set; }
 

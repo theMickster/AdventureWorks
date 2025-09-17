@@ -39,7 +39,7 @@ public sealed class ReadSingleProductReviewControllerTests : UnitTestBase
     public async Task GetProductReviewAsync_returns_ok_with_model_Async()
     {
         _mockMediator.Setup(x => x.Send(It.IsAny<ReadProductReviewQuery>(), It.IsAny<CancellationToken>()))
-            .ReturnsAsync(new ProductReviewModel { ProductReviewId = 1, ProductId = 937, ReviewerName = "Alice", Rating = 5 });
+            .ReturnsAsync(new ProductReviewModel { ProductReviewId = 1, ProductId = 937, ReviewerName = "Alice", EmailAddress = "alice@example.com", Rating = 5 });
 
         var result = await _sut.GetProductReviewAsync(1);
         var objectResult = result as OkObjectResult;
