@@ -4,88 +4,88 @@
 parameters:
   - name: workingDirectory
     type: string
-    default: 'apps/angular-web'
+    default: "apps/angular-web"
   - name: nodeVersion
     type: string
-    default: '24'
+    default: "24"
   - name: artifactName
     type: string
-    default: 'angular-artifact'
+    default: "angular-artifact"
 
 steps:
-  - task: NodeTool@0
-    displayName: 'Install Node.js ${{ parameters.nodeVersion }}'
+  - task: UseNode@1
+    displayName: "Install Node.js ${{ parameters.nodeVersion }}"
     inputs:
-      versionSpec: '${{ parameters.nodeVersion }}'
+      version: "${{ parameters.nodeVersion }}"
 
   - task: Cache@2
-    displayName: 'Cache npm packages'
+    displayName: "Cache npm packages"
     inputs:
       key: 'npm | "$(Agent.OS)" | ${{ parameters.workingDirectory }}/package-lock.json'
       restoreKeys: 'npm | "$(Agent.OS)"'
-      path: '$(HOME)/.npm'
+      path: "$(HOME)/.npm"
 
   - script: npm ci
-    displayName: 'Install dependencies'
-    workingDirectory: '${{ parameters.workingDirectory }}'
+    displayName: "Install dependencies"
+    workingDirectory: "${{ parameters.workingDirectory }}"
 
   - task: Cache@2
-    displayName: 'Cache Nx computation'
+    displayName: "Cache Nx computation"
     inputs:
       key: 'nx | "$(Agent.OS)" | ${{ parameters.workingDirectory }}/package-lock.json'
       restoreKeys: 'nx | "$(Agent.OS)"'
-      path: '${{ parameters.workingDirectory }}/.nx/cache'
+      path: "${{ parameters.workingDirectory }}/.nx/cache"
 
   - script: npx nx lint adventureworks-web
-    displayName: 'Lint'
-    workingDirectory: '${{ parameters.workingDirectory }}'
+    displayName: "Lint"
+    workingDirectory: "${{ parameters.workingDirectory }}"
 
   - script: npm audit --audit-level=high --omit=dev
-    displayName: 'Security scan (npm audit)'
-    workingDirectory: '${{ parameters.workingDirectory }}'
+    displayName: "Security scan (npm audit)"
+    workingDirectory: "${{ parameters.workingDirectory }}"
     continueOnError: true
 
   - script: npx nx build adventureworks-web --configuration=production
-    displayName: 'Build (production)'
-    workingDirectory: '${{ parameters.workingDirectory }}'
+    displayName: "Build (production)"
+    workingDirectory: "${{ parameters.workingDirectory }}"
 
   - script: npx nx run-many -t test --exclude=adventureworks-web
-    displayName: 'Run library unit tests'
-    workingDirectory: '${{ parameters.workingDirectory }}'
+    displayName: "Run library unit tests"
+    workingDirectory: "${{ parameters.workingDirectory }}"
 
   - task: PublishTestResults@2
-    displayName: 'Publish library test results'
+    displayName: "Publish library test results"
     condition: always()
     inputs:
       testResultsFormat: JUnit
-      testResultsFiles: '${{ parameters.workingDirectory }}/libs/**/test-results/junit.xml'
-      searchFolder: '$(Build.SourcesDirectory)'
-      testRunTitle: 'Angular Library Tests - $(Build.BuildNumber)'
+      testResultsFiles: "${{ parameters.workingDirectory }}/libs/**/test-results/junit.xml"
+      searchFolder: "$(Build.SourcesDirectory)"
+      testRunTitle: "Angular Library Tests - $(Build.BuildNumber)"
       mergeTestResults: true
 
   - script: npx nx test adventureworks-web --buildTarget=adventureworks-web:build:production
-    displayName: 'Run app unit tests'
-    workingDirectory: '${{ parameters.workingDirectory }}'
+    displayName: "Run app unit tests"
+    workingDirectory: "${{ parameters.workingDirectory }}"
 
   - task: PublishTestResults@2
-    displayName: 'Publish app test results'
+    displayName: "Publish app test results"
     condition: always()
     inputs:
       testResultsFormat: JUnit
-      testResultsFiles: '${{ parameters.workingDirectory }}/apps/adventureworks-web/test-results/junit.xml'
-      searchFolder: '$(Build.SourcesDirectory)'
-      testRunTitle: 'Angular App Tests - $(Build.BuildNumber)'
+      testResultsFiles: "${{ parameters.workingDirectory }}/apps/adventureworks-web/test-results/junit.xml"
+      searchFolder: "$(Build.SourcesDirectory)"
+      testRunTitle: "Angular App Tests - $(Build.BuildNumber)"
 
   - task: ArchiveFiles@2
-    displayName: 'Zip Angular output'
+    displayName: "Zip Angular output"
     inputs:
-      rootFolderOrFile: '${{ parameters.workingDirectory }}/dist/apps/adventureworks-web/browser'
+      rootFolderOrFile: "${{ parameters.workingDirectory }}/dist/apps/adventureworks-web/browser"
       includeRootFolder: false
       archiveType: zip
-      archiveFile: '$(Build.ArtifactStagingDirectory)/angular.zip'
+      archiveFile: "$(Build.ArtifactStagingDirectory)/angular.zip"
 
   - task: PublishPipelineArtifact@1
-    displayName: 'Publish Angular artifact'
+    displayName: "Publish Angular artifact"
     inputs:
-      targetPath: '$(Build.ArtifactStagingDirectory)/angular.zip'
-      artifact: '${{ parameters.artifactName }}'
+      targetPath: "$(Build.ArtifactStagingDirectory)/angular.zip"
+      artifact: "${{ parameters.artifactName }}"

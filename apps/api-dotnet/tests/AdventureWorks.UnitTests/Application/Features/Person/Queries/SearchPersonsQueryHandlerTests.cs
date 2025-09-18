@@ -152,11 +152,11 @@ public sealed class SearchPersonsQueryHandlerTests : UnitTestBase
     /// <summary>
     /// Test: No filters provided (validation failure)
     /// Handler receives firstName=null, lastName=null, personTypeCode=null
-    /// Should throw ValidationException or ArgumentException
+    /// Should throw ValidationException
     /// Assert: Exception message contains "At least one search criterion"
     /// </summary>
     [Fact]
-    public async Task Handle_throws_ArgumentException_when_no_filters_provided()
+    public async Task Handle_throws_ValidationException_when_no_filters_provided()
     {
         var query = new SearchPersonsQuery
         {
@@ -170,7 +170,7 @@ public sealed class SearchPersonsQueryHandlerTests : UnitTestBase
         var act = async () => await _sut.Handle(query, CancellationToken.None);
 
         var exception = await act.Should()
-            .ThrowAsync<ArgumentException>();
+            .ThrowAsync<ValidationException>();
 
         exception.And.Message.Should().Contain("At least one search criterion");
     }
@@ -178,11 +178,11 @@ public sealed class SearchPersonsQueryHandlerTests : UnitTestBase
     /// <summary>
     /// Test: No filters provided with empty strings (validation failure)
     /// Handler receives firstName="", lastName="", personTypeCode=""
-    /// Should throw ArgumentException
+    /// Should throw ValidationException
     /// Assert: Exception message contains "At least one search criterion"
     /// </summary>
     [Fact]
-    public async Task Handle_throws_ArgumentException_when_all_filters_empty_strings()
+    public async Task Handle_throws_ValidationException_when_all_filters_empty_strings()
     {
         var query = new SearchPersonsQuery
         {
@@ -196,7 +196,7 @@ public sealed class SearchPersonsQueryHandlerTests : UnitTestBase
         var act = async () => await _sut.Handle(query, CancellationToken.None);
 
         var exception = await act.Should()
-            .ThrowAsync<ArgumentException>();
+            .ThrowAsync<ValidationException>();
 
         exception.And.Message.Should().Contain("At least one search criterion");
     }
@@ -204,11 +204,11 @@ public sealed class SearchPersonsQueryHandlerTests : UnitTestBase
     /// <summary>
     /// Test: Invalid pageSize (> 100)
     /// Handler receives pageSize=101
-    /// Should throw ArgumentException
+    /// Should throw ValidationException
     /// Assert: Exception message contains "pageSize" and "100"
     /// </summary>
     [Fact]
-    public async Task Handle_throws_ArgumentException_when_pageSize_exceeds_100()
+    public async Task Handle_throws_ValidationException_when_pageSize_exceeds_100()
     {
         var query = new SearchPersonsQuery
         {
@@ -219,7 +219,7 @@ public sealed class SearchPersonsQueryHandlerTests : UnitTestBase
         var act = async () => await _sut.Handle(query, CancellationToken.None);
 
         var exception = await act.Should()
-            .ThrowAsync<ArgumentException>();
+            .ThrowAsync<ValidationException>();
 
         exception.And.Message.ToLower().Should().Contain("pagesize");
         exception.And.Message.Should().Contain("100");
@@ -228,10 +228,10 @@ public sealed class SearchPersonsQueryHandlerTests : UnitTestBase
     /// <summary>
     /// Test: Invalid pageSize (< 1)
     /// Handler receives pageSize=0
-    /// Should throw ArgumentException
+    /// Should throw ValidationException
     /// </summary>
     [Fact]
-    public async Task Handle_throws_ArgumentException_when_pageSize_is_zero()
+    public async Task Handle_throws_ValidationException_when_pageSize_is_zero()
     {
         var query = new SearchPersonsQuery
         {
@@ -242,7 +242,7 @@ public sealed class SearchPersonsQueryHandlerTests : UnitTestBase
         var act = async () => await _sut.Handle(query, CancellationToken.None);
 
         var exception = await act.Should()
-            .ThrowAsync<ArgumentException>();
+            .ThrowAsync<ValidationException>();
 
         exception.And.Message.ToLower().Should().Contain("pagesize");
     }
@@ -250,11 +250,11 @@ public sealed class SearchPersonsQueryHandlerTests : UnitTestBase
     /// <summary>
     /// Test: Invalid page (< 1)
     /// Handler receives page=0
-    /// Should throw ArgumentException
+    /// Should throw ValidationException
     /// Assert: Exception message contains "page" or "Page"
     /// </summary>
     [Fact]
-    public async Task Handle_throws_ArgumentException_when_page_is_zero()
+    public async Task Handle_throws_ValidationException_when_page_is_zero()
     {
         var query = new SearchPersonsQuery
         {
@@ -265,7 +265,7 @@ public sealed class SearchPersonsQueryHandlerTests : UnitTestBase
         var act = async () => await _sut.Handle(query, CancellationToken.None);
 
         var exception = await act.Should()
-            .ThrowAsync<ArgumentException>();
+            .ThrowAsync<ValidationException>();
 
         exception.And.Message.ToLower().Should().Contain("page");
     }
@@ -273,10 +273,10 @@ public sealed class SearchPersonsQueryHandlerTests : UnitTestBase
     /// <summary>
     /// Test: Invalid page (< 1)
     /// Handler receives page=-5
-    /// Should throw ArgumentException
+    /// Should throw ValidationException
     /// </summary>
     [Fact]
-    public async Task Handle_throws_ArgumentException_when_page_is_negative()
+    public async Task Handle_throws_ValidationException_when_page_is_negative()
     {
         var query = new SearchPersonsQuery
         {
@@ -287,7 +287,7 @@ public sealed class SearchPersonsQueryHandlerTests : UnitTestBase
         var act = async () => await _sut.Handle(query, CancellationToken.None);
 
         var exception = await act.Should()
-            .ThrowAsync<ArgumentException>();
+            .ThrowAsync<ValidationException>();
 
         exception.And.Message.ToLower().Should().Contain("page");
     }
