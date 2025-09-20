@@ -78,6 +78,8 @@ steps:
       AutoMapperLicenseKey: $(AutoMapperLicenseKey)
       ASPNETCORE_ENVIRONMENT: Testing
       APPSETTING_ASPNETCORE_ENVIRONMENT: Testing
+      DOTNET_ENVIRONMENT: Testing
+      ConnectionStrings__DefaultConnection: "Server=localhost;Database=AdventureWorks_Testing_Placeholder;Trusted_Connection=True;Application Name=AdventureWorks.IntegrationTests;"
 
   - task: DotNetCoreCLI@2
     displayName: "Publish API"
