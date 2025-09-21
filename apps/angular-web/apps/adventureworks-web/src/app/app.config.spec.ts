@@ -1,5 +1,5 @@
 import { describe, expect, it, vi } from 'vitest';
-import { runSignalrLifecycleStep, runStoreRefreshOnReconnectStep } from './app.config';
+import { runSignalrEventSubscriptionStep, runSignalrLifecycleStep, runStoreRefreshOnReconnectStep } from './app.config';
 
 describe('runSignalrLifecycleStep', () => {
   it('disconnects when unauthenticated', async () => {
@@ -77,5 +77,72 @@ describe('runStoreRefreshOnReconnectStep', () => {
     expect(stores.storeStore.refresh).toHaveBeenCalledTimes(1);
     expect(stores.salesPersonStore.refresh).toHaveBeenCalledTimes(1);
     expect(stores.employeeStore.refresh).toHaveBeenCalledTimes(1);
+  });
+});
+
+describe('runSignalrEventSubscriptionStep', () => {
+  it('registers handlers once when connection becomes connected', () => {
+    const signalrService = { on: vi.fn() };
+    const stores = {
+      storeStore: { applySignalrStoreUpdated: vi.fn() },
+      employeeStore: { handleSignalrEmployeeLifecycleEvent: vi.fn() },
+    };
+    const appInsightsService = { trackException: vi.fn() };
+
+    let handlersRegistered = runSignalrEventSubscriptionStep(
+      false,
+      'connected',
+      signalrService,
+      stores,
+      appInsightsService,
+    );
+    handlersRegistered = runSignalrEventSubscriptionStep(
+      handlersRegistered,
+      'connected',
+      signalrService,
+      stores,
+      appInsightsService,
+    );
+
+    expect(handlersRegistered).toBe(true);
+    expect(signalrService.on).toHaveBeenCalledTimes(3);
+  });
+
+  it('resets registration on disconnected status', () => {
+    const signalrService = { on: vi.fn() };
+    const stores = {
+      storeStore: { applySignalrStoreUpdated: vi.fn() },
+      employeeStore: { handleSignalrEmployeeLifecycleEvent: vi.fn() },
+    };
+    const appInsightsService = { trackException: vi.fn() };
+
+    const handlersRegistered = runSignalrEventSubscriptionStep(true, 'disconnected', signalrService, stores, appInsightsService);
+
+    expect(handlersRegistered).toBe(false);
+    expect(signalrService.on).not.toHaveBeenCalled();
+  });
+
+  it('tracks exception when handler registration fails', () => {
+    const signalrService = {
+      on: vi.fn().mockImplementation(() => {
+        throw new Error('registration failed');
+      }),
+    };
+    const stores = {
+      storeStore: { applySignalrStoreUpdated: vi.fn() },
+      employeeStore: { handleSignalrEmployeeLifecycleEvent: vi.fn() },
+    };
+    const appInsightsService = { trackException: vi.fn() };
+
+    const handlersRegistered = runSignalrEventSubscriptionStep(
+      false,
+      'connected',
+      signalrService,
+      stores,
+      appInsightsService,
+    );
+
+    expect(handlersRegistered).toBe(false);
+    expect(appInsightsService.trackException).toHaveBeenCalledTimes(1);
   });
 });

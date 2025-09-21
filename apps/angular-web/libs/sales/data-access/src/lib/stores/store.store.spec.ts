@@ -169,6 +169,61 @@ describe('StoreStore', () => {
     });
   });
 
+  describe('applySignalrStoreUpdated', () => {
+    it('patches an existing entity when payload contains a numeric id', () => {
+      store.loadById(1);
+      const req = httpTesting.expectOne('https://api.test.com/v1/stores/1');
+      req.flush(mockStore);
+
+      store.applySignalrStoreUpdated({ id: 1, name: 'Updated from event' });
+
+      expect(store.entities()[0].name).toBe('Updated from event');
+    });
+
+   it('ignores malformed payloads (string id)', () => {
+      store.loadById(1);
+      const req = httpTesting.expectOne('https://api.test.com/v1/stores/1');
+      req.flush(mockStore);
+
+      store.applySignalrStoreUpdated({ id: '1', name: 'Should not apply' });
+
+      expect(store.entities()[0].name).toBe('Test Store');
+    });
+
+   it('ignores payload with missing id', () => {
+     store.loadById(1);
+     const req = httpTesting.expectOne('https://api.test.com/v1/stores/1');
+     req.flush(mockStore);
+
+     store.applySignalrStoreUpdated({ name: 'No id' });
+
+     expect(store.entities()[0].name).toBe('Test Store');
+   });
+
+   it('ignores null/undefined payload', () => {
+     store.loadById(1);
+     const req = httpTesting.expectOne('https://api.test.com/v1/stores/1');
+     req.flush(mockStore);
+
+     store.applySignalrStoreUpdated(null);
+     store.applySignalrStoreUpdated(undefined);
+
+     expect(store.entities()[0].name).toBe('Test Store');
+   });
+
+   it('ignores non-object payload', () => {
+     store.loadById(1);
+     const req = httpTesting.expectOne('https://api.test.com/v1/stores/1');
+     req.flush(mockStore);
+
+     store.applySignalrStoreUpdated(123);
+     store.applySignalrStoreUpdated('string');
+     store.applySignalrStoreUpdated([1,2,3]);
+
+     expect(store.entities()[0].name).toBe('Test Store');
+   });
+  });
+
   describe('loadById', () => {
     it('should load a single entity', () => {
       store.loadById(1);

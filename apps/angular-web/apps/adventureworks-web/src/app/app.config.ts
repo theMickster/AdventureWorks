@@ -64,6 +64,7 @@ export async function runSignalrLifecycleStep(
   });
 }
 
+/** Starts or stops the SignalR connection in response to the current auth state. */
 export function initializeSignalrLifecycle(
   authService: Pick<AuthService, 'isAuthenticated'> = inject(AuthService),
   signalrService: Pick<SignalrService, 'connect' | 'disconnect'> = inject(SignalrService),
@@ -71,7 +72,7 @@ export function initializeSignalrLifecycle(
 ): EffectRef {
   return effect(() => {
     void runSignalrLifecycleStep(authService.isAuthenticated(), signalrService, appInsightsService);
-  }, { manualCleanup: true });
+  });
 }
 
 export function runStoreRefreshOnReconnectStep(
@@ -92,6 +93,35 @@ export function runStoreRefreshOnReconnectStep(
   return currentStatus;
 }
 
+export function runSignalrEventSubscriptionStep(
+  handlersRegistered: boolean,
+  currentStatus: SignalRConnectionStatus,
+  signalrService: Pick<SignalrService, 'on'>,
+  stores: {
+    storeStore: { applySignalrStoreUpdated: (payload: unknown) => void };
+    employeeStore: { handleSignalrEmployeeLifecycleEvent: () => void };
+  },
+  appInsightsService: Pick<AppInsightsService, 'trackException'>,
+): boolean {
+  if (currentStatus === 'disconnected') {
+    return false;
+  }
+
+  if (currentStatus !== 'connected' || handlersRegistered) {
+    return handlersRegistered;
+  }
+
+  try {
+    signalrService.on<unknown>('store-updated', (payload) => stores.storeStore.applySignalrStoreUpdated(payload));
+    signalrService.on<unknown>('EmployeeHired', () => stores.employeeStore.handleSignalrEmployeeLifecycleEvent());
+    signalrService.on<unknown>('EmployeeTerminated', () => stores.employeeStore.handleSignalrEmployeeLifecycleEvent());
+    return true;
+  } catch (error: unknown) {
+    appInsightsService.trackException(error instanceof Error ? error : new Error(String(error)));
+    return false;
+  }
+}
+
 export function initializeSignalrReconnectRefresh(
   signalrService: Pick<SignalrService, 'connectionStatus'> = inject(SignalrService),
   storeStore: { refresh: () => void } = inject(StoreStore),
@@ -106,7 +136,27 @@ export function initializeSignalrReconnectRefresh(
       salesPersonStore,
       employeeStore,
     });
-  }, { manualCleanup: true });
+  });
+}
+
+/** Subscribes stores to SignalR events so live updates can flow into signal stores. */
+export function initializeSignalrEventSubscriptions(
+  signalrService: Pick<SignalrService, 'connectionStatus' | 'on'> = inject(SignalrService),
+  storeStore: { applySignalrStoreUpdated: (payload: unknown) => void } = inject(StoreStore),
+  employeeStore: { handleSignalrEmployeeLifecycleEvent: () => void } = inject(EmployeeStore),
+  appInsightsService: Pick<AppInsightsService, 'trackException'> = inject(AppInsightsService),
+): EffectRef {
+  let handlersRegistered = false;
+
+  return effect(() => {
+    handlersRegistered = runSignalrEventSubscriptionStep(
+      handlersRegistered,
+      signalrService.connectionStatus(),
+      signalrService,
+      { storeStore, employeeStore },
+      appInsightsService,
+    );
+  });
 }
 
 export const appConfig: ApplicationConfig = {
@@ -137,6 +187,7 @@ export const appConfig: ApplicationConfig = {
     provideAppInitializer(() => {
       initializeSignalrLifecycle();
       initializeSignalrReconnectRefresh();
+      initializeSignalrEventSubscriptions();
     }),
     provideAppInitializer(() => inject(AppInsightsService).initialize()),
   ],

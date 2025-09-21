@@ -182,6 +182,36 @@ describe('EmployeeStore', () => {
     });
   });
 
+  describe('handleSignalrEmployeeLifecycleEvent', () => {
+    it('refreshes employees when a prior list request exists', () => {
+      store.loadPage({ pageNumber: 1, pageSize: 10 });
+      const initialReq = httpTesting.expectOne('https://api.test.com/v1/employees?pageNumber=1&pageSize=10');
+      initialReq.flush(mockSearchResult);
+
+      store.handleSignalrEmployeeLifecycleEvent();
+      const refreshReq = httpTesting.expectOne('https://api.test.com/v1/employees?pageNumber=1&pageSize=10');
+      expect(refreshReq.request.method).toBe('GET');
+      refreshReq.flush(mockSearchResult);
+    });
+
+    it('does not issue a request when no prior list/query request exists', () => {
+      store.handleSignalrEmployeeLifecycleEvent();
+      httpTesting.expectNone((request) => request.url.includes('/v1/employees'));
+    });
+
+   it('still works after a search request', () => {
+     store.search({ params: { pageNumber: 2, pageSize: 5 }, body: { firstName: 'Jane' } });
+     const searchReq = httpTesting.expectOne('https://api.test.com/v1/employees/search?pageNumber=2&pageSize=5');
+     searchReq.flush({ ...mockSearchResult, pageNumber: 2, pageSize: 5 });
+
+     store.handleSignalrEmployeeLifecycleEvent();
+     const refreshReq = httpTesting.expectOne('https://api.test.com/v1/employees/search?pageNumber=2&pageSize=5');
+     expect(refreshReq.request.method).toBe('POST');
+     expect(refreshReq.request.body).toEqual({ firstName: 'Jane' });
+     refreshReq.flush({ ...mockSearchResult, pageNumber: 2, pageSize: 5 });
+   });
+  });
+
   describe('loadById', () => {
     it('should load a single entity', () => {
       store.loadById(1);

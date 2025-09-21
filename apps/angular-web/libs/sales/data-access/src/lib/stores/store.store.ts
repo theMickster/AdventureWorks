@@ -150,6 +150,20 @@ export const StoreStore = signalStore(
       });
     };
 
+    /** Applies a SignalR store-updated payload when it contains a valid store id. */
+    const applySignalrStoreUpdated = (payload: unknown): void => {
+      if (!payload || typeof payload !== 'object') {
+        return;
+      }
+
+      const candidate = payload as Partial<Store> & { id?: unknown };
+      if (typeof candidate.id !== 'number') {
+        return;
+      }
+
+      patchState(store, updateEntity({ id: candidate.id, changes: candidate }));
+    };
+
     return {
       loadPage,
       search,
@@ -157,6 +171,7 @@ export const StoreStore = signalStore(
       create,
       update,
       refresh,
+      applySignalrStoreUpdated,
     };
   }),
 );

@@ -242,6 +242,11 @@ export const EmployeeStore = signalStore(
       });
     };
 
+    /** Refreshes the current employee query after a hired or terminated event arrives. */
+    const handleSignalrEmployeeLifecycleEvent = (): void => {
+      refresh();
+    };
+
     return {
       loadPage,
       search,
@@ -253,6 +258,7 @@ export const EmployeeStore = signalStore(
       terminateEmployee,
       rehireEmployee,
       refresh,
+      handleSignalrEmployeeLifecycleEvent,
     };
   }),
 );
