@@ -3897,111 +3897,6 @@
           ]
         }
       ]
-    }
-  ],
-  "auth": {
-    "type": "oauth2",
-    "oauth2": [
-      {
-        "key": "accessTokenUrl",
-        "value": "https://login.microsoftonline.com/{{tenantId}}/oauth2/v2.0/token",
-        "type": "string"
-      },
-      {
-        "key": "authUrl",
-        "value": "https://login.microsoftonline.com/{{tenantId}}/oauth2/v2.0/authorize",
-        "type": "string"
-      },
-      {
-        "key": "scope",
-        "value": "{{scope}}",
-        "type": "string"
-      },
-      {
-        "key": "clientSecret",
-        "value": "{{clientSecret}}",
-        "type": "string"
-      },
-      {
-        "key": "clientId",
-        "value": "{{clientId}}",
-        "type": "string"
-      },
-      {
-        "key": "redirect_uri",
-        "value": "{{callbackUrl}}",
-        "type": "string"
-      },
-      {
-        "key": "client_authentication",
-        "value": "header",
-        "type": "string"
-      },
-      {
-        "key": "tokenName",
-        "value": "AdventureWorks",
-        "type": "string"
-      },
-      {
-        "key": "useBrowser",
-        "value": false,
-        "type": "boolean"
-      },
-      {
-        "key": "grant_type",
-        "value": "authorization_code",
-        "type": "string"
-      },
-      {
-        "key": "refreshRequestParams",
-        "value": [],
-        "type": "any"
-      },
-      {
-        "key": "tokenRequestParams",
-        "value": [],
-        "type": "any"
-      },
-      {
-        "key": "authRequestParams",
-        "value": [],
-        "type": "any"
-      },
-      {
-        "key": "challengeAlgorithm",
-        "value": "S256",
-        "type": "string"
-      },
-      {
-        "key": "addTokenTo",
-        "value": "header",
-        "type": "string"
-      }
-    ]
-  },
-  "event": [
-    {
-      "listen": "prerequest",
-      "script": {
-        "type": "text/javascript",
-        "requests": {},
-        "exec": [
-          "var moment = require('moment');\r",
-          "pm.collectionVariables.set('currentDateTime', moment().format( (\"YYYYMMDD_hhmmss\")));\r",
-          "pm.collectionVariables.set('currentDate', moment().format( (\"YYYY-MM-DD\")));\r",
-          ""
-        ]
-      }
-    },
-    {
-      "listen": "test",
-      "script": {
-        "type": "text/javascript",
-        "requests": {},
-        "exec": [
-          ""
-        ]
-      }
     },
     {
       "name": "SalesReason",
@@ -4675,6 +4570,111 @@
           "response": []
         }
       ]
+    }
+  ],
+  "auth": {
+    "type": "oauth2",
+    "oauth2": [
+      {
+        "key": "accessTokenUrl",
+        "value": "https://login.microsoftonline.com/{{tenantId}}/oauth2/v2.0/token",
+        "type": "string"
+      },
+      {
+        "key": "authUrl",
+        "value": "https://login.microsoftonline.com/{{tenantId}}/oauth2/v2.0/authorize",
+        "type": "string"
+      },
+      {
+        "key": "scope",
+        "value": "{{scope}}",
+        "type": "string"
+      },
+      {
+        "key": "clientSecret",
+        "value": "{{clientSecret}}",
+        "type": "string"
+      },
+      {
+        "key": "clientId",
+        "value": "{{clientId}}",
+        "type": "string"
+      },
+      {
+        "key": "redirect_uri",
+        "value": "{{callbackUrl}}",
+        "type": "string"
+      },
+      {
+        "key": "client_authentication",
+        "value": "header",
+        "type": "string"
+      },
+      {
+        "key": "tokenName",
+        "value": "AdventureWorks",
+        "type": "string"
+      },
+      {
+        "key": "useBrowser",
+        "value": false,
+        "type": "boolean"
+      },
+      {
+        "key": "grant_type",
+        "value": "authorization_code",
+        "type": "string"
+      },
+      {
+        "key": "refreshRequestParams",
+        "value": [],
+        "type": "any"
+      },
+      {
+        "key": "tokenRequestParams",
+        "value": [],
+        "type": "any"
+      },
+      {
+        "key": "authRequestParams",
+        "value": [],
+        "type": "any"
+      },
+      {
+        "key": "challengeAlgorithm",
+        "value": "S256",
+        "type": "string"
+      },
+      {
+        "key": "addTokenTo",
+        "value": "header",
+        "type": "string"
+      }
+    ]
+  },
+  "event": [
+    {
+      "listen": "prerequest",
+      "script": {
+        "type": "text/javascript",
+        "requests": {},
+        "exec": [
+          "var moment = require('moment');\r",
+          "pm.collectionVariables.set('currentDateTime', moment().format( (\"YYYYMMDD_hhmmss\")));\r",
+          "pm.collectionVariables.set('currentDate', moment().format( (\"YYYY-MM-DD\")));\r",
+          ""
+        ]
+      }
+    },
+    {
+      "listen": "test",
+      "script": {
+        "type": "text/javascript",
+        "requests": {},
+        "exec": [
+          ""
+        ]
+      }
     }
   ],
   "variable": [

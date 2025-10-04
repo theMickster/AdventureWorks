@@ -7,9 +7,9 @@
 **Current Status Summary** (as of 2026-05-22):
 
 - ✅ Backend API Round 1: Epic #552 closed (Done) — Store Manager, Products Manager, ProductReview, CQRS foundation
-- ✅ Backend API Round 2: Epic #873 (API Completion) done — all 16 child Features are Done (Epic moved to Done on 2026-05-22)
+- ✅ Backend API Round 2: Epic #873 (API Completion) done — all 17 child Features are Done (Epic moved to Done on 2026-05-22)
 - ✅ Frontend Foundation: Angular Foundation (Epic #560) complete — all 9 features done
-- ✅ Frontend Data Layer: Data Interaction Layer (Epic #577) 83% complete — Feature #620 done, #621 (SignalR) remaining
+- ✅ Frontend Data Layer: Data Interaction Layer (Epic #577) complete — all 6 features done (Epic closed Done 2026-05-25)
 - ❌ Azure Functions: Planned as Epic #569 (Polyglot Azure Functions Architecture) - not yet started
 - ✅ Infrastructure: IaC + CI/CD (Epic #570) complete — all 5 features done
 
@@ -34,10 +34,9 @@
 
 - ✅ Nx workspace, Tailwind/DaisyUI, Shared Component Library, Entra Auth, HTTP interceptors, Environment config, Error handling, App Shell, Routing with Guards
 
-**Phase 2 - Data Interaction Layer** (Epic #577) -- 83% COMPLETE (5/6 features done):
+**Phase 2 - Data Interaction Layer** (Epic #577) -- ✅ COMPLETE (2026-05-25):
 
-- ✅ Shared data models, API contract corrections, enhanced HTTP pipeline, NgRx SignalStore foundation, domain data access libraries (Sales, HR)
-- Remaining: SignalR real-time communication (#621)
+- ✅ Shared data models, API contract corrections, enhanced HTTP pipeline, NgRx SignalStore foundation, domain data access libraries (Sales, HR), SignalR real-time communication (#621)
 
 **Phase 2.5 - API Completion** (Epic #873 — successor to closed #552) -- ✅ COMPLETE (Done 2026-05-22):
 
@@ -125,16 +124,16 @@
 
 > **Pivot**: Feature #577 (API Service Layer) was promoted to its own Epic -- the Data Interaction Layer (see below). This reduced Epic #560 from 10 to 9 features.
 
-#### Epic #577 -- Data Interaction Layer (4/6 features complete)
+#### Epic #577 -- Data Interaction Layer ✅ COMPLETE (2026-05-25)
 
-| Order | ID   | Feature                                  | Status         |
-| ----- | ---- | ---------------------------------------- | -------------- |
-| --    | #617 | Shared Data Models & API Contracts       | ✅ Done        |
-| --    | #639 | API Contract Corrections                 | ✅ Done        |
-| --    | #618 | Enhanced HTTP Pipeline                   | ✅ Done        |
-| --    | #619 | NgRx SignalStore Foundation              | ✅ Done        |
-| 3     | #620 | Domain Data Access Libraries (Sales, HR) | 🔄 In Progress |
-| 4     | #621 | Real-Time Communication (SignalR)        | 📋 Planned     |
+| Order | ID   | Feature                                  | Status  |
+| ----- | ---- | ---------------------------------------- | ------- |
+| --    | #617 | Shared Data Models & API Contracts       | ✅ Done |
+| --    | #639 | API Contract Corrections                 | ✅ Done |
+| --    | #618 | Enhanced HTTP Pipeline                   | ✅ Done |
+| --    | #619 | NgRx SignalStore Foundation              | ✅ Done |
+| 3     | #620 | Domain Data Access Libraries (Sales, HR) | ✅ Done |
+| 4     | #621 | Real-Time Communication (SignalR)        | ✅ Done |
 
 > **Pivot**: State management upgraded from plain Angular Signals to NgRx SignalStore. The codebase is 100% signal-based; SignalStore extends that pattern with `rxMethod()` for HTTP bridging, `withRequestStatus()`, and `withPagination()`.
 
@@ -284,7 +283,7 @@ The precise order for completing remaining work (577 → 565 → UI):
 | #     | Epic | Feature                                           | Status     | Depends On           |
 | ----- | ---- | ------------------------------------------------- | ---------- | -------------------- |
 | ~~3~~ | #577 | ~~Domain Data Access Libraries (Sales, HR) #620~~ | ✅ Done    | #619 (SignalStore)   |
-| 4     | #577 | Real-Time Communication (SignalR) #621            | 📋 Planned | #618 (HTTP Pipeline) |
+| ~~4~~ | #577 | ~~Real-Time Communication (SignalR) #621~~        | ✅ Done    | #618 (HTTP Pipeline) |
 
 ### Phase 2.5: API Completion (Epic #873) — successor to closed #552 ✅ COMPLETE (Done 2026-05-22)
 
@@ -329,7 +328,14 @@ The precise order for completing remaining work (577 → 565 → UI):
 | HR Additional API Endpoints            | #716 | #749-#753 (5) | was #562 — ✅ Done |
 | HR Database Views (Dashboard/OrgChart) | #722 | #771-#772 (2) | was #562 — ✅ Done |
 
-**Total under Epic #873**: 16 Features + 46 Stories (13 net-new Features + 36 net-new Stories + 3 reparented Features + 10 reparented Stories)
+**Direct Enabler Features** (infrastructure / API preparation, tracked under #873):
+
+| Feature                                              | ID   | Stories | Status |
+| ---------------------------------------------------- | ---- | ------- | ------ |
+| .NET API Integration Tests (WebApplicationFactory)  | #669 | #673-#676 (4) | ✅ Done 2026-05-18 |
+| Enabler Feature: Sales Order Paginated List Endpoint | #709 | #723 (1) | ✅ Done |
+
+**Total under Epic #873**: 17 Features + 47 Stories (13 net-new Features + 36 net-new Stories + 3 reparented Features + 10 reparented Stories + 2 enabler Features)
 
 > **Full story details**: `docs/theBigPlan/api-completion-features.md`
 
@@ -367,18 +373,17 @@ The precise order for completing remaining work (577 → 565 → UI):
 
 - Nx Workspace, Tailwind/DaisyUI, Shared Component Library, Routing with Guards, Entra Auth, HTTP Interceptors, Environment Config, Error Handling/Loading, App Shell
 
-**Epic #577 -- Data Interaction Layer**: 5 of 6 features done
+**Epic #577 -- Data Interaction Layer**: ✅ ALL 6 features done (2026-05-25)
 
-- Shared Data Models, API Contract Corrections, Enhanced HTTP Pipeline, NgRx SignalStore Foundation, Domain Data Access Libraries (Sales & HR)
+- Shared Data Models, API Contract Corrections, Enhanced HTTP Pipeline, NgRx SignalStore Foundation, Domain Data Access Libraries (Sales & HR), Real-Time Communication (SignalR)
 
 **Epic #570 -- Simple IaC + CI/CD**: ✅ ALL 5 features done (2026-03-29)
 
 - Bicep IaC, Environment & Secrets Management, GitHub Actions PR Validation, Azure Pipelines CI/CD Enhancement, Docker Local Dev Environment
 
-### Remaining Work (4 features across 2 epics)
+### Remaining Work (3 features across 1 epic)
 
-- **Epic #577**: 1 feature remaining (#621 SignalR)
-- **Epic #565**: 3 features remaining (#670, #671, #672); #669 and #923 are Done
+- **Epic #565**: 3 features remaining (#670 k6 Load Testing, #671 Playwright E2E, #672 Angular Testing Utils); #669 and #923 are Done
 
 ### Success Criteria for "Done"
 
@@ -498,6 +503,6 @@ Each markdown file follows this structure:
 
 ---
 
-**Document Version**: 2.7
-**Last Updated**: 2026-05-22
-**Status**: Active Execution — Epic #560 complete, #570 complete, #577 83% complete (#621 SignalR remaining), #552 closed Done, **#873 API Completion complete** (Done in ADO on 2026-05-22; all 16 child Features Done), #565 in progress (2/5 features done: #669, #923)
+**Document Version**: 2.8
+**Last Updated**: 2026-05-25
+**Status**: Active Execution — Epic #560 complete, #570 complete, **#577 complete** (Done 2026-05-25; all 6 features done including #621 SignalR), #552 closed Done, **#873 API Completion complete** (Done in ADO on 2026-05-22; all 17 child Features Done), #565 in progress (2/5 features done: #669, #923) — **Next: Phase 5 Sales & HR CRUD UI (Epics #561, #562) + Epic #565 remaining testing features**

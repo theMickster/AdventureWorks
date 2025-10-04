@@ -81,6 +81,8 @@ public class AdventureWorksDbContext : DbContext, IAdventureWorksDbContext
 
     public DbSet<SalesPersonEntity> SalesPersons { get; set; }
 
+    public DbSet<SalesOrderHeader> SalesOrderHeaders { get; set; }
+
     public DbSet<SalesTerritoryEntity> SalesTerritories { get; set; }
 
     public DbSet<ShiftEntity> Shifts { get; set; }

@@ -29,6 +29,7 @@
 | Feature                                              | ADO ID | Stories | Story IDs                               |
 | ---------------------------------------------------- | ------ | ------- | --------------------------------------- |
 | .NET API Integration Tests with WebApplicationFactory | #669   | 4       | #673-#676 — **Done 2026-05-18**         |
+| Enabler Feature: Sales Order Paginated List Endpoint | #709   | 1       | #723 — **Done**                        |
 
 **Reparented enabler Features** (now under #873, formerly under #561/#562):
 

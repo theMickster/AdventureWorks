@@ -28,4 +28,12 @@ public static class SortedResultConstants
     public const string Rating = "Rating";
 
     public const string ReviewDate = "ReviewDate";
+
+    public const string SalesOrderId = "SalesOrderId";
+
+    public const string OrderDate = "OrderDate";
+
+    public const string TotalDue = "TotalDue";
+
+    public const string SalesOrderNumber = "SalesOrderNumber";
 }

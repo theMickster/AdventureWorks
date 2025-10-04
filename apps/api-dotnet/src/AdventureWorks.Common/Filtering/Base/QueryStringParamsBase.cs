@@ -40,7 +40,7 @@ public abstract class QueryStringParamsBase
     public int PageSize
     {
         get => _take;
-        init => _take = value > MaxTake ? MaxTake : value;
+        init => _take = value <= 0 ? 1 : (value > MaxTake ? MaxTake : value);
     }
 
     /// <summary>

@@ -1,0 +1,997 @@
+{
+  "info": {
+    "_postman_id": "B63FE95B-6273-408E-ADA4-2E1DFEC3BD6F",
+    "name": "Sales Orders",
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
+    "_exporter_id": "2569631"
+  },
+  "item": [
+    {
+      "name": "Sales Orders",
+      "item": [
+        {
+          "name": "List",
+          "item": [
+            {
+              "name": "Sales Orders List - Zero Params",
+              "event": [
+                {
+                  "listen": "test",
+                  "script": {
+                    "exec": [
+                      "pm.test(\"Status should be OK\", function () {\r",
+                      "    pm.response.to.have.status(200);\r",
+                      "});\r",
+                      "\r",
+                      "var response = pm.response.json();\r",
+                      "\r",
+                      "pm.test(\"Response should have correct structure\", function() {\r",
+                      "    pm.expect(response).to.exist;\r",
+                      "    pm.expect(response.results).to.be.an(\"array\");\r",
+                      "    pm.expect(response.pageNumber).to.exist;\r",
+                      "    pm.expect(response.pageSize).to.exist;\r",
+                      "    pm.expect(response.totalPages).to.exist;\r",
+                      "    pm.expect(response.totalRecords).to.exist;\r",
+                      "    pm.expect(response).to.have.property(\"hasPreviousPage\");\r",
+                      "    pm.expect(response).to.have.property(\"hasNextPage\");\r",
+                      "});\r",
+                      "\r",
+                      "pm.test(\"Response should include correct paging information\", function() {\r",
+                      "    pm.expect(response.pageNumber).to.eq(1);\r",
+                      "    pm.expect(response.pageSize).to.eq(10);\r",
+                      "    pm.expect(response.totalRecords).to.eq(31465);\r",
+                      "    pm.expect(response.totalPages).to.eq(3147);\r",
+                      "    pm.expect(response.hasPreviousPage).to.be.false;\r",
+                      "    pm.expect(response.hasNextPage).to.be.true;\r",
+                      "});\r",
+                      "\r",
+                      "pm.test(\"Results array should have 10 items\", function() {\r",
+                      "    pm.expect(response.results.length).to.eq(10);\r",
+                      "});\r",
+                      "\r",
+                      "pm.test(\"Each result should have required sales order fields\", function() {\r",
+                      "    response.results.forEach(function(order) {\r",
+                      "        pm.expect(order.salesOrderId).to.be.a(\"number\");\r",
+                      "        pm.expect(order.salesOrderNumber).to.be.a(\"string\");\r",
+                      "        pm.expect(order.orderDate).to.exist;\r",
+                      "        pm.expect(order.status).to.be.a(\"number\");\r",
+                      "        pm.expect(order.statusDescription).to.be.a(\"string\");\r",
+                      "        pm.expect(order.totalDue).to.be.a(\"number\");\r",
+                      "        pm.expect(order.customerName).to.be.a(\"string\");\r",
+                      "    });\r",
+                      "});"
+                    ],
+                    "type": "text/javascript"
+                  }
+                }
+              ],
+              "request": {
+                "method": "GET",
+                "header": [],
+                "url": {
+                  "raw": "{{adventureWorksApi}}/{{apiVersion}}/sales-orders",
+                  "host": [
+                    "{{adventureWorksApi}}"
+                  ],
+                  "path": [
+                    "{{apiVersion}}",
+                    "sales-orders"
+                  ]
+                }
+              },
+              "response": []
+            },
+            {
+              "name": "Sales Orders List - Negative Page Number",
+              "event": [
+                {
+                  "listen": "test",
+                  "script": {
+                    "exec": [
+                      "pm.test(\"Status should be OK\", function () {\r",
+                      "    pm.response.to.have.status(200);\r",
+                      "});\r",
+                      "\r",
+                      "var response = pm.response.json();\r",
+                      "\r",
+                      "pm.test(\"Negative page number clamps to page 1\", function() {\r",
+                      "    pm.expect(response.pageNumber).to.eq(1);\r",
+                      "    pm.expect(response.pageSize).to.eq(10);\r",
+                      "    pm.expect(response.hasPreviousPage).to.be.false;\r",
+                      "});\r",
+                      "\r",
+                      "pm.test(\"Results should be populated\", function() {\r",
+                      "    pm.expect(response.results.length).to.eq(10);\r",
+                      "});"
+                    ],
+                    "type": "text/javascript"
+                  }
+                }
+              ],
+              "request": {
+                "method": "GET",
+                "header": [],
+                "url": {
+                  "raw": "{{adventureWorksApi}}/{{apiVersion}}/sales-orders?PageNumber=-10",
+                  "host": [
+                    "{{adventureWorksApi}}"
+                  ],
+                  "path": [
+                    "{{apiVersion}}",
+                    "sales-orders"
+                  ],
+                  "query": [
+                    {
+                      "key": "PageNumber",
+                      "value": "-10"
+                    }
+                  ]
+                }
+              },
+              "response": []
+            },
+            {
+              "name": "Sales Orders List - Page Number Out of Bounds",
+              "event": [
+                {
+                  "listen": "test",
+                  "script": {
+                    "exec": [
+                      "pm.test(\"Status should be OK\", function () {\r",
+                      "    pm.response.to.have.status(200);\r",
+                      "});\r",
+                      "\r",
+                      "var response = pm.response.json();\r",
+                      "\r",
+                      "pm.test(\"Out of bounds page returns empty results\", function() {\r",
+                      "    pm.expect(response.results).to.be.an(\"array\");\r",
+                      "    pm.expect(response.results.length).to.eq(0);\r",
+                      "});\r",
+                      "\r",
+                      "pm.test(\"TotalRecords reflects actual database count\", function() {\r",
+                      "    pm.expect(response.totalRecords).to.eq(31465);\r",
+                      "});"
+                    ],
+                    "type": "text/javascript"
+                  }
+                }
+              ],
+              "request": {
+                "method": "GET",
+                "header": [],
+                "url": {
+                  "raw": "{{adventureWorksApi}}/{{apiVersion}}/sales-orders?PageNumber=99999&PageSize=10",
+                  "host": [
+                    "{{adventureWorksApi}}"
+                  ],
+                  "path": [
+                    "{{apiVersion}}",
+                    "sales-orders"
+                  ],
+                  "query": [
+                    {
+                      "key": "PageNumber",
+                      "value": "99999"
+                    },
+                    {
+                      "key": "PageSize",
+                      "value": "10"
+                    }
+                  ]
+                }
+              },
+              "response": []
+            },
+            {
+              "name": "Sales Orders List - Sort by OrderDate Ascending",
+              "event": [
+                {
+                  "listen": "test",
+                  "script": {
+                    "exec": [
+                      "pm.test(\"Status should be OK\", function () {\r",
+                      "    pm.response.to.have.status(200);\r",
+                      "});\r",
+                      "\r",
+                      "var response = pm.response.json();\r",
+                      "\r",
+                      "pm.test(\"Response should have correct structure\", function() {\r",
+                      "    pm.expect(response.results).to.be.an(\"array\");\r",
+                      "    pm.expect(response.pageNumber).to.eq(1);\r",
+                      "    pm.expect(response.totalRecords).to.eq(31465);\r",
+                      "});\r",
+                      "\r",
+                      "pm.test(\"Results should be sorted by orderDate ascending\", function() {\r",
+                      "    pm.expect(response.results.length).to.be.above(1);\r",
+                      "    var first = new Date(response.results[0].orderDate);\r",
+                      "    var second = new Date(response.results[1].orderDate);\r",
+                      "    pm.expect(first <= second).to.be.true;\r",
+                      "});"
+                    ],
+                    "type": "text/javascript"
+                  }
+                }
+              ],
+              "request": {
+                "method": "GET",
+                "header": [],
+                "url": {
+                  "raw": "{{adventureWorksApi}}/{{apiVersion}}/sales-orders?OrderBy=orderDate&SortOrder=asc",
+                  "host": [
+                    "{{adventureWorksApi}}"
+                  ],
+                  "path": [
+                    "{{apiVersion}}",
+                    "sales-orders"
+                  ],
+                  "query": [
+                    {
+                      "key": "OrderBy",
+                      "value": "orderDate"
+                    },
+                    {
+                      "key": "SortOrder",
+                      "value": "asc"
+                    }
+                  ]
+                }
+              },
+              "response": []
+            },
+            {
+              "name": "Sales Orders List - Sort by TotalDue Descending",
+              "event": [
+                {
+                  "listen": "test",
+                  "script": {
+                    "exec": [
+                      "pm.test(\"Status should be OK\", function () {\r",
+                      "    pm.response.to.have.status(200);\r",
+                      "});\r",
+                      "\r",
+                      "var response = pm.response.json();\r",
+                      "\r",
+                      "pm.test(\"Response should have correct structure\", function() {\r",
+                      "    pm.expect(response.results).to.be.an(\"array\");\r",
+                      "    pm.expect(response.totalRecords).to.eq(31465);\r",
+                      "});\r",
+                      "\r",
+                      "pm.test(\"Results should be sorted by totalDue descending\", function() {\r",
+                      "    pm.expect(response.results.length).to.be.above(1);\r",
+                      "    pm.expect(response.results[0].totalDue >= response.results[1].totalDue).to.be.true;\r",
+                      "});"
+                    ],
+                    "type": "text/javascript"
+                  }
+                }
+              ],
+              "request": {
+                "method": "GET",
+                "header": [],
+                "url": {
+                  "raw": "{{adventureWorksApi}}/{{apiVersion}}/sales-orders?OrderBy=totalDue&SortOrder=desc",
+                  "host": [
+                    "{{adventureWorksApi}}"
+                  ],
+                  "path": [
+                    "{{apiVersion}}",
+                    "sales-orders"
+                  ],
+                  "query": [
+                    {
+                      "key": "OrderBy",
+                      "value": "totalDue"
+                    },
+                    {
+                      "key": "SortOrder",
+                      "value": "desc"
+                    }
+                  ]
+                }
+              },
+              "response": []
+            },
+            {
+              "name": "Sales Orders List - Sort by SalesOrderNumber Ascending",
+              "event": [
+                {
+                  "listen": "test",
+                  "script": {
+                    "exec": [
+                      "pm.test(\"Status should be OK\", function () {\r",
+                      "    pm.response.to.have.status(200);\r",
+                      "});\r",
+                      "\r",
+                      "var response = pm.response.json();\r",
+                      "\r",
+                      "pm.test(\"Response should have correct structure\", function() {\r",
+                      "    pm.expect(response.results).to.be.an(\"array\");\r",
+                      "    pm.expect(response.totalRecords).to.eq(31465);\r",
+                      "});\r",
+                      "\r",
+                      "pm.test(\"Results should be sorted by salesOrderNumber ascending\", function() {\r",
+                      "    pm.expect(response.results.length).to.be.above(1);\r",
+                      "    pm.expect(response.results[0].salesOrderNumber <= response.results[1].salesOrderNumber).to.be.true;\r",
+                      "});"
+                    ],
+                    "type": "text/javascript"
+                  }
+                }
+              ],
+              "request": {
+                "method": "GET",
+                "header": [],
+                "url": {
+                  "raw": "{{adventureWorksApi}}/{{apiVersion}}/sales-orders?OrderBy=salesOrderNumber&SortOrder=asc",
+                  "host": [
+                    "{{adventureWorksApi}}"
+                  ],
+                  "path": [
+                    "{{apiVersion}}",
+                    "sales-orders"
+                  ],
+                  "query": [
+                    {
+                      "key": "OrderBy",
+                      "value": "salesOrderNumber"
+                    },
+                    {
+                      "key": "SortOrder",
+                      "value": "asc"
+                    }
+                  ]
+                }
+              },
+              "response": []
+            },
+            {
+              "name": "Sales Orders List - Page 2 of 25",
+              "event": [
+                {
+                  "listen": "test",
+                  "script": {
+                    "exec": [
+                      "pm.test(\"Status should be OK\", function () {\r",
+                      "    pm.response.to.have.status(200);\r",
+                      "});\r",
+                      "\r",
+                      "var response = pm.response.json();\r",
+                      "\r",
+                      "pm.test(\"Response should reflect requested page and size\", function() {\r",
+                      "    pm.expect(response.pageNumber).to.eq(2);\r",
+                      "    pm.expect(response.pageSize).to.eq(25);\r",
+                      "    pm.expect(response.results.length).to.eq(25);\r",
+                      "});\r",
+                      "\r",
+                      "pm.test(\"Page 2 should have both previous and next page\", function() {\r",
+                      "    pm.expect(response.hasPreviousPage).to.be.true;\r",
+                      "    pm.expect(response.hasNextPage).to.be.true;\r",
+                      "});"
+                    ],
+                    "type": "text/javascript"
+                  }
+                }
+              ],
+              "request": {
+                "method": "GET",
+                "header": [],
+                "url": {
+                  "raw": "{{adventureWorksApi}}/{{apiVersion}}/sales-orders?PageNumber=2&PageSize=25",
+                  "host": [
+                    "{{adventureWorksApi}}"
+                  ],
+                  "path": [
+                    "{{apiVersion}}",
+                    "sales-orders"
+                  ],
+                  "query": [
+                    {
+                      "key": "PageNumber",
+                      "value": "2"
+                    },
+                    {
+                      "key": "PageSize",
+                      "value": "25"
+                    }
+                  ]
+                }
+              },
+              "response": []
+            }
+          ]
+        },
+        {
+          "name": "Filter",
+          "item": [
+            {
+              "name": "Sales Orders - Filter by Status = 5 (Shipped)",
+              "event": [
+                {
+                  "listen": "test",
+                  "script": {
+                    "exec": [
+                      "pm.test(\"Status should be OK\", function () {\r",
+                      "    pm.response.to.have.status(200);\r",
+                      "});\r",
+                      "\r",
+                      "var response = pm.response.json();\r",
+                      "\r",
+                      "pm.test(\"Filter by status=5 should return all 31465 orders\", function() {\r",
+                      "    pm.expect(response.totalRecords).to.eq(31465);\r",
+                      "    pm.expect(response.pageNumber).to.eq(1);\r",
+                      "});\r",
+                      "\r",
+                      "pm.test(\"All results should have status 5 (Shipped)\", function() {\r",
+                      "    response.results.forEach(function(order) {\r",
+                      "        pm.expect(order.status).to.eq(5);\r",
+                      "        pm.expect(order.statusDescription).to.eql(\"Shipped\");\r",
+                      "    });\r",
+                      "});"
+                    ],
+                    "type": "text/javascript"
+                  }
+                }
+              ],
+              "request": {
+                "method": "GET",
+                "header": [],
+                "url": {
+                  "raw": "{{adventureWorksApi}}/{{apiVersion}}/sales-orders?Status=5",
+                  "host": [
+                    "{{adventureWorksApi}}"
+                  ],
+                  "path": [
+                    "{{apiVersion}}",
+                    "sales-orders"
+                  ],
+                  "query": [
+                    {
+                      "key": "Status",
+                      "value": "5"
+                    }
+                  ]
+                }
+              },
+              "response": []
+            },
+            {
+              "name": "Sales Orders - Filter by TerritoryId = 2 (Northeast)",
+              "event": [
+                {
+                  "listen": "test",
+                  "script": {
+                    "exec": [
+                      "pm.test(\"Status should be OK\", function () {\r",
+                      "    pm.response.to.have.status(200);\r",
+                      "});\r",
+                      "\r",
+                      "var response = pm.response.json();\r",
+                      "\r",
+                      "pm.test(\"Filter by territory 2 (Northeast) should return 352 orders\", function() {\r",
+                      "    pm.expect(response.totalRecords).to.eq(352);\r",
+                      "    pm.expect(response.totalPages).to.eq(36);\r",
+                      "    pm.expect(response.pageNumber).to.eq(1);\r",
+                      "    pm.expect(response.pageSize).to.eq(10);\r",
+                      "});\r",
+                      "\r",
+                      "pm.test(\"Response structure should be correct\", function() {\r",
+                      "    pm.expect(response.results).to.be.an(\"array\");\r",
+                      "    pm.expect(response.results.length).to.eq(10);\r",
+                      "});"
+                    ],
+                    "type": "text/javascript"
+                  }
+                }
+              ],
+              "request": {
+                "method": "GET",
+                "header": [],
+                "url": {
+                  "raw": "{{adventureWorksApi}}/{{apiVersion}}/sales-orders?TerritoryId=2",
+                  "host": [
+                    "{{adventureWorksApi}}"
+                  ],
+                  "path": [
+                    "{{apiVersion}}",
+                    "sales-orders"
+                  ],
+                  "query": [
+                    {
+                      "key": "TerritoryId",
+                      "value": "2"
+                    }
+                  ]
+                }
+              },
+              "response": []
+            },
+            {
+              "name": "Sales Orders - Filter by SalesPersonId = 275 (Michael Blythe)",
+              "event": [
+                {
+                  "listen": "test",
+                  "script": {
+                    "exec": [
+                      "pm.test(\"Status should be OK\", function () {\r",
+                      "    pm.response.to.have.status(200);\r",
+                      "});\r",
+                      "\r",
+                      "var response = pm.response.json();\r",
+                      "\r",
+                      "pm.test(\"Filter by salesPersonId=275 should return 136 orders\", function() {\r",
+                      "    pm.expect(response.totalRecords).to.eq(136);\r",
+                      "    pm.expect(response.totalPages).to.eq(14);\r",
+                      "    pm.expect(response.pageNumber).to.eq(1);\r",
+                      "});\r",
+                      "\r",
+                      "pm.test(\"All results should reference Michael Blythe as sales person\", function() {\r",
+                      "    response.results.forEach(function(order) {\r",
+                      "        pm.expect(order.salesPersonName).to.eql(\"Michael Blythe\");\r",
+                      "    });\r",
+                      "});"
+                    ],
+                    "type": "text/javascript"
+                  }
+                }
+              ],
+              "request": {
+                "method": "GET",
+                "header": [],
+                "url": {
+                  "raw": "{{adventureWorksApi}}/{{apiVersion}}/sales-orders?SalesPersonId=275",
+                  "host": [
+                    "{{adventureWorksApi}}"
+                  ],
+                  "path": [
+                    "{{apiVersion}}",
+                    "sales-orders"
+                  ],
+                  "query": [
+                    {
+                      "key": "SalesPersonId",
+                      "value": "275"
+                    }
+                  ]
+                }
+              },
+              "response": []
+            },
+            {
+              "name": "Sales Orders - Filter by OrderDate Range (2013)",
+              "event": [
+                {
+                  "listen": "test",
+                  "script": {
+                    "exec": [
+                      "pm.test(\"Status should be OK\", function () {\r",
+                      "    pm.response.to.have.status(200);\r",
+                      "});\r",
+                      "\r",
+                      "var response = pm.response.json();\r",
+                      "\r",
+                      "pm.test(\"Filter by 2013 date range should return 14182 orders\", function() {\r",
+                      "    pm.expect(response.totalRecords).to.eq(14182);\r",
+                      "});\r",
+                      "\r",
+                      "pm.test(\"All results should fall within 2013 date range\", function() {\r",
+                      "    var from = new Date(\"2013-01-01\");\r",
+                      "    var to = new Date(\"2013-12-31T23:59:59\");\r",
+                      "    response.results.forEach(function(order) {\r",
+                      "        var orderDate = new Date(order.orderDate);\r",
+                      "        pm.expect(orderDate >= from).to.be.true;\r",
+                      "        pm.expect(orderDate <= to).to.be.true;\r",
+                      "    });\r",
+                      "});"
+                    ],
+                    "type": "text/javascript"
+                  }
+                }
+              ],
+              "request": {
+                "method": "GET",
+                "header": [],
+                "url": {
+                  "raw": "{{adventureWorksApi}}/{{apiVersion}}/sales-orders?OrderDateFrom=2013-01-01&OrderDateTo=2013-12-31",
+                  "host": [
+                    "{{adventureWorksApi}}"
+                  ],
+                  "path": [
+                    "{{apiVersion}}",
+                    "sales-orders"
+                  ],
+                  "query": [
+                    {
+                      "key": "OrderDateFrom",
+                      "value": "2013-01-01"
+                    },
+                    {
+                      "key": "OrderDateTo",
+                      "value": "2013-12-31"
+                    }
+                  ]
+                }
+              },
+              "response": []
+            },
+            {
+              "name": "Sales Orders - Filter by OrderDateFrom Only",
+              "event": [
+                {
+                  "listen": "test",
+                  "script": {
+                    "exec": [
+                      "pm.test(\"Status should be OK\", function () {\r",
+                      "    pm.response.to.have.status(200);\r",
+                      "});\r",
+                      "\r",
+                      "var response = pm.response.json();\r",
+                      "\r",
+                      "pm.test(\"Filter by OrderDateFrom only should return results\", function() {\r",
+                      "    pm.expect(response.totalRecords).to.be.above(0);\r",
+                      "    pm.expect(response.results).to.be.an(\"array\");\r",
+                      "    pm.expect(response.results.length).to.be.above(0);\r",
+                      "});\r",
+                      "\r",
+                      "pm.test(\"All results should be on or after 2014-01-01\", function() {\r",
+                      "    var from = new Date(\"2014-01-01\");\r",
+                      "    response.results.forEach(function(order) {\r",
+                      "        pm.expect(new Date(order.orderDate) >= from).to.be.true;\r",
+                      "    });\r",
+                      "});"
+                    ],
+                    "type": "text/javascript"
+                  }
+                }
+              ],
+              "request": {
+                "method": "GET",
+                "header": [],
+                "url": {
+                  "raw": "{{adventureWorksApi}}/{{apiVersion}}/sales-orders?OrderDateFrom=2014-01-01",
+                  "host": [
+                    "{{adventureWorksApi}}"
+                  ],
+                  "path": [
+                    "{{apiVersion}}",
+                    "sales-orders"
+                  ],
+                  "query": [
+                    {
+                      "key": "OrderDateFrom",
+                      "value": "2014-01-01"
+                    }
+                  ]
+                }
+              },
+              "response": []
+            }
+          ]
+        },
+        {
+          "name": "Validation",
+          "item": [
+            {
+              "name": "Sales Orders - Validation - Invalid Status = 99",
+              "event": [
+                {
+                  "listen": "test",
+                  "script": {
+                    "exec": [
+                      "pm.test(\"Status should be Bad Request\", function () {\r",
+                      "    pm.response.to.have.status(400);\r",
+                      "});\r",
+                      "\r",
+                      "var response = pm.response.json();\r",
+                      "\r",
+                      "pm.test(\"Response should contain validation error for status field\", function() {\r",
+                      "    pm.expect(response).to.be.an(\"array\");\r",
+                      "    var statusError = response.find(function(e) { return e.errorCode === \"Rule-07\"; });\r",
+                      "    pm.expect(statusError).to.exist;\r",
+                      "    pm.expect(statusError.errorMessage).to.include(\"Status must be between 1 and 6\");\r",
+                      "});"
+                    ],
+                    "type": "text/javascript"
+                  }
+                }
+              ],
+              "request": {
+                "method": "GET",
+                "header": [],
+                "url": {
+                  "raw": "{{adventureWorksApi}}/{{apiVersion}}/sales-orders?Status=99",
+                  "host": [
+                    "{{adventureWorksApi}}"
+                  ],
+                  "path": [
+                    "{{apiVersion}}",
+                    "sales-orders"
+                  ],
+                  "query": [
+                    {
+                      "key": "Status",
+                      "value": "99"
+                    }
+                  ]
+                }
+              },
+              "response": []
+            },
+            {
+              "name": "Sales Orders - Validation - Invalid SalesPersonId = -1",
+              "event": [
+                {
+                  "listen": "test",
+                  "script": {
+                    "exec": [
+                      "pm.test(\"Status should be Bad Request\", function () {\r",
+                      "    pm.response.to.have.status(400);\r",
+                      "});\r",
+                      "\r",
+                      "var response = pm.response.json();\r",
+                      "\r",
+                      "pm.test(\"Response should contain validation error for salesPersonId\", function() {\r",
+                      "    pm.expect(response).to.be.an(\"array\");\r",
+                      "    var spError = response.find(function(e) { return e.errorCode === \"Rule-05\"; });\r",
+                      "    pm.expect(spError).to.exist;\r",
+                      "    pm.expect(spError.errorMessage).to.include(\"SalesPersonId must be greater than 0\");\r",
+                      "});"
+                    ],
+                    "type": "text/javascript"
+                  }
+                }
+              ],
+              "request": {
+                "method": "GET",
+                "header": [],
+                "url": {
+                  "raw": "{{adventureWorksApi}}/{{apiVersion}}/sales-orders?SalesPersonId=-1",
+                  "host": [
+                    "{{adventureWorksApi}}"
+                  ],
+                  "path": [
+                    "{{apiVersion}}",
+                    "sales-orders"
+                  ],
+                  "query": [
+                    {
+                      "key": "SalesPersonId",
+                      "value": "-1"
+                    }
+                  ]
+                }
+              },
+              "response": []
+            },
+            {
+              "name": "Sales Orders - Validation - Invalid TerritoryId = -1",
+              "event": [
+                {
+                  "listen": "test",
+                  "script": {
+                    "exec": [
+                      "pm.test(\"Status should be Bad Request\", function () {\r",
+                      "    pm.response.to.have.status(400);\r",
+                      "});\r",
+                      "\r",
+                      "var response = pm.response.json();\r",
+                      "\r",
+                      "pm.test(\"Response should contain validation error for territoryId\", function() {\r",
+                      "    pm.expect(response).to.be.an(\"array\");\r",
+                      "    var terrError = response.find(function(e) { return e.errorCode === \"Rule-06\"; });\r",
+                      "    pm.expect(terrError).to.exist;\r",
+                      "    pm.expect(terrError.errorMessage).to.include(\"TerritoryId must be greater than 0\");\r",
+                      "});"
+                    ],
+                    "type": "text/javascript"
+                  }
+                }
+              ],
+              "request": {
+                "method": "GET",
+                "header": [],
+                "url": {
+                  "raw": "{{adventureWorksApi}}/{{apiVersion}}/sales-orders?TerritoryId=-1",
+                  "host": [
+                    "{{adventureWorksApi}}"
+                  ],
+                  "path": [
+                    "{{apiVersion}}",
+                    "sales-orders"
+                  ],
+                  "query": [
+                    {
+                      "key": "TerritoryId",
+                      "value": "-1"
+                    }
+                  ]
+                }
+              },
+              "response": []
+            },
+            {
+              "name": "Sales Orders - Validation - Invalid Date Range (From > To)",
+              "event": [
+                {
+                  "listen": "test",
+                  "script": {
+                    "exec": [
+                      "pm.test(\"Status should be Bad Request\", function () {\r",
+                      "    pm.response.to.have.status(400);\r",
+                      "});\r",
+                      "\r",
+                      "var response = pm.response.json();\r",
+                      "\r",
+                      "pm.test(\"Response should contain validation error for date range\", function() {\r",
+                      "    pm.expect(response).to.be.an(\"array\");\r",
+                      "    var dateError = response.find(function(e) { return e.errorCode === \"Rule-04\"; });\r",
+                      "    pm.expect(dateError).to.exist;\r",
+                      "    pm.expect(dateError.errorMessage).to.include(\"OrderDateFrom must be less than or equal to OrderDateTo\");\r",
+                      "});"
+                    ],
+                    "type": "text/javascript"
+                  }
+                }
+              ],
+              "request": {
+                "method": "GET",
+                "header": [],
+                "url": {
+                  "raw": "{{adventureWorksApi}}/{{apiVersion}}/sales-orders?OrderDateFrom=2014-06-30&OrderDateTo=2013-01-01",
+                  "host": [
+                    "{{adventureWorksApi}}"
+                  ],
+                  "path": [
+                    "{{apiVersion}}",
+                    "sales-orders"
+                  ],
+                  "query": [
+                    {
+                      "key": "OrderDateFrom",
+                      "value": "2014-06-30"
+                    },
+                    {
+                      "key": "OrderDateTo",
+                      "value": "2013-01-01"
+                    }
+                  ]
+                }
+              },
+              "response": []
+            }
+          ]
+        }
+      ]
+    }
+  ],
+  "auth": {
+    "type": "oauth2",
+    "oauth2": [
+      {
+        "key": "accessTokenUrl",
+        "value": "https://login.microsoftonline.com/{{tenantId}}/oauth2/v2.0/token",
+        "type": "string"
+      },
+      {
+        "key": "authUrl",
+        "value": "https://login.microsoftonline.com/{{tenantId}}/oauth2/v2.0/authorize",
+        "type": "string"
+      },
+      {
+        "key": "scope",
+        "value": "{{scope}}",
+        "type": "string"
+      },
+      {
+        "key": "clientSecret",
+        "value": "{{clientSecret}}",
+        "type": "string"
+      },
+      {
+        "key": "clientId",
+        "value": "{{clientId}}",
+        "type": "string"
+      },
+      {
+        "key": "redirect_uri",
+        "value": "{{callbackUrl}}",
+        "type": "string"
+      },
+      {
+        "key": "client_authentication",
+        "value": "header",
+        "type": "string"
+      },
+      {
+        "key": "tokenName",
+        "value": "AdventureWorks",
+        "type": "string"
+      },
+      {
+        "key": "useBrowser",
+        "value": false,
+        "type": "boolean"
+      },
+      {
+        "key": "grant_type",
+        "value": "authorization_code",
+        "type": "string"
+      },
+      {
+        "key": "refreshRequestParams",
+        "value": [],
+        "type": "any"
+      },
+      {
+        "key": "tokenRequestParams",
+        "value": [],
+        "type": "any"
+      },
+      {
+        "key": "authRequestParams",
+        "value": [],
+        "type": "any"
+      },
+      {
+        "key": "challengeAlgorithm",
+        "value": "S256",
+        "type": "string"
+      },
+      {
+        "key": "addTokenTo",
+        "value": "header",
+        "type": "string"
+      }
+    ]
+  },
+  "event": [
+    {
+      "listen": "prerequest",
+      "script": {
+        "type": "text/javascript",
+        "requests": {},
+        "exec": [
+          "var moment = require('moment');\r",
+          "pm.collectionVariables.set('currentDateTime', moment().format( (\"YYYYMMDD_hhmmss\")));\r",
+          "pm.collectionVariables.set('currentDate', moment().format( (\"YYYY-MM-DD\")));\r",
+          ""
+        ]
+      }
+    },
+    {
+      "listen": "test",
+      "script": {
+        "type": "text/javascript",
+        "requests": {},
+        "exec": [
+          ""
+        ]
+      }
+    }
+  ],
+  "variable": [
+    {
+      "key": "currentDateTime",
+      "value": ""
+    },
+    {
+      "key": "currentDate",
+      "value": ""
+    },
+    {
+      "key": "randomString",
+      "value": ""
+    },
+    {
+      "key": "lastCreatedEmployeeId",
+      "value": ""
+    },
+    {
+      "key": "updateEmployeeId",
+      "value": ""
+    },
+    {
+      "key": "lifecycleEmployeeId",
+      "value": ""
+    }
+  ]
+}

@@ -6,7 +6,7 @@ public abstract class SearchResultBaseModel<T>
 
     public int PageSize { get; set; } = 50;
 
-    public int TotalPages => PageSize == int.MinValue ? 0 : Convert.ToInt32( Math.Ceiling( TotalRecords / (double)PageSize));
+    public int TotalPages => PageSize <= 0 ? 0 : Convert.ToInt32(Math.Ceiling(TotalRecords / (double)PageSize));
 
     public bool HasPreviousPage => PageNumber > 1;
 
