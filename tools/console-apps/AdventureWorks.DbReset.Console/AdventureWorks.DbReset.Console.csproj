@@ -6,7 +6,7 @@
     <Nullable>enable</Nullable>
     <RootNamespace>AdventureWorks.DbReset.Console</RootNamespace>
     <AssemblyName>AdventureWorks.DbReset.Console</AssemblyName>
-    <UserSecretsId>8d4f1a92-3c5e-47b6-a9d8-2e4f6b0c8d1f</UserSecretsId>
+    <UserSecretsId>AdventureWorks.DbReset.Console</UserSecretsId>
   </PropertyGroup>
 
   <ItemGroup>

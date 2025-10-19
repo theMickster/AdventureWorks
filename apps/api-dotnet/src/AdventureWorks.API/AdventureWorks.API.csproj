@@ -7,7 +7,7 @@
 		<DockerDefaultTargetOS>Linux</DockerDefaultTargetOS>
 		<DockerfileContext>..\..</DockerfileContext>
 		<GenerateDocumentationFile>False</GenerateDocumentationFile>
-		<UserSecretsId>238eeec8-d5b9-4ad2-b75b-178e833ce96d</UserSecretsId>
+		<UserSecretsId>AdventureWorks.API</UserSecretsId>
 		<OpenApiGenerateDocuments>false</OpenApiGenerateDocuments>
 		<RunAnalyzersDuringBuild>true</RunAnalyzersDuringBuild>
 		<EnableNETAnalyzers>true</EnableNETAnalyzers>

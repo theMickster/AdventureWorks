@@ -5,7 +5,7 @@
     <TargetFramework>net10.0</TargetFramework>
     <ImplicitUsings>enable</ImplicitUsings>
     <Nullable>enable</Nullable>
-    <UserSecretsId>84c353be-679a-4a43-8f03-ec123e4940e6</UserSecretsId>
+    <UserSecretsId>AdventureWorks.UserSetup.Console</UserSecretsId>
   </PropertyGroup>
 
   <ItemGroup>

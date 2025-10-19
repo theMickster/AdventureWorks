@@ -7,7 +7,7 @@
     <IsPackable>false</IsPackable>
     <EnableNETAnalyzers>true</EnableNETAnalyzers>
     <AnalysisLevel>latest</AnalysisLevel>
-    <UserSecretsId>e09e9092-4173-4630-8c31-f32683ecf72c</UserSecretsId>
+    <UserSecretsId>AdventureWorks.UnitTests</UserSecretsId>
   </PropertyGroup>
 
   <ItemGroup>

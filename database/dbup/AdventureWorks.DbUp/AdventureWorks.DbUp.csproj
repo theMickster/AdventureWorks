@@ -5,7 +5,7 @@
     <TargetFramework>net10.0</TargetFramework>
     <ImplicitUsings>enable</ImplicitUsings>
     <Nullable>enable</Nullable>
-    <UserSecretsId>edd2f095-a58d-4db9-9b61-29a97c5034bb</UserSecretsId>
+    <UserSecretsId>AdventureWorks.DbUp</UserSecretsId>
   </PropertyGroup>
 
   <ItemGroup>
