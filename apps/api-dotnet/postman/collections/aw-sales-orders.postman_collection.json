@@ -401,6 +401,216 @@
           ]
         },
         {
+          "name": "Detail",
+          "item": [
+            {
+              "name": "Sales Order Detail - By Id (SO43659)",
+              "event": [
+                {
+                  "listen": "test",
+                  "script": {
+                    "exec": [
+                      "pm.test(\"Status should be OK\", function () {\r",
+                      "    pm.response.to.have.status(200);\r",
+                      "});\r",
+                      "\r",
+                      "var response = pm.response.json();\r",
+                      "\r",
+                      "pm.test(\"Response should have sales order header fields\", function() {\r",
+                      "    pm.expect(response.salesOrderId).to.eq(43659);\r",
+                      "    pm.expect(response.salesOrderNumber).to.eq(\"SO43659\");\r",
+                      "    pm.expect(response.orderDate).to.exist;\r",
+                      "    pm.expect(response.dueDate).to.exist;\r",
+                      "    pm.expect(response.status).to.be.a(\"number\");\r",
+                      "    pm.expect(response.statusDescription).to.be.a(\"string\");\r",
+                      "    pm.expect(response.subTotal).to.be.a(\"number\");\r",
+                      "    pm.expect(response.taxAmt).to.be.a(\"number\");\r",
+                      "    pm.expect(response.freight).to.be.a(\"number\");\r",
+                      "    pm.expect(response.totalDue).to.be.a(\"number\");\r",
+                      "});\r",
+                      "\r",
+                      "pm.test(\"Response should have line items\", function() {\r",
+                      "    pm.expect(response.lineItems).to.be.an(\"array\");\r",
+                      "    pm.expect(response.lineItems.length).to.be.above(0);\r",
+                      "    response.lineItems.forEach(function(item) {\r",
+                      "        pm.expect(item.salesOrderDetailId).to.be.a(\"number\");\r",
+                      "        pm.expect(item.productName).to.be.a(\"string\");\r",
+                      "        pm.expect(item.orderQty).to.be.a(\"number\");\r",
+                      "        pm.expect(item.unitPrice).to.be.a(\"number\");\r",
+                      "        pm.expect(item.lineTotal).to.be.a(\"number\");\r",
+                      "    });\r",
+                      "});\r",
+                      "\r",
+                      "pm.test(\"Response should have bill-to and ship-to addresses\", function() {\r",
+                      "    pm.expect(response.billToAddress).to.exist;\r",
+                      "    pm.expect(response.billToAddress.addressLine1).to.be.a(\"string\");\r",
+                      "    pm.expect(response.billToAddress.city).to.be.a(\"string\");\r",
+                      "    pm.expect(response.billToAddress.stateProvince).to.be.a(\"string\");\r",
+                      "    pm.expect(response.billToAddress.postalCode).to.be.a(\"string\");\r",
+                      "    pm.expect(response.shipToAddress).to.exist;\r",
+                      "    pm.expect(response.shipToAddress.addressLine1).to.be.a(\"string\");\r",
+                      "});\r",
+                      "\r",
+                      "pm.test(\"Has X-Correlation-Id header\", function() {\r",
+                      "    pm.response.to.have.header(\"X-Correlation-Id\");\r",
+                      "});"
+                    ],
+                    "type": "text/javascript"
+                  }
+                }
+              ],
+              "request": {
+                "method": "GET",
+                "header": [],
+                "url": {
+                  "raw": "{{adventureWorksApi}}/{{apiVersion}}/sales-orders/:salesOrderId",
+                  "host": [
+                    "{{adventureWorksApi}}"
+                  ],
+                  "path": [
+                    "{{apiVersion}}",
+                    "sales-orders",
+                    ":salesOrderId"
+                  ],
+                  "variable": [
+                    {
+                      "key": "salesOrderId",
+                      "value": "43659"
+                    }
+                  ]
+                }
+              },
+              "response": []
+            },
+            {
+              "name": "Sales Order Detail - Not Found",
+              "event": [
+                {
+                  "listen": "test",
+                  "script": {
+                    "exec": [
+                      "pm.test(\"Status should be Not Found\", function () {\r",
+                      "    pm.response.to.have.status(404);\r",
+                      "});\r",
+                      "\r",
+                      "pm.test(\"Has X-Correlation-Id header\", function() {\r",
+                      "    pm.response.to.have.header(\"X-Correlation-Id\");\r",
+                      "});"
+                    ],
+                    "type": "text/javascript"
+                  }
+                }
+              ],
+              "request": {
+                "method": "GET",
+                "header": [],
+                "url": {
+                  "raw": "{{adventureWorksApi}}/{{apiVersion}}/sales-orders/:salesOrderId",
+                  "host": [
+                    "{{adventureWorksApi}}"
+                  ],
+                  "path": [
+                    "{{apiVersion}}",
+                    "sales-orders",
+                    ":salesOrderId"
+                  ],
+                  "variable": [
+                    {
+                      "key": "salesOrderId",
+                      "value": "999999"
+                    }
+                  ]
+                }
+              },
+              "response": []
+            },
+            {
+              "name": "Sales Order Detail - Invalid Id (Zero)",
+              "event": [
+                {
+                  "listen": "test",
+                  "script": {
+                    "exec": [
+                      "pm.test(\"Status should be Bad Request\", function () {\r",
+                      "    pm.response.to.have.status(400);\r",
+                      "});\r",
+                      "\r",
+                      "pm.test(\"Has X-Correlation-Id header\", function() {\r",
+                      "    pm.response.to.have.header(\"X-Correlation-Id\");\r",
+                      "});"
+                    ],
+                    "type": "text/javascript"
+                  }
+                }
+              ],
+              "request": {
+                "method": "GET",
+                "header": [],
+                "url": {
+                  "raw": "{{adventureWorksApi}}/{{apiVersion}}/sales-orders/:salesOrderId",
+                  "host": [
+                    "{{adventureWorksApi}}"
+                  ],
+                  "path": [
+                    "{{apiVersion}}",
+                    "sales-orders",
+                    ":salesOrderId"
+                  ],
+                  "variable": [
+                    {
+                      "key": "salesOrderId",
+                      "value": "0"
+                    }
+                  ]
+                }
+              },
+              "response": []
+            },
+            {
+              "name": "Sales Order Detail - Invalid Id (Negative)",
+              "event": [
+                {
+                  "listen": "test",
+                  "script": {
+                    "exec": [
+                      "pm.test(\"Status should be Bad Request\", function () {\r",
+                      "    pm.response.to.have.status(400);\r",
+                      "});\r",
+                      "\r",
+                      "pm.test(\"Has X-Correlation-Id header\", function() {\r",
+                      "    pm.response.to.have.header(\"X-Correlation-Id\");\r",
+                      "});"
+                    ],
+                    "type": "text/javascript"
+                  }
+                }
+              ],
+              "request": {
+                "method": "GET",
+                "header": [],
+                "url": {
+                  "raw": "{{adventureWorksApi}}/{{apiVersion}}/sales-orders/:salesOrderId",
+                  "host": [
+                    "{{adventureWorksApi}}"
+                  ],
+                  "path": [
+                    "{{apiVersion}}",
+                    "sales-orders",
+                    ":salesOrderId"
+                  ],
+                  "variable": [
+                    {
+                      "key": "salesOrderId",
+                      "value": "-1"
+                    }
+                  ]
+                }
+              },
+              "response": []
+            }
+          ]
+        },
+        {
           "name": "Filter",
           "item": [
             {

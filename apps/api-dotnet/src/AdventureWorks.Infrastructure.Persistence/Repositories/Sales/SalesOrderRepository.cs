@@ -93,6 +93,32 @@ public sealed class SalesOrderRepository(AdventureWorksDbContext dbContext)
     }
 
     /// <summary>
+    /// Retrieves the full detail of a single sales order by its identifier, including line items,
+    /// addresses, sales person, and territory. Returns null when the order does not exist.
+    /// </summary>
+    /// <param name="salesOrderId">the sales order primary key</param>
+    /// <param name="cancellationToken">token to cancel the operation</param>
+    /// <returns>The matching <see cref="SalesOrderHeader"/>, or null if not found</returns>
+    public async Task<SalesOrderHeader?> GetSalesOrderDetailAsync(
+        int salesOrderId,
+        CancellationToken cancellationToken = default)
+    {
+        return await DbContext.SalesOrderHeaders
+            .AsNoTracking()
+            .Include(x => x.SalesOrderDetails)
+                .ThenInclude(d => d.Product)
+            .Include(x => x.BillToAddressEntity)
+                .ThenInclude(a => a.StateProvince)
+            .Include(x => x.ShipToAddressEntity)
+                .ThenInclude(a => a.StateProvince)
+            .Include(x => x.SalesPerson)
+                .ThenInclude(sp => sp.Employee)
+                    .ThenInclude(e => e.PersonBusinessEntity)
+            .Include(x => x.TerritoryEntity)
+            .FirstOrDefaultAsync(x => x.SalesOrderId == salesOrderId, cancellationToken);
+    }
+
+    /// <summary>
     /// Builds the base query with all necessary entity includes.
     /// </summary>
     /// <returns>A queryable of sales orders with customer and sales person relationships included</returns>

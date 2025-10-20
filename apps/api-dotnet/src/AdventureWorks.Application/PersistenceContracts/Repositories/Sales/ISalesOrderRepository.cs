@@ -29,4 +29,15 @@ public interface ISalesOrderRepository : IAsyncRepository<SalesOrderHeader>
         SalesOrderParameter parameters,
         SalesOrderSearchModel searchModel,
         CancellationToken cancellationToken = default);
+
+    /// <summary>
+    /// Retrieves the full detail of a single sales order by its identifier, including line items,
+    /// addresses, sales person, and territory. Returns null when the order does not exist.
+    /// </summary>
+    /// <param name="salesOrderId">the sales order primary key</param>
+    /// <param name="cancellationToken">token to cancel the operation</param>
+    /// <returns>The matching <see cref="SalesOrderHeader"/>, or null if not found</returns>
+    Task<SalesOrderHeader?> GetSalesOrderDetailAsync(
+        int salesOrderId,
+        CancellationToken cancellationToken = default);
 }

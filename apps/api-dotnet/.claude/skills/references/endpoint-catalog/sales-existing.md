@@ -44,3 +44,19 @@ Route prefix: `/stores`
 | Store List | GET    | `/stores` | 200             | Response is paginated object with `results` non-empty |
 
 Response shape: paginated (`results`, `pageNumber`, `pageSize`, `totalPages`, `totalRecords`)
+
+---
+
+## Sales Orders
+
+Controller: `ReadSalesOrderController`  
+Route prefix: `/sales-orders`
+
+| Name                           | Method | Path                  | Expected Status | Assertions                                                                                          |
+| ------------------------------ | ------ | --------------------- | --------------- | --------------------------------------------------------------------------------------------------- |
+| Sales Order List               | GET    | `/sales-orders`       | 200             | Response is a paginated object with `results`, `pageNumber`, `totalRecords`                         |
+| Sales Order Detail             | GET    | `/sales-orders/43659` | 200             | `response.salesOrderId == 43659`; `lineItems` is array; `billToAddress` and `shipToAddress` present |
+| Sales Order Detail - Not Found | GET    | `/sales-orders/999999`| 404             | Not found                                                                                           |
+| Sales Order Detail - Invalid   | GET    | `/sales-orders/0`     | 400             | Bad request (salesOrderId must be > 0)                                                              |
+
+Response shape for detail: `{ salesOrderId, salesOrderNumber, orderDate, dueDate, shipDate, status, statusDescription, subTotal, taxAmt, freight, totalDue, purchaseOrderNumber, salesPersonName, territoryName, billToAddress: { addressLine1, addressLine2, city, stateProvince, postalCode }, shipToAddress: {...}, lineItems: [{ salesOrderDetailId, productName, orderQty, unitPrice, lineTotal }] }`

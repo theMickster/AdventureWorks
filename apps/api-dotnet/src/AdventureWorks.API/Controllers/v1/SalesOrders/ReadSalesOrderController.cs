@@ -109,4 +109,36 @@ public sealed class ReadSalesOrderController : ControllerBase
 
         return Ok(searchResult);
     }
+
+    /// <summary>
+    /// Retrieve the full detail of a single sales order by its identifier.
+    /// </summary>
+    /// <param name="salesOrderId">the sales order primary key</param>
+    /// <param name="cancellationToken">Cancellation token</param>
+    /// <returns>The sales order detail, or 404 if not found</returns>
+    [HttpGet("{salesOrderId:int}")]
+    [ProducesResponseType(StatusCodes.Status200OK, Type = typeof(SalesOrderDetailModel))]
+    [ProducesResponseType(StatusCodes.Status400BadRequest)]
+    [ProducesResponseType(StatusCodes.Status401Unauthorized)]
+    [ProducesResponseType(StatusCodes.Status404NotFound)]
+    public async Task<IActionResult> GetDetailAsync(
+        [FromRoute] int salesOrderId,
+        CancellationToken cancellationToken = default)
+    {
+        if (salesOrderId <= 0)
+        {
+            return BadRequest();
+        }
+
+        var query = new ReadSalesOrderDetailQuery { SalesOrderId = salesOrderId };
+
+        var result = await _mediator.Send(query, cancellationToken);
+
+        if (result is null)
+        {
+            return NotFound();
+        }
+
+        return Ok(result);
+    }
 }

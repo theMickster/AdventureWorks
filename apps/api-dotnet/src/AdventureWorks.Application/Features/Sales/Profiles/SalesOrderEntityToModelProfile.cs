@@ -1,3 +1,4 @@
+using AdventureWorks.Application.Features.Sales;
 using AdventureWorks.Domain.Entities.Sales;
 using AdventureWorks.Models.Features.Sales;
 using AutoMapper;
@@ -31,19 +32,8 @@ public sealed class StatusDescriptionResolver : IValueResolver<SalesOrderHeader,
     /// <param name="destMember">the destination member name</param>
     /// <param name="context">the resolution context</param>
     /// <returns>The status description (e.g., "In process", "Shipped")</returns>
-    public string Resolve(SalesOrderHeader src, SalesOrderModel dest, string destMember, ResolutionContext context)
-    {
-        return src.Status switch
-        {
-            1 => "In process",
-            2 => "Approved",
-            3 => "Backordered",
-            4 => "Rejected",
-            5 => "Shipped",
-            6 => "Cancelled",
-            _ => "Unknown"
-        };
-    }
+    public string Resolve(SalesOrderHeader src, SalesOrderModel dest, string destMember, ResolutionContext context) =>
+        SalesOrderResolverHelpers.GetStatusDescription(src.Status);
 }
 
 /// <summary>
@@ -91,14 +81,6 @@ public sealed class SalesPersonNameResolver : IValueResolver<SalesOrderHeader, S
     /// <param name="destMember">the destination member name</param>
     /// <param name="context">the resolution context</param>
     /// <returns>The sales person's full name (FirstName LastName), or null if no sales person is assigned</returns>
-    public string? Resolve(SalesOrderHeader src, SalesOrderModel dest, string? destMember, ResolutionContext context)
-    {
-        if (src.SalesPerson?.Employee?.PersonBusinessEntity == null)
-        {
-            return null;
-        }
-
-        var person = src.SalesPerson.Employee.PersonBusinessEntity;
-        return $"{person.FirstName} {person.LastName}".Trim();
-    }
+    public string? Resolve(SalesOrderHeader src, SalesOrderModel dest, string? destMember, ResolutionContext context) =>
+        SalesOrderResolverHelpers.GetSalesPersonName(src.SalesPerson);
 }

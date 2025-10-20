@@ -333,7 +333,7 @@ The precise order for completing remaining work (577 → 565 → UI):
 | Feature                                              | ID   | Stories | Status |
 | ---------------------------------------------------- | ---- | ------- | ------ |
 | .NET API Integration Tests (WebApplicationFactory)  | #669 | #673-#676 (4) | ✅ Done 2026-05-18 |
-| Enabler Feature: Sales Order Paginated List Endpoint | #709 | #723 (1) | ✅ Done |
+| Enabler Feature: Sales Order Paginated List Endpoint | #709 | #723, #724 (2) | ✅ Done |
 
 **Total under Epic #873**: 17 Features + 47 Stories (13 net-new Features + 36 net-new Stories + 3 reparented Features + 10 reparented Stories + 2 enabler Features)
 
