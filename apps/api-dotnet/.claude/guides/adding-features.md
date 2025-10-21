@@ -240,6 +240,8 @@ public sealed class CreateCustomerController(IMediator mediator) : ControllerBas
 }
 ```
 
+- If the controller uses `[Authorize]` at class level, a POST action used for reads still inherits that protection — make the intent explicit by adding `[Authorize]` (or `[AllowAnonymous]`) directly on the action so the decision is visible at the call site.
+
 ## 10. Write Tests
 
 **Location**: `tests/AdventureWorks.UnitTests/Application/Features/Sales/Commands/`

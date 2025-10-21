@@ -53,34 +53,33 @@ public sealed class SalesOrderRepository(AdventureWorksDbContext dbContext)
         var salesOrderQuery = BuildSalesOrderQuery()
             .AsQueryable();
 
-        // Apply search filters
-        if (searchModel != null)
+        if (searchModel.OrderDateFrom.HasValue)
         {
-            if (searchModel.OrderDateFrom.HasValue)
-            {
-                salesOrderQuery = salesOrderQuery.Where(x => x.OrderDate >= searchModel.OrderDateFrom.Value);
-            }
-
-            if (searchModel.OrderDateTo.HasValue)
-            {
-                salesOrderQuery = salesOrderQuery.Where(x => x.OrderDate <= searchModel.OrderDateTo.Value);
-            }
-
-            if (searchModel.Status.HasValue)
-            {
-                salesOrderQuery = salesOrderQuery.Where(x => x.Status == searchModel.Status.Value);
-            }
-
-            if (searchModel.SalesPersonId.HasValue)
-            {
-                salesOrderQuery = salesOrderQuery.Where(x => x.SalesPersonId == searchModel.SalesPersonId.Value);
-            }
-
-            if (searchModel.TerritoryId.HasValue)
-            {
-                salesOrderQuery = salesOrderQuery.Where(x => x.TerritoryId == searchModel.TerritoryId.Value);
-            }
+            salesOrderQuery = salesOrderQuery.Where(x => x.OrderDate >= searchModel.OrderDateFrom.Value);
         }
+
+        if (searchModel.OrderDateTo.HasValue)
+        {
+            salesOrderQuery = salesOrderQuery.Where(x => x.OrderDate <= searchModel.OrderDateTo.Value);
+        }
+
+        if (searchModel.Status.HasValue)
+        {
+            salesOrderQuery = salesOrderQuery.Where(x => x.Status == searchModel.Status.Value);
+        }
+
+        if (searchModel.SalesPersonId.HasValue)
+        {
+            salesOrderQuery = salesOrderQuery.Where(x => x.SalesPersonId == searchModel.SalesPersonId.Value);
+        }
+
+        if (searchModel.TerritoryId.HasValue)
+        {
+            salesOrderQuery = salesOrderQuery.Where(x => x.TerritoryId == searchModel.TerritoryId.Value);
+        }
+
+        if (!string.IsNullOrWhiteSpace(searchModel.AccountNumber))
+            salesOrderQuery = salesOrderQuery.Where(x => x.AccountNumber == searchModel.AccountNumber.Trim());
 
         var totalCount = await salesOrderQuery.CountAsync(cancellationToken);
 

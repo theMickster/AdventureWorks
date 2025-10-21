@@ -1,11 +1,9 @@
-using AdventureWorks.Common.Filtering.Base;
-
 namespace AdventureWorks.Common.Filtering;
 
 /// <summary>
 /// Search model for filtering sales orders.
 /// </summary>
-public sealed class SalesOrderSearchModel : SearchModelBase
+public sealed class SalesOrderSearchModel
 {
     /// <summary>
     /// The filter by order date range start (inclusive).
@@ -31,4 +29,9 @@ public sealed class SalesOrderSearchModel : SearchModelBase
     /// The unique integer identifier of the sales territory.
     /// </summary>
     public int? TerritoryId { get; set; }
+
+    /// <summary>
+    /// The customer account number to filter by (exact match, e.g. 10-4020-000676).
+    /// </summary>
+    public string? AccountNumber { get; set; }
 }

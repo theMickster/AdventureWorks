@@ -234,4 +234,56 @@ public sealed class ReadSalesOrderListQueryValidatorTests
         // Assert
         result.IsValid.Should().BeTrue();
     }
+
+    [Fact]
+    public async Task AccountNumber_WhenNull_PassesValidation()
+    {
+        // Arrange
+        var query = new ReadSalesOrderListQuery
+        {
+            Parameters = new SalesOrderParameter { PageNumber = 1, PageSize = 10 },
+            SearchModel = new SalesOrderSearchModel { AccountNumber = null }
+        };
+
+        // Act
+        var result = await _sut.ValidateAsync(query);
+
+        // Assert
+        result.IsValid.Should().BeTrue();
+    }
+
+    [Fact]
+    public async Task AccountNumber_When15Chars_PassesValidation()
+    {
+        // Arrange
+        var query = new ReadSalesOrderListQuery
+        {
+            Parameters = new SalesOrderParameter { PageNumber = 1, PageSize = 10 },
+            SearchModel = new SalesOrderSearchModel { AccountNumber = new string('A', 15) }
+        };
+
+        // Act
+        var result = await _sut.ValidateAsync(query);
+
+        // Assert
+        result.IsValid.Should().BeTrue();
+    }
+
+    [Fact]
+    public async Task AccountNumber_When16Chars_FailsWithRule08()
+    {
+        // Arrange
+        var query = new ReadSalesOrderListQuery
+        {
+            Parameters = new SalesOrderParameter { PageNumber = 1, PageSize = 10 },
+            SearchModel = new SalesOrderSearchModel { AccountNumber = new string('A', 16) }
+        };
+
+        // Act
+        var result = await _sut.ValidateAsync(query);
+
+        // Assert
+        result.IsValid.Should().BeFalse();
+        result.Errors.Should().Contain(x => x.ErrorCode == "Rule-08");
+    }
 }

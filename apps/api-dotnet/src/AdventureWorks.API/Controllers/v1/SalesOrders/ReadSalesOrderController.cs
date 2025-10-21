@@ -141,4 +141,32 @@ public sealed class ReadSalesOrderController : ControllerBase
 
         return Ok(result);
     }
+
+    /// <summary>
+    /// Search sales orders using filter criteria supplied in the request body.
+    /// Pagination and sort parameters are passed as query-string parameters; filter criteria are in the body.
+    /// An empty body returns the same result as the GET list endpoint.
+    /// </summary>
+    /// <param name="parameters">Pagination and sort query parameters</param>
+    /// <param name="searchModel">Filter criteria (AccountNumber, Status, date range, salesPersonId, territoryId)</param>
+    /// <param name="cancellationToken">Cancellation token</param>
+    /// <returns>Paginated list of sales orders matching the search criteria</returns>
+    [HttpPost("search")]
+    [Authorize]
+    [ProducesResponseType(StatusCodes.Status200OK, Type = typeof(SalesOrderSearchResultModel))]
+    [ProducesResponseType(StatusCodes.Status400BadRequest)]
+    [ProducesResponseType(StatusCodes.Status401Unauthorized)]
+    public async Task<IActionResult> SearchAsync(
+        [FromQuery] SalesOrderParameter parameters,
+        [FromBody] SalesOrderSearchModel? searchModel,
+        CancellationToken cancellationToken = default)
+    {
+        var query = new ReadSalesOrderListQuery
+        {
+            Parameters = parameters,
+            SearchModel = searchModel
+        };
+        var result = await _mediator.Send(query, cancellationToken);
+        return Ok(result);
+    }
 }

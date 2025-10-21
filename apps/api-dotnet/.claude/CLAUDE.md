@@ -248,6 +248,7 @@ For new or changed API flows, cover the relevant combination of:
 - not-found read/update path
 - invalid referenced IDs
 - auth intent when an endpoint is protected or intentionally public
+- auth intent when an endpoint is read-only but uses POST (must be explicit, not inherited by assumption)
 - repository/query behavior when include flags change loaded data
 
 ---

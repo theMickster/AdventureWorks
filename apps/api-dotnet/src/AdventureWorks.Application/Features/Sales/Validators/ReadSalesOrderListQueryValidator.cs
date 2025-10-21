@@ -40,6 +40,12 @@ public sealed class ReadSalesOrderListQueryValidator : AbstractValidator<ReadSal
                 .When(x => x.SearchModel!.Status.HasValue)
                 .WithErrorCode("Rule-07")
                 .WithMessage("Status must be between 1 and 6");
+
+            RuleFor(x => x.SearchModel!.AccountNumber)
+                .MaximumLength(15)
+                .WithErrorCode("Rule-08")
+                .WithMessage("AccountNumber must not exceed 15 characters.")
+                .When(x => x.SearchModel?.AccountNumber != null);
         });
     }
 }

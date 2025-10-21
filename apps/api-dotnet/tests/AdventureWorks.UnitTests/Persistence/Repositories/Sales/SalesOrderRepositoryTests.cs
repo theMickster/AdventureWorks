@@ -232,4 +232,57 @@ public sealed class SalesOrderRepositoryTests : PersistenceUnitTestBase
         // Assert
         results.Should().HaveCount(1);
     }
+
+    [Fact]
+    public async Task SearchSalesOrdersAsync_WithAccountNumber_ReturnsOnlyMatchingOrders()
+    {
+        // Arrange
+        var customer = new CustomerEntity { CustomerId = 1, Person = new PersonEntity { BusinessEntityId = 1, FirstName = "John", LastName = "Doe" } };
+
+        var salesOrders = new[]
+        {
+            new SalesOrderHeader { SalesOrderId = 1, SalesOrderNumber = "SO1", AccountNumber = "10-4020-000676", OrderDate = new DateTime(2014, 1, 1), Status = 5, TotalDue = 1000m, CustomerId = 1, CustomerEntity = customer },
+            new SalesOrderHeader { SalesOrderId = 2, SalesOrderNumber = "SO2", AccountNumber = "10-4020-000999", OrderDate = new DateTime(2014, 1, 2), Status = 5, TotalDue = 2000m, CustomerId = 1, CustomerEntity = customer }
+        };
+
+        DbContext.SalesOrderHeaders.AddRange(salesOrders);
+        await DbContext.SaveChangesAsync();
+
+        var parameters = new SalesOrderParameter { PageNumber = 1, PageSize = 10 };
+        var searchModel = new SalesOrderSearchModel { AccountNumber = "10-4020-000676" };
+
+        // Act
+        var (results, totalCount) = await _sut.SearchSalesOrdersAsync(parameters, searchModel, CancellationToken.None);
+
+        // Assert
+        results.Should().HaveCount(1);
+        totalCount.Should().Be(1);
+        results[0].AccountNumber.Should().Be("10-4020-000676");
+    }
+
+    [Fact]
+    public async Task SearchSalesOrdersAsync_WithNullAccountNumber_ReturnsAllOrders()
+    {
+        // Arrange
+        var customer = new CustomerEntity { CustomerId = 1, Person = new PersonEntity { BusinessEntityId = 1, FirstName = "John", LastName = "Doe" } };
+
+        var salesOrders = new[]
+        {
+            new SalesOrderHeader { SalesOrderId = 1, SalesOrderNumber = "SO1", AccountNumber = "10-4020-000676", OrderDate = new DateTime(2014, 1, 1), Status = 5, TotalDue = 1000m, CustomerId = 1, CustomerEntity = customer },
+            new SalesOrderHeader { SalesOrderId = 2, SalesOrderNumber = "SO2", AccountNumber = "10-4020-000999", OrderDate = new DateTime(2014, 1, 2), Status = 5, TotalDue = 2000m, CustomerId = 1, CustomerEntity = customer }
+        };
+
+        DbContext.SalesOrderHeaders.AddRange(salesOrders);
+        await DbContext.SaveChangesAsync();
+
+        var parameters = new SalesOrderParameter { PageNumber = 1, PageSize = 10 };
+        var searchModel = new SalesOrderSearchModel { AccountNumber = null };
+
+        // Act
+        var (results, totalCount) = await _sut.SearchSalesOrdersAsync(parameters, searchModel, CancellationToken.None);
+
+        // Assert
+        results.Should().HaveCount(2);
+        totalCount.Should().Be(2);
+    }
 }

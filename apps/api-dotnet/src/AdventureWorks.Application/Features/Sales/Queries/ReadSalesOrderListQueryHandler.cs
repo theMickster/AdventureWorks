@@ -30,6 +30,7 @@ public sealed class ReadSalesOrderListQueryHandler(
         ReadSalesOrderListQuery request,
         CancellationToken cancellationToken)
     {
+        ArgumentNullException.ThrowIfNull(request);
         await _validator.ValidateAndThrowAsync(request, cancellationToken);
 
         var result = new SalesOrderSearchResultModel
