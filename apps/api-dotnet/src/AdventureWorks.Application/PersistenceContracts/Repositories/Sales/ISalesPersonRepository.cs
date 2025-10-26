@@ -66,4 +66,18 @@ public interface ISalesPersonRepository : IAsyncRepository<SalesPersonEntity>
     /// <param name="id">the sales person business entity id</param>
     /// <param name="cancellationToken">token to cancel the operation</param>
     Task<bool> ExistsAsync(int id, CancellationToken cancellationToken = default);
+
+    /// <summary>
+    /// Retrieves a sales person with quota history and territory history navigation properties loaded.
+    /// </summary>
+    /// <param name="salesPersonId">the unique sales person identifier</param>
+    /// <param name="cancellationToken">token to cancel the operation</param>
+    Task<SalesPersonEntity?> GetSalesPersonWithPerformanceDataAsync(int salesPersonId, CancellationToken cancellationToken = default);
+
+    /// <summary>
+    /// Returns the total order count and summed revenue for a sales person across all sales orders.
+    /// </summary>
+    /// <param name="salesPersonId">the unique sales person identifier</param>
+    /// <param name="cancellationToken">token to cancel the operation</param>
+    Task<(int OrderCount, decimal TotalRevenue)> GetSalesPersonOrderAggregatesAsync(int salesPersonId, CancellationToken cancellationToken = default);
 }

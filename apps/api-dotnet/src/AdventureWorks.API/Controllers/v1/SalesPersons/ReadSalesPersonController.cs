@@ -39,6 +39,28 @@ public sealed class ReadSalesPersonController : ControllerBase
     }
 
     /// <summary>
+    /// Retrieves performance metrics for a sales person including quota history and territory history.
+    /// </summary>
+    /// <param name="salesPersonId">the unique identifier</param>
+    /// <param name="cancellationToken">token to cancel the operation</param>
+    /// <returns>200 with <see cref="SalesPersonPerformanceModel"/>; 404 if the sales person does not exist; 400 if the id is invalid</returns>
+    [HttpGet("{salesPersonId:int}/performance", Name = "GetSalesPersonPerformance")]
+    [ProducesResponseType(StatusCodes.Status200OK, Type = typeof(SalesPersonPerformanceModel))]
+    [ProducesResponseType(StatusCodes.Status404NotFound)]
+    [ProducesResponseType(StatusCodes.Status400BadRequest)]
+    public async Task<IActionResult> GetSalesPersonPerformanceAsync(int salesPersonId, CancellationToken cancellationToken)
+    {
+        if (salesPersonId <= 0)
+        {
+            return BadRequest("A valid sales person id must be specified.");
+        }
+
+        var model = await _mediator.Send(new ReadSalesPersonPerformanceQuery { Id = salesPersonId }, cancellationToken);
+
+        return model is null ? NotFound("Unable to locate the sales person.") : Ok(model);
+    }
+
+    /// <summary>
     /// Retrieve a sales person using their unique identifier
     /// </summary>
     /// <param name="salesPersonId">the unique identifier</param>

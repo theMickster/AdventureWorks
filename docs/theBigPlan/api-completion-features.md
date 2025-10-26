@@ -1336,6 +1336,46 @@ Scenario: Get non-existent ship method returns 404
 
 ---
 
+## SalesPerson Endpoints
+
+### Feature: SalesPerson Performance Metrics — **Done 2026-06-01**
+
+**Parent**: Epic #873 (closed Epic #552 superseded)
+**Status**: Done — Story #726 completed.
+**Description**: Provide a read-only performance metrics endpoint for a single sales person. Returns YTD/prior-year sales, quota, bonus, commission, quota history, territory history, and order aggregates. Powers the performance tab on the SalesPerson detail view in the Angular UI.
+
+**Technical scope**: New `ReadSalesPersonPerformanceQuery` + handler under `Application/Features/Sales/Queries/`. New DTOs: `SalesPersonPerformanceModel`, `SalesPersonQuotaHistoryModel`, `SalesPersonTerritoryHistoryModel`. Two new repository methods on `ISalesPersonRepository`: `GetSalesPersonWithPerformanceDataAsync` (includes QuotaHistory and TerritoryHistory) and `GetSalesPersonOrderAggregatesAsync` (scalar COUNT/SUM). Fixed `SalesPersonQuotaHistoryConfiguration` and `SalesTerritoryHistoryConfiguration` to use explicit inverse navigation.
+
+**Acceptance criteria**:
+See Story 5.1 for detailed acceptance criteria.
+Key invariants:
+
+- Endpoint is read-only; requires `[Authorize]` consistent with all other SalesPerson read endpoints
+- Non-existent sales person returns 404
+- Invalid id (≤ 0) returns 400
+
+#### Story 5.1: SalesPerson Performance Metrics Endpoint — Done 2026-06-01 (#726)
+
+**Description**: As a frontend developer, I want an endpoint returning a salesperson's performance metrics (quota vs actual, YTD, territory history, order aggregates), so that the detail view can display a performance tab.
+
+**Acceptance criteria**:
+
+```gherkin
+Scenario: Retrieve performance
+  Given GET /api/v1/salespersons/275/performance
+  Then 200 with SalesYtd, SalesLastYear, SalesQuota, Bonus, CommissionPct, QuotaHistory, TerritoryHistory, OrderCount, TotalRevenue
+
+Scenario: Non-existent salesperson
+  Given GET /api/v1/salespersons/999999/performance
+  Then 404
+
+Scenario: Invalid id
+  Given GET /api/v1/salespersons/0/performance
+  Then 400
+```
+
+---
+
 ## Summary
 
 | Wave                            | Feature                          | ADO  | Stories (created)              | Write Endpoints                   | Read Endpoints                    |

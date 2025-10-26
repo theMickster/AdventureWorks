@@ -14,7 +14,7 @@ public class SalesPersonQuotaHistoryConfiguration : IEntityTypeConfiguration<Sal
         builder.HasKey(a => new {a.BusinessEntityId, a.QuotaDate});
 
         builder.HasOne(a => a.BusinessEntity)
-            .WithMany()
+            .WithMany(sp => sp.SalesPersonQuotaHistory)
             .HasForeignKey(a => a.BusinessEntityId);
     }
 }

@@ -328,4 +328,34 @@ public sealed class SalesPersonRepository(AdventureWorksDbContext dbContext)
     {
         return await DbContext.SalesPersons.AnyAsync(x => x.BusinessEntityId == id, cancellationToken);
     }
+
+    /// <summary>
+    /// Retrieves a sales person with quota history and territory history navigation properties loaded.
+    /// </summary>
+    public async Task<SalesPersonEntity?> GetSalesPersonWithPerformanceDataAsync(int salesPersonId, CancellationToken cancellationToken = default)
+    {
+        return await DbContext.SalesPersons
+            .AsNoTracking()
+            .Include(sp => sp.SalesPersonQuotaHistory.OrderBy(q => q.QuotaDate))
+            .Include(sp => sp.SalesTerritoryHistory.OrderBy(th => th.StartDate))
+                .ThenInclude(th => th.TerritoryEntity)
+            .FirstOrDefaultAsync(sp => sp.BusinessEntityId == salesPersonId, cancellationToken);
+    }
+
+    /// <summary>
+    /// Returns the total order count and summed revenue for a sales person across all sales orders.
+    /// </summary>
+    public async Task<(int OrderCount, decimal TotalRevenue)> GetSalesPersonOrderAggregatesAsync(int salesPersonId, CancellationToken cancellationToken = default)
+    {
+        var query = DbContext.Set<SalesOrderHeader>()
+            .AsNoTracking()
+            .Where(o => o.SalesPersonId == salesPersonId);
+
+        var orderCount = await query.CountAsync(cancellationToken);
+        var totalRevenue = orderCount > 0
+            ? await query.SumAsync(o => o.TotalDue, cancellationToken)
+            : 0m;
+
+        return (orderCount, totalRevenue);
+    }
 }

@@ -14,7 +14,7 @@ public class SalesTerritoryHistoryConfiguration : IEntityTypeConfiguration<Sales
         builder.HasKey(a => new {a.BusinessEntityId, a.TerritoryId, a.StartDate});
 
         builder.HasOne(a => a.BusinessEntity)
-            .WithMany()
+            .WithMany(sp => sp.SalesTerritoryHistory)
             .HasForeignKey(a => a.BusinessEntityId);
 
         builder.HasOne(a => a.TerritoryEntity)
