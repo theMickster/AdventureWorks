@@ -334,6 +334,7 @@ The precise order for completing remaining work (577 → 565 → UI):
 | ---------------------------------------------------- | ---- | ------- | ------ |
 | .NET API Integration Tests (WebApplicationFactory)  | #669 | #673-#676 (4) | ✅ Done 2026-05-18 |
 | Enabler Feature: Sales Order Paginated List Endpoint | #709 | #723, #724 (2) | ✅ Done |
+| Sales Dashboard Aggregate KPI Endpoint               | --   | US-727 (1) | ✅ Done — `GET /api/v1/sales/dashboard` (TotalRevenue, OrderCount, AverageOrderValue, TopPerformers top 5, TerritoryBreakdown, MonthlySalesTrend 24 months) |
 
 **Total under Epic #873**: 17 Features + 47 Stories (13 net-new Features + 36 net-new Stories + 3 reparented Features + 10 reparented Stories + 2 enabler Features)
 
@@ -503,6 +504,6 @@ Each markdown file follows this structure:
 
 ---
 
-**Document Version**: 2.8
-**Last Updated**: 2026-05-25
-**Status**: Active Execution — Epic #560 complete, #570 complete, **#577 complete** (Done 2026-05-25; all 6 features done including #621 SignalR), #552 closed Done, **#873 API Completion complete** (Done in ADO on 2026-05-22; all 17 child Features Done), #565 in progress (2/5 features done: #669, #923) — **Next: Phase 5 Sales & HR CRUD UI (Epics #561, #562) + Epic #565 remaining testing features**
+**Document Version**: 2.9
+**Last Updated**: 2026-06-02
+**Status**: Active Execution — Epic #560 complete, #570 complete, **#577 complete** (Done 2026-05-25; all 6 features done including #621 SignalR), #552 closed Done, **#873 API Completion complete** (Done in ADO on 2026-05-22; all 17 child Features Done; US-727 Sales Dashboard KPI endpoint added post-close), #565 in progress (2/5 features done: #669, #923) — **Next: Phase 5 Sales & HR CRUD UI (Epics #561, #562) + Epic #565 remaining testing features**

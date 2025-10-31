@@ -4728,6 +4728,75 @@
           "response": []
         }
       ]
+    },
+    {
+      "name": "Sales Dashboard",
+      "id": "a3f7e2d1-8c45-4b9f-b3e6-1d2a5c8e0f74",
+      "item": [
+        {
+          "name": "Get Sales Dashboard",
+          "id": "d5b9f3a2-7e14-4c8d-a0f1-2b6e3d9c5a18",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test(\"Status should be 200\", function () {",
+                  "    pm.response.to.have.status(200);",
+                  "});",
+                  "",
+                  "pm.test(\"X-Correlation-Id header exists\", function () {",
+                  "    pm.expect(pm.response.headers.get(\"X-Correlation-Id\")).to.exist;",
+                  "});",
+                  "",
+                  "var response = pm.response.json();",
+                  "",
+                  "pm.test(\"totalRevenue is a number\", function () {",
+                  "    pm.expect(response.totalRevenue).to.be.a(\"number\");",
+                  "});",
+                  "",
+                  "pm.test(\"topPerformers is array with length <= 5\", function () {",
+                  "    pm.expect(response.topPerformers).to.be.an(\"array\");",
+                  "    pm.expect(response.topPerformers.length).to.be.at.most(5);",
+                  "});",
+                  "",
+                  "pm.test(\"territoryBreakdown is non-empty array\", function () {",
+                  "    pm.expect(response.territoryBreakdown).to.be.an(\"array\");",
+                  "    pm.expect(response.territoryBreakdown.length).to.be.above(0);",
+                  "});",
+                  "",
+                  "pm.test(\"monthlySalesTrend is array and first entry has year and month\", function () {",
+                  "    pm.expect(response.monthlySalesTrend).to.be.an(\"array\");",
+                  "    if (response.monthlySalesTrend.length > 0) {",
+                  "        pm.expect(response.monthlySalesTrend[0]).to.have.property(\"year\");",
+                  "        pm.expect(response.monthlySalesTrend[0]).to.have.property(\"month\");",
+                  "    }",
+                  "});"
+                ],
+                "type": "text/javascript",
+                "packages": {},
+                "requests": {}
+              }
+            }
+          ],
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{adventureWorksApi}}/{{apiVersion}}/sales/dashboard",
+              "host": [
+                "{{adventureWorksApi}}"
+              ],
+              "path": [
+                "{{apiVersion}}",
+                "sales",
+                "dashboard"
+              ]
+            }
+          },
+          "response": []
+        }
+      ]
     }
   ],
   "auth": {
