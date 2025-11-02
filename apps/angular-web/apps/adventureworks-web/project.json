@@ -96,6 +96,10 @@
         "outputFile": "apps/adventureworks-web/test-results/junit.xml"
       }
     },
+    "type-check": {
+      "command": "tsc --noEmit -p apps/adventureworks-web/tsconfig.app.json",
+      "cache": true
+    },
     "serve-static": {
       "continuous": true,
       "executor": "@nx/web:file-server",

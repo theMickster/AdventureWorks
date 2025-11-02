@@ -53,9 +53,10 @@
 
 - .NET integration tests, k6 load testing, Playwright E2E smoke tests, Angular testing utilities
 
-**Phase 5 - Sales & HR CRUD UI** (Epics #561 + #562) -- NOT STARTED:
+**Phase 5 - Sales & HR CRUD UI** (Epics #561 + #562) -- IN PROGRESS:
 
 - Sales CRUD UI: Stores, SalesPersons, Customers (API prerequisite now satisfied by completed Phase 2.5)
+  - ✅ US-728: Store list view (`libs/sales/feature-stores`) — paginated, searchable, sortable with URL-param sync (2026-06-02)
 - HR CRUD UI: Employees, Departments (API prerequisite now satisfied by completed Phase 2.5)
 - Real-Time Dashboard (Epic #563): SignalR-powered KPI dashboard
 
@@ -504,6 +505,6 @@ Each markdown file follows this structure:
 
 ---
 
-**Document Version**: 2.9
+**Document Version**: 3.0
 **Last Updated**: 2026-06-02
-**Status**: Active Execution — Epic #560 complete, #570 complete, **#577 complete** (Done 2026-05-25; all 6 features done including #621 SignalR), #552 closed Done, **#873 API Completion complete** (Done in ADO on 2026-05-22; all 17 child Features Done; US-727 Sales Dashboard KPI endpoint added post-close), #565 in progress (2/5 features done: #669, #923) — **Next: Phase 5 Sales & HR CRUD UI (Epics #561, #562) + Epic #565 remaining testing features**
+**Status**: Active Execution — Epic #560 complete, #570 complete, **#577 complete** (Done 2026-05-25; all 6 features done including #621 SignalR), #552 closed Done, **#873 API Completion complete** (Done in ADO on 2026-05-22; all 17 child Features Done; US-727 Sales Dashboard KPI endpoint added post-close), #565 in progress (2/5 features done: #669, #923), **Phase 5 in progress** (US-728 Store List View done 2026-06-02) — **Next: Continue Phase 5 Sales & HR CRUD UI (Epics #561, #562) + Epic #565 remaining testing features**

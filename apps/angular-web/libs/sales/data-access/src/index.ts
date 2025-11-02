@@ -4,7 +4,6 @@ export type {
   StoreCreate,
   StoreUpdate,
   StoreAddress,
-  StoreAddressDetail,
   StoreContact,
   StoreSalesPerson,
 } from './lib/models/store.model';

@@ -1,0 +1,48 @@
+<div id="aw-store-list-page">
+  <div id="aw-store-list-header" class="mb-6 flex items-center justify-between">
+    <h1 class="text-2xl font-bold text-base-content">Stores</h1>
+  </div>
+
+  <div id="aw-store-list-toolbar" class="mb-4 flex flex-wrap items-end gap-2">
+    <div class="flex-1 min-w-48">
+      <label for="aw-store-search-input" class="sr-only">Search stores by name</label>
+      <input
+        id="aw-store-search-input"
+        type="text"
+        class="input input-bordered w-full"
+        placeholder="Search by name..."
+        [value]="searchTerm()"
+        (input)="searchTerm.set($any($event.target).value.trim())"
+        (keydown.enter)="onSearch(searchTerm())"
+        aria-label="Search stores by name"
+      />
+    </div>
+    <button id="aw-store-search-btn" type="button" class="btn btn-primary" (click)="onSearch(searchTerm())">
+      <i class="fa-solid fa-magnifying-glass" aria-hidden="true"></i>
+      Search
+    </button>
+    @if (searchTerm()) {
+      <button id="aw-store-clear-btn" type="button" class="btn btn-ghost" (click)="onClearSearch()">
+        <i class="fa-solid fa-xmark" aria-hidden="true"></i>
+        Clear
+      </button>
+    }
+  </div>
+
+  <aw-data-table
+    fieldId="aw-store-list-table"
+    [columns]="columns"
+    [data]="rows()"
+    [loading]="isLoading()"
+    [pageNumber]="pageNumber()"
+    [pageSize]="pageSize()"
+    [totalPages]="totalPages()"
+    [totalRecords]="totalRecords()"
+    [sortColumn]="sortColumn()"
+    [sortDirection]="sortDirection()"
+    emptyTitle="No stores found"
+    emptyDescription="Try adjusting your search."
+    (sortChange)="onSortChange($event)"
+    (pageChange)="onPageChange($event)"
+  />
+</div>

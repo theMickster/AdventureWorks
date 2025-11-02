@@ -1,18 +1,16 @@
-import type { SlimReference } from '@adventureworks-web/shared/data-access';
-
 export interface StoreAddress {
-  readonly address: StoreAddressDetail;
-  readonly addressType: { readonly id: number; readonly name: string };
-}
-
-export interface StoreAddressDetail {
   readonly id: number;
+  readonly storeId: number;
+  readonly addressTypeId: number;
+  readonly addressTypeName: string;
   readonly addressLine1: string;
   readonly addressLine2: string | null;
   readonly city: string;
-  readonly stateProvince: SlimReference;
+  readonly stateProvinceCode: string;
+  readonly stateProvinceName: string;
+  readonly countryRegionCode: string;
+  readonly countryRegionName: string;
   readonly postalCode: string;
-  readonly countryRegion: { readonly code: string; readonly name: string };
   readonly modifiedDate: string;
 }
 
