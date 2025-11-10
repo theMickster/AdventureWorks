@@ -98,7 +98,7 @@
 ### Technical Foundation (Updated)
 
 - **Framework**: Angular v21.1.1 standalone components with Signals (zoneless)
-- **Monorepo**: Nx 22.5.1 workspace with single app + shared libraries
+- **Monorepo**: Nx 22+ workspace with single app + shared libraries
 - **Styling**: Tailwind CSS v4.2.0 + DaisyUI v5.5.19 (Alpine Circuit theme)
 - **State Management**: NgRx SignalStore (`@ngrx/signals` v21.0.1) -- extends existing signal-based architecture
 - **HTTP**: HTTP interceptors for MSAL JWT, correlation IDs, error handling, loading states

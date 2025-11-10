@@ -53,7 +53,7 @@ import { someUtil } from '@adventureworks-web/shared/util';
 | Technology | Version | Purpose                                 |
 | ---------- | ------- | --------------------------------------- |
 | Angular    | 21.1.1  | UI framework (zoneless, Signals-based)  |
-| Nx         | 22.5.1  | Monorepo tooling, caching, generators   |
+| Nx         | 22+     | Monorepo tooling, caching, generators   |
 | TypeScript | 5.9.2   | Language (strict mode, all 6 flags)     |
 | esbuild    | -       | Build bundler (via @angular/build)      |
 | Vitest     | -       | Unit testing (@angular/build:unit-test) |

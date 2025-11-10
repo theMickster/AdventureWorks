@@ -22,7 +22,7 @@ Adventure Works is a modern enterprise application built with **.NET 10**, **Ang
 
 - [Visual Studio 2026](https://visualstudio.microsoft.com/) or [VS Code](https://code.visualstudio.com/) with the Angular Language Service extension
 - [.NET 10 SDK](https://dotnet.microsoft.com/download)
-- [Node.js 22+](https://nodejs.org/) (for the Angular workspace)
+- [Node.js 24+](https://nodejs.org/) (for the Angular workspace)
 - [SQL Server](https://www.microsoft.com/en-us/sql-server/) (local or Docker)
 - [SQL Server Management Studio](https://docs.microsoft.com/en-us/sql/ssms/download-sql-server-management-studio-ssms)
 
@@ -38,18 +38,26 @@ cd apps/angular-web
 npm install && npx nx serve adventureworks-web
 ```
 
+### Local Development Dashboard (Aspire)
+
+For a single-command launch of all services with a live dashboard — API, Angular, database migrations, and SQL Server health — see [`tools/aspire/README.md`](tools/aspire/README.md).
+
 ## Project Structure
 
-```
+```bash
 AdventureWorks/
 ├── apps/
-│   ├── api-dotnet/          # .NET 10 REST API (Clean Architecture)
-│   ├── angular-web/         # Angular 21 SPA (Nx monorepo)
-│   └── microservices/       # Future microservices
+│   ├── angular-web/             # Angular 21 SPA (Nx monorepo)
+│   └── api-dotnet/              # .NET 10 REST API (Clean Architecture)
 ├── database/
-│   ├── dbup/                # Database migrations
-│   └── scripts/             # SQL scripts
-└── docs/                    # Shared documentation
+│   ├── dbup/                    # DbUp migration runner and SQL scripts
+│   └── sql-change-automation/   # SQL Server Database Project (schema migrations)
+├── docs/                        # Shared documentation
+├── infra/                       # Bicep IaC templates (Azure App Service, SQL, Key Vault)
+├── pipelines/                   # Azure DevOps CI/CD pipeline templates
+└── tools/
+    ├── aspire/                  # .NET Aspire local dev dashboard (one-command stack launch)
+    └── console-apps/            # CLI utilities
 ```
 
 ## Database Enhancements

@@ -1,0 +1,111 @@
+<div id="aw-store-detail-page">
+  <div id="aw-store-detail-header" class="mb-6 flex items-center gap-4">
+    <a
+      id="aw-store-detail-back"
+      [routerLink]="['/sales/stores']"
+      [queryParams]="backQueryParams()"
+      class="btn btn-ghost btn-sm"
+    >
+      <i class="fa-solid fa-arrow-left" aria-hidden="true"></i>
+      Back to Stores
+    </a>
+    @if (isLoading()) {
+      <aw-skeleton id="aw-store-detail-name-skeleton" width="16rem" height="2rem" />
+    } @else if (store(); as s) {
+      <h1 id="aw-store-detail-name" class="text-2xl font-bold text-base-content">{{ s.name }}</h1>
+    }
+  </div>
+
+  @if (isLoading()) {
+    <div id="aw-store-detail-loading" class="space-y-4">
+      <aw-skeleton id="aw-store-detail-sp-skeleton" height="1.5rem" width="20rem" />
+      <aw-skeleton id="aw-store-detail-tab-skeleton" height="3rem" />
+      <aw-skeleton id="aw-store-detail-content-skeleton" height="12rem" />
+    </div>
+  } @else if (store(); as currentStore) {
+    <div id="aw-store-detail-salesperson" class="mb-4">
+      <span class="text-sm text-base-content/60">Sales Person: </span>
+      <span class="font-medium text-base-content">{{ salesPersonName() }}</span>
+    </div>
+
+    <div id="aw-store-detail-tabs" role="tablist" class="tabs tabs-bordered mb-6">
+      <button
+        id="aw-store-detail-tab-addresses"
+        role="tab"
+        class="tab"
+        [class.tab-active]="activeTab() === 'addresses'"
+        (click)="onTabChange('addresses')"
+      >
+        Addresses ({{ currentStore.storeAddresses.length }})
+      </button>
+      <button
+        id="aw-store-detail-tab-contacts"
+        role="tab"
+        class="tab"
+        [class.tab-active]="activeTab() === 'contacts'"
+        (click)="onTabChange('contacts')"
+      >
+        Contacts ({{ currentStore.storeContacts.length }})
+      </button>
+    </div>
+
+    @if (activeTab() === 'addresses') {
+      @if (currentStore.storeAddresses.length === 0) {
+        <aw-empty-state
+          fieldId="aw-store-addresses-empty"
+          icon="fa-solid fa-location-dot"
+          title="No addresses"
+          description="This store has no addresses on file."
+        />
+      } @else {
+        <div id="aw-store-addresses-list" class="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
+          @for (address of currentStore.storeAddresses; track address.id) {
+            <aw-card [title]="address.addressTypeName">
+              <p>{{ address.addressLine1 }}</p>
+              @if (address.addressLine2) {
+                <p>{{ address.addressLine2 }}</p>
+              }
+              <p>{{ address.city }}, {{ address.stateProvinceCode }} {{ address.postalCode }}</p>
+              <p class="text-sm text-base-content/60">{{ address.countryRegionName }}</p>
+            </aw-card>
+          }
+        </div>
+      }
+    }
+
+    @if (activeTab() === 'contacts') {
+      @if (currentStore.storeContacts.length === 0) {
+        <aw-empty-state
+          fieldId="aw-store-contacts-empty"
+          icon="fa-solid fa-user"
+          title="No contacts"
+          description="This store has no contacts on file."
+        />
+      } @else {
+        <div id="aw-store-contacts-list" class="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
+          @for (contact of currentStore.storeContacts; track contact.id) {
+            <aw-card [title]="contact.contactTypeName">
+              <p class="font-medium">
+                {{ contact.firstName }}
+                @if (contact.middleName) {
+                  {{ contact.middleName }}
+                }
+                {{ contact.lastName }}
+              </p>
+              @if (contact.title) {
+                <p class="text-sm text-base-content/60">{{ contact.title }}</p>
+              }
+            </aw-card>
+          }
+        </div>
+      }
+    }
+  } @else {
+    <aw-empty-state
+      fieldId="aw-store-detail-error"
+      icon="fa-solid fa-circle-exclamation"
+      title="Failed to load store"
+      description="Please go back and try again."
+    />
+  }
+</div>

@@ -4,12 +4,9 @@ Enterprise application demonstrating modern software architecture patterns acros
 
 ## Repository Overview
 
-This monorepo contains:
+For the current project description, tech stack, and project structure, read the root README — it is the single source of truth:
 
-- **.NET 10.0 REST API** (`apps/api-dotnet/`) - Clean Architecture with CQRS
-- **Angular Web Application** (`apps/angular-web/`) - Angular 21.2.4 + Nx 22.5.2 monorepo
-- **Microservices** (`apps/microservices/`) - Coming soon
-- **Database Scripts** (`database/`) - AdventureWorks schema and migrations
+> Use the `Read` tool on `README.md` at the repository root.
 
 ## Working with Child CLAUDE.md Files
 
@@ -17,8 +14,6 @@ Each application/service has its own CLAUDE.md with technology-specific instruct
 
 - **For .NET API work**: See `apps/api-dotnet/.claude/CLAUDE.md`
 - **For Angular work**: See `apps/angular-web/.claude/CLAUDE.md`
-- **For Microservices**: See `apps/microservices/{service}/.claude/CLAUDE.md` (future)
-
 **When starting work in a specific application:**
 
 1. Navigate to that application's directory
@@ -68,6 +63,7 @@ Each application/service has its own CLAUDE.md with technology-specific instruct
 - ❌ Empty catch blocks that swallow exceptions
 - ❌ Magic numbers/strings without explanation
 - ❌ Circular dependencies between projects
+- ❌ Braceless `if` statements — every `if`/`else` body must use `{ }`, even single-liners
 
 ### Security Rules
 
@@ -128,59 +124,6 @@ When documentation is needed:
 - Deploy strategy: same resource group for dev + prod; shared plan/SQL/Key Vault/App Insights, env-specific App Services
 - Budget: ~$18/mo (B1 Linux plan + Basic 5 DTU SQL on MSDN subscription)
 
-## Technology Stack
-
-### Current
-
-- **.NET 10.0** - Backend API
-- **Entity Framework Core** - ORM
-- **SQL Server** - Database
-- **MediatR** - CQRS implementation
-- **FluentValidation** - Input validation
-- **AutoMapper** - Object mapping
-- **xUnit** - Testing framework
-- **Angular 21** - Frontend web application
-- **Nx 22** - Angular monorepo tooling
-
-### Future
-
-- **Docker** - Containerization
-- **Kubernetes** - Orchestration (maybe)
-- **Azure Services** - Cloud infrastructure
-
-## Project Structure
-
-```
-AdventureWorks/
-├── .claude/
-│   └── CLAUDE.md                    # This file (repo-wide standards)
-│
-├── apps/
-│   ├── api-dotnet/                  # .NET REST API
-│   │   ├── .claude/
-│   │   │   ├── CLAUDE.md            # .NET-specific instructions
-│   │   │   └── guides/              # Detailed implementation guides
-│   │   ├── src/                     # Source code
-│   │   └── tests/                   # Unit tests
-│   │
-│   ├── angular-web/                 # Angular 21 SPA (Nx monorepo)
-│   └── microservices/               # Additional services (future)
-│
-├── database/
-│   ├── dbup/                        # Database migrations
-│   └── scripts/                     # SQL scripts
-│
-├── infra/
-│   ├── main.bicep                   # Bicep orchestrator
-│   ├── modules/                     # 6 resource modules
-│   ├── parameters.dev.json          # Dev environment params
-│   └── parameters.prod.json         # Prod environment params
-│
-├── docs/                            # Shared documentation
-├── docker-compose.yml               # Local dev: API + Web containers
-└── DOCKER.md                        # Docker local development guide
-```
-
 ## Getting Started
 
 **When beginning work in this repository:**
@@ -200,7 +143,6 @@ AdventureWorks/
 | **.NET REST API**            | Adding an endpoint, writing a controller, MediatR command/query handler, FluentValidation validator, AutoMapper profile, EF Core repository, anything Clean Architecture / CQRS | [`apps/api-dotnet/.claude/CLAUDE.md`](../apps/api-dotnet/.claude/CLAUDE.md)   |
 | **Angular Web**              | Building a component, generating an Nx library, wiring an NgRx SignalStore, MSAL / Entra auth, Tailwind / DaisyUI / Alpine Circuit styling, anything signals-based              | [`apps/angular-web/.claude/CLAUDE.md`](../apps/angular-web/.claude/CLAUDE.md) |
 | **Database Migrations**      | Schema change, new migration, creating or updating a stored procedure, making DDL/DML idempotent, ordering DbUp scripts                                                         | [`database/dbup/.claude/CLAUDE.md`](../database/dbup/.claude/CLAUDE.md)       |
-| **Microservices** _(future)_ | Anything under `apps/microservices/`                                                                                                                                            | `apps/microservices/{service}/.claude/CLAUDE.md` (when added)                 |
 
 ## CI/CD and Infrastructure Rules
 

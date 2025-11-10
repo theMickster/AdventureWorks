@@ -8,6 +8,8 @@ using Microsoft.Identity.Web;
 
 var builder = WebApplication.CreateBuilder(args);
 
+builder.AddAspireTelemetry();
+
 var environment = builder.Environment;
 
 builder.Configuration

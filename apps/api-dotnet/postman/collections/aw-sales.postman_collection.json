@@ -2124,6 +2124,67 @@
                 }
               },
               "response": []
+            },
+            {
+              "name": "Store by Id (292) - Full Detail",
+              "_postman_id": "d7e4c1b9-f2a3-4589-bc10-2d3e4f5a6b7c",
+              "event": [
+                {
+                  "listen": "test",
+                  "script": {
+                    "exec": [
+                      "pm.test(\"Status is 200\", function () {",
+                      "    pm.response.to.have.status(200);",
+                      "});",
+                      "",
+                      "pm.test(\"Has X-Correlation-Id header\", function () {",
+                      "    pm.response.to.have.header(\"X-Correlation-Id\");",
+                      "});",
+                      "",
+                      "var body = pm.response.json();",
+                      "",
+                      "pm.test(\"body.id is a number\", function () {",
+                      "    pm.expect(body.id).to.be.a(\"number\");",
+                      "});",
+                      "",
+                      "pm.test(\"body.name is a string\", function () {",
+                      "    pm.expect(body.name).to.be.a(\"string\");",
+                      "});",
+                      "",
+                      "pm.test(\"body.storeAddresses is an array\", function () {",
+                      "    pm.expect(body.storeAddresses).to.be.an(\"array\");",
+                      "});",
+                      "",
+                      "pm.test(\"body.storeContacts is an array\", function () {",
+                      "    pm.expect(body.storeContacts).to.be.an(\"array\");",
+                      "});",
+                      "",
+                      "pm.test(\"body.id equals 292\", function () {",
+                      "    pm.expect(body.id).to.eql(292);",
+                      "});"
+                    ],
+                    "type": "text/javascript",
+                    "packages": {},
+                    "requests": {}
+                  }
+                }
+              ],
+              "request": {
+                "method": "GET",
+                "header": [],
+                "url": {
+                  "raw": "{{adventureWorksApi}}/{{apiVersion}}/stores/292",
+                  "host": [
+                    "{{adventureWorksApi}}"
+                  ],
+                  "path": [
+                    "{{apiVersion}}",
+                    "stores",
+                    "292"
+                  ]
+                }
+              },
+              "response": []
             }
           ]
         },

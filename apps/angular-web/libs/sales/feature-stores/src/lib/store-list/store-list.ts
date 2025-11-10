@@ -1,7 +1,7 @@
 import { ChangeDetectionStrategy, Component, computed, effect, inject, OnInit, signal } from '@angular/core';
-import { ActivatedRoute, Router } from '@angular/router';
+import { ActivatedRoute, Router, RouterLink } from '@angular/router';
 import { StoreStore } from '@adventureworks-web/sales/data-access';
-import { DataTableComponent } from '@adventureworks-web/shared/ui';
+import { ColumnDefDirective, DataTableComponent } from '@adventureworks-web/shared/ui';
 import type { ColumnConfig } from '@adventureworks-web/shared/ui';
 import { NotificationService } from '@adventureworks-web/shared/util';
 
@@ -12,7 +12,7 @@ type SortColumn = (typeof VALID_SORT_COLUMNS)[number];
 @Component({
   selector: 'aw-store-list',
   standalone: true,
-  imports: [DataTableComponent],
+  imports: [DataTableComponent, RouterLink, ColumnDefDirective],
   templateUrl: './store-list.html',
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
@@ -37,6 +37,7 @@ export class StoreListComponent implements OnInit {
     { key: 'salesPerson', label: 'Sales Person', sortable: false },
     { key: 'city', label: 'City', sortable: false },
     { key: 'state', label: 'State', sortable: false },
+    { key: 'view', label: '', sortable: false, cellClass: 'text-right' },
   ];
 
   /**

@@ -31,7 +31,9 @@
     "obj": "trash",
     "console-apps": "Console",
     "AdventureWorks.DbReset.Console": "Database",
-    "AdventureWorks.DbReset.Console.Tests": "Test"
+    "AdventureWorks.DbReset.Console.Tests": "Test",
+    "aspire": "apollo",
+    "AdventureWorks.AppHost": "apollo"
   },
   "material-icon-theme.files.associations": {
     "*.query.ts": "Sequelize",

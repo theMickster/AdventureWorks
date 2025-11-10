@@ -14,7 +14,7 @@ internal static class SetupHealthChecks
     /// </summary>
     /// <param name="services"><see cref="T:Microsoft.Extensions.DependencyInjection.IServiceCollection" /></param>
     /// <returns><see cref="T:Microsoft.Extensions.DependencyInjection.IHealthChecksBuilder" /></returns>
-    public static IHealthChecksBuilder AddDefaultHealthCheck(this IServiceCollection services)
+    internal static IHealthChecksBuilder AddDefaultHealthCheck(this IServiceCollection services)
     {
         return services.AddHealthChecks().AddCheck<DefaultHealthCheck>("default");
     }
@@ -25,7 +25,7 @@ internal static class SetupHealthChecks
     /// <param name="services"><see cref="T:Microsoft.Extensions.DependencyInjection.IServiceCollection" /></param>
     /// <param name="statusFunc">A delegate function that will be evaluated as part of the health check.</param>
     /// <returns><see cref="T:Microsoft.Extensions.DependencyInjection.IHealthChecksBuilder" /></returns>
-    public static IHealthChecksBuilder AddDefaultHealthCheck(
+    internal static IHealthChecksBuilder AddDefaultHealthCheck(
       this IServiceCollection services,
       Func<(HealthStatus status, Dictionary<string, object> deps)> statusFunc)
     {
@@ -37,7 +37,7 @@ internal static class SetupHealthChecks
     /// </summary>
     /// <param name="application"><see cref="T:Microsoft.AspNetCore.Builder.IApplicationBuilder" /></param>
     /// <returns><see cref="T:Microsoft.AspNetCore.Builder.IApplicationBuilder" /></returns>
-    public static IApplicationBuilder UseApplicationHealthChecks(this IApplicationBuilder application)
+    internal static IApplicationBuilder UseApplicationHealthChecks(this IApplicationBuilder application)
     {
         application.UseEndpoints(ep =>
         {

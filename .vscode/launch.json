@@ -9,6 +9,21 @@
   "version": "0.2.0",
   "configurations": [
     {
+      "name": "AdventureWorks Aspire",
+      "type": "coreclr",
+      "request": "launch",
+      "preLaunchTask": "build-aspire",
+      "program": "${workspaceFolder}/tools/aspire/AdventureWorks.AppHost/bin/Debug/net10.0/AdventureWorks.AppHost.dll",
+      "args": [],
+      "cwd": "${workspaceFolder}/tools/aspire/AdventureWorks.AppHost",
+      "stopAtEntry": false,
+      "justMyCode": true,
+      "env": {
+        "ASPNETCORE_ENVIRONMENT": "Development",
+        "DOTNET_ENVIRONMENT": "Development"
+      }
+    },
+    {
       "name": "AdventureWorks API",
       "type": "coreclr",
       "request": "launch",

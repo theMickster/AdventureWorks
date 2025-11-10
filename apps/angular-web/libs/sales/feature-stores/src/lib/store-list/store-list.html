@@ -44,5 +44,9 @@
     emptyDescription="Try adjusting your search."
     (sortChange)="onSortChange($event)"
     (pageChange)="onPageChange($event)"
-  />
+  >
+    <ng-template awColumnDef="view" let-row>
+      <a [routerLink]="[row['id']]" class="btn btn-ghost btn-xs"> View </a>
+    </ng-template>
+  </aw-data-table>
 </div>
