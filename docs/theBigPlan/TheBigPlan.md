@@ -57,6 +57,9 @@
 
 - Sales CRUD UI: Stores, SalesPersons, Customers (API prerequisite now satisfied by completed Phase 2.5)
   - ✅ US-728: Store list view (`libs/sales/feature-stores`) — paginated, searchable, sortable with URL-param sync (2026-06-02)
+  - ✅ US-729: Store detail view (`StoreDetailComponent`) — tabbed detail with addresses and contacts (2026-06-02)
+  - ✅ US-730: Store create form (`StoreCreateComponent`) — reactive form with validation, direct API call (2026-06-03)
+  - ✅ US-731: Store edit form (`StoreEditComponent`) — reactive form with skeleton load, `isSaving` signal, direct API call (2026-06-03)
 - HR CRUD UI: Employees, Departments (API prerequisite now satisfied by completed Phase 2.5)
 - Real-Time Dashboard (Epic #563): SignalR-powered KPI dashboard
 
@@ -507,4 +510,4 @@ Each markdown file follows this structure:
 
 **Document Version**: 3.0
 **Last Updated**: 2026-06-02
-**Status**: Active Execution — Epic #560 complete, #570 complete, **#577 complete** (Done 2026-05-25; all 6 features done including #621 SignalR), #552 closed Done, **#873 API Completion complete** (Done in ADO on 2026-05-22; all 17 child Features Done; US-727 Sales Dashboard KPI endpoint added post-close), #565 in progress (2/5 features done: #669, #923), **Phase 5 in progress** (US-728 Store List View done 2026-06-02) — **Next: Continue Phase 5 Sales & HR CRUD UI (Epics #561, #562) + Epic #565 remaining testing features**
+**Status**: Active Execution — Epic #560 complete, #570 complete, **#577 complete** (Done 2026-05-25; all 6 features done including #621 SignalR), #552 closed Done, **#873 API Completion complete** (Done in ADO on 2026-05-22; all 17 child Features Done; US-727 Sales Dashboard KPI endpoint added post-close), #565 in progress (2/5 features done: #669, #923), **Phase 5 in progress** (US-728 Store List done 2026-06-02; US-729 Store Detail done 2026-06-02; US-730 Store Create done 2026-06-03; US-731 Store Edit done 2026-06-03) — **Next: Continue Phase 5 Sales & HR CRUD UI (Epics #561, #562) + Epic #565 remaining testing features**

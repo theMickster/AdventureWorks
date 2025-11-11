@@ -1,0 +1,61 @@
+<div id="aw-store-edit-page">
+  <div id="aw-store-edit-header" class="mb-6 flex items-center gap-4">
+    <a
+      id="aw-store-edit-cancel-top"
+      [routerLink]="['/sales/stores', storeId]"
+      [queryParams]="backQueryParams()"
+      class="btn btn-ghost btn-sm"
+    >
+      <i class="fa-solid fa-arrow-left" aria-hidden="true"></i>
+      Back to Store
+    </a>
+    <h1 class="text-2xl font-bold text-base-content">Edit Store</h1>
+  </div>
+
+  @if (isLoading()) {
+    <div id="aw-store-edit-loading" class="max-w-lg space-y-4">
+      <aw-skeleton id="aw-store-edit-name-skeleton" height="3rem" />
+      <aw-skeleton id="aw-store-edit-sp-skeleton" height="3rem" />
+      <aw-skeleton id="aw-store-edit-actions-skeleton" height="2.5rem" width="12rem" />
+    </div>
+  } @else {
+    <div id="aw-store-edit-form-container" class="max-w-lg">
+      <form id="aw-store-edit-form" [formGroup]="form" (ngSubmit)="onSubmit()" novalidate>
+        <div class="space-y-4">
+          <aw-input-field
+            fieldId="store-edit-name"
+            label="Name"
+            placeholder="Store name"
+            formControlName="name"
+            [errors]="nameErrors()"
+          />
+
+          <aw-select-field
+            fieldId="store-edit-sales-person"
+            label="Sales Person"
+            emptyOptionLabel="— No sales person —"
+            formControlName="salesPersonId"
+            [options]="salesPersonOptions()"
+          />
+        </div>
+
+        <div class="mt-6 flex gap-3">
+          <button id="aw-store-edit-save" type="submit" class="btn btn-primary" [disabled]="isSaving()">
+            @if (isSaving()) {
+              <span class="loading loading-spinner loading-sm" aria-hidden="true"></span>
+            }
+            Save
+          </button>
+          <a
+            id="aw-store-edit-cancel"
+            [routerLink]="['/sales/stores', storeId]"
+            [queryParams]="backQueryParams()"
+            class="btn btn-ghost"
+          >
+            Cancel
+          </a>
+        </div>
+      </form>
+    </div>
+  }
+</div>

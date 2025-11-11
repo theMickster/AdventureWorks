@@ -1,0 +1,41 @@
+<div id="aw-store-create-page">
+  <div id="aw-store-create-header" class="mb-6 flex items-center gap-4">
+    <a id="aw-store-create-cancel-top" [routerLink]="['/sales/stores']" class="btn btn-ghost btn-sm">
+      <i class="fa-solid fa-arrow-left" aria-hidden="true"></i>
+      Back to Stores
+    </a>
+    <h1 class="text-2xl font-bold text-base-content">New Store</h1>
+  </div>
+
+  <div id="aw-store-create-form-container" class="max-w-lg">
+    <form id="aw-store-create-form" [formGroup]="form" (ngSubmit)="onSubmit()" novalidate>
+      <div class="space-y-4">
+        <aw-input-field
+          fieldId="store-name"
+          label="Name"
+          placeholder="Store name"
+          formControlName="name"
+          [errors]="nameErrors()"
+        />
+
+        <aw-select-field
+          fieldId="store-sales-person"
+          label="Sales Person"
+          emptyOptionLabel="— No sales person —"
+          formControlName="salesPersonId"
+          [options]="salesPersonOptions()"
+        />
+      </div>
+
+      <div class="mt-6 flex gap-3">
+        <button id="aw-store-create-save" type="submit" class="btn btn-primary" [disabled]="isLoading()">
+          @if (isLoading()) {
+            <span class="loading loading-spinner loading-sm" aria-hidden="true"></span>
+          }
+          Save
+        </button>
+        <a id="aw-store-create-cancel" [routerLink]="['/sales/stores']" class="btn btn-ghost"> Cancel </a>
+      </div>
+    </form>
+  </div>
+</div>

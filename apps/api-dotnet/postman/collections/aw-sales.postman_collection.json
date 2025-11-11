@@ -1588,7 +1588,7 @@
                 "header": [],
                 "body": {
                   "mode": "raw",
-                  "raw": "{\r\n    \"id\": 1000032,    \r\n    \"storeAddresses\": [],\r\n    \"storeContacts\": [],\r\n    \"name\": \"Number 2 a fancy store\"\r\n}",
+                  "raw": "{\r\n    \"id\": 292,\r\n    \"name\": \"Next-Door Bike Store Updated\",\r\n    \"salesPersonId\": 279\r\n}",
                   "options": {
                     "raw": {
                       "language": "json"
@@ -1596,14 +1596,14 @@
                   }
                 },
                 "url": {
-                  "raw": "{{adventureWorksApi}}/{{apiVersion}}/stores/1000032",
+                  "raw": "{{adventureWorksApi}}/{{apiVersion}}/stores/292",
                   "host": [
                     "{{adventureWorksApi}}"
                   ],
                   "path": [
                     "{{apiVersion}}",
                     "stores",
-                    "1000032"
+                    "292"
                   ]
                 }
               },

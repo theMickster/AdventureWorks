@@ -10,12 +10,27 @@ export const salesRoutes: Route[] = [
     loadComponent: () =>
       import('@adventureworks-web/sales/feature-stores').then((m) => m.StoreListComponent),
   },
+  // stores/new MUST come before stores/:id — Angular matches top-to-bottom and "new" would otherwise be treated as an id param
+  {
+    path: 'stores/new',
+    title: 'New Store',
+    data: { breadcrumb: 'New Store' },
+    loadComponent: () =>
+      import('@adventureworks-web/sales/feature-stores').then((m) => m.StoreCreateComponent),
+  },
   {
     path: 'stores/:id',
     title: 'Store Detail',
     data: { breadcrumb: 'Store Detail' },
     loadComponent: () =>
       import('@adventureworks-web/sales/feature-stores').then((m) => m.StoreDetailComponent),
+  },
+  {
+    path: 'stores/:id/edit',
+    title: 'Edit Store',
+    data: { breadcrumb: 'Edit Store' },
+    loadComponent: () =>
+      import('@adventureworks-web/sales/feature-stores').then((m) => m.StoreEditComponent),
   },
   {
     path: 'persons',

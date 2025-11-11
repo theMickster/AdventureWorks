@@ -5,6 +5,7 @@ import { SalesApiService } from '@adventureworks-web/sales/data-access';
 import { CardComponent, EmptyStateComponent, SkeletonComponent } from '@adventureworks-web/shared/ui';
 import { NotificationService } from '@adventureworks-web/shared/util';
 import type { Store } from '@adventureworks-web/sales/data-access';
+import { extractListNavParams } from '../list-nav-params';
 
 type ActiveTab = 'addresses' | 'contacts';
 
@@ -27,24 +28,10 @@ export class StoreDetailComponent implements OnInit {
   protected readonly isLoading = signal(false);
   protected readonly activeTab = signal<ActiveTab>('addresses');
 
-  protected readonly backQueryParams = computed(() => {
-    // snapshot read is intentional: captures list nav state once at navigation time, no re-evaluation needed
-    const params = this.route.snapshot.queryParams;
-    const result: Record<string, string | number | null> = {};
-    if (params['search']) {
-      result['search'] = params['search'] as string;
-    }
-    if (params['pageNumber']) {
-      result['pageNumber'] = params['pageNumber'] as string;
-    }
-    if (params['orderBy']) {
-      result['orderBy'] = params['orderBy'] as string;
-    }
-    if (params['sortOrder']) {
-      result['sortOrder'] = params['sortOrder'] as string;
-    }
-    return result;
-  });
+  protected readonly backQueryParams = computed(() =>
+    // snapshot read is intentional: captures list nav state once at navigation time
+    extractListNavParams(this.route.snapshot.queryParams),
+  );
 
   protected readonly salesPersonName = computed(() => {
     const sp = this.store()?.salesPerson;
