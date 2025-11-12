@@ -62,6 +62,7 @@
   - ✅ US-731: Store edit form (`StoreEditComponent`) — reactive form with skeleton load, `isSaving` signal, direct API call (2026-06-03)
 - HR CRUD UI: Employees, Departments (API prerequisite now satisfied by completed Phase 2.5)
 - Real-Time Dashboard (Epic #563): SignalR-powered KPI dashboard
+  - ✅ Feature #773 (US-778, US-779, US-780): Enabler — SignalR Hub and Real-Time Infrastructure (API) — Done 2026-06-05
 
 **Future Phases** (not yet scheduled):
 
@@ -361,10 +362,16 @@ The precise order for completing remaining work (577 → 565 → UI):
 | 23  | #565 | Playwright E2E Smoke Test Suite #671                | 🆕 New     | Deployed app (ideal) |
 | 24  | #565 | Local Database Reset Tooling for Test Workflows #923 | ✅ Done    | --                   |
 
-### Phase 5: Sales & HR CRUD UI (Epics #561 + #562)
+### Phase 5: Sales & HR CRUD UI + Real-Time Dashboard (Epics #561, #562, #563)
 
 - Requires Phase 2.5 API Completion for rich, lovable screens
 - See `epics-561-562-sales-hr-ui.md` in memory for story breakdown
+
+**Epic #563 — Real-Time Dashboard**
+
+| Feature | ID   | Stories              | Status  | Done       |
+| ------- | ---- | -------------------- | ------- | ---------- |
+| Enabler: SignalR Hub and Real-Time Infrastructure (API) | #773 | US-778, US-779, US-780 | ✅ Done | 2026-06-05 |
 
 **Note on parallelism**: Epic #873 is now complete. Remaining execution can proceed in parallel across #621 (SignalR), #565 testing features, and UI epics (#561/#562).
 
@@ -509,5 +516,5 @@ Each markdown file follows this structure:
 ---
 
 **Document Version**: 3.0
-**Last Updated**: 2026-06-02
-**Status**: Active Execution — Epic #560 complete, #570 complete, **#577 complete** (Done 2026-05-25; all 6 features done including #621 SignalR), #552 closed Done, **#873 API Completion complete** (Done in ADO on 2026-05-22; all 17 child Features Done; US-727 Sales Dashboard KPI endpoint added post-close), #565 in progress (2/5 features done: #669, #923), **Phase 5 in progress** (US-728 Store List done 2026-06-02; US-729 Store Detail done 2026-06-02; US-730 Store Create done 2026-06-03; US-731 Store Edit done 2026-06-03) — **Next: Continue Phase 5 Sales & HR CRUD UI (Epics #561, #562) + Epic #565 remaining testing features**
+**Last Updated**: 2026-06-05
+**Status**: Active Execution — Epic #560 complete, #570 complete, **#577 complete** (Done 2026-05-25; all 6 features done including #621 SignalR), #552 closed Done, **#873 API Completion complete** (Done in ADO on 2026-05-22; all 17 child Features Done; US-727 Sales Dashboard KPI endpoint added post-close), #565 in progress (2/5 features done: #669, #923), **Phase 5 in progress** (US-728 Store List done 2026-06-02; US-729 Store Detail done 2026-06-02; US-730 Store Create done 2026-06-03; US-731 Store Edit done 2026-06-03), **Epic #563 in progress** (Feature #773 SignalR Hub enabler done 2026-06-05: US-778, US-779, US-780) — **Next: Continue Phase 5 Sales & HR CRUD UI (Epics #561, #562) + Epic #563 Real-Time Dashboard + Epic #565 remaining testing features**

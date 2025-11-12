@@ -19,4 +19,9 @@ public sealed class UpdateEmployeeCommand : IRequest<Unit>
     /// System-generated modification timestamp.
     /// </summary>
     public DateTime ModifiedDate { get; set; }
+
+    /// <summary>
+    /// The identity of the user performing the operation.
+    /// </summary>
+    public string UserName { get; set; } = string.Empty;
 }

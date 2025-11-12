@@ -60,7 +60,8 @@ public sealed class CreateEmployeeController : ControllerBase
         {
             Model = inputModel,
             ModifiedDate = DateTime.UtcNow,
-            RowGuid = Guid.NewGuid()
+            RowGuid = Guid.NewGuid(),
+            UserName = HttpContext.User.Identity?.Name ?? "unknown"
         };
 
         var businessEntityId = await _mediator.Send(command);

@@ -1,5 +1,5 @@
-﻿using AdventureWorks.Application.PersistenceContracts.Repositories.Sales;
-using AdventureWorks.Domain.Entities;
+﻿using AdventureWorks.Application.Features.Dashboard.Notifications;
+using AdventureWorks.Application.PersistenceContracts.Repositories.Sales;
 using AdventureWorks.Domain.Entities.Person;
 using AdventureWorks.Domain.Entities.Sales;
 using AdventureWorks.Models.Features.Sales;
@@ -12,12 +12,14 @@ namespace AdventureWorks.Application.Features.Sales.Commands;
 public sealed class CreateStoreCommandHandler(
     IMapper mapper,
     IStoreRepository storeRepository,
-    IValidator<StoreCreateModel> validator) 
+    IValidator<StoreCreateModel> validator,
+    IPublisher publisher)
         : IRequestHandler<CreateStoreCommand, int>
 {
     private readonly IMapper _mapper = mapper ?? throw new ArgumentNullException(nameof(mapper));
     private readonly IStoreRepository _storeRepository = storeRepository ?? throw new ArgumentNullException(nameof(storeRepository));
     private readonly IValidator<StoreCreateModel> _validator = validator ?? throw new ArgumentNullException(nameof(validator));
+    private readonly IPublisher _publisher = publisher ?? throw new ArgumentNullException(nameof(publisher));
 
     public async Task<int> Handle(CreateStoreCommand request, CancellationToken cancellationToken)
     {
@@ -32,6 +34,15 @@ public sealed class CreateStoreCommandHandler(
         inputEntity.StoreBusinessEntity = new BusinessEntity { Rowguid = Guid.NewGuid(), ModifiedDate = request.ModifiedDate };
 
         var outputEntity = await _storeRepository.AddAsync(inputEntity, cancellationToken);
+
+        await _publisher.Publish(new EntityChangedNotification
+        {
+            EntityType = "Store",
+            EntityId = outputEntity.BusinessEntityId,
+            Action = "Created",
+            UserName = request.UserName,
+            Timestamp = request.ModifiedDate
+        }, cancellationToken);
 
         return outputEntity.BusinessEntityId;
     }

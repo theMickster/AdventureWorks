@@ -1,4 +1,5 @@
-﻿using AdventureWorks.API.libs.Extensions;
+﻿using AdventureWorks.API.Hubs;
+using AdventureWorks.API.libs.Extensions;
 using Swashbuckle.AspNetCore.SwaggerUI;
 using System.Text;
 
@@ -40,6 +41,7 @@ internal static class SetupMiddlewarePipeline
         app.UseAuthorization();
 
         app.MapControllers();
+        app.MapHub<DashboardHub>("/hubs/dashboard");
 
         app.UseSwagger();
 

@@ -1,3 +1,4 @@
+using AdventureWorks.Application.Features.Dashboard.Notifications;
 using AdventureWorks.Application.Features.HumanResources.Commands;
 using AdventureWorks.Application.PersistenceContracts.Repositories;
 using AdventureWorks.Domain.Entities.HumanResources;
@@ -7,6 +8,7 @@ using AdventureWorks.UnitTests.Setup.Fakes;
 using AdventureWorks.UnitTests.Setup.Fixtures;
 using FluentValidation;
 using FluentValidation.Results;
+using MediatR;
 using Microsoft.Extensions.Logging;
 
 namespace AdventureWorks.UnitTests.Application.Features.HumanResources.Commands;
@@ -19,6 +21,7 @@ public sealed class RehireEmployeeCommandHandlerTests : UnitTestBase
     private readonly Mock<IEmployeeRepository> _mockEmployeeRepository = new();
     private readonly Mock<IValidator<EmployeeRehireModel>> _mockValidator = new();
     private readonly Mock<ILogger<RehireEmployeeCommandHandler>> _mockLogger = new();
+    private readonly Mock<IPublisher> _mockPublisher = new();
     private RehireEmployeeCommandHandler _sut;
 
     public RehireEmployeeCommandHandlerTests()
@@ -26,7 +29,8 @@ public sealed class RehireEmployeeCommandHandlerTests : UnitTestBase
         _sut = new RehireEmployeeCommandHandler(
             _mockEmployeeRepository.Object,
             _mockValidator.Object,
-            _mockLogger.Object);
+            _mockLogger.Object,
+            _mockPublisher.Object);
     }
 
     [Fact]
@@ -74,7 +78,8 @@ public sealed class RehireEmployeeCommandHandlerTests : UnitTestBase
         _sut = new RehireEmployeeCommandHandler(
             _mockEmployeeRepository.Object,
             validator,
-            _mockLogger.Object);
+            _mockLogger.Object,
+            _mockPublisher.Object);
 
         Func<Task> act = async () => await _sut.Handle(command, CancellationToken.None);
 
@@ -623,6 +628,46 @@ public sealed class RehireEmployeeCommandHandlerTests : UnitTestBase
             x => x.UpdateAsync(It.Is<EmployeeEntity>(e =>
                 e.BusinessEntityId == 1 &&
                 e.CurrentFlag == true), It.IsAny<CancellationToken>()),
+            Times.Once);
+    }
+
+    [Fact]
+    public async Task Handle_publishes_EntityChangedNotification_on_successful_rehireAsync()
+    {
+        var employee = HumanResourcesDomainFixtures.GetEmployeeWithDepartmentHistory(
+            businessEntityId: 1,
+            hasActiveAssignment: false,
+            hasPastTermination: true);
+        employee.CurrentFlag = false;
+
+        var command = new RehireEmployeeCommand
+        {
+            Model = HumanResourcesDomainFixtures.GetValidEmployeeRehireModel(employeeId: 1),
+            ModifiedDate = DefaultAuditDate,
+            UserName = "hr@example.com"
+        };
+
+        _mockValidator
+            .Setup(x => x.ValidateAsync(It.IsAny<EmployeeRehireModel>(), It.IsAny<CancellationToken>()))
+            .ReturnsAsync(new ValidationResult { Errors = [] });
+
+        _mockEmployeeRepository
+            .Setup(x => x.GetEmployeeByIdWithDepartmentHistoryAsync(1, It.IsAny<CancellationToken>()))
+            .ReturnsAsync(employee);
+
+        _mockEmployeeRepository
+            .Setup(x => x.UpdateAsync(It.IsAny<EmployeeEntity>(), It.IsAny<CancellationToken>()))
+            .Returns(Task.CompletedTask);
+
+        await _sut.Handle(command, CancellationToken.None);
+
+        _mockPublisher.Verify(
+            p => p.Publish(It.Is<EntityChangedNotification>(n =>
+                n.EntityType == "Employee" &&
+                n.EntityId == 1 &&
+                n.Action == "Rehired" &&
+                n.UserName == "hr@example.com"),
+            It.IsAny<CancellationToken>()),
             Times.Once);
     }
 

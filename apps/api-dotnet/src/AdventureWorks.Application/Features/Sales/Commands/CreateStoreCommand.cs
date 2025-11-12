@@ -10,4 +10,6 @@ public sealed class CreateStoreCommand : IRequest<int>
     public DateTime ModifiedDate { get; set; }
 
     public Guid RowGuid { get; set; }
+
+    public string UserName { get; set; } = string.Empty;
 }

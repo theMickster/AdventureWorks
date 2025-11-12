@@ -1,4 +1,5 @@
 ﻿using AdventureWorks.Application.PersistenceContracts.DbContext;
+using AdventureWorks.Domain.Entities.Dashboard;
 using AdventureWorks.Domain.Entities.HumanResources;
 using AdventureWorks.Domain.Entities.Person;
 using AdventureWorks.Domain.Entities.Production;
@@ -91,7 +92,9 @@ public class AdventureWorksDbContext : DbContext, IAdventureWorksDbContext
     public DbSet<StoreSalesPersonHistoryEntity> StoreSalesPersonHistories { get; set; }
 
     public DbSet<StateProvinceEntity> StateProvinces { get; set; }
-    
+
+    public DbSet<ActivityLogEntity> ActivityLogs { get; set; }
+
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
         var assemblyWithConfigurations = GetType().Assembly;

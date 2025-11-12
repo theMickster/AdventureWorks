@@ -65,6 +65,10 @@ npm run test
 npm run build
 ```
 
+## Real-Time Infrastructure
+
+A SignalR hub is present at `/hubs/dashboard` (`DashboardHub`). New command handlers that mutate entities should inject `IPublisher` and call `await _publisher.Publish(new EntityChangedNotification { ... }, cancellationToken)` after the repository call — this fans out to the SignalR broadcast and the ActivityLog persistence handler automatically. See `apps/api-dotnet/.claude/CLAUDE.md` → Real-Time Infrastructure for full details.
+
 ## When Unsure
 
 - Read the nearest scoped instruction file first.

@@ -1,3 +1,4 @@
+using AdventureWorks.Application.Features.Dashboard.Notifications;
 using AdventureWorks.Application.PersistenceContracts.Repositories;
 using AdventureWorks.Models.Features.HumanResources;
 using FluentValidation;
@@ -13,12 +14,14 @@ namespace AdventureWorks.Application.Features.HumanResources.Commands;
 public sealed class TerminateEmployeeCommandHandler(
     IEmployeeRepository employeeRepository,
     IValidator<EmployeeTerminateModel> validator,
-    ILogger<TerminateEmployeeCommandHandler> logger)
+    ILogger<TerminateEmployeeCommandHandler> logger,
+    IPublisher publisher)
     : IRequestHandler<TerminateEmployeeCommand, Unit>
 {
     private readonly IEmployeeRepository _employeeRepository = employeeRepository ?? throw new ArgumentNullException(nameof(employeeRepository));
     private readonly IValidator<EmployeeTerminateModel> _validator = validator ?? throw new ArgumentNullException(nameof(validator));
     private readonly ILogger<TerminateEmployeeCommandHandler> _logger = logger ?? throw new ArgumentNullException(nameof(logger));
+    private readonly IPublisher _publisher = publisher ?? throw new ArgumentNullException(nameof(publisher));
 
     public async Task<Unit> Handle(TerminateEmployeeCommand request, CancellationToken cancellationToken)
     {
@@ -103,8 +106,14 @@ public sealed class TerminateEmployeeCommandHandler(
             request.Model.TerminationType,
             request.Model.EligibleForRehire);
 
-        //TODO: Publish domain event for integrations (offboarding tasks, access revocation, etc.)
-        // await _mediator.Publish(new EmployeeTerminatedEvent(employee.BusinessEntityId, request.Model.TerminationDate), cancellationToken);
+        await _publisher.Publish(new EntityChangedNotification
+        {
+            EntityType = "Employee",
+            EntityId = employee.BusinessEntityId,
+            Action = "Terminated",
+            UserName = request.UserName,
+            Timestamp = request.ModifiedDate
+        }, cancellationToken);
 
         return Unit.Value;
     }

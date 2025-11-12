@@ -80,7 +80,8 @@ public sealed class EmployeeLifecycleController : ControllerBase
             var command = new HireEmployeeCommand
             {
                 Model = inputModel,
-                ModifiedDate = DateTime.UtcNow
+                ModifiedDate = DateTime.UtcNow,
+                UserName = HttpContext.User.Identity?.Name ?? string.Empty
             };
 
             var businessEntityId = await _mediator.Send(command);
@@ -152,7 +153,8 @@ public sealed class EmployeeLifecycleController : ControllerBase
             var command = new TerminateEmployeeCommand
             {
                 Model = inputModel,
-                ModifiedDate = DateTime.UtcNow
+                ModifiedDate = DateTime.UtcNow,
+                UserName = HttpContext.User.Identity?.Name ?? string.Empty
             };
 
             await _mediator.Send(command);
@@ -225,7 +227,8 @@ public sealed class EmployeeLifecycleController : ControllerBase
             var command = new RehireEmployeeCommand
             {
                 Model = inputModel,
-                ModifiedDate = DateTime.UtcNow
+                ModifiedDate = DateTime.UtcNow,
+                UserName = HttpContext.User.Identity?.Name ?? string.Empty
             };
 
             var businessEntityId = await _mediator.Send(command);

@@ -114,6 +114,14 @@ Unhandled exception types fall through to a 500 with a sanitized generic message
 Any new expected exception type used for normal API flows must be translated in middleware or handled explicitly in the controller in the same change.
 See: `AdventureWorks.API/libs/Middleware/ExceptionHandlerMiddleware.cs`
 
+#### Real-Time Infrastructure (SignalR + MediatR Notification Pipeline)
+
+- **Hub endpoint**: `/hubs/dashboard` — `DashboardHub`, requires JWT via `[Authorize(Policy = "DashboardAccess")]`. WebSocket auth passes the token as a query string (`access_token`); the middleware in `Program.cs` maps it to the `Authorization` header automatically.
+- **Notification pipeline**: After a successful repository call, command handlers call `await _publisher.Publish(new EntityChangedNotification { ... }, cancellationToken)`. MediatR fans the notification out to two handlers in parallel: `SignalRBroadcastHandler` (pushes to Dashboard group via `IHubContext`) and `ActivityLogNotificationHandler` (writes to the ActivityLog table).
+- **Failure isolation**: Both notification handlers catch and log exceptions without rethrowing — a failed broadcast or DB write never rolls back the originating command.
+- **Data access in handlers**: Notification handlers use `IActivityLogRepository` (Application layer interface), not `DbContext` directly — consistent with the repository pattern.
+- **Adding new notifications**: Any new command handler that mutates an entity should inject `IPublisher` and publish `EntityChangedNotification` after its repository call. No hub code changes are required.
+
 #### Composite-Key Rewrite Pattern (delete + insert in transaction)
 
 When a junction-table row needs to change a column that is part of its composite primary key, a true UPDATE is impossible. The handler must replace the row: open an EF transaction, delete the existing entity, insert a new entity with the new key values, and commit. The repository owns the transaction so handlers stay storage-agnostic.

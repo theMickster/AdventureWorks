@@ -1,3 +1,4 @@
+using AdventureWorks.Application.Features.Dashboard.Notifications;
 using AdventureWorks.Application.Features.HumanResources.Commands;
 using AdventureWorks.Application.PersistenceContracts.Repositories;
 using AdventureWorks.Domain.Entities.HumanResources;
@@ -18,6 +19,7 @@ public sealed class TerminateEmployeeCommandHandlerTests : UnitTestBase
     private readonly Mock<IEmployeeRepository> _mockEmployeeRepository = new();
     private readonly Mock<IValidator<EmployeeTerminateModel>> _mockValidator = new();
     private readonly Mock<ILogger<TerminateEmployeeCommandHandler>> _mockLogger = new();
+    private readonly Mock<IPublisher> _mockPublisher = new();
     private TerminateEmployeeCommandHandler _sut;
 
     public TerminateEmployeeCommandHandlerTests()
@@ -25,7 +27,8 @@ public sealed class TerminateEmployeeCommandHandlerTests : UnitTestBase
         _sut = new TerminateEmployeeCommandHandler(
             _mockEmployeeRepository.Object,
             _mockValidator.Object,
-            _mockLogger.Object);
+            _mockLogger.Object,
+            _mockPublisher.Object);
     }
 
     [Fact]
@@ -73,7 +76,8 @@ public sealed class TerminateEmployeeCommandHandlerTests : UnitTestBase
         _sut = new TerminateEmployeeCommandHandler(
             _mockEmployeeRepository.Object,
             validator,
-            _mockLogger.Object);
+            _mockLogger.Object,
+            _mockPublisher.Object);
 
         Func<Task> act = async () => await _sut.Handle(command, CancellationToken.None);
 
@@ -397,6 +401,44 @@ public sealed class TerminateEmployeeCommandHandlerTests : UnitTestBase
             x => x.UpdateAsync(It.Is<EmployeeEntity>(e =>
                 e.BusinessEntityId == 1 &&
                 e.CurrentFlag == false), It.IsAny<CancellationToken>()),
+            Times.Once);
+    }
+
+    [Fact]
+    public async Task Handle_publishes_EntityChangedNotification_on_successful_terminationAsync()
+    {
+        var employee = HumanResourcesDomainFixtures.GetEmployeeWithDepartmentHistory(
+            businessEntityId: 1,
+            hasActiveAssignment: true);
+
+        var command = new TerminateEmployeeCommand
+        {
+            Model = HumanResourcesDomainFixtures.GetValidEmployeeTerminateModel(employeeId: 1),
+            ModifiedDate = DefaultAuditDate,
+            UserName = "hr@example.com"
+        };
+
+        _mockValidator
+            .Setup(x => x.ValidateAsync(It.IsAny<EmployeeTerminateModel>(), It.IsAny<CancellationToken>()))
+            .ReturnsAsync(new ValidationResult { Errors = [] });
+
+        _mockEmployeeRepository
+            .Setup(x => x.GetEmployeeByIdWithDepartmentHistoryAsync(1, It.IsAny<CancellationToken>()))
+            .ReturnsAsync(employee);
+
+        _mockEmployeeRepository
+            .Setup(x => x.UpdateAsync(It.IsAny<EmployeeEntity>(), It.IsAny<CancellationToken>()))
+            .Returns(Task.CompletedTask);
+
+        await _sut.Handle(command, CancellationToken.None);
+
+        _mockPublisher.Verify(
+            p => p.Publish(It.Is<EntityChangedNotification>(n =>
+                n.EntityType == "Employee" &&
+                n.EntityId == 1 &&
+                n.Action == "Terminated" &&
+                n.UserName == "hr@example.com"),
+            It.IsAny<CancellationToken>()),
             Times.Once);
     }
 

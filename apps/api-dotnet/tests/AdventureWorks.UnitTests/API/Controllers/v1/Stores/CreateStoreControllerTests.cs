@@ -5,9 +5,11 @@ using AdventureWorks.Models.Features.Sales;
 using FluentValidation;
 using FluentValidation.Results;
 using MediatR;
+using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
 using System.Net;
+using System.Security.Claims;
 
 namespace AdventureWorks.UnitTests.API.Controllers.v1.Stores;
 
@@ -21,6 +23,13 @@ public sealed class CreateStoreControllerTests : UnitTestBase
     public CreateStoreControllerTests()
     {
         _sut = new CreateStoreController(_mockLogger.Object, _mockMediator.Object);
+        _sut.ControllerContext = new ControllerContext
+        {
+            HttpContext = new DefaultHttpContext
+            {
+                User = new ClaimsPrincipal(new ClaimsIdentity(new[] { new Claim(ClaimTypes.Name, "test-user@example.com") }, "Test"))
+            }
+        };
     }
 
     [Fact]

@@ -50,7 +50,7 @@ public sealed class CreateStoreController : ControllerBase
         {
             return BadRequest("The store input model cannot be null.");
         }
-        var cmd = new CreateStoreCommand { Model = inputModel, ModifiedDate = DateTime.UtcNow, RowGuid = Guid.NewGuid() };
+        var cmd = new CreateStoreCommand { Model = inputModel, ModifiedDate = DateTime.UtcNow, RowGuid = Guid.NewGuid(), UserName = HttpContext.User.Identity?.Name ?? "unknown" };
 
         var addressId = await _mediator.Send(cmd);
         var model = await _mediator.Send(new ReadStoreQuery { Id = addressId });

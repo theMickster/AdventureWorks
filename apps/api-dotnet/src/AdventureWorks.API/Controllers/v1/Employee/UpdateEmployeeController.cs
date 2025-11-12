@@ -78,7 +78,8 @@ public sealed class UpdateEmployeeController : ControllerBase
         var command = new UpdateEmployeeCommand
         {
             Model = inputModel,
-            ModifiedDate = DateTime.UtcNow
+            ModifiedDate = DateTime.UtcNow,
+            UserName = HttpContext.User.Identity?.Name ?? "unknown"
         };
 
         await _mediator.Send(command);

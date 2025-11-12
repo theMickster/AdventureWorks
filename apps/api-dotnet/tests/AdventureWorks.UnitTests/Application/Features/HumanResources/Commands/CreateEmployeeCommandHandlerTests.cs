@@ -1,4 +1,5 @@
 using AdventureWorks.Application.Features.AddressManagement.Profiles;
+using AdventureWorks.Application.Features.Dashboard.Notifications;
 using AdventureWorks.Application.Features.HumanResources.Commands;
 using AdventureWorks.Application.Features.HumanResources.Profiles;
 using AdventureWorks.Application.PersistenceContracts.Repositories;
@@ -11,6 +12,7 @@ using AdventureWorks.UnitTests.Setup.Fakes;
 using AdventureWorks.UnitTests.Setup.Fixtures;
 using FluentValidation;
 using FluentValidation.Results;
+using MediatR;
 
 namespace AdventureWorks.UnitTests.Application.Features.HumanResources.Commands;
 
@@ -20,6 +22,7 @@ public sealed class CreateEmployeeCommandHandlerTests : UnitTestBase
     private readonly IMapper _mapper;
     private readonly Mock<IEmployeeRepository> _mockEmployeeRepository = new();
     private readonly Mock<IValidator<EmployeeCreateModel>> _mockValidator = new();
+    private readonly Mock<IPublisher> _mockPublisher = new();
     private CreateEmployeeCommandHandler _sut;
 
     public CreateEmployeeCommandHandlerTests()
@@ -30,7 +33,7 @@ public sealed class CreateEmployeeCommandHandlerTests : UnitTestBase
             c.AddProfile<AddressCreateModelToAddressEntityProfile>();
         });
         _mapper = mappingConfig.CreateMapper();
-        _sut = new CreateEmployeeCommandHandler(_mapper, _mockEmployeeRepository.Object, _mockValidator.Object);
+        _sut = new CreateEmployeeCommandHandler(_mapper, _mockEmployeeRepository.Object, _mockValidator.Object, _mockPublisher.Object);
     }
 
     [Fact]
@@ -77,7 +80,7 @@ public sealed class CreateEmployeeCommandHandlerTests : UnitTestBase
             "NationalIdNumber",
             "National ID number cannot be greater than 15 characters");
 
-        _sut = new CreateEmployeeCommandHandler(_mapper, _mockEmployeeRepository.Object, validator);
+        _sut = new CreateEmployeeCommandHandler(_mapper, _mockEmployeeRepository.Object, validator, _mockPublisher.Object);
 
         Func<Task> act = async () => await _sut.Handle(command, CancellationToken.None);
 
@@ -392,5 +395,72 @@ public sealed class CreateEmployeeCommandHandlerTests : UnitTestBase
             capturedModifiedDate.Should().Be(testDate);
             capturedRowGuid.Should().Be(testGuid);
         }
+    }
+
+    [Fact]
+    public async Task Handle_publishes_notification_on_successAsync()
+    {
+        var model = HumanResourcesDomainFixtures.GetValidEmployeeCreateModel();
+        var command = new CreateEmployeeCommand
+        {
+            Model = model,
+            ModifiedDate = DefaultAuditDate,
+            RowGuid = Guid.NewGuid(),
+            UserName = "test@example.com"
+        };
+
+        _mockValidator
+            .Setup(x => x.ValidateAsync(It.IsAny<EmployeeCreateModel>(), It.IsAny<CancellationToken>()))
+            .ReturnsAsync(new ValidationResult { Errors = [] });
+
+        const int expectedBusinessEntityId = 100;
+
+        _mockEmployeeRepository
+            .Setup(x => x.CreateEmployeeWithPersonAsync(
+                It.IsAny<EmployeeEntity>(),
+                It.IsAny<PersonEntity>(),
+                It.IsAny<PersonPhone>(),
+                It.IsAny<EmailAddressEntity>(),
+                It.IsAny<AddressEntity>(),
+                It.IsAny<int>(),
+                It.IsAny<DateTime>(),
+                It.IsAny<Guid>(),
+                It.IsAny<CancellationToken>()))
+            .ReturnsAsync(expectedBusinessEntityId);
+
+        await _sut.Handle(command, CancellationToken.None);
+
+        _mockPublisher.Verify(
+            x => x.Publish(It.Is<EntityChangedNotification>(n =>
+                n.EntityType == "Employee" &&
+                n.EntityId == expectedBusinessEntityId &&
+                n.Action == "Created" &&
+                n.UserName == "test@example.com"),
+            It.IsAny<CancellationToken>()),
+            Times.Once);
+    }
+
+    [Fact]
+    public async Task Handle_does_not_publish_on_validation_failureAsync()
+    {
+        var command = new CreateEmployeeCommand
+        {
+            Model = HumanResourcesDomainFixtures.GetValidEmployeeCreateModel(),
+            ModifiedDate = DefaultAuditDate,
+            RowGuid = Guid.NewGuid(),
+            UserName = "test@example.com"
+        };
+
+        var validator = new FakeFailureValidator<EmployeeCreateModel>(
+            "NationalIdNumber",
+            "National ID number cannot be greater than 15 characters");
+        _sut = new CreateEmployeeCommandHandler(_mapper, _mockEmployeeRepository.Object, validator, _mockPublisher.Object);
+
+        await Assert.ThrowsAsync<FluentValidation.ValidationException>(
+            () => _sut.Handle(command, CancellationToken.None));
+
+        _mockPublisher.Verify(
+            x => x.Publish(It.IsAny<EntityChangedNotification>(), It.IsAny<CancellationToken>()),
+            Times.Never);
     }
 }

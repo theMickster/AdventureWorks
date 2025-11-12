@@ -1,3 +1,4 @@
+using AdventureWorks.Application.Features.Dashboard.Notifications;
 using AdventureWorks.Application.PersistenceContracts.Repositories;
 using AdventureWorks.Models.Features.HumanResources;
 using FluentValidation;
@@ -11,11 +12,13 @@ namespace AdventureWorks.Application.Features.HumanResources.Commands;
 /// </summary>
 public sealed class UpdateEmployeeCommandHandler(
     IEmployeeRepository employeeRepository,
-    IValidator<EmployeeUpdateModel> validator)
+    IValidator<EmployeeUpdateModel> validator,
+    IPublisher publisher)
         : IRequestHandler<UpdateEmployeeCommand, Unit>
 {
     private readonly IEmployeeRepository _employeeRepository = employeeRepository ?? throw new ArgumentNullException(nameof(employeeRepository));
     private readonly IValidator<EmployeeUpdateModel> _validator = validator ?? throw new ArgumentNullException(nameof(validator));
+    private readonly IPublisher _publisher = publisher ?? throw new ArgumentNullException(nameof(publisher));
 
     public async Task<Unit> Handle(UpdateEmployeeCommand request, CancellationToken cancellationToken)
     {
@@ -43,6 +46,15 @@ public sealed class UpdateEmployeeCommandHandler(
         employeeEntity.ModifiedDate = request.ModifiedDate;
 
         await _employeeRepository.UpdateAsync(employeeEntity, cancellationToken);
+
+        await _publisher.Publish(new EntityChangedNotification
+        {
+            EntityType = "Employee",
+            EntityId = request.Model.Id,
+            Action = "Updated",
+            UserName = request.UserName,
+            Timestamp = request.ModifiedDate
+        }, cancellationToken);
 
         return Unit.Value;
     }

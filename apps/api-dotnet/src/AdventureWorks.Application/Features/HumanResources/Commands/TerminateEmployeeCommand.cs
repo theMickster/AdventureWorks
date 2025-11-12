@@ -19,4 +19,9 @@ public sealed class TerminateEmployeeCommand : IRequest<Unit>
     /// System modification timestamp for audit trail.
     /// </summary>
     public DateTime ModifiedDate { get; set; } = DateTime.UtcNow;
+
+    /// <summary>
+    /// The identity of the user performing the operation.
+    /// </summary>
+    public string UserName { get; set; } = string.Empty;
 }

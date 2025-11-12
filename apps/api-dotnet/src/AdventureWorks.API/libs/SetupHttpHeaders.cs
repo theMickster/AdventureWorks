@@ -26,6 +26,7 @@ internal static class SetupHttpHeaders
             var cspHeader = string.Join("; ", new List<string>
             {
                 "default-src 'self' *.azurewebsites.net",
+                "connect-src 'self' wss://*.azurewebsites.net",
                 "img-src data: 'self' https:",
                 $"object-src 'nonce-{nonce}'",
                 $"script-src 'self' 'nonce-{nonce}'",

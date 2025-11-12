@@ -72,11 +72,36 @@ builder.Services.AddCors(options =>
 builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
     .AddMicrosoftIdentityWebApi(builder.Configuration);
 
+builder.Services.AddAuthorization(options =>
+{
+    options.AddPolicy("DashboardAccess", policy =>
+        policy.RequireAuthenticatedUser());
+});
+
+builder.Services.PostConfigure<JwtBearerOptions>(JwtBearerDefaults.AuthenticationScheme, options =>
+{
+    options.Events ??= new JwtBearerEvents();
+    // JWT is extracted from the query string per the SignalR WebSocket authentication pattern.
+    // The token appears in server access logs for the WebSocket upgrade request.
+    // Accepted risk for this deployment: tokens are short-lived and logs are access-controlled.
+    options.Events.OnMessageReceived = context =>
+    {
+        var token = context.Request.Query["access_token"];
+        if (!string.IsNullOrEmpty(token) &&
+            context.HttpContext.Request.Path.StartsWithSegments("/hubs") &&
+            context.HttpContext.WebSockets.IsWebSocketRequest)
+        {
+            context.Token = token;
+        }
+        return Task.CompletedTask;
+    };
+});
+
+builder.RegisterAdventureWorksDbContexts();
+
 builder.RegisterAspDotNetServices();
 
 builder.RegisterApiVersioning();
-
-builder.RegisterAdventureWorksDbContexts();
 
 builder.RegisterServicesViaReflection();
 

@@ -1,3 +1,4 @@
+using AdventureWorks.Application.Features.Dashboard.Notifications;
 using AdventureWorks.Application.Features.HumanResources.Commands;
 using AdventureWorks.Application.PersistenceContracts.Repositories;
 using AdventureWorks.Domain.Entities.HumanResources;
@@ -16,11 +17,12 @@ public sealed class UpdateEmployeeCommandHandlerTests : UnitTestBase
 {
     private readonly Mock<IEmployeeRepository> _mockEmployeeRepository = new();
     private readonly Mock<IValidator<EmployeeUpdateModel>> _mockValidator = new();
+    private readonly Mock<IPublisher> _mockPublisher = new();
     private UpdateEmployeeCommandHandler _sut;
 
     public UpdateEmployeeCommandHandlerTests()
     {
-        _sut = new UpdateEmployeeCommandHandler(_mockEmployeeRepository.Object, _mockValidator.Object);
+        _sut = new UpdateEmployeeCommandHandler(_mockEmployeeRepository.Object, _mockValidator.Object, _mockPublisher.Object);
     }
 
     [Fact]
@@ -65,7 +67,7 @@ public sealed class UpdateEmployeeCommandHandlerTests : UnitTestBase
             "FirstName",
             "First name is required");
 
-        _sut = new UpdateEmployeeCommandHandler(_mockEmployeeRepository.Object, validator);
+        _sut = new UpdateEmployeeCommandHandler(_mockEmployeeRepository.Object, validator, _mockPublisher.Object);
 
         Func<Task> act = async () => await _sut.Handle(command, CancellationToken.None);
 
@@ -175,5 +177,65 @@ public sealed class UpdateEmployeeCommandHandlerTests : UnitTestBase
         var result = await _sut.Handle(command, CancellationToken.None);
 
         result.Should().Be(Unit.Value);
+    }
+
+    [Fact]
+    public async Task Handle_publishes_notification_on_successAsync()
+    {
+        var model = HumanResourcesDomainFixtures.GetValidEmployeeUpdateModel(100);
+        var employeeEntity = HumanResourcesDomainFixtures.GetValidEmployeeEntity(100);
+        var personEntity = HumanResourcesDomainFixtures.GetValidPersonEntity(100);
+        employeeEntity.PersonBusinessEntity = personEntity;
+
+        var command = new UpdateEmployeeCommand
+        {
+            Model = model,
+            ModifiedDate = DefaultAuditDate,
+            UserName = "test@example.com"
+        };
+
+        _mockValidator
+            .Setup(x => x.ValidateAsync(It.IsAny<EmployeeUpdateModel>(), It.IsAny<CancellationToken>()))
+            .ReturnsAsync(new ValidationResult { Errors = [] });
+
+        _mockEmployeeRepository
+            .Setup(x => x.GetEmployeeByIdAsync(100, It.IsAny<CancellationToken>()))
+            .ReturnsAsync(employeeEntity);
+
+        _mockEmployeeRepository
+            .Setup(x => x.UpdateAsync(It.IsAny<EmployeeEntity>(), It.IsAny<CancellationToken>()))
+            .Returns(Task.CompletedTask);
+
+        await _sut.Handle(command, CancellationToken.None);
+
+        _mockPublisher.Verify(
+            x => x.Publish(It.Is<EntityChangedNotification>(n =>
+                n.EntityType == "Employee" &&
+                n.EntityId == 100 &&
+                n.Action == "Updated" &&
+                n.UserName == "test@example.com"),
+            It.IsAny<CancellationToken>()),
+            Times.Once);
+    }
+
+    [Fact]
+    public async Task Handle_does_not_publish_on_validation_failureAsync()
+    {
+        var command = new UpdateEmployeeCommand
+        {
+            Model = HumanResourcesDomainFixtures.GetValidEmployeeUpdateModel(100),
+            ModifiedDate = DefaultAuditDate,
+            UserName = "test@example.com"
+        };
+
+        var validator = new FakeFailureValidator<EmployeeUpdateModel>("FirstName", "First name is required");
+        _sut = new UpdateEmployeeCommandHandler(_mockEmployeeRepository.Object, validator, _mockPublisher.Object);
+
+        await Assert.ThrowsAsync<FluentValidation.ValidationException>(
+            () => _sut.Handle(command, CancellationToken.None));
+
+        _mockPublisher.Verify(
+            x => x.Publish(It.IsAny<EntityChangedNotification>(), It.IsAny<CancellationToken>()),
+            Times.Never);
     }
 }

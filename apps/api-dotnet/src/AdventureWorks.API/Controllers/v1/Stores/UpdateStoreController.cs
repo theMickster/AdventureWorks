@@ -60,7 +60,7 @@ public sealed class UpdateStoreController : ControllerBase
         {
             return BadRequest("The store id parameter must match the id of the store update request payload.");
         }
-        var cmd = new UpdateStoreCommand { Model = inputModel, ModifiedDate = DateTime.UtcNow };
+        var cmd = new UpdateStoreCommand { Model = inputModel, ModifiedDate = DateTime.UtcNow, UserName = HttpContext.User.Identity?.Name ?? "unknown" };
         await _mediator.Send(cmd);
         var model = await _mediator.Send(new ReadStoreQuery { Id = storeId });
 

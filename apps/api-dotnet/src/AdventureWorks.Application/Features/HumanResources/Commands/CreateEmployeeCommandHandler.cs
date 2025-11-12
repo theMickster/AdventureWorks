@@ -1,3 +1,4 @@
+using AdventureWorks.Application.Features.Dashboard.Notifications;
 using AdventureWorks.Application.PersistenceContracts.Repositories;
 using AdventureWorks.Domain.Entities.HumanResources;
 using AdventureWorks.Domain.Entities.Person;
@@ -15,12 +16,14 @@ namespace AdventureWorks.Application.Features.HumanResources.Commands;
 public sealed class CreateEmployeeCommandHandler(
     IMapper mapper,
     IEmployeeRepository employeeRepository,
-    IValidator<EmployeeCreateModel> validator)
+    IValidator<EmployeeCreateModel> validator,
+    IPublisher publisher)
         : IRequestHandler<CreateEmployeeCommand, int>
 {
     private readonly IMapper _mapper = mapper ?? throw new ArgumentNullException(nameof(mapper));
     private readonly IEmployeeRepository _employeeRepository = employeeRepository ?? throw new ArgumentNullException(nameof(employeeRepository));
     private readonly IValidator<EmployeeCreateModel> _validator = validator ?? throw new ArgumentNullException(nameof(validator));
+    private readonly IPublisher _publisher = publisher ?? throw new ArgumentNullException(nameof(publisher));
 
     public async Task<int> Handle(CreateEmployeeCommand request, CancellationToken cancellationToken)
     {
@@ -63,6 +66,15 @@ public sealed class CreateEmployeeCommandHandler(
             request.ModifiedDate,
             request.RowGuid,
             cancellationToken);
+
+        await _publisher.Publish(new EntityChangedNotification
+        {
+            EntityType = "Employee",
+            EntityId = businessEntityId,
+            Action = "Created",
+            UserName = request.UserName,
+            Timestamp = request.ModifiedDate
+        }, cancellationToken);
 
         return businessEntityId;
     }

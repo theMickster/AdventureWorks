@@ -24,4 +24,9 @@ public sealed class CreateEmployeeCommand : IRequest<int>
     /// System-generated unique row identifier.
     /// </summary>
     public Guid RowGuid { get; set; }
+
+    /// <summary>
+    /// The identity of the user performing the operation.
+    /// </summary>
+    public string UserName { get; set; } = string.Empty;
 }

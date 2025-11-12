@@ -1,3 +1,4 @@
+using AdventureWorks.Application.Features.Dashboard.Notifications;
 using AdventureWorks.Application.PersistenceContracts.Repositories;
 using AdventureWorks.Domain.Entities.HumanResources;
 using AdventureWorks.Models.Features.HumanResources;
@@ -14,12 +15,14 @@ namespace AdventureWorks.Application.Features.HumanResources.Commands;
 public sealed class HireEmployeeCommandHandler(
     IEmployeeRepository employeeRepository,
     IValidator<EmployeeHireModel> validator,
-    ILogger<HireEmployeeCommandHandler> logger)
+    ILogger<HireEmployeeCommandHandler> logger,
+    IPublisher publisher)
     : IRequestHandler<HireEmployeeCommand, int>
 {
     private readonly IEmployeeRepository _employeeRepository = employeeRepository ?? throw new ArgumentNullException(nameof(employeeRepository));
     private readonly IValidator<EmployeeHireModel> _validator = validator ?? throw new ArgumentNullException(nameof(validator));
     private readonly ILogger<HireEmployeeCommandHandler> _logger = logger ?? throw new ArgumentNullException(nameof(logger));
+    private readonly IPublisher _publisher = publisher ?? throw new ArgumentNullException(nameof(publisher));
 
     public async Task<int> Handle(HireEmployeeCommand request, CancellationToken cancellationToken)
     {
@@ -101,8 +104,14 @@ public sealed class HireEmployeeCommandHandler(
             request.Model.HireDate,
             request.Model.DepartmentId);
 
-        //TODO: Publish domain event for integrations (email notifications, provisioning, etc.)
-        // await _mediator.Publish(new EmployeeHiredEvent(employee.BusinessEntityId, request.Model.HireDate), cancellationToken);
+        await _publisher.Publish(new EntityChangedNotification
+        {
+            EntityType = "Employee",
+            EntityId = employee.BusinessEntityId,
+            Action = "Hired",
+            UserName = request.UserName,
+            Timestamp = request.ModifiedDate
+        }, cancellationToken);
 
         return employee.BusinessEntityId;
     }

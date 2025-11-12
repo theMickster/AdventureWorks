@@ -116,6 +116,7 @@ internal static class RegisterServices
         
         builder.Services.AddValidatorsFromAssemblyContaining<CreateAddressValidator>();
         builder.Services.AddApplicationServices(builder.Configuration);
+        builder.Services.AddSignalR();
         return builder;
     }
 

@@ -1,3 +1,4 @@
+using AdventureWorks.Application.Features.Dashboard.Notifications;
 using AdventureWorks.Application.PersistenceContracts.Repositories;
 using AdventureWorks.Common.Constants;
 using AdventureWorks.Domain.Entities.HumanResources;
@@ -16,13 +17,14 @@ namespace AdventureWorks.Application.Features.HumanResources.Commands;
 public sealed class RehireEmployeeCommandHandler(
     IEmployeeRepository employeeRepository,
     IValidator<EmployeeRehireModel> validator,
-    ILogger<RehireEmployeeCommandHandler> logger)
+    ILogger<RehireEmployeeCommandHandler> logger,
+    IPublisher publisher)
     : IRequestHandler<RehireEmployeeCommand, int>
 {
-
     private readonly IEmployeeRepository _employeeRepository = employeeRepository ?? throw new ArgumentNullException(nameof(employeeRepository));
     private readonly IValidator<EmployeeRehireModel> _validator = validator ?? throw new ArgumentNullException(nameof(validator));
     private readonly ILogger<RehireEmployeeCommandHandler> _logger = logger ?? throw new ArgumentNullException(nameof(logger));
+    private readonly IPublisher _publisher = publisher ?? throw new ArgumentNullException(nameof(publisher));
 
     public async Task<int> Handle(RehireEmployeeCommand request, CancellationToken cancellationToken)
     {
@@ -79,7 +81,7 @@ public sealed class RehireEmployeeCommandHandler(
                 lastTermination.EndDate.Value);
         }
 
-        employee.HireDate = request.Model.RehireDate; 
+        employee.HireDate = request.Model.RehireDate;
         employee.CurrentFlag = true;
         employee.ModifiedDate = request.ModifiedDate;
 
@@ -115,7 +117,7 @@ public sealed class RehireEmployeeCommandHandler(
             DepartmentId = request.Model.DepartmentId,
             ShiftId = request.Model.ShiftId,
             StartDate = request.Model.RehireDate,
-            EndDate = null, 
+            EndDate = null,
             ModifiedDate = request.ModifiedDate
         };
 
@@ -154,8 +156,14 @@ public sealed class RehireEmployeeCommandHandler(
             request.Model.RehireDate,
             request.Model.DepartmentId);
 
-        // TODO: Publish domain event for integrations (re-provisioning, welcome back email, etc.)
-        // await _mediator.Publish(new EmployeeRehiredEvent(employee.BusinessEntityId, request.Model.RehireDate), cancellationToken);
+        await _publisher.Publish(new EntityChangedNotification
+        {
+            EntityType = "Employee",
+            EntityId = employee.BusinessEntityId,
+            Action = "Rehired",
+            UserName = request.UserName,
+            Timestamp = request.ModifiedDate
+        }, cancellationToken);
 
         return employee.BusinessEntityId;
     }
