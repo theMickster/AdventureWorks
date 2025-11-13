@@ -39,6 +39,7 @@ import {
   msalGuardConfigFactory,
   msalInstanceFactory,
   msalInterceptorConfigFactory,
+  EntityChangedEvent,
   SignalRConnectionStatus,
   SignalrService,
 } from '@adventureworks-web/shared/util';
@@ -49,13 +50,17 @@ import { appRoutes } from './app.routes';
 
 export async function runSignalrLifecycleStep(
   isAuthenticated: boolean,
-  signalrService: Pick<SignalrService, 'connect' | 'disconnect'>,
+  signalrService: Pick<SignalrService, 'connect' | 'disconnect' | 'connectionStatus'>,
   appInsightsService: Pick<AppInsightsService, 'trackException'>,
 ): Promise<void> {
   if (isAuthenticated) {
-    await signalrService.connect().catch((error: unknown) => {
-      appInsightsService.trackException(error instanceof Error ? error : new Error(String(error)));
-    });
+    await signalrService.connect();
+    // Retry once after a short delay to recover from transient MSAL errors (e.g. block_iframe_reload)
+    // that can occur when acquireTokenSilent is called while the auth state is still settling on page load.
+    if (signalrService.connectionStatus() === 'disconnected') {
+      await new Promise<void>((resolve) => setTimeout(resolve, 2000));
+      await signalrService.connect();
+    }
     return;
   }
 
@@ -67,7 +72,7 @@ export async function runSignalrLifecycleStep(
 /** Starts or stops the SignalR connection in response to the current auth state. */
 export function initializeSignalrLifecycle(
   authService: Pick<AuthService, 'isAuthenticated'> = inject(AuthService),
-  signalrService: Pick<SignalrService, 'connect' | 'disconnect'> = inject(SignalrService),
+  signalrService: Pick<SignalrService, 'connect' | 'disconnect' | 'connectionStatus'> = inject(SignalrService),
   appInsightsService: Pick<AppInsightsService, 'trackException'> = inject(AppInsightsService),
 ): EffectRef {
   return effect(() => {
@@ -98,7 +103,7 @@ export function runSignalrEventSubscriptionStep(
   currentStatus: SignalRConnectionStatus,
   signalrService: Pick<SignalrService, 'on'>,
   stores: {
-    storeStore: { applySignalrStoreUpdated: (payload: unknown) => void };
+    storeStore: { refresh: () => void };
     employeeStore: { handleSignalrEmployeeLifecycleEvent: () => void };
   },
   appInsightsService: Pick<AppInsightsService, 'trackException'>,
@@ -112,9 +117,16 @@ export function runSignalrEventSubscriptionStep(
   }
 
   try {
-    signalrService.on<unknown>('store-updated', (payload) => stores.storeStore.applySignalrStoreUpdated(payload));
-    signalrService.on<unknown>('EmployeeHired', () => stores.employeeStore.handleSignalrEmployeeLifecycleEvent());
-    signalrService.on<unknown>('EmployeeTerminated', () => stores.employeeStore.handleSignalrEmployeeLifecycleEvent());
+    // EntityChanged carries a notification (entityType, entityId) — not store data.
+    // Each handler re-fetches; do not attempt to patch from the event payload.
+    // Group subscription is handled server-side in DashboardHub.OnConnectedAsync.
+    signalrService.on<EntityChangedEvent>('EntityChanged', (payload) => {
+      if (payload.entityType === 'Store') {
+        stores.storeStore.refresh();
+      } else if (payload.entityType === 'Employee') {
+        stores.employeeStore.handleSignalrEmployeeLifecycleEvent();
+      }
+    });
     return true;
   } catch (error: unknown) {
     appInsightsService.trackException(error instanceof Error ? error : new Error(String(error)));
@@ -142,7 +154,7 @@ export function initializeSignalrReconnectRefresh(
 /** Subscribes stores to SignalR events so live updates can flow into signal stores. */
 export function initializeSignalrEventSubscriptions(
   signalrService: Pick<SignalrService, 'connectionStatus' | 'on'> = inject(SignalrService),
-  storeStore: { applySignalrStoreUpdated: (payload: unknown) => void } = inject(StoreStore),
+  storeStore: { refresh: () => void } = inject(StoreStore),
   employeeStore: { handleSignalrEmployeeLifecycleEvent: () => void } = inject(EmployeeStore),
   appInsightsService: Pick<AppInsightsService, 'trackException'> = inject(AppInsightsService),
 ): EffectRef {

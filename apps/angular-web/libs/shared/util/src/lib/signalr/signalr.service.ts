@@ -4,8 +4,10 @@ import { HubConnection, HubConnectionBuilder, HubConnectionState } from '@micros
 import { firstValueFrom } from 'rxjs';
 import { Environment } from '../environment/environment.model';
 import { ENVIRONMENT } from '../environment/environment.token';
+import { AppInsightsService } from '../telemetry/app-insights.service';
 import { SignalRConnectionStatus, SignalRHandler } from './signalr-connection.model';
 
+// Delay schedule matches Feature 777 spec (0, 2s, 5s, 10s), capped at 8 attempts and 30s per delay.
 const DEFAULT_RECONNECT_DELAYS_MS = [0, 2000, 5000, 10000];
 const MAX_RECONNECT_ATTEMPTS = 8;
 const MAX_RECONNECT_DELAY_MS = 30_000;
@@ -15,6 +17,7 @@ const LOCAL_HOSTNAMES = new Set(['localhost', '127.0.0.1', '[::1]']);
 export class SignalrService {
   private readonly environment = inject<Environment>(ENVIRONMENT);
   private readonly msalService = inject(MsalService);
+  private readonly appInsightsService = inject(AppInsightsService);
   private readonly status = signal<SignalRConnectionStatus>('disconnected');
 
   private connection: HubConnection | null = null;
@@ -34,10 +37,13 @@ export class SignalrService {
     try {
       await connection.start();
       this.status.set('connected');
-    } catch {
+    } catch (error: unknown) {
       this.connection = null;
       this.status.set('disconnected');
-      throw new Error('Failed to establish SignalR connection.');
+      this.appInsightsService.trackException(
+        error instanceof Error ? error : new Error(String(error)),
+      );
+      // intentionally no re-throw — connectionStatus signal is the source of truth for callers
     }
   }
 
@@ -53,11 +59,22 @@ export class SignalrService {
 
     try {
       await connection.stop();
-    } catch {
-      throw new Error('Failed to stop SignalR connection cleanly.');
+    } catch (error: unknown) {
+      throw new Error(
+        'Failed to stop SignalR connection cleanly.',
+        { cause: error instanceof Error ? error : new Error(String(error)) },
+      );
     } finally {
       this.status.set('disconnected');
     }
+  }
+
+  /** Invokes a hub method on the server and returns the result. */
+  async invoke<T>(methodName: string, ...args: unknown[]): Promise<T> {
+    if (!this.connection) {
+      throw new Error('SignalR connection is not initialized. Call connect() before invoking hub methods.');
+    }
+    return this.connection.invoke<T>(methodName, ...args);
   }
 
   /** Registers a strongly typed handler for a server event. */
@@ -94,6 +111,7 @@ export class SignalrService {
 
   private getHubUrl(): string {
     const hubUrl = this.environment.signalr?.hubUrl?.trim();
+    // `__` is the deploy-time substitution sentinel — throwing fast prevents tokens from being sent to a wrong endpoint.
     if (!hubUrl || hubUrl.startsWith('__')) {
       throw new Error('SignalR hub URL is missing or has not been substituted by the deployment pipeline.');
     }
@@ -150,25 +168,23 @@ export class SignalrService {
       this.msalService.instance.setActiveAccount(activeAccount);
     }
 
-    try {
-      const result = await firstValueFrom(
-        this.msalService.acquireTokenSilent({
-          account: activeAccount,
-          scopes: this.getSignalRScopes(),
-        }),
-      );
+    // No try/catch — raw MSAL errors (e.g. InteractionRequiredAuthError) propagate to connect()'s catch, which logs the real cause.
+    const result = await firstValueFrom(
+      this.msalService.acquireTokenSilent({
+        account: activeAccount,
+        scopes: this.getSignalRScopes(),
+      }),
+    );
 
-      if (!result.accessToken) {
-        throw new Error('SignalR access token acquisition returned an empty token.');
-      }
-
-      return result.accessToken;
-    } catch {
-      throw new Error('Failed to acquire SignalR access token.');
+    if (!result.accessToken) {
+      throw new Error('SignalR access token acquisition returned an empty token.');
     }
+
+    return result.accessToken;
   }
 
   private getTrustedHubOrigins(): Set<string> {
+    // Both window origin and API origin are trusted by default — the hub may be co-hosted with the API.
     const trustedOrigins = new Set<string>();
     trustedOrigins.add(this.getCurrentOrigin());
     trustedOrigins.add(this.resolveUrl(this.environment.api.primary.baseUrl).origin);

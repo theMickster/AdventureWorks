@@ -81,15 +81,15 @@ builder.Services.AddAuthorization(options =>
 builder.Services.PostConfigure<JwtBearerOptions>(JwtBearerDefaults.AuthenticationScheme, options =>
 {
     options.Events ??= new JwtBearerEvents();
-    // JWT is extracted from the query string per the SignalR WebSocket authentication pattern.
-    // The token appears in server access logs for the WebSocket upgrade request.
-    // Accepted risk for this deployment: tokens are short-lived and logs are access-controlled.
+    // JWT is extracted from the query string for all hub transports (WebSocket, SSE, Long Polling).
+    // Browsers cannot set Authorization headers on WebSocket or SSE connections, so the SignalR
+    // client appends the token as ?access_token=. Restricting to IsWebSocketRequest breaks SSE.
+    // Accepted risk: token appears in server access logs; mitigated by short token lifetimes.
     options.Events.OnMessageReceived = context =>
     {
         var token = context.Request.Query["access_token"];
         if (!string.IsNullOrEmpty(token) &&
-            context.HttpContext.Request.Path.StartsWithSegments("/hubs") &&
-            context.HttpContext.WebSockets.IsWebSocketRequest)
+            context.HttpContext.Request.Path.StartsWithSegments("/hubs"))
         {
             context.Token = token;
         }

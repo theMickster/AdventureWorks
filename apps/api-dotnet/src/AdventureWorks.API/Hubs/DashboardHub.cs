@@ -31,6 +31,10 @@ public sealed class DashboardHub(ILogger<DashboardHub> logger) : Hub
     /// <inheritdoc/>
     public override async Task OnConnectedAsync()
     {
+        // Auto-subscribe every authenticated connection to the Dashboard group.
+        // withAutomaticReconnect() on the JS client creates a new ConnectionId on each reconnect,
+        // so OnConnectedAsync fires again and re-subscribes without any client-side invoke needed.
+        await Groups.AddToGroupAsync(Context.ConnectionId, DashboardHubConstants.DashboardGroup);
         _logger.LogInformation("SignalR connected: ConnectionId={ConnectionId}, User={User}.",
             Context.ConnectionId, Context.User?.Identity?.Name);
         await base.OnConnectedAsync();

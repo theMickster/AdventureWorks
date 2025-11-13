@@ -53,7 +53,7 @@ export class AuthService {
     this.msalService.loginRedirect({ ...authRequest } as RedirectRequest).subscribe();
   }
 
-  /** Trigger a redirect logout flow. */
+  /** Trigger a redirect logout flow. Disconnects SignalR before redirecting for a clean shutdown. */
   logout(): void {
     if (this.logoutExecution) {
       return;

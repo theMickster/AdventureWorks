@@ -22,6 +22,6 @@ export const environment: Environment = {
     scopes: ['api://<YOUR_CLIENT_ID>/access_via_group_assignments'],
   },
   signalr: {
-    hubUrl: '__SIGNALR_HUB_URL__',
+    hubUrl: 'https://localhost:44369/hubs/dashboard',
   },
 };

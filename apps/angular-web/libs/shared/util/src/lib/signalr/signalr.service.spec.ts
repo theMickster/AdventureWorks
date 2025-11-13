@@ -4,6 +4,7 @@ import { HubConnection, HubConnectionBuilder, HubConnectionState } from '@micros
 import { Observable, of, throwError } from 'rxjs';
 import { Environment } from '../environment/environment.model';
 import { ENVIRONMENT } from '../environment/environment.token';
+import { AppInsightsService } from '../telemetry/app-insights.service';
 import { SignalrService } from './signalr.service';
 
 class MockHubConnection {
@@ -11,6 +12,7 @@ class MockHubConnection {
   readonly start: ReturnType<typeof vi.fn>;
   readonly stop: ReturnType<typeof vi.fn>;
   readonly on: ReturnType<typeof vi.fn>;
+  readonly invoke: ReturnType<typeof vi.fn>;
 
   private reconnectingHandler?: () => void;
   private reconnectedHandler?: () => void;
@@ -21,6 +23,8 @@ class MockHubConnection {
     this.on = vi.fn((eventName: string, handler: (...args: unknown[]) => void) => {
       this.handlers.set(eventName, handler);
     });
+
+    this.invoke = vi.fn().mockResolvedValue(undefined);
 
     this.start = vi.fn(async () => {
       this.state = HubConnectionState.Connecting;
@@ -98,15 +102,18 @@ function setup({
   acquireTokenSilent: ReturnType<typeof vi.fn>;
   getActiveAccount: ReturnType<typeof vi.fn>;
   setActiveAccount: ReturnType<typeof vi.fn>;
+  appInsightsService: { trackException: ReturnType<typeof vi.fn> };
 } {
   const getActiveAccount = vi.fn(() => activeAccount);
   const setActiveAccount = vi.fn();
   const acquireTokenSilent = vi.fn(() => acquireTokenSilentResult);
+  const appInsightsService = { trackException: vi.fn() };
 
   TestBed.configureTestingModule({
     providers: [
       SignalrService,
       { provide: ENVIRONMENT, useValue: environment },
+      { provide: AppInsightsService, useValue: appInsightsService },
       {
         provide: MsalService,
         useValue: {
@@ -126,6 +133,7 @@ function setup({
     acquireTokenSilent,
     getActiveAccount,
     setActiveAccount,
+    appInsightsService,
   };
 }
 
@@ -213,6 +221,20 @@ describe('SignalrService', () => {
     expect(handler).toHaveBeenCalledWith({ id: '42' });
   });
 
+  it('invoke() rejects when called before connect', async () => {
+    const { service } = setup();
+    await expect(service.invoke('SubscribeToDashboard')).rejects.toThrowError(/Call connect\(\)/);
+  });
+
+  it('invoke() delegates to the hub connection', async () => {
+    const { service } = setup();
+    await service.connect();
+
+    await service.invoke('SubscribeToDashboard');
+
+    expect(currentConnection?.invoke).toHaveBeenCalledWith('SubscribeToDashboard');
+  });
+
   it('updates connection status on reconnect lifecycle callbacks', async () => {
     const { service } = setup();
     await service.connect();
@@ -228,21 +250,51 @@ describe('SignalrService', () => {
   });
 
   it('fails connect when no authenticated account is available', async () => {
-    const { service } = setup({ activeAccount: null, allAccounts: [] });
+    const { service, appInsightsService } = setup({ activeAccount: null, allAccounts: [] });
 
-    await expect(service.connect()).rejects.toThrowError('Failed to establish SignalR connection.');
+    await service.connect();
     expect(service.connectionStatus()).toBe('disconnected');
+    expect(appInsightsService.trackException).toHaveBeenCalledWith(
+      expect.objectContaining({ message: expect.stringContaining('no authenticated account') }),
+    );
   });
 
   it('fails connect when token acquisition fails', async () => {
-    const { service } = setup({
-      acquireTokenSilentResult: throwError(() => new Error('token acquisition failed')) as Observable<{
+    const tokenError = new Error('token acquisition failed');
+    const { service, appInsightsService } = setup({
+      acquireTokenSilentResult: throwError(() => tokenError) as Observable<{
         accessToken: string;
       }>,
     });
 
-    await expect(service.connect()).rejects.toThrowError('Failed to establish SignalR connection.');
+    await service.connect();
     expect(service.connectionStatus()).toBe('disconnected');
+    expect(appInsightsService.trackException).toHaveBeenCalledWith(tokenError);
+  });
+
+  it('handles expired session gracefully without throwing', async () => {
+    const interactionRequiredError = new Error('interaction_required: AADSTS65001');
+    const { service, appInsightsService } = setup({
+      acquireTokenSilentResult: throwError(() => interactionRequiredError) as Observable<{
+        accessToken: string;
+      }>,
+    });
+
+    await service.connect();
+    expect(service.connectionStatus()).toBe('disconnected');
+    expect(appInsightsService.trackException).toHaveBeenCalledOnce();
+    expect(appInsightsService.trackException).toHaveBeenCalledWith(interactionRequiredError);
+  });
+
+  it('accessTokenFactory acquires a fresh token each time it is invoked', async () => {
+    const { service, acquireTokenSilent } = setup();
+
+    await service.connect();
+    const callCountAfterConnect = acquireTokenSilent.mock.calls.length;
+
+    await currentTokenFactory?.();
+
+    expect(acquireTokenSilent.mock.calls.length).toBeGreaterThan(callCountAfterConnect);
   });
 
   it('uses custom reconnect delays and hub url from environment', async () => {
