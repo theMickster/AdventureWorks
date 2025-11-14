@@ -7,8 +7,8 @@ import { ENVIRONMENT } from '../environment/environment.token';
 import { AppInsightsService } from '../telemetry/app-insights.service';
 import { SignalRConnectionStatus, SignalRHandler } from './signalr-connection.model';
 
-// Delay schedule matches Feature 777 spec (0, 2s, 5s, 10s), capped at 8 attempts and 30s per delay.
-const DEFAULT_RECONNECT_DELAYS_MS = [0, 2000, 5000, 10000];
+// Delay schedule: 0, 2s, 5s, 10s, 30s (Feature 777 spec).
+const DEFAULT_RECONNECT_DELAYS_MS = [0, 2000, 5000, 10000, 30000];
 const MAX_RECONNECT_ATTEMPTS = 8;
 const MAX_RECONNECT_DELAY_MS = 30_000;
 const LOCAL_HOSTNAMES = new Set(['localhost', '127.0.0.1', '[::1]']);
@@ -22,6 +22,7 @@ export class SignalrService {
 
   private connection: HubConnection | null = null;
 
+  /** Read-only signal reflecting the current hub connection: `'connected'` | `'reconnecting'` | `'disconnected'`. */
   readonly connectionStatus = this.status.asReadonly();
 
   /** Starts a SignalR connection if one is not already active. */
@@ -67,6 +68,16 @@ export class SignalrService {
     } finally {
       this.status.set('disconnected');
     }
+  }
+
+  /**
+   * Tears down the current connection and starts a fresh one.
+   * Call this after the automatic retry schedule is exhausted (`connectionStatus === 'disconnected'`).
+   * Status transitions through `'disconnected'` before moving to `'connecting'` / `'connected'`.
+   */
+  async manualReconnect(): Promise<void> {
+    await this.disconnect();
+    await this.connect();
   }
 
   /** Invokes a hub method on the server and returns the result. */

@@ -223,16 +223,16 @@ describe('SignalrService', () => {
 
   it('invoke() rejects when called before connect', async () => {
     const { service } = setup();
-    await expect(service.invoke('SubscribeToDashboard')).rejects.toThrowError(/Call connect\(\)/);
+    await expect(service.invoke('SomeHubMethod')).rejects.toThrowError(/Call connect\(\)/);
   });
 
   it('invoke() delegates to the hub connection', async () => {
     const { service } = setup();
     await service.connect();
 
-    await service.invoke('SubscribeToDashboard');
+    await service.invoke('SomeHubMethod');
 
-    expect(currentConnection?.invoke).toHaveBeenCalledWith('SubscribeToDashboard');
+    expect(currentConnection?.invoke).toHaveBeenCalledWith('SomeHubMethod');
   });
 
   it('updates connection status on reconnect lifecycle callbacks', async () => {
@@ -247,6 +247,28 @@ describe('SignalrService', () => {
 
     currentConnection?.triggerClose();
     expect(service.connectionStatus()).toBe('disconnected');
+  });
+
+  it('manualReconnect() stops the current connection and creates a new one', async () => {
+    const { service } = setup();
+    await service.connect();
+    const firstConnection = currentConnection;
+
+    await service.manualReconnect();
+
+    expect(firstConnection?.stop).toHaveBeenCalledOnce();
+    expect(service.connectionStatus()).toBe('connected');
+    expect(currentConnection).not.toBe(firstConnection);
+    expect(currentConnection?.start).toHaveBeenCalledOnce();
+  });
+
+  it('manualReconnect() works when no prior connection exists', async () => {
+    const { service } = setup();
+
+    await service.manualReconnect();
+
+    expect(service.connectionStatus()).toBe('connected');
+    expect(currentConnection?.start).toHaveBeenCalledOnce();
   });
 
   it('fails connect when no authenticated account is available', async () => {
@@ -318,7 +340,7 @@ describe('SignalrService', () => {
 
     await service.connect();
 
-    expect(lastReconnectDelays).toEqual([0, 2000, 5000, 10000]);
+    expect(lastReconnectDelays).toEqual([0, 2000, 5000, 10000, 30000]);
   });
 
   it('bounds reconnect delays to non-negative integers, max delay, and max attempts', async () => {
