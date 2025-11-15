@@ -26,4 +26,4 @@ export { AwTitleStrategy } from './lib/routing/aw-title-strategy';
 export { unsavedChangesGuard } from './lib/routing/unsaved-changes.guard';
 export type { HasUnsavedChanges } from './lib/routing/unsaved-changes.guard';
 export { SignalrService } from './lib/signalr/signalr.service';
-export type { SignalRConnectionStatus, SignalRHandler, EntityChangedEvent, DashboardRefreshEvent } from './lib/signalr/signalr-connection.model';
+export type { SignalRConnectionStatus, SignalRHandler, EntityChangedEvent } from './lib/signalr/signalr-connection.model';

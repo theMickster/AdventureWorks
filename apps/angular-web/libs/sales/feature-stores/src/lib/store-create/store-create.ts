@@ -14,8 +14,7 @@ import { SalesApiService } from '@adventureworks-web/sales/data-access';
 import type { SalesPerson } from '@adventureworks-web/sales/data-access';
 import { InputFieldComponent, SelectFieldComponent } from '@adventureworks-web/shared/ui';
 import { NotificationService } from '@adventureworks-web/shared/util';
-
-const SALES_PERSON_PAGE_SIZE = 25;
+import { SALES_PERSON_PAGE_SIZE } from '../feature-stores.constants';
 
 @Component({
   selector: 'aw-store-create',
@@ -106,6 +105,7 @@ export class StoreCreateComponent implements OnInit {
       .subscribe({
         next: (store) => {
           this.notificationService.success('Store created successfully.');
+          this.isLoading.set(false);
           void this.router.navigate(['/sales/stores', store.id]);
         },
         error: () => {

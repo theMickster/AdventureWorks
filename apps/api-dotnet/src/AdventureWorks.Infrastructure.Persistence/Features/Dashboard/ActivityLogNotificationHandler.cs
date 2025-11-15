@@ -24,9 +24,13 @@ public sealed class ActivityLogNotificationHandler(
         {
             var entry = new ActivityLogEntity
             {
-                EntityType = notification.EntityType,
+                EntityType = notification.EntityType.Length > 100
+                    ? notification.EntityType[..100]
+                    : notification.EntityType,
                 EntityId = notification.EntityId,
-                Action = notification.Action,
+                Action = notification.Action.Length > 50
+                    ? notification.Action[..50]
+                    : notification.Action,
                 UserName = notification.UserName.Length > 256
                     ? notification.UserName[..256]
                     : notification.UserName,

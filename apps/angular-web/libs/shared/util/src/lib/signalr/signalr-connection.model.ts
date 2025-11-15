@@ -10,9 +10,3 @@ export interface EntityChangedEvent {
   userName: string;
   timestamp: string; // ISO 8601 — .NET DateTime serializes as string over SignalR JSON
 }
-
-/** Reserved for a future backend notification type; no server producer exists yet. */
-export interface DashboardRefreshEvent {
-  triggeredBy: string;
-  timestamp: string; // ISO 8601 — .NET DateTime serializes as string over SignalR JSON
-}

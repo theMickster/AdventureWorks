@@ -196,9 +196,10 @@ See **[guides/adding-features.md](guides/adding-features.md)** for complete code
 
 | Variable                                                  | Required   | Description                |
 | --------------------------------------------------------- | ---------- | -------------------------- |
-| `EntityFrameworkCoreSettings:CurrentConnectionStringName` | Yes        | Database connection name   |
-| `EntityFrameworkCoreSettings:CommandTimeout`              | Yes        | EF query timeout (seconds) |
-| `KeyVault:VaultUri`                                       | Yes (Prod) | Azure Key Vault URL        |
+| `EntityFrameworkCoreSettings:CurrentConnectionStringName` | Yes        | Database connection name                              |
+| `EntityFrameworkCoreSettings:CommandTimeout`              | Yes        | EF query timeout (seconds)                            |
+| `KeyVault:VaultUri`                                       | Yes (Prod) | Azure Key Vault URL                                   |
+| `Cors:AllowedOrigins`                                     | Yes (Prod) | JSON array of allowed origins (e.g. `["https://app.example.com"]`) |
 
 **Config Files:** `appsettings.json`, `appsettings.{Environment}.json`, User Secrets
 

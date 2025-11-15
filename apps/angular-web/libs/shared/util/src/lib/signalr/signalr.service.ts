@@ -1,4 +1,4 @@
-import { inject, Injectable, signal } from '@angular/core';
+import { DestroyRef, inject, Injectable, signal } from '@angular/core';
 import { MsalService } from '@azure/msal-angular';
 import { HubConnection, HubConnectionBuilder, HubConnectionState } from '@microsoft/signalr';
 import { firstValueFrom } from 'rxjs';
@@ -22,7 +22,7 @@ export class SignalrService {
 
   private connection: HubConnection | null = null;
 
-  /** Read-only signal reflecting the current hub connection: `'connected'` | `'reconnecting'` | `'disconnected'`. */
+  /** Read-only signal reflecting the current hub connection: `'connecting'` | `'connected'` | `'reconnecting'` | `'disconnected'`. */
   readonly connectionStatus = this.status.asReadonly();
 
   /** Starts a SignalR connection if one is not already active. */
@@ -30,12 +30,10 @@ export class SignalrService {
     if (this.isConnectionActive()) {
       return;
     }
-
-    const connection = this.createConnection();
-    this.connection = connection;
     this.status.set('connecting');
-
     try {
+      const connection = this.createConnection();
+      this.connection = connection;
       await connection.start();
       this.status.set('connected');
     } catch (error: unknown) {
@@ -88,13 +86,26 @@ export class SignalrService {
     return this.connection.invoke<T>(methodName, ...args);
   }
 
-  /** Registers a strongly typed handler for a server event. */
-  on<T>(eventName: string, handler: SignalRHandler<T>): void {
+  /** Registers a strongly typed handler for a server event. Pass `destroyRef` to auto-wire teardown to component destruction; call the returned `() => void` manually otherwise. */
+  on<T>(eventName: string, handler: SignalRHandler<T>, destroyRef?: DestroyRef): () => void {
     if (!this.connection) {
       throw new Error('SignalR connection is not initialized. Call connect() before subscribing to events.');
     }
 
     this.connection.on(eventName, handler as (...args: unknown[]) => void);
+
+    // Capture the connection reference now so the teardown remains safe
+    // even after disconnect() nulls this.connection.
+    const capturedConnection = this.connection;
+    const teardown = () => {
+      capturedConnection.off(eventName, handler as (...args: unknown[]) => void);
+    };
+
+    if (destroyRef) {
+      destroyRef.onDestroy(teardown);
+    }
+
+    return teardown;
   }
 
   private isConnectionActive(): boolean {
@@ -170,12 +181,13 @@ export class SignalrService {
   }
 
   private async acquireAccessToken(): Promise<string> {
-    const activeAccount = this.msalService.instance.getActiveAccount() ?? this.msalService.instance.getAllAccounts()[0];
+    const existingActive = this.msalService.instance.getActiveAccount();
+    const activeAccount = existingActive ?? this.msalService.instance.getAllAccounts()[0];
     if (!activeAccount) {
       throw new Error('Cannot acquire SignalR access token because no authenticated account is available.');
     }
 
-    if (!this.msalService.instance.getActiveAccount()) {
+    if (!existingActive) {
       this.msalService.instance.setActiveAccount(activeAccount);
     }
 

@@ -34,41 +34,17 @@ public sealed class DashboardHubTests : UnitTestBase
     }
 
     [Fact]
-    public async Task SubscribeToDashboard_adds_connection_to_groupAsync()
+    public async Task OnConnectedAsync_adds_connection_to_groupAsync()
     {
         var sut = CreateSut();
         _mockGroups.Setup(x => x.AddToGroupAsync("test-connection-id", "Dashboard", It.IsAny<CancellationToken>()))
             .Returns(Task.CompletedTask);
 
-        await sut.SubscribeToDashboard();
+        await sut.OnConnectedAsync();
 
         _mockGroups.Verify(
             x => x.AddToGroupAsync("test-connection-id", "Dashboard", It.IsAny<CancellationToken>()),
             Times.Once);
-    }
-
-    [Fact]
-    public async Task UnsubscribeFromDashboard_removes_connection_from_groupAsync()
-    {
-        var sut = CreateSut();
-        _mockGroups.Setup(x => x.RemoveFromGroupAsync("test-connection-id", "Dashboard", It.IsAny<CancellationToken>()))
-            .Returns(Task.CompletedTask);
-
-        await sut.UnsubscribeFromDashboard();
-
-        _mockGroups.Verify(
-            x => x.RemoveFromGroupAsync("test-connection-id", "Dashboard", It.IsAny<CancellationToken>()),
-            Times.Once);
-    }
-
-    [Fact]
-    public async Task OnConnectedAsync_completes_without_throwingAsync()
-    {
-        var sut = CreateSut();
-
-        var act = async () => await sut.OnConnectedAsync();
-
-        await act.Should().NotThrowAsync();
     }
 
     [Fact]

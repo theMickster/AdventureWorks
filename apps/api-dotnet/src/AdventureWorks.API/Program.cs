@@ -61,12 +61,29 @@ builder.Services.AddDefaultHealthCheck();
 
 builder.Services.AddCors(options =>
 {
-    options.AddPolicy("AdventureWorksCorsPolicy",
-        builder => builder
-            .SetIsOriginAllowed((host) => true)
-            .AllowAnyMethod()
-            .AllowAnyHeader()
-            .AllowCredentials());
+    options.AddPolicy("AdventureWorksCorsPolicy", corsBuilder =>
+    {
+        if (environment.IsDevelopment())
+        {
+            corsBuilder
+                .SetIsOriginAllowed(origin => new Uri(origin).Host == "localhost")
+                .AllowAnyMethod()
+                .AllowAnyHeader()
+                .AllowCredentials();
+        }
+        else
+        {
+            var allowedOrigins = builder.Configuration
+                .GetSection("Cors:AllowedOrigins")
+                .Get<string[]>() ?? [];
+
+            corsBuilder
+                .WithOrigins(allowedOrigins)
+                .AllowAnyMethod()
+                .AllowAnyHeader()
+                .AllowCredentials();
+        }
+    });
 });
 
 builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)

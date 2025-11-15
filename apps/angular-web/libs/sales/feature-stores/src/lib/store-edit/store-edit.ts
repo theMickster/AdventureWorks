@@ -16,8 +16,7 @@ import type { SalesPerson } from '@adventureworks-web/sales/data-access';
 import { InputFieldComponent, SelectFieldComponent, SkeletonComponent } from '@adventureworks-web/shared/ui';
 import { NotificationService } from '@adventureworks-web/shared/util';
 import { extractListNavParams } from '../list-nav-params';
-
-const SALES_PERSON_PAGE_SIZE = 25;
+import { SALES_PERSON_PAGE_SIZE } from '../feature-stores.constants';
 
 @Component({
   selector: 'aw-store-edit',

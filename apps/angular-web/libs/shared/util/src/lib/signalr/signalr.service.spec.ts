@@ -1,3 +1,4 @@
+import { DestroyRef } from '@angular/core';
 import { TestBed } from '@angular/core/testing';
 import { MsalService } from '@azure/msal-angular';
 import { HubConnection, HubConnectionBuilder, HubConnectionState } from '@microsoft/signalr';
@@ -62,6 +63,12 @@ class MockHubConnection {
   triggerClose(): void {
     this.state = HubConnectionState.Disconnected;
     this.closeHandler?.();
+  }
+
+  off(eventName: string, handler: (...args: unknown[]) => void): void {
+    if (this.handlers.get(eventName) === handler) {
+      this.handlers.delete(eventName);
+    }
   }
 
   emit<T>(eventName: string, payload: T): void {
@@ -377,5 +384,58 @@ describe('SignalrService', () => {
         scopes: ['api://signalr/access'],
       }),
     );
+  });
+
+  it('on<T>() returns a teardown that removes the handler', async () => {
+    const { service } = setup();
+    await service.connect();
+
+    const handler = vi.fn();
+    const teardown = service.on('EntityChanged', handler);
+
+    currentConnection?.emit('EntityChanged', { entityType: 'Order', entityId: 1, action: 'Created', userName: 'test', timestamp: '2024-01-01T00:00:00Z' });
+    expect(handler).toHaveBeenCalledOnce();
+
+    teardown();
+    currentConnection?.emit('EntityChanged', { entityType: 'Order', entityId: 1, action: 'Created', userName: 'test', timestamp: '2024-01-01T00:00:00Z' });
+    expect(handler).toHaveBeenCalledOnce();
+  });
+
+  it('on<T>() teardown is safe to call when connection is already null', async () => {
+    const { service } = setup();
+    await service.connect();
+
+    const teardown = service.on('EntityChanged', vi.fn());
+    await service.disconnect();
+
+    expect(() => teardown()).not.toThrow();
+  });
+
+  it('on<T>() with DestroyRef registers onDestroy callback', async () => {
+    const { service } = setup();
+    await service.connect();
+
+    const mockDestroyRef = { onDestroy: vi.fn<[() => void], void>() };
+    const handler = vi.fn();
+
+    service.on('EntityChanged', handler, mockDestroyRef as unknown as DestroyRef);
+
+    expect(mockDestroyRef.onDestroy).toHaveBeenCalledOnce();
+    expect(mockDestroyRef.onDestroy).toHaveBeenCalledWith(expect.any(Function));
+  });
+
+  it('on<T>() with DestroyRef removes handler when destroy fires', async () => {
+    const { service } = setup();
+    await service.connect();
+
+    const mockDestroyRef = { onDestroy: vi.fn<[() => void], void>() };
+    const handler = vi.fn();
+
+    service.on('EntityChanged', handler, mockDestroyRef as unknown as DestroyRef);
+
+    mockDestroyRef.onDestroy.mock.calls[0][0]();
+    currentConnection?.emit('EntityChanged', { entityType: 'Order', entityId: 1, action: 'Created', userName: 'test', timestamp: '2024-01-01T00:00:00Z' });
+
+    expect(handler).not.toHaveBeenCalled();
   });
 });

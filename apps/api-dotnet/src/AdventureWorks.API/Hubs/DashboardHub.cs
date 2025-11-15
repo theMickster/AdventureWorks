@@ -12,29 +12,13 @@ public sealed class DashboardHub(ILogger<DashboardHub> logger) : Hub
 {
     private readonly ILogger<DashboardHub> _logger = logger ?? throw new ArgumentNullException(nameof(logger));
 
-    /// <summary>Adds the caller's connection to the Dashboard broadcast group.</summary>
-    public async Task SubscribeToDashboard(CancellationToken cancellationToken = default)
-    {
-        await Groups.AddToGroupAsync(Context.ConnectionId, DashboardHubConstants.DashboardGroup, cancellationToken);
-        _logger.LogInformation("Connection {ConnectionId} subscribed to Dashboard (User: {User}).",
-            Context.ConnectionId, Context.User?.Identity?.Name);
-    }
-
-    /// <summary>Removes the caller's connection from the Dashboard broadcast group.</summary>
-    public async Task UnsubscribeFromDashboard(CancellationToken cancellationToken = default)
-    {
-        await Groups.RemoveFromGroupAsync(Context.ConnectionId, DashboardHubConstants.DashboardGroup, cancellationToken);
-        _logger.LogInformation("Connection {ConnectionId} unsubscribed from Dashboard (User: {User}).",
-            Context.ConnectionId, Context.User?.Identity?.Name);
-    }
-
     /// <inheritdoc/>
     public override async Task OnConnectedAsync()
     {
         // Auto-subscribe every authenticated connection to the Dashboard group.
         // withAutomaticReconnect() on the JS client creates a new ConnectionId on each reconnect,
         // so OnConnectedAsync fires again and re-subscribes without any client-side invoke needed.
-        await Groups.AddToGroupAsync(Context.ConnectionId, DashboardHubConstants.DashboardGroup);
+        await Groups.AddToGroupAsync(Context.ConnectionId, DashboardHubConstants.DashboardGroup, Context.ConnectionAborted);
         _logger.LogInformation("SignalR connected: ConnectionId={ConnectionId}, User={User}.",
             Context.ConnectionId, Context.User?.Identity?.Name);
         await base.OnConnectedAsync();
@@ -43,7 +27,7 @@ public sealed class DashboardHub(ILogger<DashboardHub> logger) : Hub
     /// <inheritdoc/>
     public override async Task OnDisconnectedAsync(Exception? exception)
     {
-        await Groups.RemoveFromGroupAsync(Context.ConnectionId, DashboardHubConstants.DashboardGroup);
+        await Groups.RemoveFromGroupAsync(Context.ConnectionId, DashboardHubConstants.DashboardGroup, Context.ConnectionAborted);
         _logger.LogInformation("SignalR disconnected: ConnectionId={ConnectionId}, User={User}.",
             Context.ConnectionId, Context.User?.Identity?.Name);
         await base.OnDisconnectedAsync(exception);
