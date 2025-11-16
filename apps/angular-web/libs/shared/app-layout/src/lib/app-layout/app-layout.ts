@@ -123,6 +123,10 @@ export class AppLayoutComponent {
     return crumbs;
   }
 
+  protected reconnect(): void {
+    void this.signalrService.manualReconnect();
+  }
+
   private getSignalrStatusLabel(status: SignalRConnectionStatus): string {
     switch (status) {
       case 'connected':

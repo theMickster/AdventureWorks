@@ -20,4 +20,7 @@ public sealed class SalesPersonModel : SalesPersonBaseModel
 
     public DateTime ModifiedDate { get; set; }
 
+    public decimal SalesYtd { get; set; }
+
+    public string? TerritoryName { get; set; }
 }

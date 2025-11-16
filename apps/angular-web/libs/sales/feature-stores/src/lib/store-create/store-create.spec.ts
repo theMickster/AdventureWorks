@@ -33,6 +33,8 @@ const mockSalesPersons: SalesPerson[] = [
     salesQuota: null,
     bonus: 0,
     commissionPct: 0,
+    salesYtd: 559697.5639,
+    territoryName: null,
     modifiedDate: '2026-01-01T00:00:00',
   },
   {
@@ -48,6 +50,8 @@ const mockSalesPersons: SalesPerson[] = [
     salesQuota: 300000,
     bonus: 4100,
     commissionPct: 0.012,
+    salesYtd: 3763178.1787,
+    territoryName: 'Central',
     modifiedDate: '2026-01-01T00:00:00',
   },
   {
@@ -63,6 +67,8 @@ const mockSalesPersons: SalesPerson[] = [
     salesQuota: 250000,
     bonus: 4000,
     commissionPct: 0.015,
+    salesYtd: 1750406.4785,
+    territoryName: 'Southeast',
     modifiedDate: '2026-01-01T00:00:00',
   },
 ];

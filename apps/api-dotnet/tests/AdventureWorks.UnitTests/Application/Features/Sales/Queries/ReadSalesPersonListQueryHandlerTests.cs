@@ -103,6 +103,8 @@ public sealed class ReadSalesPersonListQueryHandlerTests : UnitTestBase
             salesPerson01!.Should().NotBeNull();
             salesPerson01!.FirstName.Should().Be("Stephen");
             salesPerson01!.LastName.Should().Be("Jiang");
+            salesPerson01!.SalesYtd.Should().BeGreaterThan(0m);
+            salesPerson01!.TerritoryName.Should().NotBeNullOrEmpty();
 
             salesPerson02!.Should().NotBeNull();
             salesPerson02!.FirstName.Should().Be("Michael");
@@ -170,6 +172,8 @@ public sealed class ReadSalesPersonListQueryHandlerTests : UnitTestBase
             salesPerson01!.Should().NotBeNull();
             salesPerson01!.FirstName.Should().Be("Stephen");
             salesPerson01!.LastName.Should().Be("Jiang");
+            salesPerson01!.SalesYtd.Should().BeGreaterThan(0m);
+            salesPerson01!.TerritoryName.Should().NotBeNullOrEmpty();
         }
     }
 

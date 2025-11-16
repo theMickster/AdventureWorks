@@ -12,8 +12,8 @@ RegisterServices(builder);
 AddSqlServer(builder);
 var defaultConnection = builder.AddConnectionString("DefaultConnection");
 AddMigrations(builder);
-AddApi(builder, defaultConnection);
-AddAngularWeb(builder);
+var api = AddApi(builder, defaultConnection);
+AddAngularWeb(builder, api);
 
 builder.Build().Run();
 
@@ -61,9 +61,9 @@ static void AddMigrations(IDistributedApplicationBuilder builder)
 /// <summary>
 /// Adds the .NET API and wires the shared database connection string.
 /// </summary>
-static void AddApi(IDistributedApplicationBuilder builder, IResourceBuilder<IResourceWithConnectionString> defaultConnection)
+static IResourceBuilder<ProjectResource> AddApi(IDistributedApplicationBuilder builder, IResourceBuilder<IResourceWithConnectionString> defaultConnection)
 {
-    builder.AddProject<Projects.AdventureWorks_API>("api")
+    return builder.AddProject<Projects.AdventureWorks_API>("api")
         .WithReference(defaultConnection)
         .WithEnvironment("ASPNETCORE_ENVIRONMENT", "Development");
 }
@@ -74,10 +74,13 @@ static void AddApi(IDistributedApplicationBuilder builder, IResourceBuilder<IRes
 /// <remarks>
 /// isProxied: false is required because Aspire's reverse proxy intercepts WebSocket
 /// upgrades, which breaks Angular's HMR connection.
+/// WaitFor(api) prevents the startup race where Angular loads and MSAL authenticates
+/// before the API is ready, causing SignalR's initial connect to fail permanently.
 /// </remarks>
-static void AddAngularWeb(IDistributedApplicationBuilder builder)
+static void AddAngularWeb(IDistributedApplicationBuilder builder, IResourceBuilder<ProjectResource> api)
 {
     builder.AddNpmApp("angular-web", "../../../apps/angular-web", "start")
         .WithHttpEndpoint(port: AngularDevServerPort, name: "http", isProxied: false)
-        .WithEnvironment("NODE_ENV", "development");
+        .WithEnvironment("NODE_ENV", "development")
+        .WaitFor(api);
 }

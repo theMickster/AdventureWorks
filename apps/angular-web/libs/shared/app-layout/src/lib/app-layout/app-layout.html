@@ -74,6 +74,17 @@
             ></i>
             <span id="aw-connection-status-text" aria-hidden="true">{{ signalrStatusLabel() }}</span>
             <span class="sr-only">SignalR connection status: {{ signalrStatusLabel() }}</span>
+            @if (signalrService.connectionStatus() === 'disconnected') {
+              <button
+                id="aw-connection-reconnect-btn"
+                type="button"
+                class="btn btn-ghost btn-xs px-1 py-0 h-auto min-h-0 underline"
+                (click)="reconnect()"
+                aria-label="Reconnect to real-time updates"
+              >
+                Reconnect
+              </button>
+            }
           </div>
 
           <!-- Theme toggle -->

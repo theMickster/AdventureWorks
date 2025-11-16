@@ -68,6 +68,7 @@ public sealed class SalesPersonEntityToModelProfileTests : UnitTestBase
         {
             BusinessEntityId = businessEntityId,
             Employee = employeeEntity,
+            SalesYtd = 50000m,
             ModifiedDate = modifiedDate
         };
 
@@ -85,6 +86,64 @@ public sealed class SalesPersonEntityToModelProfileTests : UnitTestBase
             result.JobTitle.Should().Be(jobTitle);
             result.EmailAddress.Should().Be(email);
             result.ModifiedDate.Should().Be(modifiedDate);
+            result.SalesYtd.Should().Be(50000m);
+            result.TerritoryName.Should().BeNull();
+            result.Bonus.Should().Be(0m);
+            result.CommissionPct.Should().Be(0m);
         }
+    }
+
+    [Fact]
+    public void Map_entity_with_territory_to_model_maps_territory_name_succeeds()
+    {
+        var aGuid = Guid.NewGuid();
+        const int businessEntityId = 101;
+        var modifiedDate = DefaultAuditDate;
+
+        var personEntity = new PersonEntity
+        {
+            BusinessEntityId = businessEntityId,
+            FirstName = "John",
+            LastName = "Smith",
+            EmailAddresses = new List<EmailAddressEntity>
+            {
+                new()
+                {
+                    BusinessEntityId = businessEntityId,
+                    EmailAddressId = 2,
+                    EmailAddressName = "john.smith@adventure-works.com",
+                    Rowguid = aGuid,
+                    ModifiedDate = modifiedDate
+                }
+            },
+            ModifiedDate = modifiedDate
+        };
+
+        var employeeEntity = new EmployeeEntity
+        {
+            BusinessEntityId = businessEntityId,
+            JobTitle = "Sales Representative",
+            PersonBusinessEntity = personEntity,
+            ModifiedDate = modifiedDate
+        };
+
+        var salesPersonEntity = new SalesPersonEntity
+        {
+            BusinessEntityId = businessEntityId,
+            Employee = employeeEntity,
+            SalesTerritory = new SalesTerritoryEntity
+            {
+                TerritoryId = 1,
+                Name = "Northeast",
+                CountryRegionCode = "US",
+                Group = "North America",
+                ModifiedDate = modifiedDate
+            },
+            ModifiedDate = modifiedDate
+        };
+
+        var result = _mapper.Map<SalesPersonModel>(salesPersonEntity);
+
+        result.TerritoryName.Should().Be("Northeast");
     }
 }

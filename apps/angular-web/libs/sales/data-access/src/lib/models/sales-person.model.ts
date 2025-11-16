@@ -12,6 +12,8 @@ export interface SalesPerson {
   readonly salesQuota: number | null;
   readonly bonus: number;
   readonly commissionPct: number;
+  readonly salesYtd: number;
+  readonly territoryName: string | null;
   readonly modifiedDate: string;
 }
 

@@ -138,7 +138,9 @@ public sealed class UpdateSalesPersonControllerTests : UnitTestBase
             SalesQuota = 300000m,
             Bonus = 5000m,
             CommissionPct = 0.015m,
-            ModifiedDate = DateTime.UtcNow
+            ModifiedDate = DateTime.UtcNow,
+            SalesYtd = 0m,
+            TerritoryName = "Northeast"
         };
 
         var input = GetValidUpdateModel(salesPersonId);

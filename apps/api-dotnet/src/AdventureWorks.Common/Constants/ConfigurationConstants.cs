@@ -58,6 +58,11 @@ public static class ConfigurationConstants
     public const string AutoMapperLicenseKey = "AutoMapperLicenseKey";
 
     /// <summary>
+    /// MediatR license key value name
+    /// </summary>
+    public const string MediatRLicenseKey = "MediatRLicenseKey";
+
+    /// <summary>
     /// The HTTP header name for correlation ID tracking across distributed systems
     /// </summary>
     public const string CorrelationIdHeaderName = "X-Correlation-ID";

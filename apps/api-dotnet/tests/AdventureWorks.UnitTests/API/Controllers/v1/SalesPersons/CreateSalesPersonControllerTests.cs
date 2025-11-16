@@ -118,7 +118,9 @@ public sealed class CreateSalesPersonControllerTests : UnitTestBase
             SalesQuota = 250000m,
             Bonus = 0m,
             CommissionPct = 0.012m,
-            ModifiedDate = DateTime.UtcNow
+            ModifiedDate = DateTime.UtcNow,
+            SalesYtd = 0m,
+            TerritoryName = "Northeast"
         };
 
         var input = GetValidModel();

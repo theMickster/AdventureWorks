@@ -43,7 +43,7 @@ public sealed class ReadSalesPersonControllerTests : UnitTestBase
         const int id = 274;
 
         _mockMediator.Setup(x => x.Send(It.IsAny<ReadSalesPersonQuery>(), It.IsAny<CancellationToken>()))
-            .ReturnsAsync(new SalesPersonModel { Id = id, FirstName = "Stephen", LastName = "Jiang", JobTitle = "Sales Manager" });
+            .ReturnsAsync(new SalesPersonModel { Id = id, FirstName = "Stephen", LastName = "Jiang", JobTitle = "Sales Manager", SalesYtd = 0m, TerritoryName = "Northeast" });
 
         var result = await _sut.GetByIdAsync(274);
 
@@ -100,7 +100,7 @@ public sealed class ReadSalesPersonControllerTests : UnitTestBase
     public async Task GetSalesPersonListAsync_returns_ok_Async()
     {
         _mockMediator.Setup(x => x.Send(It.IsAny<ReadSalesPersonListQuery>(), It.IsAny<CancellationToken>()))
-            .ReturnsAsync(new SalesPersonSearchResultModel { Results = new List<SalesPersonModel> { new() { FirstName = "Test", LastName = "User", JobTitle = "Sales Rep" } } });
+            .ReturnsAsync(new SalesPersonSearchResultModel { Results = new List<SalesPersonModel> { new() { FirstName = "Test", LastName = "User", JobTitle = "Sales Rep", SalesYtd = 0m, TerritoryName = "Northeast" } } });
 
         var result = await _sut.GetSalesPersonListAsync(new SalesPersonParameter());
         var objectResult = result as ObjectResult;
@@ -152,7 +152,7 @@ public sealed class ReadSalesPersonControllerTests : UnitTestBase
     public async Task SearchSalesPersonsAsync_returns_ok_Async()
     {
         _mockMediator.Setup(x => x.Send(It.IsAny<ReadSalesPersonListQuery>(), It.IsAny<CancellationToken>()))
-            .ReturnsAsync(new SalesPersonSearchResultModel { Results = new List<SalesPersonModel> { new() { FirstName = "Test", LastName = "User", JobTitle = "Sales Rep" } } });
+            .ReturnsAsync(new SalesPersonSearchResultModel { Results = new List<SalesPersonModel> { new() { FirstName = "Test", LastName = "User", JobTitle = "Sales Rep", SalesYtd = 0m, TerritoryName = "Northeast" } } });
 
         var result = await _sut.SearchSalesPersonsAsync(new SalesPersonParameter(), new SalesPersonSearchModel());
         var objectResult = result as ObjectResult;

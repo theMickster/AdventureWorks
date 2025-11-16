@@ -21,9 +21,17 @@ public static class ApplicationServiceRegistration
             throw new ConfigurationException($"The '{ConfigurationConstants.AutoMapperLicenseKey}' configuration value is required.");
         }
 
+        var mediatrLicenseKey = configuration[ConfigurationConstants.MediatRLicenseKey];
+
+        if (string.IsNullOrWhiteSpace(mediatrLicenseKey))
+        {
+            throw new ConfigurationException($"The '{ConfigurationConstants.MediatRLicenseKey}' configuration value is required.");
+        }
+
         services.AddAutoMapper(cfg => cfg.LicenseKey = autoMapperLicenseKey, AppDomain.CurrentDomain.GetAssemblies());
         services.AddMediatR(cfg =>
         {
+            cfg.LicenseKey = mediatrLicenseKey;
             cfg.RegisterServicesFromAssemblies(AppDomain.CurrentDomain.GetAssemblies());
             cfg.AddOpenBehavior(typeof(CorrelationIdLoggingBehavior<,>));
         });

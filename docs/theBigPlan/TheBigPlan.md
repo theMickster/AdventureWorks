@@ -60,6 +60,7 @@
   - ✅ US-729: Store detail view (`StoreDetailComponent`) — tabbed detail with addresses and contacts (2026-06-02)
   - ✅ US-730: Store create form (`StoreCreateComponent`) — reactive form with validation, direct API call (2026-06-03)
   - ✅ US-731: Store edit form (`StoreEditComponent`) — reactive form with skeleton load, `isSaving` signal, direct API call (2026-06-03)
+  - ✅ US-732: SalesPerson list view (`libs/sales/feature-sales-persons`) — client-side search and sort at `/sales/persons` (2026-06-08)
 - HR CRUD UI: Employees, Departments (API prerequisite now satisfied by completed Phase 2.5)
 - Real-Time Dashboard (Epic #563): SignalR-powered KPI dashboard
   - ✅ Feature #773 (US-778, US-779, US-780): Enabler — SignalR Hub and Real-Time Infrastructure (API) — Done 2026-06-05
@@ -517,5 +518,5 @@ Each markdown file follows this structure:
 ---
 
 **Document Version**: 3.0
-**Last Updated**: 2026-06-05
-**Status**: Active Execution — Epic #560 complete, #570 complete, **#577 complete** (Done 2026-05-25; all 6 features done including #621 SignalR), #552 closed Done, **#873 API Completion complete** (Done in ADO on 2026-05-22; all 17 child Features Done; US-727 Sales Dashboard KPI endpoint added post-close), #565 in progress (2/5 features done: #669, #923), **Phase 5 in progress** (US-728 Store List done 2026-06-02; US-729 Store Detail done 2026-06-02; US-730 Store Create done 2026-06-03; US-731 Store Edit done 2026-06-03), **Epic #563 in progress** (Feature #773 SignalR Hub enabler done 2026-06-05: US-778, US-779, US-780; Feature #777 Angular SignalR client done 2026-06-08: US-791 MSAL auth, US-792 auto-reconnect + connection state signal, US-793 typed event registration + lifecycle teardown) — **Next: Continue Phase 5 Sales & HR CRUD UI (Epics #561, #562) + Epic #563 Real-Time Dashboard + Epic #565 remaining testing features**
+**Last Updated**: 2026-06-08
+**Status**: Active Execution — Epic #560 complete, #570 complete, **#577 complete** (Done 2026-05-25; all 6 features done including #621 SignalR), #552 closed Done, **#873 API Completion complete** (Done in ADO on 2026-05-22; all 17 child Features Done; US-727 Sales Dashboard KPI endpoint added post-close), #565 in progress (2/5 features done: #669, #923), **Phase 5 in progress** (US-728 Store List done 2026-06-02; US-729 Store Detail done 2026-06-02; US-730 Store Create done 2026-06-03; US-731 Store Edit done 2026-06-03; US-732 SalesPerson List done 2026-06-08), **Epic #563 in progress** (Feature #773 SignalR Hub enabler done 2026-06-05: US-778, US-779, US-780; Feature #777 Angular SignalR client done 2026-06-08: US-791 MSAL auth, US-792 auto-reconnect + connection state signal, US-793 typed event registration + lifecycle teardown) — **Next: Continue Phase 5 Sales & HR CRUD UI (Epics #561, #562) + Epic #563 Real-Time Dashboard + Epic #565 remaining testing features**

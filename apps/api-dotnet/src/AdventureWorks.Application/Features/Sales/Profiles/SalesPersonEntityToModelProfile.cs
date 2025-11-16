@@ -17,7 +17,9 @@ public sealed class SalesPersonEntityToModelProfile : Profile
             .ForMember(dest => dest.Suffix, opt => opt.MapFrom(src => src.Employee.PersonBusinessEntity.Suffix))
             .ForMember(dest => dest.JobTitle, opt => opt.MapFrom(src => src.Employee.JobTitle))
             .ForMember(dest => dest.EmailAddress, opt => opt.MapFrom<EmailAddressResolver>())
-            .ForMember(dest => dest.ModifiedDate, opt => opt.MapFrom(src => src.ModifiedDate));
+            .ForMember(dest => dest.ModifiedDate, opt => opt.MapFrom(src => src.ModifiedDate))
+            .ForMember(dest => dest.SalesYtd, opt => opt.MapFrom(src => src.SalesYtd))
+            .ForMember(dest => dest.TerritoryName, opt => opt.MapFrom(src => src.SalesTerritory != null ? src.SalesTerritory.Name : null)); // null when no territory assigned
     }
 }
 

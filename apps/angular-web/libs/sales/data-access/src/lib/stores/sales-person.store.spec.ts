@@ -26,6 +26,8 @@ const mockSalesPerson: SalesPerson = {
   salesQuota: 250000,
   bonus: 5000,
   commissionPct: 0.02,
+  salesYtd: 0,
+  territoryName: 'Northeast',
   modifiedDate: '2026-01-01T00:00:00',
 };
 

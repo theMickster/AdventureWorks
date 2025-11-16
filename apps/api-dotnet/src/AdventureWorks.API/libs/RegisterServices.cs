@@ -110,9 +110,7 @@ internal static class RegisterServices
             .AddNewtonsoftJson(options =>
             {
                 options.SerializerSettings.NullValueHandling = Newtonsoft.Json.NullValueHandling.Include;
-            })
-            .AddXmlSerializerFormatters()
-            .AddXmlDataContractSerializerFormatters();
+            });
         
         builder.Services.AddValidatorsFromAssemblyContaining<CreateAddressValidator>();
         builder.Services.AddApplicationServices(builder.Configuration);

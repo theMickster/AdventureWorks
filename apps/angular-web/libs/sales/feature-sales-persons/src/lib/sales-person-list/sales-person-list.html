@@ -1,0 +1,43 @@
+<div id="aw-sales-person-list-page">
+  <div id="aw-sales-person-list-header" class="mb-6">
+    <h1 class="text-2xl font-bold text-base-content">Sales Persons</h1>
+  </div>
+
+  <div id="aw-sales-person-list-toolbar" class="mb-4 flex flex-wrap items-end gap-2">
+    <div class="flex-1 min-w-48">
+      <label for="aw-sales-person-search-input" class="sr-only">Search sales persons by name or job title</label>
+      <input
+        id="aw-sales-person-search-input"
+        type="text"
+        class="input input-bordered w-full"
+        placeholder="Search by name or job title..."
+        [value]="searchTerm()"
+        (input)="onInputChange($any($event.target).value)"
+        (keydown.enter)="onSearch(searchTerm())"
+        aria-label="Search sales persons by name or job title"
+      />
+    </div>
+    <button id="aw-sales-person-search-btn" type="button" class="btn btn-primary" (click)="onSearch(searchTerm())">
+      <i class="fa-solid fa-magnifying-glass" aria-hidden="true"></i>
+      Search
+    </button>
+    @if (searchTerm()) {
+      <button id="aw-sales-person-clear-btn" type="button" class="btn btn-ghost" (click)="onClearSearch()">
+        <i class="fa-solid fa-xmark" aria-hidden="true"></i>
+        Clear
+      </button>
+    }
+  </div>
+
+  <aw-data-table
+    fieldId="aw-sales-person-list-table"
+    [columns]="columns"
+    [data]="rows()"
+    [loading]="isLoading()"
+    [sortColumn]="sortColumn()"
+    [sortDirection]="sortDirection()"
+    emptyTitle="No sales persons found"
+    emptyDescription="Try adjusting your search."
+    (sortChange)="onSortChange($event)"
+  />
+</div>

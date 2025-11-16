@@ -1,0 +1,35 @@
+{
+  "name": "sales-feature-sales-persons",
+  "$schema": "../../../node_modules/nx/schemas/project-schema.json",
+  "sourceRoot": "libs/sales/feature-sales-persons/src",
+  "prefix": "aw",
+  "projectType": "library",
+  "tags": ["type:feature", "scope:sales"],
+  "targets": {
+    "build": {
+      "executor": "@nx/angular:ng-packagr-lite",
+      "outputs": ["{workspaceRoot}/dist/{projectRoot}"],
+      "options": {
+        "project": "libs/sales/feature-sales-persons/ng-package.json",
+        "tsConfig": "libs/sales/feature-sales-persons/tsconfig.lib.json"
+      },
+      "configurations": {
+        "production": {
+          "tsConfig": "libs/sales/feature-sales-persons/tsconfig.lib.prod.json"
+        },
+        "development": {}
+      },
+      "defaultConfiguration": "production"
+    },
+    "test": {
+      "executor": "@nx/angular:unit-test",
+      "options": {
+        "reporters": ["junit", "default"],
+        "outputFile": "libs/sales/feature-sales-persons/test-results/junit.xml"
+      }
+    },
+    "lint": {
+      "executor": "@nx/eslint:lint"
+    }
+  }
+}

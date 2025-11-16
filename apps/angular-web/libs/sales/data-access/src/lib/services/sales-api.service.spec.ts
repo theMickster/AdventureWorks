@@ -205,6 +205,8 @@ describe('SalesApiService', () => {
             salesQuota: 250000,
             bonus: 5000,
             commissionPct: 0.012,
+            salesYtd: 0,
+            territoryName: 'Northwest',
             modifiedDate: '2024-01-01T00:00:00',
           },
         ],
@@ -253,6 +255,8 @@ describe('SalesApiService', () => {
         salesQuota: 250000,
         bonus: 5000,
         commissionPct: 0.012,
+        salesYtd: 0,
+        territoryName: 'Northwest',
         modifiedDate: '2024-01-01T00:00:00',
       };
 
@@ -302,6 +306,8 @@ describe('SalesApiService', () => {
         salesQuota: null,
         bonus: 3000,
         commissionPct: 0.01,
+        salesYtd: 0,
+        territoryName: null,
         modifiedDate: '2024-06-01T00:00:00',
       };
 
@@ -340,6 +346,8 @@ describe('SalesApiService', () => {
         salesQuota: 250000,
         bonus: 7500,
         commissionPct: 0.015,
+        salesYtd: 0,
+        territoryName: 'Northwest',
         modifiedDate: '2024-06-15T00:00:00',
       };
 
@@ -376,6 +384,8 @@ describe('SalesApiService', () => {
             salesQuota: 250000,
             bonus: 5000,
             commissionPct: 0.012,
+            salesYtd: 0,
+            territoryName: 'Northwest',
             modifiedDate: '2024-01-01T00:00:00',
           },
         ],

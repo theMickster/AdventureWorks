@@ -1,5 +1,4 @@
 import { Route } from '@angular/router';
-import { PlaceholderComponent } from '../placeholder/placeholder';
 
 export const salesRoutes: Route[] = [
   { path: '', redirectTo: 'stores', pathMatch: 'full' },
@@ -36,6 +35,7 @@ export const salesRoutes: Route[] = [
     path: 'persons',
     title: 'Sales Persons',
     data: { breadcrumb: 'Sales Persons' },
-    component: PlaceholderComponent,
+    loadComponent: () =>
+      import('@adventureworks-web/sales/feature-sales-persons').then((m) => m.SalesPersonListComponent),
   },
 ];
