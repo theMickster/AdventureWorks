@@ -12,6 +12,9 @@ export type {
   SalesPersonCreate,
   SalesPersonUpdate,
   SalesPersonAddressCreate,
+  SalesPersonPerformance,
+  SalesPersonQuotaHistory,
+  SalesPersonTerritoryHistory,
 } from './lib/models/sales-person.model';
 export type { StoreParams } from './lib/models/store-params.model';
 export type { SalesPersonParams } from './lib/models/sales-person-params.model';

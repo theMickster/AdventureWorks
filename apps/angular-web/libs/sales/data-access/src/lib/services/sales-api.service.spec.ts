@@ -4,7 +4,7 @@ import { HttpTestingController, provideHttpClientTesting } from '@angular/common
 import { ENVIRONMENT } from '@adventureworks-web/shared/util';
 import { SalesApiService } from './sales-api.service';
 import type { Store, StoreCreate, StoreUpdate } from '../models/store.model';
-import type { SalesPerson, SalesPersonCreate, SalesPersonUpdate } from '../models/sales-person.model';
+import type { SalesPerson, SalesPersonCreate, SalesPersonUpdate, SalesPersonPerformance } from '../models/sales-person.model';
 import type { StoreSearchBody } from '../models/store-search.model';
 import type { SalesPersonSearchBody } from '../models/sales-person-search.model';
 import type { SearchResult } from '@adventureworks-web/shared/data-access';
@@ -267,6 +267,29 @@ describe('SalesApiService', () => {
       const req = httpTesting.expectOne(`${BASE_URL}/v1/salespersons/282`);
       expect(req.request.method).toBe('GET');
       req.flush(mockData);
+    });
+
+    it('getSalesPersonPerformance calls GET /v1/salespersons/{id}/performance', () => {
+      const mockPerf: SalesPersonPerformance = {
+        salesYtd: 3763178.18,
+        salesLastYear: 2811012.72,
+        salesQuota: 300000,
+        bonus: 4100,
+        commissionPct: 0.012,
+        orderCount: 418,
+        totalRevenue: 10065803.54,
+        quotaHistory: [{ quotaDate: '2011-05-31T00:00:00', salesQuota: 300000 }],
+        territoryHistory: [{ territoryId: 3, territoryName: 'Central', startDate: '2005-07-01T00:00:00', endDate: null }],
+      };
+
+      let result: SalesPersonPerformance | undefined;
+      service.getSalesPersonPerformance(275).subscribe((r) => (result = r));
+
+      const req = httpTesting.expectOne(`${BASE_URL}/v1/salespersons/275/performance`);
+      expect(req.request.method).toBe('GET');
+      req.flush(mockPerf);
+
+      expect(result).toEqual(mockPerf);
     });
 
     it('should POST to create a sales person', () => {

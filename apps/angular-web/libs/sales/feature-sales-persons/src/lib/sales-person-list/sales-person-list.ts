@@ -1,7 +1,7 @@
 import { ChangeDetectionStrategy, Component, computed, effect, inject, OnInit, signal } from '@angular/core';
-import { ActivatedRoute, Router } from '@angular/router';
+import { ActivatedRoute, Router, RouterLink } from '@angular/router';
 import { SalesPersonStore } from '@adventureworks-web/sales/data-access';
-import { DataTableComponent } from '@adventureworks-web/shared/ui';
+import { ColumnDefDirective, DataTableComponent } from '@adventureworks-web/shared/ui';
 import type { ColumnConfig } from '@adventureworks-web/shared/ui';
 import type { SalesPerson } from '@adventureworks-web/sales/data-access';
 import { NotificationService } from '@adventureworks-web/shared/util';
@@ -36,7 +36,7 @@ function compare(a: string | number, b: string | number): number {
 @Component({
   selector: 'aw-sales-person-list',
   standalone: true,
-  imports: [DataTableComponent],
+  imports: [RouterLink, ColumnDefDirective, DataTableComponent],
   templateUrl: './sales-person-list.html',
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
@@ -69,6 +69,7 @@ export class SalesPersonListComponent implements OnInit {
     { key: 'salesYtd', label: 'Sales YTD', sortable: true },
     { key: 'bonus', label: 'Bonus', sortable: true },
     { key: 'commissionPct', label: 'Commission', sortable: true },
+    { key: 'view', label: '', sortable: false, cellClass: 'text-right' },
   ];
 
   protected readonly rows = computed((): Record<string, unknown>[] => {

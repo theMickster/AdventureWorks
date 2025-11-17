@@ -76,3 +76,27 @@ export interface SalesPersonUpdate {
   readonly bonus: number;
   readonly commissionPct: number;
 }
+
+export interface SalesPersonQuotaHistory {
+  readonly quotaDate: string;
+  readonly salesQuota: number;
+}
+
+export interface SalesPersonTerritoryHistory {
+  readonly territoryId: number;
+  readonly territoryName: string;
+  readonly startDate: string;
+  readonly endDate: string | null;
+}
+
+export interface SalesPersonPerformance {
+  readonly salesYtd: number;
+  readonly salesLastYear: number;
+  readonly salesQuota: number | null;
+  readonly bonus: number;
+  readonly commissionPct: number;
+  readonly orderCount: number;
+  readonly totalRevenue: number;
+  readonly quotaHistory: readonly SalesPersonQuotaHistory[];
+  readonly territoryHistory: readonly SalesPersonTerritoryHistory[];
+}

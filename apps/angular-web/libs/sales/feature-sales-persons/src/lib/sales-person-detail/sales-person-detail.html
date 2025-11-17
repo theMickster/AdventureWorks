@@ -1,0 +1,250 @@
+<div id="aw-sales-person-detail-page">
+  <div id="aw-sales-person-detail-header" class="mb-6 flex items-center gap-4">
+    <a
+      id="aw-sales-person-detail-back"
+      [routerLink]="['/sales/persons']"
+      [queryParams]="backQueryParams()"
+      class="btn btn-ghost btn-sm"
+    >
+      <i class="fa-solid fa-arrow-left" aria-hidden="true"></i>
+      Back to Sales Persons
+    </a>
+    @if (isLoading()) {
+      <aw-skeleton id="aw-sales-person-detail-name-skeleton" width="16rem" height="2rem" />
+    } @else if (person(); as p) {
+      <h1 id="aw-sales-person-detail-name" class="text-2xl font-bold text-base-content">{{ fullName() }}</h1>
+    }
+  </div>
+
+  @if (isLoading()) {
+    <div id="aw-sales-person-detail-loading" class="space-y-4">
+      <aw-skeleton id="aw-sales-person-detail-tab-skeleton" height="3rem" />
+      <aw-skeleton id="aw-sales-person-detail-content-skeleton" height="12rem" />
+    </div>
+  } @else if (person(); as p) {
+    <div id="aw-sales-person-detail-tabs" role="tablist" class="tabs tabs-bordered mb-6">
+      <button
+        id="aw-sales-person-detail-tab-profile"
+        role="tab"
+        class="tab"
+        [class.tab-active]="activeTab() === 'profile'"
+        (click)="onTabChange('profile')"
+      >
+        Profile
+      </button>
+      <button
+        id="aw-sales-person-detail-tab-performance"
+        role="tab"
+        class="tab"
+        [class.tab-active]="activeTab() === 'performance'"
+        (click)="onTabChange('performance')"
+      >
+        Performance
+      </button>
+    </div>
+
+    @if (activeTab() === 'profile') {
+      <div id="aw-sales-person-detail-profile" class="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
+        <aw-card title="Name">
+          <p class="font-medium">{{ fullName() }}</p>
+          @if (p.title) {
+            <p class="text-sm text-base-content/60">{{ p.title }}</p>
+          }
+        </aw-card>
+        <aw-card title="Job Title">
+          <p>{{ p.jobTitle }}</p>
+        </aw-card>
+        <aw-card title="Territory">
+          <p>{{ p.territoryName ?? '—' }}</p>
+        </aw-card>
+        <aw-card title="Email">
+          <p>{{ p.emailAddress }}</p>
+        </aw-card>
+        <aw-card title="Sales Quota">
+          <p>
+            {{
+              p.salesQuota !== null
+                ? p.salesQuota.toLocaleString('en-US', { style: 'currency', currency: 'USD', maximumFractionDigits: 0 })
+                : '—'
+            }}
+          </p>
+        </aw-card>
+        <aw-card title="Bonus &amp; Commission">
+          <p>
+            Bonus:
+            {{ p.bonus.toLocaleString('en-US', { style: 'currency', currency: 'USD', maximumFractionDigits: 0 }) }}
+          </p>
+          <p>Commission: {{ (p.commissionPct * 100).toFixed(2) }}%</p>
+        </aw-card>
+      </div>
+    }
+
+    @if (activeTab() === 'performance') {
+      @if (isLoadingPerformance()) {
+        <div id="aw-sales-person-detail-performance-loading" class="space-y-4">
+          <aw-skeleton height="6rem" />
+          <aw-skeleton height="2rem" />
+          <aw-skeleton height="10rem" />
+          <aw-skeleton height="10rem" />
+        </div>
+      } @else if (performance(); as perf) {
+        <div id="aw-sales-person-detail-performance">
+          <div id="aw-sales-person-detail-stats" class="grid gap-4 sm:grid-cols-2 lg:grid-cols-3 mb-6">
+            <aw-card title="Sales YTD">
+              <p class="text-xl font-bold">
+                {{
+                  perf.salesYtd.toLocaleString('en-US', {
+                    style: 'currency',
+                    currency: 'USD',
+                    maximumFractionDigits: 0,
+                  })
+                }}
+              </p>
+            </aw-card>
+            <aw-card title="Sales Last Year">
+              <p class="text-xl font-bold">
+                {{
+                  perf.salesLastYear.toLocaleString('en-US', {
+                    style: 'currency',
+                    currency: 'USD',
+                    maximumFractionDigits: 0,
+                  })
+                }}
+              </p>
+            </aw-card>
+            <aw-card title="Total Revenue">
+              <p class="text-xl font-bold">
+                {{
+                  perf.totalRevenue.toLocaleString('en-US', {
+                    style: 'currency',
+                    currency: 'USD',
+                    maximumFractionDigits: 0,
+                  })
+                }}
+              </p>
+            </aw-card>
+            <aw-card title="Order Count">
+              <p class="text-xl font-bold">{{ perf.orderCount.toLocaleString('en-US') }}</p>
+            </aw-card>
+            <aw-card title="Bonus">
+              <p class="text-xl font-bold">
+                {{
+                  perf.bonus.toLocaleString('en-US', { style: 'currency', currency: 'USD', maximumFractionDigits: 0 })
+                }}
+              </p>
+            </aw-card>
+            <aw-card title="Commission">
+              <p class="text-xl font-bold">{{ (perf.commissionPct * 100).toFixed(2) }}%</p>
+            </aw-card>
+          </div>
+
+          @if (perf.salesQuota) {
+            <div id="aw-sales-person-detail-quota-progress" class="mb-6">
+              <div class="flex justify-between mb-1">
+                <span class="text-sm text-base-content/60">Quota Progress</span>
+                <span class="text-sm font-medium"
+                  >{{
+                    perf.salesYtd.toLocaleString('en-US', {
+                      style: 'currency',
+                      currency: 'USD',
+                      maximumFractionDigits: 0,
+                    })
+                  }}
+                  /
+                  {{
+                    perf.salesQuota.toLocaleString('en-US', {
+                      style: 'currency',
+                      currency: 'USD',
+                      maximumFractionDigits: 0,
+                    })
+                  }}</span
+                >
+              </div>
+              <progress
+                class="progress progress-primary w-full"
+                [value]="perf.salesYtd"
+                [max]="perf.salesQuota"
+              ></progress>
+            </div>
+          }
+
+          <div id="aw-sales-person-detail-quota-history" class="mb-6">
+            <h2 class="text-lg font-semibold mb-3">Quota History</h2>
+            @if (perf.quotaHistory.length === 0) {
+              <p class="text-base-content/60">No quota history on record.</p>
+            } @else {
+              <div class="overflow-x-auto">
+                <table class="table table-sm w-full">
+                  <thead>
+                    <tr>
+                      <th>Date</th>
+                      <th>Quota</th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    @for (q of perf.quotaHistory; track $index) {
+                      <tr>
+                        <td>{{ q.quotaDate }}</td>
+                        <td>
+                          {{
+                            q.salesQuota.toLocaleString('en-US', {
+                              style: 'currency',
+                              currency: 'USD',
+                              maximumFractionDigits: 0,
+                            })
+                          }}
+                        </td>
+                      </tr>
+                    }
+                  </tbody>
+                </table>
+              </div>
+            }
+          </div>
+
+          <div id="aw-sales-person-detail-territory-history">
+            <h2 class="text-lg font-semibold mb-3">Territory History</h2>
+            @if (perf.territoryHistory.length === 0) {
+              <p class="text-base-content/60">No territory history on record.</p>
+            } @else {
+              <div class="overflow-x-auto">
+                <table class="table table-sm w-full">
+                  <thead>
+                    <tr>
+                      <th>Territory</th>
+                      <th>Start Date</th>
+                      <th>End Date</th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    @for (t of perf.territoryHistory; track $index) {
+                      <tr>
+                        <td>{{ t.territoryName }}</td>
+                        <td>{{ t.startDate }}</td>
+                        <td>{{ t.endDate ?? '—' }}</td>
+                      </tr>
+                    }
+                  </tbody>
+                </table>
+              </div>
+            }
+          </div>
+        </div>
+      } @else {
+        <aw-empty-state
+          fieldId="aw-sales-person-detail-performance-error"
+          icon="fa-solid fa-circle-exclamation"
+          title="Performance data unavailable"
+          description="Please try again."
+        />
+      }
+    }
+  } @else {
+    <aw-empty-state
+      fieldId="aw-sales-person-detail-error"
+      icon="fa-solid fa-circle-exclamation"
+      title="Failed to load sales person"
+      description="Please go back and try again."
+    />
+  }
+</div>
