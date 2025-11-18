@@ -579,6 +579,63 @@
               "response": []
             }
           ]
+        },
+        {
+          "name": "Create Sales Person",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test(\"Status is 201 Created\", function () {",
+                  "    pm.response.to.have.status(201);",
+                  "});",
+                  "",
+                  "pm.test(\"Has X-Correlation-Id header\", function () {",
+                  "    pm.response.to.have.header(\"X-Correlation-Id\");",
+                  "});",
+                  "",
+                  "var body = pm.response.json();",
+                  "",
+                  "pm.test(\"Response has id (number)\", function () {",
+                  "    pm.expect(body.id).to.be.a(\"number\");",
+                  "});",
+                  "",
+                  "pm.collectionVariables.set(\"lastCreatedSalesPersonId\", body.id);"
+                ],
+                "type": "text/javascript",
+                "packages": {},
+                "requests": {}
+              }
+            }
+          ],
+          "request": {
+            "auth": {
+              "type": "inherit"
+            },
+            "method": "POST",
+            "header": [],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"firstName\": \"Jane\",\n  \"lastName\": \"Doe\",\n  \"middleName\": null,\n  \"title\": null,\n  \"suffix\": null,\n  \"nationalIdNumber\": \"{{currentDateTime}}\",\n  \"loginId\": \"adventure-works\\\\test.sp.{{currentDateTime}}\",\n  \"jobTitle\": \"Sales Representative\",\n  \"birthDate\": \"1985-03-15\",\n  \"hireDate\": \"{{currentDate}}\",\n  \"maritalStatus\": \"S\",\n  \"gender\": \"F\",\n  \"salariedFlag\": false,\n  \"organizationLevel\": null,\n  \"territoryId\": 1,\n  \"salesQuota\": null,\n  \"bonus\": 0,\n  \"commissionPct\": 0.01,\n  \"emailAddress\": \"jane.doe.{{currentDateTime}}@adventure-works.com\",\n  \"phone\": {\n    \"phoneNumber\": \"555-867-5309\",\n    \"phoneNumberTypeId\": 1\n  },\n  \"address\": {\n    \"addressLine1\": \"123 Pine Street\",\n    \"addressLine2\": null,\n    \"city\": \"Seattle\",\n    \"stateProvince\": {\n      \"id\": 79,\n      \"name\": \"Washington\",\n      \"code\": \"WA\"\n    },\n    \"postalCode\": \"98101\"\n  },\n  \"addressTypeId\": 2\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "{{adventureWorksApi}}/{{apiVersion}}/salespersons",
+              "host": [
+                "{{adventureWorksApi}}"
+              ],
+              "path": [
+                "{{apiVersion}}",
+                "salespersons"
+              ]
+            }
+          },
+          "response": []
         }
       ]
     },
@@ -4988,6 +5045,10 @@
     },
     {
       "key": "lifecycleEmployeeId",
+      "value": ""
+    },
+    {
+      "key": "lastCreatedSalesPersonId",
       "value": ""
     }
   ]

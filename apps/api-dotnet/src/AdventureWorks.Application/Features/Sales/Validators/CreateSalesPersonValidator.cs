@@ -106,7 +106,7 @@ public sealed class CreateSalesPersonValidator : SalesPersonBaseModelValidator<S
             .NotEmpty()
             .WithErrorCode("Rule-23")
             .WithMessage(MessageHireDateEmpty)
-            .LessThanOrEqualTo(DateTime.Today)
+            .LessThanOrEqualTo(DateTime.Today.AddDays(10))
             .WithErrorCode("Rule-24")
             .WithMessage(MessageHireDateFuture);
 
@@ -159,7 +159,7 @@ public sealed class CreateSalesPersonValidator : SalesPersonBaseModelValidator<S
     public static string MessageBirthDateEmpty => "Birth date cannot be null or empty";
     public static string MessageBirthDateMinimumAge => "Sales person must be at least 18 years old";
     public static string MessageHireDateEmpty => "Hire date cannot be null or empty";
-    public static string MessageHireDateFuture => "Hire date cannot be in the future";
+    public static string MessageHireDateFuture => "Hire date cannot be more than 10 days in the future";
     public static string MessageHireDateAfterBirthDate => "Hire date must be after birth date";
     public static string MessageEmailAddressInvalid => "Email address must be in a valid format";
     public static string MessageEmailAddressLength => "Email address cannot be greater than 50 characters";

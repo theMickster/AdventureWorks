@@ -1,0 +1,326 @@
+<div id="aw-sales-person-create-page">
+  <div id="aw-sales-person-create-header" class="mb-6 flex items-center gap-4">
+    <a id="aw-sales-person-create-back" [routerLink]="['/sales/persons']" class="btn btn-ghost btn-sm">
+      <i class="fa-solid fa-arrow-left" aria-hidden="true"></i>
+      Back to Sales Persons
+    </a>
+    <h1 class="text-2xl font-bold text-base-content">New Sales Person</h1>
+  </div>
+
+  @if (isLoading()) {
+    <div id="aw-sales-person-create-loading" class="space-y-4">
+      <aw-skeleton id="aw-sales-person-create-tab-skeleton" height="3rem" />
+      <aw-skeleton id="aw-sales-person-create-content-skeleton" height="20rem" />
+    </div>
+  } @else {
+    <form id="aw-sales-person-create-form" [formGroup]="form" (ngSubmit)="onSubmit()" novalidate>
+      <div id="aw-sales-person-create-tabs" role="tablist" class="tabs tabs-bordered mb-6">
+        <button
+          id="aw-sales-person-create-tab-personal-info"
+          type="button"
+          role="tab"
+          class="tab"
+          [class.tab-active]="activeTab() === 'personalInfo'"
+          (click)="onTabChange('personalInfo')"
+        >
+          Personal Info
+          @if (personalInfoHasErrors()) {
+            <span class="ml-1 inline-block h-2 w-2 rounded-full bg-error" aria-label="This section has errors"></span>
+          }
+        </button>
+        <button
+          id="aw-sales-person-create-tab-employment"
+          type="button"
+          role="tab"
+          class="tab"
+          [class.tab-active]="activeTab() === 'employment'"
+          (click)="onTabChange('employment')"
+        >
+          Employment
+          @if (employmentHasErrors()) {
+            <span class="ml-1 inline-block h-2 w-2 rounded-full bg-error" aria-label="This section has errors"></span>
+          }
+        </button>
+        <button
+          id="aw-sales-person-create-tab-contact"
+          type="button"
+          role="tab"
+          class="tab"
+          [class.tab-active]="activeTab() === 'contact'"
+          (click)="onTabChange('contact')"
+        >
+          Contact
+          @if (contactHasErrors()) {
+            <span class="ml-1 inline-block h-2 w-2 rounded-full bg-error" aria-label="This section has errors"></span>
+          }
+        </button>
+        <button
+          id="aw-sales-person-create-tab-sales-config"
+          type="button"
+          role="tab"
+          class="tab"
+          [class.tab-active]="activeTab() === 'salesConfig'"
+          (click)="onTabChange('salesConfig')"
+        >
+          Sales Config
+          @if (salesConfigHasErrors()) {
+            <span
+              class="ml-1 inline-block h-2 w-2 rounded-full bg-error"
+              aria-label="This section has errors"
+              data-testid="sales-config-error-indicator"
+            ></span>
+          }
+        </button>
+      </div>
+
+      @if (activeTab() === 'personalInfo') {
+        <div id="aw-sales-person-create-personal-info" formGroupName="personalInfo" class="max-w-lg space-y-4">
+          <aw-input-field
+            fieldId="personal-info-first-name"
+            label="First Name"
+            placeholder="First name"
+            formControlName="firstName"
+            [errors]="firstNameErrors()"
+          />
+          <aw-input-field
+            fieldId="personal-info-last-name"
+            label="Last Name"
+            placeholder="Last name"
+            formControlName="lastName"
+            [errors]="lastNameErrors()"
+          />
+          <aw-input-field
+            fieldId="personal-info-middle-name"
+            label="Middle Name"
+            placeholder="Middle name (optional)"
+            formControlName="middleName"
+          />
+          <aw-input-field
+            fieldId="personal-info-title"
+            label="Title"
+            placeholder="e.g. Mr., Ms., Dr. (optional)"
+            formControlName="title"
+            [errors]="titleErrors()"
+          />
+          <aw-input-field
+            fieldId="personal-info-suffix"
+            label="Suffix"
+            placeholder="e.g. Jr., Sr. (optional)"
+            formControlName="suffix"
+            [errors]="suffixErrors()"
+          />
+        </div>
+      }
+
+      @if (activeTab() === 'employment') {
+        <div id="aw-sales-person-create-employment" formGroupName="employment" class="max-w-lg space-y-4">
+          <aw-input-field
+            fieldId="employment-national-id"
+            label="National ID Number"
+            placeholder="National ID"
+            formControlName="nationalIdNumber"
+            [errors]="nationalIdNumberErrors()"
+          />
+          <aw-input-field
+            fieldId="employment-login-id"
+            label="Login ID"
+            placeholder="domain\\username"
+            formControlName="loginId"
+            [errors]="loginIdErrors()"
+          />
+          <aw-input-field
+            fieldId="employment-job-title"
+            label="Job Title"
+            placeholder="Job title"
+            formControlName="jobTitle"
+            [errors]="jobTitleErrors()"
+          />
+          <fieldset class="fieldset">
+            <legend class="fieldset-legend">
+              <label for="employment-birth-date-input">Birth Date</label>
+            </legend>
+            <input
+              id="employment-birth-date-input"
+              type="date"
+              class="input input-bordered w-full"
+              [class.input-error]="!!birthDateErrors()"
+              [max]="maxBirthDate"
+              formControlName="birthDate"
+            />
+            @for (entry of errorsToList(birthDateErrors()); track entry[0]) {
+              <p class="fieldset-label text-error">{{ entry[1] }}</p>
+            }
+          </fieldset>
+          <fieldset class="fieldset">
+            <legend class="fieldset-legend">
+              <label for="employment-hire-date-input">Hire Date</label>
+            </legend>
+            <input
+              id="employment-hire-date-input"
+              type="date"
+              class="input input-bordered w-full"
+              [class.input-error]="!!hireDateErrors()"
+              [max]="maxHireDate"
+              formControlName="hireDate"
+            />
+            @for (entry of errorsToList(hireDateErrors()); track entry[0]) {
+              <p class="fieldset-label text-error">{{ entry[1] }}</p>
+            }
+          </fieldset>
+          <aw-select-field
+            fieldId="employment-marital-status"
+            label="Marital Status"
+            emptyOptionLabel="— Select status —"
+            formControlName="maritalStatus"
+            [options]="[
+              { value: 'M', label: 'Married' },
+              { value: 'S', label: 'Single' },
+            ]"
+            [errors]="maritalStatusErrors()"
+          />
+          <aw-select-field
+            fieldId="employment-gender"
+            label="Gender"
+            emptyOptionLabel="— Select gender —"
+            formControlName="gender"
+            [options]="[
+              { value: 'M', label: 'Male' },
+              { value: 'F', label: 'Female' },
+            ]"
+            [errors]="genderErrors()"
+          />
+          <aw-toggle-field fieldId="employment-salaried-flag" label="Salaried" formControlName="salariedFlag" />
+          <aw-input-field
+            fieldId="employment-organization-level"
+            label="Organization Level"
+            [inputType]="'number'"
+            placeholder="Organization level (optional)"
+            formControlName="organizationLevel"
+          />
+        </div>
+      }
+
+      @if (activeTab() === 'contact') {
+        <div id="aw-sales-person-create-contact" formGroupName="contact" class="max-w-lg space-y-4">
+          <aw-input-field
+            fieldId="contact-email"
+            label="Email Address"
+            [inputType]="'email'"
+            placeholder="Email address"
+            formControlName="emailAddress"
+            [errors]="emailAddressErrors()"
+          />
+
+          <div formGroupName="phone" class="space-y-4">
+            <aw-input-field
+              fieldId="contact-phone-number"
+              label="Phone Number"
+              [inputType]="'tel'"
+              placeholder="Phone number"
+              formControlName="phoneNumber"
+              [errors]="phoneNumberErrors()"
+            />
+            <aw-select-field
+              fieldId="contact-phone-type"
+              label="Phone Type"
+              emptyOptionLabel="— Select phone type —"
+              formControlName="phoneNumberTypeId"
+              [options]="phoneNumberTypeOptions()"
+              [errors]="phoneNumberTypeErrors()"
+            />
+          </div>
+
+          <aw-select-field
+            fieldId="contact-address-type"
+            label="Address Type"
+            emptyOptionLabel="— Select address type —"
+            formControlName="addressTypeId"
+            [options]="addressTypeOptions()"
+            [errors]="addressTypeErrors()"
+          />
+
+          <div formGroupName="address" class="space-y-4">
+            <aw-input-field
+              fieldId="contact-address-line1"
+              label="Address Line 1"
+              placeholder="Street address"
+              formControlName="addressLine1"
+              [errors]="addressLine1Errors()"
+            />
+            <aw-input-field
+              fieldId="contact-address-line2"
+              label="Address Line 2"
+              placeholder="Apt, suite, etc. (optional)"
+              formControlName="addressLine2"
+            />
+            <aw-input-field
+              fieldId="contact-city"
+              label="City"
+              placeholder="City"
+              formControlName="city"
+              [errors]="cityErrors()"
+            />
+            <aw-select-field
+              fieldId="contact-state-province"
+              label="State / Province"
+              emptyOptionLabel="— Select state —"
+              formControlName="stateProvinceId"
+              [options]="stateProvinceOptions()"
+              [errors]="stateProvinceErrors()"
+            />
+            <aw-input-field
+              fieldId="contact-postal-code"
+              label="Postal Code"
+              placeholder="Postal code"
+              formControlName="postalCode"
+              [errors]="postalCodeErrors()"
+            />
+          </div>
+        </div>
+      }
+
+      @if (activeTab() === 'salesConfig') {
+        <div id="aw-sales-person-create-sales-config" formGroupName="salesConfig" class="max-w-lg space-y-4">
+          <aw-select-field
+            fieldId="sales-config-territory"
+            label="Territory"
+            emptyOptionLabel="— No territory —"
+            formControlName="territoryId"
+            [options]="territoryOptions()"
+          />
+          <aw-input-field
+            fieldId="sales-config-quota"
+            label="Sales Quota"
+            [inputType]="'number'"
+            placeholder="Sales quota (optional)"
+            formControlName="salesQuota"
+          />
+          <aw-input-field
+            fieldId="sales-config-bonus"
+            label="Bonus"
+            [inputType]="'number'"
+            placeholder="Bonus amount"
+            formControlName="bonus"
+          />
+          <aw-input-field
+            fieldId="sales-config-commission"
+            label="Commission Percentage"
+            [inputType]="'number'"
+            placeholder="Commission rate (e.g. 0.015)"
+            formControlName="commissionPct"
+          />
+        </div>
+      }
+
+      <div class="mt-6 flex gap-3">
+        <button id="aw-sales-person-create-save" type="submit" class="btn btn-primary" [disabled]="isSaving()">
+          @if (isSaving()) {
+            <span class="loading loading-spinner loading-sm" aria-hidden="true"></span>
+          }
+          Save
+        </button>
+        <a id="aw-sales-person-create-cancel" [routerLink]="['/sales/persons']" class="btn btn-ghost">Cancel</a>
+      </div>
+    </form>
+  }
+</div>

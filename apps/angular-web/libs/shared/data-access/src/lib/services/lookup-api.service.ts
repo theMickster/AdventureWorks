@@ -4,6 +4,7 @@ import { ApiService } from '@adventureworks-web/shared/util';
 import { AddressType } from '../models/lookup/address-type.model';
 import { CountryRegion } from '../models/lookup/country-region.model';
 import { Department } from '../models/lookup/department.model';
+import { PhoneNumberType } from '../models/lookup/phone-number-type.model';
 import { SalesTerritory } from '../models/lookup/sales-territory.model';
 import { Shift } from '../models/lookup/shift.model';
 import { StateProvince } from '../models/lookup/state-province.model';
@@ -35,5 +36,9 @@ export class LookupApiService {
 
   getStateProvinces(): Observable<StateProvince[]> {
     return this.apiService.get<StateProvince[]>('/v1/states');
+  }
+
+  getPhoneNumberTypes(): Observable<PhoneNumberType[]> {
+    return this.apiService.get<PhoneNumberType[]>('/v1/phoneNumberTypes');
   }
 }

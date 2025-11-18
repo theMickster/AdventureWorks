@@ -8,6 +8,7 @@ export type { LookupType } from './lib/models/lookup-type.model';
 export type { AddressType } from './lib/models/lookup/address-type.model';
 export type { CountryRegion } from './lib/models/lookup/country-region.model';
 export type { Department } from './lib/models/lookup/department.model';
+export type { PhoneNumberType } from './lib/models/lookup/phone-number-type.model';
 export type { SalesTerritory } from './lib/models/lookup/sales-territory.model';
 export type { Shift } from './lib/models/lookup/shift.model';
 export type { StateProvince } from './lib/models/lookup/state-province.model';

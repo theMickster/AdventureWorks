@@ -39,11 +39,11 @@ export interface SalesPersonCreate {
   readonly commissionPct: number;
   readonly phone: {
     readonly phoneNumber: string;
-    readonly phoneNumberTypeId: number;
+    readonly phoneNumberTypeId: number | null;
   };
   readonly emailAddress: string;
   readonly address: SalesPersonAddressCreate;
-  readonly addressTypeId: number;
+  readonly addressTypeId: number | null;
 }
 
 export interface SalesPersonAddressCreate {

@@ -4,7 +4,7 @@ import { provideRouter } from '@angular/router';
 import { provideHttpClient } from '@angular/common/http';
 import { provideHttpClientTesting } from '@angular/common/http/testing';
 import { provideTranslateService } from '@ngx-translate/core';
-import { of, throwError } from 'rxjs';
+import { of, Subject, throwError } from 'rxjs';
 import { ENVIRONMENT, NotificationService } from '@adventureworks-web/shared/util';
 import { SalesApiService } from '@adventureworks-web/sales/data-access';
 import type { SalesPerson, Store } from '@adventureworks-web/sales/data-access';
@@ -202,9 +202,12 @@ describe('StoreCreateComponent', () => {
   });
 
   it('second call while loading is blocked (double-submit guard)', () => {
+    // Use a Subject that never completes so isLoading stays true between calls
+    const pending$ = new Subject<Store>();
+    vi.spyOn(salesApiService, 'createStore').mockReturnValue(pending$.asObservable());
     component['form'].setValue({ name: 'Contoso Bikes', salesPersonId: null });
     component['onSubmit']();
-    component['onSubmit'](); // second call should be blocked
+    component['onSubmit'](); // isLoading is still true — should be blocked
     expect(salesApiService.createStore).toHaveBeenCalledTimes(1);
   });
 

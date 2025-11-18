@@ -415,7 +415,7 @@ describe('SignalrService', () => {
     const { service } = setup();
     await service.connect();
 
-    const mockDestroyRef = { onDestroy: vi.fn<[() => void], void>() };
+    const mockDestroyRef = { onDestroy: vi.fn() };
     const handler = vi.fn();
 
     service.on('EntityChanged', handler, mockDestroyRef as unknown as DestroyRef);
@@ -428,7 +428,7 @@ describe('SignalrService', () => {
     const { service } = setup();
     await service.connect();
 
-    const mockDestroyRef = { onDestroy: vi.fn<[() => void], void>() };
+    const mockDestroyRef = { onDestroy: vi.fn() };
     const handler = vi.fn();
 
     service.on('EntityChanged', handler, mockDestroyRef as unknown as DestroyRef);

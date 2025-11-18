@@ -38,7 +38,15 @@ export const salesRoutes: Route[] = [
     loadComponent: () =>
       import('@adventureworks-web/sales/feature-sales-persons').then((m) => m.SalesPersonListComponent),
   },
-  // persons/new (US-734) MUST be inserted before persons/:id — Angular matches top-to-bottom
+  // persons/new MUST come before persons/:id — Angular matches top-to-bottom and "new" would otherwise be treated as an id param
+  {
+    path: 'persons/new',
+    title: 'New Sales Person',
+    data: { breadcrumb: 'New Sales Person' },
+    loadComponent: () =>
+      import('@adventureworks-web/sales/feature-sales-persons')
+        .then((m) => m.SalesPersonCreateComponent),
+  },
   {
     path: 'persons/:id',
     title: 'Sales Person Detail',
