@@ -4,7 +4,7 @@ import { HttpTestingController, provideHttpClientTesting } from '@angular/common
 import { ENVIRONMENT } from '@adventureworks-web/shared/util';
 import { SalesApiService } from './sales-api.service';
 import type { Store, StoreCreate, StoreUpdate } from '../models/store.model';
-import type { SalesPerson, SalesPersonCreate, SalesPersonUpdate, SalesPersonPerformance } from '../models/sales-person.model';
+import type { SalesPerson, SalesPersonCreate, SalesPersonSalesConfigUpdate, SalesPersonUpdate, SalesPersonPerformance } from '../models/sales-person.model';
 import type { StoreSearchBody } from '../models/store-search.model';
 import type { SalesPersonSearchBody } from '../models/sales-person-search.model';
 import type { SearchResult } from '@adventureworks-web/shared/data-access';
@@ -380,6 +380,42 @@ describe('SalesApiService', () => {
 
       const req = httpTesting.expectOne(`${BASE_URL}/v1/salespersons/282`);
       expect(req.request.method).toBe('PUT');
+      expect(req.request.body).toEqual(body);
+      req.flush(mockResponse);
+    });
+
+    it('should PATCH to update sales person sales config', () => {
+      const body: SalesPersonSalesConfigUpdate = {
+        id: 275,
+        territoryId: 2,
+        salesQuota: 300000,
+        bonus: 2000,
+        commissionPct: 0.12,
+      };
+      const mockResponse: SalesPerson = {
+        id: 275,
+        title: null,
+        firstName: 'Michael',
+        middleName: null,
+        lastName: 'Blythe',
+        suffix: null,
+        jobTitle: 'Sales Representative',
+        emailAddress: 'michael.blythe@adventure-works.com',
+        territoryId: 2,
+        salesQuota: 300000,
+        bonus: 2000,
+        commissionPct: 0.12,
+        salesYtd: 0,
+        territoryName: 'Central',
+        modifiedDate: '2024-06-15T00:00:00',
+      };
+
+      service.updateSalesPersonSalesConfig(275, body).subscribe((result) => {
+        expect(result).toEqual(mockResponse);
+      });
+
+      const req = httpTesting.expectOne(`${BASE_URL}/v1/salespersons/275/sales-config`);
+      expect(req.request.method).toBe('PATCH');
       expect(req.request.body).toEqual(body);
       req.flush(mockResponse);
     });

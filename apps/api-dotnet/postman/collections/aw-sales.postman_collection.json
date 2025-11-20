@@ -636,6 +636,63 @@
             }
           },
           "response": []
+        },
+        {
+          "name": "PATCH Update SalesPerson Sales Config",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test(\"Status is 200 OK\", function () {",
+                  "    pm.response.to.have.status(200);",
+                  "});",
+                  "",
+                  "pm.test(\"Has X-Correlation-Id header\", function () {",
+                  "    pm.response.to.have.header(\"X-Correlation-Id\");",
+                  "});",
+                  "",
+                  "var body = pm.response.json();",
+                  "",
+                  "pm.test(\"Response has id (number)\", function () {",
+                  "    pm.expect(body.id).to.be.a(\"number\");",
+                  "});"
+                ],
+                "type": "text/javascript",
+                "packages": {},
+                "requests": {}
+              }
+            }
+          ],
+          "request": {
+            "auth": {
+              "type": "inherit"
+            },
+            "method": "PATCH",
+            "header": [],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"id\": {{salesPersonId}},\n  \"territoryId\": 1,\n  \"salesQuota\": 300000,\n  \"bonus\": 2000.00,\n  \"commissionPct\": 0.1200\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "{{adventureWorksApi}}/{{apiVersion}}/salespersons/{{salesPersonId}}/sales-config",
+              "host": [
+                "{{adventureWorksApi}}"
+              ],
+              "path": [
+                "{{apiVersion}}",
+                "salespersons",
+                "{{salesPersonId}}",
+                "sales-config"
+              ]
+            }
+          },
+          "response": []
         }
       ]
     },

@@ -4,7 +4,7 @@ import { ApiService } from '@adventureworks-web/shared/util';
 import type { SearchResult } from '@adventureworks-web/shared/data-access';
 import { toQueryString } from '@adventureworks-web/shared/data-access';
 import type { Store, StoreCreate, StoreUpdate } from '../models/store.model';
-import type { SalesPerson, SalesPersonCreate, SalesPersonPerformance, SalesPersonUpdate } from '../models/sales-person.model';
+import type { SalesPerson, SalesPersonCreate, SalesPersonPerformance, SalesPersonSalesConfigUpdate, SalesPersonUpdate } from '../models/sales-person.model';
 import type { StoreParams } from '../models/store-params.model';
 import type { SalesPersonParams } from '../models/sales-person-params.model';
 import type { StoreSearchBody } from '../models/store-search.model';
@@ -57,6 +57,10 @@ export class SalesApiService {
 
   updateSalesPerson(id: number, model: SalesPersonUpdate): Observable<SalesPerson> {
     return this.apiService.put<SalesPerson>(`/v1/salespersons/${id}`, model);
+  }
+
+  updateSalesPersonSalesConfig(id: number, model: SalesPersonSalesConfigUpdate): Observable<SalesPerson> {
+    return this.apiService.patch<SalesPerson>(`/v1/salespersons/${id}/sales-config`, model);
   }
 
   searchSalesPersons(params: SalesPersonParams, body: SalesPersonSearchBody): Observable<SearchResult<SalesPerson>> {

@@ -10,6 +10,7 @@ export type {
 export type {
   SalesPerson,
   SalesPersonCreate,
+  SalesPersonSalesConfigUpdate,
   SalesPersonUpdate,
   SalesPersonAddressCreate,
   SalesPersonPerformance,

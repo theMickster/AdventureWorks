@@ -1,0 +1,86 @@
+<div id="aw-sales-person-edit-page">
+  <div id="aw-sales-person-edit-header" class="mb-6 flex items-center gap-4">
+    <a
+      id="aw-sales-person-edit-back"
+      [routerLink]="['/sales/persons', personId]"
+      [queryParams]="backQueryParams()"
+      class="btn btn-ghost btn-sm"
+    >
+      <i class="fa-solid fa-arrow-left" aria-hidden="true"></i>
+      Back to Sales Person
+    </a>
+    <h1 class="text-2xl font-bold text-base-content">Edit Sales Configuration</h1>
+  </div>
+
+  @if (isLoading()) {
+    <div id="aw-sales-person-edit-loading" class="max-w-lg space-y-4">
+      <aw-skeleton id="aw-sales-person-edit-info-skeleton" height="5rem" />
+      <aw-skeleton id="aw-sales-person-edit-territory-skeleton" height="3rem" />
+      <aw-skeleton id="aw-sales-person-edit-quota-skeleton" height="3rem" />
+      <aw-skeleton id="aw-sales-person-edit-bonus-skeleton" height="3rem" />
+      <aw-skeleton id="aw-sales-person-edit-commission-skeleton" height="3rem" />
+      <aw-skeleton id="aw-sales-person-edit-actions-skeleton" height="2.5rem" width="12rem" />
+    </div>
+  } @else {
+    @if (salesPerson(); as p) {
+      <div id="aw-sales-person-edit-readonly" class="mb-6 rounded-box border border-base-300 bg-base-200 p-4 max-w-lg">
+        <p id="aw-sales-person-edit-fullname" class="font-semibold text-base-content">{{ fullName() }}</p>
+        <p id="aw-sales-person-edit-jobtitle" class="text-sm text-base-content/70">{{ p.jobTitle }}</p>
+        <p id="aw-sales-person-edit-email" class="text-sm text-base-content/60">{{ p.emailAddress }}</p>
+      </div>
+
+      <div id="aw-sales-person-edit-form-container" class="max-w-lg">
+        <form id="aw-sales-person-edit-form" [formGroup]="form" (ngSubmit)="onSubmit()" novalidate>
+          <div class="space-y-4">
+            <aw-select-field
+              fieldId="sales-person-edit-territory"
+              label="Territory"
+              emptyOptionLabel="— No territory —"
+              formControlName="territoryId"
+              [options]="territoryOptions()"
+            />
+
+            <aw-input-field
+              fieldId="sales-person-edit-quota"
+              label="Sales Quota"
+              placeholder="Leave blank for no quota"
+              inputType="number"
+              formControlName="salesQuota"
+              [errors]="null"
+            />
+
+            <aw-input-field
+              fieldId="sales-person-edit-bonus"
+              label="Bonus"
+              placeholder="0"
+              inputType="number"
+              formControlName="bonus"
+              [errors]="null"
+            />
+
+            <aw-input-field
+              fieldId="sales-person-edit-commission"
+              label="Commission %"
+              placeholder="0"
+              inputType="number"
+              formControlName="commissionPct"
+              [errors]="null"
+            />
+          </div>
+
+          <div class="mt-6 flex gap-3">
+            <button id="aw-sales-person-edit-save" type="submit" class="btn btn-primary" [disabled]="isSaving()">
+              @if (isSaving()) {
+                <span class="loading loading-spinner loading-sm" aria-hidden="true"></span>
+              }
+              Save
+            </button>
+            <button id="aw-sales-person-edit-cancel" type="button" class="btn btn-ghost" (click)="onCancel()">
+              Cancel
+            </button>
+          </div>
+        </form>
+      </div>
+    }
+  }
+</div>

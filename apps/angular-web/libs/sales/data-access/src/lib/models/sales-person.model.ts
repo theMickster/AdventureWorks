@@ -58,6 +58,15 @@ export interface SalesPersonAddressCreate {
   readonly postalCode: string;
 }
 
+/** Request body for PATCH /v1/salespersons/:id/sales-config. */
+export interface SalesPersonSalesConfigUpdate {
+  readonly id: number;
+  readonly territoryId: number | null;
+  readonly salesQuota: number | null;
+  readonly bonus: number;
+  readonly commissionPct: number;
+}
+
 /** Request body for PUT /v1/salespersons/:id. */
 export interface SalesPersonUpdate {
   readonly id: number;
