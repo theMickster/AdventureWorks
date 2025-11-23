@@ -32,6 +32,20 @@ export const salesRoutes: Route[] = [
       import('@adventureworks-web/sales/feature-stores').then((m) => m.StoreEditComponent),
   },
   {
+    path: 'orders',
+    title: 'Sales Orders',
+    data: { breadcrumb: 'Sales Orders' },
+    loadComponent: () =>
+      import('@adventureworks-web/sales/feature-orders').then((m) => m.OrderListComponent),
+  },
+  {
+    path: 'orders/:id',
+    title: 'Sales Order Detail',
+    data: { breadcrumb: 'Sales Order Detail' },
+    loadComponent: () =>
+      import('@adventureworks-web/sales/feature-orders').then((m) => m.OrderDetailComponent),
+  },
+  {
     path: 'persons',
     title: 'Sales Persons',
     data: { breadcrumb: 'Sales Persons' },

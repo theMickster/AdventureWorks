@@ -5,6 +5,8 @@ import type { SearchResult } from '@adventureworks-web/shared/data-access';
 import { toQueryString } from '@adventureworks-web/shared/data-access';
 import type { Store, StoreCreate, StoreUpdate } from '../models/store.model';
 import type { SalesPerson, SalesPersonCreate, SalesPersonPerformance, SalesPersonSalesConfigUpdate, SalesPersonUpdate } from '../models/sales-person.model';
+import type { SalesOrder } from '../models/sales-order.model';
+import type { SalesOrderParams } from '../models/sales-order-params.model';
 import type { StoreParams } from '../models/store-params.model';
 import type { SalesPersonParams } from '../models/sales-person-params.model';
 import type { StoreSearchBody } from '../models/store-search.model';
@@ -66,5 +68,11 @@ export class SalesApiService {
   searchSalesPersons(params: SalesPersonParams, body: SalesPersonSearchBody): Observable<SearchResult<SalesPerson>> {
     const query = params ? toQueryString(params) : '';
     return this.apiService.post<SearchResult<SalesPerson>>(`/v1/salespersons/search${query}`, body);
+  }
+
+  /** Fetches a paginated, filterable page of sales-order list rows from GET /v1/sales-orders. */
+  getSalesOrders(params?: SalesOrderParams): Observable<SearchResult<SalesOrder>> {
+    const query = params ? toQueryString(params) : '';
+    return this.apiService.get<SearchResult<SalesOrder>>(`/v1/sales-orders${query}`);
   }
 }

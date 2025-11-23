@@ -1,0 +1,14 @@
+<div id="aw-order-detail-page">
+  <div class="mb-6 flex items-center justify-between">
+    <h1 class="text-2xl font-bold text-base-content">Sales Order #{{ salesOrderId() }}</h1>
+    <a id="aw-order-detail-back-btn" [routerLink]="['/sales/orders']" class="btn btn-ghost btn-sm">
+      <i class="fa-solid fa-arrow-left" aria-hidden="true"></i>
+      Back to Orders
+    </a>
+  </div>
+
+  <div id="aw-order-detail-placeholder" class="alert alert-info">
+    <i class="fa-solid fa-circle-info" aria-hidden="true"></i>
+    <span>Sales order detail is coming soon.</span>
+  </div>
+</div>

@@ -1,0 +1,98 @@
+<div id="aw-order-list-page">
+  <div id="aw-order-list-header" class="mb-6 flex items-center justify-between">
+    <h1 class="text-2xl font-bold text-base-content">Sales Orders</h1>
+  </div>
+
+  <form
+    id="aw-order-list-filters"
+    [formGroup]="filterForm"
+    class="mb-4 grid grid-cols-1 gap-3 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-6"
+    (ngSubmit)="onApplyFilters()"
+  >
+    <div>
+      <label for="aw-order-filter-date-from" class="label">
+        <span class="label-text">Order Date From</span>
+      </label>
+      <input
+        id="aw-order-filter-date-from"
+        type="date"
+        class="input input-bordered w-full"
+        formControlName="orderDateFrom"
+      />
+    </div>
+
+    <div>
+      <label for="aw-order-filter-date-to" class="label">
+        <span class="label-text">Order Date To</span>
+      </label>
+      <input
+        id="aw-order-filter-date-to"
+        type="date"
+        class="input input-bordered w-full"
+        formControlName="orderDateTo"
+      />
+    </div>
+
+    <aw-select-field
+      fieldId="aw-order-filter-status"
+      formControlName="status"
+      label="Status"
+      emptyOptionLabel="All statuses"
+      [options]="statusOptions"
+    />
+
+    <aw-select-field
+      fieldId="aw-order-filter-sales-person"
+      formControlName="salesPersonId"
+      label="Sales Person"
+      emptyOptionLabel="All sales persons"
+      [options]="salesPersonOptions()"
+    />
+
+    <aw-select-field
+      fieldId="aw-order-filter-territory"
+      formControlName="territoryId"
+      label="Territory"
+      emptyOptionLabel="All territories"
+      [options]="territoryOptions()"
+    />
+
+    <div class="flex items-end gap-2">
+      <button id="aw-order-filter-apply-btn" type="submit" class="btn btn-primary">
+        <i class="fa-solid fa-filter" aria-hidden="true"></i>
+        Apply
+      </button>
+      <button id="aw-order-filter-reset-btn" type="button" class="btn btn-ghost" (click)="onResetFilters()">
+        <i class="fa-solid fa-xmark" aria-hidden="true"></i>
+        Reset Filters
+      </button>
+    </div>
+  </form>
+
+  <aw-data-table
+    fieldId="aw-order-list-table"
+    [columns]="columns"
+    [data]="rows()"
+    [loading]="isLoading()"
+    [pageNumber]="pageNumber()"
+    [pageSize]="pageSize()"
+    [totalPages]="totalPages()"
+    [totalRecords]="totalRecords()"
+    [sortColumn]="sortColumn()"
+    [sortDirection]="sortDirection()"
+    emptyTitle="No sales orders found"
+    emptyDescription="Try adjusting your filters."
+    (sortChange)="onSortChange($event)"
+    (pageChange)="onPageChange($event)"
+  >
+    <ng-template awColumnDef="status" let-row>
+      <aw-status-badge [status]="$any(row)['statusKey']" [statusMap]="statusBadgeMap" />
+    </ng-template>
+    <ng-template awColumnDef="totalDue" let-row>
+      {{ $any(row)['totalDue'] | currency }}
+    </ng-template>
+    <ng-template awColumnDef="view" let-row>
+      <button type="button" class="btn btn-ghost btn-xs" (click)="onRowClick(row)">View</button>
+    </ng-template>
+  </aw-data-table>
+</div>

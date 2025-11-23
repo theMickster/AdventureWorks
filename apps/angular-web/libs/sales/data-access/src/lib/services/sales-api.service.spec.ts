@@ -5,6 +5,7 @@ import { ENVIRONMENT } from '@adventureworks-web/shared/util';
 import { SalesApiService } from './sales-api.service';
 import type { Store, StoreCreate, StoreUpdate } from '../models/store.model';
 import type { SalesPerson, SalesPersonCreate, SalesPersonSalesConfigUpdate, SalesPersonUpdate, SalesPersonPerformance } from '../models/sales-person.model';
+import type { SalesOrder } from '../models/sales-order.model';
 import type { StoreSearchBody } from '../models/store-search.model';
 import type { SalesPersonSearchBody } from '../models/sales-person-search.model';
 import type { SearchResult } from '@adventureworks-web/shared/data-access';
@@ -457,6 +458,93 @@ describe('SalesApiService', () => {
       const req = httpTesting.expectOne(`${BASE_URL}/v1/salespersons/search?orderBy=lastName`);
       expect(req.request.method).toBe('POST');
       expect(req.request.body).toEqual(body);
+      req.flush(mockData);
+    });
+  });
+
+  describe('SalesOrders', () => {
+    const mockOrder: SalesOrder = {
+      salesOrderId: 43659,
+      salesOrderNumber: 'SO43659',
+      orderDate: '2011-05-31T00:00:00',
+      status: 5,
+      statusDescription: 'Shipped',
+      totalDue: 23153.2339,
+      customerName: 'A Bike Store',
+      salesPersonName: 'Michael Blythe',
+    };
+
+    it('should GET sales orders without params', () => {
+      const mockData: SearchResult<SalesOrder> = {
+        pageNumber: 1,
+        pageSize: 25,
+        totalPages: 1,
+        hasPreviousPage: false,
+        hasNextPage: false,
+        totalRecords: 1,
+        results: [mockOrder],
+      };
+
+      service.getSalesOrders().subscribe((result) => {
+        expect(result).toEqual(mockData);
+      });
+
+      const req = httpTesting.expectOne(`${BASE_URL}/v1/sales-orders`);
+      expect(req.request.method).toBe('GET');
+      req.flush(mockData);
+    });
+
+    it('should GET sales orders with pagination and sort params', () => {
+      const mockData: SearchResult<SalesOrder> = {
+        pageNumber: 2,
+        pageSize: 25,
+        totalPages: 3,
+        hasPreviousPage: true,
+        hasNextPage: true,
+        totalRecords: 60,
+        results: [],
+      };
+
+      service.getSalesOrders({ pageNumber: 2, pageSize: 25, orderBy: 'orderDate', sortOrder: 'desc' }).subscribe((result) => {
+        expect(result).toEqual(mockData);
+      });
+
+      const req = httpTesting.expectOne(`${BASE_URL}/v1/sales-orders?pageNumber=2&pageSize=25&orderBy=orderDate&sortOrder=desc`);
+      expect(req.request.method).toBe('GET');
+      req.flush(mockData);
+    });
+
+    it('should GET sales orders with all filter params in the query string', () => {
+      const mockData: SearchResult<SalesOrder> = {
+        pageNumber: 1,
+        pageSize: 25,
+        totalPages: 1,
+        hasPreviousPage: false,
+        hasNextPage: false,
+        totalRecords: 1,
+        results: [mockOrder],
+      };
+
+      service
+        .getSalesOrders({
+          pageNumber: 1,
+          pageSize: 25,
+          orderBy: 'totalDue',
+          sortOrder: 'asc',
+          orderDateFrom: '2013-01-01',
+          orderDateTo: '2013-12-31',
+          status: 5,
+          salesPersonId: 279,
+          territoryId: 4,
+        })
+        .subscribe((result) => {
+          expect(result).toEqual(mockData);
+        });
+
+      const req = httpTesting.expectOne(
+        `${BASE_URL}/v1/sales-orders?pageNumber=1&pageSize=25&orderBy=totalDue&sortOrder=asc&orderDateFrom=2013-01-01&orderDateTo=2013-12-31&status=5&salesPersonId=279&territoryId=4`,
+      );
+      expect(req.request.method).toBe('GET');
       req.flush(mockData);
     });
   });
