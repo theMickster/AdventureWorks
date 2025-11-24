@@ -114,6 +114,10 @@ public sealed class SalesOrderRepository(AdventureWorksDbContext dbContext)
                 .ThenInclude(sp => sp.Employee)
                     .ThenInclude(e => e.PersonBusinessEntity)
             .Include(x => x.TerritoryEntity)
+            .Include(x => x.CustomerEntity)
+                .ThenInclude(c => c.Person)
+            .Include(x => x.CustomerEntity)
+                .ThenInclude(c => c.StoreEntity)
             .FirstOrDefaultAsync(x => x.SalesOrderId == salesOrderId, cancellationToken);
     }
 

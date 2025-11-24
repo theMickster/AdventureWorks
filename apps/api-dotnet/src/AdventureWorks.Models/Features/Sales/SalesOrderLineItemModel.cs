@@ -17,6 +17,9 @@ public sealed class SalesOrderLineItemModel
     /// <summary>The unit price at time of sale.</summary>
     public decimal UnitPrice { get; set; }
 
+    /// <summary>The unit price discount percentage applied to this line item.</summary>
+    public decimal UnitPriceDiscount { get; set; }
+
     /// <summary>The computed line total (Qty * UnitPrice * (1 - UnitPriceDiscount)).</summary>
     public decimal LineTotal { get; set; }
 }

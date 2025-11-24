@@ -5,11 +5,6 @@ using AdventureWorks.Domain.Entities.HumanResources;
 using AdventureWorks.Domain.Entities.Person;
 using AdventureWorks.Domain.Entities.Production;
 using AdventureWorks.Domain.Entities.Sales;
-using AdventureWorks.Models.Features.Sales;
-using AutoMapper;
-using FluentAssertions;
-using Moq;
-
 namespace AdventureWorks.UnitTests.Application.Features.Sales.Queries;
 
 public sealed class ReadSalesOrderDetailQueryHandlerTests : UnitTestBase
@@ -55,6 +50,12 @@ public sealed class ReadSalesOrderDetailQueryHandlerTests : UnitTestBase
         var territory = new SalesTerritoryEntity { TerritoryId = 1, Name = "Northwest" };
         var product = new Product { ProductId = 776, Name = "Mountain-100 Silver, 38" };
 
+        var customer = new CustomerEntity
+        {
+            CustomerId = 676,
+            Person = new PersonEntity { FirstName = "Jon", LastName = "Yang" }
+        };
+
         var entity = new SalesOrderHeader
         {
             SalesOrderId = 43659,
@@ -66,8 +67,10 @@ public sealed class ReadSalesOrderDetailQueryHandlerTests : UnitTestBase
             TaxAmt = 1971.5149m,
             Freight = 616.0984m,
             TotalDue = 23153.2339m,
+            SalesPersonId = 275,
             BillToAddressEntity = billTo,
             ShipToAddressEntity = shipTo,
+            CustomerEntity = customer,
             SalesPerson = new SalesPersonEntity { Employee = salesPersonEmployee },
             TerritoryEntity = territory,
             SalesOrderDetails = new List<SalesOrderDetail>
@@ -77,7 +80,8 @@ public sealed class ReadSalesOrderDetailQueryHandlerTests : UnitTestBase
                     SalesOrderDetailId = 1,
                     OrderQty = 1,
                     UnitPrice = 2024.994m,
-                    LineTotal = 2024.994m,
+                    UnitPriceDiscount = 0.02m,
+                    LineTotal = 1984.494m,
                     Product = product
                 }
             }
@@ -95,7 +99,9 @@ public sealed class ReadSalesOrderDetailQueryHandlerTests : UnitTestBase
         result!.SalesOrderId.Should().Be(43659);
         result.SalesOrderNumber.Should().Be("SO43659");
         result.StatusDescription.Should().Be("Shipped");
+        result.SalesPersonId.Should().Be(275);
         result.SalesPersonName.Should().Be("Linda Mitchell");
+        result.CustomerName.Should().Be("Jon Yang");
         result.TerritoryName.Should().Be("Northwest");
         result.BillToAddress!.AddressLine1.Should().Be("123 Main St");
         result.BillToAddress.StateProvince.Should().Be("Washington");
@@ -104,7 +110,8 @@ public sealed class ReadSalesOrderDetailQueryHandlerTests : UnitTestBase
         result.LineItems[0].ProductName.Should().Be("Mountain-100 Silver, 38");
         result.LineItems[0].OrderQty.Should().Be(1);
         result.LineItems[0].UnitPrice.Should().Be(2024.994m);
-        result.LineItems[0].LineTotal.Should().Be(2024.994m);
+        result.LineItems[0].UnitPriceDiscount.Should().Be(0.02m);
+        result.LineItems[0].LineTotal.Should().Be(1984.494m);
     }
 
     [Fact]

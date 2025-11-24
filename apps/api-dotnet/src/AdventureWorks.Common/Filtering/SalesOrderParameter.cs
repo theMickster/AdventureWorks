@@ -34,7 +34,7 @@ public sealed class SalesOrderParameter : QueryStringParamsBase
         {
             ArgumentNullException.ThrowIfNull(value);
 
-            var normalized = value.Trim().ToLowerInvariant();
+            var normalized = value.Trim();
             _orderBy = normalized switch
             {
                 OrderDateField => OrderDateField,

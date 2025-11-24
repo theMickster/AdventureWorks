@@ -5,6 +5,7 @@ import { FormBuilder, ReactiveFormsModule } from '@angular/forms';
 import { ActivatedRoute, Router } from '@angular/router';
 import { forkJoin } from 'rxjs';
 import { SalesApiService, SalesOrderStore, SALES_ORDER_STATUSES } from '@adventureworks-web/sales/data-access';
+import { STATUS_BADGE_MAP } from '../order-status-badge';
 import type { SalesOrderParams } from '@adventureworks-web/sales/data-access';
 import { LookupApiService } from '@adventureworks-web/shared/data-access';
 import { ColumnDefDirective, DataTableComponent, SelectFieldComponent, StatusBadgeComponent } from '@adventureworks-web/shared/ui';
@@ -26,17 +27,6 @@ interface SalesOrderFilters {
   salesPersonId?: number;
   territoryId?: number;
 }
-
-// DaisyUI badge variant per lowercased server statusDescription. The default status-badge map
-// does not cover these sales-order labels, so an explicit map is supplied.
-const STATUS_BADGE_MAP: Record<string, string> = {
-  'in process': 'badge-info',
-  approved: 'badge-success',
-  backordered: 'badge-warning',
-  rejected: 'badge-error',
-  shipped: 'badge-success',
-  cancelled: 'badge-error',
-};
 
 @Component({
   selector: 'aw-order-list',

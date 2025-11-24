@@ -17,7 +17,7 @@ export type {
   SalesPersonQuotaHistory,
   SalesPersonTerritoryHistory,
 } from './lib/models/sales-person.model';
-export type { SalesOrder } from './lib/models/sales-order.model';
+export type { SalesOrder, SalesOrderDetail, SalesOrderAddress, SalesOrderLineItem } from './lib/models/sales-order.model';
 export { SALES_ORDER_STATUSES } from './lib/models/sales-order.model';
 export type { StoreParams } from './lib/models/store-params.model';
 export type { SalesPersonParams } from './lib/models/sales-person-params.model';

@@ -4905,6 +4905,220 @@
       ]
     },
     {
+      "name": "Sales Orders",
+      "id": "b1c2d3e4-f5a6-7b8c-9d0e-1f2a3b4c5d6e",
+      "item": [
+        {
+          "name": "Get Sales Orders (list)",
+          "id": "c2d3e4f5-a6b7-8c9d-0e1f-2a3b4c5d6e7f",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test(\"Status is 200\", function () {",
+                  "    pm.response.to.have.status(200);",
+                  "});",
+                  "",
+                  "pm.test(\"Has X-Correlation-Id header\", function () {",
+                  "    pm.response.to.have.header(\"X-Correlation-Id\");",
+                  "});",
+                  "",
+                  "var body = pm.response.json();",
+                  "",
+                  "pm.test(\"Response has paginated shape\", function () {",
+                  "    pm.expect(body.results).to.be.an(\"array\");",
+                  "    pm.expect(body).to.have.property(\"pageNumber\");",
+                  "    pm.expect(body).to.have.property(\"pageSize\");",
+                  "    pm.expect(body).to.have.property(\"totalRecords\");",
+                  "});",
+                  "",
+                  "pm.test(\"Each result has required fields\", function () {",
+                  "    if (body.results.length === 0) return;",
+                  "    var r = body.results[0];",
+                  "    pm.expect(r).to.have.property(\"salesOrderId\");",
+                  "    pm.expect(r).to.have.property(\"salesOrderNumber\");",
+                  "    pm.expect(r).to.have.property(\"orderDate\");",
+                  "    pm.expect(r).to.have.property(\"totalDue\");",
+                  "    pm.expect(r).to.have.property(\"statusDescription\");",
+                  "});"
+                ],
+                "type": "text/javascript",
+                "packages": {},
+                "requests": {}
+              }
+            }
+          ],
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{adventureWorksApi}}/{{apiVersion}}/sales-orders?pageNumber=1&pageSize=25",
+              "host": [
+                "{{adventureWorksApi}}"
+              ],
+              "path": [
+                "{{apiVersion}}",
+                "sales-orders"
+              ],
+              "query": [
+                {
+                  "key": "pageNumber",
+                  "value": "1"
+                },
+                {
+                  "key": "pageSize",
+                  "value": "25"
+                }
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Search Sales Orders",
+          "id": "d3e4f5a6-b7c8-9d0e-1f2a-3b4c5d6e7f8a",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test(\"Status is 200\", function () {",
+                  "    pm.response.to.have.status(200);",
+                  "});",
+                  "",
+                  "pm.test(\"Has X-Correlation-Id header\", function () {",
+                  "    pm.response.to.have.header(\"X-Correlation-Id\");",
+                  "});",
+                  "",
+                  "var body = pm.response.json();",
+                  "",
+                  "pm.test(\"Response has paginated shape\", function () {",
+                  "    pm.expect(body.results).to.be.an(\"array\");",
+                  "    pm.expect(body).to.have.property(\"totalRecords\");",
+                  "});"
+                ],
+                "type": "text/javascript",
+                "packages": {},
+                "requests": {}
+              }
+            }
+          ],
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json",
+                "type": "text"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"orderDateFrom\": \"2013-01-01\",\n  \"orderDateTo\": \"2013-12-31\",\n  \"status\": 5\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "{{adventureWorksApi}}/{{apiVersion}}/sales-orders/search?pageNumber=1&pageSize=25",
+              "host": [
+                "{{adventureWorksApi}}"
+              ],
+              "path": [
+                "{{apiVersion}}",
+                "sales-orders",
+                "search"
+              ],
+              "query": [
+                {
+                  "key": "pageNumber",
+                  "value": "1"
+                },
+                {
+                  "key": "pageSize",
+                  "value": "25"
+                }
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Get Sales Order Detail",
+          "id": "e4f5a6b7-c8d9-0e1f-2a3b-4c5d6e7f8a9b",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test(\"Status is 200\", function () {",
+                  "    pm.response.to.have.status(200);",
+                  "});",
+                  "",
+                  "pm.test(\"Has X-Correlation-Id header\", function () {",
+                  "    pm.response.to.have.header(\"X-Correlation-Id\");",
+                  "});",
+                  "",
+                  "var body = pm.response.json();",
+                  "",
+                  "pm.test(\"body.salesOrderId is a number\", function () {",
+                  "    pm.expect(body.salesOrderId).to.be.a(\"number\");",
+                  "});",
+                  "",
+                  "pm.test(\"body.salesOrderNumber is a string\", function () {",
+                  "    pm.expect(body.salesOrderNumber).to.be.a(\"string\");",
+                  "});",
+                  "",
+                  "pm.test(\"body.lineItems is an array\", function () {",
+                  "    pm.expect(body.lineItems).to.be.an(\"array\");",
+                  "});",
+                  "",
+                  "pm.test(\"body.billToAddress exists\", function () {",
+                  "    pm.expect(body.billToAddress).to.exist;",
+                  "    pm.expect(body.billToAddress.addressLine1).to.be.a(\"string\");",
+                  "    pm.expect(body.billToAddress.city).to.be.a(\"string\");",
+                  "});",
+                  "",
+                  "pm.test(\"body.shipToAddress exists\", function () {",
+                  "    pm.expect(body.shipToAddress).to.exist;",
+                  "});",
+                  "",
+                  "pm.test(\"financial fields present\", function () {",
+                  "    pm.expect(body.subTotal).to.be.a(\"number\");",
+                  "    pm.expect(body.taxAmt).to.be.a(\"number\");",
+                  "    pm.expect(body.freight).to.be.a(\"number\");",
+                  "    pm.expect(body.totalDue).to.be.a(\"number\");",
+                  "});"
+                ],
+                "type": "text/javascript",
+                "packages": {},
+                "requests": {}
+              }
+            }
+          ],
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{adventureWorksApi}}/{{apiVersion}}/sales-orders/{{salesOrderId}}",
+              "host": [
+                "{{adventureWorksApi}}"
+              ],
+              "path": [
+                "{{apiVersion}}",
+                "sales-orders",
+                "{{salesOrderId}}"
+              ]
+            }
+          },
+          "response": []
+        }
+      ]
+    },
+    {
       "name": "Sales Dashboard",
       "id": "a3f7e2d1-8c45-4b9f-b3e6-1d2a5c8e0f74",
       "item": [
@@ -5107,6 +5321,10 @@
     {
       "key": "lastCreatedSalesPersonId",
       "value": ""
+    },
+    {
+      "key": "salesOrderId",
+      "value": "43659"
     }
   ]
 }

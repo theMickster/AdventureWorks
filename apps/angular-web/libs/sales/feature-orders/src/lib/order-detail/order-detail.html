@@ -1,14 +1,179 @@
 <div id="aw-order-detail-page">
-  <div class="mb-6 flex items-center justify-between">
-    <h1 class="text-2xl font-bold text-base-content">Sales Order #{{ salesOrderId() }}</h1>
-    <a id="aw-order-detail-back-btn" [routerLink]="['/sales/orders']" class="btn btn-ghost btn-sm">
+  <div id="aw-order-detail-header" class="mb-6 flex items-center gap-4">
+    <a
+      id="aw-order-detail-back"
+      [routerLink]="['/sales/orders']"
+      [queryParams]="backQueryParams()"
+      class="btn btn-ghost btn-sm"
+    >
       <i class="fa-solid fa-arrow-left" aria-hidden="true"></i>
-      Back to Orders
+      Orders
     </a>
   </div>
 
-  <div id="aw-order-detail-placeholder" class="alert alert-info">
-    <i class="fa-solid fa-circle-info" aria-hidden="true"></i>
-    <span>Sales order detail is coming soon.</span>
-  </div>
+  @if (isLoading()) {
+    <div id="aw-order-detail-loading" class="space-y-4">
+      <aw-skeleton height="2rem" width="20rem" />
+      <aw-skeleton height="8rem" />
+      <aw-skeleton height="6rem" />
+      <aw-skeleton height="10rem" />
+    </div>
+  } @else if (notFound()) {
+    <aw-empty-state
+      fieldId="aw-order-detail-not-found"
+      icon="fa-solid fa-circle-exclamation"
+      title="Order not found"
+      description="The requested sales order could not be found."
+    />
+  } @else if (order(); as o) {
+    <!-- Header card -->
+    <div id="aw-order-detail-info" class="card bg-base-100 shadow mb-6">
+      <div class="card-body">
+        <div class="flex flex-wrap items-start justify-between gap-4">
+          <div>
+            <h1 id="aw-order-detail-number" class="card-title text-2xl font-bold text-base-content">
+              {{ o.salesOrderNumber }}
+            </h1>
+            <p class="text-sm text-base-content/60 mt-1">
+              Customer:
+              <span id="aw-order-detail-customer" class="font-medium text-base-content">{{ o.customerName }}</span>
+            </p>
+          </div>
+          <aw-status-badge
+            fieldId="aw-order-detail-status"
+            [status]="o.statusDescription.toLowerCase()"
+            [statusMap]="statusBadgeMap"
+          />
+        </div>
+
+        <div class="grid grid-cols-2 sm:grid-cols-4 gap-4 mt-4 text-sm">
+          <div>
+            <p class="text-base-content/60">Order Date</p>
+            <p id="aw-order-detail-order-date" class="font-medium">{{ o.orderDate | date: 'mediumDate' }}</p>
+          </div>
+          <div>
+            <p class="text-base-content/60">Due Date</p>
+            <p id="aw-order-detail-due-date" class="font-medium">{{ o.dueDate | date: 'mediumDate' }}</p>
+          </div>
+          <div>
+            <p class="text-base-content/60">Ship Date</p>
+            <p id="aw-order-detail-ship-date" class="font-medium">
+              {{ o.shipDate ? (o.shipDate | date: 'mediumDate') : '—' }}
+            </p>
+          </div>
+          <div>
+            <p class="text-base-content/60">Sales Person</p>
+            @if (o.salesPersonName && o.salesPersonId) {
+              <a
+                id="aw-order-detail-salesperson-link"
+                [routerLink]="['/sales/persons', o.salesPersonId]"
+                class="font-medium text-primary hover:underline"
+              >
+                {{ o.salesPersonName }}
+              </a>
+            } @else {
+              <p id="aw-order-detail-salesperson-none" class="font-medium">—</p>
+            }
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Financial summary -->
+    <div id="aw-order-detail-financials" class="grid grid-cols-2 sm:grid-cols-4 gap-4 mb-6">
+      <div class="card bg-base-100 shadow">
+        <div class="card-body p-4">
+          <p class="text-xs text-base-content/60 uppercase tracking-wide">Subtotal</p>
+          <p id="aw-order-detail-subtotal" class="text-lg font-semibold">{{ o.subTotal | currency }}</p>
+        </div>
+      </div>
+      <div class="card bg-base-100 shadow">
+        <div class="card-body p-4">
+          <p class="text-xs text-base-content/60 uppercase tracking-wide">Tax</p>
+          <p id="aw-order-detail-tax" class="text-lg font-semibold">{{ o.taxAmt | currency }}</p>
+        </div>
+      </div>
+      <div class="card bg-base-100 shadow">
+        <div class="card-body p-4">
+          <p class="text-xs text-base-content/60 uppercase tracking-wide">Freight</p>
+          <p id="aw-order-detail-freight" class="text-lg font-semibold">{{ o.freight | currency }}</p>
+        </div>
+      </div>
+      <div class="card bg-base-100 shadow border-2 border-primary">
+        <div class="card-body p-4">
+          <p class="text-xs text-primary uppercase tracking-wide font-bold">Total Due</p>
+          <p id="aw-order-detail-total-due" class="text-xl font-bold text-primary">{{ o.totalDue | currency }}</p>
+        </div>
+      </div>
+    </div>
+
+    <!-- Addresses -->
+    <div id="aw-order-detail-addresses" class="grid grid-cols-1 md:grid-cols-2 gap-4 mb-6">
+      <div class="card bg-base-100 shadow">
+        <div class="card-body">
+          <h2 class="card-title text-base">Bill To</h2>
+          <p id="aw-order-detail-billto-line1">{{ o.billToAddress.addressLine1 }}</p>
+          @if (o.billToAddress.addressLine2) {
+            <p>{{ o.billToAddress.addressLine2 }}</p>
+          }
+          <p id="aw-order-detail-billto-city">
+            {{ o.billToAddress.city }}, {{ o.billToAddress.stateProvince }} {{ o.billToAddress.postalCode }}
+          </p>
+        </div>
+      </div>
+      <div class="card bg-base-100 shadow">
+        <div class="card-body">
+          <h2 class="card-title text-base">Ship To</h2>
+          <p id="aw-order-detail-shipto-line1">{{ o.shipToAddress.addressLine1 }}</p>
+          @if (o.shipToAddress.addressLine2) {
+            <p>{{ o.shipToAddress.addressLine2 }}</p>
+          }
+          <p id="aw-order-detail-shipto-city">
+            {{ o.shipToAddress.city }}, {{ o.shipToAddress.stateProvince }} {{ o.shipToAddress.postalCode }}
+          </p>
+        </div>
+      </div>
+    </div>
+
+    <!-- Line items table -->
+    <div id="aw-order-detail-line-items" class="card bg-base-100 shadow">
+      <div class="card-body">
+        <h2 class="card-title text-base mb-2">Line Items</h2>
+        <div class="overflow-x-auto">
+          <table class="table table-zebra w-full">
+            <thead>
+              <tr>
+                <th>Product</th>
+                <th class="text-right">Qty</th>
+                <th class="text-right">Unit Price</th>
+                <th class="text-right">Discount</th>
+                <th class="text-right">Line Total</th>
+              </tr>
+            </thead>
+            <tbody>
+              @for (item of o.lineItems; track item.salesOrderDetailId) {
+                <tr>
+                  <td>{{ item.productName }}</td>
+                  <td class="text-right">{{ item.orderQty }}</td>
+                  <td class="text-right">{{ item.unitPrice | currency }}</td>
+                  <td class="text-right">{{ item.unitPriceDiscount | percent: '1.0-2' }}</td>
+                  <td class="text-right">{{ item.lineTotal | currency }}</td>
+                </tr>
+              }
+            </tbody>
+          </table>
+        </div>
+        <p class="text-sm text-base-content/60 mt-2">
+          {{ o.lineItems.length }} item{{ o.lineItems.length === 1 ? '' : 's' }}
+        </p>
+      </div>
+    </div>
+  } @else if (hasError()) {
+    <aw-empty-state
+      fieldId="aw-order-detail-error"
+      icon="fa-solid fa-circle-exclamation"
+      title="Failed to load order"
+      description="Please go back and try again."
+    />
+  }
 </div>

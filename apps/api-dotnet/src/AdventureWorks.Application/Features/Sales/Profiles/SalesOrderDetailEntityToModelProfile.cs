@@ -1,7 +1,5 @@
-using AdventureWorks.Application.Features.Sales;
 using AdventureWorks.Domain.Entities.Person;
 using AdventureWorks.Domain.Entities.Sales;
-using AdventureWorks.Domain.Entities.Production;
 using AdventureWorks.Models.Features.Sales;
 using AutoMapper;
 
@@ -19,14 +17,17 @@ public sealed class SalesOrderDetailEntityToModelProfile : Profile
     {
         CreateMap<SalesOrderHeader, SalesOrderDetailModel>()
             .ForMember(dest => dest.StatusDescription, opt => opt.MapFrom<DetailStatusDescriptionResolver>())
+            .ForMember(dest => dest.SalesPersonId, opt => opt.MapFrom(src => src.SalesPersonId))
             .ForMember(dest => dest.SalesPersonName, opt => opt.MapFrom<DetailSalesPersonNameResolver>())
+            .ForMember(dest => dest.CustomerName, opt => opt.MapFrom<DetailCustomerNameResolver>())
             .ForMember(dest => dest.TerritoryName, opt => opt.MapFrom(src => src.TerritoryEntity != null ? src.TerritoryEntity.Name : null))
             .ForMember(dest => dest.BillToAddress, opt => opt.MapFrom(src => src.BillToAddressEntity))
             .ForMember(dest => dest.ShipToAddress, opt => opt.MapFrom(src => src.ShipToAddressEntity))
             .ForMember(dest => dest.LineItems, opt => opt.MapFrom(src => src.SalesOrderDetails));
 
         CreateMap<SalesOrderDetail, SalesOrderLineItemModel>()
-            .ForMember(dest => dest.ProductName, opt => opt.MapFrom(src => src.Product != null ? src.Product.Name : string.Empty));
+            .ForMember(dest => dest.ProductName, opt => opt.MapFrom(src => src.Product != null ? src.Product.Name : string.Empty))
+            .ForMember(dest => dest.UnitPriceDiscount, opt => opt.MapFrom(src => src.UnitPriceDiscount));
 
         CreateMap<AddressEntity, SalesOrderAddressModel>()
             .ForMember(dest => dest.StateProvince, opt => opt.MapFrom(src => src.StateProvince != null ? src.StateProvince.Name : string.Empty));
@@ -48,6 +49,38 @@ internal sealed class DetailStatusDescriptionResolver : IValueResolver<SalesOrde
     /// <returns>A human-readable order status string</returns>
     public string Resolve(SalesOrderHeader src, SalesOrderDetailModel dest, string destMember, ResolutionContext context) =>
         SalesOrderResolverHelpers.GetStatusDescription(src.Status);
+}
+
+/// <summary>
+/// Resolves the customer display name from the sales order entity.
+/// </summary>
+internal sealed class DetailCustomerNameResolver : IValueResolver<SalesOrderHeader, SalesOrderDetailModel, string>
+{
+    /// <summary>
+    /// Resolves the customer's full name from the source entity graph, returning an empty string when unavailable.
+    /// </summary>
+    /// <param name="src">the source sales order header entity</param>
+    /// <param name="dest">the destination detail model being constructed</param>
+    /// <param name="destMember">the current destination member value</param>
+    /// <param name="context">the current AutoMapper resolution context</param>
+    /// <returns>A "FirstName LastName" string for individuals, the store name for store customers, or empty string</returns>
+    public string Resolve(SalesOrderHeader src, SalesOrderDetailModel dest, string destMember, ResolutionContext context)
+    {
+        var customer = src.CustomerEntity;
+        if (customer is null)
+        {
+            return string.Empty;
+        }
+
+        if (customer.Person is not null)
+        {
+            var firstName = customer.Person.FirstName ?? string.Empty;
+            var lastName = customer.Person.LastName ?? string.Empty;
+            return $"{firstName} {lastName}".Trim();
+        }
+
+        return customer.StoreEntity?.Name ?? string.Empty;
+    }
 }
 
 /// <summary>

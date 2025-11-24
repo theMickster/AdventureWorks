@@ -106,7 +106,9 @@ public sealed class ReadSalesOrderDetailControllerTests
                 OrderDate = new DateTime(2011, 5, 31),
                 DueDate = new DateTime(2011, 6, 12),
                 Status = 5,
-                StatusDescription = "Shipped"
+                StatusDescription = "Shipped",
+                BillToAddress = new SalesOrderAddressModel { AddressLine1 = "1 Test St", City = "Seattle", StateProvince = "WA", PostalCode = "98101" },
+                ShipToAddress = new SalesOrderAddressModel { AddressLine1 = "1 Test St", City = "Seattle", StateProvince = "WA", PostalCode = "98101" }
             });
 
         // Act
@@ -135,7 +137,9 @@ public sealed class ReadSalesOrderDetailControllerTests
                 OrderDate = DateTime.UtcNow,
                 DueDate = DateTime.UtcNow,
                 Status = 5,
-                StatusDescription = "Shipped"
+                StatusDescription = "Shipped",
+                BillToAddress = new SalesOrderAddressModel { AddressLine1 = "1 Test St", City = "Seattle", StateProvince = "WA", PostalCode = "98101" },
+                ShipToAddress = new SalesOrderAddressModel { AddressLine1 = "1 Test St", City = "Seattle", StateProvince = "WA", PostalCode = "98101" }
             });
 
         // Act

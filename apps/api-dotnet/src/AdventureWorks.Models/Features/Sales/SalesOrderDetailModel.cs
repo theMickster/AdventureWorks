@@ -43,17 +43,26 @@ public sealed class SalesOrderDetailModel
     /// <summary>The purchase order number provided by the customer, if any.</summary>
     public string? PurchaseOrderNumber { get; set; }
 
+    /// <summary>The sales person identifier, or null if unassigned.</summary>
+    public int? SalesPersonId { get; set; }
+
     /// <summary>The sales person full name (FirstName LastName), or null if unassigned.</summary>
     public string? SalesPersonName { get; set; }
+
+    /// <summary>
+    /// The customer display name. For individual customers this is "FirstName LastName";
+    /// for store customers this is the store name. Empty if neither is available.
+    /// </summary>
+    public string CustomerName { get; set; } = string.Empty;
 
     /// <summary>The name of the sales territory, or null if unassigned.</summary>
     public string? TerritoryName { get; set; }
 
     /// <summary>The bill-to address.</summary>
-    public SalesOrderAddressModel? BillToAddress { get; set; }
+    public required SalesOrderAddressModel BillToAddress { get; set; }
 
     /// <summary>The ship-to address.</summary>
-    public SalesOrderAddressModel? ShipToAddress { get; set; }
+    public required SalesOrderAddressModel ShipToAddress { get; set; }
 
     /// <summary>The individual line items on this order.</summary>
     public List<SalesOrderLineItemModel> LineItems { get; set; } = [];
