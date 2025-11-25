@@ -3,7 +3,7 @@ import { ActivatedRoute, Router, provideRouter } from '@angular/router';
 import { provideHttpClient } from '@angular/common/http';
 import { provideHttpClientTesting } from '@angular/common/http/testing';
 import { provideTranslateService } from '@ngx-translate/core';
-import { of, throwError } from 'rxjs';
+import { BehaviorSubject, of, throwError } from 'rxjs';
 import { patchState } from '@ngrx/signals';
 import { setAllEntities } from '@ngrx/signals/entities';
 import { unprotected } from '@ngrx/signals/testing';
@@ -22,6 +22,8 @@ const mockEnvironment = {
   },
 };
 
+let queryParamsSub: BehaviorSubject<Record<string, string>>;
+
 const selectId = (o: SalesOrder) => o.salesOrderId;
 
 const mockOrder: SalesOrder = {
@@ -36,9 +38,9 @@ const mockOrder: SalesOrder = {
 };
 
 function buildRoute(queryParams: Record<string, string> = {}) {
+  queryParamsSub = new BehaviorSubject<Record<string, string>>(queryParams);
   return {
-    snapshot: { queryParams },
-    queryParams: { subscribe: vi.fn() },
+    queryParams: queryParamsSub,
   };
 }
 
@@ -110,13 +112,13 @@ describe('OrderListComponent', () => {
   });
 
   it('restores filter params from the URL and forwards them to loadPage', () => {
-    route.snapshot.queryParams = {
+    queryParamsSub.next({
       orderDateFrom: '2013-01-01',
       orderDateTo: '2013-12-31',
       status: '5',
       salesPersonId: '279',
       territoryId: '4',
-    };
+    });
 
     fixture.detectChanges();
 
@@ -133,8 +135,18 @@ describe('OrderListComponent', () => {
     });
   });
 
+  it('drops a non-numeric status URL param instead of forwarding NaN', () => {
+    queryParamsSub.next({ status: 'abc' });
+    fixture.detectChanges();
+    const lastCall = (salesOrderStore.loadPage as ReturnType<typeof vi.spyOn>).mock.calls.at(-1)?.[0] as Record<
+      string,
+      unknown
+    >;
+    expect('status' in lastCall).toBe(false);
+  });
+
   it('clamps junk pageNumber from the URL to 1', () => {
-    route.snapshot.queryParams = { pageNumber: '-3' };
+    queryParamsSub.next({ pageNumber: '-3' });
 
     fixture.detectChanges();
 
@@ -144,7 +156,7 @@ describe('OrderListComponent', () => {
   });
 
   it('clamps zero pageNumber from the URL to 1', () => {
-    route.snapshot.queryParams = { pageNumber: '0' };
+    queryParamsSub.next({ pageNumber: '0' });
 
     fixture.detectChanges();
 
@@ -154,7 +166,7 @@ describe('OrderListComponent', () => {
   });
 
   it('ignores an invalid orderBy from the URL and falls back to the default sort', () => {
-    route.snapshot.queryParams = { orderBy: 'dropTable', sortOrder: 'asc' };
+    queryParamsSub.next({ orderBy: 'dropTable', sortOrder: 'asc' });
 
     fixture.detectChanges();
 
@@ -167,7 +179,7 @@ describe('OrderListComponent', () => {
   });
 
   it('restores a valid orderBy from the URL', () => {
-    route.snapshot.queryParams = { orderBy: 'totalDue', sortOrder: 'asc' };
+    queryParamsSub.next({ orderBy: 'totalDue', sortOrder: 'asc' });
 
     fixture.detectChanges();
 
@@ -183,6 +195,8 @@ describe('OrderListComponent', () => {
     component['filterForm'].patchValue({ status: '5' });
 
     component['onApplyFilters']();
+    queryParamsSub.next({ status: '5', pageNumber: '1' });
+    fixture.detectChanges();
 
     expect(salesOrderStore.loadPage).toHaveBeenLastCalledWith(
       expect.objectContaining({ pageNumber: 1, pageSize: 25, status: 5 }),
@@ -204,6 +218,8 @@ describe('OrderListComponent', () => {
     component['filterForm'].patchValue({ status: '' });
 
     component['onApplyFilters']();
+    queryParamsSub.next({ pageNumber: '1' });
+    fixture.detectChanges();
 
     const lastCall = (salesOrderStore.loadPage as ReturnType<typeof vi.spyOn>).mock.calls.at(-1)?.[0] as Record<
       string,
@@ -233,7 +249,7 @@ describe('OrderListComponent', () => {
   });
 
   it('restores all five filters plus a valid page and sort from a bookmarked URL', () => {
-    route.snapshot.queryParams = {
+    queryParamsSub.next({
       orderDateFrom: '2013-01-01',
       orderDateTo: '2013-12-31',
       status: '2',
@@ -242,7 +258,7 @@ describe('OrderListComponent', () => {
       pageNumber: '4',
       orderBy: 'totalDue',
       sortOrder: 'asc',
-    };
+    });
 
     fixture.detectChanges();
 
@@ -259,8 +275,44 @@ describe('OrderListComponent', () => {
     });
   });
 
+  it('restores filter form and reloads on browser back navigation while mounted', () => {
+    fixture.detectChanges(); // initial load with empty params
+
+    // Simulate applying status=5 (filter A)
+    queryParamsSub.next({ status: '5', pageNumber: '1' });
+    fixture.detectChanges();
+
+    // Simulate applying status=2 (filter B)
+    queryParamsSub.next({ status: '2', pageNumber: '1' });
+    fixture.detectChanges();
+
+    // Simulate browser back — URL reverts to status=5
+    queryParamsSub.next({ status: '5', pageNumber: '1' });
+    fixture.detectChanges();
+
+    expect(salesOrderStore.loadPage).toHaveBeenLastCalledWith(
+      expect.objectContaining({ status: 5, pageNumber: 1 }),
+    );
+    expect(component['filterForm'].getRawValue().status).toBe('5');
+  });
+
+  it('clears sort signals on browser back to an unsorted URL state', () => {
+    fixture.detectChanges();
+
+    // Navigate to a sorted URL state
+    queryParamsSub.next({ orderBy: 'totalDue', sortOrder: 'asc' });
+    fixture.detectChanges();
+    expect(component['sortColumn']()).toBe('totalDue');
+
+    // Browser back to unsorted state
+    queryParamsSub.next({});
+    fixture.detectChanges();
+    expect(component['sortColumn']()).toBe('');
+    expect(component['sortDirection']()).toBe('desc');
+  });
+
   it('neutralizes BOTH junk orderBy and junk pageNumber in the same bookmarked URL', () => {
-    route.snapshot.queryParams = { orderBy: '; DROP TABLE', pageNumber: 'not-a-number', sortOrder: 'asc' };
+    queryParamsSub.next({ orderBy: '; DROP TABLE', pageNumber: 'not-a-number', sortOrder: 'asc' });
 
     fixture.detectChanges();
 
@@ -274,10 +326,12 @@ describe('OrderListComponent', () => {
   });
 
   it('resets all filters and sort, nulls URL params, and reloads the default view', () => {
-    route.snapshot.queryParams = { status: '5', orderBy: 'totalDue', sortOrder: 'asc' };
+    queryParamsSub.next({ status: '5', orderBy: 'totalDue', sortOrder: 'asc' });
     fixture.detectChanges();
 
     component['onResetFilters']();
+    queryParamsSub.next({});
+    fixture.detectChanges();
 
     expect(salesOrderStore.loadPage).toHaveBeenLastCalledWith({
       pageNumber: 1,
@@ -315,13 +369,15 @@ describe('OrderListComponent', () => {
     fixture.detectChanges();
 
     component['onSortChange']({ column: 'totalDue', direction: 'asc' });
+    queryParamsSub.next({ orderBy: 'totalDue', sortOrder: 'asc' });
+    fixture.detectChanges();
 
     expect(salesOrderStore.loadPage).toHaveBeenLastCalledWith(
       expect.objectContaining({ orderBy: 'totalDue', sortOrder: 'asc' }),
     );
     expect(router.navigate).toHaveBeenCalledWith(
       [],
-      expect.objectContaining({ queryParams: expect.objectContaining({ orderBy: 'totalDue', sortOrder: 'asc' }) }),
+      expect.objectContaining({ queryParams: expect.objectContaining({ orderBy: 'totalDue', sortOrder: 'asc', pageNumber: 1 }) }),
     );
   });
 
@@ -334,13 +390,12 @@ describe('OrderListComponent', () => {
     expect((salesOrderStore.loadPage as ReturnType<typeof vi.spyOn>).mock.calls.length).toBe(callsBefore);
   });
 
-  it('carries active sort and filters across pages on page change', () => {
+  it('parses page, sort, and filter params from the URL on page change', () => {
     fixture.detectChanges();
-    component['filterForm'].patchValue({ territoryId: '4' });
-    component['sortColumn'].set('totalDue');
-    component['sortDirection'].set('asc');
 
     component['onPageChange'](3);
+    queryParamsSub.next({ territoryId: '4', orderBy: 'totalDue', sortOrder: 'asc', pageNumber: '3' });
+    fixture.detectChanges();
 
     expect(salesOrderStore.loadPage).toHaveBeenLastCalledWith({
       pageNumber: 3,

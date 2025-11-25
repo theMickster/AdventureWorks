@@ -6,7 +6,6 @@ import { ActivatedRoute, Router } from '@angular/router';
 import { forkJoin } from 'rxjs';
 import { SalesApiService, SalesOrderStore, SALES_ORDER_STATUSES } from '@adventureworks-web/sales/data-access';
 import { STATUS_BADGE_MAP } from '../order-status-badge';
-import type { SalesOrderParams } from '@adventureworks-web/sales/data-access';
 import { LookupApiService } from '@adventureworks-web/shared/data-access';
 import { ColumnDefDirective, DataTableComponent, SelectFieldComponent, StatusBadgeComponent } from '@adventureworks-web/shared/ui';
 import type { ColumnConfig } from '@adventureworks-web/shared/ui';
@@ -38,8 +37,12 @@ interface SalesOrderFilters {
 /**
  * Paginated, filterable sales-order list at `/sales/orders`.
  *
- * Mirrors StoreListComponent's URL-param sync, sort allowlist, and pagination invariants, replacing the
- * single search box with a five-field filter bar (date-from, date-to, status, sales person, territory).
+ * URL-param sync uses a reactive `route.queryParams` subscription (US-738) rather than a one-shot
+ * snapshot read — every URL change (including in-place browser back/forward while the component is
+ * mounted) re-fires `restoreFiltersFromUrl` and `loadFromUrl`. Action methods (`onApplyFilters`,
+ * `onResetFilters`, `onPageChange`, `onSortChange`) only write to the URL via `router.navigate`; the
+ * subscription is the sole driver of data loading.
+ *
  * Filter state lives in a small FormGroup so the SelectFieldComponent CVAs (which emit string values)
  * can drive it; values are parsed back to numbers before reaching the SalesOrderParams.
  *
@@ -120,12 +123,16 @@ export class OrderListComponent implements OnInit {
     });
   }
 
+  /** Subscribes to `route.queryParams` so that back/forward navigation re-fires the load while the component stays mounted. Dropdown data loads in parallel and never blocks the grid. */
   ngOnInit(): void {
     // Dropdown reference data loads independently of the grid — a slow/failed lookup must not
     // block or break the list. The list load is kicked off first.
-    const params = this.route.snapshot.queryParams;
-    this.restoreFiltersFromUrl(params);
-    this.loadFromUrl(params);
+    this.route.queryParams.pipe(
+      takeUntilDestroyed(this.destroyRef)
+    ).subscribe(params => {
+      this.restoreFiltersFromUrl(params as Record<string, string>);
+      this.loadFromUrl(params as Record<string, string>);
+    });
 
     forkJoin({
       salesPersons: this.salesApi.getSalesPersons({ pageNumber: 1, pageSize: 100 }),
@@ -145,11 +152,9 @@ export class OrderListComponent implements OnInit {
       });
   }
 
-  /** Applies the filter bar: loads page 1 with the current filters and mirrors them to the URL (merge). */
+  /** Writes the current filters plus pageNumber=1 to the URL (merge); the queryParams subscription reloads. */
   protected onApplyFilters(): void {
     const filters = this.readFilters();
-    const sortParams = this.activeSortParams();
-    this.salesOrderStore.loadPage({ pageNumber: 1, pageSize: PAGE_SIZE, ...sortParams, ...filters });
     void this.router.navigate([], {
       relativeTo: this.route,
       queryParams: { ...this.filterUrlParams(filters), pageNumber: 1 },
@@ -165,7 +170,6 @@ export class OrderListComponent implements OnInit {
     this.filterForm.reset({ orderDateFrom: '', orderDateTo: '', status: '', salesPersonId: '', territoryId: '' });
     this.sortColumn.set('');
     this.sortDirection.set(DEFAULT_SORT_ORDER);
-    this.salesOrderStore.loadPage({ pageNumber: 1, pageSize: PAGE_SIZE, orderBy: DEFAULT_ORDER_BY, sortOrder: DEFAULT_SORT_ORDER });
     void this.router.navigate([], {
       relativeTo: this.route,
       queryParams: {
@@ -182,11 +186,8 @@ export class OrderListComponent implements OnInit {
     });
   }
 
-  /** Loads the requested page, carrying current sort and filters forward so neither is lost on paging. */
+  /** Writes the requested pageNumber to the URL; the merge preserves current sort/filters and the subscription reloads. */
   protected onPageChange(page: number): void {
-    const sortParams = this.activeSortParams();
-    const filters = this.readFilters();
-    this.salesOrderStore.loadPage({ pageNumber: page, pageSize: PAGE_SIZE, ...sortParams, ...filters });
     void this.router.navigate([], {
       relativeTo: this.route,
       queryParams: { pageNumber: page },
@@ -194,21 +195,18 @@ export class OrderListComponent implements OnInit {
     });
   }
 
-  /** Applies a column sort, carrying current filters forward. Non-allowlisted columns are ignored (see guard below). */
+  /** Writes the sort plus pageNumber=1 to the URL (merge preserves filters); the subscription reloads. Non-allowlisted columns are ignored (see guard below). */
   protected onSortChange(event: { column: string; direction: 'asc' | 'desc' }): void {
-    this.sortColumn.set(event.column);
-    this.sortDirection.set(event.direction);
     // Runtime allowlist guard: DataTableComponent emits sort events for any column key; the
     // sortable flag is a UI hint only. VALID_SORT_COLUMNS keeps arbitrary keys off the API call.
     if (!(VALID_SORT_COLUMNS as readonly string[]).includes(event.column)) {
       return;
     }
-    const orderBy = event.column as SortColumn;
-    const filters = this.readFilters();
-    this.salesOrderStore.loadPage({ pageNumber: this.pageNumber(), pageSize: PAGE_SIZE, orderBy, sortOrder: event.direction, ...filters });
+    this.sortColumn.set(event.column);
+    this.sortDirection.set(event.direction);
     void this.router.navigate([], {
       relativeTo: this.route,
-      queryParams: { orderBy: event.column, sortOrder: event.direction },
+      queryParams: { orderBy: event.column, sortOrder: event.direction, pageNumber: 1 },
       queryParamsHandling: 'merge',
     });
   }
@@ -218,7 +216,7 @@ export class OrderListComponent implements OnInit {
     void this.router.navigate(['/sales/orders', row['salesOrderId']]);
   }
 
-  /** Restores filter-bar form values and sort signals from the URL snapshot. */
+  /** Restores filter-bar form values and sort signals from the emitted URL params. */
   private restoreFiltersFromUrl(params: Record<string, string>): void {
     this.filterForm.setValue({
       orderDateFrom: params['orderDateFrom'] ?? '',
@@ -232,10 +230,13 @@ export class OrderListComponent implements OnInit {
     if (orderBy) {
       this.sortColumn.set(orderBy);
       this.sortDirection.set(params['sortOrder'] === 'asc' ? 'asc' : 'desc');
+    } else {
+      this.sortColumn.set('');
+      this.sortDirection.set(DEFAULT_SORT_ORDER);
     }
   }
 
-  /** Issues the initial list load using restored URL state, defaulting to OrderDate desc. */
+  /** Issues the list load using URL state, defaulting to OrderDate desc. */
   private loadFromUrl(params: Record<string, string>): void {
     const pageNumber = Math.max(1, Math.trunc(Number(params['pageNumber'])) || 1);
     const orderBy = this.parseOrderBy(params['orderBy']);
@@ -243,7 +244,10 @@ export class OrderListComponent implements OnInit {
     const sortParams = orderBy
       ? { orderBy, sortOrder: sortOrder as 'asc' | 'desc' }
       : { orderBy: DEFAULT_ORDER_BY, sortOrder: DEFAULT_SORT_ORDER };
-    this.salesOrderStore.loadPage({ pageNumber, pageSize: PAGE_SIZE, ...sortParams, ...this.readFilters() });
+
+    const filters = this.parseFilterParams(params);
+
+    this.salesOrderStore.loadPage({ pageNumber, pageSize: PAGE_SIZE, ...sortParams, ...filters });
   }
 
   /** Allowlist-validates an orderBy URL value; junk resolves to undefined and never reaches the API. */
@@ -251,34 +255,25 @@ export class OrderListComponent implements OnInit {
     return (VALID_SORT_COLUMNS as readonly string[]).includes(raw ?? '') ? (raw as SortColumn) : undefined;
   }
 
-  /** Active sort params for the current signal state, or empty when no sort is set. */
-  private activeSortParams(): Pick<SalesOrderParams, 'orderBy' | 'sortOrder'> {
-    const col = this.sortColumn();
-    return (VALID_SORT_COLUMNS as readonly string[]).includes(col)
-      ? { orderBy: col as SortColumn, sortOrder: this.sortDirection() }
-      : {};
+  /**
+   * Builds the filter accumulator from a string-keyed source (URL params or form values), coercing
+   * numerics and omitting empty fields. `Number.isFinite` guards numeric fields so that a junk URL
+   * value (e.g. `status=abc`) produces `NaN` from `Number()`, fails the check, and is silently
+   * dropped rather than forwarded to the API as `NaN`.
+   */
+  private parseFilterParams(src: Record<string, string>): SalesOrderFilters {
+    const filters: SalesOrderFilters = {};
+    if (src['orderDateFrom']) { filters.orderDateFrom = src['orderDateFrom']; }
+    if (src['orderDateTo'])   { filters.orderDateTo   = src['orderDateTo']; }
+    if (src['status'] && Number.isFinite(Number(src['status'])))               { filters.status        = Number(src['status']); }
+    if (src['salesPersonId'] && Number.isFinite(Number(src['salesPersonId']))) { filters.salesPersonId = Number(src['salesPersonId']); }
+    if (src['territoryId'] && Number.isFinite(Number(src['territoryId'])))     { filters.territoryId   = Number(src['territoryId']); }
+    return filters;
   }
 
   /** Reads the filter form, parsing select strings to numbers and omitting cleared (empty) fields. */
   private readFilters(): SalesOrderFilters {
-    const value = this.filterForm.getRawValue();
-    const filters: SalesOrderFilters = {};
-    if (value.orderDateFrom) {
-      filters.orderDateFrom = value.orderDateFrom;
-    }
-    if (value.orderDateTo) {
-      filters.orderDateTo = value.orderDateTo;
-    }
-    if (value.status) {
-      filters.status = Number(value.status);
-    }
-    if (value.salesPersonId) {
-      filters.salesPersonId = Number(value.salesPersonId);
-    }
-    if (value.territoryId) {
-      filters.territoryId = Number(value.territoryId);
-    }
-    return filters;
+    return this.parseFilterParams(this.filterForm.getRawValue() as Record<string, string>);
   }
 
   /** Maps applied filters to URL query params, nulling any cleared field so it is removed on merge. */
