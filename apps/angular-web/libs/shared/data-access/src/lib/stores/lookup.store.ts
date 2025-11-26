@@ -57,9 +57,8 @@ export const LookupStore = signalStore(
             patchState(store, setLoading());
             return apiFn().pipe(
               tap((data) => patchState(store, { [key]: data } as Partial<LookupState>, setLoaded())),
-              catchError((err: unknown) => {
-                const message = err instanceof Error ? err.message : 'An unexpected error occurred';
-                patchState(store, setError(message));
+              catchError(() => {
+                patchState(store, setError('An unexpected error occurred'));
                 return EMPTY;
               }),
             );

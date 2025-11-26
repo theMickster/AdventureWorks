@@ -51,8 +51,7 @@ export const EmployeeStore = signalStore(
               if (err instanceof ApiEmptyResultError) {
                 patchState(store, setAllEntities([] as Employee[]), setLoaded());
               } else {
-                const message = err instanceof Error ? err.message : 'Failed to load employees';
-                patchState(store, setError(message));
+                patchState(store, setError('Failed to load employees'));
               }
               return EMPTY;
             }),
@@ -80,8 +79,7 @@ export const EmployeeStore = signalStore(
               if (err instanceof ApiEmptyResultError) {
                 patchState(store, setAllEntities([] as Employee[]), setLoaded());
               } else {
-                const message = err instanceof Error ? err.message : 'Failed to search employees';
-                patchState(store, setError(message));
+                patchState(store, setError('Failed to search employees'));
               }
               return EMPTY;
             }),
@@ -96,9 +94,8 @@ export const EmployeeStore = signalStore(
         exhaustMap((id) =>
           hrApi.getEmployee(id).pipe(
             tap((entity) => patchState(store, setAllEntities([entity]), setLoaded())),
-            catchError((err: unknown) => {
-              const message = err instanceof Error ? err.message : 'Failed to load employee';
-              patchState(store, setError(message));
+            catchError(() => {
+              patchState(store, setError('Failed to load employee'));
               return EMPTY;
             }),
           ),
@@ -112,9 +109,8 @@ export const EmployeeStore = signalStore(
         exhaustMap((model) =>
           hrApi.createEmployee(model).pipe(
             tap((entity) => patchState(store, addEntity(entity), setLoaded())),
-            catchError((err: unknown) => {
-              const message = err instanceof Error ? err.message : 'Failed to create employee';
-              patchState(store, setError(message));
+            catchError(() => {
+              patchState(store, setError('Failed to create employee'));
               return EMPTY;
             }),
           ),
@@ -128,9 +124,8 @@ export const EmployeeStore = signalStore(
         exhaustMap(({ id, model }) =>
           hrApi.updateEmployee(id, model).pipe(
             tap((entity) => patchState(store, updateEntity({ id, changes: entity }), setLoaded())),
-            catchError((err: unknown) => {
-              const message = err instanceof Error ? err.message : 'Failed to update employee';
-              patchState(store, setError(message));
+            catchError(() => {
+              patchState(store, setError('Failed to update employee'));
               return EMPTY;
             }),
           ),
@@ -144,9 +139,8 @@ export const EmployeeStore = signalStore(
         exhaustMap(({ id, operations }) =>
           hrApi.patchEmployee(id, operations).pipe(
             tap((entity) => patchState(store, updateEntity({ id, changes: entity }), setLoaded())),
-            catchError((err: unknown) => {
-              const message = err instanceof Error ? err.message : 'Failed to patch employee';
-              patchState(store, setError(message));
+            catchError(() => {
+              patchState(store, setError('Failed to patch employee'));
               return EMPTY;
             }),
           ),
@@ -168,9 +162,8 @@ export const EmployeeStore = signalStore(
                 }),
               ),
             ),
-            catchError((err: unknown) => {
-              const message = err instanceof Error ? err.message : 'Failed to hire employee';
-              patchState(store, setError(message));
+            catchError(() => {
+              patchState(store, setError('Failed to hire employee'));
               return EMPTY;
             }),
           ),
@@ -192,9 +185,8 @@ export const EmployeeStore = signalStore(
                 }),
               ),
             ),
-            catchError((err: unknown) => {
-              const message = err instanceof Error ? err.message : 'Failed to terminate employee';
-              patchState(store, setError(message));
+            catchError(() => {
+              patchState(store, setError('Failed to terminate employee'));
               return EMPTY;
             }),
           ),
@@ -216,9 +208,8 @@ export const EmployeeStore = signalStore(
                 }),
               ),
             ),
-            catchError((err: unknown) => {
-              const message = err instanceof Error ? err.message : 'Failed to rehire employee';
-              patchState(store, setError(message));
+            catchError(() => {
+              patchState(store, setError('Failed to rehire employee'));
               return EMPTY;
             }),
           ),

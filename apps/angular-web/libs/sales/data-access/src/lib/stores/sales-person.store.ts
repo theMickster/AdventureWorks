@@ -47,8 +47,7 @@ export const SalesPersonStore = signalStore(
               if (err instanceof ApiEmptyResultError) {
                 patchState(store, setAllEntities([] as SalesPerson[]), setLoaded());
               } else {
-                const message = err instanceof Error ? err.message : 'Failed to load sales persons';
-                patchState(store, setError(message));
+                patchState(store, setError('Failed to load sales persons'));
               }
               return EMPTY;
             }),
@@ -76,8 +75,7 @@ export const SalesPersonStore = signalStore(
               if (err instanceof ApiEmptyResultError) {
                 patchState(store, setAllEntities([] as SalesPerson[]), setLoaded());
               } else {
-                const message = err instanceof Error ? err.message : 'Failed to search sales persons';
-                patchState(store, setError(message));
+                patchState(store, setError('Failed to search sales persons'));
               }
               return EMPTY;
             }),
@@ -92,9 +90,8 @@ export const SalesPersonStore = signalStore(
         exhaustMap((id) =>
           salesApi.getSalesPerson(id).pipe(
             tap((entity) => patchState(store, setAllEntities([entity]), setLoaded())),
-            catchError((err: unknown) => {
-              const message = err instanceof Error ? err.message : 'Failed to load sales person';
-              patchState(store, setError(message));
+            catchError(() => {
+              patchState(store, setError('Failed to load sales person'));
               return EMPTY;
             }),
           ),
@@ -108,9 +105,8 @@ export const SalesPersonStore = signalStore(
         exhaustMap((model) =>
           salesApi.createSalesPerson(model).pipe(
             tap((entity) => patchState(store, addEntity(entity), setLoaded())),
-            catchError((err: unknown) => {
-              const message = err instanceof Error ? err.message : 'Failed to create sales person';
-              patchState(store, setError(message));
+            catchError(() => {
+              patchState(store, setError('Failed to create sales person'));
               return EMPTY;
             }),
           ),
@@ -124,9 +120,8 @@ export const SalesPersonStore = signalStore(
         exhaustMap(({ id, model }) =>
           salesApi.updateSalesPerson(id, model).pipe(
             tap((entity) => patchState(store, updateEntity({ id, changes: entity }), setLoaded())),
-            catchError((err: unknown) => {
-              const message = err instanceof Error ? err.message : 'Failed to update sales person';
-              patchState(store, setError(message));
+            catchError(() => {
+              patchState(store, setError('Failed to update sales person'));
               return EMPTY;
             }),
           ),

@@ -42,8 +42,7 @@ export const SalesOrderStore = signalStore(
               if (err instanceof ApiEmptyResultError) {
                 patchState(store, setAllEntities([] as SalesOrder[], { selectId: (order) => order.salesOrderId }), setLoaded());
               } else {
-                const message = err instanceof Error ? err.message : 'Failed to load sales orders';
-                patchState(store, setError(message));
+                patchState(store, setError('Failed to load sales orders'));
               }
               return EMPTY;
             }),
