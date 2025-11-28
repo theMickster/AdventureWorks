@@ -8,7 +8,7 @@
 - ✅ Frontend Data Layer: Epic #577 complete (all 6 features done)
 - ✅ Infrastructure: Epic #570 complete (all 5 features done)
 - 🚧 Testing Foundation: Epic #565 in progress (#669, #923 done; #670, #671, #672 remaining)
-- 🚧 UI pipeline in ADO: #561 in progress; #562 and #563 currently New
+- 🚧 UI pipeline in ADO: #561 in progress (US-739 done); #562 and #563 currently New
 - 📋 Additional Initiative #559 backlog epics: #935 (Customer), #936 (Work Orders/Manufacturing), #937 (Purchasing/Vendor)
 - 📋 Future infrastructure/function backlog: #569, #567, #568 (#566 marked Removed)
 
@@ -64,7 +64,7 @@
 
 #### Additional Initiative 1 Epics (ADO status)
 
-- 🚧 #561 Sales CRUD UI — In Progress (8 child features)
+- 🚧 #561 Sales CRUD UI — In Progress (8 child features); ✅ Feature 713 / US-739 (Dashboard KPI UI) done
 - 📋 #562 HR CRUD UI — New (5 child features)
 - 📋 #563 Real-Time Dashboard — New (5 child features)
 - 📋 #935 Customer Module — New (4 child features)

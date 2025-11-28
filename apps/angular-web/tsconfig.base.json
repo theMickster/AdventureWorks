@@ -22,7 +22,8 @@
       "@adventureworks-web/hr/data-access": ["./libs/hr/data-access/src/index.ts"],
       "@adventureworks-web/sales/feature-stores": ["./libs/sales/feature-stores/src/index.ts"],
       "@adventureworks-web/sales/feature-sales-persons": ["./libs/sales/feature-sales-persons/src/index.ts"],
-      "@adventureworks-web/sales/feature-orders": ["./libs/sales/feature-orders/src/index.ts"]
+      "@adventureworks-web/sales/feature-orders": ["./libs/sales/feature-orders/src/index.ts"],
+      "@adventureworks-web/sales/feature-dashboard": ["./libs/sales/feature-dashboard/src/index.ts"]
     }
   },
   "exclude": ["node_modules", "tmp"]
