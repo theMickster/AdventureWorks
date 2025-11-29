@@ -44,13 +44,13 @@ public sealed class ReadSalesDashboardQueryHandlerTests : UnitTestBase
             AverageOrderValue = 3922.05m,
             TopPerformers =
             [
-                new DashboardTopPerformerModel { SalesPersonId = 275, Name = "Michael Blythe", Revenue = 9293903.00m, OrderCount = 450 },
-                new DashboardTopPerformerModel { SalesPersonId = 276, Name = "Linda Mitchell", Revenue = 8845979.00m, OrderCount = 418 }
+                new DashboardTopPerformerModel { SalesPersonId = 275, Name = "Michael Blythe", Territory = "Northwest", Revenue = 9293903.00m, OrderCount = 450 },
+                new DashboardTopPerformerModel { SalesPersonId = 276, Name = "Linda Mitchell", Territory = "Southwest", Revenue = 8845979.00m, OrderCount = 418 }
             ],
             TerritoryBreakdown =
             [
-                new DashboardTerritoryModel { TerritoryId = 4, Name = "Southwest", CountryCode = "US", OrderCount = 3421, Revenue = 22000000m },
-                new DashboardTerritoryModel { TerritoryId = 1, Name = "Northwest", CountryCode = "US", OrderCount = 3100, Revenue = 19000000m }
+                new DashboardTerritoryModel { TerritoryId = 4, Name = "Southwest", Group = "North America", CountryCode = "US", OrderCount = 3421, Revenue = 22000000m },
+                new DashboardTerritoryModel { TerritoryId = 1, Name = "Northwest", Group = "North America", CountryCode = "US", OrderCount = 3100, Revenue = 19000000m }
             ],
             MonthlySalesTrend =
             [
@@ -73,6 +73,8 @@ public sealed class ReadSalesDashboardQueryHandlerTests : UnitTestBase
             result.TopPerformers.Should().HaveCount(2, "because two top performers were returned");
             result.TerritoryBreakdown.Should().HaveCount(2, "because two territories were returned");
             result.MonthlySalesTrend.Should().HaveCount(2, "because two monthly trend entries were returned");
+            result.TopPerformers[0].Territory.Should().Be("Northwest", "because territory was set in mock data");
+            result.TerritoryBreakdown[0].Group.Should().Be("North America", "because group was set in mock data");
         }
     }
 }

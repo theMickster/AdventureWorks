@@ -1,83 +1,108 @@
-<div class="stats stats-vertical shadow lg:stats-horizontal w-full">
-  @if (isLoading()) {
-    <div class="stat">
-      <aw-skeleton height="1.5rem" width="60%"></aw-skeleton>
-      <aw-skeleton height="2.5rem" width="80%"></aw-skeleton>
-      <aw-skeleton height="1rem" width="50%"></aw-skeleton>
-    </div>
-    <div class="stat">
-      <aw-skeleton height="1.5rem" width="60%"></aw-skeleton>
-      <aw-skeleton height="2.5rem" width="80%"></aw-skeleton>
-      <aw-skeleton height="1rem" width="50%"></aw-skeleton>
-    </div>
-    <div class="stat">
-      <aw-skeleton height="1.5rem" width="60%"></aw-skeleton>
-      <aw-skeleton height="2.5rem" width="80%"></aw-skeleton>
-      <aw-skeleton height="1rem" width="50%"></aw-skeleton>
-    </div>
-  } @else if (dashboard()) {
-    <div class="stat">
-      <div class="stat-figure text-primary">
-        <svg
-          xmlns="http://www.w3.org/2000/svg"
-          class="h-8 w-8"
-          fill="none"
-          viewBox="0 0 24 24"
-          stroke="currentColor"
-          aria-hidden="true"
-        >
-          <path
-            stroke-linecap="round"
-            stroke-linejoin="round"
-            stroke-width="2"
-            d="M12 8c-1.657 0-3 .895-3 2s1.343 2 3 2 3 .895 3 2-1.343 2-3 2m0-8c1.11 0 2.08.402 2.599 1M12 8V7m0 1v8m0 0v1m0-1c-1.11 0-2.08-.402-2.599-1M21 12a9 9 0 11-18 0 9 9 0 0118 0z"
-          />
-        </svg>
+<div class="flex flex-col gap-6">
+  <div class="stats stats-vertical shadow lg:stats-horizontal w-full">
+    @if (isLoading()) {
+      <div class="stat">
+        <aw-skeleton height="1.5rem" width="60%"></aw-skeleton>
+        <aw-skeleton height="2.5rem" width="80%"></aw-skeleton>
+        <aw-skeleton height="1rem" width="50%"></aw-skeleton>
       </div>
-      <div class="stat-title">Total Revenue</div>
-      <div class="stat-value text-primary">{{ dashboard()!.totalRevenue | currency: 'USD' : 'symbol' : '1.0-0' }}</div>
-      <div class="stat-desc">All-time sales revenue</div>
-    </div>
-    <div class="stat">
-      <div class="stat-figure text-secondary">
-        <svg
-          xmlns="http://www.w3.org/2000/svg"
-          class="h-8 w-8"
-          fill="none"
-          viewBox="0 0 24 24"
-          stroke="currentColor"
-          aria-hidden="true"
-        >
-          <path
-            stroke-linecap="round"
-            stroke-linejoin="round"
-            stroke-width="2"
-            d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2"
-          />
-        </svg>
+      <div class="stat">
+        <aw-skeleton height="1.5rem" width="60%"></aw-skeleton>
+        <aw-skeleton height="2.5rem" width="80%"></aw-skeleton>
+        <aw-skeleton height="1rem" width="50%"></aw-skeleton>
       </div>
-      <div class="stat-title">Orders</div>
-      <div class="stat-value text-secondary">{{ dashboard()!.orderCount | number }}</div>
-      <div class="stat-desc">Total orders placed</div>
-    </div>
-    <div class="stat">
-      <div class="stat-figure text-accent">
-        <svg
-          xmlns="http://www.w3.org/2000/svg"
-          class="h-8 w-8"
-          fill="none"
-          viewBox="0 0 24 24"
-          stroke="currentColor"
-          aria-hidden="true"
-        >
-          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 7h8m0 0v8m0-8l-8 8-4-4-6 6" />
-        </svg>
+      <div class="stat">
+        <aw-skeleton height="1.5rem" width="60%"></aw-skeleton>
+        <aw-skeleton height="2.5rem" width="80%"></aw-skeleton>
+        <aw-skeleton height="1rem" width="50%"></aw-skeleton>
       </div>
-      <div class="stat-title">Avg Order Value</div>
-      <div class="stat-value text-accent">
-        {{ dashboard()!.averageOrderValue | currency: 'USD' : 'symbol' : '1.0-0' }}
+    } @else if (dashboard()) {
+      <div class="stat">
+        <div class="stat-figure text-primary">
+          <svg
+            xmlns="http://www.w3.org/2000/svg"
+            class="h-8 w-8"
+            fill="none"
+            viewBox="0 0 24 24"
+            stroke="currentColor"
+            aria-hidden="true"
+          >
+            <path
+              stroke-linecap="round"
+              stroke-linejoin="round"
+              stroke-width="2"
+              d="M12 8c-1.657 0-3 .895-3 2s1.343 2 3 2 3 .895 3 2-1.343 2-3 2m0-8c1.11 0 2.08.402 2.599 1M12 8V7m0 1v8m0 0v1m0-1c-1.11 0-2.08-.402-2.599-1M21 12a9 9 0 11-18 0 9 9 0 0118 0z"
+            />
+          </svg>
+        </div>
+        <div class="stat-title">Total Revenue</div>
+        <div class="stat-value text-primary">
+          {{ dashboard()!.totalRevenue | currency: 'USD' : 'symbol' : '1.0-0' }}
+        </div>
+        <div class="stat-desc">All-time sales revenue</div>
       </div>
-      <div class="stat-desc">Per order average</div>
+      <div class="stat">
+        <div class="stat-figure text-secondary">
+          <svg
+            xmlns="http://www.w3.org/2000/svg"
+            class="h-8 w-8"
+            fill="none"
+            viewBox="0 0 24 24"
+            stroke="currentColor"
+            aria-hidden="true"
+          >
+            <path
+              stroke-linecap="round"
+              stroke-linejoin="round"
+              stroke-width="2"
+              d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2"
+            />
+          </svg>
+        </div>
+        <div class="stat-title">Orders</div>
+        <div class="stat-value text-secondary">{{ dashboard()!.orderCount | number }}</div>
+        <div class="stat-desc">Total orders placed</div>
+      </div>
+      <div class="stat">
+        <div class="stat-figure text-accent">
+          <svg
+            xmlns="http://www.w3.org/2000/svg"
+            class="h-8 w-8"
+            fill="none"
+            viewBox="0 0 24 24"
+            stroke="currentColor"
+            aria-hidden="true"
+          >
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 7h8m0 0v8m0-8l-8 8-4-4-6 6" />
+          </svg>
+        </div>
+        <div class="stat-title">Avg Order Value</div>
+        <div class="stat-value text-accent">
+          {{ dashboard()!.averageOrderValue | currency: 'USD' : 'symbol' : '1.0-0' }}
+        </div>
+        <div class="stat-desc">Per order average</div>
+      </div>
+    }
+  </div>
+
+  <div class="card bg-base-100 shadow">
+    <div class="card-body">
+      <h2 class="card-title">Monthly Revenue Trend</h2>
+      @if (isLoading()) {
+        <aw-skeleton height="16rem" width="100%"></aw-skeleton>
+      } @else if (dashboard()) {
+        <aw-trend-chart [data]="dashboard()!.monthlySalesTrend" />
+      }
     </div>
-  }
+  </div>
+
+  <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
+    @if (isLoading()) {
+      <aw-skeleton height="20rem" width="100%"></aw-skeleton>
+      <aw-skeleton height="20rem" width="100%"></aw-skeleton>
+    } @else if (dashboard()) {
+      <aw-top-performers [performers]="dashboard()!.topPerformers" />
+      <aw-territory-breakdown [territories]="dashboard()!.territoryBreakdown" />
+    }
+  </div>
 </div>

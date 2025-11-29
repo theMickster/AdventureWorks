@@ -50,7 +50,8 @@ public sealed class SalesDashboardRepository(AdventureWorksDbContext dbContext)
             {
                 sp.BusinessEntityId,
                 sp.Employee.PersonBusinessEntity.FirstName,
-                sp.Employee.PersonBusinessEntity.LastName
+                sp.Employee.PersonBusinessEntity.LastName,
+                TerritoryName = sp.SalesTerritory != null ? sp.SalesTerritory.Name : string.Empty
             })
             .ToListAsync(cancellationToken);
 
@@ -61,6 +62,7 @@ public sealed class SalesDashboardRepository(AdventureWorksDbContext dbContext)
             {
                 SalesPersonId = agg.SalesPersonId,
                 Name = person is not null ? $"{person.FirstName} {person.LastName}" : string.Empty,
+                Territory = person?.TerritoryName ?? string.Empty,
                 Revenue = agg.Revenue,
                 OrderCount = agg.OrderCount
             };
@@ -80,7 +82,7 @@ public sealed class SalesDashboardRepository(AdventureWorksDbContext dbContext)
         var territories = await _dbContext.SalesTerritories
             .AsNoTracking()
             .Where(t => territoryIds.Contains(t.TerritoryId))
-            .Select(t => new { t.TerritoryId, t.Name, t.CountryRegionCode })
+            .Select(t => new { t.TerritoryId, t.Name, t.CountryRegionCode, t.Group })
             .ToListAsync(cancellationToken);
 
         var territoryBreakdown = territoryAggregates.Select(agg =>
@@ -91,6 +93,7 @@ public sealed class SalesDashboardRepository(AdventureWorksDbContext dbContext)
                 TerritoryId = agg.TerritoryId,
                 Name = territory?.Name ?? string.Empty,
                 CountryCode = territory?.CountryRegionCode ?? string.Empty,
+                Group = territory?.Group ?? string.Empty,
                 OrderCount = agg.OrderCount,
                 Revenue = agg.Revenue
             };

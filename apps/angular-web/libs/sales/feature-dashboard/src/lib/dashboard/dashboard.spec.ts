@@ -10,6 +10,12 @@ import { setError, setLoaded, setLoading } from '@adventureworks-web/shared/data
 import { DashboardStore } from '@adventureworks-web/sales/data-access';
 import { DashboardComponent } from './dashboard';
 
+vi.mock('chart.js', () => {
+  const Chart = vi.fn().mockImplementation(function() { return {}; });
+  (Chart as unknown as { register: () => void }).register = vi.fn();
+  return { Chart, LineController: {}, LineElement: {}, PointElement: {}, LinearScale: {}, CategoryScale: {}, Tooltip: {} };
+});
+
 const mockEnvironment = {
   production: false,
   api: {
@@ -21,9 +27,18 @@ const mockDashboard = {
   totalRevenue: 123216786.12,
   orderCount: 31465,
   averageOrderValue: 3915.99,
-  topPerformers: [],
-  territoryBreakdown: [],
-  monthlySalesTrend: [],
+  topPerformers: [
+    { salesPersonId: 275, name: 'Michael Blythe', territory: 'Northwest', revenue: 9293903, orderCount: 450 },
+    { salesPersonId: 276, name: 'Linda Mitchell', territory: 'Southwest', revenue: 8845979, orderCount: 418 },
+  ],
+  territoryBreakdown: [
+    { territoryId: 4, name: 'Southwest', group: 'North America', countryCode: 'US', revenue: 22000000, orderCount: 3421 },
+    { territoryId: 6, name: 'France', group: 'Europe', countryCode: 'FR', revenue: 5000000, orderCount: 800 },
+  ],
+  monthlySalesTrend: [
+    { year: 2012, month: 7, revenue: 800000, orderCount: 210 },
+    { year: 2012, month: 8, revenue: 850000, orderCount: 230 },
+  ],
 };
 
 describe('DashboardComponent', () => {
@@ -58,12 +73,13 @@ describe('DashboardComponent', () => {
     expect(component).toBeTruthy();
   });
 
-  it('shows 3 skeleton blocks while isLoading', () => {
+  it('shows skeleton elements while isLoading', () => {
     patchState(unprotected(dashboardStore), setLoading());
     fixture.detectChanges();
 
     const skeletons = fixture.nativeElement.querySelectorAll('aw-skeleton');
-    expect(skeletons.length).toBe(9); // 3 blocks × 3 skeletons each
+    // stats row: 3 blocks × 3 = 9, trend chart: 1, grid: 2 — total 12
+    expect(skeletons.length).toBe(12);
   });
 
   it('renders 3 stat cards with formatted values when loaded', async () => {
@@ -95,5 +111,41 @@ describe('DashboardComponent', () => {
     await fixture.whenStable();
 
     expect(notificationService.error).toHaveBeenCalledWith('Failed to load dashboard KPIs. Please try again.');
+  });
+
+  it('renders trend chart when loaded', async () => {
+    fixture.detectChanges();
+    await fixture.whenStable();
+
+    patchState(unprotected(dashboardStore), { dashboard: mockDashboard }, setLoaded());
+    fixture.detectChanges();
+    await fixture.whenStable();
+
+    const trendChart = fixture.nativeElement.querySelector('aw-trend-chart');
+    expect(trendChart).toBeTruthy();
+  });
+
+  it('renders top performers when loaded', async () => {
+    fixture.detectChanges();
+    await fixture.whenStable();
+
+    patchState(unprotected(dashboardStore), { dashboard: mockDashboard }, setLoaded());
+    fixture.detectChanges();
+    await fixture.whenStable();
+
+    const topPerformers = fixture.nativeElement.querySelector('aw-top-performers');
+    expect(topPerformers).toBeTruthy();
+  });
+
+  it('renders territory breakdown when loaded', async () => {
+    fixture.detectChanges();
+    await fixture.whenStable();
+
+    patchState(unprotected(dashboardStore), { dashboard: mockDashboard }, setLoaded());
+    fixture.detectChanges();
+    await fixture.whenStable();
+
+    const territoryBreakdown = fixture.nativeElement.querySelector('aw-territory-breakdown');
+    expect(territoryBreakdown).toBeTruthy();
   });
 });

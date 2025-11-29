@@ -114,6 +114,13 @@ Unhandled exception types fall through to a 500 with a sanitized generic message
 Any new expected exception type used for normal API flows must be translated in middleware or handled explicitly in the controller in the same change.
 See: `AdventureWorks.API/libs/Middleware/ExceptionHandlerMiddleware.cs`
 
+#### Sales Dashboard Repository (`SalesDashboardRepository`)
+
+`GetDashboardAsync` runs 7 queries. Two are relevant to the widget data added in Feature 713:
+
+- **Query 3** (top performers): Joins `sp.SalesTerritory` to project `SalesTerritory.Name` as `TerritoryName` for each of the top-5 sales persons. The join is a separate query from Query 2's GroupBy aggregation — EF Core GroupBy behavior makes the join unsafe in a single query.
+- **Query 5** (territories): Selects `t.Group` from `SalesTerritories` in addition to `TerritoryId`, `Name`, and `CountryRegionCode`. `Group` drives the alphabetical region grouping in `TerritoryBreakdownComponent`.
+
 #### Real-Time Infrastructure (SignalR + MediatR Notification Pipeline)
 
 - **Hub endpoint**: `/hubs/dashboard` — `DashboardHub`, requires JWT via `[Authorize(Policy = "DashboardAccess")]`. WebSocket auth passes the token as a query string (`access_token`); the middleware in `Program.cs` maps it to the `Authorization` header automatically.

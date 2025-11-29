@@ -3,11 +3,14 @@ import { ChangeDetectionStrategy, Component, effect, inject, OnInit } from '@ang
 import { DashboardStore } from '@adventureworks-web/sales/data-access';
 import { SkeletonComponent } from '@adventureworks-web/shared/ui';
 import { NotificationService } from '@adventureworks-web/shared/util';
+import { TopPerformersComponent } from '../top-performers/top-performers';
+import { TrendChartComponent } from '../trend-chart/trend-chart';
+import { TerritoryBreakdownComponent } from '../territory-breakdown/territory-breakdown';
 
 @Component({
   selector: 'aw-dashboard',
   standalone: true,
-  imports: [CurrencyPipe, DecimalPipe, SkeletonComponent],
+  imports: [CurrencyPipe, DecimalPipe, SkeletonComponent, TrendChartComponent, TopPerformersComponent, TerritoryBreakdownComponent],
   templateUrl: './dashboard.html',
   changeDetection: ChangeDetectionStrategy.OnPush,
 })

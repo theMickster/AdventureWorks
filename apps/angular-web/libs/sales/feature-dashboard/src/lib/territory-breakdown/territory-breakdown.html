@@ -1,0 +1,31 @@
+<div class="card bg-base-100 shadow">
+  <div class="card-body">
+    <h2 class="card-title">Territory Breakdown</h2>
+    @for (entry of grouped(); track entry[0]) {
+      <h3 class="font-semibold text-base-content/70 mt-4 mb-1">{{ entry[0] }}</h3>
+      <table class="table table-zebra w-full">
+        <thead>
+          <tr>
+            <th>Territory</th>
+            <th class="text-right">Revenue</th>
+            <th class="text-right">Orders</th>
+          </tr>
+        </thead>
+        <tbody>
+          @for (t of entry[1]; track t.territoryId) {
+            <tr
+              class="cursor-pointer hover:bg-base-200"
+              tabindex="0"
+              (click)="onTerritoryClick(t.territoryId)"
+              (keydown.enter)="onTerritoryClick(t.territoryId)"
+            >
+              <td>{{ t.name }}</td>
+              <td class="text-right">{{ t.revenue | currency: 'USD' : 'symbol' : '1.0-0' }}</td>
+              <td class="text-right">{{ t.orderCount | number }}</td>
+            </tr>
+          }
+        </tbody>
+      </table>
+    }
+  </div>
+</div>

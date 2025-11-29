@@ -64,7 +64,7 @@
 
 #### Additional Initiative 1 Epics (ADO status)
 
-- 🚧 #561 Sales CRUD UI — In Progress (8 child features); ✅ Feature 713 / US-739 (Dashboard KPI UI) done
+- 🚧 #561 Sales CRUD UI — In Progress (8 child features); ✅ Feature 713 (Sales Dashboard) done
 - 📋 #562 HR CRUD UI — New (5 child features)
 - 📋 #563 Real-Time Dashboard — New (5 child features)
 - 📋 #935 Customer Module — New (4 child features)

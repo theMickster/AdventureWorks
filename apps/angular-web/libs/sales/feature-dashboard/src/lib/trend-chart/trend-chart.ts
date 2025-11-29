@@ -1,0 +1,82 @@
+import { afterNextRender, ChangeDetectionStrategy, Component, ElementRef, input, OnDestroy, viewChild } from '@angular/core';
+import { Chart, CategoryScale, LinearScale, LineController, LineElement, PointElement, Tooltip } from 'chart.js';
+import { DashboardMonthlySalesTrend } from '@adventureworks-web/sales/data-access';
+
+Chart.register(LineController, LineElement, PointElement, LinearScale, CategoryScale, Tooltip);
+
+/**
+ * Renders a Chart.js line chart of monthly revenue for the trailing 24 months.
+ *
+ * The chart is a one-shot render driven by the `data` input at the time the
+ * component first lands in the DOM. Changing the input after initial render
+ * does not update the chart — the dashboard loads data once and never
+ * re-triggers this component.
+ */
+@Component({
+  selector: 'aw-trend-chart',
+  standalone: true,
+  imports: [],
+  templateUrl: './trend-chart.html',
+  changeDetection: ChangeDetectionStrategy.OnPush,
+})
+export class TrendChartComponent implements OnDestroy {
+  readonly data = input.required<DashboardMonthlySalesTrend[]>();
+  private readonly chartCanvas = viewChild.required<ElementRef<HTMLCanvasElement>>('chartCanvas');
+  /**
+   * Stored so `ngOnDestroy` can call `chart.destroy()` and release the canvas
+   * WebGL/2D context. Without explicit destroy, Chart.js holds a reference to
+   * the canvas element and leaks GPU/memory resources when the component is
+   * removed from the DOM.
+   */
+  private chart: Chart | null = null;
+
+  constructor() {
+    /**
+     * `afterNextRender` fires once after the first DOM render in the current
+     * scheduler tick — the earliest safe moment to read `viewChild` and
+     * manipulate the canvas. Using `ngAfterViewInit` is unsafe in zoneless
+     * apps because Angular does not guarantee change detection runs
+     * synchronously after lifecycle hooks without Zone.js.
+     */
+    afterNextRender(() => {
+      const points = this.data();
+      const labels = points.map(
+        (p) => new Date(p.year, p.month - 1).toLocaleDateString('en-US', { month: 'short', year: 'numeric' })
+      );
+      const revenues = points.map((p) => p.revenue);
+      const formatter = new Intl.NumberFormat('en-US', { style: 'currency', currency: 'USD', maximumFractionDigits: 0 });
+
+      this.chart = new Chart(this.chartCanvas().nativeElement, {
+        type: 'line',
+        data: {
+          labels,
+          datasets: [
+            {
+              data: revenues,
+              borderColor: '#0891b2',
+              backgroundColor: 'rgba(8, 145, 178, 0.1)',
+              tension: 0.3,
+              fill: true,
+            },
+          ],
+        },
+        options: {
+          responsive: true,
+          maintainAspectRatio: false,
+          plugins: {
+            tooltip: {
+              callbacks: {
+                label: (ctx) => (ctx.parsed.y === null ? '' : formatter.format(ctx.parsed.y)),
+              },
+            },
+          },
+        },
+      });
+    });
+  }
+
+  ngOnDestroy(): void {
+    this.chart?.destroy?.();
+    this.chart = null;
+  }
+}
