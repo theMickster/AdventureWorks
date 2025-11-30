@@ -1,0 +1,14 @@
+namespace AdventureWorks.Models.Features.Sales;
+
+/// <summary>Revenue total for a single calendar month within an analytics trend series.</summary>
+public sealed class SalesOrderMonthlyTrendModel
+{
+    /// <summary>Four-digit calendar year (e.g. 2013).</summary>
+    public int Year { get; set; }
+
+    /// <summary>Calendar month, 1–12.</summary>
+    public int Month { get; set; }
+
+    /// <summary>Sum of TotalDue for all orders in this month.</summary>
+    public decimal Revenue { get; set; }
+}

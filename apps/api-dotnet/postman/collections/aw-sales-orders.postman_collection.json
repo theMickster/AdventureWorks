@@ -1088,6 +1088,118 @@
           ]
         },
         {
+          "name": "Analytics",
+          "item": [
+            {
+              "name": "Sales Orders Analytics - Empty Filter",
+              "event": [
+                {
+                  "listen": "test",
+                  "script": {
+                    "exec": [
+                      "pm.test(\"Status is 200 OK\", () => pm.response.to.have.status(200));\r",
+                      "const body = pm.response.json();\r",
+                      "pm.test(\"totalRevenue is a number\", () => pm.expect(body.totalRevenue).to.be.a(\"number\"));\r",
+                      "pm.test(\"orderCount is a number\", () => pm.expect(body.orderCount).to.be.a(\"number\"));\r",
+                      "pm.test(\"percentageOfTotal is a number\", () => pm.expect(body.percentageOfTotal).to.be.a(\"number\"));\r",
+                      "pm.test(\"monthlyTrend is an array\", () => pm.expect(body.monthlyTrend).to.be.an(\"array\"));\r",
+                      "pm.test(\"monthlyTrend entries have year/month/revenue\", () => {\r",
+                      "    body.monthlyTrend.forEach(entry => {\r",
+                      "        pm.expect(entry.year).to.be.a(\"number\");\r",
+                      "        pm.expect(entry.month).to.be.a(\"number\");\r",
+                      "        pm.expect(entry.revenue).to.be.a(\"number\");\r",
+                      "    });\r",
+                      "});\r",
+                      "pm.test(\"Has X-Correlation-Id header\", () => pm.response.to.have.header(\"X-Correlation-Id\"));"
+                    ],
+                    "type": "text/javascript"
+                  }
+                }
+              ],
+              "request": {
+                "method": "POST",
+                "header": [
+                  {
+                    "key": "Content-Type",
+                    "value": "application/json"
+                  }
+                ],
+                "body": {
+                  "mode": "raw",
+                  "raw": "{}",
+                  "options": {
+                    "raw": {
+                      "language": "json"
+                    }
+                  }
+                },
+                "url": {
+                  "raw": "{{adventureWorksApi}}/{{apiVersion}}/sales-orders/analytics",
+                  "host": [
+                    "{{adventureWorksApi}}"
+                  ],
+                  "path": [
+                    "{{apiVersion}}",
+                    "sales-orders",
+                    "analytics"
+                  ]
+                }
+              },
+              "response": []
+            },
+            {
+              "name": "Sales Orders Analytics - With Filter (2013, Territory 2)",
+              "event": [
+                {
+                  "listen": "test",
+                  "script": {
+                    "exec": [
+                      "pm.test(\"Status is 200 OK\", () => pm.response.to.have.status(200));\r",
+                      "const body = pm.response.json();\r",
+                      "pm.test(\"orderCount is greater than 0\", () => pm.expect(body.orderCount).to.be.above(0));\r",
+                      "pm.test(\"totalRevenue is greater than 0\", () => pm.expect(body.totalRevenue).to.be.above(0));\r",
+                      "pm.test(\"monthlyTrend has entries\", () => pm.expect(body.monthlyTrend.length).to.be.above(0));\r",
+                      "pm.test(\"first trend entry year is 2013\", () => pm.expect(body.monthlyTrend[0].year).to.eq(2013));\r",
+                      "pm.test(\"Has X-Correlation-Id header\", () => pm.response.to.have.header(\"X-Correlation-Id\"));"
+                    ],
+                    "type": "text/javascript"
+                  }
+                }
+              ],
+              "request": {
+                "method": "POST",
+                "header": [
+                  {
+                    "key": "Content-Type",
+                    "value": "application/json"
+                  }
+                ],
+                "body": {
+                  "mode": "raw",
+                  "raw": "{\n  \"orderDateFrom\": \"2013-01-01\",\n  \"orderDateTo\": \"2013-12-31\",\n  \"territoryId\": 2\n}",
+                  "options": {
+                    "raw": {
+                      "language": "json"
+                    }
+                  }
+                },
+                "url": {
+                  "raw": "{{adventureWorksApi}}/{{apiVersion}}/sales-orders/analytics",
+                  "host": [
+                    "{{adventureWorksApi}}"
+                  ],
+                  "path": [
+                    "{{apiVersion}}",
+                    "sales-orders",
+                    "analytics"
+                  ]
+                }
+              },
+              "response": []
+            }
+          ]
+        },
+        {
           "name": "Validation",
           "item": [
             {

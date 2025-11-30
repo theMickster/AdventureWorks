@@ -1,5 +1,6 @@
 using AdventureWorks.Common.Filtering;
 using AdventureWorks.Domain.Entities.Sales;
+using AdventureWorks.Models.Features.Sales;
 
 namespace AdventureWorks.Application.PersistenceContracts.Repositories.Sales;
 
@@ -39,5 +40,17 @@ public interface ISalesOrderRepository : IAsyncRepository<SalesOrderHeader>
     /// <returns>The matching <see cref="SalesOrderHeader"/>, or null if not found</returns>
     Task<SalesOrderHeader?> GetSalesOrderDetailAsync(
         int salesOrderId,
+        CancellationToken cancellationToken = default);
+
+    /// <summary>
+    /// Returns aggregated analytics — total revenue, order count, percentage of the unfiltered total,
+    /// and a monthly revenue trend — for the slice of orders matching the optional filter.
+    /// Monthly trend is capped at 24 entries ordered by year and month ascending; date ranges
+    /// spanning more than 24 months will have the oldest months silently dropped.
+    /// </summary>
+    /// <param name="filter">Optional filter criteria. Null means no filter (full dataset).</param>
+    /// <param name="cancellationToken">token to cancel the operation</param>
+    Task<SalesOrderAnalyticsModel> GetSalesOrderAnalyticsAsync(
+        SalesOrderSearchModel? filter,
         CancellationToken cancellationToken = default);
 }

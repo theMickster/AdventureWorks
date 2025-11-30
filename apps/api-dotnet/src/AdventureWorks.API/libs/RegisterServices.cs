@@ -233,21 +233,36 @@ internal static class RegisterServices
         var sqlAzureConnectionString = 
             configuration.GetConnectionString(ConfigurationConstants.SqlConnectionSqlAzureConnectionName);
 
-        if (string.IsNullOrWhiteSpace(defaultConnectionString))
+        var loadTestingConnectionString =
+            configuration.GetConnectionString(ConfigurationConstants.SqlConnectionLoadTestingConnectionName);
+
+        var playwrightTestingConnectionString =
+            configuration.GetConnectionString(ConfigurationConstants.SqlConnectionPlaywrightTestingConnectionName);
+
+        if (string.IsNullOrWhiteSpace(defaultConnectionString) &&
+            string.IsNullOrWhiteSpace(sqlAzureConnectionString) &&
+            string.IsNullOrWhiteSpace(loadTestingConnectionString) &&
+            string.IsNullOrWhiteSpace(playwrightTestingConnectionString))
         {
             throw new ConfigurationException(
-                $"The required Configuration value for {ConfigurationConstants.SqlConnectionDefaultConnectionName} is missing." +
+                "At least one database ConnectionStrings value must be configured. " +
+                $"Supported names: {ConfigurationConstants.SqlConnectionDefaultConnectionName}, " +
+                $"{ConfigurationConstants.SqlConnectionSqlAzureConnectionName}, " +
+                $"{ConfigurationConstants.SqlConnectionLoadTestingConnectionName}, " +
+                $"{ConfigurationConstants.SqlConnectionPlaywrightTestingConnectionName}. " +
                 "Please verify database configuration.");
         }
         
-        var connectionStrings = new List<DatabaseConnectionString>
+        var connectionStrings = new List<DatabaseConnectionString>();
+
+        if (!string.IsNullOrWhiteSpace(defaultConnectionString))
         {
-            new()
+            connectionStrings.Add(new DatabaseConnectionString
             {
                 ConnectionStringName = ConfigurationConstants.SqlConnectionDefaultConnectionName,
                 ConnectionString = defaultConnectionString
-            }
-        };
+            });
+        }
 
         if (!string.IsNullOrWhiteSpace(sqlAzureConnectionString))
         {
@@ -255,6 +270,24 @@ internal static class RegisterServices
             {
                 ConnectionStringName = ConfigurationConstants.SqlConnectionSqlAzureConnectionName,
                 ConnectionString = sqlAzureConnectionString
+            });
+        }
+
+        if (!string.IsNullOrWhiteSpace(loadTestingConnectionString))
+        {
+            connectionStrings.Add(new DatabaseConnectionString
+            {
+                ConnectionStringName = ConfigurationConstants.SqlConnectionLoadTestingConnectionName,
+                ConnectionString = loadTestingConnectionString
+            });
+        }
+
+        if (!string.IsNullOrWhiteSpace(playwrightTestingConnectionString))
+        {
+            connectionStrings.Add(new DatabaseConnectionString
+            {
+                ConnectionStringName = ConfigurationConstants.SqlConnectionPlaywrightTestingConnectionName,
+                ConnectionString = playwrightTestingConnectionString
             });
         }
 

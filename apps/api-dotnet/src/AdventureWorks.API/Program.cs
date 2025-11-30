@@ -43,7 +43,10 @@ builder.Configuration
     .AddUserSecrets<Program>()
     .Build();
 
-var skipExternalConfig = !environment.IsEnvironment("Docker") && !environment.IsEnvironment("Testing");
+var skipExternalConfig = !environment.IsEnvironment("Docker") &&
+                         !environment.IsEnvironment("Testing") &&
+                         !environment.IsEnvironment("LoadTesting") &&
+                         !environment.IsEnvironment("PlaywrightTesting");
 
 if (skipExternalConfig)
 {

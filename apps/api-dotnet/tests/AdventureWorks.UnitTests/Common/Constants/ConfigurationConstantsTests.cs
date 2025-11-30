@@ -19,6 +19,8 @@ public sealed class ConfigurationConstantsTests
             ConfigurationConstants.ApplicationEnvironment02.Should().Be("APPSETTING_ASPNETCORE_ENVIRONMENT");
             ConfigurationConstants.SqlConnectionDefaultConnectionName.Should().Be("DefaultConnection");
             ConfigurationConstants.SqlConnectionSqlAzureConnectionName.Should().Be("SqlAzureConnection");
+            ConfigurationConstants.SqlConnectionLoadTestingConnectionName.Should().Be("LoadTestingConnection");
+            ConfigurationConstants.SqlConnectionPlaywrightTestingConnectionName.Should().Be("PlaywrightTestingConnection");
             ConfigurationConstants.CurrentConnectionStringNameKey.Should().Be("CurrentConnectionStringName");
             ConfigurationConstants.AutoMapperLicenseKey.Should().Be("AutoMapperLicenseKey");
         }

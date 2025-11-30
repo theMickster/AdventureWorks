@@ -4,6 +4,7 @@ using AdventureWorks.Common.Constants;
 using AdventureWorks.Common.Filtering;
 using AdventureWorks.Domain.Entities.Sales;
 using AdventureWorks.Infrastructure.Persistence.DbContexts;
+using AdventureWorks.Models.Features.Sales;
 using Microsoft.EntityFrameworkCore;
 
 namespace AdventureWorks.Infrastructure.Persistence.Repositories.Sales;
@@ -119,6 +120,86 @@ public sealed class SalesOrderRepository(AdventureWorksDbContext dbContext)
             .Include(x => x.CustomerEntity)
                 .ThenInclude(c => c.StoreEntity)
             .FirstOrDefaultAsync(x => x.SalesOrderId == salesOrderId, cancellationToken);
+    }
+
+    /// <summary>
+    /// Returns aggregated analytics for the filtered order slice.
+    /// </summary>
+    /// <param name="filter">Optional filter criteria. Null means no filter (full dataset).</param>
+    /// <param name="cancellationToken">token to cancel the operation</param>
+    public async Task<SalesOrderAnalyticsModel> GetSalesOrderAnalyticsAsync(
+        SalesOrderSearchModel? filter,
+        CancellationToken cancellationToken = default)
+    {
+        var filteredQuery = DbContext.SalesOrderHeaders.AsNoTracking().AsQueryable();
+
+        if (filter != null)
+        {
+            if (filter.OrderDateFrom.HasValue)
+            {
+                filteredQuery = filteredQuery.Where(x => x.OrderDate >= filter.OrderDateFrom.Value);
+            }
+
+            if (filter.OrderDateTo.HasValue)
+            {
+                filteredQuery = filteredQuery.Where(x => x.OrderDate <= filter.OrderDateTo.Value);
+            }
+
+            if (filter.Status.HasValue)
+            {
+                filteredQuery = filteredQuery.Where(x => x.Status == filter.Status.Value);
+            }
+
+            if (filter.SalesPersonId.HasValue)
+            {
+                filteredQuery = filteredQuery.Where(x => x.SalesPersonId == filter.SalesPersonId.Value);
+            }
+
+            if (filter.TerritoryId.HasValue)
+            {
+                filteredQuery = filteredQuery.Where(x => x.TerritoryId == filter.TerritoryId.Value);
+            }
+
+            if (!string.IsNullOrWhiteSpace(filter.AccountNumber))
+            {
+                filteredQuery = filteredQuery.Where(x => x.AccountNumber == filter.AccountNumber.Trim());
+            }
+        }
+
+        var orderCount = await filteredQuery.CountAsync(cancellationToken);
+
+        // Early return avoids three unnecessary aggregate queries when no orders match.
+        if (orderCount == 0)
+        {
+            return new SalesOrderAnalyticsModel { MonthlyTrend = [] };
+        }
+
+        var totalRevenue = await filteredQuery.SumAsync(x => x.TotalDue, cancellationToken);
+
+        var monthlyTrend = await filteredQuery
+            .GroupBy(x => new { x.OrderDate.Year, x.OrderDate.Month })
+            .Select(g => new SalesOrderMonthlyTrendModel
+            {
+                Year = g.Key.Year,
+                Month = g.Key.Month,
+                Revenue = g.Sum(x => x.TotalDue)
+            })
+            .OrderBy(x => x.Year).ThenBy(x => x.Month)
+            .Take(24)
+            .ToListAsync(cancellationToken);
+
+        // When no filter is applied the filtered total equals the unfiltered total, so skip the second query.
+        var unfilteredTotal = filter is null
+            ? totalRevenue
+            : await DbContext.SalesOrderHeaders.AsNoTracking().SumAsync(x => x.TotalDue, cancellationToken);
+
+        return new SalesOrderAnalyticsModel
+        {
+            TotalRevenue = totalRevenue,
+            OrderCount = orderCount,
+            PercentageOfTotal = unfilteredTotal > 0 ? totalRevenue / unfilteredTotal * 100 : 0,
+            MonthlyTrend = monthlyTrend.AsReadOnly()
+        };
     }
 
     /// <summary>

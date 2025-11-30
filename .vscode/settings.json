@@ -110,6 +110,30 @@
       "base": "api", // The existing icon you want to clone
       "color": "blue-500", // The material palette color you want (e.g., purple-400, purple-500, #A259FF)
       "folderNames": ["AdventureWorks.API"] // The folder(s) that should use this new icon
+    },
+    {
+      "name": "purple-test",
+      "base": "test", // The existing icon you want to clone
+      "color": "purple-600", // The material palette color you want (e.g., purple-400, purple-500, #A259FF)
+      "folderNames": ["AdventureWorks.LoadTests.k6"] // The folder(s) that should use this new icon
+    },
+    {
+      "name": "pink-test",
+      "base": "test", // The existing icon you want to clone
+      "color": "pink-500", // The material palette color you want (e.g., purple-400, purple-500, #A259FF)
+      "folderNames": ["AdventureWorks.IntegrationTests"] // The folder(s) that should use this new icon
+    },
+    {
+      "name": "blue-api",
+      "base": "api", // The existing icon you want to clone
+      "color": "blue-500", // The material palette color you want (e.g., purple-400, purple-500, #A259FF)
+      "folderNames": ["Endpoints"] // The folder(s) that should use this new icon
+    },
+    {
+      "name": "blue-seeders",
+      "base": "seeders", // The existing icon you want to clone
+      "color": "blue-500", // The material palette color you want (e.g., purple-400, purple-500, #A259FF)
+      "folderNames": ["Setup"] // The folder(s) that should use this new icon
     }
   ]
 }

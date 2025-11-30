@@ -121,6 +121,16 @@ See: `AdventureWorks.API/libs/Middleware/ExceptionHandlerMiddleware.cs`
 - **Query 3** (top performers): Joins `sp.SalesTerritory` to project `SalesTerritory.Name` as `TerritoryName` for each of the top-5 sales persons. The join is a separate query from Query 2's GroupBy aggregation — EF Core GroupBy behavior makes the join unsafe in a single query.
 - **Query 5** (territories): Selects `t.Group` from `SalesTerritories` in addition to `TerritoryId`, `Name`, and `CountryRegionCode`. `Group` drives the alphabetical region grouping in `TerritoryBreakdownComponent`.
 
+#### Sales Order Analytics Repository (`SalesOrderRepository.GetSalesOrderAnalyticsAsync`)
+
+Aggregate-only query — uses a bare `DbContext.SalesOrderHeaders.AsNoTracking()` base with **no `.Include()` chains**. Only scalar columns (`TotalDue`, `OrderDate`, filter predicate columns) are needed; joins cause EF Core `GroupBy` to evaluate client-side.
+
+Key invariants:
+- Applies the same nullable filter predicates as `SearchSalesOrdersAsync`.
+- Early-returns `new SalesOrderAnalyticsModel { MonthlyTrend = [] }` when `CountAsync == 0` — avoids three unnecessary aggregate queries.
+- Monthly trend is capped at 24 entries (`.Take(24)`) ordered by year/month ascending — documented in the interface XML doc.
+- When `filter == null`, `PercentageOfTotal` is always 100; the unfiltered `SumAsync` is skipped (`unfilteredTotal = totalRevenue`).
+
 #### Real-Time Infrastructure (SignalR + MediatR Notification Pipeline)
 
 - **Hub endpoint**: `/hubs/dashboard` — `DashboardHub`, requires JWT via `[Authorize(Policy = "DashboardAccess")]`. WebSocket auth passes the token as a query string (`access_token`); the middleware in `Program.cs` maps it to the `Authorization` header automatically.

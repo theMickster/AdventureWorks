@@ -70,8 +70,8 @@ public sealed class ReadSalesOrderController : ControllerBase
     {
         // Create search model if any filter is specified
         SalesOrderSearchModel? searchModel = null;
-        if (parameters.OrderDateFrom.HasValue || parameters.OrderDateTo.HasValue || 
-            parameters.Status.HasValue || parameters.SalesPersonId.HasValue || 
+        if (parameters.OrderDateFrom.HasValue || parameters.OrderDateTo.HasValue ||
+            parameters.Status.HasValue || parameters.SalesPersonId.HasValue ||
             parameters.TerritoryId.HasValue)
         {
             searchModel = new SalesOrderSearchModel
@@ -167,6 +167,27 @@ public sealed class ReadSalesOrderController : ControllerBase
             SearchModel = searchModel
         };
         var result = await _mediator.Send(query, cancellationToken);
+        return Ok(result);
+    }
+
+    /// <summary>
+    /// Returns aggregated analytics for a filtered slice of sales orders.
+    /// </summary>
+    /// <remarks>
+    /// POST is used because the filter is supplied in the request body.
+    /// A null or empty body returns analytics for the full dataset.
+    /// </remarks>
+    [HttpPost("analytics")]
+    [Authorize]
+    [ProducesResponseType(typeof(SalesOrderAnalyticsModel), StatusCodes.Status200OK)]
+    [ProducesResponseType(StatusCodes.Status400BadRequest)]
+    [ProducesResponseType(StatusCodes.Status401Unauthorized)]
+    public async Task<IActionResult> GetAnalyticsAsync(
+        [FromBody] SalesOrderSearchModel? filter,
+        CancellationToken cancellationToken = default)
+    {
+        var result = await _mediator.Send(
+            new GetSalesOrderAnalyticsQuery { Filter = filter }, cancellationToken);
         return Ok(result);
     }
 }

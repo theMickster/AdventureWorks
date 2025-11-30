@@ -9,6 +9,7 @@ import type { SalesOrder } from '../models/sales-order.model';
 import type { StoreSearchBody } from '../models/store-search.model';
 import type { SalesPersonSearchBody } from '../models/sales-person-search.model';
 import type { SearchResult } from '@adventureworks-web/shared/data-access';
+import type { SalesOrderAnalytics, SalesOrderAnalyticsFilter } from '../models/sales-order-analytics.model';
 
 const mockEnvironment = {
   production: false,
@@ -546,6 +547,33 @@ describe('SalesApiService', () => {
       );
       expect(req.request.method).toBe('GET');
       req.flush(mockData);
+    });
+
+    it('getOrderAnalytics POSTs to /v1/sales-orders/analytics with filter body and maps response', () => {
+      const filter: SalesOrderAnalyticsFilter = {
+        orderDateFrom: '2013-01-01',
+        orderDateTo: '2013-12-31',
+        territoryId: 2,
+      };
+      const mockAnalytics: SalesOrderAnalytics = {
+        totalRevenue: 500000,
+        orderCount: 42,
+        percentageOfTotal: 15.5,
+        monthlyTrend: [
+          { year: 2013, month: 1, revenue: 50000 },
+          { year: 2013, month: 2, revenue: 45000 },
+        ],
+      };
+
+      let result: SalesOrderAnalytics | undefined;
+      service.getOrderAnalytics(filter).subscribe((r) => (result = r));
+
+      const req = httpTesting.expectOne(`${BASE_URL}/v1/sales-orders/analytics`);
+      expect(req.request.method).toBe('POST');
+      expect(req.request.body).toEqual(filter);
+      req.flush(mockAnalytics);
+
+      expect(result).toEqual(mockAnalytics);
     });
   });
 });

@@ -48,6 +48,16 @@ public static class ConfigurationConstants
     public const string SqlConnectionSqlAzureConnectionName = "SqlAzureConnection";
 
     /// <summary>
+    /// Load-testing SQL Server Connection string name
+    /// </summary>
+    public const string SqlConnectionLoadTestingConnectionName = "LoadTestingConnection";
+
+    /// <summary>
+    /// Playwright E2E SQL Server Connection string name
+    /// </summary>
+    public const string SqlConnectionPlaywrightTestingConnectionName = "PlaywrightTestingConnection";
+
+    /// <summary>
     /// The configuration key used for setting the default Sql connection string
     /// </summary>
     public const string CurrentConnectionStringNameKey = "CurrentConnectionStringName";

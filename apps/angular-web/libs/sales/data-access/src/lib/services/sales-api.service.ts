@@ -7,6 +7,7 @@ import type { Store, StoreCreate, StoreUpdate } from '../models/store.model';
 import type { SalesPerson, SalesPersonCreate, SalesPersonPerformance, SalesPersonSalesConfigUpdate, SalesPersonUpdate } from '../models/sales-person.model';
 import type { SalesOrder, SalesOrderDetail } from '../models/sales-order.model';
 import type { SalesDashboard } from '../models/sales-dashboard.model';
+import type { SalesOrderAnalytics, SalesOrderAnalyticsFilter } from '../models/sales-order-analytics.model';
 import type { SalesOrderParams } from '../models/sales-order-params.model';
 import type { StoreParams } from '../models/store-params.model';
 import type { SalesPersonParams } from '../models/sales-person-params.model';
@@ -84,5 +85,10 @@ export class SalesApiService {
 
   getSalesDashboard(): Observable<SalesDashboard> {
     return this.apiService.get<SalesDashboard>('/v1/sales/dashboard');
+  }
+
+  /** POSTs filter body to /v1/sales-orders/analytics; returns server-computed aggregates. */
+  getOrderAnalytics(filter: SalesOrderAnalyticsFilter): Observable<SalesOrderAnalytics> {
+    return this.apiService.post<SalesOrderAnalytics>('/v1/sales-orders/analytics', filter);
   }
 }
