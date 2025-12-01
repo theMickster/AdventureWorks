@@ -5115,6 +5115,124 @@
             }
           },
           "response": []
+        },
+        {
+          "name": "Get Sales Order Analytics",
+          "id": "f5a6b7c8-d9e0-1f2a-3b4c-5d6e7f8a9b0c",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test(\"Status is 200\", function () {",
+                  "    pm.response.to.have.status(200);",
+                  "});",
+                  "",
+                  "pm.test(\"Has X-Correlation-Id header\", function () {",
+                  "    pm.response.to.have.header(\"X-Correlation-Id\");",
+                  "});",
+                  "",
+                  "var body = pm.response.json();",
+                  "",
+                  "pm.test(\"totalRevenue is a number\", function () {",
+                  "    pm.expect(body.totalRevenue).to.be.a(\"number\");",
+                  "});",
+                  "",
+                  "pm.test(\"orderCount is a number\", function () {",
+                  "    pm.expect(body.orderCount).to.be.a(\"number\");",
+                  "});",
+                  "",
+                  "pm.test(\"percentageOfTotal is a number\", function () {",
+                  "    pm.expect(body.percentageOfTotal).to.be.a(\"number\");",
+                  "});",
+                  "",
+                  "pm.test(\"monthlyTrend is an array\", function () {",
+                  "    pm.expect(body.monthlyTrend).to.be.an(\"array\");",
+                  "});",
+                  "",
+                  "pm.test(\"each monthlyTrend entry has isPartialMonth\", function () {",
+                  "    if (body.monthlyTrend.length === 0) return;",
+                  "    pm.expect(body.monthlyTrend[0]).to.have.property(\"isPartialMonth\");",
+                  "    pm.expect(body.monthlyTrend[0].isPartialMonth).to.be.a(\"boolean\");",
+                  "});"
+                ],
+                "type": "text/javascript",
+                "packages": {},
+                "requests": {}
+              }
+            }
+          ],
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json",
+                "type": "text"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"territoryId\": 5\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "{{adventureWorksApi}}/{{apiVersion}}/sales-orders/analytics",
+              "host": [
+                "{{adventureWorksApi}}"
+              ],
+              "path": [
+                "{{apiVersion}}",
+                "sales-orders",
+                "analytics"
+              ]
+            }
+          },
+          "response": [
+            {
+              "name": "Analytics for territory 5",
+              "originalRequest": {
+                "method": "POST",
+                "header": [
+                  {
+                    "key": "Content-Type",
+                    "value": "application/json",
+                    "type": "text"
+                  }
+                ],
+                "body": {
+                  "mode": "raw",
+                  "raw": "{\n  \"territoryId\": 5\n}",
+                  "options": {
+                    "raw": {
+                      "language": "json"
+                    }
+                  }
+                },
+                "url": {
+                  "raw": "{{adventureWorksApi}}/{{apiVersion}}/sales-orders/analytics",
+                  "host": [
+                    "{{adventureWorksApi}}"
+                  ],
+                  "path": [
+                    "{{apiVersion}}",
+                    "sales-orders",
+                    "analytics"
+                  ]
+                }
+              },
+              "status": "OK",
+              "code": 200,
+              "_postman_previewlanguage": "json",
+              "header": [],
+              "cookie": [],
+              "body": "{\n  \"totalRevenue\": 2538667.25,\n  \"orderCount\": 3798,\n  \"percentageOfTotal\": 1.97,\n  \"monthlyTrend\": [\n    { \"year\": 2011, \"month\": 6, \"revenue\": 13219.90, \"isPartialMonth\": false },\n    { \"year\": 2011, \"month\": 7, \"revenue\": 88412.64, \"isPartialMonth\": false },\n    { \"year\": 2014, \"month\": 5, \"revenue\": 8927.22, \"isPartialMonth\": true }\n  ]\n}"
+            }
+          ]
         }
       ]
     },

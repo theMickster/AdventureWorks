@@ -128,7 +128,8 @@ Aggregate-only query — uses a bare `DbContext.SalesOrderHeaders.AsNoTracking()
 Key invariants:
 - Applies the same nullable filter predicates as `SearchSalesOrdersAsync`.
 - Early-returns `new SalesOrderAnalyticsModel { MonthlyTrend = [] }` when `CountAsync == 0` — avoids three unnecessary aggregate queries.
-- Monthly trend is capped at 24 entries (`.Take(24)`) ordered by year/month ascending — documented in the interface XML doc.
+- Monthly trend is capped at 24 entries: the query orders months **descending** and `.Take(24)` keeps the 24 most-recent months (oldest months are dropped). The result list is then `.Reverse()`d to produce ascending (chronological) output.
+- `IsPartialMonth`: after materializing the trend list, a single `MaxAsync` on the filtered dataset resolves the latest order date. Only the entry whose Year/Month matches that date — and where `maxOrderDate.Day < DateTime.DaysInMonth(year, month)` — is flagged as partial.
 - When `filter == null`, `PercentageOfTotal` is always 100; the unfiltered `SumAsync` is skipped (`unfilteredTotal = totalRevenue`).
 
 #### Real-Time Infrastructure (SignalR + MediatR Notification Pipeline)

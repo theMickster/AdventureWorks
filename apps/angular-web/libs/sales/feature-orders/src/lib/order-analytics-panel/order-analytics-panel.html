@@ -1,0 +1,52 @@
+@if (isLoading()) {
+  <div class="mb-4">
+    <div class="stats stats-vertical w-full shadow sm:stats-horizontal">
+      <div class="stat">
+        <div class="stat-title"><span class="skeleton h-4 w-24 block"></span></div>
+        <div class="stat-value mt-2"><span class="skeleton h-8 w-32 block"></span></div>
+      </div>
+      <div class="stat">
+        <div class="stat-title"><span class="skeleton h-4 w-24 block"></span></div>
+        <div class="stat-value mt-2"><span class="skeleton h-8 w-20 block"></span></div>
+      </div>
+      <div class="stat">
+        <div class="stat-title"><span class="skeleton h-4 w-24 block"></span></div>
+        <div class="stat-value mt-2"><span class="skeleton h-8 w-20 block"></span></div>
+      </div>
+    </div>
+    <div class="skeleton mt-4 h-48 w-full rounded-lg"></div>
+  </div>
+} @else if (hasError()) {
+  <div class="alert alert-error mb-4">
+    <i class="fa-solid fa-circle-exclamation" aria-hidden="true"></i>
+    <span>Analytics unavailable. Order list is unaffected.</span>
+  </div>
+} @else if (isEmpty()) {
+  <div class="mb-4 flex items-center justify-center rounded-lg border border-base-300 bg-base-200 py-8">
+    <p class="text-base-content/60">No orders match the current filters</p>
+  </div>
+} @else {
+  <div class="mb-4">
+    <div class="stats stats-vertical w-full shadow sm:stats-horizontal">
+      <div class="stat">
+        <div class="stat-title">Total Revenue</div>
+        <div class="stat-value text-primary">
+          {{ analytics()!.totalRevenue | currency: 'USD' : 'symbol' : '1.0-0' }}
+        </div>
+      </div>
+      <div class="stat">
+        <div class="stat-title">Order Count</div>
+        <div class="stat-value">{{ analytics()!.orderCount | number: '1.0-0' }}</div>
+      </div>
+      <div class="stat">
+        <div class="stat-title">% of Total</div>
+        <div class="stat-value">{{ analytics()!.percentageOfTotal | number: '1.1-1' }}%</div>
+      </div>
+    </div>
+    @if (analytics()!.monthlyTrend.length >= 1) {
+      <div class="mt-4">
+        <aw-order-analytics-trend-chart [monthlyTrend]="analytics()!.monthlyTrend" />
+      </div>
+    }
+  </div>
+}

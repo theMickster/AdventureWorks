@@ -66,6 +66,8 @@
     </div>
   </form>
 
+  <aw-order-analytics-panel class="mb-4 block" [analytics]="analytics()" [status]="analyticsStatus()" />
+
   <aw-data-table
     fieldId="aw-order-list-table"
     [columns]="columns"

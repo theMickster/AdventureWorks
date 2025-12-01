@@ -10,6 +10,7 @@ import { LookupApiService } from '@adventureworks-web/shared/data-access';
 import { ColumnDefDirective, DataTableComponent, SelectFieldComponent, StatusBadgeComponent } from '@adventureworks-web/shared/ui';
 import type { ColumnConfig } from '@adventureworks-web/shared/ui';
 import { NotificationService } from '@adventureworks-web/shared/util';
+import { OrderAnalyticsPanelComponent } from '../order-analytics-panel/order-analytics-panel';
 
 const PAGE_SIZE = 25;
 const VALID_SORT_COLUMNS = ['orderDate', 'totalDue', 'salesOrderNumber', 'salesOrderId'] as const;
@@ -30,7 +31,7 @@ interface SalesOrderFilters {
 @Component({
   selector: 'aw-order-list',
   standalone: true,
-  imports: [CurrencyPipe, ReactiveFormsModule, DataTableComponent, ColumnDefDirective, SelectFieldComponent, StatusBadgeComponent],
+  imports: [CurrencyPipe, ReactiveFormsModule, DataTableComponent, ColumnDefDirective, SelectFieldComponent, StatusBadgeComponent, OrderAnalyticsPanelComponent],
   templateUrl: './order-list.html',
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
@@ -69,6 +70,11 @@ export class OrderListComponent implements OnInit {
   protected readonly pageSize = this.salesOrderStore.pageSize;
   protected readonly totalPages = this.salesOrderStore.totalPages;
   protected readonly totalRecords = this.salesOrderStore.totalRecords;
+  protected readonly analytics = this.salesOrderStore.analytics;
+  protected readonly analyticsStatus = this.salesOrderStore.analyticsStatus;
+
+  /** Serialized snapshot of the last-applied filters; distinguishes filter changes (→ applyFilters) from page/sort-only changes (→ loadPage) to avoid unnecessary analytics re-fetches. */
+  private _lastFilterHash = '';
 
   protected readonly statusOptions = SALES_ORDER_STATUSES.map((s) => ({ value: s.value, label: s.label }));
   protected readonly salesPersonOptions = signal<{ value: number; label: string }[]>([]);
@@ -89,7 +95,7 @@ export class OrderListComponent implements OnInit {
     { key: 'customerName', label: 'Customer', sortable: false },
     { key: 'salesPersonName', label: 'Sales Person', sortable: false },
     { key: 'status', label: 'Status', sortable: false },
-    { key: 'totalDue', label: 'Total Due', sortable: true, cellClass: 'text-right' },
+    { key: 'totalDue', label: 'Total Due', sortable: true, headerClass: 'text-right', cellClass: 'text-right' },
     { key: 'view', label: '', sortable: false, cellClass: 'text-right' },
   ];
 
@@ -114,11 +120,17 @@ export class OrderListComponent implements OnInit {
   );
 
   constructor() {
-    // effect() drives the error toast as a side effect outside the render cycle; a template
-    // expression cannot safely call the imperative notification service.
+    // Two independent effects so each signal's reactive scope is isolated — a change in one
+    // error state does not re-read and re-fire the other toast.
     effect(() => {
       if (this.salesOrderStore.hasError()) {
         this.notificationService.error('Failed to load sales orders. Please try again.');
+      }
+    });
+
+    effect(() => {
+      if (this.salesOrderStore.analyticsHasError()) {
+        this.notificationService.error('Analytics unavailable. Order list is unaffected.');
       }
     });
   }
@@ -236,7 +248,12 @@ export class OrderListComponent implements OnInit {
     }
   }
 
-  /** Issues the list load using URL state, defaulting to OrderDate desc. */
+  /**
+   * Issues a load using URL state. When filters have changed since the last load,
+   * calls `applyFilters` to refresh both the order list and analytics. When only
+   * the page or sort changed, calls `loadPage` directly to avoid an unnecessary
+   * analytics re-fetch.
+   */
   private loadFromUrl(params: Record<string, string>): void {
     const pageNumber = Math.max(1, Math.trunc(Number(params['pageNumber'])) || 1);
     const orderBy = this.parseOrderBy(params['orderBy']);
@@ -246,8 +263,15 @@ export class OrderListComponent implements OnInit {
       : { orderBy: DEFAULT_ORDER_BY, sortOrder: DEFAULT_SORT_ORDER };
 
     const filters = this.parseFilterParams(params);
+    const filterHash = JSON.stringify(filters);
+    const filtersChanged = filterHash !== this._lastFilterHash;
 
-    this.salesOrderStore.loadPage({ pageNumber, pageSize: PAGE_SIZE, ...sortParams, ...filters });
+    if (filtersChanged) {
+      this._lastFilterHash = filterHash;
+      this.salesOrderStore.applyFilters({ pageNumber, pageSize: PAGE_SIZE, ...sortParams, ...filters });
+    } else {
+      this.salesOrderStore.loadPage({ pageNumber, pageSize: PAGE_SIZE, ...sortParams, ...filters });
+    }
   }
 
   /** Allowlist-validates an orderBy URL value; junk resolves to undefined and never reaches the API. */

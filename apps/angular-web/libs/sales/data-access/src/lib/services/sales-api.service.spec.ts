@@ -560,8 +560,8 @@ describe('SalesApiService', () => {
         orderCount: 42,
         percentageOfTotal: 15.5,
         monthlyTrend: [
-          { year: 2013, month: 1, revenue: 50000 },
-          { year: 2013, month: 2, revenue: 45000 },
+          { year: 2013, month: 1, revenue: 50000, isPartialMonth: false },
+          { year: 2013, month: 2, revenue: 45000, isPartialMonth: false },
         ],
       };
 

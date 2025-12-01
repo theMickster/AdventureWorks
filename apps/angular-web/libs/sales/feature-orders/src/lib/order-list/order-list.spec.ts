@@ -86,6 +86,7 @@ describe('OrderListComponent', () => {
     router = TestBed.inject(Router);
 
     vi.spyOn(salesOrderStore, 'loadPage');
+    vi.spyOn(salesOrderStore, 'applyFilters');
     vi.spyOn(router, 'navigate').mockResolvedValue(true);
     // Dropdown data must not block the grid; stub the lookups so forkJoin resolves.
     vi.spyOn(salesApi, 'getSalesPersons').mockReturnValue(of(emptySearchResult));
@@ -103,7 +104,8 @@ describe('OrderListComponent', () => {
   it('loads page 1 with default OrderDate desc sort when no URL params', () => {
     fixture.detectChanges();
 
-    expect(salesOrderStore.loadPage).toHaveBeenCalledWith({
+    // Initial load has no prior filter hash — filters have "changed" from '' to '{}' — so applyFilters runs.
+    expect(salesOrderStore.applyFilters).toHaveBeenCalledWith({
       pageNumber: 1,
       pageSize: 25,
       orderBy: 'orderDate',
@@ -111,7 +113,7 @@ describe('OrderListComponent', () => {
     });
   });
 
-  it('restores filter params from the URL and forwards them to loadPage', () => {
+  it('restores filter params from the URL and forwards them to applyFilters', () => {
     queryParamsSub.next({
       orderDateFrom: '2013-01-01',
       orderDateTo: '2013-12-31',
@@ -122,7 +124,7 @@ describe('OrderListComponent', () => {
 
     fixture.detectChanges();
 
-    expect(salesOrderStore.loadPage).toHaveBeenCalledWith({
+    expect(salesOrderStore.applyFilters).toHaveBeenCalledWith({
       pageNumber: 1,
       pageSize: 25,
       orderBy: 'orderDate',
@@ -138,7 +140,7 @@ describe('OrderListComponent', () => {
   it('drops a non-numeric status URL param instead of forwarding NaN', () => {
     queryParamsSub.next({ status: 'abc' });
     fixture.detectChanges();
-    const lastCall = (salesOrderStore.loadPage as ReturnType<typeof vi.spyOn>).mock.calls.at(-1)?.[0] as Record<
+    const lastCall = (salesOrderStore.applyFilters as ReturnType<typeof vi.spyOn>).mock.calls.at(-1)?.[0] as Record<
       string,
       unknown
     >;
@@ -150,7 +152,7 @@ describe('OrderListComponent', () => {
 
     fixture.detectChanges();
 
-    expect(salesOrderStore.loadPage).toHaveBeenCalledWith(
+    expect(salesOrderStore.applyFilters).toHaveBeenCalledWith(
       expect.objectContaining({ pageNumber: 1 }),
     );
   });
@@ -160,7 +162,7 @@ describe('OrderListComponent', () => {
 
     fixture.detectChanges();
 
-    expect(salesOrderStore.loadPage).toHaveBeenCalledWith(
+    expect(salesOrderStore.applyFilters).toHaveBeenCalledWith(
       expect.objectContaining({ pageNumber: 1 }),
     );
   });
@@ -170,10 +172,10 @@ describe('OrderListComponent', () => {
 
     fixture.detectChanges();
 
-    expect(salesOrderStore.loadPage).toHaveBeenCalledWith(
+    expect(salesOrderStore.applyFilters).toHaveBeenCalledWith(
       expect.objectContaining({ orderBy: 'orderDate', sortOrder: 'desc' }),
     );
-    expect(salesOrderStore.loadPage).not.toHaveBeenCalledWith(
+    expect(salesOrderStore.applyFilters).not.toHaveBeenCalledWith(
       expect.objectContaining({ orderBy: 'dropTable' }),
     );
   });
@@ -183,7 +185,7 @@ describe('OrderListComponent', () => {
 
     fixture.detectChanges();
 
-    expect(salesOrderStore.loadPage).toHaveBeenCalledWith(
+    expect(salesOrderStore.applyFilters).toHaveBeenCalledWith(
       expect.objectContaining({ orderBy: 'totalDue', sortOrder: 'asc' }),
     );
     expect(component['sortColumn']()).toBe('totalDue');
@@ -198,7 +200,7 @@ describe('OrderListComponent', () => {
     queryParamsSub.next({ status: '5', pageNumber: '1' });
     fixture.detectChanges();
 
-    expect(salesOrderStore.loadPage).toHaveBeenLastCalledWith(
+    expect(salesOrderStore.applyFilters).toHaveBeenLastCalledWith(
       expect.objectContaining({ pageNumber: 1, pageSize: 25, status: 5 }),
     );
     expect(router.navigate).toHaveBeenCalledWith(
@@ -221,7 +223,7 @@ describe('OrderListComponent', () => {
     queryParamsSub.next({ pageNumber: '1' });
     fixture.detectChanges();
 
-    const lastCall = (salesOrderStore.loadPage as ReturnType<typeof vi.spyOn>).mock.calls.at(-1)?.[0] as Record<
+    const lastCall = (salesOrderStore.applyFilters as ReturnType<typeof vi.spyOn>).mock.calls.at(-1)?.[0] as Record<
       string,
       unknown
     >;
@@ -262,7 +264,7 @@ describe('OrderListComponent', () => {
 
     fixture.detectChanges();
 
-    expect(salesOrderStore.loadPage).toHaveBeenCalledWith({
+    expect(salesOrderStore.applyFilters).toHaveBeenCalledWith({
       pageNumber: 4,
       pageSize: 25,
       orderBy: 'totalDue',
@@ -290,7 +292,7 @@ describe('OrderListComponent', () => {
     queryParamsSub.next({ status: '5', pageNumber: '1' });
     fixture.detectChanges();
 
-    expect(salesOrderStore.loadPage).toHaveBeenLastCalledWith(
+    expect(salesOrderStore.applyFilters).toHaveBeenLastCalledWith(
       expect.objectContaining({ status: 5, pageNumber: 1 }),
     );
     expect(component['filterForm'].getRawValue().status).toBe('5');
@@ -299,12 +301,12 @@ describe('OrderListComponent', () => {
   it('clears sort signals on browser back to an unsorted URL state', () => {
     fixture.detectChanges();
 
-    // Navigate to a sorted URL state
+    // Navigate to a sorted URL state (same filters = {}, so loadPage fires — sort changed but filters are same)
     queryParamsSub.next({ orderBy: 'totalDue', sortOrder: 'asc' });
     fixture.detectChanges();
     expect(component['sortColumn']()).toBe('totalDue');
 
-    // Browser back to unsorted state
+    // Browser back to unsorted state (same filters = {}, so loadPage fires again)
     queryParamsSub.next({});
     fixture.detectChanges();
     expect(component['sortColumn']()).toBe('');
@@ -316,7 +318,7 @@ describe('OrderListComponent', () => {
 
     fixture.detectChanges();
 
-    const lastCall = (salesOrderStore.loadPage as ReturnType<typeof vi.spyOn>).mock.calls.at(-1)?.[0] as Record<
+    const lastCall = (salesOrderStore.applyFilters as ReturnType<typeof vi.spyOn>).mock.calls.at(-1)?.[0] as Record<
       string,
       unknown
     >;
@@ -333,7 +335,8 @@ describe('OrderListComponent', () => {
     queryParamsSub.next({});
     fixture.detectChanges();
 
-    expect(salesOrderStore.loadPage).toHaveBeenLastCalledWith({
+    // After reset, filters go from {status:5} back to {} — filter hash changed → applyFilters.
+    expect(salesOrderStore.applyFilters).toHaveBeenLastCalledWith({
       pageNumber: 1,
       pageSize: 25,
       orderBy: 'orderDate',
@@ -366,9 +369,10 @@ describe('OrderListComponent', () => {
   });
 
   it('sorts on an allowed column and writes the sort to the URL', () => {
-    fixture.detectChanges();
+    fixture.detectChanges(); // initial load: applyFilters (hash '' → '{}')
 
     component['onSortChange']({ column: 'totalDue', direction: 'asc' });
+    // Sort change: URL params emit with orderBy but no filter params — filter hash stays '{}' → loadPage
     queryParamsSub.next({ orderBy: 'totalDue', sortOrder: 'asc' });
     fixture.detectChanges();
 
@@ -383,17 +387,22 @@ describe('OrderListComponent', () => {
 
   it('does not call the store for a sort on a disallowed column key', () => {
     fixture.detectChanges();
-    const callsBefore = (salesOrderStore.loadPage as ReturnType<typeof vi.spyOn>).mock.calls.length;
+    const loadPageCallsBefore = (salesOrderStore.loadPage as ReturnType<typeof vi.spyOn>).mock.calls.length;
+    const applyFiltersCallsBefore = (salesOrderStore.applyFilters as ReturnType<typeof vi.spyOn>).mock.calls.length;
 
     component['onSortChange']({ column: 'customerName', direction: 'asc' });
 
-    expect((salesOrderStore.loadPage as ReturnType<typeof vi.spyOn>).mock.calls.length).toBe(callsBefore);
+    expect((salesOrderStore.loadPage as ReturnType<typeof vi.spyOn>).mock.calls.length).toBe(loadPageCallsBefore);
+    expect((salesOrderStore.applyFilters as ReturnType<typeof vi.spyOn>).mock.calls.length).toBe(applyFiltersCallsBefore);
   });
 
   it('parses page, sort, and filter params from the URL on page change', () => {
-    fixture.detectChanges();
+    // Establish a filter state first so the page change can be filter-stable
+    queryParamsSub.next({ territoryId: '4', orderBy: 'totalDue', sortOrder: 'asc', pageNumber: '1' });
+    fixture.detectChanges(); // applyFilters — filter hash set to '{"territoryId":4}'
 
     component['onPageChange'](3);
+    // Page change: same filters, different page → loadPage
     queryParamsSub.next({ territoryId: '4', orderBy: 'totalDue', sortOrder: 'asc', pageNumber: '3' });
     fixture.detectChanges();
 
@@ -428,6 +437,18 @@ describe('OrderListComponent', () => {
     await fixture.whenStable();
 
     expect(notificationService.error).toHaveBeenCalledWith('Failed to load sales orders. Please try again.');
+  });
+
+  it('shows an analytics error toast when analytics status becomes error', async () => {
+    vi.spyOn(notificationService, 'error');
+    fixture.detectChanges();
+    await fixture.whenStable();
+
+    patchState(unprotected(salesOrderStore), { analyticsStatus: 'error' as const });
+    fixture.detectChanges();
+    await fixture.whenStable();
+
+    expect(notificationService.error).toHaveBeenCalledWith('Analytics unavailable. Order list is unaffected.');
   });
 
   it('projects status label, currency-ready total, and a dash for a null sales person', async () => {
@@ -514,6 +535,7 @@ describe('OrderListComponent', () => {
     const lookup = TestBed.inject(LookupApiService);
     const notify = TestBed.inject(NotificationService);
     vi.spyOn(store, 'loadPage');
+    vi.spyOn(store, 'applyFilters');
     vi.spyOn(notify, 'error');
     vi.spyOn(TestBed.inject(Router), 'navigate').mockResolvedValue(true);
     vi.spyOn(api, 'getSalesPersons').mockReturnValue(throwError(() => new Error('lookup down')));
@@ -523,8 +545,8 @@ describe('OrderListComponent', () => {
     failFixture.detectChanges();
     await failFixture.whenStable();
 
-    // The grid load fired with the default view despite the lookup failure.
-    expect(store.loadPage).toHaveBeenCalledWith({ pageNumber: 1, pageSize: 25, orderBy: 'orderDate', sortOrder: 'desc' });
+    // The grid load fired with the default view despite the lookup failure (initial load uses applyFilters).
+    expect(store.applyFilters).toHaveBeenCalledWith({ pageNumber: 1, pageSize: 25, orderBy: 'orderDate', sortOrder: 'desc' });
     // The failure surfaced as the filter-options message, NOT the grid-load error message.
     expect(notify.error).toHaveBeenCalledWith('Failed to load filter options. Filtering may be unavailable.');
     expect(notify.error).not.toHaveBeenCalledWith('Failed to load sales orders. Please try again.');

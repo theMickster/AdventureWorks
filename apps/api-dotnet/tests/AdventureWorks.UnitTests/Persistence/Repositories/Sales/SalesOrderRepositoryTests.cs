@@ -285,4 +285,129 @@ public sealed class SalesOrderRepositoryTests : PersistenceUnitTestBase
         results.Should().HaveCount(2);
         totalCount.Should().Be(2);
     }
+
+    [Fact]
+    public async Task GetSalesOrderAnalyticsAsync_IsPartialMonth_IsFalse_WhenMaxOrderDate_IsLastDayOfMonth()
+    {
+        // Arrange — orders all in January 2014; max is the 31st (last day of month)
+        DbContext.SalesOrderHeaders.AddRange(
+            new SalesOrderHeader { SalesOrderId = 1, SalesOrderNumber = "SO1", OrderDate = new DateTime(2014, 1, 15), Status = 5, TotalDue = 500m, CustomerId = 1 },
+            new SalesOrderHeader { SalesOrderId = 2, SalesOrderNumber = "SO2", OrderDate = new DateTime(2014, 1, 31), Status = 5, TotalDue = 1000m, CustomerId = 1 }
+        );
+        await DbContext.SaveChangesAsync();
+
+        // Act
+        var result = await _sut.GetSalesOrderAnalyticsAsync(null, CancellationToken.None);
+
+        // Assert
+        result.MonthlyTrend.Should().HaveCount(1);
+        result.MonthlyTrend[0].IsPartialMonth.Should().BeFalse();
+    }
+
+    [Fact]
+    public async Task GetSalesOrderAnalyticsAsync_IsPartialMonth_IsTrue_WhenMaxOrderDate_IsNotLastDayOfMonth()
+    {
+        // Arrange — orders in January 2014; max is the 15th (not last day of month)
+        DbContext.SalesOrderHeaders.AddRange(
+            new SalesOrderHeader { SalesOrderId = 1, SalesOrderNumber = "SO1", OrderDate = new DateTime(2014, 1, 1), Status = 5, TotalDue = 500m, CustomerId = 1 },
+            new SalesOrderHeader { SalesOrderId = 2, SalesOrderNumber = "SO2", OrderDate = new DateTime(2014, 1, 15), Status = 5, TotalDue = 1000m, CustomerId = 1 }
+        );
+        await DbContext.SaveChangesAsync();
+
+        // Act
+        var result = await _sut.GetSalesOrderAnalyticsAsync(null, CancellationToken.None);
+
+        // Assert
+        result.MonthlyTrend.Should().HaveCount(1);
+        result.MonthlyTrend[0].IsPartialMonth.Should().BeTrue();
+    }
+
+    [Fact]
+    public async Task GetSalesOrderAnalyticsAsync_IsPartialMonth_OnlySetOnMostRecentMonthEntry()
+    {
+        // Arrange — three months; max order date is Feb 10 (not last day), so only Feb entry is partial
+        DbContext.SalesOrderHeaders.AddRange(
+            new SalesOrderHeader { SalesOrderId = 1, SalesOrderNumber = "SO1", OrderDate = new DateTime(2014, 1, 31), Status = 5, TotalDue = 100m, CustomerId = 1 },
+            new SalesOrderHeader { SalesOrderId = 2, SalesOrderNumber = "SO2", OrderDate = new DateTime(2014, 2, 10), Status = 5, TotalDue = 200m, CustomerId = 1 }
+        );
+        await DbContext.SaveChangesAsync();
+
+        // Act
+        var result = await _sut.GetSalesOrderAnalyticsAsync(null, CancellationToken.None);
+
+        // Assert
+        result.MonthlyTrend.Should().HaveCount(2);
+        var jan = result.MonthlyTrend.Single(m => m.Month == 1);
+        var feb = result.MonthlyTrend.Single(m => m.Month == 2);
+        jan.IsPartialMonth.Should().BeFalse();
+        feb.IsPartialMonth.Should().BeTrue();
+    }
+
+    [Fact]
+    public async Task GetSalesOrderAnalyticsAsync_EarlyReturn_ReturnsEmptyTrendWithNoException()
+    {
+        // Arrange — filter that matches nothing; the early-return guard bypasses all aggregate queries
+
+        // Act
+        var result = await _sut.GetSalesOrderAnalyticsAsync(
+            new SalesOrderSearchModel { SalesPersonId = 99999 },
+            CancellationToken.None);
+
+        // Assert
+        result.MonthlyTrend.Should().BeEmpty();
+        result.OrderCount.Should().Be(0);
+    }
+
+    [Fact]
+    public async Task GetSalesOrderAnalyticsAsync_Take24_KeepsNewestMonths_AndSetsIsPartialMonthOnLast()
+    {
+        // Arrange — seed 26 distinct year/month groups (2012-01 through 2014-02).
+        // Take(24) should keep the 24 newest (2012-03 through 2014-02), dropping 2012-01 and 2012-02.
+        // Max order date is 2014-02-10 (not the last day of February), so 2014-02 is partial.
+        var orders = new List<SalesOrderHeader>();
+        int id = 1;
+        for (int year = 2012; year <= 2014; year++)
+        {
+            int startMonth = (year == 2012) ? 1 : 1;
+            int endMonth   = (year == 2014) ? 2 : 12;
+            for (int month = startMonth; month <= endMonth; month++)
+            {
+                // Use the 10th of the month for all except the very last entry (2014-02)
+                // which also gets the 10th — not the last day of February — so it is partial.
+                orders.Add(new SalesOrderHeader
+                {
+                    SalesOrderId   = id++,
+                    SalesOrderNumber = $"SO{id}",
+                    OrderDate      = new DateTime(year, month, 10),
+                    Status         = 5,
+                    TotalDue       = 100m,
+                    CustomerId     = 1
+                });
+            }
+        }
+
+        DbContext.SalesOrderHeaders.AddRange(orders);
+        await DbContext.SaveChangesAsync();
+
+        // Act
+        var result = await _sut.GetSalesOrderAnalyticsAsync(null, CancellationToken.None);
+
+        // Assert — exactly 24 entries are returned
+        result.MonthlyTrend.Should().HaveCount(24);
+
+        // The oldest entry in the result must be 2012-03 (2012-01 and 2012-02 were dropped)
+        result.MonthlyTrend[0].Year.Should().Be(2012);
+        result.MonthlyTrend[0].Month.Should().Be(3);
+
+        // The newest entry must be 2014-02
+        var last = result.MonthlyTrend[^1];
+        last.Year.Should().Be(2014);
+        last.Month.Should().Be(2);
+
+        // 2014-02-10 is not the last day of February, so IsPartialMonth must be true on the last entry
+        last.IsPartialMonth.Should().BeTrue();
+
+        // Every other entry must have IsPartialMonth = false
+        result.MonthlyTrend.SkipLast(1).Should().AllSatisfy(m => m.IsPartialMonth.Should().BeFalse());
+    }
 }

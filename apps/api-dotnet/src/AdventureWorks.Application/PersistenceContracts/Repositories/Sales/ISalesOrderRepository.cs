@@ -45,11 +45,19 @@ public interface ISalesOrderRepository : IAsyncRepository<SalesOrderHeader>
     /// <summary>
     /// Returns aggregated analytics — total revenue, order count, percentage of the unfiltered total,
     /// and a monthly revenue trend — for the slice of orders matching the optional filter.
-    /// Monthly trend is capped at 24 entries ordered by year and month ascending; date ranges
-    /// spanning more than 24 months will have the oldest months silently dropped.
+    /// Monthly trend is capped at 24 entries ordered ascending; date ranges spanning more than 24
+    /// months will have the oldest months silently dropped. Each trend entry includes
+    /// <see cref="AdventureWorks.Models.Features.Sales.SalesOrderMonthlyTrendModel.IsPartialMonth"/>,
+    /// which is true when the latest order date in the filtered dataset falls before the last calendar
+    /// day of that month. Returns an empty <c>MonthlyTrend</c> immediately when no orders match.
     /// </summary>
     /// <param name="filter">Optional filter criteria. Null means no filter (full dataset).</param>
     /// <param name="cancellationToken">token to cancel the operation</param>
+    /// <returns>
+    /// Aggregated <see cref="AdventureWorks.Models.Features.Sales.SalesOrderAnalyticsModel"/> for
+    /// the filtered slice. <c>MonthlyTrend</c> is empty when no orders match; all numeric totals
+    /// are zero in that case.
+    /// </returns>
     Task<SalesOrderAnalyticsModel> GetSalesOrderAnalyticsAsync(
         SalesOrderSearchModel? filter,
         CancellationToken cancellationToken = default);

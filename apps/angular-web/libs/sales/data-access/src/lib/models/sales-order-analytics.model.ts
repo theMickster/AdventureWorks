@@ -3,6 +3,8 @@ export interface SalesOrderMonthlyTrend {
   readonly year: number;
   readonly month: number;
   readonly revenue: number;
+  /** True when the maximum order date in the filtered dataset falls before the last calendar day of this month. */
+  readonly isPartialMonth: boolean;
 }
 
 /** Aggregated analytics for a filtered slice of sales orders. */

@@ -125,6 +125,23 @@ public sealed class SalesOrderRepository(AdventureWorksDbContext dbContext)
     /// <summary>
     /// Returns aggregated analytics for the filtered order slice.
     /// </summary>
+    /// <remarks>
+    /// <para>
+    /// <b>Empty dataset:</b> Returns immediately with an empty <c>MonthlyTrend</c> when
+    /// <c>CountAsync == 0</c>, skipping the three aggregate queries.
+    /// </para>
+    /// <para>
+    /// <b>Monthly trend cap:</b> The trend query orders months descending and takes the first 24
+    /// rows, keeping the 24 most-recent calendar months and silently dropping any older months.
+    /// The result list is then reversed to produce ascending (chronological) output.
+    /// </para>
+    /// <para>
+    /// <b>IsPartialMonth:</b> After materializing the trend list, a single <c>MaxAsync</c> on the
+    /// filtered dataset resolves the latest order date. Only the entry whose Year and Month match
+    /// that date — and whose date falls before the last calendar day of that month — is flagged as
+    /// partial. All other entries represent complete calendar months.
+    /// </para>
+    /// </remarks>
     /// <param name="filter">Optional filter criteria. Null means no filter (full dataset).</param>
     /// <param name="cancellationToken">token to cancel the operation</param>
     public async Task<SalesOrderAnalyticsModel> GetSalesOrderAnalyticsAsync(
@@ -184,9 +201,19 @@ public sealed class SalesOrderRepository(AdventureWorksDbContext dbContext)
                 Month = g.Key.Month,
                 Revenue = g.Sum(x => x.TotalDue)
             })
-            .OrderBy(x => x.Year).ThenBy(x => x.Month)
+            .OrderByDescending(x => x.Year).ThenByDescending(x => x.Month)
             .Take(24)
             .ToListAsync(cancellationToken);
+
+        monthlyTrend.Reverse();
+
+        var maxOrderDate = await filteredQuery.MaxAsync(x => x.OrderDate, cancellationToken);
+        foreach (var entry in monthlyTrend)
+        {
+            entry.IsPartialMonth = entry.Year == maxOrderDate.Year
+                && entry.Month == maxOrderDate.Month
+                && maxOrderDate.Day < DateTime.DaysInMonth(entry.Year, entry.Month);
+        }
 
         // When no filter is applied the filtered total equals the unfiltered total, so skip the second query.
         var unfilteredTotal = filter is null
