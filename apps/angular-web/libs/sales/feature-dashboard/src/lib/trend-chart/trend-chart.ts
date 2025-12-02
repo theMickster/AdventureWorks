@@ -1,5 +1,5 @@
-import { afterNextRender, ChangeDetectionStrategy, Component, ElementRef, input, OnDestroy, viewChild } from '@angular/core';
-import { Chart, CategoryScale, LinearScale, LineController, LineElement, PointElement, Tooltip } from 'chart.js';
+import { afterNextRender, ChangeDetectionStrategy, Component, ElementRef, input, OnDestroy, output, viewChild } from '@angular/core';
+import { type ActiveElement, type ChartEvent, Chart, CategoryScale, LinearScale, LineController, LineElement, PointElement, Tooltip } from 'chart.js';
 import { DashboardMonthlySalesTrend } from '@adventureworks-web/sales/data-access';
 
 Chart.register(LineController, LineElement, PointElement, LinearScale, CategoryScale, Tooltip);
@@ -21,6 +21,8 @@ Chart.register(LineController, LineElement, PointElement, LinearScale, CategoryS
 })
 export class TrendChartComponent implements OnDestroy {
   readonly data = input.required<DashboardMonthlySalesTrend[]>();
+  /** Emits the year and month of the clicked data point so the host can navigate to a filtered view. */
+  readonly dataPointClick = output<{ year: number; month: number }>();
   private readonly chartCanvas = viewChild.required<ElementRef<HTMLCanvasElement>>('chartCanvas');
   /**
    * Stored so `ngOnDestroy` can call `chart.destroy()` and release the canvas
@@ -63,6 +65,11 @@ export class TrendChartComponent implements OnDestroy {
         options: {
           responsive: true,
           maintainAspectRatio: false,
+          onClick: (_event: ChartEvent, elements: ActiveElement[]) => {
+            if (elements.length === 0) { return; }
+            const point = points[elements[0].index];
+            this.dataPointClick.emit({ year: point.year, month: point.month });
+          },
           plugins: {
             tooltip: {
               callbacks: {
@@ -76,7 +83,7 @@ export class TrendChartComponent implements OnDestroy {
   }
 
   ngOnDestroy(): void {
-    this.chart?.destroy?.();
+    this.chart?.destroy();
     this.chart = null;
   }
 }

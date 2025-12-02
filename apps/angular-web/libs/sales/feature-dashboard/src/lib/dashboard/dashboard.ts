@@ -1,5 +1,6 @@
 import { CurrencyPipe, DecimalPipe } from '@angular/common';
 import { ChangeDetectionStrategy, Component, effect, inject, OnInit } from '@angular/core';
+import { Router } from '@angular/router';
 import { DashboardStore } from '@adventureworks-web/sales/data-access';
 import { SkeletonComponent } from '@adventureworks-web/shared/ui';
 import { NotificationService } from '@adventureworks-web/shared/util';
@@ -17,6 +18,7 @@ import { TerritoryBreakdownComponent } from '../territory-breakdown/territory-br
 export class DashboardComponent implements OnInit {
   private readonly dashboardStore = inject(DashboardStore);
   private readonly notificationService = inject(NotificationService);
+  private readonly router = inject(Router);
 
   protected readonly isLoading = this.dashboardStore.isLoading;
   protected readonly dashboard = this.dashboardStore.dashboard;
@@ -33,5 +35,14 @@ export class DashboardComponent implements OnInit {
 
   ngOnInit(): void {
     this.dashboardStore.load();
+  }
+
+  /** Navigates to the orders list pre-filtered to the full calendar month of the clicked trend point. */
+  protected onTrendChartClick({ year, month }: { year: number; month: number }): void {
+    const pad = (n: number) => String(n).padStart(2, '0');
+    const orderDateFrom = `${year}-${pad(month)}-01`;
+    const daysInMonth = new Date(year, month, 0).getDate();
+    const orderDateTo = `${year}-${pad(month)}-${pad(daysInMonth)}`;
+    this.router.navigate(['/sales/orders'], { queryParams: { orderDateFrom, orderDateTo } });
   }
 }

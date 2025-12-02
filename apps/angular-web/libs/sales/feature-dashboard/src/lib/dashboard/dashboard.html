@@ -91,7 +91,8 @@
       @if (isLoading()) {
         <aw-skeleton height="16rem" width="100%"></aw-skeleton>
       } @else if (dashboard()) {
-        <aw-trend-chart [data]="dashboard()!.monthlySalesTrend" />
+        <aw-trend-chart [data]="dashboard()!.monthlySalesTrend" (dataPointClick)="onTrendChartClick($event)" />
+        <p class="text-xs text-base-content/50 mt-1">Click a month to explore orders</p>
       }
     </div>
   </div>

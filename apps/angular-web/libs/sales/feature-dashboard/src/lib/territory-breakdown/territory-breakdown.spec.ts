@@ -39,4 +39,17 @@ describe('TerritoryBreakdownComponent', () => {
       { queryParams: { territoryId: 6 } }
     );
   });
+
+  it('navigates to orders filtered by territory on Enter keydown', () => {
+    fixture.detectChanges();
+
+    const rows = fixture.nativeElement.querySelectorAll('tr.cursor-pointer');
+    const event = new KeyboardEvent('keydown', { key: 'Enter', bubbles: true });
+    rows[0].dispatchEvent(event);
+
+    expect(router.navigate).toHaveBeenCalledWith(
+      ['/sales/orders'],
+      { queryParams: { territoryId: 6 } }
+    );
+  });
 });
