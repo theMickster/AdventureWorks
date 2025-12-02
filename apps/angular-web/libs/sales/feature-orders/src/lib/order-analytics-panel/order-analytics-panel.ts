@@ -30,8 +30,9 @@ export class OrderAnalyticsPanelComponent {
   readonly status = input<'idle' | 'loading' | 'loaded' | 'error'>();
 
   protected readonly isLoading = computed(() => this.status() === 'loading' || this.status() === 'idle');
-  protected readonly isEmpty = computed(
-    () => !this.analytics() || this.analytics()!.orderCount === 0 || !isFinite(this.analytics()!.totalRevenue),
-  );
+  protected readonly isEmpty = computed(() => {
+    const a = this.analytics();
+    return !a || a.orderCount === 0 || !Number.isFinite(a.totalRevenue);
+  });
   protected readonly hasError = computed(() => this.status() === 'error');
 }

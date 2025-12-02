@@ -1,6 +1,7 @@
 import { ComponentFixture, TestBed } from '@angular/core/testing';
 import { ActivatedRoute, Router } from '@angular/router';
 import { provideRouter } from '@angular/router';
+import { BehaviorSubject } from 'rxjs';
 import { provideHttpClient } from '@angular/common/http';
 import { provideHttpClientTesting } from '@angular/common/http/testing';
 import { provideTranslateService } from '@ngx-translate/core';
@@ -62,7 +63,7 @@ const mockStore: Store = {
 function buildRoute(queryParams: Record<string, string> = {}) {
   return {
     snapshot: { queryParams },
-    queryParams: { subscribe: vi.fn() },
+    queryParams: new BehaviorSubject<Record<string, string>>(queryParams),
   };
 }
 
@@ -115,6 +116,7 @@ describe('StoreListComponent', () => {
 
   it('initializes with search from URL params', () => {
     route.snapshot.queryParams = { search: 'Bike', pageNumber: '2' };
+    route.queryParams.next({ search: 'Bike', pageNumber: '2' });
 
     fixture.detectChanges();
 
@@ -130,10 +132,6 @@ describe('StoreListComponent', () => {
 
     component['onSearch']('Bike Shop');
 
-    expect(storeStore.search).toHaveBeenCalledWith({
-      params: { pageNumber: 1, pageSize: 25 },
-      body: { name: 'Bike Shop' },
-    });
     expect(router.navigate).toHaveBeenCalledWith(
       [],
       expect.objectContaining({ queryParams: { search: 'Bike Shop', pageNumber: 1, orderBy: null, sortOrder: null } }),
@@ -145,7 +143,6 @@ describe('StoreListComponent', () => {
 
     component['onClearSearch']();
 
-    expect(storeStore.loadPage).toHaveBeenLastCalledWith({ pageNumber: 1, pageSize: 25 });
     expect(router.navigate).toHaveBeenCalledWith(
       [],
       expect.objectContaining({ queryParams: { search: null, pageNumber: null, orderBy: null, sortOrder: null } }),
@@ -157,7 +154,6 @@ describe('StoreListComponent', () => {
 
     component['onPageChange'](3);
 
-    expect(storeStore.loadPage).toHaveBeenLastCalledWith({ pageNumber: 3, pageSize: 25 });
     expect(router.navigate).toHaveBeenCalledWith(
       [],
       expect.objectContaining({ queryParams: { pageNumber: 3 } }),
@@ -219,14 +215,11 @@ describe('StoreListComponent', () => {
     expect(notificationService.error).toHaveBeenCalledWith('Failed to load stores. Please try again.');
   });
 
-  it('onSortChange with no active search calls loadPage with sort params', () => {
+  it('onSortChange writes sort params to URL', () => {
     fixture.detectChanges();
 
     component['onSortChange']({ column: 'name', direction: 'asc' });
 
-    expect(storeStore.loadPage).toHaveBeenCalledWith(
-      expect.objectContaining({ pageSize: 25, orderBy: 'name', sortOrder: 'asc' }),
-    );
     expect(router.navigate).toHaveBeenCalledWith(
       [],
       expect.objectContaining({ queryParams: expect.objectContaining({ orderBy: 'name', sortOrder: 'asc' }) }),
@@ -239,10 +232,10 @@ describe('StoreListComponent', () => {
 
     component['onSortChange']({ column: 'name', direction: 'desc' });
 
-    expect(storeStore.search).toHaveBeenCalledWith({
-      params: expect.objectContaining({ orderBy: 'name', sortOrder: 'desc' }),
-      body: { name: 'Bike' },
-    });
+    expect(router.navigate).toHaveBeenCalledWith(
+      [],
+      expect.objectContaining({ queryParams: expect.objectContaining({ orderBy: 'name', sortOrder: 'desc' }) }),
+    );
   });
 
   it('onSortChange with invalid column key does nothing', () => {
@@ -258,6 +251,7 @@ describe('StoreListComponent', () => {
 
   it('initializes with sort state from URL params', () => {
     route.snapshot.queryParams = { orderBy: 'name', sortOrder: 'desc' };
+    route.queryParams.next({ orderBy: 'name', sortOrder: 'desc' });
 
     fixture.detectChanges();
 
@@ -273,7 +267,10 @@ describe('StoreListComponent', () => {
 
     component['onPageChange'](2);
 
-    expect(storeStore.loadPage).toHaveBeenLastCalledWith({ pageNumber: 2, pageSize: 25, orderBy: 'name', sortOrder: 'asc' });
+    expect(router.navigate).toHaveBeenCalledWith(
+      [],
+      expect.objectContaining({ queryParams: { pageNumber: 2 } }),
+    );
   });
 
   it('onSearch with empty string reloads full list', () => {
@@ -281,7 +278,6 @@ describe('StoreListComponent', () => {
 
     component['onSearch']('');
 
-    expect(storeStore.loadPage).toHaveBeenLastCalledWith({ pageNumber: 1, pageSize: 25 });
     expect(router.navigate).toHaveBeenCalledWith(
       [],
       expect.objectContaining({ queryParams: { search: null, pageNumber: null, orderBy: null, sortOrder: null } }),
@@ -293,7 +289,6 @@ describe('StoreListComponent', () => {
 
     component['onSearch']('   ');
 
-    expect(storeStore.loadPage).toHaveBeenLastCalledWith({ pageNumber: 1, pageSize: 25 });
     expect(router.navigate).toHaveBeenCalledWith(
       [],
       expect.objectContaining({ queryParams: { search: null, pageNumber: null, orderBy: null, sortOrder: null } }),

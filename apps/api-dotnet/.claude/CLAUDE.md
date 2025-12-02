@@ -404,6 +404,10 @@ docker build -t adventureworks-api:latest . && docker run -p 8080:80 adventurewo
 
 ---
 
+## Angular Consumer Pattern Note
+
+Angular list components consuming this API's filter/pagination params subscribe to `route.queryParams` reactively (`takeUntilDestroyed`) — not via snapshot. When adding new filter query parameters to an endpoint, the Angular feature component's reactive subscription must include those new param keys to round-trip them through the URL correctly.
+
 ## References
 
 - [Adding Features Guide](guides/adding-features.md) | [Testing Guide](guides/testing-guide.md) | [Postman Guide](guides/postman-guide.md) | [Debugging Guide](guides/debugging-guide.md)

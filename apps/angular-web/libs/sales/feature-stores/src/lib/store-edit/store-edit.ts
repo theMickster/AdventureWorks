@@ -14,8 +14,7 @@ import { forkJoin } from 'rxjs';
 import { SalesApiService } from '@adventureworks-web/sales/data-access';
 import type { SalesPerson } from '@adventureworks-web/sales/data-access';
 import { InputFieldComponent, SelectFieldComponent, SkeletonComponent } from '@adventureworks-web/shared/ui';
-import { NotificationService } from '@adventureworks-web/shared/util';
-import { extractListNavParams } from '../list-nav-params';
+import { extractListNavParams, NotificationService } from '@adventureworks-web/shared/util';
 import { SALES_PERSON_PAGE_SIZE } from '../feature-stores.constants';
 
 @Component({

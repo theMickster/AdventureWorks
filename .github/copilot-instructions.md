@@ -67,10 +67,7 @@ npm run build
 
 ## Angular URL-Param Sync Patterns
 
-Two patterns are in use across the sales feature components — match the existing component's approach when extending it:
-
-- **Snapshot read** (`ActivatedRoute.snapshot.queryParams` in `ngOnInit`): Used by `StoreListComponent`, `SalesPersonListComponent`, and others. Reads URL state once on navigation; does not re-fire on in-place back/forward.
-- **Reactive subscription** (`route.queryParams` + `takeUntilDestroyed` in `ngOnInit`): Used by `OrderListComponent` (US-738). The subscription drives all data loading; action methods only write to the URL via `router.navigate`. This re-fires on every URL change including in-place browser back/forward while the component is mounted.
+- **Reactive subscription only** (`route.queryParams` + `takeUntilDestroyed` in `ngOnInit`): All Angular list components subscribe to `route.queryParams` reactively. For server-side components, the subscription is the sole driver of store/API calls — action methods only write to the URL. For client-side components, the subscription updates filter/sort signals; data loads once separately. **Never use `route.snapshot.queryParams` to restore list state** — snapshot reads do not re-fire on in-place browser back/forward navigation, which causes stale state after history navigation.
 
 ## Dashboard Drill-Down Navigation
 

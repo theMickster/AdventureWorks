@@ -4,8 +4,7 @@ import { ActivatedRoute, Router, RouterLink } from '@angular/router';
 import { SalesApiService } from '@adventureworks-web/sales/data-access';
 import type { SalesPerson, SalesPersonPerformance } from '@adventureworks-web/sales/data-access';
 import { CardComponent, EmptyStateComponent, SkeletonComponent } from '@adventureworks-web/shared/ui';
-import { NotificationService } from '@adventureworks-web/shared/util';
-import { extractListNavParams } from '../list-nav-params';
+import { extractListNavParams, NotificationService } from '@adventureworks-web/shared/util';
 
 type ActiveTab = 'profile' | 'performance';
 

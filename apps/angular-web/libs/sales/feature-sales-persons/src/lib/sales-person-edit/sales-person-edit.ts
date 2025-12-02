@@ -16,8 +16,7 @@ import type { SalesPerson, SalesPersonSalesConfigUpdate } from '@adventureworks-
 import { LookupApiService } from '@adventureworks-web/shared/data-access';
 import type { SalesTerritory } from '@adventureworks-web/shared/data-access';
 import { InputFieldComponent, SelectFieldComponent, SkeletonComponent } from '@adventureworks-web/shared/ui';
-import { NotificationService } from '@adventureworks-web/shared/util';
-import { extractListNavParams } from '../list-nav-params';
+import { extractListNavParams, NotificationService } from '@adventureworks-web/shared/util';
 
 @Component({
   selector: 'aw-sales-person-edit',

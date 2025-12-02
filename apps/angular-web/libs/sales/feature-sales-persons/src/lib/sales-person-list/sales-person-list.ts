@@ -1,4 +1,5 @@
-import { ChangeDetectionStrategy, Component, computed, effect, inject, OnInit, signal } from '@angular/core';
+import { ChangeDetectionStrategy, Component, computed, DestroyRef, effect, inject, OnInit, signal } from '@angular/core';
+import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { ActivatedRoute, Router, RouterLink } from '@angular/router';
 import { SalesPersonStore } from '@adventureworks-web/sales/data-access';
 import { ColumnDefDirective, DataTableComponent } from '@adventureworks-web/shared/ui';
@@ -45,6 +46,7 @@ export class SalesPersonListComponent implements OnInit {
   private readonly router = inject(Router);
   private readonly route = inject(ActivatedRoute);
   private readonly notificationService = inject(NotificationService);
+  private readonly destroyRef = inject(DestroyRef);
 
   protected readonly isLoading = this.salesPersonStore.isLoading;
   protected readonly searchTerm = signal('');
@@ -107,23 +109,22 @@ export class SalesPersonListComponent implements OnInit {
   });
 
   ngOnInit(): void {
-    const params = this.route.snapshot.queryParams;
-    const search = params['search'] as string | undefined;
-    const rawOrderBy = params['orderBy'] as string | undefined;
-    const sortOrder: 'asc' | 'desc' = params['sortOrder'] === 'desc' ? 'desc' : 'asc';
+    this.route.queryParams
+      .pipe(takeUntilDestroyed(this.destroyRef))
+      .subscribe((params) => {
+        const search = params['search'] as string | undefined;
+        const rawOrderBy = params['orderBy'] as string | undefined;
+        const sortOrder: 'asc' | 'desc' = params['sortOrder'] === 'desc' ? 'desc' : 'asc';
 
-    if (search) {
-      this.searchTerm.set(search);
-    }
+        this.searchTerm.set(search ?? '');
 
-    const orderBy = (VALID_SORT_COLUMNS as readonly string[]).includes(rawOrderBy ?? '')
-      ? (rawOrderBy as SortColumn)
-      : undefined;
+        const orderBy = (VALID_SORT_COLUMNS as readonly string[]).includes(rawOrderBy ?? '')
+          ? (rawOrderBy as SortColumn)
+          : undefined;
 
-    if (orderBy) {
-      this.sortColumn.set(orderBy);
-      this.sortDirection.set(sortOrder);
-    }
+        this.sortColumn.set(orderBy ?? '');
+        this.sortDirection.set(orderBy ? sortOrder : 'asc');
+      });
 
     this.salesPersonStore.loadPage({ pageNumber: 1, pageSize: PAGE_SIZE });
   }

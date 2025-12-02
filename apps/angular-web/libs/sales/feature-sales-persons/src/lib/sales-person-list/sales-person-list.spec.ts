@@ -2,6 +2,7 @@ import { ComponentFixture, TestBed } from '@angular/core/testing';
 import { ActivatedRoute, Router } from '@angular/router';
 import { provideRouter } from '@angular/router';
 import { signal } from '@angular/core';
+import { BehaviorSubject } from 'rxjs';
 import { provideTranslateService } from '@ngx-translate/core';
 import { SalesPersonStore } from '@adventureworks-web/sales/data-access';
 import type { SalesPerson } from '@adventureworks-web/sales/data-access';
@@ -67,7 +68,7 @@ const allPersons = [person274, person275, person276];
 function buildRoute(queryParams: Record<string, string> = {}) {
   return {
     snapshot: { queryParams },
-    queryParams: { subscribe: vi.fn() },
+    queryParams: new BehaviorSubject<Record<string, string>>(queryParams),
   };
 }
 
@@ -201,7 +202,9 @@ describe('SalesPersonListComponent', () => {
   });
 
   it('restores search and sort state from URL params on ngOnInit', () => {
-    route.snapshot.queryParams = { search: 'linda', orderBy: 'salesYtd', sortOrder: 'desc' };
+    const params = { search: 'linda', orderBy: 'salesYtd', sortOrder: 'desc' };
+    route.snapshot.queryParams = params;
+    route.queryParams.next(params);
 
     const freshFixture = TestBed.createComponent(SalesPersonListComponent);
     freshFixture.detectChanges();

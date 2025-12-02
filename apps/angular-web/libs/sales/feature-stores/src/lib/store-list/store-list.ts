@@ -1,4 +1,5 @@
-import { ChangeDetectionStrategy, Component, computed, effect, inject, OnInit, signal } from '@angular/core';
+import { ChangeDetectionStrategy, Component, computed, DestroyRef, effect, inject, OnInit, signal } from '@angular/core';
+import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { ActivatedRoute, Router, RouterLink } from '@angular/router';
 import { StoreStore } from '@adventureworks-web/sales/data-access';
 import { ColumnDefDirective, DataTableComponent } from '@adventureworks-web/shared/ui';
@@ -7,7 +8,6 @@ import { NotificationService } from '@adventureworks-web/shared/util';
 
 const PAGE_SIZE = 25;
 const VALID_SORT_COLUMNS = ['name'] as const;
-type SortColumn = (typeof VALID_SORT_COLUMNS)[number];
 
 @Component({
   selector: 'aw-store-list',
@@ -21,6 +21,7 @@ export class StoreListComponent implements OnInit {
   private readonly route = inject(ActivatedRoute);
   private readonly router = inject(Router);
   private readonly notificationService = inject(NotificationService);
+  private readonly destroyRef = inject(DestroyRef);
 
   protected readonly searchTerm = signal('');
   protected readonly sortColumn = signal('');
@@ -68,28 +69,26 @@ export class StoreListComponent implements OnInit {
   }
 
   ngOnInit(): void {
-    const params = this.route.snapshot.queryParams;
-    const search = params['search'] as string | undefined;
-    const pageNumber = Math.max(1, Math.trunc(Number(params['pageNumber'])) || 1);
-    const rawOrderBy = params['orderBy'] as string | undefined;
-    // Accept only column keys that exist in VALID_SORT_COLUMNS — prevents a
-    // bookmarked URL with an arbitrary orderBy value from reaching the API.
-    const orderBy = rawOrderBy === 'name' ? ('name' as const) : undefined;
-    const sortOrder = (params['sortOrder'] === 'desc' ? 'desc' : 'asc') as 'asc' | 'desc';
+    this.route.queryParams
+      .pipe(takeUntilDestroyed(this.destroyRef))
+      .subscribe((params) => {
+        const search = params['search'] as string | undefined;
+        const pageNumber = Math.max(1, Math.trunc(Number(params['pageNumber'])) || 1);
+        const rawOrderBy = params['orderBy'] as string | undefined;
+        const orderBy = rawOrderBy === 'name' ? ('name' as const) : undefined;
+        const sortOrder = (params['sortOrder'] === 'desc' ? 'desc' : 'asc') as 'asc' | 'desc';
 
-    if (orderBy) {
-      this.sortColumn.set(orderBy);
-      this.sortDirection.set(sortOrder);
-    }
+        this.sortColumn.set(orderBy ?? '');
+        this.sortDirection.set(orderBy ? sortOrder : 'asc');
+        this.searchTerm.set(search ?? '');
 
-    if (search) {
-      this.searchTerm.set(search);
-      const sortParams = orderBy ? { orderBy, sortOrder } : {};
-      this.storeStore.search({ params: { pageNumber, pageSize: PAGE_SIZE, ...sortParams }, body: { name: search } });
-    } else {
-      const sortParams = orderBy ? { orderBy, sortOrder } : {};
-      this.storeStore.loadPage({ pageNumber, pageSize: PAGE_SIZE, ...sortParams });
-    }
+        const sortParams = orderBy ? { orderBy, sortOrder } : {};
+        if (search) {
+          this.storeStore.search({ params: { pageNumber, pageSize: PAGE_SIZE, ...sortParams }, body: { name: search } });
+        } else {
+          this.storeStore.loadPage({ pageNumber, pageSize: PAGE_SIZE, ...sortParams });
+        }
+      });
   }
 
   protected onSearch(term: string): void {
@@ -98,10 +97,6 @@ export class StoreListComponent implements OnInit {
       this.onClearSearch();
       return;
     }
-    this.searchTerm.set(trimmed);
-    this.sortColumn.set('');
-    this.sortDirection.set('asc');
-    this.storeStore.search({ params: { pageNumber: 1, pageSize: PAGE_SIZE }, body: { name: trimmed } });
     void this.router.navigate([], {
       relativeTo: this.route,
       queryParams: { search: trimmed, pageNumber: 1, orderBy: null, sortOrder: null },
@@ -110,10 +105,6 @@ export class StoreListComponent implements OnInit {
   }
 
   protected onClearSearch(): void {
-    this.searchTerm.set('');
-    this.sortColumn.set('');
-    this.sortDirection.set('asc');
-    this.storeStore.loadPage({ pageNumber: 1, pageSize: PAGE_SIZE });
     void this.router.navigate([], {
       relativeTo: this.route,
       queryParams: { search: null, pageNumber: null, orderBy: null, sortOrder: null },
@@ -122,14 +113,6 @@ export class StoreListComponent implements OnInit {
   }
 
   protected onPageChange(page: number): void {
-    const search = this.searchTerm();
-    const col = this.sortColumn();
-    const sortParams = col ? { orderBy: col as SortColumn, sortOrder: this.sortDirection() } : {};
-    if (search) {
-      this.storeStore.search({ params: { pageNumber: page, pageSize: PAGE_SIZE, ...sortParams }, body: { name: search } });
-    } else {
-      this.storeStore.loadPage({ pageNumber: page, pageSize: PAGE_SIZE, ...sortParams });
-    }
     void this.router.navigate([], {
       relativeTo: this.route,
       queryParams: { pageNumber: page },
@@ -138,23 +121,7 @@ export class StoreListComponent implements OnInit {
   }
 
   protected onSortChange(event: { column: string; direction: 'asc' | 'desc' }): void {
-    this.sortColumn.set(event.column);
-    this.sortDirection.set(event.direction);
-    const search = this.searchTerm();
-    const page = this.pageNumber();
-    // Runtime guard: DataTableComponent emits sort events for any column — the
-    // sortable flag is a UI hint, not a contract. VALID_SORT_COLUMNS is the
-    // authoritative allowlist that keeps arbitrary column keys off the API call.
-    if (!(VALID_SORT_COLUMNS as readonly string[]).includes(event.column)) return;
-    const orderBy = event.column as SortColumn;
-    if (search) {
-      this.storeStore.search({
-        params: { pageNumber: page, pageSize: PAGE_SIZE, orderBy, sortOrder: event.direction },
-        body: { name: search },
-      });
-    } else {
-      this.storeStore.loadPage({ pageNumber: page, pageSize: PAGE_SIZE, orderBy, sortOrder: event.direction });
-    }
+    if (!(VALID_SORT_COLUMNS as readonly string[]).includes(event.column)) { return; }
     void this.router.navigate([], {
       relativeTo: this.route,
       queryParams: { orderBy: event.column, sortOrder: event.direction },

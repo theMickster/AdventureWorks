@@ -10,7 +10,8 @@
     "@adventureworks-web/sales/data-access": "0.0.1",
     "@adventureworks-web/shared/data-access": "0.0.1",
     "@adventureworks-web/shared/ui": "0.0.1",
-    "@adventureworks-web/shared/util": "0.0.1"
+    "@adventureworks-web/shared/util": "0.0.1",
+    "chart.js": "^4.5.1"
   },
   "sideEffects": false
 }

@@ -7,7 +7,7 @@ import { SalesApiService } from '@adventureworks-web/sales/data-access';
 import type { SalesOrderDetail } from '@adventureworks-web/sales/data-access';
 import { EmptyStateComponent, SkeletonComponent, StatusBadgeComponent } from '@adventureworks-web/shared/ui';
 import { NotificationService } from '@adventureworks-web/shared/util';
-import { extractListNavParams } from '../list-nav-params';
+import { extractOrderListNavParams } from '../order-list-nav-params';
 import { STATUS_BADGE_MAP } from '../order-status-badge';
 
 @Component({
@@ -38,7 +38,7 @@ export class OrderDetailComponent implements OnInit {
 
   protected readonly backQueryParams = computed(() =>
     // snapshot read is intentional: captures list nav state once at navigation time
-    extractListNavParams(this.route.snapshot.queryParams),
+    extractOrderListNavParams(this.route.snapshot.queryParams),
   );
 
   constructor() {
