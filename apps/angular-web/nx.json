@@ -40,7 +40,8 @@
     },
     "@nx/angular:unit-test": {
       "cache": true,
-      "inputs": ["default", "^production"]
+      "inputs": ["default", "^production"],
+      "options": { "setupFiles": ["test-setup.ts"] }
     }
   },
   "plugins": [

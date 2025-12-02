@@ -7,7 +7,7 @@
 - ✅ Frontend Foundation: Epic #560 complete (all 9 features done)
 - ✅ Frontend Data Layer: Epic #577 complete (all 6 features done)
 - ✅ Infrastructure: Epic #570 complete (all 5 features done)
-- 🚧 Testing Foundation: Epic #565 in progress (#669, #923 done; #670, #671, #672 remaining)
+- 🚧 Testing Foundation: Epic #565 in progress (#669, #923, #672 done; #670, #671 remaining)
 - 🚧 UI pipeline in ADO: #561 in progress (US-739 done, Feature 934 done); #562 and #563 currently New
 - 📋 Additional Initiative #559 backlog epics: #935 (Customer), #936 (Work Orders/Manufacturing), #937 (Purchasing/Vendor)
 - 📋 Future infrastructure/function backlog: #569, #567, #568 (#566 marked Removed)
@@ -97,9 +97,9 @@
 
 - ✅ #669 .NET Integration Tests (WebApplicationFactory)
 - ✅ #923 Local Database Reset Tooling for Test Workflows
+- ✅ #672 Angular Testing Foundation & Utilities
 - 📋 #670 k6 Load Testing Foundation
 - 📋 #671 Playwright E2E Smoke Test Suite
-- 📋 #672 Angular Testing Foundation & Utilities
 
 #### Epic #569 -- Polyglot Azure Functions Architecture 📋 FUTURE
 
@@ -119,7 +119,7 @@
 
 1. Continue Phase 5 Sales + HR CRUD UI work (Epics #561 and #562).
 2. Continue Real-Time Dashboard work (Epic #563).
-3. Complete remaining Testing Foundation features (#670, #671, #672).
+3. Complete remaining Testing Foundation features (#670, #671).
 
 ### Later
 
