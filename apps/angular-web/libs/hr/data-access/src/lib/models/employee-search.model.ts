@@ -7,4 +7,5 @@ export interface EmployeeSearchBody {
   readonly emailAddress?: string | null;
   readonly nationalIdNumber?: string | null;
   readonly loginId?: string | null;
+  readonly currentFlag?: boolean | null;
 }

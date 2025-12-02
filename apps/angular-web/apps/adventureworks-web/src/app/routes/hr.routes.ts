@@ -1,9 +1,21 @@
 import { Route } from '@angular/router';
-import { PlaceholderComponent } from '../placeholder/placeholder';
 
 export const hrRoutes: Route[] = [
   { path: '', redirectTo: 'employees', pathMatch: 'full' },
-  { path: 'employees', title: 'Employees', data: { breadcrumb: 'Employees' }, component: PlaceholderComponent },
+  {
+    path: 'employees',
+    title: 'Employees',
+    data: { breadcrumb: 'Employees' },
+    loadComponent: () =>
+      import('@adventureworks-web/hr/feature-employees').then((m) => m.EmployeeListComponent),
+  },
+  {
+    path: 'employees/:id',
+    title: 'Employee Detail',
+    data: { breadcrumb: 'Employee Detail' },
+    loadComponent: () =>
+      import('@adventureworks-web/hr/feature-employees').then((m) => m.EmployeeDetailComponent),
+  },
   {
     path: 'departments',
     title: 'Departments',

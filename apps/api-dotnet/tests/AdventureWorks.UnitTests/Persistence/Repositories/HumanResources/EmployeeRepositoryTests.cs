@@ -565,6 +565,70 @@ public sealed class EmployeeRepositoryTests : PersistenceUnitTestBase
         entry.State.Should().Be(EntityState.Detached);
     }
 
+    [Fact]
+    public async Task GetEmployeesAsync_includes_current_department_when_active_history_existsAsync()
+    {
+        var department = new DepartmentEntity
+        {
+            DepartmentId = 1,
+            Name = "Engineering",
+            GroupName = "Research and Development",
+            ModifiedDate = StandardModifiedDate
+        };
+        DbContext.Departments.Add(department);
+
+        var shift = new ShiftEntity
+        {
+            ShiftId = 1,
+            Name = "Day",
+            StartTime = new TimeSpan(8, 0, 0),
+            EndTime = new TimeSpan(17, 0, 0),
+            ModifiedDate = StandardModifiedDate
+        };
+        DbContext.Shifts.Add(shift);
+        await DbContext.SaveChangesAsync();
+
+        var employee = HumanResourcesDomainFixtures.GetCompleteEmployeeEntity();
+        DbContext.Employees.Add(employee);
+        await DbContext.SaveChangesAsync();
+
+        DbContext.EmployeeDepartmentHistories.Add(new EmployeeDepartmentHistory
+        {
+            BusinessEntityId = employee.BusinessEntityId,
+            DepartmentId = 1,
+            ShiftId = 1,
+            StartDate = new DateTime(2020, 1, 10),
+            EndDate = null,
+            ModifiedDate = StandardModifiedDate
+        });
+        await DbContext.SaveChangesAsync();
+
+        var parameters = new EmployeeParameter { PageNumber = 1, PageSize = 10 };
+
+        var (result, _) = await _sut.GetEmployeesAsync(parameters);
+
+        using (new AssertionScope())
+        {
+            result.Should().HaveCount(1);
+            result[0].EmployeeDepartmentHistory.Should().HaveCount(1);
+            result[0].EmployeeDepartmentHistory.First().Department.Name.Should().Be("Engineering");
+        }
+    }
+
+    [Fact]
+    public async Task GetEmployeesAsync_has_no_current_department_when_no_active_historyAsync()
+    {
+        var employee = HumanResourcesDomainFixtures.GetCompleteEmployeeEntity();
+        DbContext.Employees.Add(employee);
+        await DbContext.SaveChangesAsync();
+
+        var parameters = new EmployeeParameter { PageNumber = 1, PageSize = 10 };
+
+        var (result, _) = await _sut.GetEmployeesAsync(parameters);
+
+        result[0].EmployeeDepartmentHistory.Should().BeEmpty();
+    }
+
     #endregion
 
     #region SearchEmployeesAsync Tests
@@ -829,6 +893,169 @@ public sealed class EmployeeRepositoryTests : PersistenceUnitTestBase
 
         var entry = DbContext.Entry(result[0]);
         entry.State.Should().Be(EntityState.Detached);
+    }
+
+    [Fact]
+    public async Task SearchEmployeesAsync_filters_by_CurrentFlag_trueAsync()
+    {
+        var employees = HumanResourcesDomainFixtures.GetEmployeeListForPaging();
+        employees[0].CurrentFlag = false;
+        DbContext.Employees.AddRange(employees);
+        await DbContext.SaveChangesAsync();
+
+        var parameters = new EmployeeParameter { PageNumber = 1, PageSize = 10 };
+        var searchModel = new EmployeeSearchModel { CurrentFlag = true };
+
+        var (result, totalCount) = await _sut.SearchEmployeesAsync(parameters, searchModel);
+
+        using (new AssertionScope())
+        {
+            result.Should().HaveCount(4);
+            result.Should().OnlyContain(e => e.CurrentFlag);
+            totalCount.Should().Be(4);
+        }
+    }
+
+    [Fact]
+    public async Task SearchEmployeesAsync_filters_by_CurrentFlag_falseAsync()
+    {
+        var employees = HumanResourcesDomainFixtures.GetEmployeeListForPaging();
+        employees[0].CurrentFlag = false;
+        DbContext.Employees.AddRange(employees);
+        await DbContext.SaveChangesAsync();
+
+        var parameters = new EmployeeParameter { PageNumber = 1, PageSize = 10 };
+        var searchModel = new EmployeeSearchModel { CurrentFlag = false };
+
+        var (result, totalCount) = await _sut.SearchEmployeesAsync(parameters, searchModel);
+
+        using (new AssertionScope())
+        {
+            result.Should().HaveCount(1);
+            result[0].BusinessEntityId.Should().Be(1);
+            totalCount.Should().Be(1);
+        }
+    }
+
+    [Fact]
+    public async Task SearchEmployeesAsync_omits_CurrentFlag_filter_when_nullAsync()
+    {
+        var employees = HumanResourcesDomainFixtures.GetEmployeeListForPaging();
+        employees[0].CurrentFlag = false;
+        DbContext.Employees.AddRange(employees);
+        await DbContext.SaveChangesAsync();
+
+        var parameters = new EmployeeParameter { PageNumber = 1, PageSize = 10 };
+        var searchModel = new EmployeeSearchModel { CurrentFlag = null };
+
+        var (result, totalCount) = await _sut.SearchEmployeesAsync(parameters, searchModel);
+
+        using (new AssertionScope())
+        {
+            result.Should().HaveCount(5);
+            totalCount.Should().Be(5);
+        }
+    }
+
+    [Fact]
+    public async Task SearchEmployeesAsync_includes_current_department_when_active_history_existsAsync()
+    {
+        var department = new DepartmentEntity
+        {
+            DepartmentId = 1,
+            Name = "Engineering",
+            GroupName = "Research and Development",
+            ModifiedDate = StandardModifiedDate
+        };
+        DbContext.Departments.Add(department);
+
+        var shift = new ShiftEntity
+        {
+            ShiftId = 1,
+            Name = "Day",
+            StartTime = new TimeSpan(8, 0, 0),
+            EndTime = new TimeSpan(17, 0, 0),
+            ModifiedDate = StandardModifiedDate
+        };
+        DbContext.Shifts.Add(shift);
+        await DbContext.SaveChangesAsync();
+
+        var employee = HumanResourcesDomainFixtures.GetCompleteEmployeeEntity();
+        DbContext.Employees.Add(employee);
+        await DbContext.SaveChangesAsync();
+
+        DbContext.EmployeeDepartmentHistories.Add(new EmployeeDepartmentHistory
+        {
+            BusinessEntityId = employee.BusinessEntityId,
+            DepartmentId = 1,
+            ShiftId = 1,
+            StartDate = new DateTime(2020, 1, 10),
+            EndDate = null,
+            ModifiedDate = StandardModifiedDate
+        });
+        await DbContext.SaveChangesAsync();
+
+        var parameters = new EmployeeParameter { PageNumber = 1, PageSize = 10 };
+        var searchModel = new EmployeeSearchModel();
+
+        var (result, _) = await _sut.SearchEmployeesAsync(parameters, searchModel);
+
+        using (new AssertionScope())
+        {
+            result.Should().HaveCount(1);
+            result[0].EmployeeDepartmentHistory.Should().HaveCount(1);
+            result[0].EmployeeDepartmentHistory.First().Department.Name.Should().Be("Engineering");
+        }
+    }
+
+    [Fact]
+    public async Task SearchEmployeesAsync_excludes_ended_department_historyAsync()
+    {
+        var department = new DepartmentEntity
+        {
+            DepartmentId = 1,
+            Name = "Engineering",
+            GroupName = "Research and Development",
+            ModifiedDate = StandardModifiedDate
+        };
+        DbContext.Departments.Add(department);
+
+        var shift = new ShiftEntity
+        {
+            ShiftId = 1,
+            Name = "Day",
+            StartTime = new TimeSpan(8, 0, 0),
+            EndTime = new TimeSpan(17, 0, 0),
+            ModifiedDate = StandardModifiedDate
+        };
+        DbContext.Shifts.Add(shift);
+        await DbContext.SaveChangesAsync();
+
+        var employee = HumanResourcesDomainFixtures.GetCompleteEmployeeEntity();
+        DbContext.Employees.Add(employee);
+        await DbContext.SaveChangesAsync();
+
+        DbContext.EmployeeDepartmentHistories.Add(new EmployeeDepartmentHistory
+        {
+            BusinessEntityId = employee.BusinessEntityId,
+            DepartmentId = 1,
+            ShiftId = 1,
+            StartDate = new DateTime(2018, 1, 10),
+            EndDate = new DateTime(2019, 12, 31),
+            ModifiedDate = StandardModifiedDate
+        });
+        await DbContext.SaveChangesAsync();
+
+        var parameters = new EmployeeParameter { PageNumber = 1, PageSize = 10 };
+        var searchModel = new EmployeeSearchModel();
+
+        var (result, _) = await _sut.SearchEmployeesAsync(parameters, searchModel);
+
+        using (new AssertionScope())
+        {
+            result.Should().HaveCount(1);
+            result[0].EmployeeDepartmentHistory.Should().BeEmpty();
+        }
     }
 
     #endregion

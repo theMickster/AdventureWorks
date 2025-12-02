@@ -19,5 +19,6 @@ export interface Employee {
   readonly vacationHours: number;
   readonly sickLeaveHours: number;
   readonly emailAddress: string | null;
+  readonly currentDepartment: string | null;
   readonly modifiedDate: string;
 }

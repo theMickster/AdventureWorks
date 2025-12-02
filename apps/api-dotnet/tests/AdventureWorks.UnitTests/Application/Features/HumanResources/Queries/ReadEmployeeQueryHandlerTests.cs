@@ -246,4 +246,87 @@ public sealed class ReadEmployeeQueryHandlerTests : UnitTestBase
             result.EmailAddress.Should().BeNull("because EmailAddresses collection is null");
         }
     }
+
+    [Fact]
+    public async Task Handle_maps_current_department_from_active_history_recordAsync()
+    {
+        const int businessEntityId = 300;
+
+        var employeeEntity = new EmployeeEntity
+        {
+            BusinessEntityId = businessEntityId,
+            NationalIdnumber = "123456789",
+            LoginId = "test\\jane.doe",
+            JobTitle = "Engineer",
+            BirthDate = new DateTime(1990, 1, 1),
+            HireDate = new DateTime(2020, 1, 1),
+            MaritalStatus = "S",
+            Gender = "F",
+            PersonBusinessEntity = new PersonEntity { FirstName = "Jane", LastName = "Doe" },
+            EmployeeDepartmentHistory = new List<EmployeeDepartmentHistory>
+            {
+                new()
+                {
+                    BusinessEntityId = businessEntityId,
+                    DepartmentId = 1,
+                    EndDate = new DateTime(2021, 1, 1),
+                    Department = new DepartmentEntity { DepartmentId = 1, Name = "Sales" }
+                },
+                new()
+                {
+                    BusinessEntityId = businessEntityId,
+                    DepartmentId = 2,
+                    EndDate = null,
+                    Department = new DepartmentEntity { DepartmentId = 2, Name = "Engineering" }
+                }
+            }
+        };
+
+        _mockEmployeeRepository.Setup(x => x.GetEmployeeByIdAsync(businessEntityId, It.IsAny<CancellationToken>()))
+            .ReturnsAsync(employeeEntity);
+
+        var result = await _sut.Handle(
+            new ReadEmployeeQuery { BusinessEntityId = businessEntityId },
+            CancellationToken.None);
+
+        result!.CurrentDepartment.Should().Be("Engineering", "because only the open history record is current");
+    }
+
+    [Fact]
+    public async Task Handle_maps_null_current_department_when_no_active_history_recordAsync()
+    {
+        const int businessEntityId = 301;
+
+        var employeeEntity = new EmployeeEntity
+        {
+            BusinessEntityId = businessEntityId,
+            NationalIdnumber = "123456789",
+            LoginId = "test\\john.doe",
+            JobTitle = "Engineer",
+            BirthDate = new DateTime(1990, 1, 1),
+            HireDate = new DateTime(2020, 1, 1),
+            MaritalStatus = "S",
+            Gender = "M",
+            PersonBusinessEntity = new PersonEntity { FirstName = "John", LastName = "Doe" },
+            EmployeeDepartmentHistory = new List<EmployeeDepartmentHistory>
+            {
+                new()
+                {
+                    BusinessEntityId = businessEntityId,
+                    DepartmentId = 1,
+                    EndDate = new DateTime(2021, 1, 1),
+                    Department = new DepartmentEntity { DepartmentId = 1, Name = "Sales" }
+                }
+            }
+        };
+
+        _mockEmployeeRepository.Setup(x => x.GetEmployeeByIdAsync(businessEntityId, It.IsAny<CancellationToken>()))
+            .ReturnsAsync(employeeEntity);
+
+        var result = await _sut.Handle(
+            new ReadEmployeeQuery { BusinessEntityId = businessEntityId },
+            CancellationToken.None);
+
+        result!.CurrentDepartment.Should().BeNull("because no history record is currently open");
+    }
 }

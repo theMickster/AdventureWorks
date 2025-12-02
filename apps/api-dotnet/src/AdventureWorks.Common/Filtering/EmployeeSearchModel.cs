@@ -26,4 +26,9 @@ public sealed class EmployeeSearchModel : SearchPersonModelBase
     /// The employee's login ID.
     /// </summary>
     public string? LoginId { get; set; }
+
+    /// <summary>
+    /// Filters by employment status: true for current/active employees, false for terminated.
+    /// </summary>
+    public bool? CurrentFlag { get; set; }
 }

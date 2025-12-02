@@ -51,6 +51,11 @@ public sealed class EmployeeModel : EmployeeBaseModel
     public string? EmailAddress { get; set; }
 
     /// <summary>
+    /// Name of the employee's current department, or null if no active department history record exists.
+    /// </summary>
+    public string? CurrentDepartment { get; set; }
+
+    /// <summary>
     /// Date when the employee record was last modified.
     /// </summary>
     public DateTime ModifiedDate { get; set; }

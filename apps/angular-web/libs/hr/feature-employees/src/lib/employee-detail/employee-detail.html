@@ -1,0 +1,118 @@
+<div id="aw-employee-detail-page">
+  <div id="aw-employee-detail-header" class="mb-6 flex items-center gap-4">
+    <a
+      id="aw-employee-detail-back"
+      [routerLink]="['/hr/employees']"
+      [queryParams]="backQueryParams()"
+      class="btn btn-ghost btn-sm"
+    >
+      <i class="fa-solid fa-arrow-left" aria-hidden="true"></i>
+      Back to Employees
+    </a>
+    @if (isLoading()) {
+      <aw-skeleton id="aw-employee-detail-name-skeleton" width="16rem" height="2rem" />
+    } @else if (employee(); as e) {
+      <h1 id="aw-employee-detail-name" class="text-2xl font-bold text-base-content">
+        {{ e.firstName }} {{ e.lastName }}
+      </h1>
+      @if (lifecycle()) {
+        <aw-status-badge id="aw-employee-detail-status-badge" [status]="statusKey()" [statusMap]="statusBadgeMap" />
+      }
+    }
+  </div>
+
+  @if (isLoading()) {
+    <div id="aw-employee-detail-loading" class="space-y-4">
+      <aw-skeleton id="aw-employee-detail-info-skeleton" height="1.5rem" width="20rem" />
+      <aw-skeleton id="aw-employee-detail-content-skeleton" height="12rem" />
+    </div>
+  } @else if (employee(); as e) {
+    @if (lifecycle(); as l) {
+      <div id="aw-employee-detail-cards" class="mb-6 grid gap-4 sm:grid-cols-2">
+        <aw-card fieldId="aw-employee-detail-personal-card" title="Personal Info">
+          <dl class="grid grid-cols-2 gap-1 text-sm">
+            <dt class="text-base-content/60">Name</dt>
+            <dd>{{ e.firstName }} {{ e.middleName ? e.middleName + ' ' : '' }}{{ e.lastName }}</dd>
+            <dt class="text-base-content/60">Marital Status</dt>
+            <dd>{{ e.maritalStatus === 'M' ? 'Married' : 'Single' }}</dd>
+            <dt class="text-base-content/60">Gender</dt>
+            <dd>{{ e.gender === 'M' ? 'Male' : 'Female' }}</dd>
+            <dt class="text-base-content/60">Birth Date</dt>
+            <dd>{{ e.birthDate | slice: 0 : 10 }}</dd>
+          </dl>
+        </aw-card>
+
+        <aw-card fieldId="aw-employee-detail-employment-card" title="Employment Info">
+          <dl class="grid grid-cols-2 gap-1 text-sm">
+            <dt class="text-base-content/60">Job Title</dt>
+            <dd>{{ e.jobTitle }}</dd>
+            <dt class="text-base-content/60">Department</dt>
+            <dd>{{ l.currentDepartment ?? '—' }}</dd>
+            <dt class="text-base-content/60">Hire Date</dt>
+            <dd>{{ l.hireDate | slice: 0 : 10 }}</dd>
+            <dt class="text-base-content/60">Shift</dt>
+            <dd>{{ l.currentShift ?? '—' }}</dd>
+            <dt class="text-base-content/60">Pay Rate</dt>
+            <dd>{{ l.currentPayRate !== null ? (l.currentPayRate | currency) : '—' }}</dd>
+          </dl>
+        </aw-card>
+
+        <aw-card fieldId="aw-employee-detail-pto-card" title="PTO Balances">
+          <dl class="grid grid-cols-2 gap-1 text-sm">
+            <dt class="text-base-content/60">Vacation Hours</dt>
+            <dd>{{ l.vacationHoursBalance }}</dd>
+            <dt class="text-base-content/60">Sick Leave Hours</dt>
+            <dd>{{ l.sickLeaveHoursBalance }}</dd>
+          </dl>
+        </aw-card>
+
+        <aw-card fieldId="aw-employee-detail-lifecycle-card" title="Lifecycle Status">
+          <dl class="grid grid-cols-2 gap-1 text-sm">
+            <dt class="text-base-content/60">Status</dt>
+            <dd>{{ l.employmentStatus }}</dd>
+            <dt class="text-base-content/60">Days Employed</dt>
+            <dd>{{ l.daysEmployed ?? '—' }}</dd>
+
+            @if (l.employmentStatus === 'Terminated') {
+              <dt class="text-base-content/60">Termination Date</dt>
+              <dd>{{ l.terminationDate | slice: 0 : 10 }}</dd>
+              <dt class="text-base-content/60">Days Since Termination</dt>
+              <dd>{{ daysSinceTermination() ?? '—' }}</dd>
+              <dt class="text-base-content/60">Eligible for Rehire</dt>
+              <dd id="aw-employee-detail-eligibility">{{ isEligibleForRehireWithin90Days() ? 'Yes' : 'No' }}</dd>
+            }
+          </dl>
+
+          <div card-actions>
+            @if (l.employmentStatus === 'Active') {
+              <button
+                id="aw-employee-detail-terminate-btn"
+                type="button"
+                class="btn btn-error btn-sm"
+                (click)="onTerminateClick()"
+              >
+                Terminate
+              </button>
+            } @else if (l.employmentStatus === 'Terminated') {
+              <button
+                id="aw-employee-detail-rehire-btn"
+                type="button"
+                class="btn btn-primary btn-sm"
+                (click)="onRehireClick()"
+              >
+                Rehire
+              </button>
+            }
+          </div>
+        </aw-card>
+      </div>
+    }
+  } @else {
+    <aw-empty-state
+      fieldId="aw-employee-detail-error"
+      icon="fa-solid fa-circle-exclamation"
+      title="Failed to load employee"
+      description="Please go back and try again."
+    />
+  }
+</div>

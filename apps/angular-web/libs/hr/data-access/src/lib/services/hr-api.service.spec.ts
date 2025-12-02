@@ -49,6 +49,7 @@ const mockEmployee: Employee = {
   vacationHours: 99,
   sickLeaveHours: 69,
   emailAddress: 'ken0@adventure-works.com',
+  currentDepartment: 'Executive',
   modifiedDate: '2024-01-01T00:00:00',
 };
 

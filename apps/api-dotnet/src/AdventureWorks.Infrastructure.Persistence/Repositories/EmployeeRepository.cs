@@ -150,6 +150,8 @@ public sealed class EmployeeRepository(AdventureWorksDbContext dbContext)
             .AsNoTracking()
             .Include(e => e.PersonBusinessEntity)
                 .ThenInclude(p => p.EmailAddresses)
+            .Include(e => e.EmployeeDepartmentHistory.Where(edh => edh.EndDate == null))
+                .ThenInclude(edh => edh.Department)
             .AsQueryable();
 
         employeeQuery = parameters.OrderBy switch
@@ -185,6 +187,8 @@ public sealed class EmployeeRepository(AdventureWorksDbContext dbContext)
             .AsNoTracking()
             .Include(e => e.PersonBusinessEntity)
                 .ThenInclude(p => p.EmailAddresses)
+            .Include(e => e.EmployeeDepartmentHistory.Where(edh => edh.EndDate == null))
+                .ThenInclude(edh => edh.Department)
             .AsQueryable();
 
         if (employeeSearchModel != null)
@@ -229,6 +233,11 @@ public sealed class EmployeeRepository(AdventureWorksDbContext dbContext)
             {
                 employeeQuery = employeeQuery.Where(e =>
                     EF.Functions.Like(e.LoginId, $"%{LikePatternHelper.EscapeLikePattern(employeeSearchModel.LoginId.Trim())}%"));
+            }
+
+            if (employeeSearchModel.CurrentFlag != null)
+            {
+                employeeQuery = employeeQuery.Where(e => e.CurrentFlag == employeeSearchModel.CurrentFlag.Value);
             }
         }
 

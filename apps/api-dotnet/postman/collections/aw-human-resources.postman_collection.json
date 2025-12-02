@@ -650,6 +650,66 @@
 								}
 							},
 							"response": []
+						},
+						{
+							"name": "List - Includes Current Department",
+							"event": [
+								{
+									"listen": "test",
+									"script": {
+										"exec": [
+											"pm.test(\"Status should be OK request\", function () {\r",
+											"    pm.response.to.have.status(200);\r",
+											"});\r",
+											"\r",
+											"var response = pm.response.json();\r",
+											"\r",
+											"pm.test(\"Results include currentDepartment property\", function() {\r",
+											"    pm.expect(response.results).to.be.an('array');\r",
+											"    pm.expect(response.results.length).to.be.above(0);\r",
+											"    response.results.forEach(function (employee) {\r",
+											"        pm.expect(employee).to.have.property('currentDepartment');\r",
+											"    });\r",
+											"});\r",
+											"\r",
+											"pm.test(\"Known active employee has the expected current department\", function() {\r",
+											"    var ken = response.results.find(function (e) { return e.id === 1; });\r",
+											"    if (ken) {\r",
+											"        pm.expect(ken.currentDepartment).to.eql('Executive');\r",
+											"    }\r",
+											"});"
+										],
+										"type": "text/javascript",
+										"packages": {},
+										"requests": {}
+									}
+								}
+							],
+							"request": {
+								"method": "GET",
+								"header": [],
+								"url": {
+									"raw": "{{adventureWorksApi}}/{{apiVersion}}/employees?pageNumber=1&pageSize=10",
+									"host": [
+										"{{adventureWorksApi}}"
+									],
+									"path": [
+										"{{apiVersion}}",
+										"employees"
+									],
+									"query": [
+										{
+											"key": "pageNumber",
+											"value": "1"
+										},
+										{
+											"key": "pageSize",
+											"value": "10"
+										}
+									]
+								}
+							},
+							"response": []
 						}
 					]
 				},
@@ -1322,6 +1382,164 @@
 								"body": {
 									"mode": "raw",
 									"raw": "{\r\n    \"lastName\": \"sm\"\r\n}",
+									"options": {
+										"raw": {
+											"language": "json"
+										}
+									}
+								},
+								"url": {
+									"raw": "{{adventureWorksApi}}/{{apiVersion}}/employees/search",
+									"host": [
+										"{{adventureWorksApi}}"
+									],
+									"path": [
+										"{{apiVersion}}",
+										"employees",
+										"search"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "Search - Current flag true",
+							"event": [
+								{
+									"listen": "test",
+									"script": {
+										"exec": [
+											"pm.test(\"Status should be OK request\", function () {\r",
+											"    pm.response.to.have.status(200);\r",
+											"});\r",
+											"\r",
+											"var response = pm.response.json();\r",
+											"\r",
+											"pm.test(\"All results are active employees\", function() {\r",
+											"    pm.expect(response.results).to.be.an('array');\r",
+											"    response.results.forEach(function (employee) {\r",
+											"        pm.expect(employee.currentFlag).to.eql(true);\r",
+											"    });\r",
+											"});"
+										],
+										"type": "text/javascript",
+										"packages": {},
+										"requests": {}
+									}
+								}
+							],
+							"request": {
+								"method": "POST",
+								"header": [],
+								"body": {
+									"mode": "raw",
+									"raw": "{\r\n    \"currentFlag\": true\r\n}",
+									"options": {
+										"raw": {
+											"language": "json"
+										}
+									}
+								},
+								"url": {
+									"raw": "{{adventureWorksApi}}/{{apiVersion}}/employees/search",
+									"host": [
+										"{{adventureWorksApi}}"
+									],
+									"path": [
+										"{{apiVersion}}",
+										"employees",
+										"search"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "Search - Current flag false",
+							"event": [
+								{
+									"listen": "test",
+									"script": {
+										"exec": [
+											"pm.test(\"Status should be OK request\", function () {\r",
+											"    pm.response.to.have.status(200);\r",
+											"});\r",
+											"\r",
+											"var response = pm.response.json();\r",
+											"\r",
+											"pm.test(\"Response has correct structure\", function() {\r",
+											"    pm.expect(response.results).to.be.an('array');\r",
+											"});\r",
+											"\r",
+											"pm.test(\"All results are terminated employees\", function() {\r",
+											"    response.results.forEach(function (employee) {\r",
+											"        pm.expect(employee.currentFlag).to.eql(false);\r",
+											"    });\r",
+											"});"
+										],
+										"type": "text/javascript",
+										"packages": {},
+										"requests": {}
+									}
+								}
+							],
+							"request": {
+								"method": "POST",
+								"header": [],
+								"body": {
+									"mode": "raw",
+									"raw": "{\r\n    \"currentFlag\": false\r\n}",
+									"options": {
+										"raw": {
+											"language": "json"
+										}
+									}
+								},
+								"url": {
+									"raw": "{{adventureWorksApi}}/{{apiVersion}}/employees/search",
+									"host": [
+										"{{adventureWorksApi}}"
+									],
+									"path": [
+										"{{apiVersion}}",
+										"employees",
+										"search"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "Search - Includes Current Department",
+							"event": [
+								{
+									"listen": "test",
+									"script": {
+										"exec": [
+											"pm.test(\"Status should be OK request\", function () {\r",
+											"    pm.response.to.have.status(200);\r",
+											"});\r",
+											"\r",
+											"var response = pm.response.json();\r",
+											"\r",
+											"pm.test(\"Matched employee has the expected current department\", function() {\r",
+											"    pm.expect(response.results).to.be.an('array');\r",
+											"    pm.expect(response.results.length).to.be.above(0);\r",
+											"    pm.expect(response.results[0].currentDepartment).to.eql('Executive');\r",
+											"});"
+										],
+										"type": "text/javascript",
+										"packages": {},
+										"requests": {}
+									}
+								}
+							],
+							"request": {
+								"method": "POST",
+								"header": [],
+								"body": {
+									"mode": "raw",
+									"raw": "{\r\n    \"id\": 1\r\n}",
 									"options": {
 										"raw": {
 											"language": "json"

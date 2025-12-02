@@ -31,6 +31,7 @@ public sealed class EmployeeEntityToModelProfile : Profile
             .ForMember(dest => dest.VacationHours, opt => opt.MapFrom(src => src.VacationHours))
             .ForMember(dest => dest.SickLeaveHours, opt => opt.MapFrom(src => src.SickLeaveHours))
             .ForMember(dest => dest.EmailAddress, opt => opt.MapFrom<EmployeeEmailAddressResolver>())
+            .ForMember(dest => dest.CurrentDepartment, opt => opt.MapFrom<EmployeeCurrentDepartmentResolver>())
             .ForMember(dest => dest.ModifiedDate, opt => opt.MapFrom(src => src.ModifiedDate));
     }
 }
@@ -43,5 +44,16 @@ public class EmployeeEmailAddressResolver : IValueResolver<EmployeeEntity, Emplo
     public string? Resolve(EmployeeEntity src, EmployeeModel dest, string? destMember, ResolutionContext context)
     {
         return src.PersonBusinessEntity?.EmailAddresses?.FirstOrDefault()?.EmailAddressName;
+    }
+}
+
+/// <summary>
+/// Custom resolver to extract the employee's current department name from the open EmployeeDepartmentHistory record.
+/// </summary>
+public class EmployeeCurrentDepartmentResolver : IValueResolver<EmployeeEntity, EmployeeModel, string?>
+{
+    public string? Resolve(EmployeeEntity src, EmployeeModel dest, string? destMember, ResolutionContext context)
+    {
+        return src.EmployeeDepartmentHistory?.FirstOrDefault(edh => edh.EndDate == null)?.Department?.Name;
     }
 }

@@ -44,6 +44,7 @@ const mockEmployees: Employee[] = [
     vacationHours: 1,
     sickLeaveHours: 20,
     emailAddress: 'terri0@adventure-works.com',
+    currentDepartment: 'Engineering',
     modifiedDate: '2008-04-30T00:00:00',
   },
   {
@@ -66,6 +67,7 @@ const mockEmployees: Employee[] = [
     vacationHours: 2,
     sickLeaveHours: 21,
     emailAddress: 'roberto0@adventure-works.com',
+    currentDepartment: 'Engineering',
     modifiedDate: '2008-04-30T00:00:00',
   },
 ];

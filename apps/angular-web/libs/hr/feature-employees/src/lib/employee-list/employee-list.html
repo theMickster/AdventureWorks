@@ -1,0 +1,62 @@
+<div id="aw-employee-list-page">
+  <div id="aw-employee-list-header" class="mb-6 flex items-center justify-between">
+    <h1 class="text-2xl font-bold text-base-content">Employees</h1>
+  </div>
+
+  <form id="aw-employee-list-filters" [formGroup]="filterForm" class="mb-4" (ngSubmit)="onApplyFilters()">
+    <div class="grid grid-cols-1 gap-3 sm:grid-cols-2 lg:grid-cols-3">
+      <fieldset class="fieldset">
+        <legend class="fieldset-legend">
+          <label for="aw-employee-filter-name">Name</label>
+        </legend>
+        <input
+          id="aw-employee-filter-name"
+          type="text"
+          class="input input-bordered w-full"
+          placeholder="Search by name"
+          formControlName="name"
+        />
+      </fieldset>
+
+      <aw-select-field
+        fieldId="aw-employee-filter-status"
+        formControlName="status"
+        label="Status"
+        emptyOptionLabel="All statuses"
+        [options]="statusOptions"
+      />
+    </div>
+
+    <div class="mt-3 flex items-center gap-2">
+      <button id="aw-employee-filter-apply-btn" type="submit" class="btn btn-primary">
+        <i class="fa-solid fa-filter" aria-hidden="true"></i>
+        Apply
+      </button>
+      <button id="aw-employee-filter-reset-btn" type="button" class="btn btn-ghost" (click)="onResetFilters()">
+        <i class="fa-solid fa-xmark" aria-hidden="true"></i>
+        Reset Filters
+      </button>
+    </div>
+  </form>
+
+  <aw-data-table
+    fieldId="aw-employee-list-table"
+    [columns]="columns"
+    [data]="rows()"
+    [loading]="isLoading()"
+    [pageNumber]="pageNumber()"
+    [pageSize]="pageSize()"
+    [totalPages]="totalPages()"
+    [totalRecords]="totalRecords()"
+    emptyTitle="No employees found"
+    emptyDescription="Try adjusting your filters."
+    (pageChange)="onPageChange($event)"
+  >
+    <ng-template awColumnDef="status" let-row>
+      <aw-status-badge [status]="$any(row)['statusKey']" [statusMap]="statusBadgeMap" />
+    </ng-template>
+    <ng-template awColumnDef="view" let-row>
+      <button type="button" class="btn btn-ghost btn-xs" (click)="onRowClick(row)">View</button>
+    </ng-template>
+  </aw-data-table>
+</div>
