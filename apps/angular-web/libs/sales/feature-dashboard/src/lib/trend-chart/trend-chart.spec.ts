@@ -73,4 +73,32 @@ describe('TrendChartComponent', () => {
 
     expect(chartInstance.destroy).toHaveBeenCalledTimes(1);
   });
+
+  it('onHover sets cursor to pointer when elements are present', async () => {
+    fixture.detectChanges();
+    await fixture.whenStable();
+
+    const chartConfig = (vi.mocked(Chart) as ReturnType<typeof vi.fn>).mock.calls[0]?.[1];
+    const onHover = chartConfig?.options?.onHover;
+    expect(onHover).toBeDefined();
+
+    const canvas = fixture.nativeElement.querySelector('canvas') as HTMLCanvasElement;
+    onHover({} as unknown, [{ index: 0 } as unknown]);
+
+    expect(canvas.style.cursor).toBe('pointer');
+  });
+
+  it('onHover sets cursor to default when no elements are present', async () => {
+    fixture.detectChanges();
+    await fixture.whenStable();
+
+    const chartConfig = (vi.mocked(Chart) as ReturnType<typeof vi.fn>).mock.calls[0]?.[1];
+    const onHover = chartConfig?.options?.onHover;
+
+    const canvas = fixture.nativeElement.querySelector('canvas') as HTMLCanvasElement;
+    canvas.style.cursor = 'pointer';
+    onHover({} as unknown, []);
+
+    expect(canvas.style.cursor).toBe('default');
+  });
 });

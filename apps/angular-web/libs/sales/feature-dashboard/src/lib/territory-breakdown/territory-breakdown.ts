@@ -1,4 +1,4 @@
-import { CurrencyPipe, DecimalPipe } from '@angular/common';
+import { CurrencyPipe, DecimalPipe, NgClass } from '@angular/common';
 import { ChangeDetectionStrategy, Component, computed, inject, input } from '@angular/core';
 import { Router } from '@angular/router';
 import { DashboardTerritory } from '@adventureworks-web/sales/data-access';
@@ -6,7 +6,7 @@ import { DashboardTerritory } from '@adventureworks-web/sales/data-access';
 @Component({
   selector: 'aw-territory-breakdown',
   standalone: true,
-  imports: [CurrencyPipe, DecimalPipe],
+  imports: [CurrencyPipe, DecimalPipe, NgClass],
   templateUrl: './territory-breakdown.html',
   changeDetection: ChangeDetectionStrategy.OnPush,
 })

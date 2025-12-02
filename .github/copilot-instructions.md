@@ -72,6 +72,10 @@ Two patterns are in use across the sales feature components — match the existi
 - **Snapshot read** (`ActivatedRoute.snapshot.queryParams` in `ngOnInit`): Used by `StoreListComponent`, `SalesPersonListComponent`, and others. Reads URL state once on navigation; does not re-fire on in-place back/forward.
 - **Reactive subscription** (`route.queryParams` + `takeUntilDestroyed` in `ngOnInit`): Used by `OrderListComponent` (US-738). The subscription drives all data loading; action methods only write to the URL via `router.navigate`. This re-fires on every URL change including in-place browser back/forward while the component is mounted.
 
+## Dashboard Drill-Down Navigation
+
+Dashboard drillable elements (trend chart data points, territory rows) navigate to `/sales/orders` with pre-set query params. Territory rows with `orderCount === 0` are non-interactive. The "View Orders" link on `SalesPersonDetailComponent` navigates to `/sales/orders?salesPersonId={id}`.
+
 ## Real-Time Infrastructure
 
 A SignalR hub is present at `/hubs/dashboard` (`DashboardHub`). New command handlers that mutate entities should inject `IPublisher` and call `await _publisher.Publish(new EntityChangedNotification { ... }, cancellationToken)` after the repository call — this fans out to the SignalR broadcast and the ActivityLog persistence handler automatically. See `apps/api-dotnet/.claude/CLAUDE.md` → Real-Time Infrastructure for full details.

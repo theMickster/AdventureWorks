@@ -171,6 +171,21 @@ describe('DashboardComponent', () => {
     );
   });
 
+  it('KPI stat tiles have no cursor-pointer class (non-interactive)', async () => {
+    fixture.detectChanges();
+    await fixture.whenStable();
+
+    patchState(unprotected(dashboardStore), { dashboard: mockDashboard }, setLoaded());
+    fixture.detectChanges();
+    await fixture.whenStable();
+
+    const statEls = fixture.nativeElement.querySelectorAll('.stat') as NodeListOf<HTMLElement>;
+    expect(statEls.length).toBeGreaterThan(0);
+    for (const stat of Array.from(statEls)) {
+      expect(stat.classList.contains('cursor-pointer')).toBe(false);
+    }
+  });
+
   it('navigates with correct last day for February in a leap year', async () => {
     const router = TestBed.inject(Router);
     vi.spyOn(router, 'navigate').mockResolvedValue(true);

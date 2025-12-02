@@ -5,6 +5,7 @@ import { TerritoryBreakdownComponent } from './territory-breakdown';
 const mockTerritories = [
   { territoryId: 4, name: 'Southwest', group: 'North America', countryCode: 'US', revenue: 22000000, orderCount: 3421 },
   { territoryId: 6, name: 'France', group: 'Europe', countryCode: 'FR', revenue: 5000000, orderCount: 800 },
+  { territoryId: 7, name: 'Germany', group: 'Europe', countryCode: 'DE', revenue: 1000000, orderCount: 0 },
 ];
 
 describe('TerritoryBreakdownComponent', () => {
@@ -51,5 +52,40 @@ describe('TerritoryBreakdownComponent', () => {
       ['/sales/orders'],
       { queryParams: { territoryId: 6 } }
     );
+  });
+
+  it('drillable row has title attribute "View orders for Southwest"', () => {
+    fixture.detectChanges();
+    const drillableRows = fixture.nativeElement.querySelectorAll('tr.cursor-pointer');
+    const southwestRow = Array.from(drillableRows as NodeListOf<HTMLElement>).find(
+      (row) => row.getAttribute('title') === 'View orders for Southwest',
+    );
+    expect(southwestRow).toBeTruthy();
+  });
+
+  it('drillable row has role="link" for screen reader accessibility', () => {
+    fixture.detectChanges();
+    const drillableRows = fixture.nativeElement.querySelectorAll('tr.cursor-pointer') as NodeListOf<HTMLElement>;
+    expect(drillableRows.length).toBeGreaterThan(0);
+    for (const row of Array.from(drillableRows)) {
+      expect(row.getAttribute('role')).toBe('link');
+    }
+  });
+
+  it('zero-orderCount row does not have cursor-pointer class', () => {
+    fixture.detectChanges();
+    const allRows = fixture.nativeElement.querySelectorAll('tr') as NodeListOf<HTMLElement>;
+    const germanyRow = Array.from(allRows).find((row) => row.textContent?.includes('Germany'));
+    expect(germanyRow).toBeTruthy();
+    expect(germanyRow!.classList.contains('cursor-pointer')).toBe(false);
+  });
+
+  it('zero-orderCount row does not trigger navigate when clicked', () => {
+    fixture.detectChanges();
+    const allRows = fixture.nativeElement.querySelectorAll('tr') as NodeListOf<HTMLElement>;
+    const germanyRow = Array.from(allRows).find((row) => row.textContent?.includes('Germany'));
+    expect(germanyRow).toBeTruthy();
+    germanyRow!.click();
+    expect(router.navigate).not.toHaveBeenCalled();
   });
 });

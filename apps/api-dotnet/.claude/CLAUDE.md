@@ -126,6 +126,7 @@ See: `AdventureWorks.API/libs/Middleware/ExceptionHandlerMiddleware.cs`
 Aggregate-only query — uses a bare `DbContext.SalesOrderHeaders.AsNoTracking()` base with **no `.Include()` chains**. Only scalar columns (`TotalDue`, `OrderDate`, filter predicate columns) are needed; joins cause EF Core `GroupBy` to evaluate client-side.
 
 Key invariants:
+
 - Applies the same nullable filter predicates as `SearchSalesOrdersAsync`.
 - Early-returns `new SalesOrderAnalyticsModel { MonthlyTrend = [] }` when `CountAsync == 0` — avoids three unnecessary aggregate queries.
 - Monthly trend is capped at 24 entries: the query orders months **descending** and `.Take(24)` keeps the 24 most-recent months (oldest months are dropped). The result list is then `.Reverse()`d to produce ascending (chronological) output.
@@ -212,11 +213,11 @@ See **[guides/adding-features.md](guides/adding-features.md)** for complete code
 
 ### Environment Configuration
 
-| Variable                                                  | Required   | Description                |
-| --------------------------------------------------------- | ---------- | -------------------------- |
-| `EntityFrameworkCoreSettings:CurrentConnectionStringName` | Yes        | Database connection name                              |
-| `EntityFrameworkCoreSettings:CommandTimeout`              | Yes        | EF query timeout (seconds)                            |
-| `KeyVault:VaultUri`                                       | Yes (Prod) | Azure Key Vault URL                                   |
+| Variable                                                  | Required   | Description                                                        |
+| --------------------------------------------------------- | ---------- | ------------------------------------------------------------------ |
+| `EntityFrameworkCoreSettings:CurrentConnectionStringName` | Yes        | Database connection name                                           |
+| `EntityFrameworkCoreSettings:CommandTimeout`              | Yes        | EF query timeout (seconds)                                         |
+| `KeyVault:VaultUri`                                       | Yes (Prod) | Azure Key Vault URL                                                |
 | `Cors:AllowedOrigins`                                     | Yes (Prod) | JSON array of allowed origins (e.g. `["https://app.example.com"]`) |
 
 **Config Files:** `appsettings.json`, `appsettings.{Environment}.json`, User Secrets

@@ -70,6 +70,10 @@ export class TrendChartComponent implements OnDestroy {
             const point = points[elements[0].index];
             this.dataPointClick.emit({ year: point.year, month: point.month });
           },
+          // Chart.js does not auto-set cursor; onHover drives the pointer/default switch.
+          onHover: (_event: ChartEvent, elements: ActiveElement[]) => {
+            this.chartCanvas().nativeElement.style.cursor = elements.length > 0 ? 'pointer' : 'default';
+          },
           plugins: {
             tooltip: {
               callbacks: {

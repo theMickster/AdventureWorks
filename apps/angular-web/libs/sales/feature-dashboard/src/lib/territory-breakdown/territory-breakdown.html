@@ -13,11 +13,15 @@
         </thead>
         <tbody>
           @for (t of entry[1]; track t.territoryId) {
+            <!-- Rows with zero orders are non-interactive: no cursor, role, or click handler. -->
+            @let drillable = t.orderCount > 0;
             <tr
-              class="cursor-pointer hover:bg-base-200"
-              tabindex="0"
-              (click)="onTerritoryClick(t.territoryId)"
-              (keydown.enter)="onTerritoryClick(t.territoryId)"
+              [ngClass]="{ 'cursor-pointer': drillable, 'hover:bg-base-200': drillable }"
+              [attr.role]="drillable ? 'link' : null"
+              [attr.tabindex]="drillable ? 0 : null"
+              [attr.title]="drillable ? 'View orders for ' + t.name : null"
+              (click)="drillable && onTerritoryClick(t.territoryId)"
+              (keydown.enter)="drillable && onTerritoryClick(t.territoryId)"
             >
               <td>{{ t.name }}</td>
               <td class="text-right">{{ t.revenue | currency: 'USD' : 'symbol' : '1.0-0' }}</td>

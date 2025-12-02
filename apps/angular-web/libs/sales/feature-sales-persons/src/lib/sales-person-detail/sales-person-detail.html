@@ -21,6 +21,15 @@
         <i class="fa-solid fa-pencil" aria-hidden="true"></i>
         Edit
       </a>
+      <a
+        id="aw-sales-person-detail-view-orders"
+        [routerLink]="['/sales/orders']"
+        [queryParams]="{ salesPersonId: p.id }"
+        class="btn btn-outline btn-sm"
+      >
+        <i class="fa-solid fa-list" aria-hidden="true"></i>
+        View Orders
+      </a>
     }
   </div>
 

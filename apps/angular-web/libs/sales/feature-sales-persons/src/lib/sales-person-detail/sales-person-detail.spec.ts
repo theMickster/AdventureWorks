@@ -265,6 +265,25 @@ describe('SalesPersonDetailComponent', () => {
     expect(progressBar).not.toBeNull();
   });
 
+  it('"View Orders" link is absent while isLoading() is true', () => {
+    const subject = new Subject<SalesPerson>();
+    vi.spyOn(salesApiService, 'getSalesPerson').mockReturnValue(subject.asObservable());
+    fixture.detectChanges();
+    expect(fixture.nativeElement.querySelector('#aw-sales-person-detail-view-orders')).toBeNull();
+  });
+
+  it('"View Orders" link is present after successful person load', () => {
+    fixture.detectChanges();
+    expect(fixture.nativeElement.querySelector('#aw-sales-person-detail-view-orders')).not.toBeNull();
+  });
+
+  it('"View Orders" link href is /sales/orders?salesPersonId=275', () => {
+    fixture.detectChanges();
+    const link = fixture.nativeElement.querySelector('#aw-sales-person-detail-view-orders') as HTMLAnchorElement;
+    expect(link).not.toBeNull();
+    expect(link.getAttribute('href')).toBe('/sales/orders?salesPersonId=275');
+  });
+
   it('backQueryParams() round-trips search, orderBy, sortOrder from snapshot', () => {
     route.snapshot.queryParams = {
       search: 'blythe',
