@@ -1,7 +1,7 @@
 import { inject, Injectable } from '@angular/core';
 import { Observable } from 'rxjs';
 import { ApiService } from '@adventureworks-web/shared/util';
-import type { SearchResult } from '@adventureworks-web/shared/data-access';
+import type { Department, SearchResult } from '@adventureworks-web/shared/data-access';
 import { toQueryString } from '@adventureworks-web/shared/data-access';
 import type { Employee } from '../models/employee.model';
 import type { EmployeeCreate } from '../models/employee-create.model';
@@ -15,8 +15,12 @@ import type {
   EmployeeLifecycleStatus,
 } from '../models/employee-lifecycle.model';
 import type { JsonPatchOperation } from '../models/json-patch.model';
+import type { DepartmentCreate } from '../models/department-create.model';
+import type { DepartmentUpdate } from '../models/department-update.model';
+import type { DepartmentHeadcount } from '../models/department-headcount.model';
+import type { DepartmentEmployeesParams } from '../models/department-employees-params.model';
 
-/** HTTP client for HR domain endpoints (Employees and Employee Lifecycle). */
+/** HTTP client for HR domain endpoints (Employees, Employee Lifecycle, and Departments). */
 @Injectable({ providedIn: 'root' })
 export class HrApiService {
   private readonly apiService = inject(ApiService);
@@ -67,5 +71,30 @@ export class HrApiService {
 
   getLifecycleStatus(id: number): Observable<EmployeeLifecycleStatus> {
     return this.apiService.get<EmployeeLifecycleStatus>(`/v1/employees/${id}/lifecycle/status`);
+  }
+
+  getDepartments(): Observable<Department[]> {
+    return this.apiService.get<Department[]>('/v1/departments');
+  }
+
+  getDepartment(id: number): Observable<Department> {
+    return this.apiService.get<Department>(`/v1/departments/${id}`);
+  }
+
+  createDepartment(model: DepartmentCreate): Observable<Department> {
+    return this.apiService.post<Department>('/v1/departments', model);
+  }
+
+  updateDepartment(id: number, model: DepartmentUpdate): Observable<Department> {
+    return this.apiService.put<Department>(`/v1/departments/${id}`, model);
+  }
+
+  getDepartmentHeadcount(id: number): Observable<DepartmentHeadcount> {
+    return this.apiService.get<DepartmentHeadcount>(`/v1/departments/${id}/headcount`);
+  }
+
+  getDepartmentEmployees(id: number, params?: DepartmentEmployeesParams): Observable<Employee[]> {
+    const query = params ? toQueryString(params) : '';
+    return this.apiService.get<Employee[]>(`/v1/departments/${id}/employees${query}`);
   }
 }

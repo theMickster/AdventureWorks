@@ -249,6 +249,96 @@
 						}
 					},
 					"response": []
+				},
+				{
+					"name": "Create Department",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"Status is 201 Created\", () => pm.response.to.have.status(201));",
+									"const body = pm.response.json();",
+									"pm.test(\"Response has id\", () => pm.expect(body.id).to.be.a(\"number\"));",
+									"pm.test(\"Name should match submitted value\", () => pm.expect(body.name).to.eql(\"Robotics\"));",
+									"pm.test(\"Has X-Correlation-Id header\", () => pm.response.to.have.header(\"X-Correlation-Id\"));"
+								],
+								"type": "text/javascript",
+								"packages": {},
+								"requests": {}
+							}
+						}
+					],
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \"name\": \"Robotics\",\r\n    \"groupName\": \"Research and Development\"\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{adventureWorksApi}}/{{apiVersion}}/departments/",
+							"host": [
+								"{{adventureWorksApi}}"
+							],
+							"path": [
+								"{{apiVersion}}",
+								"departments",
+								""
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Update Department",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"Status is 200 OK\", () => pm.response.to.have.status(200));",
+									"const body = pm.response.json();",
+									"pm.test(\"Response id should match requested department\", () => pm.expect(body.id).to.eql(1));",
+									"pm.test(\"Name should match submitted value\", () => pm.expect(body.name).to.eql(\"Engineering\"));",
+									"pm.test(\"Has X-Correlation-Id header\", () => pm.response.to.have.header(\"X-Correlation-Id\"));"
+								],
+								"type": "text/javascript",
+								"packages": {},
+								"requests": {}
+							}
+						}
+					],
+					"request": {
+						"method": "PUT",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \"id\": 1,\r\n    \"name\": \"Engineering\",\r\n    \"groupName\": \"Research and Development\"\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{adventureWorksApi}}/{{apiVersion}}/departments/1",
+							"host": [
+								"{{adventureWorksApi}}"
+							],
+							"path": [
+								"{{apiVersion}}",
+								"departments",
+								"1"
+							]
+						}
+					},
+					"response": []
 				}
 			]
 		},

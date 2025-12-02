@@ -11,6 +11,10 @@ export type {
   EmployeeLifecycleStatus,
 } from './lib/models/employee-lifecycle.model';
 export type { JsonPatchOperation } from './lib/models/json-patch.model';
+export type { DepartmentCreate } from './lib/models/department-create.model';
+export type { DepartmentUpdate } from './lib/models/department-update.model';
+export type { DepartmentHeadcount } from './lib/models/department-headcount.model';
+export type { DepartmentEmployeesParams } from './lib/models/department-employees-params.model';
 
 // Services
 export { HrApiService } from './lib/services/hr-api.service';

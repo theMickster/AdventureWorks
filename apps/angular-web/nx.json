@@ -41,7 +41,9 @@
     "@nx/angular:unit-test": {
       "cache": true,
       "inputs": ["default", "^production"],
-      "options": { "setupFiles": ["test-setup.ts"] }
+      "options": {
+        "setupFiles": ["test-setup.ts"]
+      }
     }
   },
   "plugins": [

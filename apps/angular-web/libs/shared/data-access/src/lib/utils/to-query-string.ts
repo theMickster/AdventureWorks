@@ -1,6 +1,9 @@
-import { PaginationParams } from '../models/pagination-params.model';
+type QueryParamValue = string | number | boolean | undefined | null;
 
-export function toQueryString(params: PaginationParams): string {
+// Mapped-type constraint (not `Record<string, QueryParamValue>`): a plain interface without an
+// index signature isn't assignable to `Record<string, X>` even when every property is
+// compatible. The mapped form accepts any params interface without forcing callers to add one.
+export function toQueryString<T extends { [K in keyof T]: QueryParamValue }>(params: T): string {
   const searchParams = new URLSearchParams();
 
   for (const [key, value] of Object.entries(params)) {

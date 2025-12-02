@@ -14,7 +14,10 @@ import type {
   EmployeeLifecycleStatus,
 } from '../models/employee-lifecycle.model';
 import type { JsonPatchOperation } from '../models/json-patch.model';
-import type { SearchResult } from '@adventureworks-web/shared/data-access';
+import type { DepartmentCreate } from '../models/department-create.model';
+import type { DepartmentUpdate } from '../models/department-update.model';
+import type { DepartmentHeadcount } from '../models/department-headcount.model';
+import type { Department, SearchResult } from '@adventureworks-web/shared/data-access';
 
 const mockEnvironment = {
   production: false,
@@ -297,6 +300,98 @@ describe('HrApiService', () => {
       const req = httpTesting.expectOne(`${BASE_URL}/v1/employees/1/lifecycle/status`);
       expect(req.request.method).toBe('GET');
       req.flush(mockStatus);
+    });
+  });
+
+  describe('Departments', () => {
+    // Department 1 — Engineering / Research and Development (verified against the local AdventureWorks DB)
+    const mockDepartment: Department = {
+      id: 1,
+      name: 'Engineering',
+      groupName: 'Research and Development',
+      modifiedDate: '2008-04-30T00:00:00',
+    };
+
+    it('should GET all departments', () => {
+      service.getDepartments().subscribe((result) => {
+        expect(result).toEqual([mockDepartment]);
+      });
+
+      const req = httpTesting.expectOne(`${BASE_URL}/v1/departments`);
+      expect(req.request.method).toBe('GET');
+      req.flush([mockDepartment]);
+    });
+
+    it('should GET a single department by id', () => {
+      service.getDepartment(1).subscribe((result) => {
+        expect(result).toEqual(mockDepartment);
+      });
+
+      const req = httpTesting.expectOne(`${BASE_URL}/v1/departments/1`);
+      expect(req.request.method).toBe('GET');
+      req.flush(mockDepartment);
+    });
+
+    it('should POST to create a department', () => {
+      const body: DepartmentCreate = { name: 'Robotics', groupName: 'Research and Development' };
+
+      service.createDepartment(body).subscribe((result) => {
+        expect(result.id).toBe(17);
+      });
+
+      const req = httpTesting.expectOne(`${BASE_URL}/v1/departments`);
+      expect(req.request.method).toBe('POST');
+      expect(req.request.body).toEqual(body);
+      req.flush({ ...mockDepartment, id: 17, name: 'Robotics' });
+    });
+
+    it('should PUT to update a department', () => {
+      const body: DepartmentUpdate = { id: 1, name: 'Engineering', groupName: 'Research and Development' };
+
+      service.updateDepartment(1, body).subscribe((result) => {
+        expect(result).toEqual(mockDepartment);
+      });
+
+      const req = httpTesting.expectOne(`${BASE_URL}/v1/departments/1`);
+      expect(req.request.method).toBe('PUT');
+      expect(req.request.body).toEqual(body);
+      req.flush(mockDepartment);
+    });
+
+    it('should GET department headcount', () => {
+      const mockHeadcount: DepartmentHeadcount = {
+        departmentId: 1,
+        departmentName: 'Engineering',
+        activeEmployeeCount: 6,
+      };
+
+      service.getDepartmentHeadcount(1).subscribe((result) => {
+        expect(result).toEqual(mockHeadcount);
+      });
+
+      const req = httpTesting.expectOne(`${BASE_URL}/v1/departments/1/headcount`);
+      expect(req.request.method).toBe('GET');
+      req.flush(mockHeadcount);
+    });
+
+    it('should GET department employees without params', () => {
+      service.getDepartmentEmployees(1).subscribe((result) => {
+        expect(result).toEqual([mockEmployee]);
+      });
+
+      const req = httpTesting.expectOne(`${BASE_URL}/v1/departments/1/employees`);
+      expect(req.request.method).toBe('GET');
+      req.flush([mockEmployee]);
+    });
+
+    it('should GET department employees with page and pageSize params', () => {
+      service.getDepartmentEmployees(1, { page: 2, pageSize: 10 }).subscribe((result) => {
+        expect(result).toEqual([mockEmployee]);
+      });
+
+      const req = httpTesting.expectOne(`${BASE_URL}/v1/departments/1/employees?page=2&pageSize=10`);
+      expect(req.request.method).toBe('GET');
+      req.flush([mockEmployee]);
     });
   });
 });

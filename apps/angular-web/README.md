@@ -22,8 +22,18 @@ apps/
 libs/
   shared/
     app-layout/             # App shell layout with nav (type:feature, scope:shared)
+    data-access/               # Shared models/DTOs, API contracts (type:data-access, scope:shared)
     ui/                        # Shared UI components (type:ui, scope:shared)
     util/                      # Shared utilities, auth, http, theme (type:util, scope:shared)
+  sales/
+    data-access/               # Sales SignalStores, models, API service (type:data-access, scope:sales)
+    feature-dashboard/         # Sales KPI dashboard (type:feature, scope:sales)
+    feature-orders/            # Sales order list/detail/analytics (type:feature, scope:sales)
+    feature-sales-persons/     # Sales person list/detail/create/edit (type:feature, scope:sales)
+    feature-stores/            # Store list/detail/create/edit (type:feature, scope:sales)
+  hr/
+    data-access/               # HR models, API service (type:data-access, scope:hr)
+    feature-departments/       # Department list/detail/create/edit (type:feature, scope:hr)
 ```
 
 ### Library Dependency Rules

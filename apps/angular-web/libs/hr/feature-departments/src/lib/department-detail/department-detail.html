@@ -1,0 +1,84 @@
+<div id="aw-department-detail-page">
+  <div id="aw-department-detail-header" class="mb-6 flex items-center gap-4">
+    <a
+      id="aw-department-detail-back"
+      [routerLink]="['/hr/departments']"
+      [queryParams]="backQueryParams()"
+      class="btn btn-ghost btn-sm"
+    >
+      <i class="fa-solid fa-arrow-left" aria-hidden="true"></i>
+      Back to Departments
+    </a>
+    @if (isLoading()) {
+      <aw-skeleton id="aw-department-detail-name-skeleton" width="16rem" height="2rem" />
+    } @else if (department(); as d) {
+      <h1 id="aw-department-detail-name" class="text-2xl font-bold text-base-content">{{ d.name }}</h1>
+      <a
+        id="aw-department-detail-edit-btn"
+        [routerLink]="['/hr/departments', d.id, 'edit']"
+        [queryParams]="backQueryParams()"
+        class="btn btn-outline btn-sm ml-auto"
+      >
+        <i class="fa-solid fa-pen" aria-hidden="true"></i>
+        Edit
+      </a>
+    }
+  </div>
+
+  @if (isLoading()) {
+    <div id="aw-department-detail-loading" class="space-y-4">
+      <aw-skeleton id="aw-department-detail-info-skeleton" height="1.5rem" width="20rem" />
+      <aw-skeleton id="aw-department-detail-content-skeleton" height="12rem" />
+    </div>
+  } @else if (department(); as currentDepartment) {
+    <div id="aw-department-detail-info" class="mb-6 grid gap-4 sm:grid-cols-2">
+      <aw-card fieldId="aw-department-detail-group-card" title="Group Name">
+        <p class="text-lg font-medium">{{ currentDepartment.groupName }}</p>
+      </aw-card>
+      <aw-card fieldId="aw-department-detail-headcount-card" title="Active Employees">
+        <p id="aw-department-detail-headcount" class="text-lg font-medium">
+          {{ headcount()?.activeEmployeeCount ?? 0 }}
+        </p>
+      </aw-card>
+    </div>
+
+    <h2 class="mb-3 text-lg font-semibold text-base-content">Employee Roster</h2>
+
+    @if (rosterRows().length === 0) {
+      <aw-empty-state
+        fieldId="aw-department-roster-empty"
+        icon="fa-solid fa-user"
+        title="No employees"
+        description="This department has no active employees on file."
+      />
+    } @else {
+      <div id="aw-department-roster-list" class="overflow-x-auto">
+        <table class="table">
+          <thead>
+            <tr>
+              <th>Name</th>
+              <th>Job Title</th>
+            </tr>
+          </thead>
+          <tbody>
+            @for (row of rosterRows(); track row.id) {
+              <tr>
+                <td>
+                  <a [routerLink]="['/hr/employees', row.id]" class="link link-primary">{{ row.name }}</a>
+                </td>
+                <td>{{ row.jobTitle }}</td>
+              </tr>
+            }
+          </tbody>
+        </table>
+      </div>
+    }
+  } @else {
+    <aw-empty-state
+      fieldId="aw-department-detail-error"
+      icon="fa-solid fa-circle-exclamation"
+      title="Failed to load department"
+      description="Please go back and try again."
+    />
+  }
+</div>

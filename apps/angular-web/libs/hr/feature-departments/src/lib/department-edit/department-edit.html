@@ -1,0 +1,62 @@
+<div id="aw-department-edit-page">
+  <div id="aw-department-edit-header" class="mb-6 flex items-center gap-4">
+    <a
+      id="aw-department-edit-cancel-top"
+      [routerLink]="['/hr/departments', departmentId]"
+      [queryParams]="backQueryParams()"
+      class="btn btn-ghost btn-sm"
+    >
+      <i class="fa-solid fa-arrow-left" aria-hidden="true"></i>
+      Back to Department
+    </a>
+    <h1 class="text-2xl font-bold text-base-content">Edit Department</h1>
+  </div>
+
+  @if (isLoading()) {
+    <div id="aw-department-edit-loading" class="max-w-lg space-y-4">
+      <aw-skeleton id="aw-department-edit-name-skeleton" height="3rem" />
+      <aw-skeleton id="aw-department-edit-group-skeleton" height="3rem" />
+      <aw-skeleton id="aw-department-edit-actions-skeleton" height="2.5rem" width="12rem" />
+    </div>
+  } @else {
+    <div id="aw-department-edit-form-container" class="max-w-lg">
+      <form id="aw-department-edit-form" [formGroup]="form" (ngSubmit)="onSubmit()" novalidate>
+        <div class="space-y-4">
+          <aw-input-field
+            fieldId="department-edit-name"
+            label="Name"
+            placeholder="Department name"
+            formControlName="name"
+            [errors]="nameErrors()"
+          />
+
+          <aw-select-field
+            fieldId="department-edit-group-name"
+            label="Group Name"
+            emptyOptionLabel="— Select group name —"
+            formControlName="groupName"
+            [options]="groupNameOptions()"
+            [errors]="groupNameErrors()"
+          />
+        </div>
+
+        <div class="mt-6 flex gap-3">
+          <button id="aw-department-edit-save" type="submit" class="btn btn-primary" [disabled]="isSaving()">
+            @if (isSaving()) {
+              <span class="loading loading-spinner loading-sm" aria-hidden="true"></span>
+            }
+            Save
+          </button>
+          <a
+            id="aw-department-edit-cancel"
+            [routerLink]="['/hr/departments', departmentId]"
+            [queryParams]="backQueryParams()"
+            class="btn btn-ghost"
+          >
+            Cancel
+          </a>
+        </div>
+      </form>
+    </div>
+  }
+</div>
