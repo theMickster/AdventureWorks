@@ -27,6 +27,7 @@
             label="Name"
             placeholder="Department name"
             formControlName="name"
+            [required]="true"
             [errors]="nameErrors()"
           />
 
@@ -36,6 +37,7 @@
             emptyOptionLabel="— Select group name —"
             formControlName="groupName"
             [options]="groupNameOptions()"
+            [required]="true"
             [errors]="groupNameErrors()"
           />
         </div>

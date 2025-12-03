@@ -16,6 +16,7 @@ import { SelectFieldComponent } from './select-field';
     [options]="options"
     [emptyOptionLabel]="'-- Select --'"
     [errors]="errors()"
+    [required]="required()"
   />`,
 })
 class TestHostComponent {
@@ -25,6 +26,7 @@ class TestHostComponent {
     { value: 'ca', label: 'Canada' },
   ];
   errors = signal<Record<string, string> | null>(null);
+  required = signal(false);
 }
 
 describe('SelectFieldComponent', () => {
@@ -98,5 +100,21 @@ describe('SelectFieldComponent', () => {
     const hint = el.querySelector('#test-select-hint') as HTMLElement;
     expect(hint).toBeTruthy();
     expect(hint.textContent).toContain('Pick one');
+  });
+
+  it('should not render required asterisk and set aria-required to false by default', () => {
+    const select = el.querySelector('select') as HTMLSelectElement;
+    const label = el.querySelector('label') as HTMLLabelElement;
+    expect(select.getAttribute('aria-required')).toBe('false');
+    expect(label.querySelector('.sr-only')).toBeNull();
+  });
+
+  it('should render required asterisk and set aria-required to true when required', () => {
+    host.required.set(true);
+    fixture.detectChanges();
+    const select = el.querySelector('select') as HTMLSelectElement;
+    const label = el.querySelector('label') as HTMLLabelElement;
+    expect(select.getAttribute('aria-required')).toBe('true');
+    expect(label.querySelector('.sr-only')?.textContent).toContain('required');
   });
 });

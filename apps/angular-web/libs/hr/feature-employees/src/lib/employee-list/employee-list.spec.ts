@@ -233,6 +233,15 @@ describe('EmployeeListComponent', () => {
     expect(employeeStore.loadPage).toHaveBeenCalledWith({ pageNumber: 1, pageSize: 10 });
   });
 
+  it('renders a "New Employee" link routing to /hr/employees/new', () => {
+    fixture.detectChanges();
+    const compiled: HTMLElement = fixture.nativeElement;
+    const newEmployeeLink = compiled.querySelector('#aw-employee-list-new-btn') as HTMLAnchorElement | null;
+
+    expect(newEmployeeLink).toBeTruthy();
+    expect(newEmployeeLink?.getAttribute('href')).toBe('/hr/employees/new');
+  });
+
   it('row click navigates to the employee detail route', () => {
     fixture.detectChanges();
 

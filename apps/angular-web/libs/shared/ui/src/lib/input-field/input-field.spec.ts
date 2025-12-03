@@ -14,11 +14,13 @@ import { InputFieldComponent } from './input-field';
     [label]="'Name'"
     [hint]="'Enter name'"
     [errors]="errors()"
+    [required]="required()"
   />`,
 })
 class TestHostComponent {
   control = new FormControl('');
   errors = signal<Record<string, string> | null>(null);
+  required = signal(false);
 }
 
 describe('InputFieldComponent', () => {
@@ -108,5 +110,21 @@ describe('InputFieldComponent', () => {
     fixture.detectChanges();
     const input = el.querySelector('input') as HTMLInputElement;
     expect(input.disabled).toBe(true);
+  });
+
+  it('should not render required asterisk and set aria-required to false by default', () => {
+    const input = el.querySelector('input') as HTMLInputElement;
+    const label = el.querySelector('label') as HTMLLabelElement;
+    expect(input.getAttribute('aria-required')).toBe('false');
+    expect(label.querySelector('.sr-only')).toBeNull();
+  });
+
+  it('should render required asterisk and set aria-required to true when required', () => {
+    host.required.set(true);
+    fixture.detectChanges();
+    const input = el.querySelector('input') as HTMLInputElement;
+    const label = el.querySelector('label') as HTMLLabelElement;
+    expect(input.getAttribute('aria-required')).toBe('true');
+    expect(label.querySelector('.sr-only')?.textContent).toContain('required');
   });
 });

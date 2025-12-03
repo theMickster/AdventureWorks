@@ -9,6 +9,7 @@ import { ENVIRONMENT } from '../environment/environment.token';
 import { Environment } from '../environment/environment.model';
 import { ApiEmptyResultError } from './errors/api-empty-result-error';
 import { ApiValidationError } from './errors/api-validation-error';
+import { ConflictError } from './errors/conflict-error';
 import { errorInterceptor } from './error.interceptor';
 
 const mockEnvironment: Environment = {
@@ -85,6 +86,24 @@ describe('errorInterceptor', () => {
     });
 
     httpTesting.expectOne('/api/test').flush('No results', { status: 400, statusText: 'Bad Request' });
+    expect(toastSpy).not.toHaveBeenCalled();
+  });
+
+  it('should throw ConflictError for 409, not ApiValidationError or ApiEmptyResultError', () => {
+    const toastSpy = vi.spyOn(notificationService, 'error');
+    const body = { error: 'An employee with this National ID Number already exists.', correlationId: 'c-409', timestamp: '2026-07-02T00:00:00Z' };
+
+    httpClient.get('/api/test').subscribe({
+      error: (err: unknown) => {
+        expect(err).toBeInstanceOf(ConflictError);
+        expect(err).not.toBeInstanceOf(ApiValidationError);
+        expect(err).not.toBeInstanceOf(ApiEmptyResultError);
+        expect((err as ConflictError).message).toBe(body.error);
+        expect((err as ConflictError).correlationId).toBe('c-409');
+      },
+    });
+
+    httpTesting.expectOne('/api/test').flush(body, { status: 409, statusText: 'Conflict' });
     expect(toastSpy).not.toHaveBeenCalled();
   });
 

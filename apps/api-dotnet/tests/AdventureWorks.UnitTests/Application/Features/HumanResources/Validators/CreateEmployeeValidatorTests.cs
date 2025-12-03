@@ -14,6 +14,7 @@ public sealed class CreateEmployeeValidatorTests : UnitTestBase
     private readonly Mock<IPhoneNumberTypeRepository> _mockPhoneNumberTypeRepository = new();
     private readonly Mock<IStateProvinceRepository> _mockStateProvinceRepository = new();
     private readonly Mock<IAddressTypeRepository> _mockAddressTypeRepository = new();
+    private readonly Mock<IEmployeeRepository> _mockEmployeeRepository = new();
     private readonly CreateEmployeeValidator _sut;
 
     public CreateEmployeeValidatorTests()
@@ -21,7 +22,8 @@ public sealed class CreateEmployeeValidatorTests : UnitTestBase
         _sut = new CreateEmployeeValidator(
             _mockPhoneNumberTypeRepository.Object,
             _mockStateProvinceRepository.Object,
-            _mockAddressTypeRepository.Object);
+            _mockAddressTypeRepository.Object,
+            _mockEmployeeRepository.Object);
 
         // Setup default mocks to return valid entities
         _mockPhoneNumberTypeRepository
@@ -35,6 +37,14 @@ public sealed class CreateEmployeeValidatorTests : UnitTestBase
         _mockAddressTypeRepository
             .Setup(x => x.GetByIdAsync(It.IsAny<int>(), It.IsAny<CancellationToken>()))
             .ReturnsAsync(new AddressTypeEntity { AddressTypeId = 2, Name = "Work" });
+
+        _mockEmployeeRepository
+            .Setup(x => x.NationalIdNumberExistsAsync(It.IsAny<string>(), It.IsAny<CancellationToken>()))
+            .ReturnsAsync(false);
+
+        _mockEmployeeRepository
+            .Setup(x => x.LoginIdExistsAsync(It.IsAny<string>(), It.IsAny<CancellationToken>()))
+            .ReturnsAsync(false);
     }
 
     [Fact]
@@ -51,6 +61,8 @@ public sealed class CreateEmployeeValidatorTests : UnitTestBase
             CreateEmployeeValidator.MessageEmailAddressLength.Should().Be("Email address cannot be greater than 50 characters");
             CreateEmployeeValidator.MessageAddressTypeIdGreaterThanZero.Should().Be("Address type ID must be greater than 0");
             CreateEmployeeValidator.MessageAddressTypeIdExists.Should().Be("Address type ID must exist prior to use");
+            CreateEmployeeValidator.MessageNationalIdNumberUnique.Should().Be("An employee with this National ID number already exists");
+            CreateEmployeeValidator.MessageLoginIdUnique.Should().Be("An employee with this Login ID already exists");
 
             // EmployeeBaseModelValidator messages
             EmployeeBaseModelValidator<EmployeeCreateModel>.MessageFirstNameLength.Should().Be("First name cannot be greater than 50 characters");
@@ -166,6 +178,36 @@ public sealed class CreateEmployeeValidatorTests : UnitTestBase
 
         result.ShouldHaveValidationErrorFor(x => x.AddressTypeId)
             .WithErrorCode("Rule-30");
+    }
+
+    [Fact]
+    public async Task Validator_should_have_national_id_number_unique_error_when_duplicateAsync()
+    {
+        _mockEmployeeRepository
+            .Setup(x => x.NationalIdNumberExistsAsync(It.IsAny<string>(), It.IsAny<CancellationToken>()))
+            .ReturnsAsync(true);
+
+        var model = HumanResourcesDomainFixtures.GetValidEmployeeCreateModel();
+
+        var result = await _sut.TestValidateAsync(model);
+
+        result.ShouldHaveValidationErrorFor(x => x.NationalIdNumber)
+            .WithErrorCode("Rule-31");
+    }
+
+    [Fact]
+    public async Task Validator_should_have_login_id_unique_error_when_duplicateAsync()
+    {
+        _mockEmployeeRepository
+            .Setup(x => x.LoginIdExistsAsync(It.IsAny<string>(), It.IsAny<CancellationToken>()))
+            .ReturnsAsync(true);
+
+        var model = HumanResourcesDomainFixtures.GetValidEmployeeCreateModel();
+
+        var result = await _sut.TestValidateAsync(model);
+
+        result.ShouldHaveValidationErrorFor(x => x.LoginId)
+            .WithErrorCode("Rule-32");
     }
 
     [Fact]

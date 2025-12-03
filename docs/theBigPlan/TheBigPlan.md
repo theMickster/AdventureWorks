@@ -65,7 +65,7 @@
 #### Additional Initiative 1 Epics (ADO status)
 
 - 🚧 #561 Sales CRUD UI — In Progress (8 child features); ✅ Feature 713 (Sales Dashboard) done; ✅ Feature 934 (Order Analytics + Dashboard Drill-Down) done — US-938–946 complete, includes analytics panel, live filter chart, trend chart click navigation, territory row drill-down (US-944), SalesPersonDetail "View Orders" link (US-945), and trend chart hover cursor (US-946)
-- 🚧 #562 HR CRUD UI — In Progress (5 child features; Departments CRUD list/detail/create/edit implemented)
+- 🚧 #562 HR CRUD UI — In Progress (5 child features; Departments CRUD list/detail/create/edit implemented; ✅ US-756 Create Employee wizard implemented)
 - 📋 #563 Real-Time Dashboard — New (5 child features)
 - 📋 #935 Customer Module — New (4 child features)
 - 📋 #936 Work Orders / Manufacturing Module — New (4 child features)

@@ -1,5 +1,5 @@
 import { ComponentFixture, TestBed } from '@angular/core/testing';
-import { Provider, Type } from '@angular/core';
+import { EnvironmentProviders, Provider, Type } from '@angular/core';
 import { provideRouter } from '@angular/router';
 
 /** Result of {@link renderEmployeeComponent}. */
@@ -18,7 +18,7 @@ export interface RenderEmployeeComponentResult<T> {
  */
 export async function renderEmployeeComponent<T>(
   component: Type<T>,
-  providers: Provider[] = [],
+  providers: Array<Provider | EnvironmentProviders> = [],
 ): Promise<RenderEmployeeComponentResult<T>> {
   await TestBed.configureTestingModule({
     imports: [component],

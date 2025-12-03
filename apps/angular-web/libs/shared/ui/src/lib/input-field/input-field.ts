@@ -24,6 +24,7 @@ export class InputFieldComponent implements ControlValueAccessor {
   readonly hint = input('');
   readonly inputType = input<'text' | 'email' | 'password' | 'number' | 'tel' | 'url'>('text');
   readonly errors = input<Record<string, string> | null>(null);
+  readonly required = input(false);
 
   protected readonly cva = createControlValueAccessor<string>('');
 

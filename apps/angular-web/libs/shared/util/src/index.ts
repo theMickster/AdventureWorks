@@ -17,6 +17,7 @@ export { msalInstanceFactory, msalInterceptorConfigFactory, msalGuardConfigFacto
 export type { ValidationError } from './lib/http/errors/validation-error.model';
 export { ApiValidationError } from './lib/http/errors/api-validation-error';
 export { ApiEmptyResultError } from './lib/http/errors/api-empty-result-error';
+export { ConflictError } from './lib/http/errors/conflict-error';
 export { createControlValueAccessor } from './lib/forms/create-control-value-accessor';
 export type { ControlValueAccessorBridge } from './lib/forms/create-control-value-accessor';
 export { ConfirmService } from './lib/confirm/confirm.service';
@@ -26,5 +27,6 @@ export { AwTitleStrategy } from './lib/routing/aw-title-strategy';
 export { unsavedChangesGuard } from './lib/routing/unsaved-changes.guard';
 export type { HasUnsavedChanges } from './lib/routing/unsaved-changes.guard';
 export { extractListNavParams } from './lib/list-nav-params';
+export { minAgeValidator } from './lib/validators/min-age.validator';
 export { SignalrService } from './lib/signalr/signalr.service';
 export type { SignalRConnectionStatus, SignalRHandler, EntityChangedEvent } from './lib/signalr/signalr-connection.model';

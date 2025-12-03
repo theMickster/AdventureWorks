@@ -6,6 +6,7 @@ import { NotificationService } from '../notification/notification.service';
 import { AppInsightsService } from '../telemetry/app-insights.service';
 import { ApiEmptyResultError } from './errors/api-empty-result-error';
 import { ApiValidationError } from './errors/api-validation-error';
+import { ConflictError } from './errors/conflict-error';
 import { ValidationError } from './errors/validation-error.model';
 
 /** Centralized HTTP error interceptor. Handles all error statuses with structured parsing, toast notifications, and App Insights telemetry. */
@@ -26,6 +27,10 @@ export const errorInterceptor: HttpInterceptorFn = (req, next) => {
 
       if (error.status === 400) {
         return throwError(() => handle400(error, correlationId));
+      }
+
+      if (error.status === 409) {
+        return throwError(() => handle409(error, correlationId));
       }
 
       if (error.status === 401) {
@@ -66,6 +71,13 @@ function handle400(error: HttpErrorResponse, correlationId: string): ApiValidati
     return new ApiValidationError(error.error as ValidationError[], correlationId);
   }
   return new ApiEmptyResultError(typeof error.error === 'string' ? error.error : 'Bad request');
+}
+
+/** 409 body is `{ error, correlationId, timestamp }` — a plain object, not an array of ValidationError —
+ *  so it is parsed separately from handle400 rather than routed through the same array-shape check. */
+function handle409(error: HttpErrorResponse, correlationId: string): ConflictError {
+  const body = error.error as { error?: string; correlationId?: string } | null;
+  return new ConflictError(body?.error ?? 'Conflict', body?.correlationId ?? correlationId);
 }
 
 function trackToAppInsights(service: AppInsightsService, error: HttpErrorResponse, correlationId: string): void {

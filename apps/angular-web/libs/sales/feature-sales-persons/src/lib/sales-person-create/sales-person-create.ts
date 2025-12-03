@@ -24,19 +24,9 @@ import type { SalesPersonCreate } from '@adventureworks-web/sales/data-access';
 import { LookupApiService } from '@adventureworks-web/shared/data-access';
 import type { AddressType, PhoneNumberType, SalesTerritory, StateProvince } from '@adventureworks-web/shared/data-access';
 import { InputFieldComponent, SelectFieldComponent, SkeletonComponent, ToggleFieldComponent } from '@adventureworks-web/shared/ui';
-import { ApiValidationError, NotificationService } from '@adventureworks-web/shared/util';
+import { ApiValidationError, minAgeValidator, NotificationService } from '@adventureworks-web/shared/util';
 
 // ── Module-level validators ────────────────────────────────────────────────
-
-function minAgeValidator(years: number): ValidatorFn {
-  return (ctrl) => {
-    if (!ctrl.value) return null;
-    const dob = new Date(ctrl.value as string);
-    const cutoff = new Date();
-    cutoff.setFullYear(cutoff.getFullYear() - years);
-    return dob <= cutoff ? null : { minAge: true };
-  };
-}
 
 function notFutureDateValidator(): ValidatorFn {
   return (ctrl) => {

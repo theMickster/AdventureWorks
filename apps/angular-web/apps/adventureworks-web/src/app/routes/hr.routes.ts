@@ -9,6 +9,14 @@ export const hrRoutes: Route[] = [
     loadComponent: () =>
       import('@adventureworks-web/hr/feature-employees').then((m) => m.EmployeeListComponent),
   },
+  // employees/new MUST come before employees/:id — Angular matches top-to-bottom and "new" would otherwise be treated as an id param
+  {
+    path: 'employees/new',
+    title: 'New Employee',
+    data: { breadcrumb: 'New Employee' },
+    loadComponent: () =>
+      import('@adventureworks-web/hr/feature-employees').then((m) => m.EmployeeCreateComponent),
+  },
   {
     path: 'employees/:id',
     title: 'Employee Detail',

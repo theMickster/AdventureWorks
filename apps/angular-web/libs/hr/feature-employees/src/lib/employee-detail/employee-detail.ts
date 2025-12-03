@@ -16,7 +16,7 @@ import { extractEmployeeListNavParams } from '../employee-list-nav-params';
  * via `forkJoin`.
  *
  * The Terminate/Rehire buttons are contextual on `lifecycle().employmentStatus` and currently only
- * show an informational notification — Stories 756-758 own the actual multi-step wizard forms.
+ * show an informational notification — Stories 757-758 own the actual multi-step wizard forms.
  */
 @Component({
   selector: 'aw-employee-detail',

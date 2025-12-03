@@ -1,7 +1,13 @@
 <fieldset [id]="fieldId() + '-fieldset'" class="fieldset">
   @if (label()) {
     <legend class="fieldset-legend">
-      <label [for]="fieldId() + '-input'">{{ label() | translate }}</label>
+      <label [for]="fieldId() + '-input'">
+        {{ label() | translate }}
+        @if (required()) {
+          <span class="text-base-content/60" aria-hidden="true">*</span>
+          <span class="sr-only">required</span>
+        }
+      </label>
     </legend>
   }
   <input
@@ -12,6 +18,7 @@
     [value]="cva.value()"
     [disabled]="cva.disabled()"
     [attr.aria-invalid]="!!errors()"
+    [attr.aria-required]="required()"
     [attr.aria-describedby]="ariaDescribedBy()"
     (input)="onInput($event)"
     (blur)="onBlur()"

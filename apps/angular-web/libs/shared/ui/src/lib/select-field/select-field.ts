@@ -24,6 +24,7 @@ export class SelectFieldComponent implements ControlValueAccessor {
   readonly options = input<{ value: string | number; label: string }[]>([]);
   readonly emptyOptionLabel = input('');
   readonly errors = input<Record<string, string> | null>(null);
+  readonly required = input(false);
 
   protected readonly cva = createControlValueAccessor<string>('');
 

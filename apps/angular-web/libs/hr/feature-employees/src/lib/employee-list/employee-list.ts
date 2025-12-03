@@ -1,7 +1,7 @@
 import { ChangeDetectionStrategy, Component, computed, DestroyRef, effect, inject, OnInit } from '@angular/core';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { FormBuilder, ReactiveFormsModule } from '@angular/forms';
-import { ActivatedRoute, Router } from '@angular/router';
+import { ActivatedRoute, Router, RouterLink } from '@angular/router';
 import { EmployeeStore } from '@adventureworks-web/hr/data-access';
 import type { EmployeeSearchBody } from '@adventureworks-web/hr/data-access';
 import { ColumnDefDirective, DataTableComponent, SelectFieldComponent, StatusBadgeComponent } from '@adventureworks-web/shared/ui';
@@ -29,7 +29,7 @@ interface EmployeeFilters {
 @Component({
   selector: 'aw-employee-list',
   standalone: true,
-  imports: [ReactiveFormsModule, DataTableComponent, ColumnDefDirective, SelectFieldComponent, StatusBadgeComponent],
+  imports: [ReactiveFormsModule, RouterLink, DataTableComponent, ColumnDefDirective, SelectFieldComponent, StatusBadgeComponent],
   templateUrl: './employee-list.html',
   changeDetection: ChangeDetectionStrategy.OnPush,
 })

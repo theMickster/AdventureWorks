@@ -80,6 +80,7 @@
             label="First Name"
             placeholder="First name"
             formControlName="firstName"
+            [required]="true"
             [errors]="firstNameErrors()"
           />
           <aw-input-field
@@ -87,6 +88,7 @@
             label="Last Name"
             placeholder="Last name"
             formControlName="lastName"
+            [required]="true"
             [errors]="lastNameErrors()"
           />
           <aw-input-field
@@ -119,6 +121,7 @@
             label="National ID Number"
             placeholder="National ID"
             formControlName="nationalIdNumber"
+            [required]="true"
             [errors]="nationalIdNumberErrors()"
           />
           <aw-input-field
@@ -126,6 +129,7 @@
             label="Login ID"
             placeholder="domain\\username"
             formControlName="loginId"
+            [required]="true"
             [errors]="loginIdErrors()"
           />
           <aw-input-field
@@ -133,11 +137,16 @@
             label="Job Title"
             placeholder="Job title"
             formControlName="jobTitle"
+            [required]="true"
             [errors]="jobTitleErrors()"
           />
           <fieldset class="fieldset">
             <legend class="fieldset-legend">
-              <label for="employment-birth-date-input">Birth Date</label>
+              <label for="employment-birth-date-input">
+                Birth Date
+                <span class="text-base-content/60" aria-hidden="true">*</span>
+                <span class="sr-only">required</span>
+              </label>
             </legend>
             <input
               id="employment-birth-date-input"
@@ -145,6 +154,7 @@
               class="input input-bordered w-full"
               [class.input-error]="!!birthDateErrors()"
               [max]="maxBirthDate"
+              [attr.aria-required]="true"
               formControlName="birthDate"
             />
             @for (entry of errorsToList(birthDateErrors()); track entry[0]) {
@@ -153,7 +163,11 @@
           </fieldset>
           <fieldset class="fieldset">
             <legend class="fieldset-legend">
-              <label for="employment-hire-date-input">Hire Date</label>
+              <label for="employment-hire-date-input">
+                Hire Date
+                <span class="text-base-content/60" aria-hidden="true">*</span>
+                <span class="sr-only">required</span>
+              </label>
             </legend>
             <input
               id="employment-hire-date-input"
@@ -161,6 +175,7 @@
               class="input input-bordered w-full"
               [class.input-error]="!!hireDateErrors()"
               [max]="maxHireDate"
+              [attr.aria-required]="true"
               formControlName="hireDate"
             />
             @for (entry of errorsToList(hireDateErrors()); track entry[0]) {
@@ -176,6 +191,7 @@
               { value: 'M', label: 'Married' },
               { value: 'S', label: 'Single' },
             ]"
+            [required]="true"
             [errors]="maritalStatusErrors()"
           />
           <aw-select-field
@@ -187,6 +203,7 @@
               { value: 'M', label: 'Male' },
               { value: 'F', label: 'Female' },
             ]"
+            [required]="true"
             [errors]="genderErrors()"
           />
           <aw-toggle-field fieldId="employment-salaried-flag" label="Salaried" formControlName="salariedFlag" />
@@ -208,6 +225,7 @@
             [inputType]="'email'"
             placeholder="Email address"
             formControlName="emailAddress"
+            [required]="true"
             [errors]="emailAddressErrors()"
           />
 
@@ -218,6 +236,7 @@
               [inputType]="'tel'"
               placeholder="Phone number"
               formControlName="phoneNumber"
+              [required]="true"
               [errors]="phoneNumberErrors()"
             />
             <aw-select-field
@@ -226,6 +245,7 @@
               emptyOptionLabel="— Select phone type —"
               formControlName="phoneNumberTypeId"
               [options]="phoneNumberTypeOptions()"
+              [required]="true"
               [errors]="phoneNumberTypeErrors()"
             />
           </div>
@@ -236,6 +256,7 @@
             emptyOptionLabel="— Select address type —"
             formControlName="addressTypeId"
             [options]="addressTypeOptions()"
+            [required]="true"
             [errors]="addressTypeErrors()"
           />
 
@@ -245,6 +266,7 @@
               label="Address Line 1"
               placeholder="Street address"
               formControlName="addressLine1"
+              [required]="true"
               [errors]="addressLine1Errors()"
             />
             <aw-input-field
@@ -258,6 +280,7 @@
               label="City"
               placeholder="City"
               formControlName="city"
+              [required]="true"
               [errors]="cityErrors()"
             />
             <aw-select-field
@@ -266,6 +289,7 @@
               emptyOptionLabel="— Select state —"
               formControlName="stateProvinceId"
               [options]="stateProvinceOptions()"
+              [required]="true"
               [errors]="stateProvinceErrors()"
             />
             <aw-input-field
@@ -273,6 +297,7 @@
               label="Postal Code"
               placeholder="Postal code"
               formControlName="postalCode"
+              [required]="true"
               [errors]="postalCodeErrors()"
             />
           </div>
@@ -301,6 +326,7 @@
             [inputType]="'number'"
             placeholder="Bonus amount"
             formControlName="bonus"
+            [required]="true"
           />
           <aw-input-field
             fieldId="sales-config-commission"
@@ -308,6 +334,7 @@
             [inputType]="'number'"
             placeholder="Commission rate (e.g. 0.015)"
             formControlName="commissionPct"
+            [required]="true"
           />
         </div>
       }

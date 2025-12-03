@@ -1,6 +1,10 @@
 <div id="aw-employee-list-page">
   <div id="aw-employee-list-header" class="mb-6 flex items-center justify-between">
     <h1 class="text-2xl font-bold text-base-content">Employees</h1>
+    <a id="aw-employee-list-new-btn" [routerLink]="['/hr/employees/new']" class="btn btn-primary btn-sm">
+      <i class="fa-solid fa-plus" aria-hidden="true"></i>
+      New Employee
+    </a>
   </div>
 
   <form id="aw-employee-list-filters" [formGroup]="filterForm" class="mb-4" (ngSubmit)="onApplyFilters()">

@@ -1,0 +1,354 @@
+<div id="aw-employee-create-page">
+  <div id="aw-employee-create-header" class="mb-6 flex items-center gap-4">
+    <a id="aw-employee-create-back" [routerLink]="['/hr/employees']" class="btn btn-ghost btn-sm">
+      <i class="fa-solid fa-arrow-left" aria-hidden="true"></i>
+      Back to Employees
+    </a>
+    <h1 class="text-2xl font-bold text-base-content">New Employee</h1>
+  </div>
+
+  @if (isLoading()) {
+    <div id="aw-employee-create-loading" class="space-y-4">
+      <aw-skeleton id="aw-employee-create-steps-skeleton" height="3rem" />
+      <aw-skeleton id="aw-employee-create-content-skeleton" height="20rem" />
+    </div>
+  } @else {
+    <ol id="aw-employee-create-steps" class="steps mb-6 w-full">
+      <li class="step" [class.step-primary]="currentStep() >= 1">Personal Info</li>
+      <li class="step" [class.step-primary]="currentStep() >= 2">Contact</li>
+      <li class="step" [class.step-primary]="currentStep() >= 3">Address</li>
+      <li class="step" [class.step-primary]="currentStep() >= 4">Review</li>
+    </ol>
+
+    <form id="aw-employee-create-form" [formGroup]="form" (ngSubmit)="onSubmit()" novalidate>
+      @if (currentStep() === 1) {
+        <div id="aw-employee-create-personal-info" formGroupName="personalInfo" class="max-w-lg space-y-4">
+          <aw-input-field
+            fieldId="personal-info-first-name"
+            label="First Name"
+            placeholder="First name"
+            formControlName="firstName"
+            [required]="true"
+            [errors]="firstNameErrors()"
+          />
+          <aw-input-field
+            fieldId="personal-info-last-name"
+            label="Last Name"
+            placeholder="Last name"
+            formControlName="lastName"
+            [required]="true"
+            [errors]="lastNameErrors()"
+          />
+          <aw-input-field
+            fieldId="personal-info-middle-name"
+            label="Middle Name"
+            placeholder="Middle name (optional)"
+            formControlName="middleName"
+            [errors]="middleNameErrors()"
+          />
+          <aw-input-field
+            fieldId="personal-info-title"
+            label="Title"
+            placeholder="e.g. Mr., Ms., Dr. (optional)"
+            formControlName="title"
+            [errors]="titleErrors()"
+          />
+          <aw-input-field
+            fieldId="personal-info-suffix"
+            label="Suffix"
+            placeholder="e.g. Jr., Sr. (optional)"
+            formControlName="suffix"
+            [errors]="suffixErrors()"
+          />
+          <aw-input-field
+            fieldId="personal-info-job-title"
+            label="Job Title"
+            placeholder="Job title"
+            formControlName="jobTitle"
+            [required]="true"
+            [errors]="jobTitleErrors()"
+          />
+          <aw-input-field
+            fieldId="personal-info-national-id"
+            label="National ID Number"
+            placeholder="National ID"
+            formControlName="nationalIdNumber"
+            [required]="true"
+            [errors]="nationalIdNumberErrors()"
+          />
+          <aw-input-field
+            fieldId="personal-info-login-id"
+            label="Login ID"
+            placeholder="domain\\username"
+            formControlName="loginId"
+            [required]="true"
+            [errors]="loginIdErrors()"
+          />
+          <fieldset class="fieldset">
+            <legend class="fieldset-legend">
+              <label for="personal-info-birth-date-input">
+                Birth Date
+                <span class="text-base-content/60" aria-hidden="true">*</span>
+                <span class="sr-only">required</span>
+              </label>
+            </legend>
+            <input
+              id="personal-info-birth-date-input"
+              type="date"
+              class="input input-bordered w-full"
+              [class.input-error]="!!birthDateErrors()"
+              [max]="maxBirthDate"
+              [attr.aria-required]="true"
+              formControlName="birthDate"
+            />
+            @for (entry of errorsToList(birthDateErrors()); track entry[0]) {
+              <p class="fieldset-label text-error">{{ entry[1] }}</p>
+            }
+          </fieldset>
+          <aw-select-field
+            fieldId="personal-info-gender"
+            label="Gender"
+            emptyOptionLabel="— Select gender —"
+            formControlName="gender"
+            [options]="[
+              { value: 'M', label: 'Male' },
+              { value: 'F', label: 'Female' },
+            ]"
+            [required]="true"
+            [errors]="genderErrors()"
+          />
+          <aw-select-field
+            fieldId="personal-info-marital-status"
+            label="Marital Status"
+            emptyOptionLabel="— Select status —"
+            formControlName="maritalStatus"
+            [options]="[
+              { value: 'M', label: 'Married' },
+              { value: 'S', label: 'Single' },
+            ]"
+            [required]="true"
+            [errors]="maritalStatusErrors()"
+          />
+        </div>
+      }
+
+      @if (currentStep() === 2) {
+        <div id="aw-employee-create-contact" formGroupName="contact" class="max-w-lg space-y-4">
+          <aw-input-field
+            fieldId="contact-email"
+            label="Email Address"
+            [inputType]="'email'"
+            placeholder="Email address"
+            formControlName="emailAddress"
+            [required]="true"
+            [errors]="emailAddressErrors()"
+          />
+          <div formGroupName="phone" class="space-y-4">
+            <aw-input-field
+              fieldId="contact-phone-number"
+              label="Phone Number"
+              [inputType]="'tel'"
+              placeholder="Phone number"
+              formControlName="phoneNumber"
+              [required]="true"
+              [errors]="phoneNumberErrors()"
+            />
+            <aw-select-field
+              fieldId="contact-phone-type"
+              label="Phone Type"
+              emptyOptionLabel="— Select phone type —"
+              formControlName="phoneNumberTypeId"
+              [options]="phoneNumberTypeOptions()"
+              [required]="true"
+              [errors]="phoneNumberTypeErrors()"
+            />
+          </div>
+        </div>
+      }
+
+      @if (currentStep() === 3) {
+        <div id="aw-employee-create-address" formGroupName="address" class="max-w-lg space-y-4">
+          <aw-input-field
+            fieldId="address-line1"
+            label="Address Line 1"
+            placeholder="Street address"
+            formControlName="addressLine1"
+            [required]="true"
+            [errors]="addressLine1Errors()"
+          />
+          <aw-input-field
+            fieldId="address-line2"
+            label="Address Line 2"
+            placeholder="Apt, suite, etc. (optional)"
+            formControlName="addressLine2"
+            [errors]="addressLine2Errors()"
+          />
+          <aw-input-field
+            fieldId="address-city"
+            label="City"
+            placeholder="City"
+            formControlName="city"
+            [required]="true"
+            [errors]="cityErrors()"
+          />
+          <aw-select-field
+            fieldId="address-state-province"
+            label="State / Province"
+            emptyOptionLabel="— Select state —"
+            formControlName="stateProvinceId"
+            [options]="stateProvinceOptions()"
+            [required]="true"
+            [errors]="stateProvinceErrors()"
+          />
+          <aw-input-field
+            fieldId="address-postal-code"
+            label="Postal Code"
+            placeholder="Postal code"
+            formControlName="postalCode"
+            [required]="true"
+            [errors]="postalCodeErrors()"
+          />
+          <aw-select-field
+            fieldId="address-type"
+            label="Address Type"
+            emptyOptionLabel="— Select address type —"
+            formControlName="addressTypeId"
+            [options]="addressTypeOptions()"
+            [required]="true"
+            [errors]="addressTypeErrors()"
+          />
+        </div>
+      }
+
+      @if (currentStep() === 4) {
+        @let personalInfo = form.controls.personalInfo.value;
+        @let contact = form.controls.contact.value;
+        @let address = form.controls.address.value;
+        <div id="aw-employee-create-review" class="max-w-lg space-y-6">
+          <section id="aw-employee-create-review-personal-info">
+            <div class="mb-2 flex items-center justify-between">
+              <h2 class="text-lg font-semibold text-base-content">Personal Info</h2>
+              <button
+                id="aw-employee-create-edit-personal-info"
+                type="button"
+                class="btn btn-ghost btn-xs"
+                (click)="onEditStep(1)"
+              >
+                Edit
+              </button>
+            </div>
+            <dl class="grid grid-cols-2 gap-x-4 gap-y-1 text-sm">
+              <dt class="text-base-content/60">Name</dt>
+              <dd>
+                {{ personalInfo.firstName }} {{ personalInfo.middleName }} {{ personalInfo.lastName }}
+                {{ personalInfo.suffix }}
+              </dd>
+              <dt class="text-base-content/60">Job Title</dt>
+              <dd>{{ personalInfo.jobTitle }}</dd>
+              <dt class="text-base-content/60">National ID</dt>
+              <dd>{{ personalInfo.nationalIdNumber }}</dd>
+              <dt class="text-base-content/60">Login ID</dt>
+              <dd>{{ personalInfo.loginId }}</dd>
+              <dt class="text-base-content/60">Birth Date</dt>
+              <dd>{{ personalInfo.birthDate }}</dd>
+              <dt class="text-base-content/60">Gender</dt>
+              <dd>{{ personalInfo.gender }}</dd>
+              <dt class="text-base-content/60">Marital Status</dt>
+              <dd>{{ personalInfo.maritalStatus }}</dd>
+            </dl>
+          </section>
+
+          <section id="aw-employee-create-review-contact">
+            <div class="mb-2 flex items-center justify-between">
+              <h2 class="text-lg font-semibold text-base-content">Contact</h2>
+              <button
+                id="aw-employee-create-edit-contact"
+                type="button"
+                class="btn btn-ghost btn-xs"
+                (click)="onEditStep(2)"
+              >
+                Edit
+              </button>
+            </div>
+            <dl class="grid grid-cols-2 gap-x-4 gap-y-1 text-sm">
+              <dt class="text-base-content/60">Email</dt>
+              <dd>{{ contact.emailAddress }}</dd>
+              <dt class="text-base-content/60">Phone</dt>
+              <dd>{{ contact.phone?.phoneNumber }}</dd>
+            </dl>
+          </section>
+
+          <section id="aw-employee-create-review-address">
+            <div class="mb-2 flex items-center justify-between">
+              <h2 class="text-lg font-semibold text-base-content">Address</h2>
+              <button
+                id="aw-employee-create-edit-address"
+                type="button"
+                class="btn btn-ghost btn-xs"
+                (click)="onEditStep(3)"
+              >
+                Edit
+              </button>
+            </div>
+            <dl class="grid grid-cols-2 gap-x-4 gap-y-1 text-sm">
+              <dt class="text-base-content/60">Address</dt>
+              <dd>{{ address.addressLine1 }} {{ address.addressLine2 }}</dd>
+              <dt class="text-base-content/60">City</dt>
+              <dd>{{ address.city }}</dd>
+              <dt class="text-base-content/60">Postal Code</dt>
+              <dd>{{ address.postalCode }}</dd>
+            </dl>
+          </section>
+        </div>
+      }
+
+      <div class="mt-6 flex gap-3">
+        @if (currentStep() > 1) {
+          <button id="aw-employee-create-back-step" type="button" class="btn btn-ghost" (click)="onBack()">Back</button>
+        }
+        @if (currentStep() === 1) {
+          <button
+            id="aw-employee-create-next-1"
+            type="button"
+            class="btn btn-primary"
+            [disabled]="!personalInfoValid()"
+            (click)="onNext()"
+          >
+            Next
+          </button>
+        }
+        @if (currentStep() === 2) {
+          <button
+            id="aw-employee-create-next-2"
+            type="button"
+            class="btn btn-primary"
+            [disabled]="!contactValid()"
+            (click)="onNext()"
+          >
+            Next
+          </button>
+        }
+        @if (currentStep() === 3) {
+          <button
+            id="aw-employee-create-next-3"
+            type="button"
+            class="btn btn-primary"
+            [disabled]="!addressValid()"
+            (click)="onNext()"
+          >
+            Next
+          </button>
+        }
+        @if (currentStep() === 4) {
+          <button id="aw-employee-create-save" type="submit" class="btn btn-primary" [disabled]="isSaving()">
+            @if (isSaving()) {
+              <span class="loading loading-spinner loading-sm" aria-hidden="true"></span>
+            }
+            Create Employee
+          </button>
+        }
+        <a id="aw-employee-create-cancel" [routerLink]="['/hr/employees']" class="btn btn-ghost">Cancel</a>
+      </div>
+    </form>
+  }
+</div>

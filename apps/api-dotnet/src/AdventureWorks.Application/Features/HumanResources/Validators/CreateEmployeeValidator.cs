@@ -15,27 +15,36 @@ public sealed class CreateEmployeeValidator : EmployeeBaseModelValidator<Employe
     private readonly IPhoneNumberTypeRepository _phoneNumberTypeRepository;
     private readonly IStateProvinceRepository _stateProvinceRepository;
     private readonly IAddressTypeRepository _addressTypeRepository;
+    private readonly IEmployeeRepository _employeeRepository;
 
     public CreateEmployeeValidator(
         IPhoneNumberTypeRepository phoneNumberTypeRepository,
         IStateProvinceRepository stateProvinceRepository,
-        IAddressTypeRepository addressTypeRepository)
+        IAddressTypeRepository addressTypeRepository,
+        IEmployeeRepository employeeRepository)
     {
         _phoneNumberTypeRepository = phoneNumberTypeRepository ?? throw new ArgumentNullException(nameof(phoneNumberTypeRepository));
         _stateProvinceRepository = stateProvinceRepository ?? throw new ArgumentNullException(nameof(stateProvinceRepository));
         _addressTypeRepository = addressTypeRepository ?? throw new ArgumentNullException(nameof(addressTypeRepository));
+        _employeeRepository = employeeRepository ?? throw new ArgumentNullException(nameof(employeeRepository));
 
         // National ID validation (NotEmpty handled by 'required' modifier)
         RuleFor(x => x.NationalIdNumber)
             .MaximumLength(15)
             .WithErrorCode("Rule-15")
-            .WithMessage(MessageNationalIdNumberLength);
+            .WithMessage(MessageNationalIdNumberLength)
+            .MustAsync(async (nationalIdNumber, cancellation) => await NationalIdNumberMustBeUniqueAsync(nationalIdNumber, cancellation))
+            .WithErrorCode("Rule-31")
+            .WithMessage(MessageNationalIdNumberUnique);
 
         // Login ID validation (NotEmpty handled by 'required' modifier)
         RuleFor(x => x.LoginId)
             .MaximumLength(256)
             .WithErrorCode("Rule-16")
-            .WithMessage(MessageLoginIdLength);
+            .WithMessage(MessageLoginIdLength)
+            .MustAsync(async (loginId, cancellation) => await LoginIdMustBeUniqueAsync(loginId, cancellation))
+            .WithErrorCode("Rule-32")
+            .WithMessage(MessageLoginIdUnique);
 
         // Birth date validation
         RuleFor(x => x.BirthDate)
@@ -81,10 +90,33 @@ public sealed class CreateEmployeeValidator : EmployeeBaseModelValidator<Employe
     public static string MessageEmailAddressLength => "Email address cannot be greater than 50 characters";
     public static string MessageAddressTypeIdGreaterThanZero => "Address type ID must be greater than 0";
     public static string MessageAddressTypeIdExists => "Address type ID must exist prior to use";
+    public static string MessageNationalIdNumberUnique => "An employee with this National ID number already exists";
+    public static string MessageLoginIdUnique => "An employee with this Login ID already exists";
 
     private async Task<bool> AddressTypeMustExistAsync(int addressTypeId)
     {
         var result = await _addressTypeRepository.GetByIdAsync(addressTypeId).ConfigureAwait(false);
         return result != null && result.AddressTypeId != int.MinValue;
+    }
+
+    /// <summary>
+    /// Primary uniqueness check for National ID Number (Rule-31). Catches the overwhelming majority
+    /// of duplicates as a clean 400; a residual TOCTOU race window is closed by the repository-level
+    /// DbUpdateException translation in <c>EmployeeRepository.CreateEmployeeWithPersonAsync</c> (409).
+    /// </summary>
+    private async Task<bool> NationalIdNumberMustBeUniqueAsync(string nationalIdNumber, CancellationToken cancellationToken)
+    {
+        var exists = await _employeeRepository.NationalIdNumberExistsAsync(nationalIdNumber, cancellationToken).ConfigureAwait(false);
+        return !exists;
+    }
+
+    /// <summary>
+    /// Primary uniqueness check for Login ID (Rule-32). See <see cref="NationalIdNumberMustBeUniqueAsync"/>
+    /// for the race-condition rationale behind the repository-level backstop.
+    /// </summary>
+    private async Task<bool> LoginIdMustBeUniqueAsync(string loginId, CancellationToken cancellationToken)
+    {
+        var exists = await _employeeRepository.LoginIdExistsAsync(loginId, cancellationToken).ConfigureAwait(false);
+        return !exists;
     }
 }

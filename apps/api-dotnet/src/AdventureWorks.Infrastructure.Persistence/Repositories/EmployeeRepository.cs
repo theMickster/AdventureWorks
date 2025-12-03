@@ -8,7 +8,10 @@ using AdventureWorks.Domain.Entities.HumanResources;
 using AdventureWorks.Domain.Entities.Person;
 using AdventureWorks.Infrastructure.Persistence.DbContexts;
 using AdventureWorks.Models.Features.HumanResources;
+using Microsoft.Data.SqlClient;
 using Microsoft.EntityFrameworkCore;
+
+[assembly: System.Runtime.CompilerServices.InternalsVisibleTo("AdventureWorks.UnitTests")]
 
 namespace AdventureWorks.Infrastructure.Persistence.Repositories;
 
@@ -113,11 +116,46 @@ public sealed class EmployeeRepository(AdventureWorksDbContext dbContext)
 
             return businessEntityId;
         }
+        catch (DbUpdateException ex) when (ex.InnerException is SqlException sqlException && IsUniqueConstraintViolation(sqlException))
+        {
+            await transaction.RollbackAsync(cancellationToken);
+            throw new ConflictException(BuildUniqueConstraintConflictMessage(sqlException.Message), ex);
+        }
         catch
         {
             await transaction.RollbackAsync(cancellationToken);
             throw;
         }
+    }
+
+    /// <summary>
+    /// SQL Server error numbers 2601 (duplicate key on a unique index) and 2627 (violation of a unique constraint)
+    /// both signal a unique-constraint conflict; other SqlException numbers are unrelated DB failures.
+    /// </summary>
+    private static bool IsUniqueConstraintViolation(SqlException sqlException) => sqlException.Number is 2601 or 2627;
+
+    /// <summary>
+    /// Builds a user-facing conflict message for a unique-constraint violation raised while creating an employee.
+    /// SQL Server's SqlException.Message already contains the violated index name, so a substring check is enough
+    /// to distinguish which field conflicted without a fragile regex. Factored out as a standalone, string-based
+    /// method (rather than requiring a live SqlException) so the message-selection logic is directly unit-testable —
+    /// SqlException has no public constructor, making it impractical to construct one in a test.
+    /// This is a defense-in-depth backstop for the TOCTOU race window between CreateEmployeeValidator's
+    /// uniqueness check (Rule-31/Rule-32) and this INSERT; the validator handles the overwhelming majority of cases.
+    /// </summary>
+    internal static string BuildUniqueConstraintConflictMessage(string sqlExceptionMessage)
+    {
+        if (sqlExceptionMessage.Contains("AK_Employee_NationalIDNumber", StringComparison.OrdinalIgnoreCase))
+        {
+            return "An employee with this National ID Number already exists.";
+        }
+
+        if (sqlExceptionMessage.Contains("AK_Employee_LoginID", StringComparison.OrdinalIgnoreCase))
+        {
+            return "An employee with this Login ID already exists.";
+        }
+
+        return "An employee with conflicting unique data already exists.";
     }
 
     /// <summary>
@@ -419,6 +457,26 @@ public sealed class EmployeeRepository(AdventureWorksDbContext dbContext)
             .ToListAsync(cancellationToken);
 
         return results.AsReadOnly();
+    }
+
+    /// <summary>
+    /// Returns true if an employee with the given National ID Number already exists.
+    /// </summary>
+    public async Task<bool> NationalIdNumberExistsAsync(
+        string nationalIdNumber,
+        CancellationToken cancellationToken = default)
+    {
+        return await DbContext.Employees.AnyAsync(x => x.NationalIdnumber == nationalIdNumber, cancellationToken);
+    }
+
+    /// <summary>
+    /// Returns true if an employee with the given Login ID already exists.
+    /// </summary>
+    public async Task<bool> LoginIdExistsAsync(
+        string loginId,
+        CancellationToken cancellationToken = default)
+    {
+        return await DbContext.Employees.AnyAsync(x => x.LoginId == loginId, cancellationToken);
     }
 
     /// <summary>

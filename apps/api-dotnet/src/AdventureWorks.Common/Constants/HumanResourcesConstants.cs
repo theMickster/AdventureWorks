@@ -78,6 +78,9 @@ public static class HumanResourcesConstants
     /// <summary>
     /// Temporary hire date placeholder for newly created employees.
     /// Employees must go through the hire lifecycle workflow to set their actual hire date.
+    /// Set to 1996-07-01 — the exact lower bound of the DB's CK_Employee_HireDate CHECK constraint
+    /// (HireDate >= '1996-07-01') — so this sentinel value satisfies the constraint on every insert.
+    /// A more obviously-fake value (e.g. 1901-01-01) would violate the constraint and fail every insert.
     /// </summary>
-    public static readonly DateTime TemporaryHireDate = new DateTime(1901, 1, 1);
+    public static readonly DateTime TemporaryHireDate = new DateTime(1996, 7, 1);
 }

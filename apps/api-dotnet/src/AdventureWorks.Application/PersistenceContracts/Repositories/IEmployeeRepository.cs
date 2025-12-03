@@ -162,4 +162,20 @@ public interface IEmployeeRepository : IAsyncRepository<EmployeeEntity>
     /// Used for computing HR dashboard aggregate statistics in memory.
     /// </summary>
     Task<IReadOnlyList<EmployeeEntity>> GetActiveEmployeesWithPayHistoryAsync(CancellationToken cancellationToken = default);
+
+    /// <summary>
+    /// Returns true if an employee with the given National ID Number already exists.
+    /// Backs the CreateEmployeeValidator uniqueness rule (Rule-31).
+    /// </summary>
+    /// <param name="nationalIdNumber">The National ID Number to check.</param>
+    /// <param name="cancellationToken">Cancellation token.</param>
+    Task<bool> NationalIdNumberExistsAsync(string nationalIdNumber, CancellationToken cancellationToken = default);
+
+    /// <summary>
+    /// Returns true if an employee with the given Login ID already exists.
+    /// Backs the CreateEmployeeValidator uniqueness rule (Rule-32).
+    /// </summary>
+    /// <param name="loginId">The Login ID to check.</param>
+    /// <param name="cancellationToken">Cancellation token.</param>
+    Task<bool> LoginIdExistsAsync(string loginId, CancellationToken cancellationToken = default);
 }
