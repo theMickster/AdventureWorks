@@ -4,6 +4,12 @@ import { LoginFailedComponent } from './login-failed/login-failed';
 import { NotFoundComponent } from './not-found/not-found';
 
 export const appRoutes: Route[] = [
+  {
+    path: '',
+    pathMatch: 'full',
+    title: 'AdventureWorks Cycling',
+    loadComponent: () => import('@adventureworks-web/public/feature-landing').then((m) => m.LandingComponent),
+  },
   { path: 'auth', component: MsalRedirectComponent },
   { path: 'login-failed', title: 'Sign In Failed', component: LoginFailedComponent },
   {

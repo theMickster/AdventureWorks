@@ -30,7 +30,11 @@ export default [
             { sourceTag: 'scope:shared', onlyDependOnLibsWithTags: ['scope:shared'] },
             { sourceTag: 'scope:sales', onlyDependOnLibsWithTags: ['scope:sales', 'scope:shared'] },
             { sourceTag: 'scope:hr', onlyDependOnLibsWithTags: ['scope:hr', 'scope:shared'] },
-            { sourceTag: 'scope:app', onlyDependOnLibsWithTags: ['scope:shared', 'scope:sales', 'scope:hr'] },
+            {
+              sourceTag: 'scope:app',
+              onlyDependOnLibsWithTags: ['scope:shared', 'scope:sales', 'scope:hr', 'scope:public'],
+            },
+            { sourceTag: 'scope:public', onlyDependOnLibsWithTags: ['scope:public', 'scope:shared'] },
           ],
         },
       ],

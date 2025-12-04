@@ -1,0 +1,16 @@
+<section id="features" class="px-6 py-16">
+  <div class="mx-auto max-w-5xl">
+    <h2 class="text-center text-2xl font-bold text-base-content">Why AdventureWorks</h2>
+    <div class="mt-10 grid gap-6 sm:grid-cols-3">
+      @for (feature of features; track feature.heading) {
+        <div class="card bg-base-100 shadow-sm">
+          <div class="card-body items-center text-center">
+            <i class="fa-solid {{ feature.icon }} text-3xl text-primary" aria-hidden="true"></i>
+            <h3 class="card-title text-base">{{ feature.heading }}</h3>
+            <p class="text-sm text-base-content/60">{{ feature.blurb }}</p>
+          </div>
+        </div>
+      }
+    </div>
+  </div>
+</section>

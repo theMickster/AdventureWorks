@@ -1,0 +1,46 @@
+<header id="aw-public-header" role="banner">
+  <nav id="aw-public-navbar" class="navbar bg-base-100 shadow-sm sticky top-0 z-30 px-4" aria-label="Global">
+    <div id="aw-public-navbar-start" class="flex-1">
+      <a id="aw-public-brand" routerLink="/" class="flex items-center gap-3">
+        <img ngSrc="logos/aw-icon-transparent.png" alt="AdventureWorks" width="415" height="301" class="h-9 w-auto" />
+        <span>
+          <span class="block text-base font-bold leading-tight text-base-content">AdventureWorks</span>
+          <span class="block text-xs text-base-content/60">Cycling</span>
+        </span>
+      </a>
+    </div>
+
+    <div id="aw-public-navbar-end" class="flex-none flex items-center gap-2">
+      <a
+        id="aw-public-nav-home"
+        routerLink="/"
+        routerLinkActive="menu-active"
+        [routerLinkActiveOptions]="{ exact: true }"
+        class="btn btn-ghost btn-sm"
+      >
+        Home
+      </a>
+      <a id="aw-public-nav-about" href="#about" class="btn btn-ghost btn-sm">About</a>
+
+      <button
+        id="aw-public-theme-toggle"
+        type="button"
+        (click)="themeService.toggle()"
+        class="btn btn-ghost btn-circle btn-sm"
+      >
+        @if (themeService.darkMode()) {
+          <i class="fa-solid fa-sun text-lg" aria-hidden="true"></i>
+          <span class="sr-only">Switch to light theme</span>
+        } @else {
+          <i class="fa-solid fa-moon text-lg" aria-hidden="true"></i>
+          <span class="sr-only">Switch to dark theme</span>
+        }
+      </button>
+
+      <button id="aw-public-login-btn" type="button" class="btn btn-primary btn-sm" (click)="authService.login()">
+        <i class="fa-solid fa-right-to-bracket" aria-hidden="true"></i>
+        Log In
+      </button>
+    </div>
+  </nav>
+</header>
