@@ -6,6 +6,7 @@ export interface EmployeeUpdate {
   readonly middleName?: string | null;
   readonly title?: string | null;
   readonly suffix?: string | null;
+  readonly jobTitle: string;
   readonly maritalStatus: 'M' | 'S';
   readonly gender: 'M' | 'F';
 }

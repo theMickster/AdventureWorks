@@ -38,6 +38,8 @@ public sealed class UpdateEmployeeValidatorTests : UnitTestBase
             UpdateEmployeeValidator.MessageSuffixLength.Should().Be("Suffix cannot be greater than 10 characters");
             UpdateEmployeeValidator.MessageMaritalStatusInvalid.Should().Be("Marital status must be 'M' (Married) or 'S' (Single)");
             UpdateEmployeeValidator.MessageGenderInvalid.Should().Be("Gender must be 'M' (Male) or 'F' (Female)");
+            UpdateEmployeeValidator.MessageJobTitleRequired.Should().Be("Job title is required");
+            UpdateEmployeeValidator.MessageJobTitleLength.Should().Be("Job title cannot be greater than 50 characters");
         }
     }
 
@@ -187,6 +189,32 @@ public sealed class UpdateEmployeeValidatorTests : UnitTestBase
 
         result.ShouldHaveValidationErrorFor(x => x.Gender)
             .WithErrorCode("Rule-11");
+    }
+
+    [Theory]
+    [InlineData("")]
+    [InlineData(" ")]
+    public async Task Validator_should_have_job_title_required_error(string jobTitle)
+    {
+        var model = HumanResourcesDomainFixtures.GetValidEmployeeUpdateModel();
+        model.JobTitle = jobTitle!;
+
+        var result = await _sut.TestValidateAsync(model);
+
+        result.ShouldHaveValidationErrorFor(x => x.JobTitle)
+            .WithErrorCode("Rule-12");
+    }
+
+    [Fact]
+    public async Task Validator_should_have_job_title_length_error()
+    {
+        var model = HumanResourcesDomainFixtures.GetValidEmployeeUpdateModel();
+        model.JobTitle = new string('a', 51);
+
+        var result = await _sut.TestValidateAsync(model);
+
+        result.ShouldHaveValidationErrorFor(x => x.JobTitle)
+            .WithErrorCode("Rule-13");
     }
 
     [Fact]

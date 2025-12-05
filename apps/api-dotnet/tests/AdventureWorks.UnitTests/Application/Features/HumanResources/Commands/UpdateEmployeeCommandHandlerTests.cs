@@ -138,6 +138,7 @@ public sealed class UpdateEmployeeCommandHandlerTests : UnitTestBase
             personEntity.Suffix.Should().Be(model.Suffix);
             personEntity.ModifiedDate.Should().Be(DefaultAuditDate);
 
+            employeeEntity.JobTitle.Should().Be(model.JobTitle);
             employeeEntity.MaritalStatus.Should().Be(model.MaritalStatus);
             employeeEntity.Gender.Should().Be(model.Gender);
             employeeEntity.ModifiedDate.Should().Be(DefaultAuditDate);

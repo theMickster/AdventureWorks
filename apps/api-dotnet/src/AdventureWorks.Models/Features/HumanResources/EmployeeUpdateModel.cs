@@ -1,8 +1,8 @@
 namespace AdventureWorks.Models.Features.HumanResources;
 
 /// <summary>
-/// Model for updating an existing employee's personal and marital information.
-/// Note: JobTitle, PTO, and compensation changes use separate endpoints.
+/// Model for updating an existing employee's personal, marital, and job title information.
+/// Note: PTO and compensation changes use separate endpoints.
 /// Immutable fields (NationalIdNumber, LoginId, BirthDate, HireDate) cannot be updated.
 /// </summary>
 public sealed class EmployeeUpdateModel
@@ -36,6 +36,11 @@ public sealed class EmployeeUpdateModel
     /// Name suffix (Jr., Sr., III, etc.).
     /// </summary>
     public string? Suffix { get; set; }
+
+    /// <summary>
+    /// Employee's job title.
+    /// </summary>
+    public required string JobTitle { get; set; }
 
     /// <summary>
     /// Employee's marital status. Valid values: 'M' (Married), 'S' (Single).

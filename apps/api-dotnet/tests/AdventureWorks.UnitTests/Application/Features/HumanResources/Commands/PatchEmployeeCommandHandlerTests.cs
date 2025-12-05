@@ -224,6 +224,74 @@ public sealed class PatchEmployeeCommandHandlerTests : UnitTestBase
     }
 
     [Fact]
+    public async Task Handle_succeeds_when_patch_does_not_touch_JobTitle()
+    {
+        // JobTitle is now a required field on EmployeeUpdateModel; the handler must hydrate it
+        // from the existing entity so patches that don't touch job title don't fail validation.
+        var employeeEntity = HumanResourcesDomainFixtures.GetCompleteEmployeeEntity();
+        employeeEntity.JobTitle = "Senior Engineer";
+
+        var patchDocument = new JsonPatchDocument<EmployeeUpdateModel>();
+        patchDocument.Replace(x => x.FirstName, "Jane");
+
+        var command = new PatchEmployeeCommand
+        {
+            EmployeeId = 100,
+            PatchDocument = patchDocument,
+            ModifiedDate = DefaultAuditDate
+        };
+
+        _mockValidator
+            .Setup(x => x.ValidateAsync(It.IsAny<EmployeeUpdateModel>(), It.IsAny<CancellationToken>()))
+            .ReturnsAsync(new ValidationResult { Errors = [] });
+
+        _mockEmployeeRepository
+            .Setup(x => x.GetEmployeeByIdAsync(100, It.IsAny<CancellationToken>()))
+            .ReturnsAsync(employeeEntity);
+
+        _mockEmployeeRepository
+            .Setup(x => x.UpdateAsync(It.IsAny<EmployeeEntity>(), It.IsAny<CancellationToken>()))
+            .Returns(Task.CompletedTask);
+
+        await _sut.Handle(command, CancellationToken.None);
+
+        employeeEntity.JobTitle.Should().Be("Senior Engineer", "because JobTitle was not patched and should retain its original value");
+    }
+
+    [Fact]
+    public async Task Handle_patches_JobTitle_when_directly_targeted()
+    {
+        var employeeEntity = HumanResourcesDomainFixtures.GetCompleteEmployeeEntity();
+        employeeEntity.JobTitle = "Senior Engineer";
+
+        var patchDocument = new JsonPatchDocument<EmployeeUpdateModel>();
+        patchDocument.Replace(x => x.JobTitle, "Principal Engineer");
+
+        var command = new PatchEmployeeCommand
+        {
+            EmployeeId = 100,
+            PatchDocument = patchDocument,
+            ModifiedDate = DefaultAuditDate
+        };
+
+        _mockValidator
+            .Setup(x => x.ValidateAsync(It.IsAny<EmployeeUpdateModel>(), It.IsAny<CancellationToken>()))
+            .ReturnsAsync(new ValidationResult { Errors = [] });
+
+        _mockEmployeeRepository
+            .Setup(x => x.GetEmployeeByIdAsync(100, It.IsAny<CancellationToken>()))
+            .ReturnsAsync(employeeEntity);
+
+        _mockEmployeeRepository
+            .Setup(x => x.UpdateAsync(It.IsAny<EmployeeEntity>(), It.IsAny<CancellationToken>()))
+            .Returns(Task.CompletedTask);
+
+        await _sut.Handle(command, CancellationToken.None);
+
+        employeeEntity.JobTitle.Should().Be("Principal Engineer");
+    }
+
+    [Fact]
     public async Task Handle_returns_Unit_value_when_successful()
     {
         var employeeEntity = HumanResourcesDomainFixtures.GetCompleteEmployeeEntity();

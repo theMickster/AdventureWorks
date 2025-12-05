@@ -34,9 +34,9 @@ public sealed class UpdateEmployeeController : ControllerBase
     }
 
     /// <summary>
-    /// Updates an existing employee's personal information and marital status.
+    /// Updates an existing employee's personal information, job title, and marital status.
     /// Does not update immutable fields (NationalIdNumber, LoginId, BirthDate, HireDate).
-    /// Use separate endpoints for job title, PTO, and address changes.
+    /// Use separate endpoints for PTO and address changes.
     /// </summary>
     /// <param name="id">Employee's BusinessEntityId</param>
     /// <param name="inputModel">Employee update data</param>

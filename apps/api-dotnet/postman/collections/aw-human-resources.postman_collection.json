@@ -1701,7 +1701,7 @@
 								"header": [],
 								"body": {
 									"mode": "raw",
-									"raw": "{\r\n    \r\n    \"id\": {{updateEmployeeId}},\r\n    \"firstName\": \"Jack\",\r\n    \"lastName\": \"Doe\",\r\n    \"maritalStatus\": \"S\",\r\n    \"gender\": \"M\"\r\n  \r\n}",
+									"raw": "{\r\n    \r\n    \"id\": {{updateEmployeeId}},\r\n    \"firstName\": \"Jack\",\r\n    \"lastName\": \"Doe\",\r\n    \"jobTitle\": \"Marketing Assistant\",\r\n    \"maritalStatus\": \"S\",\r\n    \"gender\": \"M\"\r\n  \r\n}",
 									"options": {
 										"raw": {
 											"language": "json"
@@ -1845,6 +1845,150 @@
 							"response": []
 						},
 						{
+							"name": "Invalid Employee - Missing JobTitle",
+							"event": [
+								{
+									"listen": "prerequest",
+									"script": {
+										"exec": [
+											"const uuid = pm.variables.replaceIn('{{$guid}}');\r",
+											"const last12 = uuid.slice(-12);\r",
+											"const randomString = last12.toUpperCase();\r",
+											"pm.collectionVariables.set('randomString', randomString);"
+										],
+										"type": "text/javascript",
+										"packages": {},
+										"requests": {}
+									}
+								},
+								{
+									"listen": "test",
+									"script": {
+										"exec": [
+											"pm.test(\"Status code is 400 Bad Request for missing job title\", function () {\r",
+											"    pm.response.to.have.status(400);\r",
+											"});\r",
+											"\r",
+											"var errorList = pm.response.json();\r",
+											"\r",
+											"pm.test(\"Response body is an array\", function () {\r",
+											"    pm.expect(errorList).to.be.an('array');\r",
+											"    pm.expect(errorList.length).to.be.above(0);\r",
+											"});\r",
+											"\r",
+											"pm.test(\"JobTitle validation error exists with Rule-12\", function () {\r",
+											"    var jobTitleError = errorList.find(e => e.propertyName === \"JobTitle\");\r",
+											"\r",
+											"    pm.expect(jobTitleError).to.exist;\r",
+											"    pm.expect(jobTitleError.errorCode).to.eql(\"Rule-12\");\r",
+											"    pm.expect(jobTitleError.errorMessage).to.include(\"Job title is required\");\r",
+											"});"
+										],
+										"type": "text/javascript",
+										"packages": {},
+										"requests": {}
+									}
+								}
+							],
+							"request": {
+								"method": "PUT",
+								"header": [],
+								"body": {
+									"mode": "raw",
+									"raw": "{\r\n    \r\n    \"id\": {{updateEmployeeId}},\r\n    \"firstName\": \"Jack\",\r\n    \"lastName\": \"Doe\",\r\n    \"maritalStatus\": \"S\",\r\n    \"gender\": \"M\"\r\n  \r\n}",
+									"options": {
+										"raw": {
+											"language": "json"
+										}
+									}
+								},
+								"url": {
+									"raw": "{{adventureWorksApi}}/{{apiVersion}}/employees/{{updateEmployeeId}}",
+									"host": [
+										"{{adventureWorksApi}}"
+									],
+									"path": [
+										"{{apiVersion}}",
+										"employees",
+										"{{updateEmployeeId}}"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "Invalid Employee - JobTitle Too Long",
+							"event": [
+								{
+									"listen": "prerequest",
+									"script": {
+										"exec": [
+											"const uuid = pm.variables.replaceIn('{{$guid}}');\r",
+											"const last12 = uuid.slice(-12);\r",
+											"const randomString = last12.toUpperCase();\r",
+											"pm.collectionVariables.set('randomString', randomString);"
+										],
+										"type": "text/javascript",
+										"packages": {},
+										"requests": {}
+									}
+								},
+								{
+									"listen": "test",
+									"script": {
+										"exec": [
+											"pm.test(\"Status code is 400 Bad Request for job title too long\", function () {\r",
+											"    pm.response.to.have.status(400);\r",
+											"});\r",
+											"\r",
+											"var errorList = pm.response.json();\r",
+											"\r",
+											"pm.test(\"Response body is an array\", function () {\r",
+											"    pm.expect(errorList).to.be.an('array');\r",
+											"    pm.expect(errorList.length).to.be.above(0);\r",
+											"});\r",
+											"\r",
+											"pm.test(\"JobTitle validation error exists with Rule-13\", function () {\r",
+											"    var jobTitleError = errorList.find(e => e.propertyName === \"JobTitle\");\r",
+											"\r",
+											"    pm.expect(jobTitleError).to.exist;\r",
+											"    pm.expect(jobTitleError.errorCode).to.eql(\"Rule-13\");\r",
+											"    pm.expect(jobTitleError.errorMessage).to.include(\"Job title cannot be greater than 50 characters\");\r",
+											"});"
+										],
+										"type": "text/javascript",
+										"packages": {},
+										"requests": {}
+									}
+								}
+							],
+							"request": {
+								"method": "PUT",
+								"header": [],
+								"body": {
+									"mode": "raw",
+									"raw": "{\r\n    \r\n    \"id\": {{updateEmployeeId}},\r\n    \"firstName\": \"Jack\",\r\n    \"lastName\": \"Doe\",\r\n    \"jobTitle\": \"AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA\",\r\n    \"maritalStatus\": \"S\",\r\n    \"gender\": \"M\"\r\n  \r\n}",
+									"options": {
+										"raw": {
+											"language": "json"
+										}
+									}
+								},
+								"url": {
+									"raw": "{{adventureWorksApi}}/{{apiVersion}}/employees/{{updateEmployeeId}}",
+									"host": [
+										"{{adventureWorksApi}}"
+									],
+									"path": [
+										"{{apiVersion}}",
+										"employees",
+										"{{updateEmployeeId}}"
+									]
+								}
+							},
+							"response": []
+						},
+						{
 							"name": "Invalid Employee - Invalid Marital Status",
 							"event": [
 								{
@@ -1896,7 +2040,7 @@
 								"header": [],
 								"body": {
 									"mode": "raw",
-									"raw": "{\r\n    \r\n    \"id\": {{updateEmployeeId}},\r\n    \"firstName\": \"Jake\",\r\n    \"lastName\": \"Doe\",\r\n    \"maritalStatus\": \"X\",\r\n    \"gender\": \"M\"\r\n  \r\n}",
+									"raw": "{\r\n    \r\n    \"id\": {{updateEmployeeId}},\r\n    \"firstName\": \"Jake\",\r\n    \"lastName\": \"Doe\",\r\n    \"jobTitle\": \"Marketing Assistant\",\r\n    \"maritalStatus\": \"X\",\r\n    \"gender\": \"M\"\r\n  \r\n}",
 									"options": {
 										"raw": {
 											"language": "json"

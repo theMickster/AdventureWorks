@@ -282,6 +282,7 @@ describe('EmployeeStore', () => {
         id: 1,
         firstName: 'John',
         lastName: 'Updated',
+        jobTitle: 'Software Engineer',
         maritalStatus: 'M' as const,
         gender: 'M' as const,
       };

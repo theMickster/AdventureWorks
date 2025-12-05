@@ -2,8 +2,8 @@ import { of, throwError } from 'rxjs';
 import { ActivatedRoute, Router } from '@angular/router';
 import { provideTranslateService } from '@ngx-translate/core';
 import { HrApiService } from '@adventureworks-web/hr/data-access';
-import type { Employee, EmployeeLifecycleStatus } from '@adventureworks-web/hr/data-access';
-import { NotificationService } from '@adventureworks-web/shared/util';
+import type { Employee, EmployeeLifecycleStatus, EmployeeUpdate } from '@adventureworks-web/hr/data-access';
+import { ApiValidationError, NotificationService } from '@adventureworks-web/shared/util';
 import { renderEmployeeComponent } from '../testing/render-employee-component';
 import { EmployeeDetailComponent } from './employee-detail';
 
@@ -87,6 +87,7 @@ describe('EmployeeDetailComponent', () => {
         options.error ? throwError(() => new Error('Network error')) : of(options.employee ?? mockEmployee),
       ),
       getLifecycleStatus: vi.fn().mockReturnValue(of(options.lifecycle ?? mockActiveLifecycle)),
+      updateEmployee: vi.fn(),
     };
     const mockNotificationService = { error: vi.fn(), success: vi.fn(), info: vi.fn() };
     const navigateSpy = vi.spyOn(Router.prototype, 'navigate').mockResolvedValue(true);
@@ -222,6 +223,184 @@ describe('EmployeeDetailComponent', () => {
       });
 
       expect(fixture.nativeElement.textContent).toContain('45');
+    });
+  });
+
+  describe('Editing personal info', () => {
+    it('clicking Edit populates the form from employee() and shows the form instead of the read-only view', async () => {
+      const { fixture, component } = await setup();
+
+      component['onEditClick']();
+      fixture.detectChanges();
+
+      expect(component['isEditing']()).toBe(true);
+      expect(component['personalInfoForm'].value).toEqual({
+        firstName: mockEmployee.firstName,
+        middleName: '',
+        lastName: mockEmployee.lastName,
+        jobTitle: mockEmployee.jobTitle,
+        maritalStatus: mockEmployee.maritalStatus,
+        gender: mockEmployee.gender,
+      });
+      expect(fixture.nativeElement.querySelector('#aw-employee-detail-personal-form')).toBeTruthy();
+      expect(fixture.nativeElement.querySelector('#aw-employee-detail-edit-btn')).toBeFalsy();
+    });
+
+    it('changing fields including Job Title and clicking Save calls updateEmployee with the exact payload, updates employee(), exits edit mode, and shows a success toast', async () => {
+      const updatedEmployee: Employee = {
+        ...mockEmployee,
+        firstName: 'Jane',
+        jobTitle: 'Principal Engineer',
+        maritalStatus: 'M',
+      };
+      const { fixture, component, mockHrApi, mockNotificationService } = await setup();
+      mockHrApi.updateEmployee.mockReturnValue(of(updatedEmployee));
+
+      component['onEditClick']();
+      component['personalInfoForm'].patchValue({
+        firstName: 'Jane',
+        jobTitle: 'Principal Engineer',
+        maritalStatus: 'M',
+      });
+      component['onSaveClick']();
+      fixture.detectChanges();
+
+      const expectedPayload: EmployeeUpdate = {
+        id: mockEmployee.id,
+        firstName: 'Jane',
+        middleName: null,
+        lastName: mockEmployee.lastName,
+        title: mockEmployee.title,
+        suffix: mockEmployee.suffix,
+        jobTitle: 'Principal Engineer',
+        maritalStatus: 'M',
+        gender: mockEmployee.gender,
+      };
+      expect(mockHrApi.updateEmployee).toHaveBeenCalledWith(mockEmployee.id, expectedPayload);
+      expect(component['employee']()).toEqual(updatedEmployee);
+      expect(component['isEditing']()).toBe(false);
+      expect(component['isSaving']()).toBe(false);
+      expect(mockNotificationService.success).toHaveBeenCalledWith('Employee updated successfully.');
+    });
+
+    it('preserves an existing title/suffix unchanged on save, since they are not editable fields', async () => {
+      const employeeWithHonorific: Employee = { ...mockEmployee, title: 'Dr.', suffix: 'III' };
+      const { fixture, component, mockHrApi } = await setup({ employee: employeeWithHonorific });
+      mockHrApi.updateEmployee.mockReturnValue(of(employeeWithHonorific));
+
+      component['onEditClick']();
+      component['onSaveClick']();
+      fixture.detectChanges();
+
+      expect(mockHrApi.updateEmployee).toHaveBeenCalledWith(
+        employeeWithHonorific.id,
+        expect.objectContaining({ title: 'Dr.', suffix: 'III' }),
+      );
+    });
+
+    it('clicking Cancel after changing fields without saving returns to the read-only view showing the original values', async () => {
+      const { fixture, component } = await setup();
+
+      component['onEditClick']();
+      component['personalInfoForm'].patchValue({ firstName: 'Changed But Not Saved' });
+      component['onCancelClick']();
+      fixture.detectChanges();
+
+      expect(component['isEditing']()).toBe(false);
+      expect(component['employee']()).toEqual(mockEmployee);
+      expect(fixture.nativeElement.textContent).toContain(`${mockEmployee.firstName} ${mockEmployee.lastName}`);
+      expect(fixture.nativeElement.querySelector('#aw-employee-detail-personal-form')).toBeFalsy();
+    });
+
+    it('sets a field-level error and keeps isEditing true on a 400 ApiValidationError', async () => {
+      // propertyName is the raw FluentValidation C# property name (PascalCase) — only the JSON key
+      // "propertyName" itself is camelCase, per ExceptionHandlerMiddleware's CamelCaseOptions.
+      const { fixture, component, mockHrApi, mockNotificationService } = await setup();
+      mockHrApi.updateEmployee.mockReturnValue(
+        throwError(
+          () =>
+            new ApiValidationError(
+              [{ propertyName: 'JobTitle', errorCode: 'Rule-12', errorMessage: 'Job title is required', correlationId: 'abc' }],
+              'abc',
+            ),
+        ),
+      );
+
+      component['onEditClick']();
+      fixture.detectChanges(); // mounts the edit form so its reactive form directives attach before Save runs
+      component['onSaveClick']();
+      fixture.detectChanges();
+
+      expect(component['isEditing']()).toBe(true);
+      expect(component['personalInfoForm'].controls.jobTitle.errors?.['server']).toBe('Job title is required');
+      expect(component['personalInfoForm'].controls.jobTitle.touched).toBe(true);
+      expect(mockNotificationService.error).not.toHaveBeenCalled();
+    });
+
+    it('shows the generic error toast when the ApiValidationError propertyName has no form-control mapping', async () => {
+      const { fixture, component, mockHrApi, mockNotificationService } = await setup();
+      mockHrApi.updateEmployee.mockReturnValue(
+        throwError(
+          () =>
+            new ApiValidationError(
+              [{ propertyName: 'Id', errorCode: 'Rule-02', errorMessage: 'Employee ID must exist prior to update', correlationId: 'abc' }],
+              'abc',
+            ),
+        ),
+      );
+
+      component['onEditClick']();
+      fixture.detectChanges();
+      component['onSaveClick']();
+      fixture.detectChanges();
+
+      expect(component['isEditing']()).toBe(true);
+      expect(mockNotificationService.error).toHaveBeenCalledWith('Failed to update employee. Please try again.');
+    });
+
+    it('keeps isEditing true and shows a hardcoded error toast on a network/500 error', async () => {
+      const { fixture, component, mockHrApi, mockNotificationService } = await setup();
+      mockHrApi.updateEmployee.mockReturnValue(throwError(() => new Error('Internal server error')));
+
+      component['onEditClick']();
+      fixture.detectChanges();
+      component['onSaveClick']();
+      fixture.detectChanges();
+
+      expect(component['isEditing']()).toBe(true);
+      expect(component['isSaving']()).toBe(false);
+      expect(mockNotificationService.error).toHaveBeenCalledWith('Failed to update employee. Please try again.');
+    });
+
+    it('does not call updateEmployee when the form is invalid', async () => {
+      const { component, mockHrApi } = await setup();
+
+      component['onEditClick']();
+      component['personalInfoForm'].patchValue({ firstName: '' });
+      component['onSaveClick']();
+
+      expect(mockHrApi.updateEmployee).not.toHaveBeenCalled();
+      expect(component['isEditing']()).toBe(true);
+    });
+  });
+
+  describe('Terminate/Rehire regression guard', () => {
+    it('Terminate button still shows an informational notification', async () => {
+      const { fixture, component, mockNotificationService } = await setup({ lifecycle: mockActiveLifecycle });
+      fixture.detectChanges();
+
+      component['onTerminateClick']();
+
+      expect(mockNotificationService.info).toHaveBeenCalledWith('Terminate employee is not yet available.');
+    });
+
+    it('Rehire button still shows an informational notification', async () => {
+      const { fixture, component, mockNotificationService } = await setup({ lifecycle: mockTerminatedLifecycle });
+      fixture.detectChanges();
+
+      component['onRehireClick']();
+
+      expect(mockNotificationService.info).toHaveBeenCalledWith('Rehire employee is not yet available.');
     });
   });
 });

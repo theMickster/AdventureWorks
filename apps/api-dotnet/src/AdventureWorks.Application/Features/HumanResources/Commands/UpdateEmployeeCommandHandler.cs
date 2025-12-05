@@ -41,6 +41,7 @@ public sealed class UpdateEmployeeCommandHandler(
         personEntity.Title = request.Model.Title;
         personEntity.Suffix = request.Model.Suffix;
         personEntity.ModifiedDate = request.ModifiedDate;
+        employeeEntity.JobTitle = request.Model.JobTitle;
         employeeEntity.MaritalStatus = request.Model.MaritalStatus;
         employeeEntity.Gender = request.Model.Gender;
         employeeEntity.ModifiedDate = request.ModifiedDate;

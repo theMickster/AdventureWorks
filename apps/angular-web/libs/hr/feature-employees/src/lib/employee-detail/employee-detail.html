@@ -30,16 +30,106 @@
     @if (lifecycle(); as l) {
       <div id="aw-employee-detail-cards" class="mb-6 grid gap-4 sm:grid-cols-2">
         <aw-card fieldId="aw-employee-detail-personal-card" title="Personal Info">
-          <dl class="grid grid-cols-2 gap-1 text-sm">
-            <dt class="text-base-content/60">Name</dt>
-            <dd>{{ e.firstName }} {{ e.middleName ? e.middleName + ' ' : '' }}{{ e.lastName }}</dd>
-            <dt class="text-base-content/60">Marital Status</dt>
-            <dd>{{ e.maritalStatus === 'M' ? 'Married' : 'Single' }}</dd>
-            <dt class="text-base-content/60">Gender</dt>
-            <dd>{{ e.gender === 'M' ? 'Male' : 'Female' }}</dd>
-            <dt class="text-base-content/60">Birth Date</dt>
-            <dd>{{ e.birthDate | slice: 0 : 10 }}</dd>
-          </dl>
+          @if (isEditing()) {
+            <form id="aw-employee-detail-personal-form" [formGroup]="personalInfoForm" class="space-y-4">
+              <aw-input-field
+                fieldId="aw-employee-detail-first-name"
+                label="First Name"
+                formControlName="firstName"
+                [required]="true"
+                [errors]="firstNameErrors()"
+              />
+              <aw-input-field
+                fieldId="aw-employee-detail-middle-name"
+                label="Middle Name"
+                formControlName="middleName"
+                [errors]="middleNameErrors()"
+              />
+              <aw-input-field
+                fieldId="aw-employee-detail-last-name"
+                label="Last Name"
+                formControlName="lastName"
+                [required]="true"
+                [errors]="lastNameErrors()"
+              />
+              <aw-input-field
+                fieldId="aw-employee-detail-job-title"
+                label="Job Title"
+                formControlName="jobTitle"
+                [required]="true"
+                [errors]="jobTitleErrors()"
+              />
+              <aw-select-field
+                fieldId="aw-employee-detail-marital-status"
+                label="Marital Status"
+                emptyOptionLabel="— Select status —"
+                formControlName="maritalStatus"
+                [options]="[
+                  { value: 'M', label: 'Married' },
+                  { value: 'S', label: 'Single' },
+                ]"
+                [required]="true"
+                [errors]="maritalStatusErrors()"
+              />
+              <aw-select-field
+                fieldId="aw-employee-detail-gender"
+                label="Gender"
+                emptyOptionLabel="— Select gender —"
+                formControlName="gender"
+                [options]="[
+                  { value: 'M', label: 'Male' },
+                  { value: 'F', label: 'Female' },
+                ]"
+                [required]="true"
+                [errors]="genderErrors()"
+              />
+              <dl class="grid grid-cols-2 gap-1 text-sm">
+                <dt class="text-base-content/60">Birth Date</dt>
+                <dd>{{ e.birthDate | slice: 0 : 10 }}</dd>
+              </dl>
+            </form>
+          } @else {
+            <dl class="grid grid-cols-2 gap-1 text-sm">
+              <dt class="text-base-content/60">Name</dt>
+              <dd>{{ e.firstName }} {{ e.middleName ? e.middleName + ' ' : '' }}{{ e.lastName }}</dd>
+              <dt class="text-base-content/60">Marital Status</dt>
+              <dd>{{ e.maritalStatus === 'M' ? 'Married' : 'Single' }}</dd>
+              <dt class="text-base-content/60">Gender</dt>
+              <dd>{{ e.gender === 'M' ? 'Male' : 'Female' }}</dd>
+              <dt class="text-base-content/60">Birth Date</dt>
+              <dd>{{ e.birthDate | slice: 0 : 10 }}</dd>
+            </dl>
+          }
+          <div card-actions>
+            @if (isEditing()) {
+              <button
+                id="aw-employee-detail-save-btn"
+                type="button"
+                class="btn btn-primary btn-sm"
+                [disabled]="isSaving()"
+                (click)="onSaveClick()"
+              >
+                Save
+              </button>
+              <button
+                id="aw-employee-detail-cancel-btn"
+                type="button"
+                class="btn btn-ghost btn-sm"
+                (click)="onCancelClick()"
+              >
+                Cancel
+              </button>
+            } @else {
+              <button
+                id="aw-employee-detail-edit-btn"
+                type="button"
+                class="btn btn-primary btn-sm"
+                (click)="onEditClick()"
+              >
+                Edit
+              </button>
+            }
+          </div>
         </aw-card>
 
         <aw-card fieldId="aw-employee-detail-employment-card" title="Employment Info">

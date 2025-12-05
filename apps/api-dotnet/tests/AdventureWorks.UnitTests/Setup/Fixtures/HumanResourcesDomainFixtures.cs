@@ -180,6 +180,7 @@ internal sealed class HumanResourcesDomainFixtures : UnitTestFixtureBase
             MiddleName = "Elizabeth",
             Title = "Dr.",
             Suffix = "III",
+            JobTitle = "Software Engineer",
             MaritalStatus = "S",
             Gender = "F"
         };

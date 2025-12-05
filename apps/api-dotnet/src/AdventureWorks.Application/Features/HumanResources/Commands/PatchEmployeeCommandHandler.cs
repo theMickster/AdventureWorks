@@ -42,6 +42,7 @@ public sealed class PatchEmployeeCommandHandler(
             MiddleName = personEntity.MiddleName,
             Title = personEntity.Title,
             Suffix = personEntity.Suffix,
+            JobTitle = employeeEntity.JobTitle,
             MaritalStatus = employeeEntity.MaritalStatus,
             Gender = employeeEntity.Gender
         };
@@ -67,6 +68,7 @@ public sealed class PatchEmployeeCommandHandler(
         personEntity.ModifiedDate = request.ModifiedDate;
 
         // Apply changes to EmployeeEntity
+        employeeEntity.JobTitle = employeeUpdateModel.JobTitle;
         employeeEntity.MaritalStatus = employeeUpdateModel.MaritalStatus;
         employeeEntity.Gender = employeeUpdateModel.Gender;
         employeeEntity.ModifiedDate = request.ModifiedDate;

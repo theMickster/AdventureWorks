@@ -183,6 +183,7 @@ describe('HrApiService', () => {
         id: 1,
         firstName: 'Ken',
         lastName: 'Sánchez',
+        jobTitle: 'Chief Executive Officer',
         maritalStatus: 'M',
         gender: 'M',
       };

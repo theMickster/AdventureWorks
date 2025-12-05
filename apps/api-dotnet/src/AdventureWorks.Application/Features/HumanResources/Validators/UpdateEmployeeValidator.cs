@@ -71,9 +71,18 @@ public sealed class UpdateEmployeeValidator : AbstractValidator<EmployeeUpdateMo
 
         // Gender validation
         RuleFor(x => x.Gender)
-            .Must(gender => gender == "M" || gender == "F")
+            .Must(gender => gender is "M" or "F")
             .WithErrorCode("Rule-11")
             .WithMessage(MessageGenderInvalid);
+
+        // JobTitle validation
+        RuleFor(x => x.JobTitle)
+            .NotEmpty()
+            .WithErrorCode("Rule-12")
+            .WithMessage(MessageJobTitleRequired)
+            .MaximumLength(50)
+            .WithErrorCode("Rule-13")
+            .WithMessage(MessageJobTitleLength);
     }
 
     public static string MessageIdGreaterThanZero => "Employee ID must be greater than 0";
@@ -87,6 +96,8 @@ public sealed class UpdateEmployeeValidator : AbstractValidator<EmployeeUpdateMo
     public static string MessageSuffixLength => "Suffix cannot be greater than 10 characters";
     public static string MessageMaritalStatusInvalid => "Marital status must be 'M' (Married) or 'S' (Single)";
     public static string MessageGenderInvalid => "Gender must be 'M' (Male) or 'F' (Female)";
+    public static string MessageJobTitleRequired => "Job title is required";
+    public static string MessageJobTitleLength => "Job title cannot be greater than 50 characters";
 
     private async Task<bool> EmployeeMustExistAsync(int employeeId)
     {
