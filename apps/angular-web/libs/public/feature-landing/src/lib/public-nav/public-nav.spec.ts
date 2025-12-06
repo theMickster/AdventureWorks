@@ -7,9 +7,13 @@ import { PublicNavComponent } from './public-nav';
 describe('PublicNavComponent', () => {
   let fixture: ComponentFixture<PublicNavComponent>;
   let login: ReturnType<typeof vi.fn>;
+  let logout: ReturnType<typeof vi.fn>;
+  let isAuthenticated: ReturnType<typeof signal<boolean>>;
 
   beforeEach(async () => {
     login = vi.fn();
+    logout = vi.fn();
+    isAuthenticated = signal(false);
 
     await TestBed.configureTestingModule({
       imports: [PublicNavComponent],
@@ -18,12 +22,12 @@ describe('PublicNavComponent', () => {
         {
           provide: AuthService,
           useValue: {
-            isAuthenticated: signal(false),
+            isAuthenticated,
             user: signal(null),
             displayName: signal(''),
             userInitials: signal(''),
             login,
-            logout: vi.fn(),
+            logout,
             initialize: vi.fn(),
           },
         },
@@ -52,5 +56,24 @@ describe('PublicNavComponent', () => {
     loginBtn.click();
 
     expect(login).toHaveBeenCalledOnce();
+  });
+
+  it('shows Dashboard and Sign Out buttons instead of Log In when authenticated', () => {
+    isAuthenticated.set(true);
+    fixture.detectChanges();
+
+    expect(fixture.nativeElement.querySelector('#aw-public-login-btn')).toBeNull();
+    expect(fixture.nativeElement.querySelector('#aw-public-dashboard-btn')).toBeTruthy();
+    expect(fixture.nativeElement.querySelector('#aw-public-logout-btn')).toBeTruthy();
+  });
+
+  it('triggers logout when the Sign Out button is clicked', () => {
+    isAuthenticated.set(true);
+    fixture.detectChanges();
+
+    const logoutBtn = fixture.nativeElement.querySelector('#aw-public-logout-btn') as HTMLButtonElement;
+    logoutBtn.click();
+
+    expect(logout).toHaveBeenCalledOnce();
   });
 });

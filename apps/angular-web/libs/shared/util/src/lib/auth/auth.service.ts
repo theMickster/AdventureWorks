@@ -66,7 +66,7 @@ export class AuthService {
         this.appInsightsService.trackException(error instanceof Error ? error : new Error(String(error)));
       } finally {
         this.logoutExecution = null;
-        this.msalService.logoutRedirect().subscribe();
+        this.msalService.logoutRedirect({ postLogoutRedirectUri: '/' }).subscribe();
       }
     })();
   }

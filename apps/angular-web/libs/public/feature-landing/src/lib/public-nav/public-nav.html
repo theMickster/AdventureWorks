@@ -37,10 +37,21 @@
         }
       </button>
 
-      <button id="aw-public-login-btn" type="button" class="btn btn-primary btn-sm" (click)="authService.login()">
-        <i class="fa-solid fa-right-to-bracket" aria-hidden="true"></i>
-        Log In
-      </button>
+      @if (authService.isAuthenticated()) {
+        <a id="aw-public-dashboard-btn" routerLink="/dashboard" class="btn btn-primary btn-sm">
+          <i class="fa-solid fa-gauge" aria-hidden="true"></i>
+          Dashboard
+        </a>
+        <button id="aw-public-logout-btn" type="button" class="btn btn-ghost btn-sm" (click)="authService.logout()">
+          <i class="fa-solid fa-right-from-bracket" aria-hidden="true"></i>
+          Sign Out
+        </button>
+      } @else {
+        <button id="aw-public-login-btn" type="button" class="btn btn-primary btn-sm" (click)="authService.login()">
+          <i class="fa-solid fa-right-to-bracket" aria-hidden="true"></i>
+          Log In
+        </button>
+      }
     </div>
   </nav>
 </header>
