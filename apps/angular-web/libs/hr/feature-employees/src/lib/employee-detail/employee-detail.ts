@@ -17,6 +17,9 @@ import {
 import { ApiValidationError, NotificationService } from '@adventureworks-web/shared/util';
 import { EMPLOYEE_STATUS_BADGE_MAP } from '../employee-status-badge';
 import { extractEmployeeListNavParams } from '../employee-list-nav-params';
+import { EmployeeHireModalComponent } from './employee-hire-modal';
+import { EmployeeTerminateModalComponent } from './employee-terminate-modal';
+import { EmployeeRehireModalComponent } from './employee-rehire-modal';
 
 /**
  * Maps a server `propertyName` to its form control. `ExceptionHandlerMiddleware`'s `CamelCaseOptions`
@@ -38,8 +41,13 @@ const SERVER_ERROR_FIELD_MAP: Record<string, string> = {
  * calls, no NgRx store. Employee and lifecycle status are two independent reads, loaded in parallel
  * via `forkJoin`.
  *
- * The Terminate/Rehire buttons are contextual on `lifecycle().employmentStatus` and currently only
- * show an informational notification — a future story owns the actual multi-step wizard forms.
+ * The Hire/Terminate/Rehire actions (US-758) open modal wizards (`EmployeeHireModalComponent`,
+ * `EmployeeTerminateModalComponent`, `EmployeeRehireModalComponent`) that each inject `EmployeeStore`
+ * directly and call its `hireEmployee`/`terminateEmployee`/`rehireEmployee` rxMethods — a deliberate,
+ * narrow exception to this component's "no NgRx store" convention, scoped to those three lifecycle
+ * actions only. This component itself still reads via `HrApiService` (`getEmployee`,
+ * `getLifecycleStatus`) and saves Personal Info via `HrApiService.updateEmployee` — not a precedent
+ * for further store migration.
  *
  * US-757: the Personal Info card toggles between a read-only view and an in-place edit form via
  * `isEditing` — a deliberate deviation from the routed `/edit` page convention used elsewhere in HR.
@@ -58,6 +66,9 @@ const SERVER_ERROR_FIELD_MAP: Record<string, string> = {
     StatusBadgeComponent,
     InputFieldComponent,
     SelectFieldComponent,
+    EmployeeHireModalComponent,
+    EmployeeTerminateModalComponent,
+    EmployeeRehireModalComponent,
   ],
   templateUrl: './employee-detail.html',
   changeDetection: ChangeDetectionStrategy.OnPush,
@@ -76,6 +87,9 @@ export class EmployeeDetailComponent implements OnInit {
   protected readonly hasError = signal(false);
   protected readonly isEditing = signal(false);
   protected readonly isSaving = signal(false);
+  protected readonly hireModalOpen = signal(false);
+  protected readonly terminateModalOpen = signal(false);
+  protected readonly rehireModalOpen = signal(false);
   // Flipped to true on first save attempt; drives field errors to show even before touch
   protected readonly submitted = signal(false);
 
@@ -101,7 +115,7 @@ export class EmployeeDetailComponent implements OnInit {
    * Days elapsed since termination. The API's `eligibleForRehire` field (see
    * `ReadEmployeeLifecycleStatusQueryHandler.EligibleForRehire = !CurrentFlag && terminationCount > 0`)
    * only means "was terminated at least once" — it does not implement any time-based rule. The 90-day
-   * window is a UI-only computation from `terminationDate`.
+   * cooling-off period is a UI-only computation from `terminationDate`.
    *
    * `terminationDate` is a date-only string; both sides are normalized to UTC calendar midnight so the
    * day count is timezone-stable rather than drifting with the viewer's local offset.
@@ -117,10 +131,15 @@ export class EmployeeDetailComponent implements OnInit {
     return Math.floor(elapsedMs / (1000 * 60 * 60 * 24));
   });
 
-  /** True when the employee is within the 90-day rehire-eligibility window from their termination date. */
-  protected readonly isEligibleForRehireWithin90Days = computed(() => {
+  /**
+   * True once the employee has passed the 90-day rehire cooling-off period (US-758 AC: terminated
+   * 30 days ago -> blocked with "60 more days" warning; eligible once `daysSinceTermination >= 90`).
+   * Matches `EmployeeRehireModalComponent.isBlocked`'s day-90 boundary exactly — that modal is the
+   * only path to actually perform a rehire, so this read-only badge must agree with its gate.
+   */
+  protected readonly isPastRehireWaitingPeriod = computed(() => {
     const days = this.daysSinceTermination();
-    return days !== null && days <= 90;
+    return days !== null && days >= 90;
   });
 
   protected readonly backQueryParams = computed(() =>
@@ -276,14 +295,46 @@ export class EmployeeDetailComponent implements OnInit {
       });
   }
 
-  /** Stub handler — the Terminate wizard is not yet built. */
-  protected onTerminateClick(): void {
-    this.notificationService.info('Terminate employee is not yet available.');
+  protected onHireClick(): void {
+    this.hireModalOpen.set(true);
   }
 
-  /** Stub handler — the Rehire wizard (US-758) is not yet built. */
+  protected onTerminateClick(): void {
+    this.terminateModalOpen.set(true);
+  }
+
   protected onRehireClick(): void {
-    this.notificationService.info('Rehire employee is not yet available.');
+    this.rehireModalOpen.set(true);
+  }
+
+  /** Re-fetches lifecycle status after a successful lifecycle action and shows a success toast. */
+  private refreshLifecycle(successMessage: string): void {
+    const id = this.employee()?.id;
+    if (!id) {
+      return;
+    }
+    this.hrApi
+      .getLifecycleStatus(id)
+      .pipe(takeUntilDestroyed(this.destroyRef))
+      .subscribe({
+        next: (lifecycle) => {
+          this.lifecycle.set(lifecycle);
+          this.notificationService.success(successMessage);
+        },
+        error: () => this.notificationService.error('Failed to refresh employee status. Please refresh the page.'),
+      });
+  }
+
+  protected onHireConfirmed(): void {
+    this.refreshLifecycle('Employee hired successfully.');
+  }
+
+  protected onTerminateConfirmed(): void {
+    this.refreshLifecycle('Employee terminated successfully.');
+  }
+
+  protected onRehireConfirmed(): void {
+    this.refreshLifecycle('Employee rehired successfully.');
   }
 
   /**

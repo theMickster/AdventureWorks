@@ -88,6 +88,7 @@ describe('EmployeeDetailComponent', () => {
       ),
       getLifecycleStatus: vi.fn().mockReturnValue(of(options.lifecycle ?? mockActiveLifecycle)),
       updateEmployee: vi.fn(),
+      getDepartments: vi.fn().mockReturnValue(of([])),
     };
     const mockNotificationService = { error: vi.fn(), success: vi.fn(), info: vi.fn() };
     const navigateSpy = vi.spyOn(Router.prototype, 'navigate').mockResolvedValue(true);
@@ -158,13 +159,13 @@ describe('EmployeeDetailComponent', () => {
       expect(fixture.nativeElement.querySelector('#aw-employee-detail-eligibility')).toBeFalsy();
     });
 
-    it('Terminate button shows an informational notification', async () => {
-      const { fixture, component, mockNotificationService } = await setup({ lifecycle: mockActiveLifecycle });
+    it('Terminate button opens the terminate modal', async () => {
+      const { fixture, component } = await setup({ lifecycle: mockActiveLifecycle });
       fixture.detectChanges();
 
       component['onTerminateClick']();
 
-      expect(mockNotificationService.info).toHaveBeenCalledWith('Terminate employee is not yet available.');
+      expect(component['terminateModalOpen']()).toBe(true);
     });
   });
 
@@ -175,31 +176,32 @@ describe('EmployeeDetailComponent', () => {
       expect(fixture.nativeElement.querySelector('#aw-employee-detail-rehire-btn')).toBeTruthy();
       expect(fixture.nativeElement.querySelector('#aw-employee-detail-terminate-btn')).toBeFalsy();
       expect(component['lifecycle']()?.terminationDate).toBe(mockTerminatedLifecycle.terminationDate);
+      // mockTerminatedLifecycle is terminated 30 days ago — still within the 90-day cooling-off period.
       const eligibility = fixture.nativeElement.querySelector('#aw-employee-detail-eligibility');
-      expect(eligibility.textContent.trim()).toBe('Yes');
+      expect(eligibility.textContent.trim()).toBe('No');
     });
 
-    it('Rehire button shows an informational notification', async () => {
-      const { fixture, component, mockNotificationService } = await setup({ lifecycle: mockTerminatedLifecycle });
+    it('Rehire button opens the rehire modal', async () => {
+      const { fixture, component } = await setup({ lifecycle: mockTerminatedLifecycle });
       fixture.detectChanges();
 
       component['onRehireClick']();
 
-      expect(mockNotificationService.info).toHaveBeenCalledWith('Rehire employee is not yet available.');
+      expect(component['rehireModalOpen']()).toBe(true);
     });
 
-    it('is eligible for rehire within the 90-day window regardless of the API eligibleForRehire flag', async () => {
+    it('is not yet eligible for rehire while within the 90-day cooling-off period, regardless of the API eligibleForRehire flag', async () => {
       // API's eligibleForRehire only means "was terminated at least once" — the 90-day
-      // window is computed client-side from terminationDate, not read from this flag.
+      // cooling-off period is computed client-side from terminationDate, not read from this flag.
       const { fixture } = await setup({
         lifecycle: { ...mockActiveLifecycle, employmentStatus: 'Terminated', terminationDate: daysAgo(89), eligibleForRehire: false },
       });
 
       const eligibility = fixture.nativeElement.querySelector('#aw-employee-detail-eligibility');
-      expect(eligibility.textContent.trim()).toBe('Yes');
+      expect(eligibility.textContent.trim()).toBe('No');
     });
 
-    it('is eligible for rehire at exactly the 90-day boundary', async () => {
+    it('is eligible for rehire at exactly the 90-day cooling-off boundary', async () => {
       const { fixture } = await setup({
         lifecycle: { ...mockActiveLifecycle, employmentStatus: 'Terminated', terminationDate: daysAgo(90), eligibleForRehire: true },
       });
@@ -208,13 +210,13 @@ describe('EmployeeDetailComponent', () => {
       expect(eligibility.textContent.trim()).toBe('Yes');
     });
 
-    it('is not eligible for rehire beyond the 90-day window even when the API eligibleForRehire flag is true', async () => {
+    it('is eligible for rehire once the 90-day cooling-off period has fully elapsed', async () => {
       const { fixture } = await setup({
         lifecycle: { ...mockActiveLifecycle, employmentStatus: 'Terminated', terminationDate: daysAgo(91), eligibleForRehire: true },
       });
 
       const eligibility = fixture.nativeElement.querySelector('#aw-employee-detail-eligibility');
-      expect(eligibility.textContent.trim()).toBe('No');
+      expect(eligibility.textContent.trim()).toBe('Yes');
     });
 
     it('renders days-since-termination as a number', async () => {
@@ -384,23 +386,72 @@ describe('EmployeeDetailComponent', () => {
     });
   });
 
-  describe('Terminate/Rehire regression guard', () => {
-    it('Terminate button still shows an informational notification', async () => {
-      const { fixture, component, mockNotificationService } = await setup({ lifecycle: mockActiveLifecycle });
-      fixture.detectChanges();
+  const mockOnLeaveLifecycle: EmployeeLifecycleStatus = {
+    ...mockActiveLifecycle,
+    employmentStatus: 'OnLeave',
+  };
 
-      component['onTerminateClick']();
+  describe('OnLeave employee', () => {
+    it('shows the Hire button and hides Terminate/Rehire', async () => {
+      const { fixture } = await setup({ lifecycle: mockOnLeaveLifecycle });
 
-      expect(mockNotificationService.info).toHaveBeenCalledWith('Terminate employee is not yet available.');
+      expect(fixture.nativeElement.querySelector('#aw-employee-detail-hire-btn')).toBeTruthy();
+      expect(fixture.nativeElement.querySelector('#aw-employee-detail-terminate-btn')).toBeFalsy();
+      expect(fixture.nativeElement.querySelector('#aw-employee-detail-rehire-btn')).toBeFalsy();
     });
 
-    it('Rehire button still shows an informational notification', async () => {
-      const { fixture, component, mockNotificationService } = await setup({ lifecycle: mockTerminatedLifecycle });
+    it('renders the OnLeave badge as badge-warning', async () => {
+      const { fixture } = await setup({ lifecycle: mockOnLeaveLifecycle });
+
+      const badge = fixture.nativeElement.querySelector('#aw-employee-detail-status-badge span');
+      expect(badge.className).toContain('badge-warning');
+    });
+
+    it('Hire button opens the hire modal', async () => {
+      const { fixture, component } = await setup({ lifecycle: mockOnLeaveLifecycle });
       fixture.detectChanges();
 
-      component['onRehireClick']();
+      component['onHireClick']();
 
-      expect(mockNotificationService.info).toHaveBeenCalledWith('Rehire employee is not yet available.');
+      expect(component['hireModalOpen']()).toBe(true);
+    });
+  });
+
+  describe('Lifecycle action confirmation handlers', () => {
+    it('onHireConfirmed re-fetches lifecycle status and shows a success toast', async () => {
+      const { component, mockHrApi, mockNotificationService } = await setup({ lifecycle: mockOnLeaveLifecycle });
+      mockHrApi.getLifecycleStatus.mockClear();
+      mockHrApi.getLifecycleStatus.mockReturnValue(of(mockActiveLifecycle));
+
+      component['onHireConfirmed']();
+
+      expect(mockHrApi.getLifecycleStatus).toHaveBeenCalledWith(mockEmployee.id);
+      expect(component['lifecycle']()).toEqual(mockActiveLifecycle);
+      expect(mockNotificationService.success).toHaveBeenCalledWith('Employee hired successfully.');
+    });
+
+    it('onTerminateConfirmed re-fetches lifecycle status and shows a success toast', async () => {
+      const { component, mockHrApi, mockNotificationService } = await setup({ lifecycle: mockActiveLifecycle });
+      mockHrApi.getLifecycleStatus.mockClear();
+      mockHrApi.getLifecycleStatus.mockReturnValue(of(mockTerminatedLifecycle));
+
+      component['onTerminateConfirmed']();
+
+      expect(mockHrApi.getLifecycleStatus).toHaveBeenCalledWith(mockEmployee.id);
+      expect(component['lifecycle']()).toEqual(mockTerminatedLifecycle);
+      expect(mockNotificationService.success).toHaveBeenCalledWith('Employee terminated successfully.');
+    });
+
+    it('onRehireConfirmed re-fetches lifecycle status and shows a success toast', async () => {
+      const { component, mockHrApi, mockNotificationService } = await setup({ lifecycle: mockTerminatedLifecycle });
+      mockHrApi.getLifecycleStatus.mockClear();
+      mockHrApi.getLifecycleStatus.mockReturnValue(of(mockActiveLifecycle));
+
+      component['onRehireConfirmed']();
+
+      expect(mockHrApi.getLifecycleStatus).toHaveBeenCalledWith(mockEmployee.id);
+      expect(component['lifecycle']()).toEqual(mockActiveLifecycle);
+      expect(mockNotificationService.success).toHaveBeenCalledWith('Employee rehired successfully.');
     });
   });
 });

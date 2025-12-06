@@ -2,4 +2,5 @@
 export const EMPLOYEE_STATUS_BADGE_MAP: Record<string, string> = {
   active: 'badge-success',
   terminated: 'badge-error',
+  onleave: 'badge-warning',
 };

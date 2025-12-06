@@ -1,0 +1,140 @@
+<aw-modal fieldId="aw-employee-terminate-modal" title="Terminate Employee" [(open)]="open">
+  <ol id="aw-employee-terminate-steps" class="steps mb-6 w-full">
+    <li class="step" [class.step-primary]="currentStep() >= 1">Details</li>
+    <li class="step" [class.step-primary]="currentStep() >= 2">Options</li>
+    <li class="step" [class.step-primary]="currentStep() >= 3">Confirm</li>
+  </ol>
+
+  <form id="aw-employee-terminate-form" [formGroup]="form" novalidate>
+    @if (currentStep() === 1) {
+      <div id="aw-employee-terminate-details" formGroupName="details" class="space-y-4">
+        <fieldset class="fieldset">
+          <legend class="fieldset-legend">
+            <label for="aw-employee-terminate-date-input">
+              Termination Date
+              <span class="text-base-content/60" aria-hidden="true">*</span>
+              <span class="sr-only">required</span>
+            </label>
+          </legend>
+          <input
+            id="aw-employee-terminate-date-input"
+            type="date"
+            class="input input-bordered w-full"
+            [class.input-error]="!!terminationDateErrors()"
+            [attr.aria-required]="true"
+            [attr.aria-invalid]="!!terminationDateErrors()"
+            [attr.aria-describedby]="terminationDateAriaDescribedBy()"
+            formControlName="terminationDate"
+          />
+          @for (entry of errorsToList(terminationDateErrors()); track entry[0]) {
+            <p [id]="'aw-employee-terminate-date-error-' + entry[0]" class="fieldset-label text-error">
+              {{ entry[1] }}
+            </p>
+          }
+        </fieldset>
+        <aw-select-field
+          fieldId="aw-employee-terminate-type"
+          label="Termination Type"
+          emptyOptionLabel="— Select termination type —"
+          formControlName="terminationType"
+          [options]="terminationTypeOptions"
+          [required]="true"
+          [errors]="terminationTypeErrors()"
+        />
+        <aw-textarea-field
+          fieldId="aw-employee-terminate-reason"
+          label="Reason"
+          formControlName="reason"
+          [errors]="reasonErrors()"
+        />
+      </div>
+    }
+
+    @if (currentStep() === 2) {
+      <div id="aw-employee-terminate-options" formGroupName="options" class="space-y-4">
+        <aw-toggle-field
+          fieldId="aw-employee-terminate-eligible-for-rehire"
+          label="Eligible for Rehire"
+          formControlName="eligibleForRehire"
+        />
+        @if (hasVacationBalance()) {
+          <aw-toggle-field
+            fieldId="aw-employee-terminate-payout-pto"
+            label="Pay Out Remaining PTO"
+            formControlName="payoutPto"
+          />
+        }
+        <aw-textarea-field
+          fieldId="aw-employee-terminate-notes"
+          label="Notes"
+          formControlName="notes"
+          [errors]="notesErrors()"
+        />
+      </div>
+    }
+
+    @if (currentStep() === 3) {
+      @let details = form.controls.details.value;
+      @let options = form.controls.options.value;
+      <div id="aw-employee-terminate-confirm" class="space-y-2 text-sm">
+        <dl class="grid grid-cols-2 gap-x-4 gap-y-1">
+          <dt class="text-base-content/60">Termination Date</dt>
+          <dd>{{ details.terminationDate }}</dd>
+          <dt class="text-base-content/60">Type</dt>
+          <dd>{{ details.terminationType }}</dd>
+          <dt class="text-base-content/60">Reason</dt>
+          <dd>{{ details.reason }}</dd>
+          <dt class="text-base-content/60">Eligible for Rehire</dt>
+          <dd>{{ options.eligibleForRehire ? 'Yes' : 'No' }}</dd>
+          @if (hasVacationBalance()) {
+            <dt class="text-base-content/60">PTO Payout</dt>
+            <dd>{{ options.payoutPto ? 'Yes' : 'No' }}</dd>
+          }
+        </dl>
+      </div>
+    }
+  </form>
+
+  <div modal-actions class="flex gap-3">
+    @if (currentStep() > 1) {
+      <button id="aw-employee-terminate-back" type="button" class="btn btn-ghost" (click)="onBack()">Back</button>
+    }
+    @if (currentStep() === 1) {
+      <button
+        id="aw-employee-terminate-next-1"
+        type="button"
+        class="btn btn-primary"
+        [disabled]="!detailsValid()"
+        (click)="onNext()"
+      >
+        Next
+      </button>
+    }
+    @if (currentStep() === 2) {
+      <button
+        id="aw-employee-terminate-next-2"
+        type="button"
+        class="btn btn-primary"
+        [disabled]="!optionsValid()"
+        (click)="onNext()"
+      >
+        Next
+      </button>
+    }
+    @if (currentStep() === 3) {
+      <button
+        id="aw-employee-terminate-confirm-btn"
+        type="button"
+        class="btn btn-error"
+        [disabled]="isSubmitting()"
+        (click)="onConfirm()"
+      >
+        @if (isSubmitting()) {
+          <span class="loading loading-spinner loading-sm" aria-hidden="true"></span>
+        }
+        Confirm
+      </button>
+    }
+    <button id="aw-employee-terminate-cancel" type="button" class="btn btn-ghost" (click)="onCancel()">Cancel</button>
+  </div>
+</aw-modal>

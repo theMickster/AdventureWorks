@@ -169,7 +169,7 @@
               <dt class="text-base-content/60">Days Since Termination</dt>
               <dd>{{ daysSinceTermination() ?? '—' }}</dd>
               <dt class="text-base-content/60">Eligible for Rehire</dt>
-              <dd id="aw-employee-detail-eligibility">{{ isEligibleForRehireWithin90Days() ? 'Yes' : 'No' }}</dd>
+              <dd id="aw-employee-detail-eligibility">{{ isPastRehireWaitingPeriod() ? 'Yes' : 'No' }}</dd>
             }
           </dl>
 
@@ -192,10 +192,33 @@
               >
                 Rehire
               </button>
+            } @else if (l.employmentStatus === 'OnLeave') {
+              <button
+                id="aw-employee-detail-hire-btn"
+                type="button"
+                class="btn btn-primary btn-sm"
+                (click)="onHireClick()"
+              >
+                Hire
+              </button>
             }
           </div>
         </aw-card>
       </div>
+
+      <aw-employee-hire-modal [employeeId]="e.id" [(open)]="hireModalOpen" (hired)="onHireConfirmed()" />
+      <aw-employee-terminate-modal
+        [employeeId]="e.id"
+        [vacationHoursBalance]="l.vacationHoursBalance"
+        [(open)]="terminateModalOpen"
+        (terminated)="onTerminateConfirmed()"
+      />
+      <aw-employee-rehire-modal
+        [employeeId]="e.id"
+        [daysSinceTermination]="daysSinceTermination()"
+        [(open)]="rehireModalOpen"
+        (rehired)="onRehireConfirmed()"
+      />
     }
   } @else {
     <aw-empty-state

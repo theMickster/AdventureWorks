@@ -11,6 +11,7 @@ export type {
   EmployeeLifecycleStatus,
 } from './lib/models/employee-lifecycle.model';
 export type { JsonPatchOperation } from './lib/models/json-patch.model';
+export { SHIFT_OPTIONS, PAY_FREQUENCY_OPTIONS, TERMINATION_TYPE_OPTIONS } from './lib/models/employee-lifecycle-options.model';
 export type { DepartmentCreate } from './lib/models/department-create.model';
 export type { DepartmentUpdate } from './lib/models/department-update.model';
 export type { DepartmentHeadcount } from './lib/models/department-headcount.model';

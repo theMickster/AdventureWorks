@@ -28,5 +28,7 @@ export { unsavedChangesGuard } from './lib/routing/unsaved-changes.guard';
 export type { HasUnsavedChanges } from './lib/routing/unsaved-changes.guard';
 export { extractListNavParams } from './lib/list-nav-params';
 export { minAgeValidator } from './lib/validators/min-age.validator';
+export { maxFutureDateValidator } from './lib/validators/max-future-date.validator';
+export { minDateValidator } from './lib/validators/min-date.validator';
 export { SignalrService } from './lib/signalr/signalr.service';
 export type { SignalRConnectionStatus, SignalRHandler, EntityChangedEvent } from './lib/signalr/signalr-connection.model';

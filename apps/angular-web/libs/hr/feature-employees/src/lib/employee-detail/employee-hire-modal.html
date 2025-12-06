@@ -1,0 +1,170 @@
+<aw-modal fieldId="aw-employee-hire-modal" title="Hire Employee" [(open)]="open">
+  <ol id="aw-employee-hire-steps" class="steps mb-6 w-full">
+    <li class="step" [class.step-primary]="currentStep() >= 1">Assignment</li>
+    <li class="step" [class.step-primary]="currentStep() >= 2">Compensation</li>
+    <li class="step" [class.step-primary]="currentStep() >= 3">Confirm</li>
+  </ol>
+
+  <form id="aw-employee-hire-form" [formGroup]="form" novalidate>
+    @if (currentStep() === 1) {
+      <div id="aw-employee-hire-assignment" formGroupName="assignment" class="space-y-4">
+        <aw-select-field
+          fieldId="aw-employee-hire-department"
+          label="Department"
+          emptyOptionLabel="— Select department —"
+          formControlName="departmentId"
+          [options]="departmentOptions()"
+          [required]="true"
+          [errors]="departmentIdErrors()"
+        />
+        <aw-select-field
+          fieldId="aw-employee-hire-shift"
+          label="Shift"
+          emptyOptionLabel="— Select shift —"
+          formControlName="shiftId"
+          [options]="shiftOptions"
+          [required]="true"
+          [errors]="shiftIdErrors()"
+        />
+        <fieldset class="fieldset">
+          <legend class="fieldset-legend">
+            <label for="aw-employee-hire-date-input">
+              Hire Date
+              <span class="text-base-content/60" aria-hidden="true">*</span>
+              <span class="sr-only">required</span>
+            </label>
+          </legend>
+          <input
+            id="aw-employee-hire-date-input"
+            type="date"
+            class="input input-bordered w-full"
+            [class.input-error]="!!hireDateErrors()"
+            [attr.aria-required]="true"
+            [attr.aria-invalid]="!!hireDateErrors()"
+            [attr.aria-describedby]="hireDateAriaDescribedBy()"
+            formControlName="hireDate"
+          />
+          @for (entry of errorsToList(hireDateErrors()); track entry[0]) {
+            <p [id]="'aw-employee-hire-date-error-' + entry[0]" class="fieldset-label text-error">{{ entry[1] }}</p>
+          }
+        </fieldset>
+        <aw-input-field
+          fieldId="aw-employee-hire-manager"
+          label="Manager ID"
+          [inputType]="'number'"
+          placeholder="Manager business entity ID (optional)"
+          formControlName="managerId"
+        />
+      </div>
+    }
+
+    @if (currentStep() === 2) {
+      <div id="aw-employee-hire-compensation" formGroupName="compensation" class="space-y-4">
+        <aw-input-field
+          fieldId="aw-employee-hire-pay-rate"
+          label="Initial Pay Rate"
+          [inputType]="'number'"
+          placeholder="Pay rate"
+          formControlName="initialPayRate"
+          [required]="true"
+          [errors]="initialPayRateErrors()"
+        />
+        <aw-select-field
+          fieldId="aw-employee-hire-pay-frequency"
+          label="Pay Frequency"
+          emptyOptionLabel="— Select pay frequency —"
+          formControlName="payFrequency"
+          [options]="payFrequencyOptions"
+          [required]="true"
+          [errors]="payFrequencyErrors()"
+        />
+        <aw-input-field
+          fieldId="aw-employee-hire-vacation-hours"
+          label="Initial Vacation Hours"
+          [inputType]="'number'"
+          formControlName="initialVacationHours"
+          [errors]="initialVacationHoursErrors()"
+        />
+        <aw-input-field
+          fieldId="aw-employee-hire-sick-hours"
+          label="Initial Sick Leave Hours"
+          [inputType]="'number'"
+          formControlName="initialSickLeaveHours"
+          [errors]="initialSickLeaveHoursErrors()"
+        />
+        <aw-textarea-field
+          fieldId="aw-employee-hire-notes"
+          label="Notes"
+          formControlName="notes"
+          [errors]="notesErrors()"
+        />
+      </div>
+    }
+
+    @if (currentStep() === 3) {
+      @let assignment = form.controls.assignment.value;
+      @let compensation = form.controls.compensation.value;
+      <div id="aw-employee-hire-confirm" class="space-y-2 text-sm">
+        <dl class="grid grid-cols-2 gap-x-4 gap-y-1">
+          <dt class="text-base-content/60">Hire Date</dt>
+          <dd>{{ assignment.hireDate }}</dd>
+          <dt class="text-base-content/60">Department</dt>
+          <dd>{{ findLabel(departmentOptions(), assignment.departmentId) }}</dd>
+          <dt class="text-base-content/60">Shift</dt>
+          <dd>{{ findLabel(shiftOptions, assignment.shiftId) }}</dd>
+          <dt class="text-base-content/60">Pay Rate</dt>
+          <dd>{{ compensation.initialPayRate }}</dd>
+          <dt class="text-base-content/60">Pay Frequency</dt>
+          <dd>{{ findLabel(payFrequencyOptions, compensation.payFrequency) }}</dd>
+          <dt class="text-base-content/60">Vacation Hours</dt>
+          <dd>{{ compensation.initialVacationHours }}</dd>
+          <dt class="text-base-content/60">Sick Leave Hours</dt>
+          <dd>{{ compensation.initialSickLeaveHours }}</dd>
+        </dl>
+      </div>
+    }
+  </form>
+
+  <div modal-actions class="flex gap-3">
+    @if (currentStep() > 1) {
+      <button id="aw-employee-hire-back" type="button" class="btn btn-ghost" (click)="onBack()">Back</button>
+    }
+    @if (currentStep() === 1) {
+      <button
+        id="aw-employee-hire-next-1"
+        type="button"
+        class="btn btn-primary"
+        [disabled]="!assignmentValid()"
+        (click)="onNext()"
+      >
+        Next
+      </button>
+    }
+    @if (currentStep() === 2) {
+      <button
+        id="aw-employee-hire-next-2"
+        type="button"
+        class="btn btn-primary"
+        [disabled]="!compensationValid()"
+        (click)="onNext()"
+      >
+        Next
+      </button>
+    }
+    @if (currentStep() === 3) {
+      <button
+        id="aw-employee-hire-confirm-btn"
+        type="button"
+        class="btn btn-primary"
+        [disabled]="isSubmitting()"
+        (click)="onConfirm()"
+      >
+        @if (isSubmitting()) {
+          <span class="loading loading-spinner loading-sm" aria-hidden="true"></span>
+        }
+        Confirm
+      </button>
+    }
+    <button id="aw-employee-hire-cancel" type="button" class="btn btn-ghost" (click)="onCancel()">Cancel</button>
+  </div>
+</aw-modal>
