@@ -1,0 +1,55 @@
+<div id="aw-customer-list-page">
+  <div id="aw-customer-list-header" class="mb-6 flex items-center justify-between">
+    <h1 class="text-2xl font-bold text-base-content">Customers</h1>
+  </div>
+
+  <div id="aw-customer-list-toolbar" class="mb-4 flex flex-wrap items-end gap-2">
+    <div class="flex-1 min-w-48">
+      <label for="aw-customer-search-input" class="sr-only">Search customers by name</label>
+      <input
+        id="aw-customer-search-input"
+        type="text"
+        class="input input-bordered w-full"
+        placeholder="Search by name..."
+        [value]="searchTerm()"
+        (input)="searchTerm.set($any($event.target).value.trim())"
+        (keydown.enter)="onSearch(searchTerm())"
+        aria-label="Search customers by name"
+      />
+    </div>
+    <button id="aw-customer-search-btn" type="button" class="btn btn-primary" (click)="onSearch(searchTerm())">
+      <i class="fa-solid fa-magnifying-glass" aria-hidden="true"></i>
+      Search
+    </button>
+    @if (searchTerm()) {
+      <button id="aw-customer-clear-btn" type="button" class="btn btn-ghost" (click)="onClearSearch()">
+        <i class="fa-solid fa-xmark" aria-hidden="true"></i>
+        Clear
+      </button>
+    }
+  </div>
+
+  <aw-data-table
+    fieldId="aw-customer-list-table"
+    [columns]="columns"
+    [data]="rows()"
+    [loading]="isLoading()"
+    [pageNumber]="pageNumber()"
+    [pageSize]="pageSize()"
+    [totalPages]="totalPages()"
+    [totalRecords]="totalRecords()"
+    emptyTitle="No customers found"
+    emptyDescription="Try adjusting your search."
+    (pageChange)="onPageChange($event)"
+  >
+    <ng-template awColumnDef="totalSpend" let-row>
+      {{ $any(row)['totalSpend'] | currency }}
+    </ng-template>
+    <ng-template awColumnDef="status" let-row>
+      <aw-status-badge [status]="$any(row)['statusKey']" />
+    </ng-template>
+    <ng-template awColumnDef="view" let-row>
+      <button type="button" class="btn btn-ghost btn-xs" (click)="onRowClick(row)">View</button>
+    </ng-template>
+  </aw-data-table>
+</div>

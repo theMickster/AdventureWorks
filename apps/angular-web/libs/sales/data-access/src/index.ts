@@ -26,6 +26,8 @@ export type { SalesPersonParams } from './lib/models/sales-person-params.model';
 export type { SalesOrderParams } from './lib/models/sales-order-params.model';
 export type { StoreSearchBody } from './lib/models/store-search.model';
 export type { SalesPersonSearchBody } from './lib/models/sales-person-search.model';
+export type { CustomerListItem } from './lib/models/customer-list-item.model';
+export type { CustomerParams } from './lib/models/customer-params.model';
 
 // Services
 export { SalesApiService } from './lib/services/sales-api.service';
@@ -35,3 +37,4 @@ export { StoreStore } from './lib/stores/store.store';
 export { SalesPersonStore } from './lib/stores/sales-person.store';
 export { SalesOrderStore } from './lib/stores/sales-order.store';
 export { DashboardStore } from './lib/stores/dashboard.store';
+export { CustomerStore } from './lib/stores/customer.store';

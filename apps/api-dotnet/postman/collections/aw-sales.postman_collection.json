@@ -4232,6 +4232,131 @@
       ]
     },
     {
+      "name": "Customers",
+      "item": [
+        {
+          "name": "List Customers",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test(\"Status is 200 OK\", function () {",
+                  "    pm.response.to.have.status(200);",
+                  "});",
+                  "",
+                  "const response = pm.response.json();",
+                  "",
+                  "pm.test(\"Response has correct paginated shape\", function () {",
+                  "    pm.expect(response).to.exist;",
+                  "    pm.expect(response.results).to.be.an(\"array\");",
+                  "    pm.expect(response.pageNumber).to.exist;",
+                  "    pm.expect(response.pageSize).to.exist;",
+                  "    pm.expect(response.totalRecords).to.exist;",
+                  "});",
+                  "",
+                  "pm.test(\"Results are ordered by ltvRank ascending\", function () {",
+                  "    const ranks = response.results.map((r) => r.ltvRank);",
+                  "    const sorted = [...ranks].sort((a, b) => a - b);",
+                  "    pm.expect(ranks).to.eql(sorted);",
+                  "});",
+                  "",
+                  "pm.test(\"Has X-Correlation-Id header\", function () {",
+                  "    pm.response.to.have.header(\"X-Correlation-Id\");",
+                  "});"
+                ],
+                "type": "text/javascript"
+              }
+            }
+          ],
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{adventureWorksApi}}/{{apiVersion}}/customers?pageNumber=1&pageSize=25",
+              "host": [
+                "{{adventureWorksApi}}"
+              ],
+              "path": [
+                "{{apiVersion}}",
+                "customers"
+              ],
+              "query": [
+                {
+                  "key": "pageNumber",
+                  "value": "1"
+                },
+                {
+                  "key": "pageSize",
+                  "value": "25"
+                }
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "List Customers - Search",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test(\"Status is 200 OK\", function () {",
+                  "    pm.response.to.have.status(200);",
+                  "});",
+                  "",
+                  "const response = pm.response.json();",
+                  "",
+                  "pm.test(\"Response has correct paginated shape\", function () {",
+                  "    pm.expect(response).to.exist;",
+                  "    pm.expect(response.results).to.be.an(\"array\");",
+                  "});",
+                  "",
+                  "pm.test(\"Filtered results retain their pre-filter global rank (not renumbered from 1)\", function () {",
+                  "    response.results.forEach((r) => {",
+                  "        pm.expect(r.ltvRank).to.be.a(\"number\");",
+                  "        pm.expect(r.ltvRank).to.be.at.least(1);",
+                  "    });",
+                  "});"
+                ],
+                "type": "text/javascript"
+              }
+            }
+          ],
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{adventureWorksApi}}/{{apiVersion}}/customers?pageNumber=1&pageSize=25&search=bike",
+              "host": [
+                "{{adventureWorksApi}}"
+              ],
+              "path": [
+                "{{apiVersion}}",
+                "customers"
+              ],
+              "query": [
+                {
+                  "key": "pageNumber",
+                  "value": "1"
+                },
+                {
+                  "key": "pageSize",
+                  "value": "25"
+                },
+                {
+                  "key": "search",
+                  "value": "bike"
+                }
+              ]
+            }
+          },
+          "response": []
+        }
+      ]
+    },
+    {
       "name": "SalesReason",
       "item": [
         {

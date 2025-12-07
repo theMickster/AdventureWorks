@@ -1,0 +1,13 @@
+{
+  "name": "@adventureworks-web/sales/feature-customers",
+  "version": "0.0.1",
+  "peerDependencies": {
+    "@angular/common": "^21.2.0",
+    "@angular/core": "^21.2.0",
+    "@angular/router": "^21.2.0",
+    "@adventureworks-web/sales/data-access": "0.0.1",
+    "@adventureworks-web/shared/ui": "0.0.1",
+    "@adventureworks-web/shared/util": "0.0.1"
+  },
+  "sideEffects": false
+}

@@ -60,3 +60,18 @@ Route prefix: `/sales-orders`
 | Sales Order Detail - Invalid   | GET    | `/sales-orders/0`     | 400             | Bad request (salesOrderId must be > 0)                                                              |
 
 Response shape for detail: `{ salesOrderId, salesOrderNumber, orderDate, dueDate, shipDate, status, statusDescription, subTotal, taxAmt, freight, totalDue, purchaseOrderNumber, salesPersonName, territoryName, billToAddress: { addressLine1, addressLine2, city, stateProvince, postalCode }, shipToAddress: {...}, lineItems: [{ salesOrderDetailId, productName, orderQty, unitPrice, lineTotal }] }`
+
+---
+
+## Customers (LTV List)
+
+Controller: `ReadCustomersController`  
+Route prefix: `/customers`
+
+| Name                    | Method | Path                              | Expected Status | Assertions                                                                   |
+| ----------------------- | ------ | ---------------------------------- | ---------------- | ----------------------------------------------------------------------------- |
+| Customer LTV List       | GET    | `/customers?pageNumber=1&pageSize=25` | 200          | Response is a paginated object with `results`, `pageNumber`, `totalRecords`; `results` ordered by `ltvRank` ascending |
+| Customer LTV List - Search | GET | `/customers?pageNumber=1&pageSize=25&search=bike` | 200 | Filtered results retain their pre-filter global `ltvRank` (rank is assigned before search filtering) |
+
+Response shape: paginated (`results`, `pageNumber`, `pageSize`, `totalPages`, `totalRecords`)  
+Item shape: `{ customerId, displayName, customerType, storeId, ltvRank, totalSpend, orderCount, isInactive }`

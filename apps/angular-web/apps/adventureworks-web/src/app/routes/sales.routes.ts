@@ -76,4 +76,11 @@ export const salesRoutes: Route[] = [
       import('@adventureworks-web/sales/feature-sales-persons')
         .then((m) => m.SalesPersonEditComponent),
   },
+  {
+    path: 'customers',
+    title: 'Customers',
+    data: { breadcrumb: 'Customers' },
+    loadComponent: () =>
+      import('@adventureworks-web/sales/feature-customers').then((m) => m.CustomerListComponent),
+  },
 ];

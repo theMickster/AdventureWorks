@@ -9,7 +9,8 @@
 - ✅ Infrastructure: Epic #570 complete (all 5 features done)
 - 🚧 Testing Foundation: Epic #565 in progress (#669, #923, #672 done; #670, #671 remaining)
 - 🚧 UI pipeline in ADO: #561 in progress (US-739 done, Feature 934 done); #562 now In Progress (Departments CRUD implemented); #563 currently New
-- 📋 Additional Initiative #559 backlog epics: #935 (Customer), #936 (Work Orders/Manufacturing), #937 (Purchasing/Vendor)
+- ✅ #935 Customer Module complete (2026-07-07) — Feature 947, US-951/952/953 (Customer LTV list, API + Angular)
+- 📋 Additional Initiative #559 backlog epics: #936 (Work Orders/Manufacturing), #937 (Purchasing/Vendor)
 - 📋 Future infrastructure/function backlog: #569, #567, #568 (#566 marked Removed)
 
 ---
@@ -62,12 +63,18 @@
 - ✅ Reparented enablers under #873: #715, #716, #722
 - ✅ Additional enablers: #669 (.NET API integration tests), #709 (sales order paginated list), US-727 dashboard KPI endpoint
 
+#### Epic #935 -- Customer Module ✅ COMPLETE (2026-07-07)
+
+- ✅ Feature #947 Customer LTV List
+- ✅ US-951 Customer LTV List API (`GET /v1/customers`, LTV rank + inactivity computed via `CustomerRepository.GetCustomersAsync`)
+- ✅ US-952 Angular Customer State (`CustomerStore` in `sales/data-access`, server-side paginated)
+- ✅ US-953 Angular Customer UI (`CustomerListComponent` in `sales/feature-customers`, ranked list with search)
+
 #### Additional Initiative 1 Epics (ADO status)
 
 - 🚧 #561 Sales CRUD UI — In Progress (8 child features); ✅ Feature 713 (Sales Dashboard) done; ✅ Feature 934 (Order Analytics + Dashboard Drill-Down) done — US-938–946 complete, includes analytics panel, live filter chart, trend chart click navigation, territory row drill-down (US-944), SalesPersonDetail "View Orders" link (US-945), and trend chart hover cursor (US-946)
 - 🚧 #562 HR CRUD UI — In Progress (5 child features; Departments CRUD list/detail/create/edit implemented; ✅ US-756 Create Employee wizard implemented; ✅ US-757 Edit Employee Personal Info inline implemented)
 - 📋 #563 Real-Time Dashboard — New (5 child features)
-- 📋 #935 Customer Module — New (4 child features)
 - 📋 #936 Work Orders / Manufacturing Module — New (4 child features)
 - 📋 #937 Purchasing / Vendor Management Module — New (4 child features)
 
@@ -155,6 +162,6 @@
 
 ---
 
-**Document Version**: 3.3  
-**Last Updated**: 2026-06-29  
+**Document Version**: 3.4  
+**Last Updated**: 2026-07-07  
 **Status**: Active execution

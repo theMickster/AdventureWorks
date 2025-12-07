@@ -13,6 +13,8 @@ import type { StoreParams } from '../models/store-params.model';
 import type { SalesPersonParams } from '../models/sales-person-params.model';
 import type { StoreSearchBody } from '../models/store-search.model';
 import type { SalesPersonSearchBody } from '../models/sales-person-search.model';
+import type { CustomerListItem } from '../models/customer-list-item.model';
+import type { CustomerParams } from '../models/customer-params.model';
 
 /** HTTP client for Sales domain endpoints (Stores and Sales Persons). */
 @Injectable({ providedIn: 'root' })
@@ -90,5 +92,11 @@ export class SalesApiService {
   /** POSTs filter body to /v1/sales-orders/analytics; returns server-computed aggregates. */
   getOrderAnalytics(filter: SalesOrderAnalyticsFilter): Observable<SalesOrderAnalytics> {
     return this.apiService.post<SalesOrderAnalytics>('/v1/sales-orders/analytics', filter);
+  }
+
+  /** Fetches a paginated, LTV-ranked page of customers from GET /v1/customers. */
+  getCustomers(params?: CustomerParams): Observable<SearchResult<CustomerListItem>> {
+    const query = params ? toQueryString(params) : '';
+    return this.apiService.get<SearchResult<CustomerListItem>>(`/v1/customers${query}`);
   }
 }
