@@ -18,9 +18,10 @@ describe('PublicFooterComponent', () => {
   });
 
   it('renders the current year in the copyright line', () => {
+    const expectedYear = new Date().getFullYear();
     fixture.detectChanges();
 
     const text = (fixture.nativeElement as HTMLElement).textContent ?? '';
-    expect(text).toContain(String(new Date().getFullYear()));
+    expect(text).toContain(String(expectedYear));
   });
 });

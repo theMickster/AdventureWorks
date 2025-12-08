@@ -86,7 +86,8 @@ stages:
                     resourceGroupName: $(resourceGroup)
                     appSettings: |
                       [
-                        { "name": "AutoMapperLicenseKey", "value": "$(automapper-license-key)", "slotSetting": false }
+                        { "name": "AutoMapperLicenseKey", "value": "$(automapper-license-key)", "slotSetting": false },
+                        { "name": "MediatRLicenseKey", "value": "$(mediatr-license-key)", "slotSetting": false }
                       ]
                     connectionStrings: |
                       [

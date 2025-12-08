@@ -65,6 +65,7 @@ steps:
       arguments: '--configuration ${{ parameters.buildConfiguration }} --no-build --collect "XPlat Code Coverage"'
     env:
       AutoMapperLicenseKey: $(AutoMapperLicenseKey)
+      MediatRLicenseKey: $(MediatRLicenseKey)
 
   - task: DotNetCoreCLI@2
     displayName: "Run integration tests"
@@ -76,6 +77,7 @@ steps:
       arguments: '--configuration ${{ parameters.buildConfiguration }} --no-build --collect "XPlat Code Coverage"'
     env:
       AutoMapperLicenseKey: $(AutoMapperLicenseKey)
+      MediatRLicenseKey: $(MediatRLicenseKey)
       ASPNETCORE_ENVIRONMENT: Testing
       APPSETTING_ASPNETCORE_ENVIRONMENT: Testing
       DOTNET_ENVIRONMENT: Testing

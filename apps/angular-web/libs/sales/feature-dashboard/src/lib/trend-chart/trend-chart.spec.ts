@@ -35,7 +35,7 @@ describe('TrendChartComponent', () => {
 
   it('emits dataPointClick with year and month when a data point is clicked', async () => {
     fixture.detectChanges();
-    await fixture.whenStable();
+    await vi.waitFor(() => expect(vi.mocked(Chart)).toHaveBeenCalled());
 
     const emitted: { year: number; month: number }[] = [];
     fixture.componentInstance.dataPointClick.subscribe((e) => emitted.push(e));
@@ -51,7 +51,7 @@ describe('TrendChartComponent', () => {
 
   it('does not emit dataPointClick when clicking empty chart area', async () => {
     fixture.detectChanges();
-    await fixture.whenStable();
+    await vi.waitFor(() => expect(vi.mocked(Chart)).toHaveBeenCalled());
 
     const emitted: { year: number; month: number }[] = [];
     fixture.componentInstance.dataPointClick.subscribe((e) => emitted.push(e));
@@ -66,7 +66,7 @@ describe('TrendChartComponent', () => {
 
   it('destroys the Chart.js instance on ngOnDestroy', async () => {
     fixture.detectChanges();
-    await fixture.whenStable();
+    await vi.waitFor(() => expect(vi.mocked(Chart)).toHaveBeenCalled());
 
     const chartInstance = (vi.mocked(Chart) as ReturnType<typeof vi.fn>).mock.results[0]?.value;
     fixture.destroy();
@@ -76,7 +76,7 @@ describe('TrendChartComponent', () => {
 
   it('onHover sets cursor to pointer when elements are present', async () => {
     fixture.detectChanges();
-    await fixture.whenStable();
+    await vi.waitFor(() => expect(vi.mocked(Chart)).toHaveBeenCalled());
 
     const chartConfig = (vi.mocked(Chart) as ReturnType<typeof vi.fn>).mock.calls[0]?.[1];
     const onHover = chartConfig?.options?.onHover;
@@ -90,7 +90,7 @@ describe('TrendChartComponent', () => {
 
   it('onHover sets cursor to default when no elements are present', async () => {
     fixture.detectChanges();
-    await fixture.whenStable();
+    await vi.waitFor(() => expect(vi.mocked(Chart)).toHaveBeenCalled());
 
     const chartConfig = (vi.mocked(Chart) as ReturnType<typeof vi.fn>).mock.calls[0]?.[1];
     const onHover = chartConfig?.options?.onHover;
