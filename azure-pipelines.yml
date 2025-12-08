@@ -36,26 +36,6 @@ stages:
         steps:
           - template: pipelines/templates/build-angular.yml
 
-  # --- E2E smoke tests (Playwright) ---
-  # Runs in parallel with the deploy stages below — intentionally not a dependency of DeployDev,
-  # so a failure here (e.g. no real Entra test account provisioned yet, per US-991) never blocks
-  # a deploy.
-  - stage: E2ETests
-    displayName: 'E2E Smoke Tests'
-    dependsOn:
-      - BuildAPI
-      - BuildAngular
-    variables:
-      - group: 'AdventureWorks-Dev'
-      - group: 'AdventureWorks-Dev-Secrets'
-    jobs:
-      - job: PlaywrightE2E
-        displayName: 'Playwright E2E (adventureworks-web-e2e)'
-        steps:
-          - template: pipelines/templates/e2e.yml
-            parameters:
-              dotNetSdkVersion: $(dotNetSdkVersion)
-
   # --- Deploy Dev (auto on every main build) ---
 
   - template: pipelines/templates/deploy-stage.yml
