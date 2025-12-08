@@ -159,6 +159,44 @@ public sealed class CorrelationIdLoggingBehaviorTests
     }
 
     [Fact]
+    public async Task Handle_CanceledRequest_LogsInformationNotError()
+    {
+        var correlationId = "test-correlation-id-123";
+        _correlationIdAccessorMock.Setup(x => x.CorrelationId).Returns(correlationId);
+
+        using var cts = new CancellationTokenSource();
+        cts.Cancel();
+
+        var next = new RequestHandlerDelegate<TestResponse>((ct) => throw new TaskCanceledException());
+
+        var behavior = new CorrelationIdLoggingBehavior<TestRequest, TestResponse>(
+            _loggerMock.Object,
+            _correlationIdAccessorMock.Object);
+
+        var request = new TestRequest();
+        await Assert.ThrowsAsync<TaskCanceledException>(
+            async () => await behavior.Handle(request, next, cts.Token));
+
+        _loggerMock.Verify(
+            x => x.Log(
+                LogLevel.Information,
+                It.IsAny<EventId>(),
+                It.Is<It.IsAnyType>((v, t) => v.ToString()!.Contains("canceled")),
+                null,
+                It.IsAny<Func<It.IsAnyType, Exception?, string>>()),
+            Times.Once);
+
+        _loggerMock.Verify(
+            x => x.Log(
+                LogLevel.Error,
+                It.IsAny<EventId>(),
+                It.IsAny<It.IsAnyType>(),
+                It.IsAny<Exception>(),
+                It.IsAny<Func<It.IsAnyType, Exception?, string>>()),
+            Times.Never);
+    }
+
+    [Fact]
     public async Task Handle_CallsNextDelegate()
     {
         var expectedResponse = new TestResponse { Value = "test" };

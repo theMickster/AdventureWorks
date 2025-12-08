@@ -2,6 +2,7 @@ using AdventureWorks.Application.Features.Person.Queries;
 using AdventureWorks.Models.Features.Person;
 using Asp.Versioning;
 using MediatR;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
 namespace AdventureWorks.API.Controllers.v1.PhoneNumberType;
@@ -9,8 +10,12 @@ namespace AdventureWorks.API.Controllers.v1.PhoneNumberType;
 /// <summary>
 /// The controller that coordinates retrieving PhoneNumberType information.
 /// </summary>
-/// <remarks></remarks>
+/// <remarks>
+/// Public by design: phone number types are non-sensitive reference/dropdown data consumed
+/// by unauthenticated form-population flows.
+/// </remarks>
 [ApiController]
+[AllowAnonymous]
 [ApiVersion("1.0")]
 [ApiExplorerSettings(GroupName = "Person")]
 [Produces("application/json")]

@@ -5,16 +5,20 @@
     "outDir": "../../dist/out-tsc",
     "sourceMap": false,
     "module": "commonjs",
+    "moduleResolution": "node10",
     "strict": true,
     "noImplicitOverride": true,
     "noPropertyAccessFromIndexSignature": true,
     "noImplicitReturns": true,
-    "noFallthroughCasesInSwitch": true
+    "noFallthroughCasesInSwitch": true,
+    "types": ["node"]
   },
   "include": [
     "**/*.ts",
     "**/*.js",
     "playwright.config.ts",
+    "src/**/*.ts",
+    "src/**/*.js",
     "src/**/*.spec.ts",
     "src/**/*.spec.js",
     "src/**/*.test.ts",

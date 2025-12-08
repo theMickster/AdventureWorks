@@ -2,6 +2,13 @@
   display: block;
 }
 
+/* Overrides DaisyUI's built-in .menu-title color-mix(...40%, transparent) opacity, which fails
+   WCAG AA contrast. Unlayered component styles beat DaisyUI's @layer-scoped rules regardless of
+   specificity or source order (CSS Cascade Layers spec). */
+#aw-sidebar .menu-title {
+  color: var(--color-secondary);
+}
+
 @keyframes loading-slide {
   0% {
     transform: translateX(-100%);

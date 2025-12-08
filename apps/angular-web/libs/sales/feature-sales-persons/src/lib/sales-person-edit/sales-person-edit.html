@@ -25,8 +25,8 @@
     @if (salesPerson(); as p) {
       <div id="aw-sales-person-edit-readonly" class="mb-6 rounded-box border border-base-300 bg-base-200 p-4 max-w-lg">
         <p id="aw-sales-person-edit-fullname" class="font-semibold text-base-content">{{ fullName() }}</p>
-        <p id="aw-sales-person-edit-jobtitle" class="text-sm text-base-content/70">{{ p.jobTitle }}</p>
-        <p id="aw-sales-person-edit-email" class="text-sm text-base-content/60">{{ p.emailAddress }}</p>
+        <p id="aw-sales-person-edit-jobtitle" class="text-sm text-secondary">{{ p.jobTitle }}</p>
+        <p id="aw-sales-person-edit-email" class="text-sm text-secondary">{{ p.emailAddress }}</p>
       </div>
 
       <div id="aw-sales-person-edit-form-container" class="max-w-lg">

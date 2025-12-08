@@ -22,6 +22,9 @@ public sealed class ConfigurationConstantsTests
             ConfigurationConstants.SqlConnectionLoadTestingConnectionName.Should().Be("LoadTestingConnection");
             ConfigurationConstants.SqlConnectionPlaywrightTestingConnectionName.Should().Be("PlaywrightTestingConnection");
             ConfigurationConstants.CurrentConnectionStringNameKey.Should().Be("CurrentConnectionStringName");
+            ConfigurationConstants.AzureAdCurrentSectionNameKey.Should().Be("AzureAdSettings:CurrentSectionName");
+            ConfigurationConstants.AzureAdDefaultSectionName.Should().Be("AzureAd");
+            ConfigurationConstants.AzureAdPlaywrightTestingSectionName.Should().Be("AzureAdPlaywrightTesting");
             ConfigurationConstants.AutoMapperLicenseKey.Should().Be("AutoMapperLicenseKey");
         }
     }

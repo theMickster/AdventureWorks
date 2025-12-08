@@ -1,11 +1,4 @@
 {
-  // The .NET (coreclr) debugger has no launch.json field for filtering exception
-  // types. Expected exceptions thrown into FluentValidation/KeyNotFound flows are
-  // caught by ExceptionHandlerMiddleware, but the debugger still breaks on the
-  // "User-Unhandled" exception filter. Configure the ignore list in the
-  // Breakpoints panel (Run & Debug view).
-  //
-  // Setup: apps/api-dotnet/.claude/guides/debugging-guide.md
   "version": "0.2.0",
   "configurations": [
     {
@@ -35,6 +28,24 @@
       "justMyCode": true,
       "env": {
         "ASPNETCORE_ENVIRONMENT": "Development"
+      }
+    },
+    {
+      "name": "AdventureWorks API (PlaywrightTesting)",
+      "type": "coreclr",
+      "request": "launch",
+      "preLaunchTask": "build-api",
+      "program": "${workspaceFolder}/apps/api-dotnet/src/AdventureWorks.API/bin/Debug/net10.0/AdventureWorks.API.dll",
+      "args": [],
+      "cwd": "${workspaceFolder}/apps/api-dotnet/src/AdventureWorks.API",
+      "stopAtEntry": false,
+      "justMyCode": true,
+      "env": {
+        "ASPNETCORE_ENVIRONMENT": "PlaywrightTesting",
+        // Plain HTTP, matching pipelines/templates/e2e.yml — HTTPS here triggers a macOS
+        // Kestrel HTTP/2-over-TLS teardown bug (SslStream "Bad address") under Playwright's
+        // connection churn. environment.playwright.ts points at this same origin.
+        "ASPNETCORE_URLS": "http://localhost:5000"
       }
     },
     {

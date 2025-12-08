@@ -2,6 +2,7 @@ using AdventureWorks.Application.Features.Production.Queries;
 using AdventureWorks.Models.Features.Production;
 using Asp.Versioning;
 using MediatR;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
 namespace AdventureWorks.API.Controllers.v1.Products;
@@ -10,6 +11,7 @@ namespace AdventureWorks.API.Controllers.v1.Products;
 /// The controller that coordinates retrieving product price history.
 /// </summary>
 [ApiController]
+[Authorize]
 [ApiVersion("1.0")]
 [ApiExplorerSettings(GroupName = "Products")]
 [Produces("application/json")]
@@ -40,6 +42,7 @@ public sealed class ReadProductPriceHistoryController : ControllerBase
     [HttpGet("{id:int}/price-history")]
     [ProducesResponseType(StatusCodes.Status200OK, Type = typeof(List<ProductPriceHistoryModel>))]
     [ProducesResponseType(StatusCodes.Status400BadRequest)]
+    [ProducesResponseType(StatusCodes.Status401Unauthorized)]
     public async Task<IActionResult> GetPriceHistoryAsync(int id, CancellationToken cancellationToken = default)
     {
         if (id <= 0)

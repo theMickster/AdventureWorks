@@ -1,5 +1,6 @@
 ﻿using AdventureWorks.API.libs;
 using AdventureWorks.API.libs.Extensions;
+using AdventureWorks.Common.Constants;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Identity.Web;
@@ -89,8 +90,13 @@ builder.Services.AddCors(options =>
     });
 });
 
+// A named AzureAd section (selected per environment, mirroring CurrentConnectionStringName) lets
+// test-tenant credentials coexist with the default tenant's in user secrets and env vars.
+var azureAdSectionName = builder.Configuration[ConfigurationConstants.AzureAdCurrentSectionNameKey]
+                         ?? ConfigurationConstants.AzureAdDefaultSectionName;
+
 builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
-    .AddMicrosoftIdentityWebApi(builder.Configuration);
+    .AddMicrosoftIdentityWebApi(builder.Configuration, azureAdSectionName);
 
 builder.Services.AddAuthorization(options =>
 {

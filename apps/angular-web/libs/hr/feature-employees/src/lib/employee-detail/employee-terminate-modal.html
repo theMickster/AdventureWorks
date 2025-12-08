@@ -12,7 +12,7 @@
           <legend class="fieldset-legend">
             <label for="aw-employee-terminate-date-input">
               Termination Date
-              <span class="text-base-content/60" aria-hidden="true">*</span>
+              <span class="text-secondary" aria-hidden="true">*</span>
               <span class="sr-only">required</span>
             </label>
           </legend>
@@ -78,16 +78,16 @@
       @let options = form.controls.options.value;
       <div id="aw-employee-terminate-confirm" class="space-y-2 text-sm">
         <dl class="grid grid-cols-2 gap-x-4 gap-y-1">
-          <dt class="text-base-content/60">Termination Date</dt>
+          <dt class="text-secondary">Termination Date</dt>
           <dd>{{ details.terminationDate }}</dd>
-          <dt class="text-base-content/60">Type</dt>
+          <dt class="text-secondary">Type</dt>
           <dd>{{ details.terminationType }}</dd>
-          <dt class="text-base-content/60">Reason</dt>
+          <dt class="text-secondary">Reason</dt>
           <dd>{{ details.reason }}</dd>
-          <dt class="text-base-content/60">Eligible for Rehire</dt>
+          <dt class="text-secondary">Eligible for Rehire</dt>
           <dd>{{ options.eligibleForRehire ? 'Yes' : 'No' }}</dd>
           @if (hasVacationBalance()) {
-            <dt class="text-base-content/60">PTO Payout</dt>
+            <dt class="text-secondary">PTO Payout</dt>
             <dd>{{ options.payoutPto ? 'Yes' : 'No' }}</dd>
           }
         </dl>

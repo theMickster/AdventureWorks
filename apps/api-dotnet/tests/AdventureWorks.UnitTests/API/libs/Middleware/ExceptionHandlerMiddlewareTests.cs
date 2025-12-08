@@ -1,9 +1,11 @@
 using AdventureWorks.API.libs.Middleware;
+using AdventureWorks.Application.Exceptions;
 using AdventureWorks.Application.Interfaces;
 using AdventureWorks.Common.Constants;
 using FluentValidation;
 using FluentValidation.Results;
 using Microsoft.AspNetCore.Http;
+using Microsoft.AspNetCore.Http.Features;
 using Microsoft.Extensions.Logging;
 
 namespace AdventureWorks.UnitTests.API.libs.Middleware;
@@ -170,6 +172,51 @@ public sealed class ExceptionHandlerMiddlewareTests : UnitTestBase
         }
     }
 
+    private sealed class TestLifetimeFeature : IHttpRequestLifetimeFeature
+    {
+        private readonly CancellationTokenSource _cts = new();
+        public CancellationToken RequestAborted { get => _cts.Token; set => throw new NotSupportedException(); }
+        public void Abort() => _cts.Cancel();
+    }
+
+    [Fact]
+    public async Task Invoke_ClientAbortedRequest_LogsInformationAndWritesNoResponseBody()
+    {
+        var context = CreateHttpContext();
+        context.Features.Set<IHttpRequestLifetimeFeature>(new TestLifetimeFeature());
+        RequestDelegate next = _ =>
+        {
+            context.Abort();
+            throw new TaskCanceledException();
+        };
+        var middleware = new ExceptionHandlerMiddleware(next, _loggerMock.Object);
+
+        await middleware.Invoke(context, _correlationIdAccessorMock.Object);
+
+        var body = await ReadResponseBodyAsync(context);
+
+        using (new AssertionScope())
+        {
+            body.Should().BeEmpty();
+            _loggerMock.Verify(
+                x => x.Log(
+                    LogLevel.Information,
+                    It.IsAny<EventId>(),
+                    It.IsAny<It.IsAnyType>(),
+                    null,
+                    It.IsAny<Func<It.IsAnyType, Exception?, string>>()),
+                Times.Once);
+            _loggerMock.Verify(
+                x => x.Log(
+                    LogLevel.Error,
+                    It.IsAny<EventId>(),
+                    It.IsAny<It.IsAnyType>(),
+                    It.IsAny<Exception>(),
+                    It.IsAny<Func<It.IsAnyType, Exception?, string>>()),
+                Times.Never);
+        }
+    }
+
     [Fact]
     public async Task Invoke_UnknownException_BodyContainsCorrelationIdAndTimestamp()
     {
@@ -189,5 +236,34 @@ public sealed class ExceptionHandlerMiddlewareTests : UnitTestBase
             body.Should().Contain(SanitizedErrorMessage);
             body.Should().Contain(TestCorrelationId);
         }
+    }
+
+    [Fact]
+    public async Task Invoke_NoExceptionThrown_CallsNext()
+    {
+        var nextCalled = false;
+        RequestDelegate next = _ =>
+        {
+            nextCalled = true;
+            return Task.CompletedTask;
+        };
+        var middleware = new ExceptionHandlerMiddleware(next, _loggerMock.Object);
+        var context = CreateHttpContext();
+
+        await middleware.Invoke(context, _correlationIdAccessorMock.Object);
+
+        nextCalled.Should().BeTrue();
+    }
+
+    [Fact]
+    public async Task Invoke_ConflictExceptionThrown_Returns409()
+    {
+        RequestDelegate next = _ => throw new ConflictException("resource conflict");
+        var middleware = new ExceptionHandlerMiddleware(next, _loggerMock.Object);
+        var context = CreateHttpContext();
+
+        await middleware.Invoke(context, _correlationIdAccessorMock.Object);
+
+        context.Response.StatusCode.Should().Be(StatusCodes.Status409Conflict);
     }
 }

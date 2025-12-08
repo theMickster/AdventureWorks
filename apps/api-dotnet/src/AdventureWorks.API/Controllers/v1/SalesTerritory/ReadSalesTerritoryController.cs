@@ -2,6 +2,7 @@
 using AdventureWorks.Models.Features.Sales;
 using Asp.Versioning;
 using MediatR;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
 namespace AdventureWorks.API.Controllers.v1.SalesTerritory;
@@ -11,6 +12,7 @@ namespace AdventureWorks.API.Controllers.v1.SalesTerritory;
 /// </summary>
 /// <remarks></remarks>
 [ApiController]
+[Authorize]
 [ApiVersion("1.0")]
 [ApiExplorerSettings(GroupName = "Sales Territory")]
 [Produces("application/json")]
@@ -41,6 +43,7 @@ public sealed class ReadSalesTerritoryController : ControllerBase
     /// <returns></returns>
     [HttpGet("{id:int}", Name = "GetSalesTerritoryById")]
     [Produces(typeof(SalesTerritoryModel))]
+    [ProducesResponseType(StatusCodes.Status401Unauthorized)]
     public async Task<IActionResult> GetByIdAsync(int id)
     {
         if (id <= 0)
@@ -59,6 +62,7 @@ public sealed class ReadSalesTerritoryController : ControllerBase
     /// <returns></returns>
     [HttpGet(Name = "GetSalesTerritories")]
     [Produces(typeof(SalesTerritoryModel))]
+    [ProducesResponseType(StatusCodes.Status401Unauthorized)]
     public async Task<IActionResult> GetListAsync()
     {
         var model = await _mediator.Send(new ReadSalesTerritoryListQuery());

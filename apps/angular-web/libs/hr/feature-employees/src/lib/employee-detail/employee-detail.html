@@ -84,19 +84,19 @@
                 [errors]="genderErrors()"
               />
               <dl class="grid grid-cols-2 gap-1 text-sm">
-                <dt class="text-base-content/60">Birth Date</dt>
+                <dt class="text-secondary">Birth Date</dt>
                 <dd>{{ e.birthDate | slice: 0 : 10 }}</dd>
               </dl>
             </form>
           } @else {
             <dl class="grid grid-cols-2 gap-1 text-sm">
-              <dt class="text-base-content/60">Name</dt>
+              <dt class="text-secondary">Name</dt>
               <dd>{{ e.firstName }} {{ e.middleName ? e.middleName + ' ' : '' }}{{ e.lastName }}</dd>
-              <dt class="text-base-content/60">Marital Status</dt>
+              <dt class="text-secondary">Marital Status</dt>
               <dd>{{ e.maritalStatus === 'M' ? 'Married' : 'Single' }}</dd>
-              <dt class="text-base-content/60">Gender</dt>
+              <dt class="text-secondary">Gender</dt>
               <dd>{{ e.gender === 'M' ? 'Male' : 'Female' }}</dd>
-              <dt class="text-base-content/60">Birth Date</dt>
+              <dt class="text-secondary">Birth Date</dt>
               <dd>{{ e.birthDate | slice: 0 : 10 }}</dd>
             </dl>
           }
@@ -134,41 +134,41 @@
 
         <aw-card fieldId="aw-employee-detail-employment-card" title="Employment Info">
           <dl class="grid grid-cols-2 gap-1 text-sm">
-            <dt class="text-base-content/60">Job Title</dt>
+            <dt class="text-secondary">Job Title</dt>
             <dd>{{ e.jobTitle }}</dd>
-            <dt class="text-base-content/60">Department</dt>
+            <dt class="text-secondary">Department</dt>
             <dd>{{ l.currentDepartment ?? '—' }}</dd>
-            <dt class="text-base-content/60">Hire Date</dt>
+            <dt class="text-secondary">Hire Date</dt>
             <dd>{{ l.hireDate | slice: 0 : 10 }}</dd>
-            <dt class="text-base-content/60">Shift</dt>
+            <dt class="text-secondary">Shift</dt>
             <dd>{{ l.currentShift ?? '—' }}</dd>
-            <dt class="text-base-content/60">Pay Rate</dt>
+            <dt class="text-secondary">Pay Rate</dt>
             <dd>{{ l.currentPayRate !== null ? (l.currentPayRate | currency) : '—' }}</dd>
           </dl>
         </aw-card>
 
         <aw-card fieldId="aw-employee-detail-pto-card" title="PTO Balances">
           <dl class="grid grid-cols-2 gap-1 text-sm">
-            <dt class="text-base-content/60">Vacation Hours</dt>
+            <dt class="text-secondary">Vacation Hours</dt>
             <dd>{{ l.vacationHoursBalance }}</dd>
-            <dt class="text-base-content/60">Sick Leave Hours</dt>
+            <dt class="text-secondary">Sick Leave Hours</dt>
             <dd>{{ l.sickLeaveHoursBalance }}</dd>
           </dl>
         </aw-card>
 
         <aw-card fieldId="aw-employee-detail-lifecycle-card" title="Lifecycle Status">
           <dl class="grid grid-cols-2 gap-1 text-sm">
-            <dt class="text-base-content/60">Status</dt>
+            <dt class="text-secondary">Status</dt>
             <dd>{{ l.employmentStatus }}</dd>
-            <dt class="text-base-content/60">Days Employed</dt>
+            <dt class="text-secondary">Days Employed</dt>
             <dd>{{ l.daysEmployed ?? '—' }}</dd>
 
             @if (l.employmentStatus === 'Terminated') {
-              <dt class="text-base-content/60">Termination Date</dt>
+              <dt class="text-secondary">Termination Date</dt>
               <dd>{{ l.terminationDate | slice: 0 : 10 }}</dd>
-              <dt class="text-base-content/60">Days Since Termination</dt>
+              <dt class="text-secondary">Days Since Termination</dt>
               <dd>{{ daysSinceTermination() ?? '—' }}</dd>
-              <dt class="text-base-content/60">Eligible for Rehire</dt>
+              <dt class="text-secondary">Eligible for Rehire</dt>
               <dd id="aw-employee-detail-eligibility">{{ isPastRehireWaitingPeriod() ? 'Yes' : 'No' }}</dd>
             }
           </dl>

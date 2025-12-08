@@ -8,8 +8,20 @@ import {
 import { MsalGuardConfiguration, MsalInterceptorConfiguration } from '@azure/msal-angular';
 import { Environment } from '../environment/environment.model';
 
+/** Disabled-auth stub used when `environment.auth` is entirely absent (e.g. Docker local dev). */
+const DISABLED_AUTH_CONFIG: NonNullable<Environment['auth']> = {
+  clientId: '00000000-0000-0000-0000-000000000000',
+  authority: 'https://login.microsoftonline.com/common',
+  redirectUri: '/',
+  postLogoutRedirectUri: '/',
+  scopes: [],
+};
+
 function getAuthConfig(env: Environment): NonNullable<Environment['auth']> {
-  if (!env.auth || env.auth.clientId.startsWith('__')) {
+  if (!env.auth) {
+    return DISABLED_AUTH_CONFIG;
+  }
+  if (env.auth.clientId.startsWith('__')) {
     throw new Error('Entra ID auth configuration is missing or has not been substituted by the deployment pipeline.');
   }
   return env.auth;

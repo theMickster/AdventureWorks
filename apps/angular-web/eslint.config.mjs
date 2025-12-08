@@ -52,6 +52,7 @@ export default [
       '@angular-eslint/prefer-standalone': 'error',
       '@angular-eslint/prefer-on-push-component-change-detection': 'error',
       '@typescript-eslint/no-explicit-any': 'error',
+      '@nx/workspace-no-text-color-opacity': 'error',
     },
   },
   {
@@ -67,6 +68,10 @@ export default [
   {
     files: ['**/*.html'],
     ...angular.configs.templateAccessibility[0],
+  },
+  {
+    files: ['**/*.html'],
+    rules: { '@nx/workspace-no-text-color-opacity': 'error' },
   },
   prettierConfig,
 ];

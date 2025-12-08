@@ -30,6 +30,16 @@ public sealed class ExceptionHandlerMiddleware(RequestDelegate next, ILogger<Exc
         {
             await _next(context);
         }
+        catch (OperationCanceledException) when (context.RequestAborted.IsCancellationRequested)
+        {
+            // Client disconnected (navigated away, refreshed, closed the tab) before the request
+            // completed — not an application error. No response body is written; the client is
+            // no longer listening.
+            _logger.LogInformation(
+                "Request canceled by client. Path: {Path}, Method: {Method}",
+                context.Request.Path,
+                context.Request.Method);
+        }
         catch (Exception ex)
         {
             await HandleException(context, ex, correlationIdAccessor);

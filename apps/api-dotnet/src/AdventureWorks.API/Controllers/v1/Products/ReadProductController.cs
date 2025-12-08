@@ -2,6 +2,7 @@ using AdventureWorks.Application.Features.Production.Queries;
 using AdventureWorks.Models.Features.Production;
 using Asp.Versioning;
 using MediatR;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
 namespace AdventureWorks.API.Controllers.v1.Products;
@@ -10,6 +11,7 @@ namespace AdventureWorks.API.Controllers.v1.Products;
 /// The controller that coordinates retrieving a single product by its identifier.
 /// </summary>
 [ApiController]
+[Authorize]
 [ApiVersion("1.0")]
 [ApiExplorerSettings(GroupName = "Products")]
 [Produces("application/json")]
@@ -41,6 +43,7 @@ public sealed class ReadProductController : ControllerBase
     [ProducesResponseType(StatusCodes.Status200OK, Type = typeof(ProductDetailModel))]
     [ProducesResponseType(StatusCodes.Status404NotFound)]
     [ProducesResponseType(StatusCodes.Status400BadRequest)]
+    [ProducesResponseType(StatusCodes.Status401Unauthorized)]
     public async Task<IActionResult> GetByIdAsync(int id, CancellationToken cancellationToken = default)
     {
         if (id <= 0)

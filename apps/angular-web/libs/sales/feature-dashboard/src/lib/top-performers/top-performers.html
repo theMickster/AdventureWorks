@@ -7,7 +7,7 @@
           <div class="flex items-center gap-3 mb-1">
             <span class="badge badge-outline w-6 text-center">{{ i + 1 }}</span>
             <a [routerLink]="['/sales/persons', p.salesPersonId]" class="link link-primary font-medium">{{ p.name }}</a>
-            <span class="text-base-content/60 text-sm ml-auto">{{ p.territory }}</span>
+            <span class="text-secondary text-sm ml-auto">{{ p.territory }}</span>
             <span class="font-semibold">{{ p.revenue | currency: 'USD' : 'symbol' : '1.0-0' }}</span>
           </div>
           <progress class="progress progress-primary w-full" [value]="barWidth(p.revenue)" max="100"></progress>

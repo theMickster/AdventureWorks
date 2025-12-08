@@ -33,7 +33,7 @@
     </div>
   } @else if (store(); as currentStore) {
     <div id="aw-store-detail-salesperson" class="mb-4">
-      <span class="text-sm text-base-content/60">Sales Person: </span>
+      <span class="text-sm text-secondary">Sales Person: </span>
       <span class="font-medium text-base-content">{{ salesPersonName() }}</span>
     </div>
 
@@ -75,7 +75,7 @@
                 <p>{{ address.addressLine2 }}</p>
               }
               <p>{{ address.city }}, {{ address.stateProvinceCode }} {{ address.postalCode }}</p>
-              <p class="text-sm text-base-content/60">{{ address.countryRegionName }}</p>
+              <p class="text-sm text-secondary">{{ address.countryRegionName }}</p>
             </aw-card>
           }
         </div>
@@ -102,7 +102,7 @@
                 {{ contact.lastName }}
               </p>
               @if (contact.title) {
-                <p class="text-sm text-base-content/60">{{ contact.title }}</p>
+                <p class="text-sm text-secondary">{{ contact.title }}</p>
               }
             </aw-card>
           }

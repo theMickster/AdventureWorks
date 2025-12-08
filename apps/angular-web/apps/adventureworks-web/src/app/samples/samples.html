@@ -6,7 +6,7 @@
         <h1 class="text-4xl font-bold text-base-content">
           Alpine Circuit <span class="text-primary">Design System</span>
         </h1>
-        <p class="py-4 text-base-content/70">
+        <p class="py-4 text-secondary">
           Tailwind CSS v4 + DaisyUI v5 component showcase for AdventureWorks Cycling. Toggle dark mode above to see both
           theme variants.
         </p>
@@ -100,13 +100,13 @@
       <h2 class="mb-6 text-2xl font-bold text-base-content">Cards</h2>
       <div id="aw-samples-cards-grid" class="grid grid-cols-1 gap-6 md:grid-cols-3">
         <aw-card fieldId="aw-samples-card-default" title="Sales Overview">
-          <p class="text-base-content/70">Revenue tracking and territory performance metrics.</p>
+          <p class="text-secondary">Revenue tracking and territory performance metrics.</p>
           <div card-actions>
             <aw-button variant="primary" size="sm" (clicked)="(false)">View</aw-button>
           </div>
         </aw-card>
         <aw-card fieldId="aw-samples-card-actions" title="Employee Directory">
-          <p class="text-base-content/70">Browse and manage employee records across departments.</p>
+          <p class="text-secondary">Browse and manage employee records across departments.</p>
           <div card-actions>
             <aw-button variant="ghost" size="sm" (clicked)="(false)">Cancel</aw-button>
             <aw-button variant="accent" size="sm" (clicked)="(false)">Save</aw-button>
@@ -184,7 +184,7 @@
         </div>
       </div>
       <aw-modal fieldId="aw-samples-modal-dialog" title="Sample Modal" [(open)]="modalOpen">
-        <p class="py-4 text-base-content/70">
+        <p class="py-4 text-secondary">
           This is a reusable modal using the native &lt;dialog&gt; element with DaisyUI styling. Press Escape or click
           outside to close.
         </p>
@@ -285,7 +285,7 @@
         @if (lookupStore.isLoading()) {
           <div id="aw-samples-departments-loading" class="flex items-center gap-2">
             <span class="loading loading-spinner loading-sm text-primary"></span>
-            <span class="text-sm text-base-content/70">Loading departments...</span>
+            <span class="text-sm text-secondary">Loading departments...</span>
           </div>
         }
         @if (lookupStore.hasError()) {
@@ -303,7 +303,7 @@
               }
             </select>
           </fieldset>
-          <p id="aw-samples-departments-count" class="mt-2 text-sm text-base-content/70">
+          <p id="aw-samples-departments-count" class="mt-2 text-sm text-secondary">
             {{ lookupStore.departments().length }} departments loaded from API
           </p>
         }
@@ -313,7 +313,7 @@
     <!-- Footer -->
     <footer class="footer footer-center rounded-lg bg-base-200 p-6 text-base-content">
       <div>
-        <p class="text-sm text-base-content/60">
+        <p class="text-sm text-secondary">
           AdventureWorks Cycling &mdash; Alpine Circuit v2 Design System &bull; Tailwind CSS v4 &bull; DaisyUI v5 &bull;
           Angular 21
         </p>

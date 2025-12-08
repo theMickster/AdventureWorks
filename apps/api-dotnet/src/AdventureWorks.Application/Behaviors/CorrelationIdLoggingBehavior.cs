@@ -55,6 +55,16 @@ public sealed class CorrelationIdLoggingBehavior<TRequest, TResponse>(
 
                 return response;
             }
+            catch (OperationCanceledException) when (cancellationToken.IsCancellationRequested)
+            {
+                // Client disconnected or the request was superseded (e.g. a superseding call
+                // canceling this one) — not an application error.
+                _logger.LogInformation(
+                    "{RequestName} canceled with correlation ID: {CorrelationId}",
+                    requestName,
+                    correlationId ?? "N/A");
+                throw;
+            }
             catch (Exception ex)
             {
                 _logger.LogError(

@@ -2,6 +2,7 @@ using AdventureWorks.Application.Features.HumanResources.Queries;
 using AdventureWorks.Models.Features.HumanResources;
 using Asp.Versioning;
 using MediatR;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
 namespace AdventureWorks.API.Controllers.v1.Departments;
@@ -11,6 +12,7 @@ namespace AdventureWorks.API.Controllers.v1.Departments;
 /// </summary>
 /// <remarks></remarks>
 [ApiController]
+[Authorize]
 [ApiVersion("1.0")]
 [ApiExplorerSettings(GroupName = "Human Resources")]
 [Produces("application/json")]
@@ -41,6 +43,7 @@ public sealed class ReadDepartmentController : ControllerBase
     /// <returns></returns>
     [HttpGet("{id:int}", Name = "GetDepartmentById")]
     [Produces(typeof(DepartmentModel))]
+    [ProducesResponseType(StatusCodes.Status401Unauthorized)]
     public async Task<IActionResult> GetByIdAsync(short id)
     {
         if (id <= 0)
@@ -59,6 +62,7 @@ public sealed class ReadDepartmentController : ControllerBase
     /// <returns></returns>
     [HttpGet(Name = "GetDepartments")]
     [Produces(typeof(DepartmentModel))]
+    [ProducesResponseType(StatusCodes.Status401Unauthorized)]
     public async Task<IActionResult> GetListAsync()
     {
         var model = await _mediator.Send(new ReadDepartmentListQuery());

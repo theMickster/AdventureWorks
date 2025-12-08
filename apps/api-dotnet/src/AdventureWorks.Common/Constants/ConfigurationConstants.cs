@@ -63,6 +63,21 @@ public static class ConfigurationConstants
     public const string CurrentConnectionStringNameKey = "CurrentConnectionStringName";
 
     /// <summary>
+    /// The configuration key used for selecting which Azure AD configuration section binds JWT authentication
+    /// </summary>
+    public const string AzureAdCurrentSectionNameKey = "AzureAdSettings:CurrentSectionName";
+
+    /// <summary>
+    /// Default Azure AD configuration section name
+    /// </summary>
+    public const string AzureAdDefaultSectionName = "AzureAd";
+
+    /// <summary>
+    /// Playwright E2E Azure AD configuration section name (dedicated test tenant)
+    /// </summary>
+    public const string AzureAdPlaywrightTestingSectionName = "AzureAdPlaywrightTesting";
+
+    /// <summary>
     /// AutoMapper license key value name
     /// </summary>
     public const string AutoMapperLicenseKey = "AutoMapperLicenseKey";

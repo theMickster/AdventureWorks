@@ -136,7 +136,7 @@ internal static class RegisterServices
             {
                 options.UseSqlServer(currentConnectionString);
             }
-        ); 
+        );
 
         builder.Services.AddScoped<IAdventureWorksDbContext>(
             provider => provider.GetService<AdventureWorksDbContext>() ?? 

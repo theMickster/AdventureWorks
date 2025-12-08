@@ -2,6 +2,7 @@
 using AdventureWorks.Models.Features.AddressManagement;
 using Asp.Versioning;
 using MediatR;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
 namespace AdventureWorks.API.Controllers.v1.CountryRegion;
@@ -9,8 +10,12 @@ namespace AdventureWorks.API.Controllers.v1.CountryRegion;
 /// <summary>
 /// The controller that coordinates retrieving Country Region information.
 /// </summary>
-/// <remarks></remarks>
+/// <remarks>
+/// Public by design: country/region codes are non-sensitive reference/dropdown data consumed
+/// by unauthenticated form-population flows.
+/// </remarks>
 [ApiController]
+[AllowAnonymous]
 [ApiVersion("1.0")]
 [ApiExplorerSettings(GroupName = "Country Region")]
 [Produces("application/json")]

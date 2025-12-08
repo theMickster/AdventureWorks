@@ -1,0 +1,124 @@
+# E2E smoke tests (Playwright): boots the API against PlaywrightTesting config, then runs
+# `npx nx e2e adventureworks-web-e2e` against a local `nx serve` dev server (BASE_URL can
+# override this to target a deployed environment instead — see the e2e README).
+# Called as a job template from the main pipeline. Runs in parallel with the deploy stages
+# (US-991) — a failure here does not block DeployDev/DeployProd, since a real Entra test
+# account is not provisioned yet and the authenticated specs are expected to fail until it is.
+
+parameters:
+  - name: workingDirectory
+    type: string
+    default: "apps/angular-web"
+  - name: nodeVersion
+    type: string
+    default: "24"
+  - name: dotNetSdkVersion
+    type: string
+    default: "10.0.x"
+  - name: apiProject
+    type: string
+    default: "apps/api-dotnet/src/AdventureWorks.API/AdventureWorks.API.csproj"
+
+steps:
+  - task: UseNode@1
+    displayName: "Install Node.js ${{ parameters.nodeVersion }}"
+    inputs:
+      version: "${{ parameters.nodeVersion }}"
+
+  - task: UseDotNet@2
+    displayName: "Install .NET SDK ${{ parameters.dotNetSdkVersion }}"
+    inputs:
+      packageType: sdk
+      version: "${{ parameters.dotNetSdkVersion }}"
+
+  - script: npm ci
+    displayName: "Install Angular dependencies"
+    workingDirectory: "${{ parameters.workingDirectory }}"
+
+  # environment.playwright.ts is gitignored (see .gitignore) — the e2e webServer serves the
+  # "playwright" configuration, which file-replaces environment.ts with it, so it must be
+  # materialized from pipeline secrets before `nx e2e` boots the dev server.
+  # Mirrors the placeholder-substitution approach in infra/scripts/replace-tokens.sh,
+  # applied here to a whole file instead of tokens inside built output.
+  - bash: |
+      set -euo pipefail
+      cat > apps/adventureworks-web/src/environments/environment.playwright.ts <<EOF
+      import { Environment } from '@adventureworks-web/shared/util';
+
+      export const environment: Environment = {
+        production: false,
+        defaultLocale: 'en',
+        api: {
+          primary: { baseUrl: 'http://localhost:5000/api', name: 'AdventureWorks API' },
+        },
+        auth: {
+          authority: '${E2E_ENTRA_AUTHORITY}',
+          clientId: '${E2E_ENTRA_CLIENT_ID}',
+          redirectUri: 'http://localhost:4200',
+          postLogoutRedirectUri: 'http://localhost:4200',
+          scopes: ['${E2E_ENTRA_API_SCOPE}'],
+        },
+        signalr: {
+          hubUrl: 'http://localhost:5000/hubs/dashboard',
+        },
+      };
+      EOF
+    displayName: "Materialize environment.playwright.ts from CI secrets"
+    workingDirectory: "${{ parameters.workingDirectory }}"
+    env:
+      E2E_ENTRA_AUTHORITY: $(playwrightTestingEntraAuthority)
+      E2E_ENTRA_CLIENT_ID: $(playwrightTestingEntraSpaClientId)
+      E2E_ENTRA_API_SCOPE: $(playwrightTestingEntraApiScope)
+
+  - script: npx playwright install --with-deps chromium firefox webkit
+    displayName: "Install Playwright browsers"
+    workingDirectory: "${{ parameters.workingDirectory }}"
+
+  - task: DotNetCoreCLI@2
+    displayName: "Build API (PlaywrightTesting)"
+    inputs:
+      command: build
+      projects: "${{ parameters.apiProject }}"
+      arguments: "--configuration Release"
+
+  # Runs detached for the lifetime of the job; the agent tears the process down when the job ends.
+  - script: |
+      nohup dotnet run --no-build --no-launch-profile --configuration Release --project $(Build.SourcesDirectory)/${{ parameters.apiProject }} > $(Build.ArtifactStagingDirectory)/api-playwrighttesting.log 2>&1 &
+      echo "Waiting for API health endpoint..."
+      for i in $(seq 1 30); do
+        if curl -sf http://localhost:5000/health; then
+          echo "API is healthy."
+          exit 0
+        fi
+        sleep 2
+      done
+      echo "API did not become healthy in time." >&2
+      cat $(Build.ArtifactStagingDirectory)/api-playwrighttesting.log
+      exit 1
+    displayName: "Start API (PlaywrightTesting)"
+    env:
+      ASPNETCORE_ENVIRONMENT: PlaywrightTesting
+      ConnectionStrings__PlaywrightTestingConnection: $(adventureworks-sql-connection-string)
+      AzureAdPlaywrightTesting__Instance: $(playwrightTestingEntraInstance)
+      AzureAdPlaywrightTesting__TenantId: $(playwrightTestingEntraTenantId)
+      AzureAdPlaywrightTesting__ClientId: $(playwrightTestingEntraClientId)
+      AzureAdPlaywrightTesting__Audience: $(playwrightTestingEntraAudience)
+
+  - script: npx nx e2e adventureworks-web-e2e
+    displayName: "Run Playwright E2E smoke tests"
+    workingDirectory: "${{ parameters.workingDirectory }}"
+    continueOnError: true
+    env:
+      BASE_URL: $(E2E_BASE_URL)
+      E2E_TEST_TENANT_ID: $(e2e-test-tenant-id)
+      E2E_TEST_CLIENT_ID: $(e2e-test-client-id)
+      E2E_TEST_API_SCOPE: $(e2e-test-api-scope)
+      E2E_TEST_USERNAME: $(e2e-test-username)
+      E2E_TEST_PASSWORD: $(e2e-test-password)
+
+  - task: PublishPipelineArtifact@1
+    displayName: "Publish Playwright report"
+    condition: always()
+    inputs:
+      targetPath: "${{ parameters.workingDirectory }}/dist/.playwright/apps/adventureworks-web-e2e/playwright-report"
+      artifact: "playwright-report"

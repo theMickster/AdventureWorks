@@ -66,6 +66,17 @@
               "with": "apps/adventureworks-web/src/environments/environment.docker.ts"
             }
           ]
+        },
+        "playwright": {
+          "optimization": false,
+          "extractLicenses": false,
+          "sourceMap": true,
+          "fileReplacements": [
+            {
+              "replace": "apps/adventureworks-web/src/environments/environment.ts",
+              "with": "apps/adventureworks-web/src/environments/environment.playwright.ts"
+            }
+          ]
         }
       },
       "defaultConfiguration": "production"
@@ -82,6 +93,9 @@
         },
         "development": {
           "buildTarget": "adventureworks-web:build:development"
+        },
+        "playwright": {
+          "buildTarget": "adventureworks-web:build:playwright"
         }
       },
       "defaultConfiguration": "development"

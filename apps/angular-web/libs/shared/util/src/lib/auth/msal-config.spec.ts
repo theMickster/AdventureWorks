@@ -1,6 +1,6 @@
 import { InteractionType } from '@azure/msal-browser';
 import { Environment } from '../environment/environment.model';
-import { msalInterceptorConfigFactory } from './msal-config';
+import { msalGuardConfigFactory, msalInstanceFactory, msalInterceptorConfigFactory } from './msal-config';
 
 const baseAuth = {
   authority: 'https://login.microsoftonline.com/tenant-id',
@@ -71,5 +71,28 @@ describe('msalInterceptorConfigFactory', () => {
 
     const config = msalInterceptorConfigFactory(env);
     expect(config.interactionType).toBe(InteractionType.Redirect);
+  });
+});
+
+describe('getAuthConfig (Docker / disabled-auth guard)', () => {
+  const envWithoutAuth: Environment = {
+    production: false,
+    defaultLocale: 'en',
+    api: { primary: { baseUrl: '/api', name: 'AdventureWorks API' } },
+  };
+
+  it('does not throw when environment.auth is entirely absent', () => {
+    expect(() => msalInstanceFactory(envWithoutAuth)).not.toThrow();
+    expect(() => msalGuardConfigFactory(envWithoutAuth)).not.toThrow();
+    expect(() => msalInterceptorConfigFactory(envWithoutAuth)).not.toThrow();
+  });
+
+  it('still throws when environment.auth is present but unsubstituted', () => {
+    const env: Environment = {
+      ...envWithoutAuth,
+      auth: { ...baseAuth, clientId: '__CLIENT_ID__' },
+    };
+
+    expect(() => msalInstanceFactory(env)).toThrow();
   });
 });

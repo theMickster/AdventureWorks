@@ -2,6 +2,7 @@
 using AdventureWorks.Models.Features.AddressManagement;
 using Asp.Versioning;
 using MediatR;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
 namespace AdventureWorks.API.Controllers.v1.Address;
@@ -11,6 +12,7 @@ namespace AdventureWorks.API.Controllers.v1.Address;
 /// </summary>
 /// <remarks></remarks>
 [ApiController]
+[Authorize]
 [ApiVersion("1.0")]
 [ApiExplorerSettings(GroupName = "Address")]
 [Produces("application/json")]
@@ -24,12 +26,12 @@ public sealed class ReadAddressController : ControllerBase
     /// The controller that coordinates retrieving Address information.
     /// </summary>
     /// <remarks></remarks>
-    public ReadAddressController( 
+    public ReadAddressController(
         ILogger<ReadAddressController> logger,
         IMediator mediator)
     {
-        ArgumentNullException.ThrowIfNull(logger, nameof(logger));
-        ArgumentNullException.ThrowIfNull(mediator, nameof(mediator));
+        ArgumentNullException.ThrowIfNull(logger);
+        ArgumentNullException.ThrowIfNull(mediator);
         _logger = logger;
         _mediator = mediator;
     }
@@ -39,8 +41,9 @@ public sealed class ReadAddressController : ControllerBase
     /// </summary>
     /// <param name="addressId">the unique identifier</param>
     /// <returns></returns>
-    [HttpGet("{addressId:int}", Name="GetAddressById")]
+    [HttpGet("{addressId:int}", Name = "GetAddressById")]
     [Produces(typeof(AddressModel))]
+    [ProducesResponseType(StatusCodes.Status401Unauthorized)]
     public async Task<IActionResult> GetByIdAsync(int addressId)
     {
         if (addressId <= 0)
@@ -48,7 +51,7 @@ public sealed class ReadAddressController : ControllerBase
             return BadRequest("A valid address id must be specified.");
         }
 
-        var model = await _mediator.Send(new ReadAddressQuery{Id = addressId });
+        var model = await _mediator.Send(new ReadAddressQuery { Id = addressId });
 
         return model is null ? NotFound("Unable to locate the Address.") : Ok(model);
     }

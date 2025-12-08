@@ -55,4 +55,92 @@ public sealed class AuthorizationGateTests(CustomWebApplicationFactory factory) 
         response.Headers.Location.Should().NotBeNull(
             "a 201 Created response must include a Location header");
     }
+
+    /// <summary>
+    /// Read-only endpoints that require authentication (US-991). Anonymous requests must return 401;
+    /// authenticated requests must reach the handler (any non-401 status, since most of these entities
+    /// have no InMemory seed data and legitimately resolve to 404).
+    /// </summary>
+    public static IEnumerable<object[]> AuthorizedReadEndpoints()
+    {
+        yield return new object[] { "/api/v1.0/products/1" };
+        yield return new object[] { "/api/v1.0/products?pageNumber=1&pageSize=10" };
+        yield return new object[] { "/api/v1.0/products/1/inventory" };
+        yield return new object[] { "/api/v1.0/products/1/price-history" };
+        yield return new object[] { "/api/v1.0/departments/1" };
+        yield return new object[] { "/api/v1.0/departments" };
+        yield return new object[] { $"/api/v1.0/addresses/{TestConstants.SeededStoreId}" };
+        yield return new object[] { "/api/v1.0/territories/1" };
+        yield return new object[] { "/api/v1.0/territories" };
+        yield return new object[] { "/api/v1.0/shifts/1" };
+        yield return new object[] { "/api/v1.0/shifts" };
+    }
+
+    /// <summary>
+    /// Reference/dropdown endpoints intentionally marked <c>[AllowAnonymous]</c> (US-991, first
+    /// usage in the codebase). Anonymous requests must not be challenged with 401.
+    /// </summary>
+    public static IEnumerable<object[]> AnonymousReadEndpoints()
+    {
+        yield return new object[] { "/api/v1.0/products/categories" };
+        yield return new object[] { "/api/v1.0/products/subcategories" };
+        yield return new object[] { "/api/v1.0/phoneNumberTypes" };
+        yield return new object[] { "/api/v1.0/countries" };
+        yield return new object[] { "/api/v1.0/states" };
+    }
+
+    [Theory]
+    [MemberData(nameof(AuthorizedReadEndpoints))]
+    public async Task AuthorizedReadEndpoint_Anonymous_Returns401(string requestUri)
+    {
+        var client = CreateAnonymousClient();
+
+        var response = await client.GetAsync(requestUri);
+
+        response.StatusCode.Should().Be(HttpStatusCode.Unauthorized);
+    }
+
+    [Theory]
+    [MemberData(nameof(AuthorizedReadEndpoints))]
+    public async Task AuthorizedReadEndpoint_Authenticated_DoesNotReturn401(string requestUri)
+    {
+        var client = CreateAuthenticatedClient();
+
+        var response = await client.GetAsync(requestUri);
+
+        response.StatusCode.Should().NotBe(HttpStatusCode.Unauthorized);
+    }
+
+    [Fact]
+    public async Task UpdateAddress_Anonymous_Returns401()
+    {
+        var client = CreateAnonymousClient();
+        var body = new { id = TestConstants.SeededStoreId };
+
+        var response = await client.PutAsJsonAsync($"/api/v1.0/addresses/{TestConstants.SeededStoreId}", body);
+
+        response.StatusCode.Should().Be(HttpStatusCode.Unauthorized);
+    }
+
+    [Fact]
+    public async Task UpdateAddress_Authenticated_DoesNotReturn401()
+    {
+        var client = CreateAuthenticatedClient();
+        var body = new { id = TestConstants.SeededStoreId };
+
+        var response = await client.PutAsJsonAsync($"/api/v1.0/addresses/{TestConstants.SeededStoreId}", body);
+
+        response.StatusCode.Should().NotBe(HttpStatusCode.Unauthorized);
+    }
+
+    [Theory]
+    [MemberData(nameof(AnonymousReadEndpoints))]
+    public async Task AllowAnonymousReadEndpoint_Anonymous_DoesNotReturn401(string requestUri)
+    {
+        var client = CreateAnonymousClient();
+
+        var response = await client.GetAsync(requestUri);
+
+        response.StatusCode.Should().NotBe(HttpStatusCode.Unauthorized);
+    }
 }

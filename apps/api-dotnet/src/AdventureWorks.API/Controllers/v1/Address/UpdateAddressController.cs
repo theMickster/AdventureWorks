@@ -3,6 +3,7 @@ using AdventureWorks.Application.Features.AddressManagement.Queries;
 using AdventureWorks.Models.Features.AddressManagement;
 using Asp.Versioning;
 using MediatR;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
 namespace AdventureWorks.API.Controllers.v1.Address;
@@ -12,6 +13,7 @@ namespace AdventureWorks.API.Controllers.v1.Address;
 /// </summary>
 /// <remarks></remarks>
 [ApiController]
+[Authorize]
 [ApiVersion("1.0")]
 [ApiExplorerSettings(GroupName = "Address")]
 [Produces("application/json")]
@@ -39,6 +41,7 @@ public sealed class UpdateAddressController : ControllerBase
     /// <returns></returns>
     [HttpPut("{addressId:int}")]
     [Produces(typeof(AddressModel))]
+    [ProducesResponseType(StatusCodes.Status401Unauthorized)]
     public async Task<IActionResult> PutAsync(int addressId, [FromBody] AddressUpdateModel? inputModel)
     {
         if (inputModel == null)

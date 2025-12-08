@@ -5,5 +5,10 @@
   "sourceRoot": "apps/adventureworks-web-e2e/src",
   "implicitDependencies": ["adventureworks-web"],
   "// targets": "to see all targets run: nx show project adventureworks-web-e2e --web",
-  "targets": {}
+  "targets": {
+    "e2e": {
+      "// dependsOn": "The @nx/playwright/plugin infers a dependency on adventureworks-web:serve (default 'development' config), which would bind port 4200 with the dev-tenant environment before playwright.config.ts's own webServer (serve:playwright, test-tenant environment) gets a chance to start on the same port. Overriding to [] lets Playwright's webServer be the sole thing that starts the dev server.",
+      "dependsOn": []
+    }
+  }
 }

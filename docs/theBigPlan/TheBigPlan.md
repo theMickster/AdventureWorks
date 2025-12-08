@@ -106,7 +106,7 @@
 - ✅ #923 Local Database Reset Tooling for Test Workflows
 - ✅ #672 Angular Testing Foundation & Utilities
 - 📋 #670 k6 Load Testing Foundation
-- 📋 #671 Playwright E2E Smoke Test Suite
+- 🚧 #671 Playwright E2E Smoke Test Suite — POM framework, smoke/a11y/visual specs, and CI stage in place; blocked on a provisioned real Entra test account for authenticated runs
 
 #### Epic #569 -- Polyglot Azure Functions Architecture 📋 FUTURE
 

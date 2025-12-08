@@ -2,6 +2,7 @@
 using AdventureWorks.Models.Features.AddressManagement;
 using Asp.Versioning;
 using MediatR;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
 namespace AdventureWorks.API.Controllers.v1.StateProvince;
@@ -9,8 +10,12 @@ namespace AdventureWorks.API.Controllers.v1.StateProvince;
 /// <summary>
 /// The controller that coordinates retrieving State Province information.
 /// </summary>
-/// <remarks></remarks>
+/// <remarks>
+/// Public by design: state/province codes are non-sensitive reference/dropdown data consumed
+/// by unauthenticated form-population flows.
+/// </remarks>
 [ApiController]
+[AllowAnonymous]
 [ApiVersion("1.0")]
 [ApiExplorerSettings(GroupName = "State Province")]
 [Produces("application/json")]

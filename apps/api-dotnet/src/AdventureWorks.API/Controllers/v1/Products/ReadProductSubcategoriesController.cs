@@ -2,6 +2,7 @@ using AdventureWorks.Application.Features.Production.Queries;
 using AdventureWorks.Models.Features.Production;
 using Asp.Versioning;
 using MediatR;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
 namespace AdventureWorks.API.Controllers.v1.Products;
@@ -9,7 +10,12 @@ namespace AdventureWorks.API.Controllers.v1.Products;
 /// <summary>
 /// The controller that coordinates retrieving product subcategories.
 /// </summary>
+/// <remarks>
+/// Public by design: product subcategories are non-sensitive reference/dropdown data consumed
+/// by unauthenticated storefront-style browsing flows.
+/// </remarks>
 [ApiController]
+[AllowAnonymous]
 [ApiVersion("1.0")]
 [ApiExplorerSettings(GroupName = "Products")]
 [Produces("application/json")]

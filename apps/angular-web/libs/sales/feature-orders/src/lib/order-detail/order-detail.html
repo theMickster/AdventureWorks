@@ -34,7 +34,7 @@
             <h1 id="aw-order-detail-number" class="card-title text-2xl font-bold text-base-content">
               {{ o.salesOrderNumber }}
             </h1>
-            <p class="text-sm text-base-content/60 mt-1">
+            <p class="text-sm text-secondary mt-1">
               Customer:
               <span id="aw-order-detail-customer" class="font-medium text-base-content">{{ o.customerName }}</span>
             </p>
@@ -48,21 +48,21 @@
 
         <div class="grid grid-cols-2 sm:grid-cols-4 gap-4 mt-4 text-sm">
           <div>
-            <p class="text-base-content/60">Order Date</p>
+            <p class="text-secondary">Order Date</p>
             <p id="aw-order-detail-order-date" class="font-medium">{{ o.orderDate | date: 'mediumDate' }}</p>
           </div>
           <div>
-            <p class="text-base-content/60">Due Date</p>
+            <p class="text-secondary">Due Date</p>
             <p id="aw-order-detail-due-date" class="font-medium">{{ o.dueDate | date: 'mediumDate' }}</p>
           </div>
           <div>
-            <p class="text-base-content/60">Ship Date</p>
+            <p class="text-secondary">Ship Date</p>
             <p id="aw-order-detail-ship-date" class="font-medium">
               {{ o.shipDate ? (o.shipDate | date: 'mediumDate') : '—' }}
             </p>
           </div>
           <div>
-            <p class="text-base-content/60">Sales Person</p>
+            <p class="text-secondary">Sales Person</p>
             @if (o.salesPersonName && o.salesPersonId) {
               <a
                 id="aw-order-detail-salesperson-link"
@@ -83,19 +83,19 @@
     <div id="aw-order-detail-financials" class="grid grid-cols-2 sm:grid-cols-4 gap-4 mb-6">
       <div class="card bg-base-100 shadow">
         <div class="card-body p-4">
-          <p class="text-xs text-base-content/60 uppercase tracking-wide">Subtotal</p>
+          <p class="text-xs text-secondary uppercase tracking-wide">Subtotal</p>
           <p id="aw-order-detail-subtotal" class="text-lg font-semibold">{{ o.subTotal | currency }}</p>
         </div>
       </div>
       <div class="card bg-base-100 shadow">
         <div class="card-body p-4">
-          <p class="text-xs text-base-content/60 uppercase tracking-wide">Tax</p>
+          <p class="text-xs text-secondary uppercase tracking-wide">Tax</p>
           <p id="aw-order-detail-tax" class="text-lg font-semibold">{{ o.taxAmt | currency }}</p>
         </div>
       </div>
       <div class="card bg-base-100 shadow">
         <div class="card-body p-4">
-          <p class="text-xs text-base-content/60 uppercase tracking-wide">Freight</p>
+          <p class="text-xs text-secondary uppercase tracking-wide">Freight</p>
           <p id="aw-order-detail-freight" class="text-lg font-semibold">{{ o.freight | currency }}</p>
         </div>
       </div>
@@ -163,7 +163,7 @@
             </tbody>
           </table>
         </div>
-        <p class="text-sm text-base-content/60 mt-2">
+        <p class="text-sm text-secondary mt-2">
           {{ o.lineItems.length }} item{{ o.lineItems.length === 1 ? '' : 's' }}
         </p>
       </div>

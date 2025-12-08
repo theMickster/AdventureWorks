@@ -88,7 +88,7 @@
             <legend class="fieldset-legend">
               <label for="personal-info-birth-date-input">
                 Birth Date
-                <span class="text-base-content/60" aria-hidden="true">*</span>
+                <span class="text-secondary" aria-hidden="true">*</span>
                 <span class="sr-only">required</span>
               </label>
             </legend>
@@ -238,22 +238,22 @@
               </button>
             </div>
             <dl class="grid grid-cols-2 gap-x-4 gap-y-1 text-sm">
-              <dt class="text-base-content/60">Name</dt>
+              <dt class="text-secondary">Name</dt>
               <dd>
                 {{ personalInfo.firstName }} {{ personalInfo.middleName }} {{ personalInfo.lastName }}
                 {{ personalInfo.suffix }}
               </dd>
-              <dt class="text-base-content/60">Job Title</dt>
+              <dt class="text-secondary">Job Title</dt>
               <dd>{{ personalInfo.jobTitle }}</dd>
-              <dt class="text-base-content/60">National ID</dt>
+              <dt class="text-secondary">National ID</dt>
               <dd>{{ personalInfo.nationalIdNumber }}</dd>
-              <dt class="text-base-content/60">Login ID</dt>
+              <dt class="text-secondary">Login ID</dt>
               <dd>{{ personalInfo.loginId }}</dd>
-              <dt class="text-base-content/60">Birth Date</dt>
+              <dt class="text-secondary">Birth Date</dt>
               <dd>{{ personalInfo.birthDate }}</dd>
-              <dt class="text-base-content/60">Gender</dt>
+              <dt class="text-secondary">Gender</dt>
               <dd>{{ personalInfo.gender }}</dd>
-              <dt class="text-base-content/60">Marital Status</dt>
+              <dt class="text-secondary">Marital Status</dt>
               <dd>{{ personalInfo.maritalStatus }}</dd>
             </dl>
           </section>
@@ -271,9 +271,9 @@
               </button>
             </div>
             <dl class="grid grid-cols-2 gap-x-4 gap-y-1 text-sm">
-              <dt class="text-base-content/60">Email</dt>
+              <dt class="text-secondary">Email</dt>
               <dd>{{ contact.emailAddress }}</dd>
-              <dt class="text-base-content/60">Phone</dt>
+              <dt class="text-secondary">Phone</dt>
               <dd>{{ contact.phone?.phoneNumber }}</dd>
             </dl>
           </section>
@@ -291,11 +291,11 @@
               </button>
             </div>
             <dl class="grid grid-cols-2 gap-x-4 gap-y-1 text-sm">
-              <dt class="text-base-content/60">Address</dt>
+              <dt class="text-secondary">Address</dt>
               <dd>{{ address.addressLine1 }} {{ address.addressLine2 }}</dd>
-              <dt class="text-base-content/60">City</dt>
+              <dt class="text-secondary">City</dt>
               <dd>{{ address.city }}</dd>
-              <dt class="text-base-content/60">Postal Code</dt>
+              <dt class="text-secondary">Postal Code</dt>
               <dd>{{ address.postalCode }}</dd>
             </dl>
           </section>
