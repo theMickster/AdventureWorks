@@ -1,0 +1,32 @@
+{
+  "name": "sales-ui-trend-chart",
+  "$schema": "../../../node_modules/nx/schemas/project-schema.json",
+  "sourceRoot": "libs/sales/ui-trend-chart/src",
+  "prefix": "aw",
+  "projectType": "library",
+  "tags": ["type:ui", "scope:sales"],
+  "targets": {
+    "build": {
+      "executor": "@nx/angular:ng-packagr-lite",
+      "outputs": ["{workspaceRoot}/dist/{projectRoot}"],
+      "options": {
+        "project": "libs/sales/ui-trend-chart/ng-package.json",
+        "tsConfig": "libs/sales/ui-trend-chart/tsconfig.lib.json"
+      },
+      "configurations": {
+        "production": {
+          "tsConfig": "libs/sales/ui-trend-chart/tsconfig.lib.prod.json"
+        },
+        "development": {}
+      },
+      "defaultConfiguration": "production"
+    },
+    "test": {
+      "executor": "@nx/angular:unit-test",
+      "options": {}
+    },
+    "lint": {
+      "executor": "@nx/eslint:lint"
+    }
+  }
+}

@@ -4,8 +4,8 @@ import { Router } from '@angular/router';
 import { DashboardStore } from '@adventureworks-web/sales/data-access';
 import { SkeletonComponent } from '@adventureworks-web/shared/ui';
 import { NotificationService } from '@adventureworks-web/shared/util';
+import { TrendChartComponent } from '@adventureworks-web/sales/ui-trend-chart';
 import { TopPerformersComponent } from '../top-performers/top-performers';
-import { TrendChartComponent } from '../trend-chart/trend-chart';
 import { TerritoryBreakdownComponent } from '../territory-breakdown/territory-breakdown';
 
 @Component({

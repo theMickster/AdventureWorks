@@ -1,4 +1,5 @@
 import { ComponentFixture, TestBed } from '@angular/core/testing';
+import { Component, input, output } from '@angular/core';
 import { provideHttpClient } from '@angular/common/http';
 import { provideHttpClientTesting } from '@angular/common/http/testing';
 import { provideRouter, Router } from '@angular/router';
@@ -9,14 +10,37 @@ import { unprotected } from '@ngrx/signals/testing';
 import { ENVIRONMENT, NotificationService } from '@adventureworks-web/shared/util';
 import { setError, setLoaded, setLoading } from '@adventureworks-web/shared/data-access';
 import { DashboardStore } from '@adventureworks-web/sales/data-access';
-import { TrendChartComponent } from '../trend-chart/trend-chart';
+import { TrendChartComponent, TrendChartDataPoint } from '@adventureworks-web/sales/ui-trend-chart';
 import { DashboardComponent } from './dashboard';
 
+/**
+ * dashboard.ts statically imports TrendChartComponent, whose module scope calls the
+ * real Chart.register(...) regardless of whether the component is ever instantiated.
+ * Without this mock, that hits real Chart.js internals (ResizeObserver, unavailable in
+ * this jsdom environment). Kept even though TrendChartComponent itself is stubbed out
+ * below.
+ */
 vi.mock('chart.js', () => {
   const Chart = vi.fn().mockImplementation(function() { return { destroy: vi.fn() }; });
   (Chart as unknown as { register: () => void }).register = vi.fn();
   return { Chart, LineController: {}, LineElement: {}, PointElement: {}, LinearScale: {}, CategoryScale: {}, Tooltip: {} };
 });
+
+/**
+ * Stubs out the real TrendChartComponent so this spec never constructs a Chart.js
+ * instance of its own — trend-chart.spec.ts (in the sales-ui-trend-chart library) owns
+ * the only test asserting on Chart.js construction. These tests only care about the
+ * dataPointClick output wiring and selector presence, never Chart.js rendering.
+ */
+@Component({
+  selector: 'aw-trend-chart',
+  standalone: true,
+  template: '',
+})
+class StubTrendChartComponent {
+  readonly data = input.required<TrendChartDataPoint[]>();
+  readonly dataPointClick = output<{ year: number; month: number }>();
+}
 
 const mockEnvironment = {
   production: false,
@@ -59,7 +83,12 @@ describe('DashboardComponent', () => {
         provideTranslateService(),
         { provide: ENVIRONMENT, useValue: mockEnvironment },
       ],
-    }).compileComponents();
+    })
+      .overrideComponent(DashboardComponent, {
+        remove: { imports: [TrendChartComponent] },
+        add: { imports: [StubTrendChartComponent] },
+      })
+      .compileComponents();
 
     dashboardStore = TestBed.inject(DashboardStore);
     notificationService = TestBed.inject(NotificationService);
@@ -162,7 +191,7 @@ describe('DashboardComponent', () => {
     fixture.detectChanges();
     await fixture.whenStable();
 
-    const trendChartDe = fixture.debugElement.query(By.directive(TrendChartComponent));
+    const trendChartDe = fixture.debugElement.query(By.directive(StubTrendChartComponent));
     trendChartDe.componentInstance.dataPointClick.emit({ year: 2014, month: 3 });
 
     expect(router.navigate).toHaveBeenCalledWith(
@@ -197,7 +226,7 @@ describe('DashboardComponent', () => {
     fixture.detectChanges();
     await fixture.whenStable();
 
-    const trendChartDe = fixture.debugElement.query(By.directive(TrendChartComponent));
+    const trendChartDe = fixture.debugElement.query(By.directive(StubTrendChartComponent));
     trendChartDe.componentInstance.dataPointClick.emit({ year: 2012, month: 2 });
 
     expect(router.navigate).toHaveBeenCalledWith(

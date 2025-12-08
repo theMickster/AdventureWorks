@@ -1,8 +1,15 @@
 import { afterNextRender, ChangeDetectionStrategy, Component, ElementRef, input, OnDestroy, output, viewChild } from '@angular/core';
 import { type ActiveElement, type ChartEvent, Chart, CategoryScale, LinearScale, LineController, LineElement, PointElement, Tooltip } from 'chart.js';
-import { DashboardMonthlySalesTrend } from '@adventureworks-web/sales/data-access';
 
 Chart.register(LineController, LineElement, PointElement, LinearScale, CategoryScale, Tooltip);
+
+/** Structurally identical to `DashboardMonthlySalesTrend` (sales/data-access) — duplicated here so this `type:ui` library doesn't depend on `type:data-access`. */
+export interface TrendChartDataPoint {
+  readonly year: number;
+  readonly month: number;
+  readonly revenue: number;
+  readonly orderCount: number;
+}
 
 /**
  * Renders a Chart.js line chart of monthly revenue for the trailing 24 months.
@@ -20,7 +27,7 @@ Chart.register(LineController, LineElement, PointElement, LinearScale, CategoryS
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class TrendChartComponent implements OnDestroy {
-  readonly data = input.required<DashboardMonthlySalesTrend[]>();
+  readonly data = input.required<TrendChartDataPoint[]>();
   /** Emits the year and month of the clicked data point so the host can navigate to a filtered view. */
   readonly dataPointClick = output<{ year: number; month: number }>();
   private readonly chartCanvas = viewChild.required<ElementRef<HTMLCanvasElement>>('chartCanvas');
