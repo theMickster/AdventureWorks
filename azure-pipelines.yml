@@ -4,6 +4,12 @@
 trigger:
   - main
 
+parameters:
+  - name: enableDebug
+    displayName: 'Enable detailed diagnostic logging (verbose logs)'
+    type: boolean
+    default: false
+
 pool:
   vmImage: ubuntu-latest
 
@@ -11,6 +17,15 @@ variables:
   dotNetSdkVersion: '10.0.x'
   buildConfiguration: 'Release'
   azureSubscription: 'AdventureWorks-AzureDevOps-ServiceConnection'
+  ${{ if parameters.enableDebug }}:
+    system.debug: 'true'
+    dotnetVerbosity: 'diagnostic'
+    nxVerbose: '--verbose'
+    npmVerbose: '--loglevel verbose'
+  ${{ else }}:
+    dotnetVerbosity: 'minimal'
+    nxVerbose: ''
+    npmVerbose: ''
 
 stages:
   # --- Build (parallel) ---

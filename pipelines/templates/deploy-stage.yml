@@ -55,7 +55,7 @@ stages:
                     packageType: sdk
                     version: '${{ parameters.dotNetSdkVersion }}'
 
-                - script: dotnet run --no-launch-profile --configuration Release
+                - script: dotnet run --no-launch-profile --configuration Release --verbosity $(dotnetVerbosity)
                   displayName: 'Run DbUp migrations'
                   workingDirectory: '$(Build.SourcesDirectory)/database/dbup/AdventureWorks.DbUp'
                   env:

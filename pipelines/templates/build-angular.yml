@@ -25,7 +25,7 @@ steps:
       restoreKeys: 'npm | "$(Agent.OS)"'
       path: "$(HOME)/.npm"
 
-  - script: npm ci
+  - script: npm ci $(npmVerbose)
     displayName: "Install dependencies"
     workingDirectory: "${{ parameters.workingDirectory }}"
 
@@ -36,7 +36,7 @@ steps:
       restoreKeys: 'nx | "$(Agent.OS)"'
       path: "${{ parameters.workingDirectory }}/.nx/cache"
 
-  - script: npx nx lint adventureworks-web
+  - script: npx nx lint adventureworks-web $(nxVerbose)
     displayName: "Lint"
     workingDirectory: "${{ parameters.workingDirectory }}"
 
@@ -45,11 +45,11 @@ steps:
     workingDirectory: "${{ parameters.workingDirectory }}"
     continueOnError: true
 
-  - script: npx nx build adventureworks-web --configuration=production
+  - script: npx nx build adventureworks-web --configuration=production $(nxVerbose)
     displayName: "Build (production)"
     workingDirectory: "${{ parameters.workingDirectory }}"
 
-  - script: npx nx run-many -t test --exclude=adventureworks-web
+  - script: npx nx run-many -t test --exclude=adventureworks-web $(nxVerbose)
     displayName: "Run library unit tests"
     workingDirectory: "${{ parameters.workingDirectory }}"
 
@@ -63,7 +63,7 @@ steps:
       testRunTitle: "Angular Library Tests - $(Build.BuildNumber)"
       mergeTestResults: true
 
-  - script: npx nx test adventureworks-web --buildTarget=adventureworks-web:build:production
+  - script: npx nx test adventureworks-web --buildTarget=adventureworks-web:build:production $(nxVerbose)
     displayName: "Run app unit tests"
     workingDirectory: "${{ parameters.workingDirectory }}"
 

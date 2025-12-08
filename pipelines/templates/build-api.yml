@@ -43,13 +43,14 @@ steps:
     inputs:
       command: restore
       projects: "${{ parameters.solution }}"
+      arguments: "--verbosity $(dotnetVerbosity)"
 
   - task: DotNetCoreCLI@2
     displayName: "Build solution"
     inputs:
       command: build
       projects: "${{ parameters.solution }}"
-      arguments: "--configuration ${{ parameters.buildConfiguration }} --no-restore"
+      arguments: "--configuration ${{ parameters.buildConfiguration }} --no-restore --verbosity $(dotnetVerbosity)"
 
   - script: dotnet list ${{ parameters.solution }} package --vulnerable --include-transitive
     displayName: "Security scan (vulnerable packages)"
@@ -62,7 +63,7 @@ steps:
       projects: "${{ parameters.testProject }}"
       testRunTitle: "AdventureWorks UnitTests - $(Build.BuildNumber)"
       publishTestResults: true
-      arguments: '--configuration ${{ parameters.buildConfiguration }} --no-build --collect "XPlat Code Coverage"'
+      arguments: '--configuration ${{ parameters.buildConfiguration }} --no-build --collect "XPlat Code Coverage" --verbosity $(dotnetVerbosity)'
     env:
       AutoMapperLicenseKey: $(AutoMapperLicenseKey)
       MediatRLicenseKey: $(MediatRLicenseKey)
@@ -74,7 +75,7 @@ steps:
       projects: "${{ parameters.integrationTestProject }}"
       testRunTitle: "AdventureWorks IntegrationTests - $(Build.BuildNumber)"
       publishTestResults: true
-      arguments: '--configuration ${{ parameters.buildConfiguration }} --no-build --collect "XPlat Code Coverage"'
+      arguments: '--configuration ${{ parameters.buildConfiguration }} --no-build --collect "XPlat Code Coverage" --verbosity $(dotnetVerbosity)'
     env:
       AutoMapperLicenseKey: $(AutoMapperLicenseKey)
       MediatRLicenseKey: $(MediatRLicenseKey)
@@ -89,7 +90,7 @@ steps:
       command: publish
       publishWebProjects: false
       projects: "${{ parameters.project }}"
-      arguments: "--configuration ${{ parameters.buildConfiguration }} --output $(Build.ArtifactStagingDirectory)/api"
+      arguments: "--configuration ${{ parameters.buildConfiguration }} --output $(Build.ArtifactStagingDirectory)/api --verbosity $(dotnetVerbosity)"
 
   - task: ArchiveFiles@2
     displayName: "Zip API output"
