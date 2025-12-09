@@ -1,4 +1,5 @@
 import { ComponentFixture, TestBed } from '@angular/core/testing';
+import { Chart } from 'chart.js';
 import { OrderAnalyticsTrendChartComponent } from './order-analytics-trend-chart';
 import type { SalesOrderMonthlyTrend } from '@adventureworks-web/sales/data-access';
 
@@ -9,22 +10,30 @@ vi.mock('chart.js', () => {
     return { destroy: mockDestroy };
   });
   (Chart as unknown as { register: () => void }).register = vi.fn();
-  return { Chart, LineController: {}, LineElement: {}, PointElement: {}, LinearScale: {}, CategoryScale: {}, Tooltip: {} };
+  return {
+    Chart,
+    LineController: {},
+    LineElement: {},
+    PointElement: {},
+    LinearScale: {},
+    CategoryScale: {},
+    Tooltip: {},
+  };
 });
 
-const singlePoint: SalesOrderMonthlyTrend[] = [
-  { year: 2013, month: 6, revenue: 120000, isPartialMonth: false },
-];
+const singlePoint: SalesOrderMonthlyTrend[] = [{ year: 2013, month: 6, revenue: 120000, isPartialMonth: false }];
 
 const multiPoint: SalesOrderMonthlyTrend[] = [
   { year: 2013, month: 6, revenue: 120000, isPartialMonth: false },
-  { year: 2013, month: 7, revenue: 95000,  isPartialMonth: true },
+  { year: 2013, month: 7, revenue: 95000, isPartialMonth: true },
 ];
 
 describe('OrderAnalyticsTrendChartComponent', () => {
   let fixture: ComponentFixture<OrderAnalyticsTrendChartComponent>;
 
   beforeEach(async () => {
+    vi.mocked(Chart).mockClear();
+
     await TestBed.configureTestingModule({
       imports: [OrderAnalyticsTrendChartComponent],
     }).compileComponents();
@@ -59,13 +68,17 @@ describe('OrderAnalyticsTrendChartComponent', () => {
     expect(() => fixture.detectChanges()).not.toThrow();
   });
 
-  it('calls chart.destroy() on ngOnDestroy', () => {
+  it('calls chart.destroy() on ngOnDestroy', async () => {
     fixture = TestBed.createComponent(OrderAnalyticsTrendChartComponent);
     fixture.componentRef.setInput('monthlyTrend', singlePoint);
     fixture.detectChanges();
 
-    fixture.componentRef.destroy();
+    await vi.waitFor(() => expect(vi.mocked(Chart)).toHaveBeenCalled());
 
-    expect(mockDestroy).toHaveBeenCalled();
+    const chartInstance = (vi.mocked(Chart) as ReturnType<typeof vi.fn>).mock.results[0]?.value;
+
+    fixture.destroy();
+
+    expect(chartInstance.destroy).toHaveBeenCalledTimes(1);
   });
 });
