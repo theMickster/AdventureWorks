@@ -44,7 +44,7 @@ describe('OrderAnalyticsTrendChartComponent', () => {
     mockDestroy.mockReset();
   });
 
-  it.skip('renders a canvas element when given a single data point', () => {
+  it('renders a canvas element when given a single data point', () => {
     fixture = TestBed.createComponent(OrderAnalyticsTrendChartComponent);
     fixture.componentRef.setInput('monthlyTrend', singlePoint);
     fixture.detectChanges();
@@ -53,7 +53,7 @@ describe('OrderAnalyticsTrendChartComponent', () => {
     expect(canvas).not.toBeNull();
   });
 
-  it.skip('renders a canvas element when given multiple data points', () => {
+  it('renders a canvas element when given multiple data points', () => {
     fixture = TestBed.createComponent(OrderAnalyticsTrendChartComponent);
     fixture.componentRef.setInput('monthlyTrend', multiPoint);
     fixture.detectChanges();
@@ -62,7 +62,7 @@ describe('OrderAnalyticsTrendChartComponent', () => {
     expect(canvas).not.toBeNull();
   });
 
-  it.skip('renders without error when monthlyTrend is an empty array', () => {
+  it('renders without error when monthlyTrend is an empty array', () => {
     fixture = TestBed.createComponent(OrderAnalyticsTrendChartComponent);
     fixture.componentRef.setInput('monthlyTrend', []);
     expect(() => fixture.detectChanges()).not.toThrow();

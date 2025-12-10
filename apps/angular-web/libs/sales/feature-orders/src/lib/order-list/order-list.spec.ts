@@ -15,6 +15,20 @@ import type { SalesOrder } from '@adventureworks-web/sales/data-access';
 import { StatusBadgeComponent } from '@adventureworks-web/shared/ui';
 import { OrderListComponent } from './order-list';
 
+/**
+ * order-list.ts statically imports OrderAnalyticsPanelComponent, whose child
+ * OrderAnalyticsTrendChartComponent calls the real Chart.register(...) at module
+ * scope regardless of whether a chart is ever rendered. Without this mock, that hits
+ * real Chart.js internals (ResizeObserver, canvas text metrics — unavailable/incomplete
+ * in this jsdom environment) and can leak the real Chart binding into other spec files'
+ * shared bundle chunks.
+ */
+vi.mock('chart.js', () => {
+  const Chart = vi.fn().mockImplementation(function () { return { destroy: vi.fn() }; });
+  (Chart as unknown as { register: () => void }).register = vi.fn();
+  return { Chart, LineController: {}, LineElement: {}, PointElement: {}, LinearScale: {}, CategoryScale: {}, Tooltip: {} };
+});
+
 const mockEnvironment = {
   production: false,
   api: {
