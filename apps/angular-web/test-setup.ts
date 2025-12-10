@@ -14,6 +14,23 @@ if (typeof window.matchMedia !== 'function') {
   });
 }
 
+if (typeof window.ResizeObserver !== 'function') {
+  Object.defineProperty(window, 'ResizeObserver', {
+    writable: true,
+    value: class ResizeObserverStub {
+      observe(): void {
+        return undefined;
+      }
+      unobserve(): void {
+        return undefined;
+      }
+      disconnect(): void {
+        return undefined;
+      }
+    },
+  });
+}
+
 const originalGetContext = HTMLCanvasElement.prototype.getContext as (...args: unknown[]) => unknown;
 HTMLCanvasElement.prototype.getContext = function (this: HTMLCanvasElement, contextId: string, ...args: unknown[]) {
   if (contextId === '2d') {
