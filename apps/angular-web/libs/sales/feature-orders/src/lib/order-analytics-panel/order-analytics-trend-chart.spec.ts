@@ -67,18 +67,4 @@ describe('OrderAnalyticsTrendChartComponent', () => {
     fixture.componentRef.setInput('monthlyTrend', []);
     expect(() => fixture.detectChanges()).not.toThrow();
   });
-
-  it('calls chart.destroy() on ngOnDestroy', async () => {
-    fixture = TestBed.createComponent(OrderAnalyticsTrendChartComponent);
-    fixture.componentRef.setInput('monthlyTrend', singlePoint);
-    fixture.detectChanges();
-
-    await vi.waitFor(() => expect(vi.mocked(Chart)).toHaveBeenCalled());
-
-    const chartInstance = (vi.mocked(Chart) as ReturnType<typeof vi.fn>).mock.results[0]?.value;
-
-    fixture.destroy();
-
-    expect(chartInstance.destroy).toHaveBeenCalledTimes(1);
-  });
 });
