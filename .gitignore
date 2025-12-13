@@ -362,8 +362,8 @@ apps/angular-web/apps/adventureworks-web-e2e/playwright/.auth/
 tools/console-apps/AdventureWorks.DbReset.Console/appsettings.Development.json
 
 # k6 load test generated artifacts
-apps/api-dotnet/tests/load/results/*
-!apps/api-dotnet/tests/load/results/.gitkeep
+apps/api-dotnet/tests/AdventureWorks.LoadTests.k6/results/*
+!apps/api-dotnet/tests/AdventureWorks.LoadTests.k6/results/.gitkeep
 
 # Git worktrees
 .worktrees/

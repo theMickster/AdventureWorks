@@ -38,7 +38,7 @@
 
 ## Quick Start
 
-From `apps/api-dotnet/tests/load`:
+From `apps/api-dotnet/tests/AdventureWorks.LoadTests.k6`:
 
 ```bash
 ./run-tests.sh smoke
@@ -60,9 +60,50 @@ Example with auth token:
 K6_AUTH_TOKEN="<jwt-token>" BASE_URL="https://localhost:44369" ./run-tests.sh load
 ```
 
+### Automatic token acquisition (LOADTEST_\*)
+
+`run-tests.sh` can acquire `K6_AUTH_TOKEN` automatically via MSAL Node's ROPC (Resource Owner
+Password Credential) flow, so you no longer have to paste a JWT by hand before running `load` or
+`stress`. Set these five variables:
+
+- `LOADTEST_TENANT_ID`
+- `LOADTEST_CLIENT_ID`
+- `LOADTEST_API_SCOPE`
+- `LOADTEST_USERNAME`
+- `LOADTEST_PASSWORD`
+
+**`load` and `stress` profiles**: all five vars are required. If any is missing, the script exits
+non-zero before k6 starts and names exactly which variable(s) are missing.
+
+**`smoke` profile**: these vars are optional. If none are set, `smoke` runs unauthenticated
+exactly as it always has (health/version checks only) — zero-config behavior is preserved. If you
+set even one of the five vars, the script treats it as an authenticated smoke run and applies the
+same fail-fast validation as `load`/`stress`.
+
+```bash
+LOADTEST_TENANT_ID="<tenant-id>" \
+LOADTEST_CLIENT_ID="<client-id>" \
+LOADTEST_API_SCOPE="api://<api-client-id>/.default" \
+LOADTEST_USERNAME="<test-user>@<tenant>.onmicrosoft.com" \
+LOADTEST_PASSWORD="<test-user-password>" \
+./run-tests.sh load
+```
+
+The first time an authenticated profile actually runs, `run-tests.sh` installs the token script's
+dependencies (`@azure/msal-node`, `tsx`) into a local `node_modules/` automatically via
+`npm install`. A pure unauthenticated `smoke` run never triggers this install.
+
+**Security caveat**: `acquireTokenByUsernamePassword` implements the ROPC flow, which Microsoft
+documents specifically for test-automation scenarios
+(learn.microsoft.com/entra/identity-platform/test-automate-integration-testing) but discourages
+for general use — it has no MFA support and is marked `@deprecated` in `@azure/msal-node` with no
+replacement API. `LOADTEST_*` credentials must point at a dedicated test tenant and app
+registration with MFA excluded via Conditional Access — never at production Entra ID
+configuration.
+
 ## Reports
 
-Each run writes reports to `tests/load/results/`:
+Each run writes reports to `tests/AdventureWorks.LoadTests.k6/results/`:
 
 - `<profile>-summary.html`
 - `<profile>-summary.json`

@@ -78,6 +78,11 @@ public static class ConfigurationConstants
     public const string AzureAdPlaywrightTestingSectionName = "AzureAdPlaywrightTesting";
 
     /// <summary>
+    /// k6 load testing Azure AD configuration section name (dedicated test tenant)
+    /// </summary>
+    public const string AzureAdLoadTestingSectionName = "AzureAdLoadTesting";
+
+    /// <summary>
     /// AutoMapper license key value name
     /// </summary>
     public const string AutoMapperLicenseKey = "AutoMapperLicenseKey";

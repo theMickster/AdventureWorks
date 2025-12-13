@@ -24,6 +24,38 @@ case "${PROFILE}" in
     ;;
 esac
 
+REQUIRED_LOADTEST_VARS=(LOADTEST_TENANT_ID LOADTEST_CLIENT_ID LOADTEST_API_SCOPE LOADTEST_USERNAME LOADTEST_PASSWORD)
+missing_vars=()
+present_vars=()
+for var in "${REQUIRED_LOADTEST_VARS[@]}"; do
+  if [[ -z "${!var:-}" ]]; then
+    missing_vars+=("${var}")
+  else
+    present_vars+=("${var}")
+  fi
+done
+
+if [[ "${PROFILE}" != "smoke" || ${#present_vars[@]} -gt 0 ]]; then
+  if [[ ${#missing_vars[@]} -gt 0 ]]; then
+    echo "Missing required environment variable(s) for token acquisition: ${missing_vars[*]}" >&2
+    exit 1
+  fi
+
+  if [[ ! -d "${SCRIPT_DIR}/node_modules" ]]; then
+    echo "Installing k6 script dependencies (@azure/msal-node, tsx)..."
+    (cd "${SCRIPT_DIR}" && npm ci)
+  fi
+
+  echo "Acquiring Entra access token via MSAL (LOADTEST_* credentials)..."
+  if ! K6_AUTH_TOKEN="$(cd "${SCRIPT_DIR}" && npx tsx get-token.ts)"; then
+    echo "Token acquisition failed; see MSAL error above." >&2
+    exit 1
+  fi
+  export K6_AUTH_TOKEN
+else
+  echo "No LOADTEST_* credentials set; running smoke without auth (health/version checks only)."
+fi
+
 mkdir -p "${SCRIPT_DIR}/results"
 
 echo "Running '${PROFILE}' profile against ${BASE_URL:-https://localhost:44369}"

@@ -49,6 +49,23 @@
       }
     },
     {
+      "name": "AdventureWorks API (LoadTesting)",
+      "type": "coreclr",
+      "request": "launch",
+      "preLaunchTask": "build-api",
+      "program": "${workspaceFolder}/apps/api-dotnet/src/AdventureWorks.API/bin/Debug/net10.0/AdventureWorks.API.dll",
+      "args": [],
+      "cwd": "${workspaceFolder}/apps/api-dotnet/src/AdventureWorks.API",
+      "stopAtEntry": false,
+      "justMyCode": true,
+      "env": {
+        // ConnectionStrings:LoadTestingConnection is blank in appsettings.LoadTesting.json —
+        // set it via `dotnet user-secrets` to point at a DB restored with
+        // tools/console-apps/AdventureWorks.DbReset.Console, not your everyday dev DB.
+        "ASPNETCORE_ENVIRONMENT": "LoadTesting"
+      }
+    },
+    {
       "name": "AdventureWorks Web",
       "type": "chrome",
       "request": "launch",
