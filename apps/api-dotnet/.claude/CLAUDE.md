@@ -295,6 +295,8 @@ dotnet test --filter "FullyQualifiedName~CreateStore"  # Filtered
 
 **Integration tests** — `AdventureWorks.IntegrationTests`: `WebApplicationFactory<Program>`, EF Core InMemory (per-factory-instance isolation), `IntegrationTestBase` + `CustomWebApplicationFactory`, xUnit collection fixture for shared factory lifecycle. Use integration tests to verify HTTP pipeline behavior (middleware, routing, auth gates, health/version endpoints) that unit tests cannot observe.
 
+**Load/smoke tests (k6)** — `tests/AdventureWorks.LoadTests.k6/`: TypeScript profiles run natively by k6; see [that directory's README](../tests/AdventureWorks.LoadTests.k6/README.md) for available profiles and `run-tests.sh` usage.
+
 ---
 
 ## Code Style & Standards

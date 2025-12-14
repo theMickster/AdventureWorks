@@ -45,9 +45,12 @@ From `apps/api-dotnet/tests/AdventureWorks.LoadTests.k6`:
 ./run-tests.sh load
 ./run-tests.sh stress
 ./run-tests.sh smoke-human-resources
+./run-tests.sh smoke-person
 ```
 
 `smoke-human-resources` exercises the 5 HumanResources endpoints (employees, departments, shifts) with a p95 < 300ms threshold; every endpoint requires auth, so this profile always needs `LOADTEST_*` credentials or a pre-set `K6_AUTH_TOKEN`/`AUTH_TOKEN` — there is no unauthenticated fallback.
+
+`smoke-person` exercises the Person endpoints (plus two anonymous Country/State reads) with a p95 < 300ms threshold, including a negative-path check that a nonexistent Person id returns 404. The Person list/by-id checks require auth, so `run-tests.sh` requires `LOADTEST_*` credentials for this profile, same as `smoke-human-resources` — there's no partial-anonymous run through the script. The Country/State reads don't need a token themselves; if you invoke the profile directly with `k6 run` (bypassing `run-tests.sh`) without credentials, they still execute and the Person checks are skipped with a warning.
 
 ## Environment Variables
 

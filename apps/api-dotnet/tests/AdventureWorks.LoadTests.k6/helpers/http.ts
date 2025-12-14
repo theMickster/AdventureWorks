@@ -27,6 +27,21 @@ export function checkResponse(response: http.Response, { name, expectedStatus = 
   });
 }
 
+export function anonymousGet(
+  path: string,
+  { expectedStatus = 200, headers = {}, tags = {}, ...requestOptions }: { expectedStatus?: number; headers?: Record<string, string>; tags?: Record<string, string> } = {},
+): http.Response {
+  const response = http.get(buildUrl(path), {
+    ...requestOptions,
+    tags,
+    responseCallback: http.expectedStatuses(expectedStatus),
+    headers,
+  });
+
+  checkResponse(response, { name: `GET ${normalizePath(path)}`, expectedStatus });
+  return response;
+}
+
 export function authenticatedGet(
   path: string,
   { expectedStatus = 200, headers = {}, tags = {}, ...requestOptions }: { expectedStatus?: number; headers?: Record<string, string>; tags?: Record<string, string> } = {},
