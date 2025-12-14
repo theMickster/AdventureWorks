@@ -199,7 +199,7 @@ export function getProfileOptions(profileName: 'smoke' | 'load' | 'stress', opti
   };
 }
 
-export function createHandleSummary(profileName: 'smoke' | 'load' | 'stress') {
+export function createHandleSummary(profileName: string) {
   return (data: SummaryData) => ({
     [`results/${profileName}-summary.html`]: buildHtmlSummary(profileName, data),
     [`results/${profileName}-summary.json`]: JSON.stringify(data, null, 2),

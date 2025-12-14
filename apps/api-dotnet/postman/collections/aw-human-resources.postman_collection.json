@@ -2925,6 +2925,40 @@
 					"response": []
 				},
 				{
+					"name": "By Id - Not Found",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"Status should be not found\", function () {\r",
+									"    pm.response.to.have.status(404);\r",
+									"});"
+								],
+								"type": "text/javascript",
+								"packages": {},
+								"requests": {}
+							}
+						}
+					],
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{adventureWorksApi}}/{{apiVersion}}/employees/999999999",
+							"host": [
+								"{{adventureWorksApi}}"
+							],
+							"path": [
+								"{{apiVersion}}",
+								"employees",
+								"999999999"
+							]
+						}
+					},
+					"response": []
+				},
+				{
 					"name": "Department Transfers",
 					"item": [
 						{

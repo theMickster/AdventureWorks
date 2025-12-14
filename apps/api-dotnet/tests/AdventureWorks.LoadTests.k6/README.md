@@ -44,7 +44,10 @@ From `apps/api-dotnet/tests/AdventureWorks.LoadTests.k6`:
 ./run-tests.sh smoke
 ./run-tests.sh load
 ./run-tests.sh stress
+./run-tests.sh smoke-human-resources
 ```
+
+`smoke-human-resources` exercises the 5 HumanResources endpoints (employees, departments, shifts) with a p95 < 300ms threshold; every endpoint requires auth, so this profile always needs `LOADTEST_*` credentials or a pre-set `K6_AUTH_TOKEN`/`AUTH_TOKEN` — there is no unauthenticated fallback.
 
 ## Environment Variables
 

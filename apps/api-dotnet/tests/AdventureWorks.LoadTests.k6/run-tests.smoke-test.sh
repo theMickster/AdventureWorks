@@ -98,6 +98,34 @@ else
   failures=$((failures + 1))
 fi
 
+# --- Scenario 3: one var set, four missing, profile=smoke-human-resources -> fail fast, k6 never invoked ---
+run_case "profile=smoke-human-resources, only LOADTEST_TENANT_ID set"
+rm -f "${INVOKED_MARKER}"
+set +e
+stderr_output="$(
+  PATH="${STUB_DIR}:${PATH}" \
+  LOADTEST_TENANT_ID="tenant-id" \
+  LOADTEST_CLIENT_ID="" \
+  LOADTEST_API_SCOPE="" \
+  LOADTEST_USERNAME="" \
+  LOADTEST_PASSWORD="" \
+  "${SCRIPT_DIR}/run-tests.sh" smoke-human-resources 2>&1 1>/dev/null
+)"
+exit_code=$?
+set -e
+
+assert_eq "1" "${exit_code}" "smoke-human-resources profile with 4 missing vars exits non-zero"
+assert_contains "${stderr_output}" "LOADTEST_CLIENT_ID" "error names LOADTEST_CLIENT_ID (smoke-human-resources)"
+assert_contains "${stderr_output}" "LOADTEST_API_SCOPE" "error names LOADTEST_API_SCOPE (smoke-human-resources)"
+assert_contains "${stderr_output}" "LOADTEST_USERNAME" "error names LOADTEST_USERNAME (smoke-human-resources)"
+assert_contains "${stderr_output}" "LOADTEST_PASSWORD" "error names LOADTEST_PASSWORD (smoke-human-resources)"
+if [[ -f "${INVOKED_MARKER}" ]]; then
+  echo "FAIL: stub k6 should never have been invoked (smoke-human-resources)"
+  failures=$((failures + 1))
+else
+  echo "PASS: stub k6 was never invoked (smoke-human-resources)"
+fi
+
 echo
 if [[ "${failures}" -eq 0 ]]; then
   echo "All checks passed."

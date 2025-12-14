@@ -11,15 +11,15 @@ if ! command -v k6 >/dev/null 2>&1; then
 fi
 
 if [[ -z "${PROFILE}" ]]; then
-  echo "Usage: ./run-tests.sh <smoke|load|stress>"
+  echo "Usage: ./run-tests.sh <smoke|load|stress|smoke-human-resources>"
   exit 1
 fi
 
 case "${PROFILE}" in
-  smoke|load|stress)
+  smoke|load|stress|smoke-human-resources)
     ;;
   *)
-    echo "Unsupported profile '${PROFILE}'. Use one of: smoke, load, stress."
+    echo "Unsupported profile '${PROFILE}'. Use one of: smoke, load, stress, smoke-human-resources."
     exit 1
     ;;
 esac

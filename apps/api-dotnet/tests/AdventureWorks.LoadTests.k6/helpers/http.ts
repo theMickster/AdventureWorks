@@ -36,6 +36,7 @@ export function authenticatedGet(
   const response = http.get(buildUrl(path), {
     ...requestOptions,
     tags,
+    responseCallback: http.expectedStatuses(expectedStatus),
     headers: {
       ...headers,
       Authorization: `Bearer ${token}`,
@@ -56,6 +57,7 @@ export function authenticatedPost(
   const response = http.post(buildUrl(path), JSON.stringify(payload), {
     ...requestOptions,
     tags,
+    responseCallback: http.expectedStatuses(expectedStatus),
     headers: {
       'Content-Type': 'application/json',
       ...headers,
