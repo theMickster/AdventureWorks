@@ -105,7 +105,7 @@
 - ✅ #669 .NET Integration Tests (WebApplicationFactory)
 - ✅ #923 Local Database Reset Tooling for Test Workflows
 - ✅ #672 Angular Testing Foundation & Utilities
-- 🚧 #670 k6 Load Testing Foundation — smoke/load/stress profiles, MSAL-based automatic `LOADTEST_*` token acquisition (US-992), HumanResources smoke coverage (US-993), and Person smoke coverage (US-994) in place; remaining child items (678, 679, 680, 995, 996, 997, 998, 999) not yet started
+- 🚧 #670 k6 Load Testing Foundation — smoke/load/stress profiles, MSAL-based automatic `LOADTEST_*` token acquisition (US-992), HumanResources smoke coverage (US-993), Person smoke coverage (US-994), Production smoke coverage (US-995), and Product Review smoke coverage (US-996) in place; remaining child items (678, 679, 680, 997, 998, 999) not yet started
 - 🚧 #671 Playwright E2E Smoke Test Suite — POM framework, smoke/a11y/visual specs, and CI stage in place; blocked on a provisioned real Entra test account for authenticated runs
 
 #### Epic #569 -- Polyglot Azure Functions Architecture 📋 FUTURE
@@ -162,6 +162,6 @@
 
 ---
 
-**Document Version**: 3.5  
-**Last Updated**: 2026-07-15  
+**Document Version**: 3.6  
+**Last Updated**: 2026-07-19  
 **Status**: Active execution

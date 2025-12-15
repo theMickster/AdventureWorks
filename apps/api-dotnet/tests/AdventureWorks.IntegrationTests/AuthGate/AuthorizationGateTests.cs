@@ -74,6 +74,9 @@ public sealed class AuthorizationGateTests(CustomWebApplicationFactory factory) 
         yield return new object[] { "/api/v1.0/territories" };
         yield return new object[] { "/api/v1.0/shifts/1" };
         yield return new object[] { "/api/v1.0/shifts" };
+        yield return new object[] { "/api/v1.0/product-models" };
+        yield return new object[] { "/api/v1.0/products/1/reviews" };
+        yield return new object[] { "/api/v1.0/products/1/reviews/statistics" };
     }
 
     /// <summary>

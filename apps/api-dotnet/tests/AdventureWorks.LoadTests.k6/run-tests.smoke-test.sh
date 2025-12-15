@@ -154,6 +154,62 @@ else
   echo "PASS: stub k6 was never invoked (smoke-person)"
 fi
 
+# --- Scenario 5: one var set, four missing, profile=smoke-production -> fail fast, k6 never invoked ---
+run_case "profile=smoke-production, only LOADTEST_TENANT_ID set"
+rm -f "${INVOKED_MARKER}"
+set +e
+stderr_output="$(
+  PATH="${STUB_DIR}:${PATH}" \
+  LOADTEST_TENANT_ID="tenant-id" \
+  LOADTEST_CLIENT_ID="" \
+  LOADTEST_API_SCOPE="" \
+  LOADTEST_USERNAME="" \
+  LOADTEST_PASSWORD="" \
+  "${SCRIPT_DIR}/run-tests.sh" smoke-production 2>&1 1>/dev/null
+)"
+exit_code=$?
+set -e
+
+assert_eq "1" "${exit_code}" "smoke-production profile with 4 missing vars exits non-zero"
+assert_contains "${stderr_output}" "LOADTEST_CLIENT_ID" "error names LOADTEST_CLIENT_ID (smoke-production)"
+assert_contains "${stderr_output}" "LOADTEST_API_SCOPE" "error names LOADTEST_API_SCOPE (smoke-production)"
+assert_contains "${stderr_output}" "LOADTEST_USERNAME" "error names LOADTEST_USERNAME (smoke-production)"
+assert_contains "${stderr_output}" "LOADTEST_PASSWORD" "error names LOADTEST_PASSWORD (smoke-production)"
+if [[ -f "${INVOKED_MARKER}" ]]; then
+  echo "FAIL: stub k6 should never have been invoked (smoke-production)"
+  failures=$((failures + 1))
+else
+  echo "PASS: stub k6 was never invoked (smoke-production)"
+fi
+
+# --- Scenario 6: one var set, four missing, profile=smoke-product-review -> fail fast, k6 never invoked ---
+run_case "profile=smoke-product-review, only LOADTEST_TENANT_ID set"
+rm -f "${INVOKED_MARKER}"
+set +e
+stderr_output="$(
+  PATH="${STUB_DIR}:${PATH}" \
+  LOADTEST_TENANT_ID="tenant-id" \
+  LOADTEST_CLIENT_ID="" \
+  LOADTEST_API_SCOPE="" \
+  LOADTEST_USERNAME="" \
+  LOADTEST_PASSWORD="" \
+  "${SCRIPT_DIR}/run-tests.sh" smoke-product-review 2>&1 1>/dev/null
+)"
+exit_code=$?
+set -e
+
+assert_eq "1" "${exit_code}" "smoke-product-review profile with 4 missing vars exits non-zero"
+assert_contains "${stderr_output}" "LOADTEST_CLIENT_ID" "error names LOADTEST_CLIENT_ID (smoke-product-review)"
+assert_contains "${stderr_output}" "LOADTEST_API_SCOPE" "error names LOADTEST_API_SCOPE (smoke-product-review)"
+assert_contains "${stderr_output}" "LOADTEST_USERNAME" "error names LOADTEST_USERNAME (smoke-product-review)"
+assert_contains "${stderr_output}" "LOADTEST_PASSWORD" "error names LOADTEST_PASSWORD (smoke-product-review)"
+if [[ -f "${INVOKED_MARKER}" ]]; then
+  echo "FAIL: stub k6 should never have been invoked (smoke-product-review)"
+  failures=$((failures + 1))
+else
+  echo "PASS: stub k6 was never invoked (smoke-product-review)"
+fi
+
 echo
 if [[ "${failures}" -eq 0 ]]; then
   echo "All checks passed."
