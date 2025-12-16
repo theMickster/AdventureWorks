@@ -48,6 +48,9 @@ From `apps/api-dotnet/tests/AdventureWorks.LoadTests.k6`:
 ./run-tests.sh smoke-person
 ./run-tests.sh smoke-production
 ./run-tests.sh smoke-product-review
+./run-tests.sh smoke-sales-order
+./run-tests.sh smoke-sales-person
+./run-tests.sh smoke-store
 ```
 
 `smoke-human-resources` exercises the 5 HumanResources endpoints (employees, departments, shifts) with a p95 < 300ms threshold; every endpoint requires auth, so this profile always needs `LOADTEST_*` credentials or a pre-set `K6_AUTH_TOKEN`/`AUTH_TOKEN` — there is no unauthenticated fallback.
@@ -57,6 +60,12 @@ From `apps/api-dotnet/tests/AdventureWorks.LoadTests.k6`:
 `smoke-production` exercises `GET /api/v1/products`, `GET /api/v1/products/{id}`, and `GET /api/v1/product-models` with a p95 < 300ms threshold, plus a negative-path check that a nonexistent product id (`999999999`) returns 404 — Product's route id parameter is `int`-typed, so (unlike Departments' `short`) this is a clean 404 with no binding-width quirk. `GET /api/v1/products/categories` is `[AllowAnonymous]` and runs first, unconditionally. The remaining checks require auth, so `run-tests.sh` requires `LOADTEST_*` credentials for this profile, same as `smoke-human-resources`.
 
 `smoke-product-review` exercises `GET /api/v1/products/{productId}/reviews` and `GET /api/v1/products/{productId}/reviews/statistics` for product id `937` (confirmed via the local AdventureWorks DB to have 2 reviews, the most of any product) with a p95 < 300ms threshold. Both endpoints require auth, so `run-tests.sh` requires `LOADTEST_*` credentials for this profile, same as `smoke-human-resources`. If you invoke the profile directly with `k6 run` (bypassing `run-tests.sh`) without a token, it takes the negative path instead: both requests are sent without a bearer token and assert `401` explicitly, satisfying the "unset/invalid token" acceptance case without ever surfacing as an unhandled script error.
+
+`smoke-sales-order` exercises `GET /api/v1/sales-orders`, `GET /api/v1/sales-orders/{id}` (id `43659`/SO43659, confirmed via the local AdventureWorks DB), `GET /api/v1/sales/dashboard`, `GET /api/v1/sales-reasons`, `GET /api/v1/territories`, `GET /api/v1/ship-methods`, and `GET /api/v1/special-offers` with a p95 < 300ms threshold, plus a negative-path check that a nonexistent sales order id (`999999999`) returns 404. The ADO acceptance criteria text for this story says "sales-territories", but there is no such route — the real controller (`ReadSalesTerritoryController`) exposes `GET /api/v1/territories`, which is what the script calls. Every endpoint requires auth, so this profile always needs `LOADTEST_*` credentials or a pre-set `K6_AUTH_TOKEN`/`AUTH_TOKEN` — there is no unauthenticated fallback.
+
+`smoke-sales-person` exercises `GET /api/v1/salespersons`, `GET /api/v1/salespersons/{id}` (id `275`, Michael Blythe, confirmed via the local AdventureWorks DB), and `GET /api/v1/salespersons/{id}/performance` with a p95 < 300ms threshold, plus a negative-path check that a nonexistent sales person id (`999999999`) returns 404. Every endpoint requires auth, so this profile always needs `LOADTEST_*` credentials or a pre-set `K6_AUTH_TOKEN`/`AUTH_TOKEN` — there is no unauthenticated fallback.
+
+`smoke-store` exercises `GET /api/v1/stores`, `GET /api/v1/stores/{id}` (id `292`, Next-Door Bike Store, confirmed via the local AdventureWorks DB), `POST /api/v1/stores/search`, `GET /api/v1/stores/{id}/addresses`, and `GET /api/v1/stores/{id}/contacts` with a p95 < 300ms threshold, plus a negative-path check that a nonexistent store id (`999999999`) returns 404. That 404 check targets `GET /api/v1/stores/{id}` specifically — `ReadStoreAddressController` and `ReadStoreContactController` don't verify the parent store exists (they return `200` with an empty list for any positive id), so a 404 assertion against those endpoints would fail. Every endpoint requires auth, so this profile always needs `LOADTEST_*` credentials or a pre-set `K6_AUTH_TOKEN`/`AUTH_TOKEN` — there is no unauthenticated fallback.
 
 ## Environment Variables
 
