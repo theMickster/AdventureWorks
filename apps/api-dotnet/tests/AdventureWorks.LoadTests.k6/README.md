@@ -53,6 +53,17 @@ From `apps/api-dotnet/tests/AdventureWorks.LoadTests.k6`:
 ./run-tests.sh smoke-store
 ```
 
+`load` ramps virtual users 0 → 50 over 2 minutes, sustains 50 VUs for 5 minutes, then ramps down to 0
+over 1 minute, exercising `GET /health`, `GET /version`, and the read-only Store endpoints
+(`GET /api/v1/stores`, `GET /api/v1/stores/{id}`, `GET /api/v1/stores/{id}/addresses`,
+`GET /api/v1/stores/{id}/contacts`) — `POST /api/v1/stores/search` is intentionally excluded since
+it's a write-shaped call outside this profile's read-only scope. Thresholds: `http_req_duration`
+p95 < 500ms and p99 < 1500ms, `http_req_failed` rate < 1%, `checks` pass rate > 99%. The Store
+endpoints require auth, so `run-tests.sh` requires `LOADTEST_*` credentials for this profile —
+there's no partial-anonymous run through the script. If you invoke the profile directly with `k6 run`
+(bypassing `run-tests.sh`) without a token, only the unauthenticated health/version checks run and
+the Store checks are skipped with a warning.
+
 `smoke-human-resources` exercises the 5 HumanResources endpoints (employees, departments, shifts) with a p95 < 300ms threshold; every endpoint requires auth, so this profile always needs `LOADTEST_*` credentials or a pre-set `K6_AUTH_TOKEN`/`AUTH_TOKEN` — there is no unauthenticated fallback.
 
 `smoke-person` exercises the Person endpoints (plus two anonymous Country/State reads) with a p95 < 300ms threshold, including a negative-path check that a nonexistent Person id returns 404. The Person list/by-id checks require auth, so `run-tests.sh` requires `LOADTEST_*` credentials for this profile, same as `smoke-human-resources` — there's no partial-anonymous run through the script. The Country/State reads don't need a token themselves; if you invoke the profile directly with `k6 run` (bypassing `run-tests.sh`) without credentials, they still execute and the Person checks are skipped with a warning.

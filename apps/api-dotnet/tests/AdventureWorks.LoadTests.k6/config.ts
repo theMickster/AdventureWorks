@@ -14,17 +14,15 @@ const profileConfigurations = Object.freeze({
   load: {
     options: {
       stages: [
-        { duration: '2m', target: 10 },
-        { duration: '3m', target: 25 },
+        { duration: '2m', target: 50 },
         { duration: '5m', target: 50 },
-        { duration: '3m', target: 50 },
-        { duration: '2m', target: 0 },
+        { duration: '1m', target: 0 },
       ],
     },
     thresholds: {
-      checks: ['rate>0.98'],
-      http_req_duration: ['p(95)<1200', 'p(99)<2000'],
-      http_req_failed: ['rate<0.02'],
+      checks: ['rate>0.99'],
+      http_req_duration: ['p(95)<500', 'p(99)<1500'],
+      http_req_failed: ['rate<0.01'],
     },
   },
   stress: {
