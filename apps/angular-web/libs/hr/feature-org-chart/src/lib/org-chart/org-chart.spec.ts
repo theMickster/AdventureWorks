@@ -86,7 +86,7 @@ describe('OrgChartComponent', () => {
     fixture.detectChanges();
     loadWithItems();
     fixture.detectChanges();
-    vi.spyOn(store, 'searchAndExpand');
+    vi.spyOn(store, 'searchAndExpand').mockImplementation(() => undefined);
 
     const input = fixture.nativeElement.querySelector('#aw-org-chart-search-input') as HTMLInputElement;
     input.value = 'Brian';

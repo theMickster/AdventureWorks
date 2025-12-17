@@ -39,6 +39,12 @@ HTMLCanvasElement.prototype.getContext = function (this: HTMLCanvasElement, cont
   return originalGetContext.apply(this, [contextId, ...args]);
 } as typeof HTMLCanvasElement.prototype.getContext;
 
+if (typeof Element.prototype.scrollIntoView !== 'function') {
+  Element.prototype.scrollIntoView = function (): void {
+    return undefined;
+  };
+}
+
 if (typeof localStorage === 'undefined') {
   throw new Error('localStorage is unexpectedly unavailable in the jsdom test environment.');
 }
