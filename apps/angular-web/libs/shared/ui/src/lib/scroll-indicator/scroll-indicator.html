@@ -1,0 +1,24 @@
+<div class="relative">
+  @if (canScrollLeft()) {
+    <div
+      class="pointer-events-none absolute inset-y-0 left-0 w-8 bg-gradient-to-r from-base-100 to-transparent z-10"
+      aria-hidden="true"
+    ></div>
+  }
+  @if (canScrollRight()) {
+    <div
+      class="pointer-events-none absolute inset-y-0 right-0 w-8 bg-gradient-to-l from-base-100 to-transparent z-10"
+      aria-hidden="true"
+    ></div>
+  }
+  <div
+    #scrollContainer
+    class="overflow-x-auto"
+    tabindex="0"
+    role="region"
+    [attr.aria-label]="ariaLabel()"
+    (scroll)="onScroll()"
+  >
+    <ng-content></ng-content>
+  </div>
+</div>

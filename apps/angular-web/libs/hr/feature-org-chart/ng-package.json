@@ -1,0 +1,7 @@
+{
+  "$schema": "../../../node_modules/ng-packagr/ng-package.schema.json",
+  "dest": "../../../dist/libs/hr/feature-org-chart",
+  "lib": {
+    "entryFile": "src/index.ts"
+  }
+}

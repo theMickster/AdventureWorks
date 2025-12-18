@@ -14,4 +14,5 @@ export { ModalComponent } from './lib/modal/modal';
 export { ConfirmDialogComponent } from './lib/confirm-dialog/confirm-dialog';
 export { DataTableComponent } from './lib/data-table/data-table';
 export { ColumnDefDirective } from './lib/data-table/column-def.directive';
+export { ScrollIndicatorComponent } from './lib/scroll-indicator/scroll-indicator';
 export type { ColumnConfig } from './lib/data-table/column-config.model';

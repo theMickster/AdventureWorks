@@ -1,0 +1,36 @@
+/*
+ * Every nested aw-org-node is a direct child of .org-node-children-inner (display:flex), which
+ * CSS auto-blockifies regardless of the host's own display value. The ROOT aw-org-node (in
+ * org-chart.html) sits inside a plain block div instead, so without this it's the one instance
+ * left at the custom-element UA default of display:inline — an inline box doesn't participate in
+ * width/max-content and overflow calculations the way its flex-child siblings do, which is what
+ * let content centered under it bleed to viewport positions the scroll container's scrollLeft:0
+ * can never reach in an LTR context.
+ */
+:host {
+  display: block;
+}
+
+.org-node-children {
+  display: grid;
+  grid-template-rows: 0fr;
+  overflow: hidden;
+  transition:
+    grid-template-rows 200ms ease,
+    width 200ms ease;
+  width: 0;
+}
+
+.org-node-children-expanded {
+  grid-template-rows: 1fr;
+  width: max-content;
+}
+
+.org-node-children-inner {
+  min-height: 0;
+  min-width: 0;
+  display: flex;
+  flex-direction: row;
+  gap: 1rem;
+  padding-top: 1.5rem;
+}

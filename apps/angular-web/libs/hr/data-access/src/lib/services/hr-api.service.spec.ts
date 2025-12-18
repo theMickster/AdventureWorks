@@ -4,6 +4,7 @@ import { HttpTestingController, provideHttpClientTesting } from '@angular/common
 import { ENVIRONMENT } from '@adventureworks-web/shared/util';
 import { HrApiService } from './hr-api.service';
 import type { Employee } from '../models/employee.model';
+import type { EmployeeOrgTreeItem } from '../models/employee-org-tree-item.model';
 import type { EmployeeCreate } from '../models/employee-create.model';
 import type { EmployeeUpdate } from '../models/employee-update.model';
 import type { EmployeeSearchBody } from '../models/employee-search.model';
@@ -209,6 +210,38 @@ describe('HrApiService', () => {
       expect(req.request.method).toBe('PATCH');
       expect(req.request.body).toEqual(operations);
       req.flush(mockEmployee);
+    });
+  });
+
+  describe('Org Tree', () => {
+    // CEO + VP Sales — verified against the local AdventureWorks DB
+    const mockOrgTree: EmployeeOrgTreeItem[] = [
+      {
+        employeeId: 1,
+        fullName: 'Ken Sánchez',
+        jobTitle: 'Chief Executive Officer',
+        departmentName: 'Executive',
+        organizationLevel: null,
+        parentEmployeeId: null,
+      },
+      {
+        employeeId: 273,
+        fullName: 'Brian Welcker',
+        jobTitle: 'Vice President of Sales',
+        departmentName: 'Sales',
+        organizationLevel: 1,
+        parentEmployeeId: null,
+      },
+    ];
+
+    it('should GET the org tree', () => {
+      service.getOrgTree().subscribe((result) => {
+        expect(result).toEqual(mockOrgTree);
+      });
+
+      const req = httpTesting.expectOne(`${BASE_URL}/v1/employees/org-tree`);
+      expect(req.request.method).toBe('GET');
+      req.flush(mockOrgTree);
     });
   });
 

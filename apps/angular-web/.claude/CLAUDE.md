@@ -27,7 +27,9 @@ Every library must have exactly two tags in `project.json`:
 
 ## NgRx SignalStore Pattern
 
-Stores live in `libs/{scope}/data-access/`. They use `withRequestStatus()` + `withPagination()` + `rxMethod()` for HTTP bridging. Components inject the store and read signals directly — no subscriptions.
+Domain-data stores live in `libs/{scope}/data-access/`. They use `withRequestStatus()` + `withPagination()` + `rxMethod()` for HTTP bridging. Components inject the store and read signals directly — no subscriptions.
+
+A store may instead live feature-local in `libs/{scope}/feature-*/` when it has exactly one consumer, is not exported from the lib's public barrel, and holds feature-specific view state (e.g. `OrgChartStore`'s `expandedIds`/`highlightedId` and baked-in DaisyUI color classes) rather than reusable domain data.
 
 ## Sales Feature Libraries
 
@@ -184,6 +186,20 @@ Tabbed detail at `/sales/stores/:id`. Calls `SalesApiService` directly; no NgRx 
   - **Hire button only renders when `lifecycle().employmentStatus === 'OnLeave'`** — not for `Terminated` (that's Rehire's job) or `Active`.
   - **Hardcoded lookup constants**: `SHIFT_OPTIONS`, `PAY_FREQUENCY_OPTIONS`, `TERMINATION_TYPE_OPTIONS` live in `hr/data-access`'s `employee-lifecycle-options.model.ts` (exported from its barrel) because no backend lookup endpoint exists for these — they mirror `HumanResourcesConstants.cs` byte/const values on the API.
   - **`maxFutureDateValidator(days)`/`minDateValidator(minDate)`** live alongside `minAgeValidator` in `shared/util`'s `validators/` folder, following the same UTC-calendar-date comparison pattern.
+
+### `libs/hr/feature-org-chart`
+
+**OrgChartComponent** — interactive org chart at `/hr/org-chart`: CEO-down tree with expand/collapse, department color-coding, search/click-through, and summary stats. First recursive-component and first `libs/shared/ui` scroll-indicator pattern in this workspace.
+
+- **`OrgChartStore` is `withState`, not `withEntities`**: one-shot ~290-row payload with no per-entity CRUD, mirroring `DashboardStore` rather than `EmployeeStore`. `load()` runs a `forkJoin` of `getOrgTree()` + `getDepartments()` so the department→color map is available before the tree is built.
+- **Department color source is `GroupName` (6 values), not `DepartmentName` (17 values)**: `department-group-color-map.ts` maps the 6 `HumanResources.Department.GroupName` values to DaisyUI semantic classes (`primary`/`accent`/`info`/`warning`/`secondary`/`success`), with a `neutral` fallback for an unmapped or blank department name. The store resolves each employee's `departmentName` to a color once at load time and bakes it into the tree node (`colorClass`) — `OrgNodeComponent` never does a lookup itself.
+- **`build-org-tree.ts` reparents orphans under the true root — a real AdventureWorks data quirk, not a hypothetical**: the CEO's `HumanResources.Employee.OrganizationNode` is SQL `NULL` (not the hierarchyid root value), so the backend's `OrganizationNode.GetAncestor(1)` self-join misses for every level-1 VP — they come back from `/employees/org-tree` with `parentEmployeeId === null` even though they aren't the root. The true root is identified by `organizationLevel === null` (unique to the CEO); every other row with a null `parentEmployeeId` — VPs hit by this quirk, plus any employee created through the app that hasn't been assigned a manager yet — is attached directly under that root instead of becoming a second tree or being dropped. `OrgChartStore.searchAndExpand`'s ancestor walk defaults a null `parentEmployeeId` link to the same resolved root for exactly this reason, so the expansion path matches what's actually rendered. **`compute-org-stats.ts` mirrors this same root-resolution and reparenting** — without it, `managerCount`/`averageSpanOfControl` silently disagree with the tree: the root itself never appears as anyone's raw `parentEmployeeId` (verified against the live DB — zero rows), so a naive "distinct non-null `parentEmployeeId`" count undercounts managers by at least 1 and excludes every orphan's contribution to span of control.
+- **`expandedIds: Set<number>` lives on the store, not per-node local signals**: this is what lets `searchAndExpand` auto-expand an arbitrary ancestor chain (e.g. searching "Stephen Jiang" expands `{273, 1}`) without `OrgNodeComponent` knowing anything about search. `toggleExpanded`/`searchAndExpand` always write a _new_ `Set` reference — never mutate in place — so signal equality checks pick up the change.
+- **`OrgNodeComponent` is dumb and store-free**: `input.required<OrgChartTreeNode>()`, `input.required<ReadonlySet<number>>()` for `expandedIds`, `input<number | null>()` for `highlightedId`, and two `output<number>()`s. It self-imports its own class (`imports: [OrgNodeComponent]` inside its own `@Component` decorator) — the standard Angular pattern for a standalone recursive component, first use of it in this workspace.
+- **Output is named `toggleExpand`, not `toggle`**: `@angular-eslint/no-output-native` forbids `toggle` because `<details>` fires a real native `toggle` event.
+- **Expand/collapse is CSS-only**: a `grid-template-rows: 0fr` → `1fr` transition (~200ms) on the children wrapper, driven by a class binding on the expanded state. Children stay mounted in the DOM even when collapsed — no `@if` around the collapsed content, only around whether the node has any children at all.
+- **Tree is built once, not per render**: `OrgChartStore.tree` and `.stats` are `withComputed` signals derived from the flat `items` state — they only recompute when `items()`/`departmentColorClasses()` actually change (i.e. once per `load()`), not on every template re-render.
+- **`ScrollIndicatorComponent`** (`libs/shared/ui`) — new reusable gradient-fade edge affordance for horizontally-scrollable containers, used to wrap the tree. Not org-chart-specific; any future wide/scrollable content can reuse it.
 
 ## SignalR
 

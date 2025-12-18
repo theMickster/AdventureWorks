@@ -2959,6 +2959,87 @@
 					"response": []
 				},
 				{
+					"name": "Org Tree",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"Status should be OK request\", function () {\r",
+									"    pm.response.to.have.status(200);\r",
+									"});\r",
+									"\r",
+									"pm.test(\"Has X-Correlation-Id header\", function () {\r",
+									"    pm.response.to.have.header(\"X-Correlation-Id\");\r",
+									"});\r",
+									"\r",
+									"var response = pm.response.json();\r",
+									"\r",
+									"pm.test(\"Response is a non-empty array of org tree items\", function () {\r",
+									"    pm.expect(response).to.be.an('array');\r",
+									"    pm.expect(response.length).to.be.above(0);\r",
+									"});\r",
+									"\r",
+									"pm.test(\"Each item has the expected org tree shape\", function () {\r",
+									"    response.forEach(function (item) {\r",
+									"        pm.expect(item).to.have.property('employeeId');\r",
+									"        pm.expect(item).to.have.property('fullName');\r",
+									"        pm.expect(item).to.have.property('jobTitle');\r",
+									"        pm.expect(item).to.have.property('departmentName');\r",
+									"        pm.expect(item).to.have.property('organizationLevel');\r",
+									"        pm.expect(item).to.have.property('parentEmployeeId');\r",
+									"    });\r",
+									"});\r",
+									"\r",
+									"pm.test(\"CEO (employee 1) is the root: null organizationLevel and null parentEmployeeId\", function () {\r",
+									"    var ceo = response.find(function (e) { return e.employeeId === 1; });\r",
+									"    pm.expect(ceo).to.exist;\r",
+									"    pm.expect(ceo.fullName).to.eql('Ken Sánchez');\r",
+									"    pm.expect(ceo.organizationLevel).to.eql(null);\r",
+									"    pm.expect(ceo.parentEmployeeId).to.eql(null);\r",
+									"});\r",
+									"\r",
+									"pm.test(\"Brian Welcker (employee 273) is present at organization level 1\", function () {\r",
+									"    var brian = response.find(function (e) { return e.employeeId === 273; });\r",
+									"    pm.expect(brian).to.exist;\r",
+									"    pm.expect(brian.fullName).to.eql('Brian Welcker');\r",
+									"    pm.expect(brian.jobTitle).to.eql('Vice President of Sales');\r",
+									"    pm.expect(brian.organizationLevel).to.eql(1);\r",
+									"});\r",
+									"\r",
+									"pm.test(\"Stephen Jiang, Syed Abbas, and Amy Alberts report to Brian Welcker (274/285/287 -> 273)\", function () {\r",
+									"    [274, 285, 287].forEach(function (id) {\r",
+									"        var report = response.find(function (e) { return e.employeeId === id; });\r",
+									"        pm.expect(report).to.exist;\r",
+									"        pm.expect(report.parentEmployeeId).to.eql(273);\r",
+									"        pm.expect(report.organizationLevel).to.eql(2);\r",
+									"    });\r",
+									"});"
+								],
+								"type": "text/javascript",
+								"packages": {},
+								"requests": {}
+							}
+						}
+					],
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{adventureWorksApi}}/{{apiVersion}}/employees/org-tree",
+							"host": [
+								"{{adventureWorksApi}}"
+							],
+							"path": [
+								"{{apiVersion}}",
+								"employees",
+								"org-tree"
+							]
+						}
+					},
+					"response": []
+				},
+				{
 					"name": "Department Transfers",
 					"item": [
 						{

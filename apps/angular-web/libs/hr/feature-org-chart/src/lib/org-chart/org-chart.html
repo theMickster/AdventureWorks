@@ -1,0 +1,79 @@
+<div id="aw-org-chart-page" class="flex flex-col gap-6">
+  <div id="aw-org-chart-header" class="flex items-center justify-between">
+    <h1 class="text-2xl font-bold text-base-content">Organization Chart</h1>
+  </div>
+
+  <div id="aw-org-chart-toolbar" class="flex flex-wrap items-end gap-2">
+    <div class="min-w-64">
+      <label for="aw-org-chart-search-input" class="sr-only">Search employees by name</label>
+      <input
+        id="aw-org-chart-search-input"
+        type="text"
+        placeholder="Search by name..."
+        class="input input-bordered w-full"
+        [value]="searchTerm()"
+        (input)="onSearchInput($any($event.target).value)"
+      />
+    </div>
+  </div>
+
+  <div class="stats stats-vertical shadow lg:stats-horizontal w-full">
+    @if (isLoading()) {
+      <div class="stat">
+        <aw-skeleton height="1.5rem" width="60%"></aw-skeleton>
+        <aw-skeleton height="2.5rem" width="80%"></aw-skeleton>
+      </div>
+      <div class="stat">
+        <aw-skeleton height="1.5rem" width="60%"></aw-skeleton>
+        <aw-skeleton height="2.5rem" width="80%"></aw-skeleton>
+      </div>
+      <div class="stat">
+        <aw-skeleton height="1.5rem" width="60%"></aw-skeleton>
+        <aw-skeleton height="2.5rem" width="80%"></aw-skeleton>
+      </div>
+      <div class="stat">
+        <aw-skeleton height="1.5rem" width="60%"></aw-skeleton>
+        <aw-skeleton height="2.5rem" width="80%"></aw-skeleton>
+      </div>
+    } @else if (tree()) {
+      <div id="aw-org-chart-stat-total" class="stat">
+        <div class="stat-title">Total Employees</div>
+        <div class="stat-value text-primary">{{ stats().totalEmployees | number }}</div>
+      </div>
+      <div id="aw-org-chart-stat-managers" class="stat">
+        <div class="stat-title">Managers</div>
+        <div class="stat-value text-secondary">{{ stats().managerCount | number }}</div>
+      </div>
+      <div id="aw-org-chart-stat-span" class="stat">
+        <div class="stat-title">Avg Span of Control</div>
+        <div class="stat-value text-accent">{{ stats().averageSpanOfControl | number: '1.0-1' }}</div>
+      </div>
+      <div id="aw-org-chart-stat-depth" class="stat">
+        <div class="stat-title">Org Depth</div>
+        <div class="stat-value text-info">{{ stats().maxDepth | number }}</div>
+      </div>
+    }
+  </div>
+
+  <div class="card bg-base-100 shadow">
+    <div class="card-body">
+      @if (isLoading()) {
+        <aw-skeleton height="24rem" width="100%"></aw-skeleton>
+      } @else if (hasError()) {
+        <p class="text-secondary">Unable to load the organization chart.</p>
+      } @else if (tree(); as root) {
+        <aw-scroll-indicator ariaLabel="Organization chart">
+          <div id="aw-org-chart-tree" class="p-4">
+            <aw-org-node
+              [node]="root"
+              [expandedIds]="expandedIds()"
+              [highlightedId]="highlightedId()"
+              (toggleExpand)="onToggle($event)"
+              (navigate)="onNodeClick($event)"
+            />
+          </div>
+        </aw-scroll-indicator>
+      }
+    </div>
+  </div>
+</div>

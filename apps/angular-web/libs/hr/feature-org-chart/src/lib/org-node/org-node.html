@@ -1,0 +1,53 @@
+<div class="flex flex-col items-start">
+  <div
+    class="card bg-base-100 border border-base-300 shadow-sm w-56 cursor-pointer hover:shadow-md transition-shadow"
+    [class.ring-2]="isHighlighted()"
+    [class.ring-primary]="isHighlighted()"
+    role="button"
+    tabindex="0"
+    [attr.aria-label]="'View ' + node().fullName"
+    (click)="onCardClick()"
+    (keydown.enter)="onCardClick()"
+  >
+    <div class="card-body p-3 gap-1">
+      <div class="flex items-center justify-between gap-2">
+        <span
+          class="badge badge-sm min-w-0 truncate"
+          [class]="'badge-' + node().colorClass"
+          [title]="node().departmentName || 'Unassigned'"
+          >{{ node().departmentName || 'Unassigned' }}</span
+        >
+        @if (node().children.length > 0) {
+          <button
+            type="button"
+            class="btn btn-ghost btn-xs btn-circle"
+            [attr.aria-label]="isExpanded() ? 'Collapse' : 'Expand'"
+            [attr.aria-expanded]="isExpanded()"
+            (click)="onToggleClick($event)"
+            (keydown.enter)="$event.stopPropagation()"
+          >
+            {{ isExpanded() ? '−' : '+' }}
+          </button>
+        }
+      </div>
+      <p class="font-semibold text-sm truncate" [title]="node().fullName">{{ node().fullName }}</p>
+      <p class="text-xs text-secondary truncate" [title]="node().jobTitle">{{ node().jobTitle }}</p>
+    </div>
+  </div>
+
+  @if (node().children.length > 0) {
+    <div class="org-node-children" [class.org-node-children-expanded]="isExpanded()">
+      <div class="org-node-children-inner">
+        @for (child of node().children; track child.employeeId) {
+          <aw-org-node
+            [node]="child"
+            [expandedIds]="expandedIds()"
+            [highlightedId]="highlightedId()"
+            (toggleExpand)="onChildToggle($event)"
+            (navigate)="onChildNavigate($event)"
+          />
+        }
+      </div>
+    </div>
+  }
+</div>

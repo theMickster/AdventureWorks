@@ -4,6 +4,7 @@ import { ApiService } from '@adventureworks-web/shared/util';
 import type { Department, SearchResult } from '@adventureworks-web/shared/data-access';
 import { toQueryString } from '@adventureworks-web/shared/data-access';
 import type { Employee } from '../models/employee.model';
+import type { EmployeeOrgTreeItem } from '../models/employee-org-tree-item.model';
 import type { EmployeeCreate } from '../models/employee-create.model';
 import type { EmployeeUpdate } from '../models/employee-update.model';
 import type { EmployeeParams } from '../models/employee-params.model';
@@ -71,6 +72,10 @@ export class HrApiService {
 
   getLifecycleStatus(id: number): Observable<EmployeeLifecycleStatus> {
     return this.apiService.get<EmployeeLifecycleStatus>(`/v1/employees/${id}/lifecycle/status`);
+  }
+
+  getOrgTree(): Observable<EmployeeOrgTreeItem[]> {
+    return this.apiService.get<EmployeeOrgTreeItem[]>('/v1/employees/org-tree');
   }
 
   getDepartments(): Observable<Department[]> {

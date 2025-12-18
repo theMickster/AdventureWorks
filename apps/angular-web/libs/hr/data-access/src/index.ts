@@ -1,5 +1,6 @@
 // Models
 export type { Employee } from './lib/models/employee.model';
+export type { EmployeeOrgTreeItem } from './lib/models/employee-org-tree-item.model';
 export type { EmployeeCreate, EmployeeAddressCreate } from './lib/models/employee-create.model';
 export type { EmployeeUpdate } from './lib/models/employee-update.model';
 export type { EmployeeParams } from './lib/models/employee-params.model';
