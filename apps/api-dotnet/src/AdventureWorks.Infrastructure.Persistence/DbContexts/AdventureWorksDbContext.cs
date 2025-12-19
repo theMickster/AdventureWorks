@@ -95,6 +95,8 @@ public class AdventureWorksDbContext : DbContext, IAdventureWorksDbContext
 
     public DbSet<ActivityLogEntity> ActivityLogs { get; set; }
 
+    public DbSet<WorkOrder> WorkOrders { get; set; }
+
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
         var assemblyWithConfigurations = GetType().Assembly;

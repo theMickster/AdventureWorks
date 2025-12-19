@@ -12,6 +12,7 @@
     "@azure/msal-angular": "^5.1.0",
     "@azure/msal-browser": "^5.3.0",
     "@ngx-translate/core": "^17.0.0",
+    "@angular/forms": "^21.2.0",
     "rxjs": "~7.8.0"
   },
   "sideEffects": false

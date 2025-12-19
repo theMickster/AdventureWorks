@@ -3,7 +3,8 @@
   "version": "0.0.1",
   "peerDependencies": {
     "@angular/common": "^21.2.0",
-    "@angular/core": "^21.2.0"
+    "@angular/core": "^21.2.0",
+    "@adventureworks-web/sales/ui-trend-chart": "0.0.1"
   },
   "sideEffects": false
 }

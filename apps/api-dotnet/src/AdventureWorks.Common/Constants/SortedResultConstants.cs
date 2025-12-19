@@ -36,4 +36,10 @@ public static class SortedResultConstants
     public const string TotalDue = "TotalDue";
 
     public const string SalesOrderNumber = "SalesOrderNumber";
+
+    public const string WorkOrderId = "WorkOrderId";
+
+    public const string StartDate = "StartDate";
+
+    public const string DueDate = "DueDate";
 }

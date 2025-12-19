@@ -307,6 +307,359 @@
           }
         }
       ]
+    },
+    {
+      "name": "Work Orders",
+      "item": [
+        {
+          "name": "Work Orders List - Zero Params",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test(\"Status should be OK\", function () {\r",
+                  "    pm.response.to.have.status(200);\r",
+                  "});\r",
+                  "\r",
+                  "var response = pm.response.json();\r",
+                  "\r",
+                  "pm.test(\"Response should have correct structure\", function() {\r",
+                  "    pm.expect(response).to.exist;\r",
+                  "    pm.expect(response.results).to.be.an(\"array\");\r",
+                  "    pm.expect(response.pageNumber).to.exist;\r",
+                  "    pm.expect(response.pageSize).to.exist;\r",
+                  "    pm.expect(response.totalPages).to.exist;\r",
+                  "    pm.expect(response.totalRecords).to.exist;\r",
+                  "});\r",
+                  "\r",
+                  "pm.test(\"Defaults to page 1, page size 25\", function() {\r",
+                  "    pm.expect(response.pageNumber).to.eq(1);\r",
+                  "    pm.expect(response.pageSize).to.eq(25);\r",
+                  "});\r",
+                  "\r",
+                  "pm.test(\"Each result should have required work order fields\", function() {\r",
+                  "    response.results.forEach(function(workOrder) {\r",
+                  "        pm.expect(workOrder.workOrderId).to.be.a(\"number\");\r",
+                  "        pm.expect(workOrder.productId).to.be.a(\"number\");\r",
+                  "        pm.expect(workOrder.productName).to.be.a(\"string\");\r",
+                  "        pm.expect(workOrder.orderedQty).to.be.a(\"number\");\r",
+                  "        pm.expect(workOrder.stockedQty).to.be.a(\"number\");\r",
+                  "        pm.expect(workOrder.scrappedQty).to.be.a(\"number\");\r",
+                  "        pm.expect(workOrder.yieldRate).to.be.a(\"number\");\r",
+                  "        pm.expect(workOrder.startDate).to.exist;\r",
+                  "        pm.expect(workOrder.dueDate).to.exist;\r",
+                  "        pm.expect(workOrder.isCompletedLate).to.be.a(\"boolean\");\r",
+                  "    });\r",
+                  "});\r"
+                ],
+                "type": "text/javascript",
+                "packages": {},
+                "requests": {}
+              }
+            }
+          ],
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{adventureWorksApi}}/{{apiVersion}}/work-orders",
+              "host": [
+                "{{adventureWorksApi}}"
+              ],
+              "path": [
+                "{{apiVersion}}",
+                "work-orders"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Work Orders - Filter by ProductId = 747",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test(\"Status should be OK\", function () {\r",
+                  "    pm.response.to.have.status(200);\r",
+                  "});\r",
+                  "\r",
+                  "var response = pm.response.json();\r",
+                  "\r",
+                  "pm.test(\"All results match the requested ProductId\", function() {\r",
+                  "    response.results.forEach(function(workOrder) {\r",
+                  "        pm.expect(workOrder.productId).to.eql(747);\r",
+                  "    });\r",
+                  "});\r"
+                ],
+                "type": "text/javascript",
+                "packages": {},
+                "requests": {}
+              }
+            }
+          ],
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{adventureWorksApi}}/{{apiVersion}}/work-orders?productId=747",
+              "host": [
+                "{{adventureWorksApi}}"
+              ],
+              "path": [
+                "{{apiVersion}}",
+                "work-orders"
+              ],
+              "query": [
+                {
+                  "key": "productId",
+                  "value": "747"
+                }
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Work Orders - Filter by HasScrapped = true",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test(\"Status should be OK\", function () {\r",
+                  "    pm.response.to.have.status(200);\r",
+                  "});\r",
+                  "\r",
+                  "var response = pm.response.json();\r",
+                  "\r",
+                  "pm.test(\"All results have scrapped units\", function() {\r",
+                  "    response.results.forEach(function(workOrder) {\r",
+                  "        pm.expect(workOrder.scrappedQty).to.be.above(0);\r",
+                  "    });\r",
+                  "});\r"
+                ],
+                "type": "text/javascript",
+                "packages": {},
+                "requests": {}
+              }
+            }
+          ],
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{adventureWorksApi}}/{{apiVersion}}/work-orders?hasScrapped=true",
+              "host": [
+                "{{adventureWorksApi}}"
+              ],
+              "path": [
+                "{{apiVersion}}",
+                "work-orders"
+              ],
+              "query": [
+                {
+                  "key": "hasScrapped",
+                  "value": "true"
+                }
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Work Orders - Filter by ScrapReasonId = 7",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test(\"Status should be OK\", function () {\r",
+                  "    pm.response.to.have.status(200);\r",
+                  "});\r",
+                  "\r",
+                  "var response = pm.response.json();\r",
+                  "\r",
+                  "pm.test(\"Results should be populated\", function() {\r",
+                  "    pm.expect(response.results).to.be.an(\"array\");\r",
+                  "});\r"
+                ],
+                "type": "text/javascript",
+                "packages": {},
+                "requests": {}
+              }
+            }
+          ],
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{adventureWorksApi}}/{{apiVersion}}/work-orders?scrapReasonId=7",
+              "host": [
+                "{{adventureWorksApi}}"
+              ],
+              "path": [
+                "{{apiVersion}}",
+                "work-orders"
+              ],
+              "query": [
+                {
+                  "key": "scrapReasonId",
+                  "value": "7"
+                }
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Work Orders - Filter by Date Range (2011)",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test(\"Status should be OK\", function () {\r",
+                  "    pm.response.to.have.status(200);\r",
+                  "});\r",
+                  "\r",
+                  "var response = pm.response.json();\r",
+                  "\r",
+                  "pm.test(\"All results fall within the requested date range\", function() {\r",
+                  "    response.results.forEach(function(workOrder) {\r",
+                  "        var start = new Date(workOrder.startDate);\r",
+                  "        pm.expect(start >= new Date(\"2011-01-01\") && start <= new Date(\"2011-12-31\")).to.be.true;\r",
+                  "    });\r",
+                  "});\r"
+                ],
+                "type": "text/javascript",
+                "packages": {},
+                "requests": {}
+              }
+            }
+          ],
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{adventureWorksApi}}/{{apiVersion}}/work-orders?startDate=2011-01-01&endDate=2011-12-31",
+              "host": [
+                "{{adventureWorksApi}}"
+              ],
+              "path": [
+                "{{apiVersion}}",
+                "work-orders"
+              ],
+              "query": [
+                {
+                  "key": "startDate",
+                  "value": "2011-01-01"
+                },
+                {
+                  "key": "endDate",
+                  "value": "2011-12-31"
+                }
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Work Orders - Validation - Invalid Date Range (From > To)",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test(\"Status should be Bad Request\", function () {\r",
+                  "    pm.response.to.have.status(400);\r",
+                  "});\r"
+                ],
+                "type": "text/javascript",
+                "packages": {},
+                "requests": {}
+              }
+            }
+          ],
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{adventureWorksApi}}/{{apiVersion}}/work-orders?startDate=2011-12-31&endDate=2011-01-01",
+              "host": [
+                "{{adventureWorksApi}}"
+              ],
+              "path": [
+                "{{apiVersion}}",
+                "work-orders"
+              ],
+              "query": [
+                {
+                  "key": "startDate",
+                  "value": "2011-12-31"
+                },
+                {
+                  "key": "endDate",
+                  "value": "2011-01-01"
+                }
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Work Orders List - Page Number Out of Bounds",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test(\"Status should be OK\", function () {\r",
+                  "    pm.response.to.have.status(200);\r",
+                  "});\r",
+                  "\r",
+                  "var response = pm.response.json();\r",
+                  "\r",
+                  "pm.test(\"Out of bounds page returns empty results\", function() {\r",
+                  "    pm.expect(response.results).to.be.an(\"array\");\r",
+                  "    pm.expect(response.results.length).to.eq(0);\r",
+                  "});\r"
+                ],
+                "type": "text/javascript",
+                "packages": {},
+                "requests": {}
+              }
+            }
+          ],
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{adventureWorksApi}}/{{apiVersion}}/work-orders?pageNumber=99999&pageSize=10",
+              "host": [
+                "{{adventureWorksApi}}"
+              ],
+              "path": [
+                "{{apiVersion}}",
+                "work-orders"
+              ],
+              "query": [
+                {
+                  "key": "pageNumber",
+                  "value": "99999"
+                },
+                {
+                  "key": "pageSize",
+                  "value": "10"
+                }
+              ]
+            }
+          },
+          "response": []
+        }
+      ]
     }
   ],
   "auth": {

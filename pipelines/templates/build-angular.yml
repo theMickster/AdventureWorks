@@ -36,7 +36,7 @@ steps:
       restoreKeys: 'nx | "$(Agent.OS)"'
       path: "${{ parameters.workingDirectory }}/.nx/cache"
 
-  - script: npx nx lint adventureworks-web $(nxVerbose)
+  - script: npx nx run-many -t lint $(nxVerbose)
     displayName: "Lint"
     workingDirectory: "${{ parameters.workingDirectory }}"
 

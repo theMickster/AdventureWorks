@@ -1,0 +1,40 @@
+{
+  "iisSettings": {
+    "windowsAuthentication": false,
+    "anonymousAuthentication": true,
+    "iisExpress": {
+      "applicationUrl": "http://localhost:16000",
+      "sslPort": 44369
+    }
+  },
+  "$schema": "https://json.schemastore.org/launchsettings.json",
+  "profiles": {
+    "AdventureWorks.API": {
+      "commandName": "Project",
+      "dotnetRunMessages": true,
+      "launchBrowser": true,
+      "applicationUrl": "https://localhost:44369;http://localhost:44370",
+      "environmentVariables": {
+        "ASPNETCORE_ENVIRONMENT": "Development"
+      }
+    },
+    "AdventureWorks.API.LoadTesting": {
+      "commandName": "Project",
+      "dotnetRunMessages": true,
+      "launchBrowser": false,
+      "applicationUrl": "https://localhost:44369;http://localhost:44370",
+      "environmentVariables": {
+        "ASPNETCORE_ENVIRONMENT": "LoadTesting"
+      }
+    },
+    "AdventureWorks.API.PlaywrightTesting": {
+      "commandName": "Project",
+      "dotnetRunMessages": true,
+      "launchBrowser": false,
+      "applicationUrl": "https://localhost:44369;http://localhost:44370",
+      "environmentVariables": {
+        "ASPNETCORE_ENVIRONMENT": "PlaywrightTesting"
+      }
+    }
+  }
+}

@@ -133,6 +133,12 @@ Key invariants:
 - `IsPartialMonth`: after materializing the trend list, a single `MaxAsync` on the filtered dataset resolves the latest order date. Only the entry whose Year/Month matches that date — and where `maxOrderDate.Day < DateTime.DaysInMonth(year, month)` — is flagged as partial.
 - When `filter == null`, `PercentageOfTotal` is always 100; the unfiltered `SumAsync` is skipped (`unfilteredTotal = totalRevenue`).
 
+#### Work Order List (`WorkOrderRepository`, `WorkOrderParameter`) — DbSet Registration Gap & Pagination Default Override
+
+`WorkOrder` (`Domain/Entities/Production/`) had a correct `IEntityTypeConfiguration<T>` class (`WorkOrderConfiguration`) long before it was queryable — it was not exposed as a `DbSet<T>` on `AdventureWorksDbContext` or `IAdventureWorksDbContext`. When adding a new read slice for an entity that already has EF configuration, check both DbContext files for a matching `DbSet<T>` before assuming the wiring is complete; add it additively (don't reorder existing `DbSet` declarations).
+
+`QueryStringParamsBase.PageSize` is now `virtual` (mirroring the pre-existing `virtual SortOrder`) so `WorkOrderParameter` can override the base's default of 10 with a default of 25, per its list endpoint's product requirements. Follow the same pattern (own backing field + override) for any future list feature that needs a non-default page size — don't change the base default itself.
+
 #### Real-Time Infrastructure (SignalR + MediatR Notification Pipeline)
 
 - **Hub endpoint**: `/hubs/dashboard` — `DashboardHub`, requires JWT via `[Authorize(Policy = "DashboardAccess")]`. WebSocket auth passes the token as a query string (`access_token`); the middleware in `Program.cs` maps it to the `Authorization` header automatically.

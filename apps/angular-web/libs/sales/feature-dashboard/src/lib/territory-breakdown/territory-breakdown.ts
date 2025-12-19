@@ -25,10 +25,9 @@ export class TerritoryBreakdownComponent {
   protected readonly grouped = computed(() => {
     const map = new Map<string, DashboardTerritory[]>();
     for (const t of this.territories()) {
-      if (!map.has(t.group)) {
-        map.set(t.group, []);
-      }
-      map.get(t.group)!.push(t);
+      const group = map.get(t.group) ?? [];
+      group.push(t);
+      map.set(t.group, group);
     }
     return Array.from(map.entries()).sort(([a], [b]) => a.localeCompare(b));
   });

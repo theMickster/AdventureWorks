@@ -51,6 +51,7 @@ From `apps/api-dotnet/tests/AdventureWorks.LoadTests.k6`:
 ./run-tests.sh smoke-sales-order
 ./run-tests.sh smoke-sales-person
 ./run-tests.sh smoke-store
+./run-tests.sh smoke-work-order
 ```
 
 `load` ramps virtual users 0 → 50 over 2 minutes, sustains 50 VUs for 5 minutes, then ramps down to 0
@@ -77,6 +78,8 @@ the Store checks are skipped with a warning.
 `smoke-sales-person` exercises `GET /api/v1/salespersons`, `GET /api/v1/salespersons/{id}` (id `275`, Michael Blythe, confirmed via the local AdventureWorks DB), and `GET /api/v1/salespersons/{id}/performance` with a p95 < 300ms threshold, plus a negative-path check that a nonexistent sales person id (`999999999`) returns 404. Every endpoint requires auth, so this profile always needs `LOADTEST_*` credentials or a pre-set `K6_AUTH_TOKEN`/`AUTH_TOKEN` — there is no unauthenticated fallback.
 
 `smoke-store` exercises `GET /api/v1/stores`, `GET /api/v1/stores/{id}` (id `292`, Next-Door Bike Store, confirmed via the local AdventureWorks DB), `POST /api/v1/stores/search`, `GET /api/v1/stores/{id}/addresses`, and `GET /api/v1/stores/{id}/contacts` with a p95 < 300ms threshold, plus a negative-path check that a nonexistent store id (`999999999`) returns 404. That 404 check targets `GET /api/v1/stores/{id}` specifically — `ReadStoreAddressController` and `ReadStoreContactController` don't verify the parent store exists (they return `200` with an empty list for any positive id), so a 404 assertion against those endpoints would fail. Every endpoint requires auth, so this profile always needs `LOADTEST_*` credentials or a pre-set `K6_AUTH_TOKEN`/`AUTH_TOKEN` — there is no unauthenticated fallback.
+
+`smoke-work-order` exercises `GET /api/v1/work-orders`, a `productId` filter (`747`, confirmed via the local AdventureWorks DB — WorkOrderID 13 for that product has an `EndDate` after its `DueDate`, exercising the completed-late computed field), a `hasScrapped=true` filter, and a `startDate`/`endDate` range filter, all with a p95 < 300ms threshold, plus a negative-path check that an inverted date range (`startDate` after `endDate`) returns 400 per Rule-02. Every endpoint requires auth, so this profile always needs `LOADTEST_*` credentials or a pre-set `K6_AUTH_TOKEN`/`AUTH_TOKEN` — there is no unauthenticated fallback.
 
 ## Environment Variables
 

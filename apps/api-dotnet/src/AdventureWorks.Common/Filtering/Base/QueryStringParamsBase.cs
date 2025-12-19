@@ -36,8 +36,11 @@ public abstract class QueryStringParamsBase
     /// <summary>
     /// The amount of records requested to be returned to a list endpoint's caller
     /// </summary>
-    /// <remarks>The page size cannot be greater than fifty (50).</remarks>
-    public int PageSize
+    /// <remarks>
+    /// The page size cannot be greater than fifty (50). <c>virtual</c> so subclasses can override
+    /// the default page size (e.g. <see cref="WorkOrderParameter"/> defaults to 25).
+    /// </remarks>
+    public virtual int PageSize
     {
         get => _take;
         init => _take = value <= 0 ? 1 : (value > MaxTake ? MaxTake : value);

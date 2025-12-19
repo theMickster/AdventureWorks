@@ -77,7 +77,10 @@ describe('TerritoryBreakdownComponent', () => {
     const allRows = fixture.nativeElement.querySelectorAll('tr') as NodeListOf<HTMLElement>;
     const germanyRow = Array.from(allRows).find((row) => row.textContent?.includes('Germany'));
     expect(germanyRow).toBeTruthy();
-    expect(germanyRow!.classList.contains('cursor-pointer')).toBe(false);
+    if (!germanyRow) {
+      return;
+    }
+    expect(germanyRow.classList.contains('cursor-pointer')).toBe(false);
   });
 
   it('zero-orderCount row does not trigger navigate when clicked', () => {
@@ -85,7 +88,10 @@ describe('TerritoryBreakdownComponent', () => {
     const allRows = fixture.nativeElement.querySelectorAll('tr') as NodeListOf<HTMLElement>;
     const germanyRow = Array.from(allRows).find((row) => row.textContent?.includes('Germany'));
     expect(germanyRow).toBeTruthy();
-    germanyRow!.click();
+    if (!germanyRow) {
+      return;
+    }
+    germanyRow.click();
     expect(router.navigate).not.toHaveBeenCalled();
   });
 });
