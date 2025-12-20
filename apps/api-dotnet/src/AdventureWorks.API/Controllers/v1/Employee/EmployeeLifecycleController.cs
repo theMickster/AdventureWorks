@@ -1,3 +1,4 @@
+using AdventureWorks.API.libs.InternalHelpers;
 using AdventureWorks.Application.Features.HumanResources.Commands;
 using AdventureWorks.Application.Features.HumanResources.Queries;
 using AdventureWorks.Models.Features.HumanResources;
@@ -145,8 +146,8 @@ public sealed class EmployeeLifecycleController : ControllerBase
             "Terminating employee {EmployeeId}: TerminationDate={TerminationDate}, Type={Type}, Reason={Reason}",
             employeeId,
             inputModel.TerminationDate,
-            inputModel.TerminationType,
-            inputModel.Reason);
+            LogSanitizer.Sanitize(inputModel.TerminationType),
+            LogSanitizer.Sanitize(inputModel.Reason));
 
         try
         {

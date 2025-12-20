@@ -1,4 +1,5 @@
-﻿using AdventureWorks.Application.Exceptions;
+﻿using AdventureWorks.API.libs.InternalHelpers;
+using AdventureWorks.Application.Exceptions;
 using AdventureWorks.Application.Interfaces;
 using AdventureWorks.Common.Constants;
 using FluentValidation;
@@ -37,8 +38,8 @@ public sealed class ExceptionHandlerMiddleware(RequestDelegate next, ILogger<Exc
             // no longer listening.
             _logger.LogInformation(
                 "Request canceled by client. Path: {Path}, Method: {Method}",
-                context.Request.Path,
-                context.Request.Method);
+                LogSanitizer.Sanitize(context.Request.Path.Value),
+                LogSanitizer.Sanitize(context.Request.Method));
         }
         catch (Exception ex)
         {
@@ -56,8 +57,8 @@ public sealed class ExceptionHandlerMiddleware(RequestDelegate next, ILogger<Exc
             exception,
             "Unhandled exception occurred. CorrelationId: {CorrelationId}, Path: {Path}, Method: {Method}",
             correlationId,
-            context.Request.Path,
-            context.Request.Method);
+            LogSanitizer.Sanitize(context.Request.Path.Value),
+            LogSanitizer.Sanitize(context.Request.Method));
 
         context.Response.ContentType = "application/json";
 

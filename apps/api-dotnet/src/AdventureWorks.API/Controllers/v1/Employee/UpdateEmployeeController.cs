@@ -1,3 +1,4 @@
+using AdventureWorks.API.libs.InternalHelpers;
 using AdventureWorks.Application.Features.HumanResources.Commands;
 using AdventureWorks.Application.Features.HumanResources.Queries;
 using AdventureWorks.Models.Features.HumanResources;
@@ -72,8 +73,8 @@ public sealed class UpdateEmployeeController : ControllerBase
         _logger.LogInformation(
             "Updating employee: ID {Id}, Name: {FirstName} {LastName}",
             id,
-            inputModel.FirstName,
-            inputModel.LastName);
+            LogSanitizer.Sanitize(inputModel.FirstName),
+            LogSanitizer.Sanitize(inputModel.LastName));
 
         var command = new UpdateEmployeeCommand
         {

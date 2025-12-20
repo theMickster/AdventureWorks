@@ -1,3 +1,4 @@
+using AdventureWorks.API.libs.InternalHelpers;
 using AdventureWorks.Application.Interfaces;
 using AdventureWorks.Common.Constants;
 
@@ -37,7 +38,7 @@ public sealed class CorrelationIdMiddleware(RequestDelegate next, ILogger<Correl
         }
         else
         {
-            _logger.LogDebug("Using existing correlation ID from request: {CorrelationId}", correlationId);
+            _logger.LogDebug("Using existing correlation ID from request: {CorrelationId}", LogSanitizer.Sanitize(correlationId));
         }
 
         // Store in accessor for use throughout the request
