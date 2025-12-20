@@ -3,7 +3,10 @@ using Azure.Messaging.ServiceBus;
 const string connectionString = "Endpoint=sb://localhost:5673;SharedAccessKeyName=RootManageSharedAccessKey;SharedAccessKey=SAS_KEY_VALUE;UseDevelopmentEmulator=true;";
 const string topicName = "sales-order-events";
 
-var salesOrderId = args.Length > 0 ? int.Parse(args[0]) : 71774;
+// Outside AdventureWorks' real SalesOrderID range (43659-75123) — an ID inside that range
+// already has TransactionHistory rows, which trips ReserveStockActivity's idempotency
+// short-circuit and silently skips the actual reservation.
+var salesOrderId = args.Length > 0 ? int.Parse(args[0]) : 900000;
 
 var payload = $$"""
 {

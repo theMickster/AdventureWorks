@@ -38,7 +38,6 @@ public sealed class CheckInventoryActivityCore(SalesOrderSagaDbContext dbContext
 public sealed class CheckInventoryActivity(SalesOrderSagaDbContext dbContext)
 {
     [Function(nameof(CheckInventoryActivity))]
-    public Task<LineItemAvailability> RunAsync(
-        [ActivityTrigger] SalesOrderSagaLineItem input, TaskActivityContext context) =>
-        new CheckInventoryActivityCore(dbContext).RunAsync(context, input);
+    public Task<LineItemAvailability> RunAsync([ActivityTrigger] SalesOrderSagaLineItem input) =>
+        new CheckInventoryActivityCore(dbContext).RunAsync(new FunctionsTaskActivityContext(nameof(CheckInventoryActivity)), input);
 }

@@ -37,7 +37,6 @@ public sealed class ValidateOrderActivityCore : TaskActivity<SalesOrderSagaInput
 public static class ValidateOrderActivity
 {
     [Function(nameof(ValidateOrderActivity))]
-    public static Task<ValidateOrderResult> RunAsync(
-        [ActivityTrigger] SalesOrderSagaInput input, TaskActivityContext context) =>
-        new ValidateOrderActivityCore().RunAsync(context, input);
+    public static Task<ValidateOrderResult> RunAsync([ActivityTrigger] SalesOrderSagaInput input) =>
+        new ValidateOrderActivityCore().RunAsync(new FunctionsTaskActivityContext(nameof(ValidateOrderActivity)), input);
 }

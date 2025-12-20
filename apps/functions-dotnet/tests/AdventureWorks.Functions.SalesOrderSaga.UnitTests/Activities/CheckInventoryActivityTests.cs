@@ -54,10 +54,9 @@ public class CheckInventoryActivityTests
         dbContext.ProductInventories.Add(new ProductInventory { ProductId = 316, LocationId = 1, Shelf = "A", Bin = 1, Quantity = 1361 });
         await dbContext.SaveChangesAsync();
 
-        var context = new Mock<TaskActivityContext>(MockBehavior.Strict);
         var line = new SalesOrderSagaLineItem { ProductId = 316, OrderQty = 10, UnitPrice = 10m };
 
-        var result = await new CheckInventoryActivity(dbContext).RunAsync(line, context.Object);
+        var result = await new CheckInventoryActivity(dbContext).RunAsync(line);
 
         Assert.True(result.IsAvailable);
     }

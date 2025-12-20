@@ -48,10 +48,10 @@ In a second terminal:
 
 ```bash
 cd apps/functions-dotnet/local-dev/smoke-test-tool
-dotnet run -- 71774
+dotnet run -- 900000
 ```
 
-`71774` is the sales order ID — change it to send a different order.
+`900000` is the sales order ID — change it to send a different order. Keep it outside AdventureWorks' real `SalesOrderID` range (43659-75123); an ID inside that range already has `TransactionHistory` rows and will trip `ReserveStockActivity`'s replay-idempotency short-circuit, silently skipping the actual reservation.
 
 ## 5. Confirm it fired
 
@@ -59,13 +59,13 @@ In the `func start` terminal, expect (order and exact timings will vary):
 
 ```
 Executing 'Functions.SalesOrderSagaStarter' ...
-Scheduling new SalesOrderSagaOrchestrator orchestration with instance ID 'sales-order-saga-71774' and NNN bytes of input data.
-Started sales order saga sales-order-saga-71774 for SalesOrderId 71774.
+Scheduling new SalesOrderSagaOrchestrator orchestration with instance ID 'sales-order-saga-900000' and NNN bytes of input data.
+Started sales order saga sales-order-saga-900000 for SalesOrderId 900000.
 Executed 'Functions.SalesOrderSagaStarter' (Succeeded, ...)
 Executing 'Functions.SalesOrderSagaOrchestrator' ...
-'SalesOrderSagaOrchestrator' orchestration with ID 'sales-order-saga-71774' started.
-Sales order saga orchestration accepted for SalesOrderId 71774 with 1 line item(s).
-'SalesOrderSagaOrchestrator' orchestration with ID 'sales-order-saga-71774' completed.
+'SalesOrderSagaOrchestrator' orchestration with ID 'sales-order-saga-900000' started.
+Sales order saga orchestration accepted for SalesOrderId 900000 with 1 line item(s).
+'SalesOrderSagaOrchestrator' orchestration with ID 'sales-order-saga-900000' completed.
 Executed 'Functions.SalesOrderSagaOrchestrator' (Succeeded, ...)
 ```
 

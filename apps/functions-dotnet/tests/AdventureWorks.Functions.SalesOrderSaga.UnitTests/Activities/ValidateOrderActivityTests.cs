@@ -67,9 +67,7 @@ public class ValidateOrderActivityTests
     [Fact]
     public async Task ActivityAdapter_DelegatesTo_Core()
     {
-        var context = new Mock<TaskActivityContext>(MockBehavior.Strict);
-
-        var result = await ValidateOrderActivity.RunAsync(ValidInput(), context.Object);
+        var result = await ValidateOrderActivity.RunAsync(ValidInput());
 
         Assert.True(result.IsValid);
     }

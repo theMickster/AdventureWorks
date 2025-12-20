@@ -163,7 +163,6 @@ public sealed class ReserveStockActivityCore(SalesOrderSagaDbContext dbContext) 
 public sealed class ReserveStockActivity(SalesOrderSagaDbContext dbContext)
 {
     [Function(nameof(ReserveStockActivity))]
-    public Task<ReservationReceipt> RunAsync(
-        [ActivityTrigger] SalesOrderSagaInput input, TaskActivityContext context) =>
-        new ReserveStockActivityCore(dbContext).RunAsync(context, input);
+    public Task<ReservationReceipt> RunAsync([ActivityTrigger] SalesOrderSagaInput input) =>
+        new ReserveStockActivityCore(dbContext).RunAsync(new FunctionsTaskActivityContext(nameof(ReserveStockActivity)), input);
 }

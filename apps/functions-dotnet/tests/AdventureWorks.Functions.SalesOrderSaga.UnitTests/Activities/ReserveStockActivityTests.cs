@@ -155,10 +155,9 @@ public class ReserveStockActivityTests
         dbContext.ProductInventories.Add(new ProductInventory { ProductId = 316, LocationId = 1, Shelf = "A", Bin = 1, Quantity = 1361 });
         await dbContext.SaveChangesAsync();
 
-        var context = new Mock<TaskActivityContext>(MockBehavior.Strict);
         var input = Input(new SalesOrderSagaLineItem { ProductId = 316, OrderQty = 5, UnitPrice = 10m });
 
-        var receipt = await new ReserveStockActivity(dbContext).RunAsync(input, context.Object);
+        var receipt = await new ReserveStockActivity(dbContext).RunAsync(input);
 
         Assert.Equal([316], receipt.ReservedProductIds);
     }
