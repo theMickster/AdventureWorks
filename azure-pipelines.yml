@@ -51,6 +51,18 @@ stages:
         steps:
           - template: pipelines/templates/build-angular.yml
 
+  - stage: BuildFunctions
+    displayName: 'Build Functions'
+    dependsOn: []
+    jobs:
+      - job: BuildSalesOrderSagaFunctions
+        displayName: 'Build Sales Order Saga Functions'
+        steps:
+          - template: pipelines/templates/build-functions.yml
+            parameters:
+              dotNetSdkVersion: $(dotNetSdkVersion)
+              buildConfiguration: $(buildConfiguration)
+
   # --- Deploy Dev (auto on every main build) ---
 
   - template: pipelines/templates/deploy-stage.yml

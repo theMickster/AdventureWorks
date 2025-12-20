@@ -1,0 +1,98 @@
+# Build Azure Functions app: pack local NuGet deps, restore, build, test, publish artifact.
+# Called as a job template from the main pipeline.
+
+parameters:
+  - name: solution
+    type: string
+    default: "apps/functions-dotnet/AdventureWorks.Functions.sln"
+  - name: project
+    type: string
+    default: "apps/functions-dotnet/src/AdventureWorks.Functions.SalesOrderSaga/AdventureWorks.Functions.SalesOrderSaga.csproj"
+  - name: testProject
+    type: string
+    default: "apps/functions-dotnet/tests/AdventureWorks.Functions.SalesOrderSaga.UnitTests/AdventureWorks.Functions.SalesOrderSaga.UnitTests.csproj"
+  - name: orchestrationTestProject
+    type: string
+    default: "apps/functions-dotnet/tests/AdventureWorks.Functions.SalesOrderSaga.OrchestrationTests/AdventureWorks.Functions.SalesOrderSaga.OrchestrationTests.csproj"
+  - name: buildConfiguration
+    type: string
+    default: "Release"
+  - name: dotNetSdkVersion
+    type: string
+    default: "10.0.x"
+  - name: artifactName
+    type: string
+    default: "functions-artifact"
+
+steps:
+  - task: UseDotNet@2
+    displayName: "Install .NET SDK ${{ parameters.dotNetSdkVersion }}"
+    inputs:
+      packageType: sdk
+      version: "${{ parameters.dotNetSdkVersion }}"
+
+  - task: Cache@2
+    displayName: "Cache NuGet packages"
+    inputs:
+      key: 'nuget | "$(Agent.OS)" | apps/functions-dotnet/**/*.csproj | apps/api-dotnet/src/AdventureWorks.Domain/*.csproj | apps/api-dotnet/src/AdventureWorks.Application/*.csproj'
+      restoreKeys: 'nuget | "$(Agent.OS)"'
+      path: "$(HOME)/.nuget/packages"
+
+  - script: ./pack-local-nuget.sh
+    displayName: "Pack local NuGet feed (Domain/Application)"
+    workingDirectory: apps/functions-dotnet
+
+  - task: DotNetCoreCLI@2
+    displayName: "Restore NuGet packages"
+    inputs:
+      command: restore
+      projects: "${{ parameters.solution }}"
+      arguments: "--verbosity $(dotnetVerbosity)"
+
+  - task: DotNetCoreCLI@2
+    displayName: "Build solution"
+    inputs:
+      command: build
+      projects: "${{ parameters.solution }}"
+      arguments: "--configuration ${{ parameters.buildConfiguration }} --no-restore --verbosity $(dotnetVerbosity)"
+
+  - task: DotNetCoreCLI@2
+    displayName: "Run unit tests"
+    inputs:
+      command: test
+      projects: "${{ parameters.testProject }}"
+      testRunTitle: "AdventureWorks.Functions UnitTests - $(Build.BuildNumber)"
+      publishTestResults: true
+      arguments: '--configuration ${{ parameters.buildConfiguration }} --no-build --collect "XPlat Code Coverage" --verbosity $(dotnetVerbosity)'
+
+  - task: DotNetCoreCLI@2
+    displayName: "Run orchestration tests"
+    continueOnError: true
+    inputs:
+      command: test
+      projects: "${{ parameters.orchestrationTestProject }}"
+      testRunTitle: "AdventureWorks.Functions OrchestrationTests - $(Build.BuildNumber)"
+      publishTestResults: true
+      arguments: '--configuration ${{ parameters.buildConfiguration }} --no-build --collect "XPlat Code Coverage" --verbosity $(dotnetVerbosity)'
+
+  - task: DotNetCoreCLI@2
+    displayName: "Publish Functions app"
+    inputs:
+      command: publish
+      publishWebProjects: false
+      projects: "${{ parameters.project }}"
+      arguments: "--configuration ${{ parameters.buildConfiguration }} --output $(Build.ArtifactStagingDirectory)/functions --verbosity $(dotnetVerbosity)"
+
+  - task: ArchiveFiles@2
+    displayName: "Zip Functions output"
+    inputs:
+      rootFolderOrFile: "$(Build.ArtifactStagingDirectory)/functions"
+      includeRootFolder: false
+      archiveType: zip
+      archiveFile: "$(Build.ArtifactStagingDirectory)/functions.zip"
+
+  - task: PublishPipelineArtifact@1
+    displayName: "Publish Functions artifact"
+    inputs:
+      targetPath: "$(Build.ArtifactStagingDirectory)/functions.zip"
+      artifact: "${{ parameters.artifactName }}"
