@@ -10,6 +10,7 @@ Use the most specific guidance that applies to the files you are touching:
 - API-specific GitHub Copilot guidance: `.github/instructions/api-dotnet.instructions.md`
 - Angular-specific GitHub Copilot guidance: `.github/instructions/angular-web.instructions.md`
 - DbUp-specific guidance: `.github/instructions/dbup.instructions.md`
+- Functions-specific GitHub Copilot guidance: `.github/instructions/functions-dotnet.instructions.md`
 - API Claude-specific guidance: `apps/api-dotnet/.claude/CLAUDE.md`
 - API implementation/testing walkthroughs:
   - `apps/api-dotnet/.claude/guides/adding-features.md`
@@ -23,6 +24,7 @@ This monorepo contains:
 
 - `apps/api-dotnet/` — .NET 10 API
 - `apps/angular-web/` — Angular 21 + Nx frontend
+- `apps/functions-dotnet/` — .NET 10 isolated-worker Azure Functions (Sales Order Saga)
 - `database/dbup/` — DbUp migration tooling
 - `database/sql-change-automation/` — SQL Change Automation project
 - `tools/console-apps/` — utility console apps

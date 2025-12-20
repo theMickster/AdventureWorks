@@ -1,5 +1,5 @@
 using System.Text.Json;
-using AdventureWorks.Functions.SalesOrderSaga.Models;
+using AdventureWorks.Application.Features.Sales.Saga.Models;
 using Microsoft.Azure.Functions.Worker;
 using Microsoft.DurableTask;
 using Microsoft.DurableTask.Client;

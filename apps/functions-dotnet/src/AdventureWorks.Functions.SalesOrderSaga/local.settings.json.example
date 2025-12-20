@@ -6,6 +6,7 @@
         "FUNCTIONS_WORKER_RUNTIME": "dotnet-isolated",
         "ServiceBusConnection": "Endpoint=sb://localhost:5673;SharedAccessKeyName=RootManageSharedAccessKey;SharedAccessKey=SAS_KEY_VALUE;UseDevelopmentEmulator=true;",
         "ServiceBusSalesOrderEventsTopicName": "sales-order-events",
-        "ServiceBusSalesOrderSagaSubscriptionName": "sales-order-saga"
+        "ServiceBusSalesOrderSagaSubscriptionName": "sales-order-saga",
+        "SqlConnectionString": "Server=localhost,1433;Database=AdventureWorks;User Id=sa;Password=REPLACE_ME;Encrypt=false;"
     }
 }

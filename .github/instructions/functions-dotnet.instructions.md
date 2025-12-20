@@ -8,13 +8,12 @@ applyTo: "apps/functions-dotnet/**/*"
 
 Use this file together with `apps/functions-dotnet/.claude/CLAUDE.md`.
 
-## Scope (US 806)
+## Scope (US 806-807)
 
-This app currently contains only the Sales Order Saga **scaffold**: a Service Bus-triggered
-starter, a deterministic-instance-ID orchestrator stub, and shared domain/application packages
-consumed via a local NuGet feed. Real saga activities (inventory validation, stock reservation,
-payment authorization, compensation) are out of scope until stories 807-810 — do not add
-SQL-touching code here without confirming with the user first.
+US 806 scaffolded the Sales Order Saga app; US 807 added the first real saga steps (order
+validation, fan-out inventory check, transactional stock reservation) and this app's first SQL
+access. See the CLAUDE.md's Architecture Decisions for the SQL/connection-string mechanics.
+Payment authorization and compensation remain out of scope until stories 808-810.
 
 ## Local NuGet Feed
 
@@ -27,14 +26,12 @@ SQL-touching code here without confirming with the user first.
   restoring or building this app. If restore still resolves an old version, run
   `dotnet nuget locals all --clear`.
 
-## Managed Identity Only
+## Managed Identity for Storage/Service Bus; SQL Auth Only for Local Dev
 
-- No connection strings or shared keys in `local.settings.json.example` or Bicep outputs.
-- Storage (`AzureWebJobsStorage`, `DurableStorage`) and Service Bus (`ServiceBusConnection`) use
-  identity-based connections (`__accountName`/`__credential` or `__fullyQualifiedNamespace`
-  app-setting prefixes) in Azure. Local dev uses Azurite (`UseDevelopmentStorage=true`) and the
-  Service Bus emulator's fixed dev-only connection string — neither is a real secret.
-- SQL/MI is explicitly deferred — see the app's CLAUDE.md before adding any SQL access.
+- Storage and Service Bus use identity-based connections in Azure, never a connection string.
+  Local dev uses Azurite and the Service Bus emulator's fixed dev-only connection string.
+- SQL is the one exception, per Architecture Decision 4 in the app's CLAUDE.md: SQL-auth locally
+  (gitignored `local.settings.json`, never committed), managed identity in Azure.
 
 ## Durable Functions
 

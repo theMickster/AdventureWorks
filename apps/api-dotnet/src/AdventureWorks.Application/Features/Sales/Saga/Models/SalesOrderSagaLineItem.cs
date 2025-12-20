@@ -1,8 +1,9 @@
-namespace AdventureWorks.Functions.SalesOrderSaga.Models;
+namespace AdventureWorks.Application.Features.Sales.Saga.Models;
 
 /// <summary>
 /// One order line carried on an <c>OrderCreated</c> event. Mirrors the subset of
-/// <c>Sales.SalesOrderDetail</c> the saga needs to reserve stock — not a full row projection.
+/// <c>Sales.SalesOrderDetail</c> the sales order saga needs to check inventory and reserve
+/// stock — not a full row projection.
 /// </summary>
 public sealed class SalesOrderSagaLineItem
 {

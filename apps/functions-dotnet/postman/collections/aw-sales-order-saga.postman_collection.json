@@ -1,0 +1,84 @@
+{
+  "info": {
+    "_postman_id": "af69afe2-d56e-4f4d-9908-5e872bd1af07",
+    "name": "AW Sales Order Saga",
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
+    "description": "First Postman collection for apps/functions-dotnet (US 807). Covers the HTTP-testable status read of a sales order saga orchestration. No OAuth — this app authenticates via a Functions key (?code=), not Azure AD/JWT like apps/api-dotnet."
+  },
+  "item": [
+    {
+      "name": "Sales Order Saga",
+      "item": [
+        {
+          "name": "Get Saga Status",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"Status is 200 or 404\", () => {",
+                  "    pm.expect(pm.response.code).to.be.oneOf([200, 404]);",
+                  "});",
+                  "",
+                  "if (pm.response.code === 200) {",
+                  "    const body = pm.response.json();",
+                  "    pm.test(\"Response has instanceId\", () => pm.expect(body.instanceId).to.be.a(\"string\"));",
+                  "    pm.test(\"Response has runtimeStatus\", () => pm.expect(body.runtimeStatus).to.be.a(\"string\"));",
+                  "}"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{functionsBaseUrl}}/saga-status/{{salesOrderId}}?code={{functionKey}}",
+              "host": [
+                "{{functionsBaseUrl}}"
+              ],
+              "path": [
+                "saga-status",
+                "{{salesOrderId}}"
+              ],
+              "query": [
+                {
+                  "key": "code",
+                  "value": "{{functionKey}}"
+                }
+              ]
+            }
+          },
+          "response": []
+        }
+      ]
+    }
+  ],
+  "event": [
+    {
+      "listen": "prerequest",
+      "script": {
+        "type": "text/javascript",
+        "exec": [
+          ""
+        ]
+      }
+    },
+    {
+      "listen": "test",
+      "script": {
+        "type": "text/javascript",
+        "exec": [
+          ""
+        ]
+      }
+    }
+  ],
+  "variable": [
+    {
+      "key": "salesOrderId",
+      "value": "71774"
+    }
+  ]
+}

@@ -1,6 +1,6 @@
 using System.Text.Json;
+using AdventureWorks.Application.Features.Sales.Saga.Models;
 using AdventureWorks.Functions.SalesOrderSaga.Functions;
-using AdventureWorks.Functions.SalesOrderSaga.Models;
 using Microsoft.DurableTask;
 using Microsoft.DurableTask.Client;
 using Microsoft.Extensions.Logging.Abstractions;

@@ -11,7 +11,7 @@
 - 🚧 UI pipeline in ADO: #561 in progress (US-739 done, Feature 934 done); #562 now In Progress (Departments CRUD implemented); #563 currently New
 - ✅ #935 Customer Module complete (2026-07-07) — Feature 947, US-951/952/953 (Customer LTV list, API + Angular)
 - 🚧 Additional Initiative #559 backlog epics: #936 (Work Orders/Manufacturing) In Progress — ✅ US-966 Work Orders List API (`GET /api/v1/work-orders`, `WorkOrderRepository.GetWorkOrdersAsync`/`SearchWorkOrdersAsync`, server-computed `yieldRate`/`isCompletedLate`); #937 (Purchasing/Vendor) In Progress — ✅ Feature 977, US-981 (Vendor list ranked by spend with credit risk indicators, API only)
-- 🚧 Epic #569 (Polyglot Azure Functions Architecture) started: US 806 Sales Order Saga scaffold in place
+- 🚧 Epic #569 (Polyglot Azure Functions Architecture) started: US 806 Sales Order Saga scaffold in place; ✅ US-807 (validate order, fan-out inventory check, transactional stock reservation) done
 - 📋 Future infrastructure/function backlog: #567, #568 (#566 marked Removed)
 
 ---
@@ -119,9 +119,11 @@
   support this), Flex Consumption Function App with managed identity only (no connection
   strings), local NuGet feed for `AdventureWorks.Domain`/`AdventureWorks.Application`, and local
   dev via Azurite + the Service Bus emulator.
-- Remaining: US 807-810 (real saga activities — inventory validation, stock reservation, payment
-  authorization, compensation). SQL/MI access is explicitly deferred until one of those stories
-  needs it — see `apps/functions-dotnet/.claude/CLAUDE.md`.
+- ✅ US 807 (`apps/functions-dotnet`): `ValidateOrderActivity`, `CheckInventorySubOrchestrator`
+  (fan-out per line item), `ReserveStockActivity` (transactional decrement + `TransactionHistory`
+  insert). First SQL access in this app — a minimal `SalesOrderSagaDbContext`, environment-specific
+  connection string (SQL-auth locally, managed identity in Azure).
+- Remaining: US 808-810 (payment authorization, compensation).
 - Still future: #567 (Intelligent Document Processing Function), #568 (Real-Time Fraud Detection
   Function) — no work started.
 
@@ -143,7 +145,7 @@
 
 ### Later
 
-1. Continue Azure Functions work under Epic #569 (US 807-810: real Sales Order Saga activities) after current UI/testing priorities.
+1. Continue Azure Functions work under Epic #569 (US 808-810: payment authorization, compensation) after current UI/testing priorities.
 
 ---
 
@@ -175,6 +177,6 @@
 
 ---
 
-**Document Version**: 3.7  
-**Last Updated**: 2026-07-20  
+**Document Version**: 3.8  
+**Last Updated**: 2026-07-23  
 **Status**: Active execution
