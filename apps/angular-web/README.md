@@ -34,6 +34,10 @@ libs/
   hr/
     data-access/               # HR models, API service (type:data-access, scope:hr)
     feature-departments/       # Department list/detail/create/edit (type:feature, scope:hr)
+    feature-employees/         # Employee create wizard, detail/edit, lifecycle modals (type:feature, scope:hr)
+    feature-org-chart/         # Interactive org chart (type:feature, scope:hr)
+  public/
+    feature-landing/           # Public landing page (type:feature, scope:public)
 ```
 
 ### Library Dependency Rules

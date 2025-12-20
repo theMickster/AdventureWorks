@@ -1,0 +1,573 @@
+{
+	"info": {
+		"_postman_id": "95e2f25c-6b52-48e4-9b04-b3f176b18701",
+		"name": "Purchasing",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
+		"_exporter_id": "2569631"
+	},
+	"auth": {
+		"type": "oauth2",
+		"oauth2": [
+			{
+				"key": "accessTokenUrl",
+				"value": "https://login.microsoftonline.com/{{tenantId}}/oauth2/v2.0/token",
+				"type": "string"
+			},
+			{
+				"key": "authUrl",
+				"value": "https://login.microsoftonline.com/{{tenantId}}/oauth2/v2.0/authorize",
+				"type": "string"
+			},
+			{
+				"key": "scope",
+				"value": "{{scope}}",
+				"type": "string"
+			},
+			{
+				"key": "clientSecret",
+				"value": "{{clientSecret}}",
+				"type": "string"
+			},
+			{
+				"key": "clientId",
+				"value": "{{clientId}}",
+				"type": "string"
+			},
+			{
+				"key": "redirect_uri",
+				"value": "{{callbackUrl}}",
+				"type": "string"
+			},
+			{
+				"key": "client_authentication",
+				"value": "header",
+				"type": "string"
+			},
+			{
+				"key": "tokenName",
+				"value": "AdventureWorks",
+				"type": "string"
+			},
+			{
+				"key": "useBrowser",
+				"value": false,
+				"type": "boolean"
+			},
+			{
+				"key": "grant_type",
+				"value": "authorization_code",
+				"type": "string"
+			},
+			{
+				"key": "refreshRequestParams",
+				"value": [],
+				"type": "any"
+			},
+			{
+				"key": "tokenRequestParams",
+				"value": [],
+				"type": "any"
+			},
+			{
+				"key": "authRequestParams",
+				"value": [],
+				"type": "any"
+			},
+			{
+				"key": "challengeAlgorithm",
+				"value": "S256",
+				"type": "string"
+			},
+			{
+				"key": "addTokenTo",
+				"value": "header",
+				"type": "string"
+			}
+		]
+	},
+	"event": [
+		{
+			"listen": "prerequest",
+			"script": {
+				"type": "text/javascript",
+				"requests": {},
+				"exec": [
+					"var moment = require('moment');\r",
+					"pm.collectionVariables.set('currentDateTime', moment().format( (\"YYYYMMDD_hhmmss\")));\r",
+					"pm.collectionVariables.set('currentDate', moment().format( (\"YYYY-MM-DD\")));\r",
+					""
+				]
+			}
+		},
+		{
+			"listen": "test",
+			"script": {
+				"type": "text/javascript",
+				"requests": {},
+				"exec": [
+					""
+				]
+			}
+		}
+	],
+	"item": [
+		{
+			"name": "List",
+			"id": "315955fc-efa1-4d74-939e-7f6036e6117c",
+			"item": [
+				{
+					"name": "Get Vendors (default list)",
+					"id": "0a21c061-f08c-4523-aefe-f7770d391be1",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"Status is 200\", function () {",
+									"    pm.response.to.have.status(200);",
+									"});",
+									"",
+									"pm.test(\"Has X-Correlation-Id header\", function () {",
+									"    pm.response.to.have.header(\"X-Correlation-Id\");",
+									"});",
+									"",
+									"var body = pm.response.json();",
+									"",
+									"pm.test(\"Response has paginated shape\", function () {",
+									"    pm.expect(body.results).to.be.an(\"array\");",
+									"    pm.expect(body).to.have.property(\"pageNumber\");",
+									"    pm.expect(body).to.have.property(\"pageSize\");",
+									"    pm.expect(body).to.have.property(\"totalRecords\");",
+									"});",
+									"",
+									"pm.test(\"Defaults to pageSize 25\", function () {",
+									"    pm.expect(body.pageSize).to.eql(25);",
+									"});",
+									"",
+									"pm.test(\"Each result has required fields\", function () {",
+									"    if (body.results.length === 0) return;",
+									"    var r = body.results[0];",
+									"    pm.expect(r).to.have.property(\"vendorId\");",
+									"    pm.expect(r).to.have.property(\"name\");",
+									"    pm.expect(r).to.have.property(\"accountNumber\");",
+									"    pm.expect(r).to.have.property(\"creditRatingLabel\");",
+									"    pm.expect(r).to.have.property(\"preferredVendorStatus\");",
+									"    pm.expect(r).to.have.property(\"activeFlag\");",
+									"    pm.expect(r).to.have.property(\"totalSpend\");",
+									"    pm.expect(r).to.have.property(\"poCount\");",
+									"    pm.expect(r).to.have.property(\"isHighRisk\");",
+									"});",
+									"",
+									"pm.test(\"Results are ordered by totalSpend descending\", function () {",
+									"    for (var i = 1; i < body.results.length; i++) {",
+									"        pm.expect(body.results[i - 1].totalSpend).to.be.at.least(body.results[i].totalSpend);",
+									"    }",
+									"});",
+									"",
+									"pm.test(\"isHighRisk is only true for creditRatingLabel Average or Below Average\", function () {",
+									"    body.results.forEach(function (r) {",
+									"        if (r.isHighRisk) {",
+									"            pm.expect([\"Average\", \"Below Average\"]).to.include(r.creditRatingLabel);",
+									"        }",
+									"    });",
+									"});"
+								],
+								"type": "text/javascript",
+								"packages": {},
+								"requests": {}
+							}
+						}
+					],
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{adventureWorksApi}}/{{apiVersion}}/vendors?pageNumber=1&pageSize=25",
+							"host": [
+								"{{adventureWorksApi}}"
+							],
+							"path": [
+								"{{apiVersion}}",
+								"vendors"
+							],
+							"query": [
+								{
+									"key": "pageNumber",
+									"value": "1"
+								},
+								{
+									"key": "pageSize",
+									"value": "25"
+								}
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Get Vendors (page beyond total - empty state)",
+					"id": "6a5aa7e8-eaad-48b6-a75c-a82843268456",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"Status is 200\", function () {",
+									"    pm.response.to.have.status(200);",
+									"});",
+									"",
+									"pm.test(\"Has X-Correlation-Id header\", function () {",
+									"    pm.response.to.have.header(\"X-Correlation-Id\");",
+									"});",
+									"",
+									"var body = pm.response.json();",
+									"",
+									"pm.test(\"Results is an empty array\", function () {",
+									"    pm.expect(body.results).to.be.an(\"array\").that.is.empty;",
+									"});",
+									"",
+									"pm.test(\"totalRecords is still reported\", function () {",
+									"    pm.expect(body.totalRecords).to.be.a(\"number\");",
+									"});"
+								],
+								"type": "text/javascript",
+								"packages": {},
+								"requests": {}
+							}
+						}
+					],
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{adventureWorksApi}}/{{apiVersion}}/vendors?pageNumber=999999&pageSize=25",
+							"host": [
+								"{{adventureWorksApi}}"
+							],
+							"path": [
+								"{{apiVersion}}",
+								"vendors"
+							],
+							"query": [
+								{
+									"key": "pageNumber",
+									"value": "999999"
+								},
+								{
+									"key": "pageSize",
+									"value": "25"
+								}
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "Filter",
+			"id": "fa449ee8-1beb-400e-99f9-1de291f43f01",
+			"item": [
+				{
+					"name": "Filter by Credit Rating",
+					"id": "97d0ef12-6c10-48c6-b364-df66107c0a42",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"Status is 200\", function () {",
+									"    pm.response.to.have.status(200);",
+									"});",
+									"",
+									"var body = pm.response.json();",
+									"",
+									"pm.test(\"All results have the Average credit rating label\", function () {",
+									"    body.results.forEach(function (r) {",
+									"        pm.expect(r.creditRatingLabel).to.eql(\"Average\");",
+									"    });",
+									"});"
+								],
+								"type": "text/javascript",
+								"packages": {},
+								"requests": {}
+							}
+						}
+					],
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{adventureWorksApi}}/{{apiVersion}}/vendors?creditRating=4",
+							"host": [
+								"{{adventureWorksApi}}"
+							],
+							"path": [
+								"{{apiVersion}}",
+								"vendors"
+							],
+							"query": [
+								{
+									"key": "creditRating",
+									"value": "4"
+								}
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Filter by Preferred Vendor Status",
+					"id": "a4b4218b-5ecf-4499-83a0-fa0230d82da4",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"Status is 200\", function () {",
+									"    pm.response.to.have.status(200);",
+									"});",
+									"",
+									"var body = pm.response.json();",
+									"",
+									"pm.test(\"All results are preferred vendors\", function () {",
+									"    body.results.forEach(function (r) {",
+									"        pm.expect(r.preferredVendorStatus).to.eql(true);",
+									"    });",
+									"});"
+								],
+								"type": "text/javascript",
+								"packages": {},
+								"requests": {}
+							}
+						}
+					],
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{adventureWorksApi}}/{{apiVersion}}/vendors?preferredVendorStatus=true",
+							"host": [
+								"{{adventureWorksApi}}"
+							],
+							"path": [
+								"{{apiVersion}}",
+								"vendors"
+							],
+							"query": [
+								{
+									"key": "preferredVendorStatus",
+									"value": "true"
+								}
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Filter by Active Flag",
+					"id": "604f6f53-f700-4d32-9c58-5d84b4695944",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"Status is 200\", function () {",
+									"    pm.response.to.have.status(200);",
+									"});",
+									"",
+									"var body = pm.response.json();",
+									"",
+									"pm.test(\"All results are active\", function () {",
+									"    body.results.forEach(function (r) {",
+									"        pm.expect(r.activeFlag).to.eql(true);",
+									"    });",
+									"});"
+								],
+								"type": "text/javascript",
+								"packages": {},
+								"requests": {}
+							}
+						}
+					],
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{adventureWorksApi}}/{{apiVersion}}/vendors?activeFlag=true",
+							"host": [
+								"{{adventureWorksApi}}"
+							],
+							"path": [
+								"{{apiVersion}}",
+								"vendors"
+							],
+							"query": [
+								{
+									"key": "activeFlag",
+									"value": "true"
+								}
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Combined Filters",
+					"id": "1c590162-0b19-4cd5-b5e2-be97861bd1f9",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"Status is 200\", function () {",
+									"    pm.response.to.have.status(200);",
+									"});",
+									"",
+									"var body = pm.response.json();",
+									"",
+									"pm.test(\"All results match every filter\", function () {",
+									"    body.results.forEach(function (r) {",
+									"        pm.expect(r.creditRatingLabel).to.eql(\"Average\");",
+									"        pm.expect(r.preferredVendorStatus).to.eql(true);",
+									"        pm.expect(r.activeFlag).to.eql(true);",
+									"    });",
+									"});"
+								],
+								"type": "text/javascript",
+								"packages": {},
+								"requests": {}
+							}
+						}
+					],
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{adventureWorksApi}}/{{apiVersion}}/vendors?creditRating=4&preferredVendorStatus=true&activeFlag=true",
+							"host": [
+								"{{adventureWorksApi}}"
+							],
+							"path": [
+								"{{apiVersion}}",
+								"vendors"
+							],
+							"query": [
+								{
+									"key": "creditRating",
+									"value": "4"
+								},
+								{
+									"key": "preferredVendorStatus",
+									"value": "true"
+								},
+								{
+									"key": "activeFlag",
+									"value": "true"
+								}
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "Validation",
+			"id": "aa5dc623-bd2d-4bdf-913d-b4718fff63ca",
+			"item": [
+				{
+					"name": "Invalid Credit Rating (400)",
+					"id": "e1a1b2c3-d4e5-4f6a-8b7c-9d0e1f2a3b4c",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"Status should be Bad Request\", function () {",
+									"    pm.response.to.have.status(400);",
+									"});"
+								],
+								"type": "text/javascript",
+								"packages": {},
+								"requests": {}
+							}
+						}
+					],
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{adventureWorksApi}}/{{apiVersion}}/vendors?creditRating=9",
+							"host": [
+								"{{adventureWorksApi}}"
+							],
+							"path": [
+								"{{apiVersion}}",
+								"vendors"
+							],
+							"query": [
+								{
+									"key": "creditRating",
+									"value": "9"
+								}
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Get Vendors - Unauthenticated (401)",
+					"id": "f2b3c4d5-e6f7-4a8b-9c0d-1e2f3a4b5c6d",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"Status should be Unauthorized\", function () {",
+									"    pm.response.to.have.status(401);",
+									"});"
+								],
+								"type": "text/javascript",
+								"packages": {},
+								"requests": {}
+							}
+						}
+					],
+					"request": {
+						"auth": {
+							"type": "noauth"
+						},
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{adventureWorksApi}}/{{apiVersion}}/vendors",
+							"host": [
+								"{{adventureWorksApi}}"
+							],
+							"path": [
+								"{{apiVersion}}",
+								"vendors"
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		}
+	],
+	"variable": [
+		{
+			"key": "currentDateTime",
+			"value": ""
+		},
+		{
+			"key": "currentDate",
+			"value": ""
+		},
+		{
+			"key": "randomString",
+			"value": ""
+		}
+	]
+}

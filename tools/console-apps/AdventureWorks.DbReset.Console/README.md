@@ -57,8 +57,8 @@ The tool refuses to run any destructive verb until five rules pass against the r
 
 - **Source-marker mechanism**: `snapshot` stamps `dbreset.role = source` as a SQL extended property on the source DB. `restore` drops it from the restored target — a restored DB cannot carry the marker even if the `.bak` came from a source DB. Rule #5 checks for this property before any destructive verb runs.
 - **TargetNamePattern** is matched against `InitialCatalog` (the actual database name from the connection string), not the configuration key. Default: `^AdventureWorks_(E2E|Test|Load)([A-Za-z0-9_]*)?$`.
-- **Dev DB safeguard**: `AdventureWorksDev` fails Rule #1 (same key as `SnapshotSource`) AND carries the source-marker after first snapshot — two independent checks prevent it from ever being a target.
-- **Baseline drift**: Because `snapshot` reads from the local dev DB, developers with different seed data will have different baselines — this is expected, not a bug; test authors should treat the baseline as the data on the machine that last ran `snapshot`.
+- **Dev DB safeguard**: `AdventureWorksDev` fails Rule #1 (same key as `SnapshotSource`) and carries the source-marker after first snapshot.
+- **Baseline drift**: `snapshot` reads from the local dev DB, so the baseline is whichever developer's seed data last ran `snapshot`. Treat it as the current baseline, not a fixed one.
 
 ## Configuration
 

@@ -52,34 +52,32 @@ From `apps/api-dotnet/tests/AdventureWorks.LoadTests.k6`:
 ./run-tests.sh smoke-sales-person
 ./run-tests.sh smoke-store
 ./run-tests.sh smoke-work-order
+./run-tests.sh smoke-vendor
 ```
 
-`load` ramps virtual users 0 → 50 over 2 minutes, sustains 50 VUs for 5 minutes, then ramps down to 0
-over 1 minute, exercising `GET /health`, `GET /version`, and the read-only Store endpoints
-(`GET /api/v1/stores`, `GET /api/v1/stores/{id}`, `GET /api/v1/stores/{id}/addresses`,
-`GET /api/v1/stores/{id}/contacts`) — `POST /api/v1/stores/search` is intentionally excluded since
-it's a write-shaped call outside this profile's read-only scope. Thresholds: `http_req_duration`
-p95 < 500ms and p99 < 1500ms, `http_req_failed` rate < 1%, `checks` pass rate > 99%. The Store
-endpoints require auth, so `run-tests.sh` requires `LOADTEST_*` credentials for this profile —
-there's no partial-anonymous run through the script. If you invoke the profile directly with `k6 run`
-(bypassing `run-tests.sh`) without a token, only the unauthenticated health/version checks run and
-the Store checks are skipped with a warning.
+`load` ramps 0 → 50 VUs over 2 min, holds 50 VUs for 5 min, ramps down over 1 min.
+`stress` pushes beyond that to find the breaking point. Both need `LOADTEST_*` (see below).
+Every `smoke-*` profile targets one domain, threshold p95 < 300ms unless noted, and includes at
+least one negative-path check (404/400/401) alongside the happy path — read the profile source in
+`profiles/` for exact endpoints and assertions.
 
-`smoke-human-resources` exercises the 5 HumanResources endpoints (employees, departments, shifts) with a p95 < 300ms threshold; every endpoint requires auth, so this profile always needs `LOADTEST_*` credentials or a pre-set `K6_AUTH_TOKEN`/`AUTH_TOKEN` — there is no unauthenticated fallback.
+| Profile                  | Domain              | Auth                                    |
+| ------------------------ | -------------------- | ---------------------------------------- |
+| `load`                   | health, version, stores | required (p95 < 500ms / p99 < 1500ms) |
+| `stress`                 | same as `load`, higher VUs | required |
+| `smoke-human-resources`  | employees, departments, shifts | required |
+| `smoke-person`           | persons, country/state | persons required; country/state anonymous |
+| `smoke-production`      | products, product-models, categories | categories anonymous; rest required |
+| `smoke-product-review`  | product reviews + stats | required |
+| `smoke-sales-order`     | sales-orders, dashboard, sales-reasons, territories, ship-methods, special-offers | required |
+| `smoke-sales-person`    | salespersons, performance | required |
+| `smoke-store`           | stores, search, addresses, contacts | required |
+| `smoke-work-order`      | work-orders + filters | required |
+| `smoke-vendor`          | vendors + filters | required |
 
-`smoke-person` exercises the Person endpoints (plus two anonymous Country/State reads) with a p95 < 300ms threshold, including a negative-path check that a nonexistent Person id returns 404. The Person list/by-id checks require auth, so `run-tests.sh` requires `LOADTEST_*` credentials for this profile, same as `smoke-human-resources` — there's no partial-anonymous run through the script. The Country/State reads don't need a token themselves; if you invoke the profile directly with `k6 run` (bypassing `run-tests.sh`) without credentials, they still execute and the Person checks are skipped with a warning.
-
-`smoke-production` exercises `GET /api/v1/products`, `GET /api/v1/products/{id}`, and `GET /api/v1/product-models` with a p95 < 300ms threshold, plus a negative-path check that a nonexistent product id (`999999999`) returns 404 — Product's route id parameter is `int`-typed, so (unlike Departments' `short`) this is a clean 404 with no binding-width quirk. `GET /api/v1/products/categories` is `[AllowAnonymous]` and runs first, unconditionally. The remaining checks require auth, so `run-tests.sh` requires `LOADTEST_*` credentials for this profile, same as `smoke-human-resources`.
-
-`smoke-product-review` exercises `GET /api/v1/products/{productId}/reviews` and `GET /api/v1/products/{productId}/reviews/statistics` for product id `937` (confirmed via the local AdventureWorks DB to have 2 reviews, the most of any product) with a p95 < 300ms threshold. Both endpoints require auth, so `run-tests.sh` requires `LOADTEST_*` credentials for this profile, same as `smoke-human-resources`. If you invoke the profile directly with `k6 run` (bypassing `run-tests.sh`) without a token, it takes the negative path instead: both requests are sent without a bearer token and assert `401` explicitly, satisfying the "unset/invalid token" acceptance case without ever surfacing as an unhandled script error.
-
-`smoke-sales-order` exercises `GET /api/v1/sales-orders`, `GET /api/v1/sales-orders/{id}` (id `43659`/SO43659, confirmed via the local AdventureWorks DB), `GET /api/v1/sales/dashboard`, `GET /api/v1/sales-reasons`, `GET /api/v1/territories`, `GET /api/v1/ship-methods`, and `GET /api/v1/special-offers` with a p95 < 300ms threshold, plus a negative-path check that a nonexistent sales order id (`999999999`) returns 404. The ADO acceptance criteria text for this story says "sales-territories", but there is no such route — the real controller (`ReadSalesTerritoryController`) exposes `GET /api/v1/territories`, which is what the script calls. Every endpoint requires auth, so this profile always needs `LOADTEST_*` credentials or a pre-set `K6_AUTH_TOKEN`/`AUTH_TOKEN` — there is no unauthenticated fallback.
-
-`smoke-sales-person` exercises `GET /api/v1/salespersons`, `GET /api/v1/salespersons/{id}` (id `275`, Michael Blythe, confirmed via the local AdventureWorks DB), and `GET /api/v1/salespersons/{id}/performance` with a p95 < 300ms threshold, plus a negative-path check that a nonexistent sales person id (`999999999`) returns 404. Every endpoint requires auth, so this profile always needs `LOADTEST_*` credentials or a pre-set `K6_AUTH_TOKEN`/`AUTH_TOKEN` — there is no unauthenticated fallback.
-
-`smoke-store` exercises `GET /api/v1/stores`, `GET /api/v1/stores/{id}` (id `292`, Next-Door Bike Store, confirmed via the local AdventureWorks DB), `POST /api/v1/stores/search`, `GET /api/v1/stores/{id}/addresses`, and `GET /api/v1/stores/{id}/contacts` with a p95 < 300ms threshold, plus a negative-path check that a nonexistent store id (`999999999`) returns 404. That 404 check targets `GET /api/v1/stores/{id}` specifically — `ReadStoreAddressController` and `ReadStoreContactController` don't verify the parent store exists (they return `200` with an empty list for any positive id), so a 404 assertion against those endpoints would fail. Every endpoint requires auth, so this profile always needs `LOADTEST_*` credentials or a pre-set `K6_AUTH_TOKEN`/`AUTH_TOKEN` — there is no unauthenticated fallback.
-
-`smoke-work-order` exercises `GET /api/v1/work-orders`, a `productId` filter (`747`, confirmed via the local AdventureWorks DB — WorkOrderID 13 for that product has an `EndDate` after its `DueDate`, exercising the completed-late computed field), a `hasScrapped=true` filter, and a `startDate`/`endDate` range filter, all with a p95 < 300ms threshold, plus a negative-path check that an inverted date range (`startDate` after `endDate`) returns 400 per Rule-02. Every endpoint requires auth, so this profile always needs `LOADTEST_*` credentials or a pre-set `K6_AUTH_TOKEN`/`AUTH_TOKEN` — there is no unauthenticated fallback.
+"required" means `run-tests.sh` needs `LOADTEST_*` creds or a pre-set `K6_AUTH_TOKEN`/`AUTH_TOKEN` —
+no unauthenticated fallback. `smoke` (unqualified) is the exception: it runs anonymously by default
+and only exercises `/health`/`/version` unless you opt in with credentials.
 
 ## Environment Variables
 

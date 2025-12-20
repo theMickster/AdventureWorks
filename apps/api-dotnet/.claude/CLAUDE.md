@@ -6,7 +6,7 @@ Enterprise-grade RESTful API built with .NET 10.0 implementing Clean Architectur
 
 ### What This Project Does
 
-- Exposes RESTful APIs for Sales, HumanResources, and AddressManagement domains using Clean Architecture
+- Exposes RESTful APIs for Sales, HumanResources, AddressManagement, and Purchasing domains using Clean Architecture
 - Implements CQRS pattern via MediatR with FluentValidation and AutoMapper
 - JWT-based authentication with Microsoft Identity and Azure Key Vault for secrets
 
@@ -138,6 +138,20 @@ Key invariants:
 `WorkOrder` (`Domain/Entities/Production/`) had a correct `IEntityTypeConfiguration<T>` class (`WorkOrderConfiguration`) long before it was queryable — it was not exposed as a `DbSet<T>` on `AdventureWorksDbContext` or `IAdventureWorksDbContext`. When adding a new read slice for an entity that already has EF configuration, check both DbContext files for a matching `DbSet<T>` before assuming the wiring is complete; add it additively (don't reorder existing `DbSet` declarations).
 
 `QueryStringParamsBase.PageSize` is now `virtual` (mirroring the pre-existing `virtual SortOrder`) so `WorkOrderParameter` can override the base's default of 10 with a default of 25, per its list endpoint's product requirements. Follow the same pattern (own backing field + override) for any future list feature that needs a non-default page size — don't change the base default itself.
+
+#### Vendor Repository (`VendorRepository.GetVendorsAsync`)
+
+Powers `GET /api/v1/vendors` (US-981) — a paginated, risk-ranked vendor list. Aggregate-only, join-free query pattern, same rationale as the Sales Order Analytics repository above: `PurchaseOrderHeaders.GroupBy(p => p.VendorId)` runs as one query with no `.Include()`/join; `Vendors.AsNoTracking().ToListAsync()` runs as a second, separate query; the two are joined **in memory**. The vendor table is small (104 rows), so materializing it and joining client-side is cheap and predictable — EF Core would otherwise evaluate the `GroupBy` client-side the moment a join is layered into the same query.
+
+**Critical invariant — rank is computed before filters, always:** Every vendor's spend-rank and `IsHighRisk` flag are computed against the **full** vendor population, before `creditRating`, `preferredVendorStatus`, or `activeFlag` filters are applied. Filters only narrow which already-ranked rows are returned in the final page — they never change what a vendor's rank or `IsHighRisk` value is. A future "optimization" that reorders this — e.g. filtering the vendor list first, then ranking only the filtered subset — would silently change `IsHighRisk` results whenever a filter is applied, and there is no test signal that would tell you it's wrong. `VendorRepositoryTests.GetVendorsAsync_RankIsComputedBeforeFilters_NotAfter` is a regression test guarding exactly this.
+
+**Rank semantics — true `RANK()`, not `ROW_NUMBER()`:** Rank is computed in C# as `1 + count of vendors with strictly greater total spend`, so tied vendors share a rank and the next distinct spend value skips ahead accordingly (e.g. two vendors tied at rank 52 push the next vendor to rank 54, not 53). `OrderByDescending().Select((x, i) => i + 1)` would be `ROW_NUMBER()` semantics and give tied vendors distinct, incorrect ranks — do not use that shape here.
+
+**IsHighRisk:** `true` only when `CreditRating >= 4` (Average/Below Average) **and** the vendor's pre-filter rank is `<= 52` (the top half of the 104-vendor population).
+
+**Zero-PO vendors:** Vendors with no purchase orders are still included in results, with `TotalSpend = 0` and `PoCount = 0` — they are never silently dropped by the join.
+
+**`VendorParameter.PageSize` default override:** `QueryStringParamsBase.PageSize` was made `virtual` specifically so `VendorParameter` could override the base class's default of 10 with 25 (the AC-specified default for this endpoint), following the same `virtual`/`override` pattern already used for `QueryStringParamsBase.SortOrder` (see `StoreCustomerParameter`). A `new` hide instead of `override` would silently break pagination — `QueryStringParamsBase.GetRecordsToSkip()` calls `PageSize` non-polymorphically from the base class, so only a true `override` is picked up by that call.
 
 #### Real-Time Infrastructure (SignalR + MediatR Notification Pipeline)
 

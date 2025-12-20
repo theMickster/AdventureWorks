@@ -3,6 +3,7 @@ using AdventureWorks.Domain.Entities.Dashboard;
 using AdventureWorks.Domain.Entities.HumanResources;
 using AdventureWorks.Domain.Entities.Person;
 using AdventureWorks.Domain.Entities.Production;
+using AdventureWorks.Domain.Entities.Purchasing;
 using AdventureWorks.Domain.Entities.Sales;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Logging;
@@ -96,6 +97,10 @@ public class AdventureWorksDbContext : DbContext, IAdventureWorksDbContext
     public DbSet<ActivityLogEntity> ActivityLogs { get; set; }
 
     public DbSet<WorkOrder> WorkOrders { get; set; }
+
+    public DbSet<Vendor> Vendors { get; set; }
+
+    public DbSet<PurchaseOrderHeader> PurchaseOrderHeaders { get; set; }
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {

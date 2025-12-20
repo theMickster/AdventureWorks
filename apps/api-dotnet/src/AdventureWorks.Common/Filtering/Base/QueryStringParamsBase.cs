@@ -38,7 +38,7 @@ public abstract class QueryStringParamsBase
     /// </summary>
     /// <remarks>
     /// The page size cannot be greater than fifty (50). <c>virtual</c> so subclasses can override
-    /// the default page size (e.g. <see cref="WorkOrderParameter"/> defaults to 25).
+    /// the default page size is 25).
     /// </remarks>
     public virtual int PageSize
     {
@@ -58,10 +58,10 @@ public abstract class QueryStringParamsBase
         get => _sortOrder;
         init => _sortOrder = value == null ? SortedResultConstants.Ascending : value.Trim().ToLower()
             switch
-            {
-                "asc" or "ascending" => SortedResultConstants.Ascending,
-                "desc" or "descending" => SortedResultConstants.Descending,
-                _ => SortedResultConstants.Ascending
-            };
+        {
+            "asc" or "ascending" => SortedResultConstants.Ascending,
+            "desc" or "descending" => SortedResultConstants.Descending,
+            _ => SortedResultConstants.Ascending
+        };
     }
 }

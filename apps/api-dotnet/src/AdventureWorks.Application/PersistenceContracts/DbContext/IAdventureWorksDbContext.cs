@@ -1,6 +1,7 @@
 ﻿using AdventureWorks.Domain.Entities.HumanResources;
 using AdventureWorks.Domain.Entities.Person;
 using AdventureWorks.Domain.Entities.Production;
+using AdventureWorks.Domain.Entities.Purchasing;
 using AdventureWorks.Domain.Entities.Sales;
 using Microsoft.EntityFrameworkCore;
 
@@ -69,4 +70,8 @@ public interface IAdventureWorksDbContext
     DbSet<StoreSalesPersonHistoryEntity> StoreSalesPersonHistories { get; set; }
 
     DbSet<WorkOrder> WorkOrders { get; set; }
+
+    DbSet<Vendor> Vendors { get; set; }
+
+    DbSet<PurchaseOrderHeader> PurchaseOrderHeaders { get; set; }
 }

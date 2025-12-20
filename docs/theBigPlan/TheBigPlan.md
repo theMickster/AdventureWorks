@@ -10,7 +10,7 @@
 - 🚧 Testing Foundation: Epic #565 in progress (#669, #923, #672 done; #670, #671 remaining)
 - 🚧 UI pipeline in ADO: #561 in progress (US-739 done, Feature 934 done); #562 now In Progress (Departments CRUD implemented); #563 currently New
 - ✅ #935 Customer Module complete (2026-07-07) — Feature 947, US-951/952/953 (Customer LTV list, API + Angular)
-- 🚧 Additional Initiative #559 backlog epics: #936 (Work Orders/Manufacturing) In Progress — ✅ US-966 Work Orders List API (`GET /api/v1/work-orders`, `WorkOrderRepository.GetWorkOrdersAsync`/`SearchWorkOrdersAsync`, server-computed `yieldRate`/`isCompletedLate`); #937 (Purchasing/Vendor) New
+- 🚧 Additional Initiative #559 backlog epics: #936 (Work Orders/Manufacturing) In Progress — ✅ US-966 Work Orders List API (`GET /api/v1/work-orders`, `WorkOrderRepository.GetWorkOrdersAsync`/`SearchWorkOrdersAsync`, server-computed `yieldRate`/`isCompletedLate`); #937 (Purchasing/Vendor) In Progress — ✅ Feature 977, US-981 (Vendor list ranked by spend with credit risk indicators, API only)
 - 🚧 Epic #569 (Polyglot Azure Functions Architecture) started: US 806 Sales Order Saga scaffold in place
 - 📋 Future infrastructure/function backlog: #567, #568 (#566 marked Removed)
 
@@ -32,7 +32,7 @@
 
 ### Epic Status (Initiative 1)
 
-- **ADO rollup**: Epics — Done 4, In Progress 1, New 5. Features — Done 36, In Progress 8, New 16.
+- **ADO rollup**: Epics — Done 4, In Progress 1, New 4. Features — Done 36, In Progress 8, New 16.
 
 #### Epic #560 -- Angular Foundation ✅ COMPLETE (2026-03-17)
 
@@ -77,7 +77,7 @@
 - 🚧 #562 HR CRUD UI — In Progress (5 child features; Departments CRUD list/detail/create/edit implemented; ✅ US-756 Create Employee wizard implemented; ✅ US-757 Edit Employee Personal Info inline implemented; ✅ Feature 719 (Interactive Organization Chart) done — US-762–764 complete, `hr/feature-org-chart` at `/hr/org-chart`, recursive `OrgNodeComponent`, `OrgChartStore`, department-group color-coding, search/click-through, summary stats)
 - 📋 #563 Real-Time Dashboard — New (5 child features)
 - 🚧 #936 Work Orders / Manufacturing Module — In Progress (4 child features); ✅ US-966 Work Orders List API done (`GET /api/v1/work-orders` — paginated/filterable, computed `yieldRate` and `isCompletedLate`)
-- 📋 #937 Purchasing / Vendor Management Module — New (4 child features)
+- 🚧 #937 Purchasing / Vendor Management Module — In Progress (4 child features); ✅ Feature 977 US-981 done — `GET /api/v1/vendors` (`VendorRepository.GetVendorsAsync`), paginated vendor list ranked by total spend descending with pre-computed `isHighRisk` flags (CreditRating >= 4 and pre-filter spend-rank <= 52); API only, Angular UI is a separate story
 
 ### Dependencies and Sequencing (Initiative 1)
 

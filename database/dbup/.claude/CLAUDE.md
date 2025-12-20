@@ -14,25 +14,23 @@
 
 ```
 database/dbup/
-├── src/
-│   └── AdventureWorks.DbUp/
-│       ├── Scripts/                    # Migration scripts (EmbeddedResources)
-│       │   ├── 001_InitialSetup/       # Version folders
-│       │   │   ├── 001_CreateSchema.sql
-│       │   │   └── 002_CreateTables.sql
-│       │   ├── 002_AddAuditFields/
-│       │   └── 003_PersonEnhancements/
-│       ├── Program.cs                   # DbUp engine configuration
-│       └── AdventureWorks.DbUp.csproj
+├── AdventureWorks.DbUp/
+│   ├── Scripts/                     # Migration scripts (EmbeddedResources), flat — no subfolders
+│   │   ├── 20250701_1000_BASELINE_FullTextIndexes.sql
+│   │   ├── 20250702_1007_ALTER_add_BusinessEntity_IsEntraUser.sql
+│   │   └── 20260605_1202_CREATE_dbo_ActivityLog.sql
+│   ├── ProgrammableObjects/          # Always-run objects (views, procs, functions), by schema
+│   ├── Program.cs                    # DbUp engine configuration
+│   └── AdventureWorks.DbUp.csproj
 └── README.md
 ```
 
 **Rules:**
 
-- Scripts organized in version folders: `{version}_{Description}/`
-- Scripts named: `{sequence}_{ActionObject}.sql`
+- Scripts live flat in `Scripts/` — no version subfolders.
+- Scripts named: `{YYYYMMDD}_{HHmm}_{ACTION}_{Description}.sql`
 - All scripts marked as `EmbeddedResource` in .csproj
-- Version folders processed in alphabetical order
+- DbUp runs scripts in filename (timestamp) order
 
 ## Migration Script Standards
 
@@ -40,16 +38,13 @@ database/dbup/
 
 ```
 Scripts/
-  001_InitialSetup/
-    001_CreateHRSchema.sql
-    002_CreateEmployeeTable.sql
-    003_CreateDepartmentTable.sql
-  002_AuditFields/
-    001_AddCreatedDateToEmployee.sql
-    002_AddModifiedDateToEmployee.sql
+  20250701_1002_BASELINE_Schemas.sql
+  20250702_1008a_CREATE_PersonType_Table.sql
+  20250702_1008b_SEED_PersonType_Data.sql
+  20260510_1200_CREATE_StoreSalesPersonHistory_Table.sql
 ```
 
-**Pattern:** `{version}_{Feature}/{sequence}_{Action}{Object}.sql`
+**Pattern:** `{YYYYMMDD}_{HHmm}_{ACTION}_{Description}.sql` — the timestamp is the sequencing mechanism; pick a time later than every script it must run after. A trailing letter (`1008a`, `1008b`) breaks ties between scripts created in the same session.
 
 ### IDEMPOTENCY - Non-Negotiable Patterns
 
@@ -423,9 +418,9 @@ return 0;
 ### Decision Tree
 
 **Adding new table?**
-→ Create: `{version}_Add{Entity}/{seq}_Create{Entity}Table.sql`
+→ Create: `{YYYYMMDD}_{HHmm}_CREATE_{Entity}Table.sql`
 → Include: Primary key, required columns, defaults
-→ Next script: Add indexes, foreign keys
+→ Next script: Add indexes, foreign keys (later timestamp, same day is fine)
 
 **Modifying existing column?**
 → Create: New column → Migrate data → Drop old (3 scripts)
@@ -449,32 +444,29 @@ return 0;
 
 ```
 Scripts/
-  015_EmployeeSkills/
-    001_CreateSkillTable.sql          # Reference data table
-    002_CreateEmployeeSkillTable.sql  # Junction table
-    003_AddSkillIndexes.sql           # Performance indexes
-    004_SeedDefaultSkills.sql         # Reference data
+  20260710_0900_CREATE_Skill_Table.sql          # Reference data table
+  20260710_0901_CREATE_EmployeeSkill_Table.sql  # Junction table
+  20260710_0902_CREATE_EmployeeSkill_Indexes.sql
+  20260710_0903_SEED_Skill_Defaults.sql
 ```
 
 ### Scenario 2: Enhance Existing - Add Audit Fields
 
 ```
 Scripts/
-  016_AddAuditFields/
-    001_AddCreatedByToEmployee.sql
-    002_AddModifiedByToEmployee.sql
-    003_BackfillAuditFields.sql       # Populate existing rows
-    004_MakeAuditFieldsNotNull.sql    # After backfill complete
+  20260710_1000_ALTER_Employee_Add_CreatedBy.sql
+  20260710_1001_ALTER_Employee_Add_ModifiedBy.sql
+  20260710_1002_BACKFILL_Employee_AuditFields.sql   # Populate existing rows
+  20260710_1003_ALTER_Employee_AuditFields_NotNull.sql  # After backfill complete
 ```
 
 ### Scenario 3: Performance - Add Indexes
 
 ```
 Scripts/
-  017_PerformanceIndexes/
-    001_AddIndexToOrderDate.sql
-    002_AddIndexToCustomerName.sql
-    003_UpdateStatistics.sql
+  20260710_1100_CREATE_SalesOrderHeader_OrderDate_Index.sql
+  20260710_1101_CREATE_Customer_Name_Index.sql
+  20260710_1102_UPDATE_Statistics.sql
 ```
 
 ## Key Takeaways
@@ -485,7 +477,7 @@ Scripts/
 4. **Test twice locally** - Second run should be no-op
 5. **GO separates batches** - Critical for DDL commands
 6. **Forward only** - No rollbacks, create compensating migrations
-7. **Version folders** - Group related changes logically
+7. **Flat, timestamp-named `Scripts/`** - No version subfolders; filename timestamp is the run order
 
 ## Questions to Ask Before Writing a Migration
 
@@ -494,7 +486,7 @@ Scripts/
 3. Will this lock tables in production? (Consider ONLINE operations)
 4. Is data at risk? (Backup strategy needed?)
 5. Are dependencies resolved? (Foreign keys, procedures referencing tables)
-6. Is this in the correct version folder? (Logical grouping)
+6. Does the timestamp sort after every script it depends on?
 
 ---
 
