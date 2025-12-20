@@ -11,7 +11,8 @@
 - 🚧 UI pipeline in ADO: #561 in progress (US-739 done, Feature 934 done); #562 now In Progress (Departments CRUD implemented); #563 currently New
 - ✅ #935 Customer Module complete (2026-07-07) — Feature 947, US-951/952/953 (Customer LTV list, API + Angular)
 - 🚧 Additional Initiative #559 backlog epics: #936 (Work Orders/Manufacturing) In Progress — ✅ US-966 Work Orders List API (`GET /api/v1/work-orders`, `WorkOrderRepository.GetWorkOrdersAsync`/`SearchWorkOrdersAsync`, server-computed `yieldRate`/`isCompletedLate`); #937 (Purchasing/Vendor) New
-- 📋 Future infrastructure/function backlog: #569, #567, #568 (#566 marked Removed)
+- 🚧 Epic #569 (Polyglot Azure Functions Architecture) started: US 806 Sales Order Saga scaffold in place
+- 📋 Future infrastructure/function backlog: #567, #568 (#566 marked Removed)
 
 ---
 
@@ -108,9 +109,21 @@
 - 🚧 #670 k6 Load Testing Foundation — smoke/load/stress profiles, MSAL-based automatic `LOADTEST_*` token acquisition (US-992), HumanResources smoke coverage (US-993), Person smoke coverage (US-994), Production smoke coverage (US-995), Product Review smoke coverage (US-996), Sales Orders/Dashboard smoke coverage (US-997), Sales Persons smoke coverage (US-998), and Stores smoke coverage (US-999) in place; remaining child items (678, 679, 680) not yet started
 - 🚧 #671 Playwright E2E Smoke Test Suite — POM framework, smoke/a11y/visual specs, and CI stage in place; blocked on a provisioned real Entra test account for authenticated runs
 
-#### Epic #569 -- Polyglot Azure Functions Architecture 📋 FUTURE
+#### Epic #569 -- Polyglot Azure Functions Architecture 🚧 IN PROGRESS
 
-- Future phase epic for Azure Functions microservice scenarios.
+- 🚧 Feature 610 (Sales Order Saga Orchestrator) / Feature 608 (Shared Azure Serverless Infrastructure):
+  US 806 scaffold complete — new `apps/functions-dotnet/` app (.NET 10 isolated worker, Durable
+  Functions), Service Bus Standard namespace (`sales-order-events` topic / `sales-order-saga`
+  subscription — Topic+Subscription chosen over Feature 610's literal "Queue" wording to match
+  Feature 608's shared-backbone design; the local emulator's `Config.json` schema confirmed to
+  support this), Flex Consumption Function App with managed identity only (no connection
+  strings), local NuGet feed for `AdventureWorks.Domain`/`AdventureWorks.Application`, and local
+  dev via Azurite + the Service Bus emulator.
+- Remaining: US 807-810 (real saga activities — inventory validation, stock reservation, payment
+  authorization, compensation). SQL/MI access is explicitly deferred until one of those stories
+  needs it — see `apps/functions-dotnet/.claude/CLAUDE.md`.
+- Still future: #567 (Intelligent Document Processing Function), #568 (Real-Time Fraud Detection
+  Function) — no work started.
 
 #### Additional Initiative 2 Epics (ADO status)
 
@@ -130,7 +143,7 @@
 
 ### Later
 
-1. Start Azure Functions work under Epic #569 after current UI/testing priorities.
+1. Continue Azure Functions work under Epic #569 (US 807-810: real Sales Order Saga activities) after current UI/testing priorities.
 
 ---
 

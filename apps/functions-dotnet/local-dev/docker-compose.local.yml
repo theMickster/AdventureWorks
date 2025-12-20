@@ -1,0 +1,36 @@
+# Local dev backbone for AdventureWorks.Functions.SalesOrderSaga only. Separate from the root docker-compose.yml (api/web) — this file is never started as part of that stack.
+#
+# Brings up azurite (storage emulator for AzureWebJobsStorage + the Durable Task hub) and emulator (Service Bus emulator, configured via Config.json with the sales-order-events topic + sales-order-saga subscription — Topic+Subscription is supported by the emulator's Config.json schema, verified before choosing this over a plain queue).
+#
+# SQL dependency: the emulator requires a SQL Server to store its own topology/message state (it unconditionally drops and recreates 'SbGatewayDatabase' and 'SbMessageContainerDatabase00001' on every start — these two names are hardcoded in the emulator image, not configurable). Per explicit instruction, this points at the pre-existing 'tosk-mssql' container on localhost:1433 instead of a disposable companion container. 'tosk-mssql' must already be running before this stack starts — this compose file does not manage its lifecycle.
+#
+# Usage: docker compose -f local-dev/docker-compose.local.yml --env-file local-dev/.env.local up -d
+name: adventureworks-functions-local
+services:
+  azurite:
+    container_name: aw-functions-azurite
+    image: mcr.microsoft.com/azure-storage/azurite:latest
+    # Host ports remapped off the 10000-10002 default — already bound by an unrelated Azurite instance on this machine. Container-internal ports are untouched.
+    ports:
+      - "11000:10000" # Blob
+      - "11001:10001" # Queue
+      - "11002:10002" # Table
+
+  emulator:
+    container_name: aw-functions-sb-emulator
+    image: mcr.microsoft.com/azure-messaging/servicebus-emulator:latest
+    pull_policy: always
+    volumes:
+      - ./Config.json:/ServiceBus_Emulator/ConfigFiles/Config.json
+    # AMQP host port remapped off the 5672 default — already bound by an unrelated Service Bus emulator on this machine. Management port 5300 is unaffected and unchanged.
+    ports:
+      - "5673:5672"
+      - "5300:5300"
+    environment:
+      # host.docker.internal reaches tosk-mssql via its published host port (1433) — tosk-mssql runs outside this compose project, so it can't be reached by container name/DNS alias.
+      SQL_SERVER: host.docker.internal
+      MSSQL_SA_PASSWORD: ${MSSQL_SA_PASSWORD}
+      ACCEPT_EULA: ${ACCEPT_EULA}
+      EMULATOR_HTTP_PORT: 5300
+    extra_hosts:
+      - "host.docker.internal:host-gateway"

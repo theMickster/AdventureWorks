@@ -14,7 +14,8 @@ Each application/service has its own CLAUDE.md with technology-specific instruct
 
 - **For .NET API work**: See `apps/api-dotnet/.claude/CLAUDE.md`
 - **For Angular work**: See `apps/angular-web/.claude/CLAUDE.md`
-**When starting work in a specific application:**
+- **For the Sales Order Saga Functions app**: See `apps/functions-dotnet/.claude/CLAUDE.md`
+  **When starting work in a specific application:**
 
 1. Navigate to that application's directory
 2. Read its CLAUDE.md file for context-specific instructions
@@ -138,11 +139,12 @@ When documentation is needed:
 
 **Claude should load additional context based on the task:**
 
-| Working on                   | Triggers                                                                                                                                                                        | Load                                                                          |
-| ---------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | ----------------------------------------------------------------------------- |
-| **.NET REST API**            | Adding an endpoint, writing a controller, MediatR command/query handler, FluentValidation validator, AutoMapper profile, EF Core repository, anything Clean Architecture / CQRS | [`apps/api-dotnet/.claude/CLAUDE.md`](../apps/api-dotnet/.claude/CLAUDE.md)   |
-| **Angular Web**              | Building a component, generating an Nx library, wiring an NgRx SignalStore, MSAL / Entra auth, Tailwind / DaisyUI / Alpine Circuit styling, anything signals-based              | [`apps/angular-web/.claude/CLAUDE.md`](../apps/angular-web/.claude/CLAUDE.md) |
-| **Database Migrations**      | Schema change, new migration, creating or updating a stored procedure, making DDL/DML idempotent, ordering DbUp scripts                                                         | [`database/dbup/.claude/CLAUDE.md`](../database/dbup/.claude/CLAUDE.md)       |
+| Working on                     | Triggers                                                                                                                                                                        | Load                                                                                    |
+| ------------------------------ | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | --------------------------------------------------------------------------------------- |
+| **.NET REST API**              | Adding an endpoint, writing a controller, MediatR command/query handler, FluentValidation validator, AutoMapper profile, EF Core repository, anything Clean Architecture / CQRS | [`apps/api-dotnet/.claude/CLAUDE.md`](../apps/api-dotnet/.claude/CLAUDE.md)             |
+| **Angular Web**                | Building a component, generating an Nx library, wiring an NgRx SignalStore, MSAL / Entra auth, Tailwind / DaisyUI / Alpine Circuit styling, anything signals-based              | [`apps/angular-web/.claude/CLAUDE.md`](../apps/angular-web/.claude/CLAUDE.md)           |
+| **Database Migrations**        | Schema change, new migration, creating or updating a stored procedure, making DDL/DML idempotent, ordering DbUp scripts                                                         | [`database/dbup/.claude/CLAUDE.md`](../database/dbup/.claude/CLAUDE.md)                 |
+| **Sales Order Saga Functions** | Service Bus trigger, Durable Functions orchestrator/activity, the local NuGet feed for Domain/Application, Azurite/Service Bus emulator local dev                               | [`apps/functions-dotnet/.claude/CLAUDE.md`](../apps/functions-dotnet/.claude/CLAUDE.md) |
 
 ## CI/CD and Infrastructure Rules
 

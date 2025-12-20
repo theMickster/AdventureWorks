@@ -7,6 +7,7 @@
     "projectName": { "value": "AdventureWorks" },
     "appInsightsName": { "value": "mick-adventureworks" },
     "keyVaultName": { "value": "MickKeyVaultWestUS" },
-    "keyVaultResourceGroup": { "value": "Mick-West-US-DotNetDevTest" }
+    "keyVaultResourceGroup": { "value": "Mick-West-US-DotNetDevTest" },
+    "deploySalesOrderSaga": { "value": true }
   }
 }

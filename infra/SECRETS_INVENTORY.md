@@ -12,6 +12,26 @@ Single reference for how every configuration value flows across environments.
 | ASPNETCORE_ENVIRONMENT         | VS Code `launch.json` env var | `Docker` (docker-compose)          | Bicep app setting (`Development`) | Bicep app setting (`Production`) | Bicep app setting                                         |
 | AutoMapper License Key         | User Secrets                  | N/A                                | Key Vault linked var / GH Secret  | Key Vault linked var             | Pipeline `AzureAppServiceSettings@1` (from Key Vault linked var group) |
 
+## Sales Order Saga Functions Configuration (`apps/functions-dotnet`)
+
+No secrets — Managed Identity only. This is intentional: the Function App's system-assigned
+identity is granted RBAC roles directly on Service Bus (Data Receiver on the topic) and its
+storage account (Blob/Queue/Table Data Contributor), and reads nothing from Key Vault.
+
+| Config Key                                | Local Dev                                | Azure Runtime                                                          |
+| ------------------------------------------ | ----------------------------------------- | ----------------------------------------------------------------------- |
+| `AzureWebJobsStorage`                       | `UseDevelopmentStorage=true` (Azurite)    | `AzureWebJobsStorage__accountName` + `__credential=managedidentity` (Bicep) |
+| `DurableStorage`                            | `UseDevelopmentStorage=true` (Azurite)    | `DurableStorage__accountName` + `__credential=managedidentity` (Bicep)     |
+| `ServiceBusConnection`                      | Service Bus emulator fixed dev connection string | `ServiceBusConnection__fullyQualifiedNamespace` (Bicep, MI)          |
+| `ServiceBusSalesOrderEventsTopicName`       | `local.settings.json`                     | Bicep app setting                                                       |
+| `ServiceBusSalesOrderSagaSubscriptionName`  | `local.settings.json`                     | Bicep app setting                                                       |
+
+**SQL/MI is not yet wired.** This scaffold makes no SQL calls. When a future story (807-810)
+adds a SQL-touching activity, confirm with the user whether an Entra admin is already configured
+on the target SQL Server before adding any `CREATE USER ... FROM EXTERNAL PROVIDER` DbUp script —
+there is no existing MI-to-SQL pattern in this repo today (the API itself uses the
+`adventureworks-sql-connection-string` Key Vault secret below, not MI).
+
 ## Angular Configuration (Frontend)
 
 These values are baked into the Angular build as `__PLACEHOLDER__` tokens and replaced at deploy time by `infra/scripts/replace-tokens.sh`.

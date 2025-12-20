@@ -6,15 +6,17 @@ Adventure Works is a modern enterprise application built with **.NET 10**, **Ang
 
 ## Tech Stack
 
-| Layer             | Technology                                       |
-| ----------------- | ------------------------------------------------ |
-| **Backend API**   | .NET 10 (Clean Architecture + CQRS + MediatR)    |
-| **Frontend**      | Angular 21 + Nx 22 monorepo (Signals, zoneless)  |
-| **Design System** | Alpine Circuit v2 (Tailwind CSS v4 + DaisyUI v5) |
-| **Database**      | SQL Server + Entity Framework Core               |
-| **Icons**         | Font Awesome Free 7                              |
-| **Testing**       | xUnit, Vitest, Playwright                        |
-| **Tooling**       | VS Code, Visual Studio 2026, Azure DevOps        |
+| Layer             | Technology                                                                         |
+| ----------------- | ---------------------------------------------------------------------------------- |
+| **Backend API**   | .NET 10 (Clean Architecture + CQRS + MediatR)                                      |
+| **Functions**     | .NET 10 isolated worker Azure Functions (Durable Functions, Service Bus-triggered) |
+| **Frontend**      | Angular 21 + Nx 22 monorepo (Signals, zoneless)                                    |
+| **Design System** | Alpine Circuit v2 (Tailwind CSS v4 + DaisyUI v5)                                   |
+| **Database**      | SQL Server + Entity Framework Core                                                 |
+| **Messaging**     | Azure Service Bus (Standard, topics + subscriptions)                               |
+| **Icons**         | Font Awesome Free 7                                                                |
+| **Testing**       | xUnit, Vitest, Playwright                                                          |
+| **Tooling**       | VS Code, Visual Studio 2026, Azure DevOps                                          |
 
 ## Getting Started
 
@@ -48,7 +50,8 @@ For a single-command launch of all services with a live dashboard — API, Angul
 AdventureWorks/
 ├── apps/
 │   ├── angular-web/             # Angular 21 SPA (Nx monorepo)
-│   └── api-dotnet/              # .NET 10 REST API (Clean Architecture)
+│   ├── api-dotnet/              # .NET 10 REST API (Clean Architecture)
+│   └── functions-dotnet/        # .NET 10 isolated Azure Functions (Sales Order Saga orchestrator)
 ├── database/
 │   ├── dbup/                    # DbUp migration runner and SQL scripts
 │   └── sql-change-automation/   # SQL Server Database Project (schema migrations)

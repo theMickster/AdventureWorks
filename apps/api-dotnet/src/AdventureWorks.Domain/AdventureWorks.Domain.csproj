@@ -8,6 +8,15 @@
 		<AnalysisLevel>latest</AnalysisLevel>
 	</PropertyGroup>
 
+	<!-- Packaging for the local NuGet feed consumed by apps/functions-dotnet. Version must be
+	     overridden via -p:Version=<unique-value> on every `dotnet pack` (see
+	     apps/functions-dotnet/pack-local-nuget.sh) — a static version would let restore silently
+	     keep serving a stale cached .nupkg after this project changes. -->
+	<PropertyGroup>
+		<PackageId>AdventureWorks.Domain</PackageId>
+		<Version>1.0.0-dev</Version>
+	</PropertyGroup>
+
 	<ItemGroup>
 		<Compile Remove="Exceptions\**" />
 		<Compile Remove="ViewModels\**" />
