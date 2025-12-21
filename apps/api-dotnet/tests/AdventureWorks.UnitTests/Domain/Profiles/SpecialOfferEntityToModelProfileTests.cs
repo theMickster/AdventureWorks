@@ -1,4 +1,3 @@
-using AdventureWorks.Application.Features.Sales.Profiles;
 using AdventureWorks.Domain.Entities.Sales;
 using AdventureWorks.Models.Features.Sales;
 
@@ -11,10 +10,7 @@ public sealed class SpecialOfferEntityToModelProfileTests : UnitTestBase
 
     public SpecialOfferEntityToModelProfileTests()
     {
-        var mappingConfig = new MapperConfiguration(config =>
-            config.AddMaps(typeof(SpecialOfferEntityToModelProfile).Assembly));
-
-        _mapper = mappingConfig.CreateMapper();
+        _mapper = SharedMapper;
     }
 
     [Fact]

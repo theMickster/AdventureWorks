@@ -1,4 +1,3 @@
-using AdventureWorks.Application.Features.Sales.Profiles;
 using AdventureWorks.Application.Features.Sales.Queries;
 using AdventureWorks.Application.PersistenceContracts.Repositories.Sales;
 using AdventureWorks.Common.Filtering;
@@ -18,10 +17,8 @@ public sealed class ReadCustomerListQueryHandlerTests : UnitTestBase
 
     public ReadCustomerListQueryHandlerTests()
     {
-        _mapperConfiguration = new MapperConfiguration(config =>
-            config.AddMaps(typeof(CustomerLtvProjectionToCustomerListItemModelProfile).Assembly)
-        );
-        _mapper = _mapperConfiguration.CreateMapper();
+        _mapperConfiguration = SharedMapperConfiguration;
+        _mapper = SharedMapper;
 
         _mockValidator
             .Setup(v => v.ValidateAsync(It.IsAny<ValidationContext<ReadCustomerListQuery>>(), It.IsAny<CancellationToken>()))

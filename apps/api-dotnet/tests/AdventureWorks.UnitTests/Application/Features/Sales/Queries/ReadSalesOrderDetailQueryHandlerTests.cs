@@ -1,4 +1,3 @@
-using AdventureWorks.Application.Features.Sales.Profiles;
 using AdventureWorks.Application.Features.Sales.Queries;
 using AdventureWorks.Application.PersistenceContracts.Repositories.Sales;
 using AdventureWorks.Domain.Entities.HumanResources;
@@ -15,9 +14,7 @@ public sealed class ReadSalesOrderDetailQueryHandlerTests : UnitTestBase
 
     public ReadSalesOrderDetailQueryHandlerTests()
     {
-        var mappingConfig = new MapperConfiguration(c =>
-            c.AddMaps(typeof(SalesOrderDetailEntityToModelProfile).Assembly));
-        _mapper = mappingConfig.CreateMapper();
+        _mapper = SharedMapper;
         _sut = new ReadSalesOrderDetailQueryHandler(_mapper, _mockSalesOrderRepository.Object);
     }
 

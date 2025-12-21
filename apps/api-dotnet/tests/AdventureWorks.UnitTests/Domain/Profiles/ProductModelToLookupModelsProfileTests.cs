@@ -1,4 +1,3 @@
-using AdventureWorks.Application.Features.Production.Profiles;
 using AdventureWorks.Models.Features.Production;
 
 namespace AdventureWorks.UnitTests.Domain.Profiles;
@@ -10,10 +9,7 @@ public sealed class ProductModelToLookupModelsProfileTests : UnitTestBase
 
     public ProductModelToLookupModelsProfileTests()
     {
-        var mappingConfig = new MapperConfiguration(config =>
-            config.AddMaps(typeof(ProductModelToLookupModelsProfile).Assembly));
-
-        _mapper = mappingConfig.CreateMapper();
+        _mapper = SharedMapper;
     }
 
     [Fact]

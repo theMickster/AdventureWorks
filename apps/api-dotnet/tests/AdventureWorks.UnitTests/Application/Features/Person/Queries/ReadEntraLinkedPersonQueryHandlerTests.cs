@@ -1,4 +1,3 @@
-using AdventureWorks.Application.Features.Person.Profiles;
 using AdventureWorks.Application.Features.Person.Queries;
 using AdventureWorks.Application.PersistenceContracts.Repositories.Person;
 using AdventureWorks.Domain.Entities.Person;
@@ -15,10 +14,7 @@ public sealed class ReadEntraLinkedPersonQueryHandlerTests : UnitTestBase
 
     public ReadEntraLinkedPersonQueryHandlerTests()
     {
-        var mappingConfig = new MapperConfiguration(config =>
-            config.AddMaps(typeof(EntraLinkedPersonProfile).Assembly));
-
-        _mapper = mappingConfig.CreateMapper();
+        _mapper = SharedMapper;
         _sut = new ReadEntraLinkedPersonQueryHandler(_mapper, _mockPersonRepository.Object, _mockLogger.Object);
     }
 

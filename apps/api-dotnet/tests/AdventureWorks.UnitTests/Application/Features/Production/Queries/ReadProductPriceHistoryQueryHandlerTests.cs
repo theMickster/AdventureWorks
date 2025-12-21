@@ -1,4 +1,3 @@
-using AdventureWorks.Application.Features.Production.Profiles;
 using AdventureWorks.Application.Features.Production.Queries;
 using AdventureWorks.Application.PersistenceContracts.Repositories.Production;
 using AdventureWorks.Domain.Entities.Production;
@@ -16,8 +15,7 @@ public sealed class ReadProductPriceHistoryQueryHandlerTests : UnitTestBase
 
     public ReadProductPriceHistoryQueryHandlerTests()
     {
-        var mappingConfig = new MapperConfiguration(c => c.AddMaps(typeof(ProductListPriceHistoryToModelProfile).Assembly));
-        _mapper = mappingConfig.CreateMapper();
+        _mapper = SharedMapper;
         _sut = new ReadProductPriceHistoryQueryHandler(_mapper, _mockProductRepository.Object);
     }
 

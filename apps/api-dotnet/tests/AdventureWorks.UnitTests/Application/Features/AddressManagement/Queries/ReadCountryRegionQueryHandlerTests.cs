@@ -1,5 +1,4 @@
-﻿using AdventureWorks.Application.Features.AddressManagement.Profiles;
-using AdventureWorks.Application.Features.AddressManagement.Queries;
+﻿using AdventureWorks.Application.Features.AddressManagement.Queries;
 using AdventureWorks.Application.PersistenceContracts.Repositories;
 using AdventureWorks.Domain.Entities.Person;
 
@@ -13,10 +12,7 @@ public sealed class ReadCountryRegionQueryHandlerTests : UnitTestBase
 
     public ReadCountryRegionQueryHandlerTests()
     {
-        var mappingConfig = new MapperConfiguration(config =>
-            config.AddMaps(typeof(CountryRegionEntityToModelProfile).Assembly)
-        );
-        _mapper = mappingConfig.CreateMapper();
+        _mapper = SharedMapper;
 
         _sut = new ReadCountryRegionQueryHandler(_mapper, _mockCountryRegionRepository.Object);
     }
@@ -65,6 +61,5 @@ public sealed class ReadCountryRegionQueryHandlerTests : UnitTestBase
             result!.Code.Should().Be("UK");
         }
     }
-
 
 }

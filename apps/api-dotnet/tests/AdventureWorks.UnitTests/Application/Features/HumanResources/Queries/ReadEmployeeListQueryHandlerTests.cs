@@ -1,4 +1,3 @@
-using AdventureWorks.Application.Features.HumanResources.Profiles;
 using AdventureWorks.Application.Features.HumanResources.Queries;
 using AdventureWorks.Application.PersistenceContracts.Repositories;
 using AdventureWorks.Common.Filtering;
@@ -16,10 +15,7 @@ public sealed class ReadEmployeeListQueryHandlerTests : UnitTestBase
 
     public ReadEmployeeListQueryHandlerTests()
     {
-        var mappingConfig = new MapperConfiguration(config =>
-            config.AddMaps(typeof(EmployeeEntityToModelProfile).Assembly));
-
-        _mapper = mappingConfig.CreateMapper();
+        _mapper = SharedMapper;
         _sut = new ReadEmployeeListQueryHandler(_mapper, _mockEmployeeRepository.Object);
     }
 

@@ -1,4 +1,3 @@
-using AdventureWorks.Application.Features.Production.Profiles;
 using AdventureWorks.Domain.Entities.Production;
 using AdventureWorks.Models.Features.Production;
 using AdventureWorks.UnitTests.Setup.Fixtures;
@@ -12,10 +11,7 @@ public sealed class ProductProfileTests : UnitTestBase
 
     public ProductProfileTests()
     {
-        var mappingConfig = new MapperConfiguration(config =>
-            config.AddMaps(typeof(ProductToDetailModelProfile).Assembly));
-
-        _mapper = mappingConfig.CreateMapper();
+        _mapper = SharedMapper;
     }
 
     [Fact]

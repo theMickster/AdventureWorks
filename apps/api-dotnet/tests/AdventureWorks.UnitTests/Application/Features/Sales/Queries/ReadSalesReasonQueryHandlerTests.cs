@@ -1,4 +1,3 @@
-using AdventureWorks.Application.Features.Sales.Profiles;
 using AdventureWorks.Application.Features.Sales.Queries;
 using AdventureWorks.Application.PersistenceContracts.Repositories;
 using AdventureWorks.Domain.Entities.Sales;
@@ -13,10 +12,7 @@ public sealed class ReadSalesReasonQueryHandlerTests : UnitTestBase
 
     public ReadSalesReasonQueryHandlerTests()
     {
-        var mappingConfig = new MapperConfiguration(config =>
-            config.AddMaps(typeof(SalesReasonEntityToModelProfile).Assembly)
-        );
-        _mapper = mappingConfig.CreateMapper();
+        _mapper = SharedMapper;
 
         _sut = new ReadSalesReasonQueryHandler(_mapper, _mockRepository.Object);
     }

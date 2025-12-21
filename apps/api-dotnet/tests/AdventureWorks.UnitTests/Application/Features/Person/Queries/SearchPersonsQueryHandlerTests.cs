@@ -1,4 +1,3 @@
-using AdventureWorks.Application.Features.Person.Profiles;
 using AdventureWorks.Application.Features.Person.Queries;
 using AdventureWorks.Application.Features.Person.Validators;
 using AdventureWorks.Application.PersistenceContracts.Repositories.Person;
@@ -27,9 +26,7 @@ public sealed class SearchPersonsQueryHandlerTests : UnitTestBase
 
     public SearchPersonsQueryHandlerTests()
     {
-        var mappingConfig = new MapperConfiguration(c =>
-            c.AddMaps(typeof(PersonEntityToSearchPersonsModelProfile).Assembly));
-        _mapper = mappingConfig.CreateMapper();
+        _mapper = SharedMapper;
         _sut = new SearchPersonsQueryHandler(_mapper, _mockPersonRepository.Object, _validator);
     }
 

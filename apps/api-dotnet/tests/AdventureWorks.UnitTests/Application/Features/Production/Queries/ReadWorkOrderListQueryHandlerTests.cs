@@ -1,4 +1,3 @@
-using AdventureWorks.Application.Features.Production.Profiles;
 using AdventureWorks.Application.Features.Production.Queries;
 using AdventureWorks.Application.PersistenceContracts.Repositories.Production;
 using AdventureWorks.Common.Filtering;
@@ -21,9 +20,7 @@ public sealed class ReadWorkOrderListQueryHandlerTests : UnitTestBase
 
     public ReadWorkOrderListQueryHandlerTests()
     {
-        var mappingConfig = new MapperConfiguration(c =>
-            c.AddMaps(typeof(WorkOrderEntityToModelProfile).Assembly));
-        _mapper = mappingConfig.CreateMapper();
+        _mapper = SharedMapper;
         _mockValidator
             .Setup(v => v.ValidateAsync(It.IsAny<ValidationContext<ReadWorkOrderListQuery>>(), It.IsAny<CancellationToken>()))
             .ReturnsAsync(new ValidationResult());

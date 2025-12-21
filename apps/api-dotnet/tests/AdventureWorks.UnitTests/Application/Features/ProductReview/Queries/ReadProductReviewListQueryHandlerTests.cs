@@ -1,4 +1,3 @@
-using AdventureWorks.Application.Features.ProductReview.Profiles;
 using AdventureWorks.Application.Features.ProductReview.Queries;
 using AdventureWorks.Application.PersistenceContracts.Repositories;
 using AdventureWorks.Common.Filtering;
@@ -15,10 +14,7 @@ public sealed class ReadProductReviewListQueryHandlerTests : UnitTestBase
 
     public ReadProductReviewListQueryHandlerTests()
     {
-        var mappingConfig = new MapperConfiguration(config =>
-            config.AddMaps(typeof(ProductReviewEntityToModelProfile).Assembly)
-        );
-        _mapper = mappingConfig.CreateMapper();
+        _mapper = SharedMapper;
 
         _sut = new ReadProductReviewListQueryHandler(_mapper, _mockProductReviewRepository.Object);
     }

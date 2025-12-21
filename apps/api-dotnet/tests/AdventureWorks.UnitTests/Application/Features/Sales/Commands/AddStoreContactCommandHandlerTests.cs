@@ -1,5 +1,4 @@
 using AdventureWorks.Application.Features.Sales.Commands;
-using AdventureWorks.Application.Features.Sales.Profiles;
 using AdventureWorks.Application.PersistenceContracts.Repositories.Person;
 using AdventureWorks.Application.PersistenceContracts.Repositories.Sales;
 using AdventureWorks.Domain.Entities.Person;
@@ -19,8 +18,7 @@ public sealed class AddStoreContactCommandHandlerTests : UnitTestBase
 
     public AddStoreContactCommandHandlerTests()
     {
-        var mappingConfig = new MapperConfiguration(c => c.AddMaps(typeof(StoreContactCreateModelToBusinessEntityContactEntityProfile).Assembly));
-        _mapper = mappingConfig.CreateMapper();
+        _mapper = SharedMapper;
         _sut = new AddStoreContactCommandHandler(
             _mapper,
             _mockBeceRepository.Object,

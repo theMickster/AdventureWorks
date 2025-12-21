@@ -1,4 +1,3 @@
-using AdventureWorks.Application.Features.Sales.Profiles;
 using AdventureWorks.Application.Features.Sales.Queries;
 using AdventureWorks.Application.PersistenceContracts.Repositories;
 using AdventureWorks.Domain.Entities.Sales;
@@ -13,10 +12,7 @@ public sealed class ReadSpecialOfferListQueryHandlerTests : UnitTestBase
 
     public ReadSpecialOfferListQueryHandlerTests()
     {
-        var mappingConfig = new MapperConfiguration(config =>
-            config.AddMaps(typeof(SpecialOfferEntityToModelProfile).Assembly)
-        );
-        _mapper = mappingConfig.CreateMapper();
+        _mapper = SharedMapper;
 
         _sut = new ReadSpecialOfferListQueryHandler(_mapper, _mockRepository.Object);
     }

@@ -1,4 +1,3 @@
-using AdventureWorks.Application.Features.Sales.Profiles;
 using AdventureWorks.Domain.Entities.Sales;
 using AdventureWorks.Models.Features.Sales;
 
@@ -10,10 +9,7 @@ public sealed class SalesPersonUpdateModelToSalesPersonEntityProfileTests : Unit
 
     public SalesPersonUpdateModelToSalesPersonEntityProfileTests()
     {
-        var mappingConfig = new MapperConfiguration(config =>
-            config.AddMaps(typeof(SalesPersonUpdateModelToSalesPersonEntityProfile).Assembly));
-
-        _mapper = mappingConfig.CreateMapper();
+        _mapper = SharedMapper;
     }
 
     private static SalesPersonUpdateModel GetValidUpdateModel(int id = 100)

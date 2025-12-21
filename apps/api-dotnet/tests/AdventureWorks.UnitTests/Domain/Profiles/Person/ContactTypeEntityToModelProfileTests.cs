@@ -1,5 +1,4 @@
-﻿using AdventureWorks.Application.Features.HumanResources.Profiles;
-using AdventureWorks.Domain.Entities.Person;
+﻿using AdventureWorks.Domain.Entities.Person;
 using AdventureWorks.Models.Features.HumanResources;
 
 namespace AdventureWorks.UnitTests.Domain.Profiles.Person;
@@ -11,10 +10,7 @@ public sealed class ContactTypeEntityToModelProfileTests : UnitTestBase
 
     public ContactTypeEntityToModelProfileTests()
     {
-        var mappingConfig = new MapperConfiguration(config =>
-            config.AddMaps(typeof(ContactTypeEntityToModelProfile).Assembly));
-
-        _mapper = mappingConfig.CreateMapper();
+        _mapper = SharedMapper;
     }
 
     [Fact]

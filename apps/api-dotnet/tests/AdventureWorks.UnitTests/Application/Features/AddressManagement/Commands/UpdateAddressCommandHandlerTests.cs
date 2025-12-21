@@ -1,5 +1,4 @@
 ﻿using AdventureWorks.Application.Features.AddressManagement.Commands;
-using AdventureWorks.Application.Features.AddressManagement.Profiles;
 using AdventureWorks.Application.PersistenceContracts.Repositories;
 using AdventureWorks.Domain.Entities.Person;
 using AdventureWorks.Models.Features.AddressManagement;
@@ -19,10 +18,7 @@ public sealed class UpdateAddressCommandHandlerTests : UnitTestBase
 
     public UpdateAddressCommandHandlerTests()
     {
-        var mappingConfig = new MapperConfiguration(config =>
-            config.AddMaps(typeof(AddressUpdateModelToAddressEntityProfile).Assembly)
-        );
-        _mapper = mappingConfig.CreateMapper();
+        _mapper = SharedMapper;
 
         _sut = new UpdateAddressCommandHandler(_mapper, _mockAddressRepository.Object, _mockValidator.Object);
     }

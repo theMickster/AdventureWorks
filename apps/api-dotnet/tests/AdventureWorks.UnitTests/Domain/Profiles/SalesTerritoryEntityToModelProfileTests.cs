@@ -1,5 +1,4 @@
-﻿using AdventureWorks.Application.Features.Sales.Profiles;
-using AdventureWorks.Domain.Entities.Person;
+﻿using AdventureWorks.Domain.Entities.Person;
 using AdventureWorks.Domain.Entities.Sales;
 using AdventureWorks.Models.Features.Sales;
 
@@ -12,10 +11,7 @@ public sealed class SalesTerritoryEntityToModelProfileTests : UnitTestBase
 
     public SalesTerritoryEntityToModelProfileTests()
     {
-        var mappingConfig = new MapperConfiguration(config =>
-            config.AddMaps(typeof(SalesTerritoryEntityToModelProfile).Assembly));
-
-        _mapper = mappingConfig.CreateMapper();
+        _mapper = SharedMapper;
     }
 
     [Fact]

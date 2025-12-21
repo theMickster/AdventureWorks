@@ -1,4 +1,3 @@
-using AdventureWorks.Application.Features.Sales.Profiles;
 using AdventureWorks.Application.Features.Sales.Queries;
 using AdventureWorks.Application.PersistenceContracts.Repositories.Sales;
 using AdventureWorks.Domain.Entities.Sales;
@@ -15,9 +14,7 @@ public sealed class ReadStoreSalesPersonAssignmentListQueryHandlerTests : UnitTe
 
     public ReadStoreSalesPersonAssignmentListQueryHandlerTests()
     {
-        var mappingConfig = new MapperConfiguration(c =>
-            c.AddMaps(typeof(StoreSalesPersonHistoryEntityToStoreSalesPersonAssignmentModelProfile).Assembly));
-        _mapper = mappingConfig.CreateMapper();
+        _mapper = SharedMapper;
 
         _sut = new ReadStoreSalesPersonAssignmentListQueryHandler(
             _mapper,

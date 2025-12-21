@@ -1,4 +1,3 @@
-using AdventureWorks.Application.Features.Sales.Profiles;
 using AdventureWorks.Application.Features.Sales.Queries;
 using AdventureWorks.Application.PersistenceContracts.Repositories.Sales;
 using AdventureWorks.Common.Constants;
@@ -17,10 +16,8 @@ public sealed class ReadStoreCustomerListQueryHandlerTests : UnitTestBase
 
     public ReadStoreCustomerListQueryHandlerTests()
     {
-        _mapperConfiguration = new MapperConfiguration(config =>
-            config.AddMaps(typeof(StoreCustomerProjectionToStoreCustomerModelProfile).Assembly)
-        );
-        _mapper = _mapperConfiguration.CreateMapper();
+        _mapperConfiguration = SharedMapperConfiguration;
+        _mapper = SharedMapper;
 
         _sut = new ReadStoreCustomerListQueryHandler(_mapper, _mockStoreRepository.Object);
     }

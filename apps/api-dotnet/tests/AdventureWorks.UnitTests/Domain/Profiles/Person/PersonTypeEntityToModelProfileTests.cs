@@ -1,5 +1,4 @@
-﻿using AdventureWorks.Application.Features.HumanResources.Profiles;
-using AdventureWorks.Domain.Entities.Person;
+﻿using AdventureWorks.Domain.Entities.Person;
 using AdventureWorks.Models.Features.HumanResources;
 
 namespace AdventureWorks.UnitTests.Domain.Profiles.Person;
@@ -11,15 +10,11 @@ public sealed class PersonTypeEntityToModelProfileTests : UnitTestBase
 
     public PersonTypeEntityToModelProfileTests()
     {
-        var mappingConfig = new MapperConfiguration(config =>
-            config.AddMaps(typeof(PersonTypeEntityToModelProfile).Assembly));
-
-        _mapper = mappingConfig.CreateMapper();
+        _mapper = SharedMapper;
     }
 
     [Fact]
     public void all_mappings_are_correctly_setup_succeeds() => _mapper.ConfigurationProvider.AssertConfigurationIsValid();
-
 
     [Fact]
     public void Map_entities_to_model_succeeds()

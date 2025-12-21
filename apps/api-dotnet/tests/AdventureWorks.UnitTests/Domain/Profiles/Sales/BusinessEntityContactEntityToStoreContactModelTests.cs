@@ -1,5 +1,4 @@
-﻿using AdventureWorks.Application.Features.Sales.Profiles;
-using AdventureWorks.Domain.Entities.Person;
+﻿using AdventureWorks.Domain.Entities.Person;
 using AdventureWorks.Models.Features.Sales;
 
 namespace AdventureWorks.UnitTests.Domain.Profiles.Sales;
@@ -11,10 +10,7 @@ public sealed class BusinessEntityContactEntityToStoreContactModelProfileTests :
 
     public BusinessEntityContactEntityToStoreContactModelProfileTests()
     {
-        var mappingConfig = new MapperConfiguration(config =>
-            config.AddMaps(typeof(BusinessEntityContactEntityToStoreContactModelProfile).Assembly));
-
-        _mapper = mappingConfig.CreateMapper();
+        _mapper = SharedMapper;
     }
 
     [Fact]

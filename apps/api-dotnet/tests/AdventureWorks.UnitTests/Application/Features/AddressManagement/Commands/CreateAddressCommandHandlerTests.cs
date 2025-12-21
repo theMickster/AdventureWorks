@@ -1,5 +1,4 @@
 ﻿using AdventureWorks.Application.Features.AddressManagement.Commands;
-using AdventureWorks.Application.Features.AddressManagement.Profiles;
 using AdventureWorks.Application.PersistenceContracts.Repositories;
 using AdventureWorks.Domain.Entities.Person;
 using AdventureWorks.Models.Features.AddressManagement;
@@ -19,10 +18,7 @@ public sealed class CreateAddressCommandHandlerTests : UnitTestBase
 
     public CreateAddressCommandHandlerTests()
     {
-        var mappingConfig = new MapperConfiguration(config =>
-            config.AddMaps(typeof(AddressEntityToAddressModelProfile).Assembly)
-        );
-        _mapper = mappingConfig.CreateMapper();
+        _mapper = SharedMapper;
 
         _sut = new CreateAddressCommandHandler(_mapper, _mockAddressRepository.Object, _mockValidator.Object);
     }
@@ -61,7 +57,6 @@ public sealed class CreateAddressCommandHandlerTests : UnitTestBase
         _ = (((Func<Task>)(async () => await _sut.Handle(null!, CancellationToken.None)))
             .Should().ThrowAsync<ArgumentNullException>());
     }
-
 
     [Fact]
     public async Task Handle_returns_successAsync()

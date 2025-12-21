@@ -1,4 +1,3 @@
-using AdventureWorks.Application.Features.Sales.Profiles;
 using AdventureWorks.Application.Features.Sales.Queries;
 using AdventureWorks.Application.PersistenceContracts.Repositories.Sales;
 using AdventureWorks.Common.Filtering;
@@ -24,9 +23,7 @@ public sealed class ReadSalesOrderListQueryHandlerTests : UnitTestBase
 
     public ReadSalesOrderListQueryHandlerTests()
     {
-        var mappingConfig = new MapperConfiguration(c =>
-            c.AddMaps(typeof(SalesOrderEntityToModelProfile).Assembly));
-        _mapper = mappingConfig.CreateMapper();
+        _mapper = SharedMapper;
         _mockValidator
             .Setup(v => v.ValidateAsync(It.IsAny<ValidationContext<ReadSalesOrderListQuery>>(), It.IsAny<CancellationToken>()))
             .ReturnsAsync(new ValidationResult());

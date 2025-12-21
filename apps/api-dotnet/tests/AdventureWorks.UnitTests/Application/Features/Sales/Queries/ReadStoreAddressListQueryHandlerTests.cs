@@ -15,10 +15,7 @@ public sealed class ReadStoreAddressListQueryHandlerTests : UnitTestBase
 
     public ReadStoreAddressListQueryHandlerTests()
     {
-        var mappingConfig = new MapperConfiguration(config =>
-            config.AddMaps(typeof(StoreEntityToModelProfile).Assembly)
-        );
-        _mapper = mappingConfig.CreateMapper();
+        _mapper = SharedMapper;
 
         _sut = new ReadStoreAddressListQueryHandler(_mapper, _mockBusinessEntityAddressRepository.Object);
     }

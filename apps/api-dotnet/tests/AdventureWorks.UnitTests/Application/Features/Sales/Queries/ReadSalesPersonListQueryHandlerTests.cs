@@ -1,4 +1,3 @@
-using AdventureWorks.Application.Features.Sales.Profiles;
 using AdventureWorks.Application.Features.Sales.Queries;
 using AdventureWorks.Application.PersistenceContracts.Repositories.Sales;
 using AdventureWorks.Common.Filtering;
@@ -16,10 +15,7 @@ public sealed class ReadSalesPersonListQueryHandlerTests : UnitTestBase
 
     public ReadSalesPersonListQueryHandlerTests()
     {
-        var mappingConfig = new MapperConfiguration(config =>
-            config.AddMaps(typeof(SalesPersonEntityToModelProfile).Assembly));
-
-        _mapper = mappingConfig.CreateMapper();
+        _mapper = SharedMapper;
         _sut = new ReadSalesPersonListQueryHandler(_mapper, _mockSalesPersonRepository.Object);
     }
 

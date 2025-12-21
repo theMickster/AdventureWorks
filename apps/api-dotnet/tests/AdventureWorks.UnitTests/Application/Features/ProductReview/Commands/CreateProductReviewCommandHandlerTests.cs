@@ -1,5 +1,4 @@
 using AdventureWorks.Application.Features.ProductReview.Commands;
-using AdventureWorks.Application.Features.ProductReview.Profiles;
 using AdventureWorks.Application.PersistenceContracts.Repositories;
 using AdventureWorks.Models.Features.ProductReview;
 using AdventureWorks.UnitTests.Setup.Fakes;
@@ -18,9 +17,7 @@ public sealed class CreateProductReviewCommandHandlerTests : UnitTestBase
 
     public CreateProductReviewCommandHandlerTests()
     {
-        var mappingConfig = new MapperConfiguration(c =>
-            c.AddMaps(typeof(ProductReviewCreateModelToEntityProfile).Assembly));
-        _mapper = mappingConfig.CreateMapper();
+        _mapper = SharedMapper;
         _sut = new CreateProductReviewCommandHandler(_mapper, _mockProductReviewRepository.Object, _mockValidator.Object);
     }
 

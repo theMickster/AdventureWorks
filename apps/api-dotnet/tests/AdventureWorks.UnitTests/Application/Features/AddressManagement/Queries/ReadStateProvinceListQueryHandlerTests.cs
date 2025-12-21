@@ -1,5 +1,4 @@
-﻿using AdventureWorks.Application.Features.AddressManagement.Profiles;
-using AdventureWorks.Application.Features.AddressManagement.Queries;
+﻿using AdventureWorks.Application.Features.AddressManagement.Queries;
 using AdventureWorks.Application.PersistenceContracts.Repositories;
 using AdventureWorks.Domain.Entities.Person;
 
@@ -13,10 +12,7 @@ public sealed class ReadStateProvinceListQueryHandlerTests : UnitTestBase
 
     public ReadStateProvinceListQueryHandlerTests()
     {
-        var mappingConfig = new MapperConfiguration(config =>
-            config.AddMaps(typeof(StateProvinceEntityToModelProfile).Assembly)
-        );
-        _mapper = mappingConfig.CreateMapper();
+        _mapper = SharedMapper;
 
         _sut = new ReadStateProvinceListQueryHandler(_mapper, _mockStateProvinceRepository.Object);
     }

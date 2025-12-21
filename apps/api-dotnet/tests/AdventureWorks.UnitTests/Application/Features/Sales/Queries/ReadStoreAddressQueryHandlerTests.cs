@@ -1,4 +1,3 @@
-using AdventureWorks.Application.Features.Sales.Profiles;
 using AdventureWorks.Application.Features.Sales.Queries;
 using AdventureWorks.Application.PersistenceContracts.Repositories.Person;
 using AdventureWorks.Domain.Entities.Person;
@@ -14,10 +13,7 @@ public sealed class ReadStoreAddressQueryHandlerTests : UnitTestBase
 
     public ReadStoreAddressQueryHandlerTests()
     {
-        var mappingConfig = new MapperConfiguration(config =>
-            config.AddMaps(typeof(BusinessEntityAddressEntityToStoreAddressModelProfile).Assembly)
-        );
-        _mapper = mappingConfig.CreateMapper();
+        _mapper = SharedMapper;
 
         _sut = new ReadStoreAddressQueryHandler(_mapper, _mockBeaRepository.Object);
     }

@@ -1,4 +1,3 @@
-using AdventureWorks.Application.Features.Sales.Profiles;
 using AdventureWorks.Domain.Entities.Sales;
 using AdventureWorks.Models.Features.AddressManagement;
 using AdventureWorks.Models.Features.Sales;
@@ -12,10 +11,7 @@ public sealed class SalesPersonCreateModelToSalesPersonEntityProfileTests : Unit
 
     public SalesPersonCreateModelToSalesPersonEntityProfileTests()
     {
-        var mappingConfig = new MapperConfiguration(config =>
-            config.AddMaps(typeof(SalesPersonCreateModelToSalesPersonEntityProfile).Assembly));
-
-        _mapper = mappingConfig.CreateMapper();
+        _mapper = SharedMapper;
     }
 
     private static SalesPersonCreateModel GetValidModel()

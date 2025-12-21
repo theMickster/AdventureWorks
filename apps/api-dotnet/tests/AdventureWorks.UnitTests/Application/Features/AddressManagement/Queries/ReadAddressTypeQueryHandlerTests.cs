@@ -1,5 +1,4 @@
-﻿using AdventureWorks.Application.Features.AddressManagement.Profiles;
-using AdventureWorks.Application.Features.AddressManagement.Queries;
+﻿using AdventureWorks.Application.Features.AddressManagement.Queries;
 using AdventureWorks.Application.PersistenceContracts.Repositories;
 using AdventureWorks.Domain.Entities.Person;
 
@@ -13,10 +12,7 @@ public sealed class ReadAddressTypeQueryHandlerTests : UnitTestBase
 
     public ReadAddressTypeQueryHandlerTests()
     {
-        var mappingConfig = new MapperConfiguration(config =>
-            config.AddMaps(typeof(AddressTypeEntityToModelProfile).Assembly)
-        );
-        _mapper = mappingConfig.CreateMapper();
+        _mapper = SharedMapper;
 
         _sut = new ReadAddressTypeQueryHandler(_mapper, _mockRepository.Object);
     }

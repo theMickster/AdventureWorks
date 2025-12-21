@@ -1,5 +1,4 @@
-﻿using AdventureWorks.Application.Features.HumanResources.Profiles;
-using AdventureWorks.Application.Features.HumanResources.Queries;
+﻿using AdventureWorks.Application.Features.HumanResources.Queries;
 using AdventureWorks.Application.PersistenceContracts.Repositories.Person;
 using AdventureWorks.Domain.Entities.Person;
 
@@ -13,10 +12,7 @@ public sealed class ReadContactTypeListQueryHandlerTests
 
     public ReadContactTypeListQueryHandlerTests()
     {
-        var mappingConfig = new MapperConfiguration(config =>
-            config.AddMaps(typeof(PersonTypeEntityToModelProfile).Assembly)
-        );
-        _mapper = mappingConfig.CreateMapper();
+        _mapper = UnitTestBase.SharedMapper;
 
         _sut = new ReadContactTypeListQueryHandler(_mapper, _mockRepository.Object);
     }

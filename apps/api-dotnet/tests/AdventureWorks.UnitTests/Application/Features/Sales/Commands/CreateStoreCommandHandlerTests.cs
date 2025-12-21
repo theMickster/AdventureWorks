@@ -1,6 +1,5 @@
 ﻿using AdventureWorks.Application.Features.Dashboard.Notifications;
 using AdventureWorks.Application.Features.Sales.Commands;
-using AdventureWorks.Application.Features.Sales.Profiles;
 using AdventureWorks.Application.PersistenceContracts.Repositories.Sales;
 using AdventureWorks.Domain.Entities.Sales;
 using AdventureWorks.Models.Features.Sales;
@@ -21,8 +20,7 @@ public sealed class CreateStoreCommandHandlerTests : UnitTestBase
 
     public CreateStoreCommandHandlerTests()
     {
-        var mappingConfig = new MapperConfiguration(c => c.AddMaps(typeof(StoreCreateModelToStoreEntityProfile).Assembly));
-        _mapper = mappingConfig.CreateMapper();
+        _mapper = SharedMapper;
         _sut = new CreateStoreCommandHandler(_mapper, _mockStoreRepository.Object, _mockValidator.Object, _mockPublisher.Object);
     }
 

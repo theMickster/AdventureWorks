@@ -1,5 +1,4 @@
 using AdventureWorks.Application.Features.Person.Commands;
-using AdventureWorks.Application.Features.Person.Profiles;
 using AdventureWorks.Application.PersistenceContracts.Repositories.Person;
 using AdventureWorks.Domain.Entities.Person;
 using AdventureWorks.Models.Features.Person;
@@ -17,9 +16,7 @@ public sealed class AddPersonEmailCommandHandlerTests : UnitTestBase
 
     public AddPersonEmailCommandHandlerTests()
     {
-        var mappingConfig = new MapperConfiguration(c =>
-            c.AddMaps(typeof(PersonEmailCreateModelToEmailAddressEntityProfile).Assembly));
-        _mapper = mappingConfig.CreateMapper();
+        _mapper = SharedMapper;
 
         _sut = new AddPersonEmailCommandHandler(_mapper, _mockRepo.Object, _mockValidator.Object);
     }

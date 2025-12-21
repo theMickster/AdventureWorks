@@ -1,5 +1,4 @@
-﻿using AdventureWorks.Application.Features.AddressManagement.Profiles;
-using AdventureWorks.Domain.Entities.Person;
+﻿using AdventureWorks.Domain.Entities.Person;
 using AdventureWorks.Domain.Entities.Sales;
 using AdventureWorks.Models.Features.AddressManagement;
 
@@ -12,10 +11,7 @@ public sealed class StateProvinceEntityToStateProvinceModelProfileTests : UnitTe
 
     public StateProvinceEntityToStateProvinceModelProfileTests()
     {
-        var mappingConfig = new MapperConfiguration(config =>
-            config.AddMaps(typeof(StateProvinceEntityToModelProfile).Assembly));
-
-        _mapper = mappingConfig.CreateMapper();
+        _mapper = SharedMapper;
     }
 
     [Fact]

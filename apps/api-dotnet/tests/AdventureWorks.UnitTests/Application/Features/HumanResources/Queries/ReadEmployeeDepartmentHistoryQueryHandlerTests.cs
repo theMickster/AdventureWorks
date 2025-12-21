@@ -1,4 +1,3 @@
-using AdventureWorks.Application.Features.HumanResources.Profiles;
 using AdventureWorks.Application.Features.HumanResources.Queries;
 using AdventureWorks.Application.PersistenceContracts.Repositories;
 using AdventureWorks.Domain.Entities.HumanResources;
@@ -16,10 +15,7 @@ public sealed class ReadEmployeeDepartmentHistoryQueryHandlerTests : UnitTestBas
 
     public ReadEmployeeDepartmentHistoryQueryHandlerTests()
     {
-        var mappingConfig = new MapperConfiguration(config =>
-            config.AddMaps(typeof(EmployeeDepartmentHistoryEntityToModelProfile).Assembly));
-
-        _mapper = mappingConfig.CreateMapper();
+        _mapper = SharedMapper;
         _sut = new ReadEmployeeDepartmentHistoryQueryHandler(_mapper, _mockEmployeeRepository.Object);
     }
 

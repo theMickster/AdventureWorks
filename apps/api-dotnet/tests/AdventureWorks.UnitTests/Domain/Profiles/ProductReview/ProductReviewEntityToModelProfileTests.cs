@@ -1,4 +1,3 @@
-using AdventureWorks.Application.Features.ProductReview.Profiles;
 using AdventureWorks.Models.Features.ProductReview;
 
 namespace AdventureWorks.UnitTests.Domain.Profiles.ProductReview;
@@ -10,10 +9,7 @@ public sealed class ProductReviewEntityToModelProfileTests : UnitTestBase
 
     public ProductReviewEntityToModelProfileTests()
     {
-        var mappingConfig = new MapperConfiguration(config =>
-            config.AddMaps(typeof(ProductReviewEntityToModelProfile).Assembly));
-
-        _mapper = mappingConfig.CreateMapper();
+        _mapper = SharedMapper;
     }
 
     [Fact]

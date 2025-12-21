@@ -1,4 +1,3 @@
-using AdventureWorks.Application.Features.HumanResources.Profiles;
 using AdventureWorks.Application.Features.HumanResources.Queries;
 using AdventureWorks.Application.PersistenceContracts.Repositories.HumanResources;
 using AdventureWorks.Domain.Entities.HumanResources;
@@ -13,10 +12,7 @@ public sealed class ReadShiftListQueryHandlerTests : UnitTestBase
 
     public ReadShiftListQueryHandlerTests()
     {
-        var mappingConfig = new MapperConfiguration(config =>
-            config.AddMaps(typeof(ShiftEntityToShiftModelProfile).Assembly)
-        );
-        _mapper = mappingConfig.CreateMapper();
+        _mapper = SharedMapper;
 
         _sut = new ReadShiftListQueryHandler(_mapper, _mockRepository.Object);
     }

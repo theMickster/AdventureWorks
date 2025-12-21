@@ -1,4 +1,3 @@
-using AdventureWorks.Application.Features.HumanResources.Profiles;
 using AdventureWorks.Application.Features.HumanResources.Queries;
 using AdventureWorks.Application.PersistenceContracts.Repositories;
 using AdventureWorks.Domain.Entities.Person;
@@ -14,10 +13,7 @@ public sealed class ReadEmployeeAddressListQueryHandlerTests : UnitTestBase
 
     public ReadEmployeeAddressListQueryHandlerTests()
     {
-        var mappingConfig = new MapperConfiguration(config =>
-            config.AddMaps(typeof(EmployeeAddressProfile).Assembly));
-
-        _mapper = mappingConfig.CreateMapper();
+        _mapper = SharedMapper;
         _sut = new ReadEmployeeAddressListQueryHandler(_mapper, _mockEmployeeRepository.Object);
     }
 

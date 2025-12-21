@@ -1,5 +1,4 @@
 using AdventureWorks.Application.Features.Production.Commands;
-using AdventureWorks.Application.Features.Production.Profiles;
 using AdventureWorks.Application.PersistenceContracts.Repositories.Production;
 using AdventureWorks.Domain.Entities.Production;
 using AdventureWorks.Models.Features.Production;
@@ -19,8 +18,7 @@ public sealed class UpdateProductCommandHandlerTests : UnitTestBase
 
     public UpdateProductCommandHandlerTests()
     {
-        var mappingConfig = new MapperConfiguration(c => c.AddMaps(typeof(ProductUpdateModelToProductProfile).Assembly));
-        _mapper = mappingConfig.CreateMapper();
+        _mapper = SharedMapper;
         _sut = new UpdateProductCommandHandler(_mapper, _mockProductRepository.Object, _mockValidator.Object);
     }
 

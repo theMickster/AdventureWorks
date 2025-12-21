@@ -1,5 +1,4 @@
 using AdventureWorks.Application.Features.Sales.Commands;
-using AdventureWorks.Application.Features.Sales.Profiles;
 using AdventureWorks.Application.PersistenceContracts.Repositories.Sales;
 using AdventureWorks.Domain.Entities.HumanResources;
 using AdventureWorks.Domain.Entities.Person;
@@ -22,8 +21,7 @@ public sealed class CreateSalesPersonCommandHandlerTests : UnitTestBase
 
     public CreateSalesPersonCommandHandlerTests()
     {
-        var mappingConfig = new MapperConfiguration(c => c.AddMaps(typeof(SalesPersonCreateModelToSalesPersonEntityProfile).Assembly));
-        _mapper = mappingConfig.CreateMapper();
+        _mapper = SharedMapper;
         _sut = new CreateSalesPersonCommandHandler(_mapper, _mockSalesPersonRepository.Object, _mockValidator.Object);
     }
 

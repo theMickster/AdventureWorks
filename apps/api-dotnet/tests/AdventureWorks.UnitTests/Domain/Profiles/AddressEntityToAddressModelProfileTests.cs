@@ -1,5 +1,4 @@
-﻿using AdventureWorks.Application.Features.AddressManagement.Profiles;
-using AdventureWorks.Domain.Entities.Person;
+﻿using AdventureWorks.Domain.Entities.Person;
 using AdventureWorks.Models.Features.AddressManagement;
 
 namespace AdventureWorks.UnitTests.Domain.Profiles;
@@ -11,10 +10,7 @@ public sealed class AddressEntityToAddressModelProfileTests : UnitTestBase
 
     public AddressEntityToAddressModelProfileTests()
     {
-        var mappingConfig = new MapperConfiguration(config =>
-            config.AddMaps(typeof(AddressEntityToAddressModelProfile).Assembly));
-
-        _mapper = mappingConfig.CreateMapper();
+        _mapper = SharedMapper;
     }
 
     [Fact]

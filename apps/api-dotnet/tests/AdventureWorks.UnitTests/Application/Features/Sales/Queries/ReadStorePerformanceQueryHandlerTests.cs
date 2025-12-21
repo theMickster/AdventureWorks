@@ -1,4 +1,3 @@
-using AdventureWorks.Application.Features.Sales.Profiles;
 using AdventureWorks.Application.Features.Sales.Queries;
 using AdventureWorks.Application.PersistenceContracts.Repositories.Sales;
 using AdventureWorks.Models.Features.Sales;
@@ -15,10 +14,8 @@ public sealed class ReadStorePerformanceQueryHandlerTests : UnitTestBase
 
     public ReadStorePerformanceQueryHandlerTests()
     {
-        _mapperConfiguration = new MapperConfiguration(config =>
-            config.AddMaps(typeof(StorePerformanceProjectionToStorePerformanceModelProfile).Assembly)
-        );
-        _mapper = _mapperConfiguration.CreateMapper();
+        _mapperConfiguration = SharedMapperConfiguration;
+        _mapper = SharedMapper;
 
         _sut = new ReadStorePerformanceQueryHandler(_mapper, _mockStoreRepository.Object);
     }

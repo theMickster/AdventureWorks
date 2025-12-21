@@ -1,5 +1,4 @@
-﻿using AdventureWorks.Application.Features.Sales.Profiles;
-using AdventureWorks.Application.Features.Sales.Queries;
+﻿using AdventureWorks.Application.Features.Sales.Queries;
 using AdventureWorks.Application.PersistenceContracts.Repositories;
 using AdventureWorks.Domain.Entities.Sales;
 
@@ -13,10 +12,7 @@ public sealed class ReadSalesTerritoryQueryHandlerTests : UnitTestBase
 
     public ReadSalesTerritoryQueryHandlerTests()
     {
-        var mappingConfig = new MapperConfiguration(config =>
-            config.AddMaps(typeof(SalesTerritoryEntityToModelProfile).Assembly)
-        );
-        _mapper = mappingConfig.CreateMapper();
+        _mapper = SharedMapper;
 
         _sut = new ReadSalesTerritoryQueryHandler(_mapper, _mockRepository.Object);
     }

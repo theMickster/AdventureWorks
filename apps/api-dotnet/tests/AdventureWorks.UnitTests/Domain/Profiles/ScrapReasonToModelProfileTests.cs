@@ -1,4 +1,3 @@
-using AdventureWorks.Application.Features.Production.Profiles;
 using AdventureWorks.Domain.Entities.Production;
 using AdventureWorks.Models.Features.Production;
 
@@ -11,10 +10,7 @@ public sealed class ScrapReasonToModelProfileTests : UnitTestBase
 
     public ScrapReasonToModelProfileTests()
     {
-        var mappingConfig = new MapperConfiguration(config =>
-            config.AddMaps(typeof(ScrapReasonToModelProfile).Assembly));
-
-        _mapper = mappingConfig.CreateMapper();
+        _mapper = SharedMapper;
     }
 
     [Fact]

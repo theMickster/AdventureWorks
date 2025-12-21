@@ -1,4 +1,3 @@
-using AdventureWorks.Application.Features.Production.Profiles;
 using AdventureWorks.Application.Features.Production.Queries;
 using AdventureWorks.Application.PersistenceContracts.Repositories.Production;
 using AdventureWorks.Domain.Entities.Production;
@@ -16,8 +15,7 @@ public sealed class ReadProductQueryHandlerTests : UnitTestBase
 
     public ReadProductQueryHandlerTests()
     {
-        var mappingConfig = new MapperConfiguration(c => c.AddMaps(typeof(ProductToDetailModelProfile).Assembly));
-        _mapper = mappingConfig.CreateMapper();
+        _mapper = SharedMapper;
         _sut = new ReadProductQueryHandler(_mapper, _mockProductRepository.Object);
     }
 

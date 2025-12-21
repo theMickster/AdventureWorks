@@ -1,4 +1,3 @@
-using AdventureWorks.Application.Features.HumanResources.Profiles;
 using AdventureWorks.Domain.Entities.HumanResources;
 using AdventureWorks.Models.Features.HumanResources;
 
@@ -11,10 +10,7 @@ public sealed class ShiftEntityToShiftModelProfileTests : UnitTestBase
 
     public ShiftEntityToShiftModelProfileTests()
     {
-        var mappingConfig = new MapperConfiguration(config =>
-            config.AddMaps(typeof(ShiftEntityToShiftModelProfile).Assembly));
-
-        _mapper = mappingConfig.CreateMapper();
+        _mapper = SharedMapper;
     }
 
     [Fact]

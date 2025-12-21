@@ -1,5 +1,4 @@
 using AdventureWorks.Application.Features.Sales.Commands;
-using AdventureWorks.Application.Features.Sales.Profiles;
 using AdventureWorks.Application.PersistenceContracts.Repositories.Person;
 using AdventureWorks.Application.PersistenceContracts.Repositories.Sales;
 using AdventureWorks.Domain.Entities.Person;
@@ -20,9 +19,7 @@ public sealed class AddStoreAddressCommandHandlerTests : UnitTestBase
 
     public AddStoreAddressCommandHandlerTests()
     {
-        var mappingConfig = new MapperConfiguration(c =>
-            c.AddMaps(typeof(StoreAddressCreateModelToBusinessEntityAddressEntityProfile).Assembly));
-        _mapper = mappingConfig.CreateMapper();
+        _mapper = SharedMapper;
         _sut = new AddStoreAddressCommandHandler(
             _mapper,
             _mockBeaRepository.Object,

@@ -1,5 +1,4 @@
-﻿using AdventureWorks.Application.Features.AddressManagement.Profiles;
-using AdventureWorks.Domain.Entities.Person;
+﻿using AdventureWorks.Domain.Entities.Person;
 using AdventureWorks.Models.Features.AddressManagement;
 using AdventureWorks.Models.Slim;
 
@@ -12,15 +11,11 @@ public sealed class AddressUpdateModelToAddressEntityProfileTests
 
     public AddressUpdateModelToAddressEntityProfileTests()
     {
-        var mappingConfig = new MapperConfiguration(config =>
-            config.AddMaps(typeof(AddressUpdateModelToAddressEntityProfile).Assembly));
-
-        _mapper = mappingConfig.CreateMapper();
+        _mapper = UnitTestBase.SharedMapper;
     }
         
     [Fact]
     public void All_mappings_are_correctly_setup_succeeds() => _mapper.ConfigurationProvider.AssertConfigurationIsValid();
-
 
     [Fact]
     public void Map_model_to_entity_succeeds()

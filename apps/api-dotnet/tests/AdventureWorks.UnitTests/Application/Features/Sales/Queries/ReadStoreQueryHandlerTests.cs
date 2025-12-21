@@ -1,5 +1,4 @@
-﻿using AdventureWorks.Application.Features.Sales.Profiles;
-using AdventureWorks.Application.Features.Sales.Queries;
+﻿using AdventureWorks.Application.Features.Sales.Queries;
 using AdventureWorks.Application.PersistenceContracts.Repositories.Person;
 using AdventureWorks.Application.PersistenceContracts.Repositories.Sales;
 using AdventureWorks.Domain.Entities.Person;
@@ -17,10 +16,7 @@ public sealed class ReadStoreQueryHandlerTests : UnitTestBase
 
     public ReadStoreQueryHandlerTests()
     {
-        var mappingConfig = new MapperConfiguration(config =>
-            config.AddMaps(typeof(StoreEntityToModelProfile).Assembly)
-        );
-        _mapper = mappingConfig.CreateMapper();
+        _mapper = SharedMapper;
 
         _sut = new ReadStoreQueryHandler(_mapper, _mockStoreRepository.Object, _mockContactEntityRepository.Object);
     }

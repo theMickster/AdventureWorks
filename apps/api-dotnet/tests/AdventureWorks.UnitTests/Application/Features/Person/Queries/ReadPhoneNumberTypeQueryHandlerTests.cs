@@ -1,4 +1,3 @@
-using AdventureWorks.Application.Features.Person.Profiles;
 using AdventureWorks.Application.Features.Person.Queries;
 using AdventureWorks.Application.PersistenceContracts.Repositories.Person;
 using AdventureWorks.Domain.Entities.Person;
@@ -13,10 +12,7 @@ public sealed class ReadPhoneNumberTypeQueryHandlerTests : UnitTestBase
 
     public ReadPhoneNumberTypeQueryHandlerTests()
     {
-        var mappingConfig = new MapperConfiguration(config =>
-            config.AddMaps(typeof(PhoneNumberTypeEntityToPhoneNumberTypeModelProfile).Assembly)
-        );
-        _mapper = mappingConfig.CreateMapper();
+        _mapper = SharedMapper;
 
         _sut = new ReadPhoneNumberTypeQueryHandler(_mapper, _mockRepository.Object);
     }

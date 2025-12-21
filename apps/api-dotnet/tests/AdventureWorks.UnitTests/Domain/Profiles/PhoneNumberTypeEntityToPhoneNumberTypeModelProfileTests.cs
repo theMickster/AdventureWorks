@@ -1,4 +1,3 @@
-using AdventureWorks.Application.Features.Person.Profiles;
 using AdventureWorks.Domain.Entities.Person;
 using AdventureWorks.Models.Features.Person;
 
@@ -10,10 +9,7 @@ public sealed class PhoneNumberTypeEntityToPhoneNumberTypeModelProfileTests : Un
 
     public PhoneNumberTypeEntityToPhoneNumberTypeModelProfileTests()
     {
-        var mappingConfig = new MapperConfiguration(config =>
-            config.AddMaps(typeof(PhoneNumberTypeEntityToPhoneNumberTypeModelProfile).Assembly)
-        );
-        _mapper = mappingConfig.CreateMapper();
+        _mapper = SharedMapper;
     }
 
     [Fact]

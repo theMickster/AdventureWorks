@@ -1,5 +1,4 @@
 using AdventureWorks.Application.Features.HumanResources.Commands;
-using AdventureWorks.Application.Features.HumanResources.Profiles;
 using AdventureWorks.Application.PersistenceContracts.Repositories;
 using AdventureWorks.Domain.Entities.HumanResources;
 using AdventureWorks.Domain.Entities.Person;
@@ -25,10 +24,7 @@ public sealed class PatchEmployeeAddressCommandHandlerTests : UnitTestBase
 
     public PatchEmployeeAddressCommandHandlerTests()
     {
-        var mappingConfig = new MapperConfiguration(config =>
-            config.AddMaps(typeof(EmployeeAddressProfile).Assembly));
-
-        _mapper = mappingConfig.CreateMapper();
+        _mapper = SharedMapper;
 
         _sut = new PatchEmployeeAddressCommandHandler(
             _mapper,
