@@ -26,7 +26,7 @@ public class ReserveStockActivityTests
         dbContext.ProductInventories.AddRange(
             new ProductInventory { ProductId = 1, LocationId = 1, Shelf = "A", Bin = 1, Quantity = 400 },
             new ProductInventory { ProductId = 1, LocationId = 2, Shelf = "B", Bin = 2, Quantity = 485 });
-        await dbContext.SaveChangesAsync();
+        await dbContext.SaveChangesAsync(TestContext.Current.CancellationToken);
 
         var context = new Mock<TaskActivityContext>(MockBehavior.Strict);
         var input = Input(new SalesOrderSagaLineItem { ProductId = 1, OrderQty = 450, UnitPrice = 10m });
@@ -38,10 +38,10 @@ public class ReserveStockActivityTests
 
         var remainingQuantity = await dbContext.ProductInventories
             .Where(pi => pi.ProductId == 1)
-            .SumAsync(pi => (int)pi.Quantity);
+            .SumAsync(pi => (int)pi.Quantity, TestContext.Current.CancellationToken);
         Assert.Equal(885 - 450, remainingQuantity);
 
-        var transaction = await dbContext.TransactionHistories.SingleAsync(th => th.ProductId == 1);
+        var transaction = await dbContext.TransactionHistories.SingleAsync(th => th.ProductId == 1, TestContext.Current.CancellationToken);
         Assert.Equal("S", transaction.TransactionType);
         Assert.Equal(71774, transaction.ReferenceOrderId);
         Assert.Equal(450, transaction.Quantity);
@@ -54,15 +54,15 @@ public class ReserveStockActivityTests
         dbContext.ProductInventories.AddRange(
             new ProductInventory { ProductId = 1, LocationId = 1, Shelf = "A", Bin = 1, Quantity = 100 },
             new ProductInventory { ProductId = 1, LocationId = 2, Shelf = "B", Bin = 2, Quantity = 100 });
-        await dbContext.SaveChangesAsync();
+        await dbContext.SaveChangesAsync(TestContext.Current.CancellationToken);
 
         var context = new Mock<TaskActivityContext>(MockBehavior.Strict);
         var input = Input(new SalesOrderSagaLineItem { ProductId = 1, OrderQty = 150, UnitPrice = 10m });
 
         await new ReserveStockActivityCore(dbContext).RunAsync(context.Object, input);
 
-        var locationOne = await dbContext.ProductInventories.SingleAsync(pi => pi.ProductId == 1 && pi.LocationId == 1);
-        var locationTwo = await dbContext.ProductInventories.SingleAsync(pi => pi.ProductId == 1 && pi.LocationId == 2);
+        var locationOne = await dbContext.ProductInventories.SingleAsync(pi => pi.ProductId == 1 && pi.LocationId == 1, TestContext.Current.CancellationToken);
+        var locationTwo = await dbContext.ProductInventories.SingleAsync(pi => pi.ProductId == 1 && pi.LocationId == 2, TestContext.Current.CancellationToken);
         Assert.Equal(0, locationOne.Quantity);
         Assert.Equal(50, locationTwo.Quantity);
     }
@@ -72,7 +72,7 @@ public class ReserveStockActivityTests
     {
         using var dbContext = SalesOrderSagaDbContextFactory.Create();
         dbContext.ProductInventories.Add(new ProductInventory { ProductId = 853, LocationId = 1, Shelf = "A", Bin = 1, Quantity = 0 });
-        await dbContext.SaveChangesAsync();
+        await dbContext.SaveChangesAsync(TestContext.Current.CancellationToken);
 
         var context = new Mock<TaskActivityContext>(MockBehavior.Strict);
         var input = Input(new SalesOrderSagaLineItem { ProductId = 853, OrderQty = 1, UnitPrice = 10m });
@@ -94,13 +94,13 @@ public class ReserveStockActivityTests
         var databaseName = Guid.NewGuid().ToString();
         using var dbContextA = SalesOrderSagaDbContextFactory.Create(databaseName);
         dbContextA.ProductInventories.Add(new ProductInventory { ProductId = 1, LocationId = 1, Shelf = "A", Bin = 1, Quantity = 100 });
-        await dbContextA.SaveChangesAsync();
+        await dbContextA.SaveChangesAsync(TestContext.Current.CancellationToken);
 
         using var dbContextB = SalesOrderSagaDbContextFactory.Create(databaseName);
         // Force dbContextB to read the pre-reservation row into its own change tracker before
         // dbContextA reserves, mirroring two concurrent activity invocations that both read the
         // row before either commits a decrement.
-        _ = await dbContextB.ProductInventories.SingleAsync(pi => pi.ProductId == 1);
+        _ = await dbContextB.ProductInventories.SingleAsync(pi => pi.ProductId == 1, TestContext.Current.CancellationToken);
 
         var context = new Mock<TaskActivityContext>(MockBehavior.Strict);
         var line = new SalesOrderSagaLineItem { ProductId = 1, OrderQty = 40, UnitPrice = 10m };
@@ -122,7 +122,7 @@ public class ReserveStockActivityTests
         using var dbContext = SalesOrderSagaDbContextFactory.Create();
         dbContext.ProductInventories.Add(
             new ProductInventory { ProductId = 1, LocationId = 1, Shelf = "A", Bin = 1, Quantity = 400 });
-        await dbContext.SaveChangesAsync();
+        await dbContext.SaveChangesAsync(TestContext.Current.CancellationToken);
 
         var context = new Mock<TaskActivityContext>(MockBehavior.Strict);
         var input = Input(new SalesOrderSagaLineItem { ProductId = 1, OrderQty = 50, UnitPrice = 10m });
@@ -131,15 +131,15 @@ public class ReserveStockActivityTests
 
         var inventoryAfterFirstRun = await dbContext.ProductInventories
             .Where(pi => pi.ProductId == 1)
-            .SumAsync(pi => (int)pi.Quantity);
-        var transactionCountAfterFirstRun = await dbContext.TransactionHistories.CountAsync(th => th.ProductId == 1);
+            .SumAsync(pi => (int)pi.Quantity, TestContext.Current.CancellationToken);
+        var transactionCountAfterFirstRun = await dbContext.TransactionHistories.CountAsync(th => th.ProductId == 1, TestContext.Current.CancellationToken);
 
         var replayReceipt = await new ReserveStockActivityCore(dbContext).RunAsync(context.Object, input);
 
         var inventoryAfterReplay = await dbContext.ProductInventories
             .Where(pi => pi.ProductId == 1)
-            .SumAsync(pi => (int)pi.Quantity);
-        var transactionCountAfterReplay = await dbContext.TransactionHistories.CountAsync(th => th.ProductId == 1);
+            .SumAsync(pi => (int)pi.Quantity, TestContext.Current.CancellationToken);
+        var transactionCountAfterReplay = await dbContext.TransactionHistories.CountAsync(th => th.ProductId == 1, TestContext.Current.CancellationToken);
 
         Assert.Equal(inventoryAfterFirstRun, inventoryAfterReplay);
         Assert.Equal(transactionCountAfterFirstRun, transactionCountAfterReplay);
@@ -153,7 +153,7 @@ public class ReserveStockActivityTests
     {
         using var dbContext = SalesOrderSagaDbContextFactory.Create();
         dbContext.ProductInventories.Add(new ProductInventory { ProductId = 316, LocationId = 1, Shelf = "A", Bin = 1, Quantity = 1361 });
-        await dbContext.SaveChangesAsync();
+        await dbContext.SaveChangesAsync(TestContext.Current.CancellationToken);
 
         var input = Input(new SalesOrderSagaLineItem { ProductId = 316, OrderQty = 5, UnitPrice = 10m });
 

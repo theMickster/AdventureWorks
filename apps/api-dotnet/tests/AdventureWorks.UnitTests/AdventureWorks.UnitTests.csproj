@@ -29,6 +29,10 @@
   </ItemGroup>
 
   <ItemGroup>
+    <None Include="xunit.runner.json" CopyToOutputDirectory="PreserveNewest" />
+  </ItemGroup>
+
+  <ItemGroup>
     <ProjectReference Include="..\..\src\AdventureWorks.API\AdventureWorks.API.csproj" />
     <ProjectReference Include="..\..\src\AdventureWorks.Application\AdventureWorks.Application.csproj" />
     <ProjectReference Include="..\..\src\AdventureWorks.Common\AdventureWorks.Common.csproj" />

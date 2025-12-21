@@ -22,7 +22,7 @@ public class CheckInventoryActivityTests
             new ProductInventory { ProductId = 1, LocationId = 1, Shelf = "A", Bin = 1, Quantity = 400 },
             new ProductInventory { ProductId = 1, LocationId = 2, Shelf = "B", Bin = 2, Quantity = 485 },
             new ProductInventory { ProductId = 1, LocationId = 3, Shelf = "C", Bin = 3, Quantity = 200 });
-        await dbContext.SaveChangesAsync();
+        await dbContext.SaveChangesAsync(TestContext.Current.CancellationToken);
 
         var context = new Mock<TaskActivityContext>(MockBehavior.Strict);
         var line = new SalesOrderSagaLineItem { ProductId = 1, OrderQty = 1000, UnitPrice = 10m };
@@ -52,7 +52,7 @@ public class CheckInventoryActivityTests
     {
         using var dbContext = SalesOrderSagaDbContextFactory.Create();
         dbContext.ProductInventories.Add(new ProductInventory { ProductId = 316, LocationId = 1, Shelf = "A", Bin = 1, Quantity = 1361 });
-        await dbContext.SaveChangesAsync();
+        await dbContext.SaveChangesAsync(TestContext.Current.CancellationToken);
 
         var line = new SalesOrderSagaLineItem { ProductId = 316, OrderQty = 10, UnitPrice = 10m };
 

@@ -98,7 +98,7 @@ public sealed class SalesOrderSagaOrchestratorInProcessTests
         {
             ProductId = 1, LocationId = 1, Shelf = "A", Bin = 1, Quantity = 1085
         });
-        await dbContext.SaveChangesAsync();
+        await dbContext.SaveChangesAsync(TestContext.Current.CancellationToken);
 
         var input = ValidInput(new SalesOrderSagaLineItem { ProductId = 1, OrderQty = 5, UnitPrice = 34.99m });
 
