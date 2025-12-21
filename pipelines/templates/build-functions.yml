@@ -42,12 +42,8 @@ steps:
     displayName: "Pack local NuGet feed (Domain/Application)"
     workingDirectory: apps/functions-dotnet
 
-  - task: DotNetCoreCLI@2
+  - script: dotnet restore "${{ parameters.solution }}" --verbosity $(dotnetVerbosity)
     displayName: "Restore NuGet packages"
-    inputs:
-      command: restore
-      projects: "${{ parameters.solution }}"
-      arguments: "--verbosity $(dotnetVerbosity)"
 
   - task: DotNetCoreCLI@2
     displayName: "Build solution"
