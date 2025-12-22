@@ -19,7 +19,12 @@
           @for (col of columns(); track col.key) {
             <th [id]="fieldId() + '-th-' + col.key" [class]="col.headerClass ?? ''">
               @if (col.sortable) {
-                <button class="btn btn-ghost btn-xs gap-1" (click)="onSort(col.key)" (keydown.enter)="onSort(col.key)">
+                <button
+                  type="button"
+                  class="inline-flex cursor-pointer items-center gap-1 bg-transparent p-0 hover:text-base-content focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary"
+                  (click)="onSort(col.key)"
+                  (keydown.enter)="onSort(col.key)"
+                >
                   {{ col.label | translate }}
                   @if (sortColumn() === col.key) {
                     <i

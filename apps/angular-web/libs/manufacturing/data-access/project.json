@@ -1,0 +1,35 @@
+{
+  "name": "manufacturing-data-access",
+  "$schema": "../../../node_modules/nx/schemas/project-schema.json",
+  "sourceRoot": "libs/manufacturing/data-access/src",
+  "prefix": "aw",
+  "projectType": "library",
+  "tags": ["type:data-access", "scope:manufacturing"],
+  "targets": {
+    "build": {
+      "executor": "@nx/angular:ng-packagr-lite",
+      "outputs": ["{workspaceRoot}/dist/{projectRoot}"],
+      "options": {
+        "project": "libs/manufacturing/data-access/ng-package.json",
+        "tsConfig": "libs/manufacturing/data-access/tsconfig.lib.json"
+      },
+      "configurations": {
+        "production": {
+          "tsConfig": "libs/manufacturing/data-access/tsconfig.lib.prod.json"
+        },
+        "development": {}
+      },
+      "defaultConfiguration": "production"
+    },
+    "test": {
+      "executor": "@nx/angular:unit-test",
+      "options": {
+        "reporters": ["junit", "default"],
+        "outputFile": "libs/manufacturing/data-access/test-results/junit.xml"
+      }
+    },
+    "lint": {
+      "executor": "@nx/eslint:lint"
+    }
+  }
+}

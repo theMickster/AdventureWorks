@@ -23,7 +23,7 @@ Additional guardrails live in `.claude/rules/` and are auto-loaded by Claude:
 Every library must have exactly two tags in `project.json`:
 
 - **type**: `type:feature` | `type:ui` | `type:data-access` | `type:util`
-- **scope**: `scope:shared` | `scope:sales` | `scope:hr` | `scope:public`
+- **scope**: `scope:shared` | `scope:sales` | `scope:hr` | `scope:manufacturing` | `scope:public`
 
 ## NgRx SignalStore Pattern
 
@@ -200,6 +200,27 @@ Tabbed detail at `/sales/stores/:id`. Calls `SalesApiService` directly; no NgRx 
 - **Expand/collapse is CSS-only**: a `grid-template-rows: 0fr` → `1fr` transition (~200ms) on the children wrapper, driven by a class binding on the expanded state. Children stay mounted in the DOM even when collapsed — no `@if` around the collapsed content, only around whether the node has any children at all.
 - **Tree is built once, not per render**: `OrgChartStore.tree` and `.stats` are `withComputed` signals derived from the flat `items` state — they only recompute when `items()`/`departmentColorClasses()` actually change (i.e. once per `load()`), not on every template re-render.
 - **`ScrollIndicatorComponent`** (`libs/shared/ui`) — new reusable gradient-fade edge affordance for horizontally-scrollable containers, used to wrap the tree. Not org-chart-specific; any future wide/scrollable content can reuse it.
+
+## Manufacturing Feature Libraries
+
+### `libs/manufacturing/data-access`
+
+**`WorkOrderStore`** — entity store for the Production.WorkOrder paginated, filterable list. Mirrors `SalesOrderStore`'s shape (`withEntities` + `withRequestStatus` + `withPagination(25)`) minus the sales domain's second analytics side-effect — work orders has no analytics feature, so `applyFilters` is intentionally thin.
+
+- **`applyFilters` is a one-liner, not a dual-dispatch method**: unlike `SalesOrderStore.applyFilters` (which fires both `loadPage` and `loadAnalytics`), `WorkOrderStore.applyFilters` only merges the given filters onto a page-1 request and delegates to `loadPage`. Do not add a second side-effect here without also adding the corresponding domain feature.
+- **AC wording vs. the real `RequestStatus` union**: story #967's AC literally says `requestStatus() === 'failed'`. The real union (`with-request-status.ts`) has no `'failed'` member — it's `'idle' | 'loading' | 'loaded' | 'error'`. This store deliberately reuses the shared union rather than inventing a parallel one; `work-order.store.spec.ts` asserts against `'error'` and documents why in a comment. Do not add a `'failed'` state to satisfy the AC literally.
+
+### `libs/manufacturing/feature-work-orders`
+
+**WorkOrderListComponent** — server-side paginated, filterable list at `/manufacturing/work-orders`. Follows the Sales List Component Invariants (see above) with these deviations:
+
+- **`productId`/`scrapReasonId` are plain numeric `<input type="number">` fields, not dropdowns**: no lookup endpoint exists for either — unlike the Sales Orders filter bar's `SelectFieldComponent` dropdowns, there is no reference data to fetch. Do not add a `forkJoin` lookup call here without a backing API.
+- **Filter bar also has `startDate`/`endDate` (`<input type="date">`) and `hasScrapped` (All / With Scrap / No Scrap `<select>`)**: all three map directly onto `WorkOrderParams`, which the API already supports — round-tripped through the URL exactly like `productId`/`scrapReasonId`. `hasScrapped`'s URL/form value is the string `'true'`/`'false'`/`''` (not a real boolean) until `parseFilterParams` converts it; `''` means "All" and must stay distinct from `'false'`.
+- **`statusKey` is blank unless `isCompletedLate`, not a cased label**: `rows` projects `statusKey` to `'completed late'` only when `workOrder.isCompletedLate` is true, and `''` otherwise — the template's `awColumnDef="statusKey"` guards the badge behind `@if ($any(row)['statusKey'])`. An on-time work order renders no badge at all, not an "On Time" badge. `WORK_ORDER_STATUS_BADGE_MAP` (in `work-order-status-badge.ts`, not exported from `index.ts`, matching `order-status-badge.ts`'s convention) has exactly one key: `'completed late'`.
+- **View-button row navigation, not row-click**: `DataTableComponent`'s template has no row-click output (only `sortChange`/`pageChange`) — a per-row "View" button column (`onViewClick`) navigates to `/manufacturing/work-orders/:id`, following `OrderListComponent`'s `onRowClick` precedent applied to a button instead of a `<tr>` handler. Do not add a new row-click output to the shared `type:ui` `DataTableComponent` to support this; it would affect every consumer.
+- **Known gap: `/manufacturing/work-orders/:id` has no registered route or detail component yet.** US-968's AC describes the row-click navigation only — no `WorkOrderDetailComponent` was in scope for #962's children (966/967/968), and none exists elsewhere in the app. Clicking "View" today falls through to the app-wide `**` wildcard `NotFoundComponent`. This is an accepted, tracked gap (a future story), not a regression to silently patch here — do not stub a fake detail route or remove the button as a workaround without a product decision.
+- **Default sort `startDate` desc**: matches the API's own default (`WorkOrderParameter`), so AC1's "newest first" requires no client-side override — `loadFromUrl` only supplies `orderBy`/`sortOrder` explicitly when the URL specifies a valid sort column.
+- **No analytics panel and no dropdown lookups**: unlike `OrderListComponent`, there is no `OrderAnalyticsPanelComponent` equivalent and no `forkJoin` for reference data — the filter bar and error-toast `effect()` are the full extent of `ngOnInit`'s side-effects.
 
 ## SignalR
 

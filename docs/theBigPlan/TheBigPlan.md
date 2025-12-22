@@ -10,7 +10,7 @@
 - 🚧 Testing Foundation: Epic #565 in progress (#669, #923, #672 done; #670, #671 remaining)
 - 🚧 UI pipeline in ADO: #561 in progress (US-739 done, Feature 934 done); #562 now In Progress (Departments CRUD implemented); #563 currently New
 - ✅ #935 Customer Module complete (2026-07-07) — Feature 947, US-951/952/953 (Customer LTV list, API + Angular)
-- 🚧 Additional Initiative #559 backlog epics: #936 (Work Orders/Manufacturing) In Progress — ✅ US-966 Work Orders List API (`GET /api/v1/work-orders`, `WorkOrderRepository.GetWorkOrdersAsync`/`SearchWorkOrdersAsync`, server-computed `yieldRate`/`isCompletedLate`); #937 (Purchasing/Vendor) In Progress — ✅ Feature 977, US-981 (Vendor list ranked by spend with credit risk indicators, API only)
+- 🚧 Additional Initiative #559 backlog epics: #936 (Work Orders/Manufacturing) In Progress — ✅ US-966 Work Orders List API (`GET /api/v1/work-orders`, `WorkOrderRepository.GetWorkOrdersAsync`/`SearchWorkOrdersAsync`, server-computed `yieldRate`/`isCompletedLate`); ✅ Feature 962, US-967/968 (Angular `WorkOrderStore` + `WorkOrderListComponent`, `/manufacturing/work-orders` — new `libs/manufacturing/data-access` and `libs/manufacturing/feature-work-orders`, `scope:manufacturing`); #937 (Purchasing/Vendor) In Progress — ✅ Feature 977, US-981 (Vendor list ranked by spend with credit risk indicators, API only)
 - 🚧 Epic #569 (Polyglot Azure Functions Architecture) started: US 806 Sales Order Saga scaffold in place; ✅ US-807 (validate order, fan-out inventory check, transactional stock reservation) done
 - 📋 Future infrastructure/function backlog: #567, #568 (#566 marked Removed)
 

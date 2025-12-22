@@ -62,6 +62,7 @@ export class AppLayoutComponent {
 
   private readonly salesNav = viewChild<ElementRef<HTMLElement>>('salesNav');
   private readonly hrNav = viewChild<ElementRef<HTMLElement>>('hrNav');
+  private readonly manufacturingNav = viewChild<ElementRef<HTMLElement>>('manufacturingNav');
   private readonly userMenuTrigger = viewChild<ElementRef<HTMLButtonElement>>('userMenuTrigger');
 
   constructor() {
@@ -82,6 +83,9 @@ export class AppLayoutComponent {
           this.hrNav()
             ?.nativeElement.querySelector('details')
             ?.toggleAttribute('open', this.router.url.startsWith('/hr'));
+          this.manufacturingNav()
+            ?.nativeElement.querySelector('details')
+            ?.toggleAttribute('open', this.router.url.startsWith('/manufacturing'));
         });
     });
   }

@@ -12,7 +12,7 @@ Generator commands are documented in `.claude/CLAUDE.md`. This file covers **gua
 Tags are enforced by `eslint.config.mjs`. Use only these exact values:
 
 - **type**: `type:feature`, `type:ui`, `type:data-access`, `type:util`
-- **scope**: `scope:shared`, `scope:sales`, `scope:hr`, `scope:public`
+- **scope**: `scope:shared`, `scope:sales`, `scope:hr`, `scope:manufacturing`, `scope:public`
 
 Never invent new tags without updating the ESLint `depConstraints` array.
 

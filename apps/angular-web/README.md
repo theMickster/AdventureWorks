@@ -36,6 +36,9 @@ libs/
     feature-departments/       # Department list/detail/create/edit (type:feature, scope:hr)
     feature-employees/         # Employee create wizard, detail/edit, lifecycle modals (type:feature, scope:hr)
     feature-org-chart/         # Interactive org chart (type:feature, scope:hr)
+  manufacturing/
+    data-access/               # WorkOrderStore, models, API service (type:data-access, scope:manufacturing)
+    feature-work-orders/       # Work order list (type:feature, scope:manufacturing)
   public/
     feature-landing/           # Public landing page (type:feature, scope:public)
 ```
@@ -51,7 +54,7 @@ data-access  -> data-access, util
 util         -> util only
 ```
 
-Domain scopes: `shared`, `sales`, `hr`. A domain library can only depend on its own scope or `shared`.
+Domain scopes: `shared`, `sales`, `hr`, `manufacturing`. A domain library can only depend on its own scope or `shared`.
 
 ### Import Paths
 

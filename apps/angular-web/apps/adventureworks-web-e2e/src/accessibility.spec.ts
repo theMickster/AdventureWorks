@@ -28,4 +28,13 @@ test.describe('Accessibility smoke tests (US-684)', () => {
 
     expect(results.violations).toEqual([]);
   });
+
+  test('authenticated /manufacturing/work-orders has zero WCAG AA violations', async ({ page }) => {
+    await page.goto('/manufacturing/work-orders');
+    await expect(page.locator('#aw-work-order-list-page')).toBeVisible();
+
+    const results = await new AxeBuilder({ page }).withTags(['wcag2a', 'wcag2aa', 'wcag21a', 'wcag21aa']).analyze();
+
+    expect(results.violations).toEqual([]);
+  });
 });

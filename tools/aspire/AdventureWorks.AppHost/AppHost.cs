@@ -79,7 +79,7 @@ static IResourceBuilder<ProjectResource> AddApi(IDistributedApplicationBuilder b
 /// </remarks>
 static void AddAngularWeb(IDistributedApplicationBuilder builder, IResourceBuilder<ProjectResource> api)
 {
-    builder.AddNpmApp("angular-web", "../../../apps/angular-web", "start")
+    builder.AddJavaScriptApp("angular-web", "../../../apps/angular-web", "start")
         .WithHttpEndpoint(port: AngularDevServerPort, name: "http", isProxied: false)
         .WithEnvironment("NODE_ENV", "development")
         .WaitFor(api);

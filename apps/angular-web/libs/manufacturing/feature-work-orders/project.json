@@ -1,0 +1,35 @@
+{
+  "name": "manufacturing-feature-work-orders",
+  "$schema": "../../../node_modules/nx/schemas/project-schema.json",
+  "sourceRoot": "libs/manufacturing/feature-work-orders/src",
+  "prefix": "aw",
+  "projectType": "library",
+  "tags": ["type:feature", "scope:manufacturing"],
+  "targets": {
+    "build": {
+      "executor": "@nx/angular:ng-packagr-lite",
+      "outputs": ["{workspaceRoot}/dist/{projectRoot}"],
+      "options": {
+        "project": "libs/manufacturing/feature-work-orders/ng-package.json",
+        "tsConfig": "libs/manufacturing/feature-work-orders/tsconfig.lib.json"
+      },
+      "configurations": {
+        "production": {
+          "tsConfig": "libs/manufacturing/feature-work-orders/tsconfig.lib.prod.json"
+        },
+        "development": {}
+      },
+      "defaultConfiguration": "production"
+    },
+    "test": {
+      "executor": "@nx/angular:unit-test",
+      "options": {
+        "reporters": ["junit", "default"],
+        "outputFile": "libs/manufacturing/feature-work-orders/test-results/junit.xml"
+      }
+    },
+    "lint": {
+      "executor": "@nx/eslint:lint"
+    }
+  }
+}

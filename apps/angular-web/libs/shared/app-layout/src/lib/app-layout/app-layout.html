@@ -272,6 +272,27 @@
           </details>
         </li>
 
+        <!-- Manufacturing (collapsible) -->
+        <li id="aw-nav-manufacturing" #manufacturingNav>
+          <details>
+            <summary>
+              <i class="fa-solid fa-industry" aria-hidden="true"></i>
+              Manufacturing
+            </summary>
+            <ul>
+              <li id="aw-nav-manufacturing-work-orders">
+                <a
+                  routerLink="/manufacturing/work-orders"
+                  routerLinkActive="menu-active"
+                  [routerLinkActiveOptions]="{ exact: false }"
+                >
+                  Work Orders
+                </a>
+              </li>
+            </ul>
+          </details>
+        </li>
+
         <!-- Section divider -->
         <li class="menu-title mt-4">System</li>
 
