@@ -18,6 +18,7 @@ import type { JsonPatchOperation } from '../models/json-patch.model';
 import type { DepartmentCreate } from '../models/department-create.model';
 import type { DepartmentUpdate } from '../models/department-update.model';
 import type { DepartmentHeadcount } from '../models/department-headcount.model';
+import type { EmployeeAggregates } from '../models/employee-aggregates.model';
 import type { Department, SearchResult } from '@adventureworks-web/shared/data-access';
 
 const mockEnvironment = {
@@ -427,6 +428,36 @@ describe('HrApiService', () => {
       const req = httpTesting.expectOne(`${BASE_URL}/v1/departments/1/employees?page=2&pageSize=10`);
       expect(req.request.method).toBe('GET');
       req.flush([mockEmployee]);
+    });
+  });
+
+  describe('Aggregates', () => {
+    const mockAggregates: EmployeeAggregates = {
+      totalEmployeeCount: 290,
+      activeEmployeeCount: 290,
+      terminatedEmployeeCount: 0,
+      departmentCount: 16,
+      departmentHeadcounts: [
+        { departmentId: 1, departmentName: 'Engineering', groupName: 'Research and Development', activeEmployeeCount: 6 },
+      ],
+      tenureDistribution: {
+        underOneYear: 32,
+        oneToThreeYears: 58,
+        threeToFiveYears: 71,
+        fiveToTenYears: 89,
+        tenPlusYears: 40,
+      },
+      payBandSummary: [{ departmentGroup: 'Research and Development', averageRate: 32.65, minRate: 8.62, maxRate: 50.48 }],
+    };
+
+    it('should GET employee aggregates', () => {
+      service.getAggregates().subscribe((result) => {
+        expect(result).toEqual(mockAggregates);
+      });
+
+      const req = httpTesting.expectOne(`${BASE_URL}/v1/employees/aggregates`);
+      expect(req.request.method).toBe('GET');
+      req.flush(mockAggregates);
     });
   });
 });

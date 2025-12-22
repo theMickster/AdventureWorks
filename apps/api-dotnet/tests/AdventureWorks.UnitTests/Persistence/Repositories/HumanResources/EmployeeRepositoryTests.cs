@@ -1877,6 +1877,39 @@ public sealed class EmployeeRepositoryTests : PersistenceUnitTestBase
 
     #endregion
 
+    #region GetEmployeeCountsAsync
+
+    [Fact]
+    public async Task GetEmployeeCountsAsync_returns_total_and_active_countsAsync()
+    {
+        var employees = HumanResourcesDomainFixtures.GetEmployeeListForPaging();
+        employees[0].CurrentFlag = false;
+        DbContext.Employees.AddRange(employees);
+        await DbContext.SaveChangesAsync(cancellationToken: TestContext.Current.CancellationToken);
+
+        var (totalCount, activeCount) = await _sut.GetEmployeeCountsAsync(cancellationToken: TestContext.Current.CancellationToken);
+
+        using (new AssertionScope())
+        {
+            totalCount.Should().Be(5);
+            activeCount.Should().Be(4);
+        }
+    }
+
+    [Fact]
+    public async Task GetEmployeeCountsAsync_returns_zero_when_no_employeesAsync()
+    {
+        var (totalCount, activeCount) = await _sut.GetEmployeeCountsAsync(cancellationToken: TestContext.Current.CancellationToken);
+
+        using (new AssertionScope())
+        {
+            totalCount.Should().Be(0);
+            activeCount.Should().Be(0);
+        }
+    }
+
+    #endregion
+
     // Helper methods to create test entities
     private static EmployeeEntity CreateTestEmployeeEntity()
     {

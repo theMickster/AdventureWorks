@@ -40,6 +40,10 @@ public sealed class ReadEmployeeAggregatesControllerTests : UnitTestBase
     {
         var aggregatesModel = new EmployeeAggregatesModel
         {
+            TotalEmployeeCount = 10,
+            ActiveEmployeeCount = 9,
+            TerminatedEmployeeCount = 1,
+            DepartmentCount = 1,
             DepartmentHeadcounts = new List<DepartmentHeadcountSummaryModel>
             {
                 new() { DepartmentId = (short)1, DepartmentName = "Engineering", GroupName = "Research and Development", ActiveEmployeeCount = 10 }

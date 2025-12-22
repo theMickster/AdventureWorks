@@ -1,0 +1,11 @@
+<div class="h-64 w-full">
+  <canvas #chartCanvas role="img" [attr.aria-label]="ariaLabel()"></canvas>
+</div>
+<ul class="flex flex-wrap gap-4 mt-2" aria-label="Tenure bucket legend">
+  @for (bucket of bucketSummary(); track bucket.label) {
+    <li class="flex items-center gap-2 text-sm">
+      <span class="inline-block h-3 w-3 rounded-full" [style.background-color]="bucket.color" aria-hidden="true"></span>
+      <span>{{ bucket.label }} ({{ bucket.value }})</span>
+    </li>
+  }
+</ul>

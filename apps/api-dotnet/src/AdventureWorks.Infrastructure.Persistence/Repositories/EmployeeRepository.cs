@@ -497,6 +497,26 @@ public sealed class EmployeeRepository(AdventureWorksDbContext dbContext)
     }
 
     /// <summary>
+    /// Returns the total employee count and the active employee count (<c>CurrentFlag == true</c>) via two plain
+    /// <c>COUNT(*)</c> queries — no navigation properties are loaded, unlike <see cref="GetActiveEmployeesWithPayHistoryAsync"/>.
+    /// Deliberately two simple queries rather than one conditional-count-in-a-GroupBy query: this repo has no
+    /// existing precedent for a *predicated* <c>Count()</c> inside a grouped projection (unlike
+    /// <see cref="AdventureWorks.Infrastructure.Persistence.Repositories.Sales.SalesDashboardRepository"/>'s
+    /// unconditional <c>g.Count()</c>/<c>g.Sum()</c> shape), so two unambiguous <c>CountAsync</c> calls are used
+    /// instead of trusting an unverified EF Core SQL Server translation.
+    /// </summary>
+    public async Task<(int TotalCount, int ActiveCount)> GetEmployeeCountsAsync(
+        CancellationToken cancellationToken = default)
+    {
+        var query = DbContext.Employees.AsNoTracking();
+
+        var totalCount = await query.CountAsync(cancellationToken);
+        var activeCount = await query.CountAsync(e => e.CurrentFlag, cancellationToken);
+
+        return (totalCount, activeCount);
+    }
+
+    /// <summary>
     /// Transfers an employee to a new department and/or shift within a single transaction.
     /// Closes the active department assignment (sets EndDate) and inserts a new open record.
     /// Re-fetches the active record inside the transaction to prevent stale-data races between

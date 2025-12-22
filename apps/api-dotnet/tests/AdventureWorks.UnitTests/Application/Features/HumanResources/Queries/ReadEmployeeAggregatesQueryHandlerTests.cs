@@ -39,6 +39,7 @@ public sealed class ReadEmployeeAggregatesQueryHandlerTests : UnitTestBase
     {
         SetupEmptyHeadcountSummary();
         SetupActiveEmployees(new List<EmployeeEntity>());
+        SetupEmployeeCounts(totalCount: 0, activeCount: 0);
 
         var result = await _sut.Handle(new ReadEmployeeAggregatesQuery(), CancellationToken.None);
 
@@ -49,6 +50,36 @@ public sealed class ReadEmployeeAggregatesQueryHandlerTests : UnitTestBase
             result.TenureDistribution.Should().NotBeNull();
             result.PayBandSummary.Should().NotBeNull();
         }
+    }
+
+    [Fact]
+    public async Task Handle_populates_employee_and_department_countsAsync()
+    {
+        SetupHeadcountSummary(BuildDepartmentHeadcounts(16));
+        SetupActiveEmployees(new List<EmployeeEntity>());
+        SetupEmployeeCounts(totalCount: 296, activeCount: 290);
+
+        var result = await _sut.Handle(new ReadEmployeeAggregatesQuery(), CancellationToken.None);
+
+        using (new AssertionScope())
+        {
+            result.TotalEmployeeCount.Should().Be(296);
+            result.ActiveEmployeeCount.Should().Be(290);
+            result.TerminatedEmployeeCount.Should().Be(6);
+            result.DepartmentCount.Should().Be(16);
+        }
+    }
+
+    [Fact]
+    public async Task Handle_computes_zero_terminated_count_when_all_employees_are_activeAsync()
+    {
+        SetupEmptyHeadcountSummary();
+        SetupActiveEmployees(new List<EmployeeEntity>());
+        SetupEmployeeCounts(totalCount: 290, activeCount: 290);
+
+        var result = await _sut.Handle(new ReadEmployeeAggregatesQuery(), CancellationToken.None);
+
+        result.TerminatedEmployeeCount.Should().Be(0);
     }
 
     [Fact]
@@ -223,6 +254,36 @@ public sealed class ReadEmployeeAggregatesQueryHandlerTests : UnitTestBase
         _mockEmployeeRepository
             .Setup(x => x.GetActiveEmployeesWithPayHistoryAsync(It.IsAny<CancellationToken>()))
             .ReturnsAsync(employees);
+    }
+
+    private void SetupEmployeeCounts(int totalCount, int activeCount)
+    {
+        _mockEmployeeRepository
+            .Setup(x => x.GetEmployeeCountsAsync(It.IsAny<CancellationToken>()))
+            .ReturnsAsync((totalCount, activeCount));
+    }
+
+    private void SetupHeadcountSummary(IReadOnlyList<(DepartmentEntity Dept, int Count)> headcountSummary)
+    {
+        _mockDepartmentRepository
+            .Setup(x => x.GetDepartmentHeadcountSummaryAsync(It.IsAny<CancellationToken>()))
+            .ReturnsAsync(headcountSummary);
+    }
+
+    private static IReadOnlyList<(DepartmentEntity Dept, int Count)> BuildDepartmentHeadcounts(int count)
+    {
+        return Enumerable.Range(1, count)
+            .Select(i => (
+                Dept: new DepartmentEntity
+                {
+                    DepartmentId = (short)i,
+                    Name = $"Department {i}",
+                    GroupName = "Research and Development",
+                    ModifiedDate = DefaultAuditDate
+                },
+                Count: i))
+            .ToList()
+            .AsReadOnly();
     }
 
     private static EmployeeEntity BuildEmployee(

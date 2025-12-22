@@ -24,6 +24,7 @@ public sealed class ReadEmployeeAggregatesQueryHandler(
 
         var headcountSummary = await _departmentRepository.GetDepartmentHeadcountSummaryAsync(cancellationToken);
         var activeEmployees = await _employeeRepository.GetActiveEmployeesWithPayHistoryAsync(cancellationToken);
+        var (totalEmployeeCount, activeEmployeeCount) = await _employeeRepository.GetEmployeeCountsAsync(cancellationToken);
 
         var departmentHeadcounts = headcountSummary
             .Select(x => new DepartmentHeadcountSummaryModel
@@ -41,6 +42,10 @@ public sealed class ReadEmployeeAggregatesQueryHandler(
 
         return new EmployeeAggregatesModel
         {
+            TotalEmployeeCount = totalEmployeeCount,
+            ActiveEmployeeCount = activeEmployeeCount,
+            TerminatedEmployeeCount = totalEmployeeCount - activeEmployeeCount,
+            DepartmentCount = departmentHeadcounts.Count,
             DepartmentHeadcounts = departmentHeadcounts,
             TenureDistribution = tenureDistribution,
             PayBandSummary = payBandSummary

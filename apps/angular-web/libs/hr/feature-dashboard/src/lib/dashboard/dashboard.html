@@ -1,0 +1,105 @@
+<div class="flex flex-col gap-6">
+  <div class="flex flex-wrap items-center justify-between gap-2">
+    <h1 class="text-2xl font-bold">HR Dashboard</h1>
+    <div class="flex items-center gap-3">
+      @if (lastUpdatedLabel(); as label) {
+        <span id="aw-hr-dashboard-last-updated" class="text-secondary text-sm">Last updated {{ label }}</span>
+      }
+      <button
+        id="aw-hr-dashboard-refresh-btn"
+        type="button"
+        class="btn btn-sm btn-outline"
+        [disabled]="isLoading()"
+        (click)="onRefreshClick()"
+      >
+        Refresh
+      </button>
+    </div>
+  </div>
+
+  @if (hasError()) {
+    <div id="aw-hr-dashboard-error" class="alert alert-error" role="alert">
+      <span>Failed to load HR dashboard data. Please try again.</span>
+      <button type="button" class="btn btn-sm" (click)="onRetryClick()">Retry</button>
+    </div>
+  }
+
+  @if (isLoading()) {
+    <div class="stats stats-vertical shadow lg:stats-horizontal w-full">
+      @for (i of [1, 2, 3, 4]; track i) {
+        <div class="stat">
+          <aw-skeleton height="1.5rem" width="60%"></aw-skeleton>
+          <aw-skeleton height="2.5rem" width="80%"></aw-skeleton>
+        </div>
+      }
+    </div>
+    <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
+      <aw-skeleton height="20rem" width="100%"></aw-skeleton>
+      <aw-skeleton height="16rem" width="100%"></aw-skeleton>
+    </div>
+    <aw-skeleton height="12rem" width="100%"></aw-skeleton>
+  } @else if (aggregates(); as data) {
+    <div class="stats stats-vertical shadow lg:stats-horizontal w-full">
+      <div class="stat">
+        <div class="stat-title">Total Employees</div>
+        <div class="stat-value text-primary">{{ data.totalEmployeeCount | number }}</div>
+      </div>
+      <div class="stat">
+        <div class="stat-title">Active</div>
+        <div class="stat-value text-success">{{ data.activeEmployeeCount | number }}</div>
+      </div>
+      <div class="stat">
+        <div class="stat-title">Terminated</div>
+        <div class="stat-value text-error">{{ data.terminatedEmployeeCount | number }}</div>
+      </div>
+      <div class="stat">
+        <div class="stat-title">Departments</div>
+        <div class="stat-value text-accent">{{ data.departmentCount | number }}</div>
+      </div>
+    </div>
+
+    <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
+      <div class="card bg-base-100 shadow">
+        <div class="card-body">
+          <h2 class="card-title">Headcount by Department</h2>
+          <aw-headcount-chart [data]="data.departmentHeadcounts" />
+        </div>
+      </div>
+
+      <div class="card bg-base-100 shadow">
+        <div class="card-body">
+          <h2 class="card-title">Tenure Distribution</h2>
+          <aw-tenure-chart [data]="data.tenureDistribution" />
+        </div>
+      </div>
+    </div>
+
+    <div class="card bg-base-100 shadow">
+      <div class="card-body">
+        <h2 class="card-title">Pay Band Summary by Department Group</h2>
+        <div class="overflow-x-auto">
+          <table class="table">
+            <thead>
+              <tr>
+                <th>Department Group</th>
+                <th>Average Rate</th>
+                <th>Min Rate</th>
+                <th>Max Rate</th>
+              </tr>
+            </thead>
+            <tbody>
+              @for (band of data.payBandSummary; track band.departmentGroup) {
+                <tr>
+                  <td>{{ band.departmentGroup }}</td>
+                  <td>{{ band.averageRate | currency: 'USD' : 'symbol' : '1.2-2' }}</td>
+                  <td>{{ band.minRate | currency: 'USD' : 'symbol' : '1.2-2' }}</td>
+                  <td>{{ band.maxRate | currency: 'USD' : 'symbol' : '1.2-2' }}</td>
+                </tr>
+              }
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+  }
+</div>

@@ -17,6 +17,12 @@ export type { DepartmentCreate } from './lib/models/department-create.model';
 export type { DepartmentUpdate } from './lib/models/department-update.model';
 export type { DepartmentHeadcount } from './lib/models/department-headcount.model';
 export type { DepartmentEmployeesParams } from './lib/models/department-employees-params.model';
+export type {
+  EmployeeAggregates,
+  DepartmentHeadcountSummary,
+  TenureDistribution,
+  PayBandSummary,
+} from './lib/models/employee-aggregates.model';
 
 // Services
 export { HrApiService } from './lib/services/hr-api.service';

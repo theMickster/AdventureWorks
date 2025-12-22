@@ -20,6 +20,7 @@ import type { DepartmentCreate } from '../models/department-create.model';
 import type { DepartmentUpdate } from '../models/department-update.model';
 import type { DepartmentHeadcount } from '../models/department-headcount.model';
 import type { DepartmentEmployeesParams } from '../models/department-employees-params.model';
+import type { EmployeeAggregates } from '../models/employee-aggregates.model';
 
 /** HTTP client for HR domain endpoints (Employees, Employee Lifecycle, and Departments). */
 @Injectable({ providedIn: 'root' })
@@ -101,5 +102,10 @@ export class HrApiService {
   getDepartmentEmployees(id: number, params?: DepartmentEmployeesParams): Observable<Employee[]> {
     const query = params ? toQueryString(params) : '';
     return this.apiService.get<Employee[]>(`/v1/departments/${id}/employees${query}`);
+  }
+
+  /** HR dashboard aggregate statistics: stat card counts, department headcounts, tenure distribution, and pay band summary. */
+  getAggregates(): Observable<EmployeeAggregates> {
+    return this.apiService.get<EmployeeAggregates>('/v1/employees/aggregates');
   }
 }

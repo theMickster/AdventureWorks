@@ -31,6 +31,12 @@ export const hrRoutes: Route[] = [
     loadComponent: () => import('@adventureworks-web/hr/feature-org-chart').then((m) => m.OrgChartComponent),
   },
   {
+    path: 'dashboard',
+    title: 'HR Dashboard',
+    data: { breadcrumb: 'Dashboard' },
+    loadComponent: () => import('@adventureworks-web/hr/feature-dashboard').then((m) => m.HrDashboardComponent),
+  },
+  {
     path: 'departments',
     title: 'Departments',
     data: { breadcrumb: 'Departments' },

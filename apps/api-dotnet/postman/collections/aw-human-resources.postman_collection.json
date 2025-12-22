@@ -3252,6 +3252,123 @@
 							"response": []
 						}
 					]
+				},
+				{
+					"name": "Aggregates",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"Status should be OK request\", function () {\r",
+									"    pm.response.to.have.status(200);\r",
+									"});\r",
+									"\r",
+									"pm.test(\"Has X-Correlation-Id header\", function () {\r",
+									"    pm.response.to.have.header(\"X-Correlation-Id\");\r",
+									"});\r",
+									"\r",
+									"var response = pm.response.json();\r",
+									"\r",
+									"pm.test(\"Response has the expected stat card counts\", function () {\r",
+									"    pm.expect(response).to.have.property('totalEmployeeCount');\r",
+									"    pm.expect(response).to.have.property('activeEmployeeCount');\r",
+									"    pm.expect(response).to.have.property('terminatedEmployeeCount');\r",
+									"    pm.expect(response).to.have.property('departmentCount');\r",
+									"});\r",
+									"\r",
+									"pm.test(\"Active + terminated counts sum to the total\", function () {\r",
+									"    pm.expect(response.activeEmployeeCount + response.terminatedEmployeeCount).to.eql(response.totalEmployeeCount);\r",
+									"});\r",
+									"\r",
+									"pm.test(\"Department count reflects all 16 AdventureWorks departments\", function () {\r",
+									"    pm.expect(response.departmentCount).to.eql(16);\r",
+									"});\r",
+									"\r",
+									"pm.test(\"departmentHeadcounts lists all departments, including zero-headcount ones\", function () {\r",
+									"    pm.expect(response.departmentHeadcounts).to.be.an('array');\r",
+									"    pm.expect(response.departmentHeadcounts.length).to.eql(response.departmentCount);\r",
+									"    response.departmentHeadcounts.forEach(function (item) {\r",
+									"        pm.expect(item).to.have.property('departmentId');\r",
+									"        pm.expect(item).to.have.property('departmentName');\r",
+									"        pm.expect(item).to.have.property('groupName');\r",
+									"        pm.expect(item).to.have.property('activeEmployeeCount');\r",
+									"    });\r",
+									"});\r",
+									"\r",
+									"pm.test(\"tenureDistribution buckets sum to the active employee count\", function () {\r",
+									"    var t = response.tenureDistribution;\r",
+									"    pm.expect(t).to.have.property('underOneYear');\r",
+									"    pm.expect(t).to.have.property('oneToThreeYears');\r",
+									"    pm.expect(t).to.have.property('threeToFiveYears');\r",
+									"    pm.expect(t).to.have.property('fiveToTenYears');\r",
+									"    pm.expect(t).to.have.property('tenPlusYears');\r",
+									"    var sum = t.underOneYear + t.oneToThreeYears + t.threeToFiveYears + t.fiveToTenYears + t.tenPlusYears;\r",
+									"    pm.expect(sum).to.eql(response.activeEmployeeCount);\r",
+									"});\r",
+									"\r",
+									"pm.test(\"payBandSummary items expose avg/min/max rate per department group\", function () {\r",
+									"    pm.expect(response.payBandSummary).to.be.an('array');\r",
+									"    response.payBandSummary.forEach(function (item) {\r",
+									"        pm.expect(item).to.have.property('departmentGroup');\r",
+									"        pm.expect(item).to.have.property('averageRate');\r",
+									"        pm.expect(item).to.have.property('minRate');\r",
+									"        pm.expect(item).to.have.property('maxRate');\r",
+									"    });\r",
+									"});"
+								],
+								"type": "text/javascript",
+								"packages": {},
+								"requests": {}
+							}
+						}
+					],
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{adventureWorksApi}}/{{apiVersion}}/employees/aggregates",
+							"host": [
+								"{{adventureWorksApi}}"
+							],
+							"path": [
+								"{{apiVersion}}",
+								"employees",
+								"aggregates"
+							]
+						}
+					},
+					"response": [
+						{
+							"name": "200 OK - HR dashboard aggregates",
+							"originalRequest": {
+								"method": "GET",
+								"header": [],
+								"url": {
+									"raw": "{{adventureWorksApi}}/{{apiVersion}}/employees/aggregates",
+									"host": [
+										"{{adventureWorksApi}}"
+									],
+									"path": [
+										"{{apiVersion}}",
+										"employees",
+										"aggregates"
+									]
+								}
+							},
+							"status": "OK",
+							"code": 200,
+							"_postman_previewlanguage": "json",
+							"header": [
+								{
+									"key": "Content-Type",
+									"value": "application/json"
+								}
+							],
+							"cookie": [],
+							"body": "{\n  \"totalEmployeeCount\": 290,\n  \"activeEmployeeCount\": 290,\n  \"terminatedEmployeeCount\": 0,\n  \"departmentCount\": 16,\n  \"departmentHeadcounts\": [\n    {\n      \"departmentId\": 1,\n      \"departmentName\": \"Engineering\",\n      \"groupName\": \"Research and Development\",\n      \"activeEmployeeCount\": 6\n    },\n    {\n      \"departmentId\": 2,\n      \"departmentName\": \"Tool Design\",\n      \"groupName\": \"Research and Development\",\n      \"activeEmployeeCount\": 4\n    },\n    {\n      \"departmentId\": 3,\n      \"departmentName\": \"Sales\",\n      \"groupName\": \"Sales and Marketing\",\n      \"activeEmployeeCount\": 18\n    },\n    {\n      \"departmentId\": 4,\n      \"departmentName\": \"Marketing\",\n      \"groupName\": \"Sales and Marketing\",\n      \"activeEmployeeCount\": 9\n    },\n    {\n      \"departmentId\": 5,\n      \"departmentName\": \"Purchasing\",\n      \"groupName\": \"Inventory Management\",\n      \"activeEmployeeCount\": 12\n    },\n    {\n      \"departmentId\": 6,\n      \"departmentName\": \"Research and Development\",\n      \"groupName\": \"Research and Development\",\n      \"activeEmployeeCount\": 4\n    },\n    {\n      \"departmentId\": 7,\n      \"departmentName\": \"Production\",\n      \"groupName\": \"Manufacturing\",\n      \"activeEmployeeCount\": 179\n    },\n    {\n      \"departmentId\": 8,\n      \"departmentName\": \"Production Control\",\n      \"groupName\": \"Manufacturing\",\n      \"activeEmployeeCount\": 6\n    },\n    {\n      \"departmentId\": 9,\n      \"departmentName\": \"Human Resources\",\n      \"groupName\": \"Executive General and Administration\",\n      \"activeEmployeeCount\": 6\n    },\n    {\n      \"departmentId\": 10,\n      \"departmentName\": \"Finance\",\n      \"groupName\": \"Executive General and Administration\",\n      \"activeEmployeeCount\": 10\n    },\n    {\n      \"departmentId\": 11,\n      \"departmentName\": \"Information Services\",\n      \"groupName\": \"Executive General and Administration\",\n      \"activeEmployeeCount\": 10\n    },\n    {\n      \"departmentId\": 12,\n      \"departmentName\": \"Document Control\",\n      \"groupName\": \"Quality Assurance\",\n      \"activeEmployeeCount\": 5\n    },\n    {\n      \"departmentId\": 13,\n      \"departmentName\": \"Quality Assurance\",\n      \"groupName\": \"Quality Assurance\",\n      \"activeEmployeeCount\": 6\n    },\n    {\n      \"departmentId\": 14,\n      \"departmentName\": \"Facilities and Maintenance\",\n      \"groupName\": \"Executive General and Administration\",\n      \"activeEmployeeCount\": 7\n    },\n    {\n      \"departmentId\": 15,\n      \"departmentName\": \"Shipping and Receiving\",\n      \"groupName\": \"Inventory Management\",\n      \"activeEmployeeCount\": 6\n    },\n    {\n      \"departmentId\": 16,\n      \"departmentName\": \"Executive\",\n      \"groupName\": \"Executive General and Administration\",\n      \"activeEmployeeCount\": 2\n    }\n  ],\n  \"tenureDistribution\": {\n    \"underOneYear\": 0,\n    \"oneToThreeYears\": 0,\n    \"threeToFiveYears\": 0,\n    \"fiveToTenYears\": 0,\n    \"tenPlusYears\": 290\n  },\n  \"payBandSummary\": [\n    {\n      \"departmentGroup\": \"Executive General and Administration\",\n      \"averageRate\": 27.6,\n      \"minRate\": 9.25,\n      \"maxRate\": 125.5\n    },\n    {\n      \"departmentGroup\": \"Inventory Management\",\n      \"averageRate\": 15.84,\n      \"minRate\": 9.0,\n      \"maxRate\": 30.0\n    },\n    {\n      \"departmentGroup\": \"Manufacturing\",\n      \"averageRate\": 14.3,\n      \"minRate\": 9.5,\n      \"maxRate\": 84.1346\n    },\n    {\n      \"departmentGroup\": \"Quality Assurance\",\n      \"averageRate\": 14.98,\n      \"minRate\": 10.25,\n      \"maxRate\": 28.8462\n    },\n    {\n      \"departmentGroup\": \"Research and Development\",\n      \"averageRate\": 37.45,\n      \"minRate\": 25.0,\n      \"maxRate\": 63.4615\n    },\n    {\n      \"departmentGroup\": \"Sales and Marketing\",\n      \"averageRate\": 25.54,\n      \"minRate\": 13.4615,\n      \"maxRate\": 72.1154\n    }\n  ]\n}"
+						}
+					]
 				}
 			]
 		},

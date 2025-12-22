@@ -164,6 +164,14 @@ public interface IEmployeeRepository : IAsyncRepository<EmployeeEntity>
     Task<IReadOnlyList<EmployeeEntity>> GetActiveEmployeesWithPayHistoryAsync(CancellationToken cancellationToken = default);
 
     /// <summary>
+    /// Returns the total employee count and the active employee count (<c>CurrentFlag == true</c>) in a single
+    /// pass, without loading navigation properties. Used for HR dashboard stat cards where only counts are needed.
+    /// </summary>
+    /// <param name="cancellationToken">Cancellation token.</param>
+    /// <returns>Tuple of (TotalCount, ActiveCount).</returns>
+    Task<(int TotalCount, int ActiveCount)> GetEmployeeCountsAsync(CancellationToken cancellationToken = default);
+
+    /// <summary>
     /// Returns true if an employee with the given National ID Number already exists.
     /// Backs the CreateEmployeeValidator uniqueness rule (Rule-31).
     /// </summary>
