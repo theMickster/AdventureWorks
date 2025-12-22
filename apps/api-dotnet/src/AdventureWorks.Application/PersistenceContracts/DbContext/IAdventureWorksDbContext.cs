@@ -71,6 +71,8 @@ public interface IAdventureWorksDbContext
 
     DbSet<WorkOrder> WorkOrders { get; set; }
 
+    DbSet<ScrapReason> ScrapReasons { get; set; }
+
     DbSet<Vendor> Vendors { get; set; }
 
     DbSet<PurchaseOrderHeader> PurchaseOrderHeaders { get; set; }

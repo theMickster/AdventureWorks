@@ -1,0 +1,107 @@
+<div id="aw-work-order-detail-page">
+  <div id="aw-work-order-detail-header" class="mb-6 flex items-center gap-4">
+    <a id="aw-work-order-detail-back" [routerLink]="['/manufacturing/work-orders']" class="btn btn-ghost btn-sm">
+      <i class="fa-solid fa-arrow-left" aria-hidden="true"></i>
+      Work Orders
+    </a>
+  </div>
+
+  @if (isLoading()) {
+    <div id="aw-work-order-detail-loading" class="space-y-4">
+      <aw-skeleton height="2rem" width="20rem" />
+      <aw-skeleton height="6rem" />
+      <aw-skeleton height="6rem" />
+      <aw-skeleton height="8rem" />
+    </div>
+  } @else if (notFound()) {
+    <aw-empty-state
+      fieldId="aw-work-order-detail-not-found"
+      icon="fa-solid fa-circle-exclamation"
+      title="Work order not found"
+      description="The requested work order could not be found."
+    />
+  } @else if (workOrder(); as wo) {
+    <div id="aw-work-order-detail-info" class="card bg-base-100 shadow mb-6">
+      <div class="card-body">
+        <div class="flex flex-wrap items-start justify-between gap-4">
+          <div>
+            <h1 id="aw-work-order-detail-work-order-id" class="card-title text-2xl font-bold text-base-content">
+              Work Order #{{ wo.workOrderId }}
+            </h1>
+            <p class="text-sm text-secondary mt-1">
+              Product:
+              <a [routerLink]="['/products', wo.productId]" id="aw-work-order-detail-product-link">{{
+                wo.productName
+              }}</a>
+            </p>
+          </div>
+          @if (wo.isCompletedLate) {
+            <div class="flex items-center gap-2">
+              <aw-status-badge
+                fieldId="aw-work-order-detail-status"
+                status="completed-late"
+                [statusMap]="statusBadgeMap"
+              />
+              <span id="aw-work-order-detail-days-late" class="text-sm text-secondary"
+                >{{ wo.daysLate }} days late</span
+              >
+            </div>
+          }
+        </div>
+      </div>
+    </div>
+
+    <div id="aw-work-order-detail-metrics" class="grid grid-cols-2 sm:grid-cols-4 gap-4 mb-6">
+      <aw-card fieldId="aw-work-order-detail-ordered-qty" title="Ordered Qty">
+        <p class="text-xl font-bold">{{ wo.orderedQty }}</p>
+      </aw-card>
+      <aw-card fieldId="aw-work-order-detail-stocked-qty" title="Stocked Qty">
+        <p class="text-xl font-bold">{{ wo.stockedQty }}</p>
+      </aw-card>
+      <aw-card fieldId="aw-work-order-detail-scrapped-qty" title="Scrapped Qty">
+        <p class="text-xl font-bold">{{ wo.scrappedQty }}</p>
+      </aw-card>
+      <aw-card fieldId="aw-work-order-detail-yield-rate" title="Yield Rate %">
+        <p class="text-xl font-bold">{{ wo.yieldRate }}%</p>
+      </aw-card>
+    </div>
+
+    <div id="aw-work-order-detail-dates" class="card bg-base-100 shadow mb-6">
+      <div class="card-body">
+        <h2 class="card-title text-base mb-2">Dates</h2>
+        <div class="grid grid-cols-1 sm:grid-cols-3 gap-4 text-sm">
+          <div>
+            <p class="text-secondary">Start Date</p>
+            <p id="aw-work-order-detail-start-date" class="font-medium">{{ wo.startDate | date: 'mediumDate' }}</p>
+          </div>
+          <div>
+            <p class="text-secondary">End Date</p>
+            <p id="aw-work-order-detail-end-date" class="font-medium">
+              {{ wo.endDate ? (wo.endDate | date: 'mediumDate') : '—' }}
+            </p>
+          </div>
+          <div>
+            <p class="text-secondary">Due Date</p>
+            <p id="aw-work-order-detail-due-date" class="font-medium">{{ wo.dueDate | date: 'mediumDate' }}</p>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    @if (wo.scrapReasonName) {
+      <div id="aw-work-order-detail-scrap-reason" class="card bg-base-100 shadow">
+        <div class="card-body">
+          <h2 class="card-title text-base">Scrap Reason</h2>
+          <p id="aw-work-order-detail-scrap-reason-name">{{ wo.scrapReasonName }}</p>
+        </div>
+      </div>
+    }
+  } @else if (hasError()) {
+    <aw-empty-state
+      fieldId="aw-work-order-detail-error"
+      icon="fa-solid fa-circle-exclamation"
+      title="Failed to load work order"
+      description="Please go back and try again."
+    />
+  }
+</div>

@@ -4,6 +4,7 @@ import { HttpTestingController, provideHttpClientTesting } from '@angular/common
 import { ENVIRONMENT } from '@adventureworks-web/shared/util';
 import type { SearchResult } from '@adventureworks-web/shared/data-access';
 import type { WorkOrder } from '../models/work-order.model';
+import type { WorkOrderDetail } from '../models/work-order-detail.model';
 import { WorkOrderApiService } from './work-order-api.service';
 
 const mockEnvironment = {
@@ -122,5 +123,49 @@ describe('WorkOrderApiService', () => {
     );
     expect(req.request.method).toBe('GET');
     req.flush(mockData);
+  });
+
+  it('should GET a single work order by id', () => {
+    // Real fixture: WorkOrderID 41, ProductID 518 (ML Road Seat Assembly), ScrapReasonID 7 (Handling damage)
+    const mockDetail: WorkOrderDetail = {
+      workOrderId: 41,
+      productId: 518,
+      productName: 'ML Road Seat Assembly',
+      orderedQty: 98,
+      stockedQty: 97,
+      scrappedQty: 1,
+      yieldRate: 98.98,
+      startDate: '2011-06-03T00:00:00',
+      endDate: '2011-06-19T00:00:00',
+      dueDate: '2011-06-14T00:00:00',
+      isCompletedLate: true,
+      daysLate: 5,
+      scrapReasonId: 7,
+      scrapReasonName: 'Handling damage',
+    };
+
+    service.getWorkOrder(41).subscribe((result) => {
+      expect(result).toEqual(mockDetail);
+    });
+
+    const req = httpTesting.expectOne(`${BASE_URL}/v1/work-orders/41`);
+    expect(req.request.method).toBe('GET');
+    req.flush(mockDetail);
+  });
+
+  it('should pass through a 404 error when the work order does not exist', () => {
+    // Confirmed absent via database query
+    let capturedStatus: number | undefined;
+    service.getWorkOrder(9999999).subscribe({
+      next: () => expect.fail('expected an error'),
+      error: (err) => {
+        capturedStatus = err.status;
+      },
+    });
+
+    const req = httpTesting.expectOne(`${BASE_URL}/v1/work-orders/9999999`);
+    req.flush('Not Found', { status: 404, statusText: 'Not Found' });
+
+    expect(capturedStatus).toBe(404);
   });
 });

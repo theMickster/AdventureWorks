@@ -98,6 +98,8 @@ public class AdventureWorksDbContext : DbContext, IAdventureWorksDbContext
 
     public DbSet<WorkOrder> WorkOrders { get; set; }
 
+    public DbSet<ScrapReason> ScrapReasons { get; set; }
+
     public DbSet<Vendor> Vendors { get; set; }
 
     public DbSet<PurchaseOrderHeader> PurchaseOrderHeaders { get; set; }

@@ -658,6 +658,97 @@
             }
           },
           "response": []
+        },
+        {
+          "name": "By Id",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test(\"Status should be OK\", function () {\r",
+                  "    pm.response.to.have.status(200);\r",
+                  "});\r",
+                  "\r",
+                  "const workOrderId = 41\r",
+                  "const productId = 518\r",
+                  "const productName = \"ML Road Seat Assembly\"\r",
+                  "var response = pm.response.json();\r",
+                  "\r",
+                  "pm.test(\"Should return correct response object\", function() {\r",
+                  "    pm.expect(response.workOrderId).to.eql(workOrderId);\r",
+                  "    pm.expect(response.productId).to.eql(productId);\r",
+                  "    pm.expect(response.productName).to.eql(productName);\r",
+                  "    pm.expect(response.isCompletedLate).to.eql(true);\r",
+                  "    pm.expect(response.daysLate).to.eql(5);\r",
+                  "    pm.expect(response.scrapReasonId).to.eql(7);\r",
+                  "    pm.expect(response.scrapReasonName).to.eql(\"Handling damage\");\r",
+                  "});"
+                ],
+                "type": "text/javascript",
+                "packages": {},
+                "requests": {}
+              }
+            }
+          ],
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{adventureWorksApi}}/{{apiVersion}}/work-orders/41",
+              "host": [
+                "{{adventureWorksApi}}"
+              ],
+              "path": [
+                "{{apiVersion}}",
+                "work-orders",
+                "41"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "By Id - Not Found",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test(\"Status should be not found\", function () {\r",
+                  "    pm.response.to.have.status(404);\r",
+                  "});\r",
+                  "\r",
+                  "var response = pm.response.json();\r",
+                  "\r",
+                  "pm.test(\"Body should be a structured error\", function () {\r",
+                  "    pm.expect(response.error).to.be.a(\"string\");\r",
+                  "    pm.expect(response.correlationId).to.be.a(\"string\");\r",
+                  "    pm.expect(response.timestamp).to.be.a(\"string\");\r",
+                  "});"
+                ],
+                "type": "text/javascript",
+                "packages": {},
+                "requests": {}
+              }
+            }
+          ],
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{adventureWorksApi}}/{{apiVersion}}/work-orders/9999999",
+              "host": [
+                "{{adventureWorksApi}}"
+              ],
+              "path": [
+                "{{apiVersion}}",
+                "work-orders",
+                "9999999"
+              ]
+            }
+          },
+          "response": []
         }
       ]
     }

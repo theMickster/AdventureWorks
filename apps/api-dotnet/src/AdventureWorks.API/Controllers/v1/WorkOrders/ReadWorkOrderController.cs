@@ -83,4 +83,26 @@ public sealed class ReadWorkOrderController : ControllerBase
 
         return Ok(searchResult);
     }
+
+    /// <summary>
+    /// Retrieve a single work order using its unique identifier.
+    /// </summary>
+    /// <param name="id">the unique work order identifier</param>
+    /// <param name="cancellationToken">cancellation token</param>
+    [HttpGet("{id:int}", Name = "GetWorkOrderById")]
+    [ProducesResponseType(StatusCodes.Status200OK, Type = typeof(WorkOrderDetailModel))]
+    [ProducesResponseType(StatusCodes.Status400BadRequest)]
+    [ProducesResponseType(StatusCodes.Status401Unauthorized)]
+    [ProducesResponseType(StatusCodes.Status404NotFound)]
+    public async Task<IActionResult> GetByIdAsync(int id, CancellationToken cancellationToken = default)
+    {
+        if (id <= 0)
+        {
+            return BadRequest("A valid work order id must be specified.");
+        }
+
+        var model = await _mediator.Send(new ReadWorkOrderDetailQuery { WorkOrderId = id }, cancellationToken);
+
+        return Ok(model);
+    }
 }

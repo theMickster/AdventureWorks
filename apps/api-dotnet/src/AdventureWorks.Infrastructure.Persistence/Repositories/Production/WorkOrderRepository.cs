@@ -90,6 +90,21 @@ public sealed class WorkOrderRepository(AdventureWorksDbContext dbContext) : IWo
     }
 
     /// <summary>
+    /// Retrieves a single work order by its identifier, including product and scrap reason details.
+    /// </summary>
+    /// <param name="workOrderId">the unique work order identifier</param>
+    /// <param name="cancellationToken">token to cancel the operation</param>
+    /// <returns>The matching work order, or null when no work order exists with the given identifier</returns>
+    public async Task<WorkOrder?> GetByIdAsync(int workOrderId, CancellationToken cancellationToken = default)
+    {
+        return await _dbContext.WorkOrders
+            .AsNoTracking()
+            .Include(x => x.Product)
+            .Include(x => x.ScrapReason)
+            .FirstOrDefaultAsync(x => x.WorkOrderId == workOrderId, cancellationToken);
+    }
+
+    /// <summary>
     /// Builds the base query with the product relationship included for <c>ProductName</c> mapping.
     /// </summary>
     /// <returns>A queryable of work orders with the product relationship included</returns>

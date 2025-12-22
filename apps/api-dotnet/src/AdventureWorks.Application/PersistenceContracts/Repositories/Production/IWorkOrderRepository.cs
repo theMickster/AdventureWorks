@@ -29,4 +29,12 @@ public interface IWorkOrderRepository
         WorkOrderParameter parameters,
         WorkOrderSearchModel searchModel,
         CancellationToken cancellationToken = default);
+
+    /// <summary>
+    /// Retrieves a single work order by its identifier, including product and scrap reason details.
+    /// </summary>
+    /// <param name="workOrderId">the unique work order identifier</param>
+    /// <param name="cancellationToken">token to cancel the operation</param>
+    /// <returns>The matching work order, or null when no work order exists with the given identifier</returns>
+    Task<WorkOrder?> GetByIdAsync(int workOrderId, CancellationToken cancellationToken = default);
 }

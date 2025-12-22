@@ -165,4 +165,49 @@ public sealed class ReadWorkOrderControllerTests
         // Assert
         result.Should().BeOfType<OkObjectResult>();
     }
+
+    [Fact]
+    public async Task GetByIdAsync_returns_ok_result_with_detail_model()
+    {
+        // Arrange - real fixture: WorkOrderID 13, ProductID 747 (HL Mountain Frame - Black, 38)
+        var detailModel = new WorkOrderDetailModel
+        {
+            WorkOrderId = 13,
+            ProductId = 747,
+            ProductName = "HL Mountain Frame - Black, 38",
+            OrderedQty = 4,
+            StockedQty = 4,
+            ScrappedQty = 0,
+            YieldRate = 100m,
+            StartDate = new DateTime(2011, 6, 3),
+            EndDate = new DateTime(2011, 6, 19),
+            DueDate = new DateTime(2011, 6, 14),
+            IsCompletedLate = true,
+            DaysLate = 5
+        };
+
+        _mockMediator.Setup(x => x.Send(It.IsAny<ReadWorkOrderDetailQuery>(), It.IsAny<CancellationToken>()))
+            .ReturnsAsync(detailModel);
+
+        // Act
+        var result = await _sut.GetByIdAsync(13, cancellationToken: TestContext.Current.CancellationToken);
+
+        // Assert
+        result.Should().BeOfType<OkObjectResult>();
+        var okResult = (OkObjectResult)result;
+        okResult.Value.Should().BeEquivalentTo(detailModel);
+    }
+
+    [Theory]
+    [InlineData(0)]
+    [InlineData(-1)]
+    public async Task GetByIdAsync_returns_bad_request_when_id_is_non_positive(int id)
+    {
+        // Act
+        var result = await _sut.GetByIdAsync(id, cancellationToken: TestContext.Current.CancellationToken);
+
+        // Assert
+        result.Should().BeOfType<BadRequestObjectResult>();
+        _mockMediator.Verify(x => x.Send(It.IsAny<ReadWorkOrderDetailQuery>(), It.IsAny<CancellationToken>()), Times.Never);
+    }
 }

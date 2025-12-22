@@ -222,6 +222,78 @@ public sealed class WorkOrderRepositoryTests : PersistenceUnitTestBase
     }
 
     [Fact]
+    public async Task GetByIdAsync_returns_work_order_with_scrap_reason()
+    {
+        // Arrange - real fixture: WorkOrderID 41, ProductID 518 (ML Road Seat Assembly), ScrapReasonID 7 (Handling damage)
+        var product = new Product { ProductId = 518, Name = "ML Road Seat Assembly" };
+        var scrapReason = new ScrapReason { ScrapReasonId = 7, Name = "Handling damage" };
+        DbContext.WorkOrders.Add(new WorkOrder
+        {
+            WorkOrderId = 41,
+            ProductId = 518,
+            OrderQty = 98,
+            StockedQty = 97,
+            ScrappedQty = 1,
+            StartDate = new DateTime(2011, 6, 3),
+            EndDate = new DateTime(2011, 6, 19),
+            DueDate = new DateTime(2011, 6, 14),
+            ScrapReasonId = 7,
+            Product = product,
+            ScrapReason = scrapReason
+        });
+        await DbContext.SaveChangesAsync(cancellationToken: TestContext.Current.CancellationToken);
+
+        // Act
+        var result = await _sut.GetByIdAsync(41, CancellationToken.None);
+
+        // Assert
+        result.Should().NotBeNull();
+        result!.WorkOrderId.Should().Be(41);
+        result.Product.Should().NotBeNull();
+        result.Product.Name.Should().Be("ML Road Seat Assembly");
+        result.ScrapReason.Should().NotBeNull();
+        result.ScrapReason.Name.Should().Be("Handling damage");
+    }
+
+    [Fact]
+    public async Task GetByIdAsync_returns_work_order_without_scrap_reason()
+    {
+        // Arrange - real fixture: WorkOrderID 1, ProductID 722 (LL Road Frame - Black, 58), no scrap reason
+        var product = new Product { ProductId = 722, Name = "LL Road Frame - Black, 58" };
+        DbContext.WorkOrders.Add(new WorkOrder
+        {
+            WorkOrderId = 1,
+            ProductId = 722,
+            OrderQty = 8,
+            StockedQty = 8,
+            ScrappedQty = 0,
+            StartDate = new DateTime(2011, 6, 3),
+            EndDate = new DateTime(2011, 6, 13),
+            DueDate = new DateTime(2011, 6, 14),
+            Product = product
+        });
+        await DbContext.SaveChangesAsync(cancellationToken: TestContext.Current.CancellationToken);
+
+        // Act
+        var result = await _sut.GetByIdAsync(1, CancellationToken.None);
+
+        // Assert
+        result.Should().NotBeNull();
+        result!.ScrapReason.Should().BeNull();
+        result.ScrapReasonId.Should().BeNull();
+    }
+
+    [Fact]
+    public async Task GetByIdAsync_returns_null_when_work_order_does_not_exist()
+    {
+        // Act - confirmed absent via database query
+        var result = await _sut.GetByIdAsync(9999999, CancellationToken.None);
+
+        // Assert
+        result.Should().BeNull();
+    }
+
+    [Fact]
     public async Task GetWorkOrdersAsync_uses_no_tracking()
     {
         // Arrange

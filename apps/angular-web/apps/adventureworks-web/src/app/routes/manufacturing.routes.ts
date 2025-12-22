@@ -9,4 +9,11 @@ export const manufacturingRoutes: Route[] = [
     loadComponent: () =>
       import('@adventureworks-web/manufacturing/feature-work-orders').then((m) => m.WorkOrderListComponent),
   },
+  {
+    path: 'work-orders/:id',
+    title: 'Work Order Detail',
+    data: { breadcrumb: 'Work Order Detail' },
+    loadComponent: () =>
+      import('@adventureworks-web/manufacturing/feature-work-orders').then((m) => m.WorkOrderDetailComponent),
+  },
 ];
