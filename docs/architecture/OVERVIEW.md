@@ -17,7 +17,7 @@ Enterprise application built on the Microsoft AdventureWorks sample database, de
 
 Clean Architecture layers: API (controllers) → Application (CQRS handlers) → Domain (entities) → Infrastructure (EF Core).
 
-Domains implemented: **Sales** (Stores, SalesPersons, Territories), **HR** (Employees, Departments, Shifts), **Person** (Addresses, Contacts).
+Domains implemented: **Sales** (Stores, SalesPersons, Territories), **HR** (Employees, Departments, Shifts), **Person** (Addresses, Contacts), **Purchasing** (Vendors).
 
 ## Angular Architecture
 

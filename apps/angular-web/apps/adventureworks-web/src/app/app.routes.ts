@@ -41,6 +41,11 @@ export const appRoutes: Route[] = [
         loadChildren: () => import('./routes/manufacturing.routes').then((m) => m.manufacturingRoutes),
       },
       {
+        path: 'purchasing',
+        data: { breadcrumb: 'Purchasing' },
+        loadChildren: () => import('./routes/purchasing.routes').then((m) => m.purchasingRoutes),
+      },
+      {
         path: 'samples',
         title: 'Samples',
         data: { breadcrumb: 'Samples' },

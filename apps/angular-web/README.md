@@ -39,6 +39,9 @@ libs/
   manufacturing/
     data-access/               # WorkOrderStore, models, API service (type:data-access, scope:manufacturing)
     feature-work-orders/       # Work order list (type:feature, scope:manufacturing)
+  purchasing/
+    data-access/               # Purchasing SignalStores, models, API service (type:data-access, scope:purchasing)
+    feature-vendors/           # Vendor list (type:feature, scope:purchasing)
   public/
     feature-landing/           # Public landing page (type:feature, scope:public)
 ```
@@ -54,7 +57,7 @@ data-access  -> data-access, util
 util         -> util only
 ```
 
-Domain scopes: `shared`, `sales`, `hr`, `manufacturing`. A domain library can only depend on its own scope or `shared`.
+Domain scopes: `shared`, `sales`, `hr`, `manufacturing`, `purchasing`. A domain library can only depend on its own scope or `shared`.
 
 ### Import Paths
 

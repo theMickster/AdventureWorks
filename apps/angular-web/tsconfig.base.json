@@ -31,7 +31,9 @@
       "@adventureworks-web/sales/ui-trend-chart": ["libs/sales/ui-trend-chart/src/index.ts"],
       "@adventureworks-web/hr/feature-org-chart": ["libs/hr/feature-org-chart/src/index.ts"],
       "@adventureworks-web/manufacturing/data-access": ["libs/manufacturing/data-access/src/index.ts"],
-      "@adventureworks-web/manufacturing/feature-work-orders": ["libs/manufacturing/feature-work-orders/src/index.ts"]
+      "@adventureworks-web/manufacturing/feature-work-orders": ["libs/manufacturing/feature-work-orders/src/index.ts"],
+      "@adventureworks-web/purchasing/data-access": ["libs/purchasing/data-access/src/index.ts"],
+      "@adventureworks-web/purchasing/feature-vendors": ["libs/purchasing/feature-vendors/src/index.ts"]
     }
   },
   "exclude": ["node_modules", "tmp"]

@@ -293,6 +293,27 @@
           </details>
         </li>
 
+        <!-- Purchasing (collapsible) -->
+        <li id="aw-nav-purchasing" #purchasingNav>
+          <details>
+            <summary>
+              <i class="fa-solid fa-truck-field" aria-hidden="true"></i>
+              Purchasing
+            </summary>
+            <ul>
+              <li id="aw-nav-purchasing-vendors">
+                <a
+                  routerLink="/purchasing/vendors"
+                  routerLinkActive="menu-active"
+                  [routerLinkActiveOptions]="{ exact: true }"
+                >
+                  Vendors
+                </a>
+              </li>
+            </ul>
+          </details>
+        </li>
+
         <!-- Section divider -->
         <li class="menu-title mt-4">System</li>
 

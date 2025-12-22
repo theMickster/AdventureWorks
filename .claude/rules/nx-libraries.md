@@ -12,11 +12,11 @@ Generator commands are documented in `.claude/CLAUDE.md`. This file covers **gua
 Tags are enforced by `eslint.config.mjs`. Use only these exact values:
 
 - **type**: `type:feature`, `type:ui`, `type:data-access`, `type:util`
-- **scope**: `scope:shared`, `scope:sales`, `scope:hr`, `scope:manufacturing`, `scope:public`
+- **scope**: `scope:shared`, `scope:sales`, `scope:hr`, `scope:manufacturing`, `scope:purchasing`, `scope:public`
 
 Never invent new tags without updating the ESLint `depConstraints` array.
 
-`scope:public` is one-directional: public libraries may depend on `scope:shared`, but no `scope:sales`/`scope:hr`/`scope:shared` library may depend back on `scope:public` — it sits at the top of the public-facing dependency graph, isolated from authenticated feature code.
+`scope:public` is one-directional: public libraries may depend on `scope:shared`, but no `scope:sales`/`scope:hr`/`scope:manufacturing`/`scope:purchasing`/`scope:shared` library may depend back on `scope:public` — it sits at the top of the public-facing dependency graph, isolated from authenticated feature code.
 
 ## Import Rules
 

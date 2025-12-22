@@ -16,7 +16,7 @@ Use this file together with `apps/angular-web/README.md`.
   - `ui -> ui, util`
   - `data-access -> data-access, util`
   - `util -> util`
-- Respect scope boundaries (`shared`, `sales`, `hr`).
+- Respect scope boundaries (`shared`, `sales`, `hr`, `purchasing`).
 - Prefer placing reusable UI in `libs/shared/ui`, cross-cutting utilities in `libs/shared/util`, and API/domain access in `data-access` libraries.
 
 ## Angular Style Defaults

@@ -23,7 +23,7 @@ Additional guardrails live in `.claude/rules/` and are auto-loaded by Claude:
 Every library must have exactly two tags in `project.json`:
 
 - **type**: `type:feature` | `type:ui` | `type:data-access` | `type:util`
-- **scope**: `scope:shared` | `scope:sales` | `scope:hr` | `scope:manufacturing` | `scope:public`
+- **scope**: `scope:shared` | `scope:sales` | `scope:hr` | `scope:manufacturing` | `scope:purchasing` | `scope:public`
 
 ## NgRx SignalStore Pattern
 
@@ -147,6 +147,28 @@ Tabbed detail at `/sales/stores/:id`. Calls `SalesApiService` directly; no NgRx 
 - **`isSaving` separate from `isLoading`**: `StoreEditComponent` has two distinct signals — `isLoading` (true while the initial `forkJoin` loads store + sales persons) and `isSaving` (true while the save call is in flight). Do not merge them.
 - **Navigate on `next`**: After successful create or update, navigates to `/sales/stores/:id`. `isSaving`/`isLoading` is reset to false in the `error` handler so the user can retry.
 - **`extractListNavParams` utility**: Both `StoreDetailComponent` and `StoreEditComponent` use `extractListNavParams(this.route.snapshot.queryParams)` inside a `computed()`. The function is exported from `@adventureworks-web/shared/util` (not a local file). The snapshot read is intentional — do not refactor to `toSignal(route.queryParams)`.
+
+## Purchasing Feature Libraries
+
+### `libs/purchasing/data-access`
+
+**`VendorStore`** — entity store for the risk-ranked, paginated vendor list (`GET /v1/vendors`). Mirrors `StoreStore`/`SalesOrderStore` shape (`withDevtools`, `withEntities`, `withRequestStatus`, `withPagination`), but exposes only `loadPage` — no `search`/CRUD, since US-981's endpoint is read-only.
+
+- **`VendorListItem`'s id field is `vendorId`, not `id`** — every `setAllEntities` call passes `{ selectId: (vendor) => vendor.vendorId }` explicitly, same pattern as `SalesOrderStore`'s `salesOrderId`.
+- **No client-facing sort**: the server always orders by total spend descending (`VendorParameter` has no sort param) — `VendorListParams` has no `orderBy`/`sortOrder` fields, unlike `StoreParams`/`SalesOrderParams`.
+- **`VendorListParams` uses `pageNumber`, not `page`**: `toQueryString` forwards field names verbatim to the query string, so the params model's field name must match the _specific endpoint's_ actual query-string parameter — it is not a fixed convention across the workspace. `GET /v1/vendors` binds to `VendorParameter`, whose paging property is `pageNumber`. Contrast with HR's `DepartmentEmployeesParams` (`GET /v1/departments/:id/employees`), which uses `page` — check the target endpoint's parameter model, don't assume.
+- **`creditRatingLabel` is already a display string** (e.g. "Superior", "Average") from the server — the numeric `creditRating` (1–5) is filter-only and never rendered directly.
+
+### `libs/purchasing/feature-vendors`
+
+**VendorListComponent** — server-side paginated, filterable vendor list at `/purchasing/vendors`. No detail route exists yet, and there is no row-click navigation or "View" column — `purchasing.routes.ts` only defines `''` and `'vendors'`, so a navigate call to a `:id` route would 404. Do not re-add row-click navigation until a detail route actually exists.
+
+Deviations from the List Component Invariants above:
+
+- **No sort column at all**: every column has `sortable: false` and `DataTableComponent`'s `sortChange` output is not bound — the server's fixed total-spend-descending order is not client-overridable.
+- **Two boolean toggles are "show only" filters, not tri-state**: `preferredVendorStatus`/`activeFlag` toggles unchecked omit the param entirely (no filtering on that field); checked sends `true`. The API also accepts an explicit `false`, but a single `ToggleFieldComponent` can only represent two UI states, so that value is intentionally not exposed.
+- **Two independent `StatusBadgeComponent` instances**: the Status column keys off `statusKey` (`'preferred'` → `badge-success`, `'standard'` → `badge-outline`); the Risk column keys off `riskKey` (`'high-risk'` → `badge-error`, `'low-risk'` → `badge-success`). Do not conflate them into a single shared map — the visual meaning of "success" differs per column.
+- **Empty-filtered-result state is DataTableComponent's own built-in `EmptyStateComponent`** — the component does not render a separate empty-state block; a filter matching zero vendors simply produces `entities() === []`, which `DataTableComponent` already renders via its `data().length === 0` branch.
 
 ## HR Feature Libraries
 
