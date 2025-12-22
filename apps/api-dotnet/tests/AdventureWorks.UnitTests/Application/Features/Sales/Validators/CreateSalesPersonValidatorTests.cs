@@ -88,7 +88,7 @@ public sealed class CreateSalesPersonValidatorTests : UnitTestBase
         var model = GetValidModel();
         model.CommissionPct = commissionPct;
 
-        var result = await _sut.TestValidateAsync(model);
+        var result = await _sut.TestValidateAsync(model, cancellationToken: TestContext.Current.CancellationToken);
         result.ShouldHaveValidationErrorFor(x => x.CommissionPct);
     }
 
@@ -98,7 +98,7 @@ public sealed class CreateSalesPersonValidatorTests : UnitTestBase
         var model = GetValidModel();
         model.Bonus = -100;
 
-        var result = await _sut.TestValidateAsync(model);
+        var result = await _sut.TestValidateAsync(model, cancellationToken: TestContext.Current.CancellationToken);
         result.ShouldHaveValidationErrorFor(x => x.Bonus);
     }
 
@@ -107,7 +107,7 @@ public sealed class CreateSalesPersonValidatorTests : UnitTestBase
     {
         var model = GetValidModel();
 
-        var result = await _sut.TestValidateAsync(model);
+        var result = await _sut.TestValidateAsync(model, cancellationToken: TestContext.Current.CancellationToken);
         result.ShouldNotHaveAnyValidationErrors();
     }
 }

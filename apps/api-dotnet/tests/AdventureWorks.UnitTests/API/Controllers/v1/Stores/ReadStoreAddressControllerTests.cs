@@ -41,7 +41,7 @@ public sealed class ReadStoreAddressControllerTests : UnitTestBase
     [InlineData(-999)]
     public async Task GetAllAsync_invalid_storeId_returns_bad_request(int storeId)
     {
-        var result = await _sut.GetAllAsync(storeId);
+        var result = await _sut.GetAllAsync(storeId, cancellationToken: TestContext.Current.CancellationToken);
         var objectResult = result as BadRequestObjectResult;
         using (new AssertionScope())
         {
@@ -63,7 +63,7 @@ public sealed class ReadStoreAddressControllerTests : UnitTestBase
         _mockMediator.Setup(x => x.Send(It.IsAny<ReadStoreAddressListQuery>(), It.IsAny<CancellationToken>()))
             .ReturnsAsync(addresses);
 
-        var result = await _sut.GetAllAsync(2534);
+        var result = await _sut.GetAllAsync(2534, cancellationToken: TestContext.Current.CancellationToken);
 
         var objectResult = result as OkObjectResult;
 
@@ -82,7 +82,7 @@ public sealed class ReadStoreAddressControllerTests : UnitTestBase
         _mockMediator.Setup(x => x.Send(It.IsAny<ReadStoreAddressListQuery>(), It.IsAny<CancellationToken>()))
             .ReturnsAsync(new List<StoreAddressModel>());
 
-        var result = await _sut.GetAllAsync(9999);
+        var result = await _sut.GetAllAsync(9999, cancellationToken: TestContext.Current.CancellationToken);
 
         var objectResult = result as OkObjectResult;
 
@@ -103,7 +103,7 @@ public sealed class ReadStoreAddressControllerTests : UnitTestBase
         _mockMediator.Setup(x => x.Send(It.IsAny<ReadStoreAddressListQuery>(), It.IsAny<CancellationToken>()))
             .ReturnsAsync(new List<StoreAddressModel>());
 
-        await _sut.GetAllAsync(storeId);
+        await _sut.GetAllAsync(storeId, cancellationToken: TestContext.Current.CancellationToken);
 
         _mockMediator.Verify(x => x.Send(
             It.Is<ReadStoreAddressListQuery>(q => q.StoreId == storeId),
@@ -119,7 +119,7 @@ public sealed class ReadStoreAddressControllerTests : UnitTestBase
     [InlineData(2534, 100, -7, "A valid address type id must be specified.")]
     public async Task GetByCompositeKeyAsync_invalid_route_values_return_bad_requestAsync(int storeId, int addressId, int addressTypeId, string expectedMessage)
     {
-        var result = await _sut.GetByCompositeKeyAsync(storeId, addressId, addressTypeId);
+        var result = await _sut.GetByCompositeKeyAsync(storeId, addressId, addressTypeId, cancellationToken: TestContext.Current.CancellationToken);
 
         var objectResult = result as BadRequestObjectResult;
 
@@ -137,7 +137,7 @@ public sealed class ReadStoreAddressControllerTests : UnitTestBase
         _mockMediator.Setup(x => x.Send(It.IsAny<ReadStoreAddressQuery>(), It.IsAny<CancellationToken>()))
             .ReturnsAsync((StoreAddressModel?)null);
 
-        var result = await _sut.GetByCompositeKeyAsync(2534, 100, 2);
+        var result = await _sut.GetByCompositeKeyAsync(2534, 100, 2, cancellationToken: TestContext.Current.CancellationToken);
 
         var notFound = result as NotFoundObjectResult;
 
@@ -170,7 +170,7 @@ public sealed class ReadStoreAddressControllerTests : UnitTestBase
         _mockMediator.Setup(x => x.Send(It.IsAny<ReadStoreAddressQuery>(), It.IsAny<CancellationToken>()))
             .ReturnsAsync(output);
 
-        var result = await _sut.GetByCompositeKeyAsync(2534, 100, 2);
+        var result = await _sut.GetByCompositeKeyAsync(2534, 100, 2, cancellationToken: TestContext.Current.CancellationToken);
 
         var okResult = result as OkObjectResult;
 
@@ -192,7 +192,7 @@ public sealed class ReadStoreAddressControllerTests : UnitTestBase
         _mockMediator.Setup(x => x.Send(It.IsAny<ReadStoreAddressQuery>(), It.IsAny<CancellationToken>()))
             .ReturnsAsync((StoreAddressModel?)null);
 
-        await _sut.GetByCompositeKeyAsync(storeId, addressId, addressTypeId);
+        await _sut.GetByCompositeKeyAsync(storeId, addressId, addressTypeId, cancellationToken: TestContext.Current.CancellationToken);
 
         _mockMediator.Verify(x => x.Send(
             It.Is<ReadStoreAddressQuery>(q =>

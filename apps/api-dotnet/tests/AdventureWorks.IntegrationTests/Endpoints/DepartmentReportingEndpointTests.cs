@@ -14,7 +14,7 @@ public sealed class DepartmentReportingEndpointTests(CustomWebApplicationFactory
     {
         var client = CreateAnonymousClient();
 
-        var response = await client.GetAsync("/api/v1.0/departments/1/headcount");
+        var response = await client.GetAsync("/api/v1.0/departments/1/headcount", TestContext.Current.CancellationToken);
 
         response.StatusCode.Should().Be(HttpStatusCode.Unauthorized);
     }
@@ -26,7 +26,7 @@ public sealed class DepartmentReportingEndpointTests(CustomWebApplicationFactory
     {
         var client = CreateAuthenticatedClient();
 
-        var response = await client.GetAsync($"/api/v1.0/departments/{departmentId}/headcount");
+        var response = await client.GetAsync($"/api/v1.0/departments/{departmentId}/headcount", TestContext.Current.CancellationToken);
 
         response.StatusCode.Should().Be(HttpStatusCode.BadRequest);
     }
@@ -36,7 +36,7 @@ public sealed class DepartmentReportingEndpointTests(CustomWebApplicationFactory
     {
         var client = CreateAuthenticatedClient();
 
-        var response = await client.GetAsync("/api/v1.0/departments/31000/headcount");
+        var response = await client.GetAsync("/api/v1.0/departments/31000/headcount", TestContext.Current.CancellationToken);
 
         response.StatusCode.Should().Be(HttpStatusCode.NotFound);
     }
@@ -47,7 +47,7 @@ public sealed class DepartmentReportingEndpointTests(CustomWebApplicationFactory
         var departmentId = await SeedDepartmentWithActiveEmployeeAsync();
         var client = CreateAuthenticatedClient();
 
-        var response = await client.GetAsync($"/api/v1.0/departments/{departmentId}/headcount");
+        var response = await client.GetAsync($"/api/v1.0/departments/{departmentId}/headcount", TestContext.Current.CancellationToken);
 
         response.StatusCode.Should().Be(HttpStatusCode.OK);
         var model = await DeserializeAsync<DepartmentHeadcountModel>(response);
@@ -63,7 +63,7 @@ public sealed class DepartmentReportingEndpointTests(CustomWebApplicationFactory
         var departmentId = await SeedDepartmentWithActiveEmployeeAsync();
         var client = CreateAuthenticatedClient();
 
-        var response = await client.GetAsync("/api/v1.0/departments/headcount-summary");
+        var response = await client.GetAsync("/api/v1.0/departments/headcount-summary", TestContext.Current.CancellationToken);
 
         response.StatusCode.Should().Be(HttpStatusCode.OK);
         var models = await DeserializeAsync<List<DepartmentHeadcountSummaryModel>>(response);
@@ -85,7 +85,7 @@ public sealed class DepartmentReportingEndpointTests(CustomWebApplicationFactory
         var client = CreateAuthenticatedClient();
 
         var response = await client.GetAsync(
-            $"/api/v1.0/departments/{departmentId}/employees?page={page}&pageSize={pageSize}");
+            $"/api/v1.0/departments/{departmentId}/employees?page={page}&pageSize={pageSize}", TestContext.Current.CancellationToken);
 
         response.StatusCode.Should().Be(HttpStatusCode.BadRequest);
     }
@@ -95,7 +95,7 @@ public sealed class DepartmentReportingEndpointTests(CustomWebApplicationFactory
     {
         var client = CreateAuthenticatedClient();
 
-        var response = await client.GetAsync("/api/v1.0/departments/31000/employees?page=1&pageSize=20");
+        var response = await client.GetAsync("/api/v1.0/departments/31000/employees?page=1&pageSize=20", TestContext.Current.CancellationToken);
 
         response.StatusCode.Should().Be(HttpStatusCode.NotFound);
     }
@@ -106,7 +106,7 @@ public sealed class DepartmentReportingEndpointTests(CustomWebApplicationFactory
         var departmentId = await SeedDepartmentWithActiveEmployeeAsync();
         var client = CreateAuthenticatedClient();
 
-        var response = await client.GetAsync($"/api/v1.0/departments/{departmentId}/employees?page=1&pageSize=20");
+        var response = await client.GetAsync($"/api/v1.0/departments/{departmentId}/employees?page=1&pageSize=20", TestContext.Current.CancellationToken);
 
         response.StatusCode.Should().Be(HttpStatusCode.OK);
         response.Headers.TryGetValues("X-Total-Count", out var totalCountHeader).Should().BeTrue();

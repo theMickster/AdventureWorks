@@ -39,7 +39,7 @@ public sealed class UpdateStoreAddressControllerTests : UnitTestBase
     [Fact]
     public async Task PatchAsync_null_input_returns_bad_requestAsync()
     {
-        var result = await _sut.PatchAsync(2534, 100, 2, null);
+        var result = await _sut.PatchAsync(2534, 100, 2, null, cancellationToken: TestContext.Current.CancellationToken);
 
         var objectResult = result as BadRequestObjectResult;
 
@@ -62,7 +62,7 @@ public sealed class UpdateStoreAddressControllerTests : UnitTestBase
     {
         var input = new StoreAddressUpdateModel { AddressTypeId = 3 };
 
-        var result = await _sut.PatchAsync(storeId, addressId, addressTypeId, input);
+        var result = await _sut.PatchAsync(storeId, addressId, addressTypeId, input, cancellationToken: TestContext.Current.CancellationToken);
 
         var objectResult = result as BadRequestObjectResult;
 
@@ -117,7 +117,7 @@ public sealed class UpdateStoreAddressControllerTests : UnitTestBase
             .Setup(x => x.Send(It.IsAny<ReadStoreAddressQuery>(), It.IsAny<CancellationToken>()))
             .ReturnsAsync((StoreAddressModel?)null);
 
-        var result = await _sut.PatchAsync(2534, 100, 2, input);
+        var result = await _sut.PatchAsync(2534, 100, 2, input, cancellationToken: TestContext.Current.CancellationToken);
 
         var notFound = result as NotFoundObjectResult;
 
@@ -156,7 +156,7 @@ public sealed class UpdateStoreAddressControllerTests : UnitTestBase
             .Setup(x => x.Send(It.IsAny<ReadStoreAddressQuery>(), It.IsAny<CancellationToken>()))
             .ReturnsAsync(output);
 
-        var result = await _sut.PatchAsync(storeId, 100, 2, input);
+        var result = await _sut.PatchAsync(storeId, 100, 2, input, cancellationToken: TestContext.Current.CancellationToken);
 
         var okResult = result as OkObjectResult;
 

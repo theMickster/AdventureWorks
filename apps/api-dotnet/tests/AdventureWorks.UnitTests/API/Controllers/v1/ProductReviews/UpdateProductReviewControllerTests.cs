@@ -48,7 +48,7 @@ public sealed class UpdateProductReviewControllerTests : UnitTestBase
             Rating = 5
         };
 
-        var result = await _sut.UpdateProductReviewAsync(reviewId, model);
+        var result = await _sut.UpdateProductReviewAsync(reviewId, model, cancellationToken: TestContext.Current.CancellationToken);
 
         var objectResult = result as BadRequestObjectResult;
 
@@ -62,7 +62,7 @@ public sealed class UpdateProductReviewControllerTests : UnitTestBase
     [Fact]
     public async Task UpdateProductReviewAsync_returns_bad_request_when_model_is_null_Async()
     {
-        var result = await _sut.UpdateProductReviewAsync(1, null);
+        var result = await _sut.UpdateProductReviewAsync(1, null, cancellationToken: TestContext.Current.CancellationToken);
 
         var objectResult = result as BadRequestObjectResult;
 
@@ -102,7 +102,7 @@ public sealed class UpdateProductReviewControllerTests : UnitTestBase
         _mockMediator.Setup(x => x.Send(It.IsAny<ReadProductReviewQuery>(), It.IsAny<CancellationToken>()))
             .ReturnsAsync(expectedModel);
 
-        var result = await _sut.UpdateProductReviewAsync(reviewId, model);
+        var result = await _sut.UpdateProductReviewAsync(reviewId, model, cancellationToken: TestContext.Current.CancellationToken);
 
         var okResult = result as OkObjectResult;
 

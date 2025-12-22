@@ -36,7 +36,7 @@ public sealed class UpdateStoreContactValidatorTests : UnitTestBase
     {
         var model = new StoreContactUpdateModel { ContactTypeId = contactTypeId };
 
-        var result = await _sut.TestValidateAsync(model);
+        var result = await _sut.TestValidateAsync(model, cancellationToken: TestContext.Current.CancellationToken);
 
         result.ShouldHaveValidationErrorFor(x => x.ContactTypeId).WithErrorCode("Rule-01");
     }
@@ -49,7 +49,7 @@ public sealed class UpdateStoreContactValidatorTests : UnitTestBase
 
         var model = new StoreContactUpdateModel { ContactTypeId = 999 };
 
-        var result = await _sut.TestValidateAsync(model);
+        var result = await _sut.TestValidateAsync(model, cancellationToken: TestContext.Current.CancellationToken);
 
         result.ShouldHaveValidationErrorFor(x => x.ContactTypeId).WithErrorCode("Rule-01");
     }
@@ -62,7 +62,7 @@ public sealed class UpdateStoreContactValidatorTests : UnitTestBase
 
         var model = new StoreContactUpdateModel { ContactTypeId = 11 };
 
-        var result = await _sut.TestValidateAsync(model);
+        var result = await _sut.TestValidateAsync(model, cancellationToken: TestContext.Current.CancellationToken);
 
         result.ShouldNotHaveValidationErrorFor(x => x.ContactTypeId);
     }

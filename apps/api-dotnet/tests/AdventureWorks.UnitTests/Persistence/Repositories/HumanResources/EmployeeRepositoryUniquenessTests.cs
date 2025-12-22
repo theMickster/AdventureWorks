@@ -46,7 +46,7 @@ public sealed class EmployeeRepositoryUniquenessTests : PersistenceUnitTestBase
     [Fact]
     public async Task NationalIdNumberExistsAsync_returns_true_when_matching_employee_existsAsync()
     {
-        var result = await _sut.NationalIdNumberExistsAsync("123456789");
+        var result = await _sut.NationalIdNumberExistsAsync("123456789", cancellationToken: TestContext.Current.CancellationToken);
 
         result.Should().BeTrue();
     }
@@ -54,7 +54,7 @@ public sealed class EmployeeRepositoryUniquenessTests : PersistenceUnitTestBase
     [Fact]
     public async Task NationalIdNumberExistsAsync_returns_false_when_no_matching_employee_existsAsync()
     {
-        var result = await _sut.NationalIdNumberExistsAsync("999999999");
+        var result = await _sut.NationalIdNumberExistsAsync("999999999", cancellationToken: TestContext.Current.CancellationToken);
 
         result.Should().BeFalse();
     }
@@ -62,7 +62,7 @@ public sealed class EmployeeRepositoryUniquenessTests : PersistenceUnitTestBase
     [Fact]
     public async Task LoginIdExistsAsync_returns_true_when_matching_employee_existsAsync()
     {
-        var result = await _sut.LoginIdExistsAsync("adventure-works\\john.doe");
+        var result = await _sut.LoginIdExistsAsync("adventure-works\\john.doe", cancellationToken: TestContext.Current.CancellationToken);
 
         result.Should().BeTrue();
     }
@@ -70,7 +70,7 @@ public sealed class EmployeeRepositoryUniquenessTests : PersistenceUnitTestBase
     [Fact]
     public async Task LoginIdExistsAsync_returns_false_when_no_matching_employee_existsAsync()
     {
-        var result = await _sut.LoginIdExistsAsync("adventure-works\\nobody");
+        var result = await _sut.LoginIdExistsAsync("adventure-works\\nobody", cancellationToken: TestContext.Current.CancellationToken);
 
         result.Should().BeFalse();
     }

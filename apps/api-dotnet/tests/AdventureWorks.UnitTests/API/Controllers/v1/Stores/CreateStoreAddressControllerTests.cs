@@ -39,7 +39,7 @@ public sealed class CreateStoreAddressControllerTests : UnitTestBase
     [Fact]
     public async Task PostAsync_null_input_returns_bad_requestAsync()
     {
-        var result = await _sut.PostAsync(2534, null);
+        var result = await _sut.PostAsync(2534, null, cancellationToken: TestContext.Current.CancellationToken);
 
         var objectResult = result as BadRequestObjectResult;
 
@@ -59,7 +59,7 @@ public sealed class CreateStoreAddressControllerTests : UnitTestBase
     {
         var input = new StoreAddressCreateModel { AddressId = 100, AddressTypeId = 2 };
 
-        var result = await _sut.PostAsync(storeId, input);
+        var result = await _sut.PostAsync(storeId, input, cancellationToken: TestContext.Current.CancellationToken);
 
         var objectResult = result as BadRequestObjectResult;
 
@@ -149,7 +149,7 @@ public sealed class CreateStoreAddressControllerTests : UnitTestBase
             .Setup(x => x.Send(It.IsAny<ReadStoreAddressQuery>(), It.IsAny<CancellationToken>()))
             .ReturnsAsync(output);
 
-        var result = await _sut.PostAsync(storeId, input);
+        var result = await _sut.PostAsync(storeId, input, cancellationToken: TestContext.Current.CancellationToken);
 
         var createdResult = result as CreatedAtRouteResult;
 

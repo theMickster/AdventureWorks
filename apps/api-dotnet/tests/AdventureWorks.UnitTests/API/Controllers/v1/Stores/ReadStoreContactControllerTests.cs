@@ -119,7 +119,7 @@ public sealed class ReadStoreContactControllerTests : UnitTestBase
     [InlineData(2534, 100, -7, "A valid contact type id must be specified.")]
     public async Task GetByCompositeKeyAsync_invalid_route_values_return_bad_requestAsync(int storeId, int personId, int contactTypeId, string expectedMessage)
     {
-        var result = await _sut.GetByCompositeKeyAsync(storeId, personId, contactTypeId);
+        var result = await _sut.GetByCompositeKeyAsync(storeId, personId, contactTypeId, cancellationToken: TestContext.Current.CancellationToken);
 
         var objectResult = result as BadRequestObjectResult;
 
@@ -137,7 +137,7 @@ public sealed class ReadStoreContactControllerTests : UnitTestBase
         _mockMediator.Setup(x => x.Send(It.IsAny<ReadStoreContactQuery>(), It.IsAny<CancellationToken>()))
             .ReturnsAsync((StoreContactModel?)null);
 
-        var result = await _sut.GetByCompositeKeyAsync(2534, 100, 11);
+        var result = await _sut.GetByCompositeKeyAsync(2534, 100, 11, cancellationToken: TestContext.Current.CancellationToken);
 
         var notFound = result as NotFoundObjectResult;
 
@@ -164,7 +164,7 @@ public sealed class ReadStoreContactControllerTests : UnitTestBase
         _mockMediator.Setup(x => x.Send(It.IsAny<ReadStoreContactQuery>(), It.IsAny<CancellationToken>()))
             .ReturnsAsync(output);
 
-        var result = await _sut.GetByCompositeKeyAsync(2534, 100, 11);
+        var result = await _sut.GetByCompositeKeyAsync(2534, 100, 11, cancellationToken: TestContext.Current.CancellationToken);
 
         var okResult = result as OkObjectResult;
 
@@ -186,7 +186,7 @@ public sealed class ReadStoreContactControllerTests : UnitTestBase
         _mockMediator.Setup(x => x.Send(It.IsAny<ReadStoreContactQuery>(), It.IsAny<CancellationToken>()))
             .ReturnsAsync((StoreContactModel?)null);
 
-        await _sut.GetByCompositeKeyAsync(storeId, personId, contactTypeId);
+        await _sut.GetByCompositeKeyAsync(storeId, personId, contactTypeId, cancellationToken: TestContext.Current.CancellationToken);
 
         _mockMediator.Verify(x => x.Send(
             It.Is<ReadStoreContactQuery>(q =>

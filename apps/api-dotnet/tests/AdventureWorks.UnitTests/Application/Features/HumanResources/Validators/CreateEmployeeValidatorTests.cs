@@ -90,7 +90,7 @@ public sealed class CreateEmployeeValidatorTests : UnitTestBase
         var model = HumanResourcesDomainFixtures.GetValidEmployeeCreateModel();
         model.NationalIdNumber = nationalIdNumber;
 
-        var result = await _sut.TestValidateAsync(model);
+        var result = await _sut.TestValidateAsync(model, cancellationToken: TestContext.Current.CancellationToken);
 
         result.ShouldHaveValidationErrorFor(x => x.NationalIdNumber)
             .WithErrorCode("Rule-15");
@@ -104,7 +104,7 @@ public sealed class CreateEmployeeValidatorTests : UnitTestBase
         var model = HumanResourcesDomainFixtures.GetValidEmployeeCreateModel();
         model.LoginId = new string('a', length);
 
-        var result = await _sut.TestValidateAsync(model);
+        var result = await _sut.TestValidateAsync(model, cancellationToken: TestContext.Current.CancellationToken);
 
         result.ShouldHaveValidationErrorFor(x => x.LoginId)
             .WithErrorCode("Rule-16");
@@ -116,7 +116,7 @@ public sealed class CreateEmployeeValidatorTests : UnitTestBase
         var model = HumanResourcesDomainFixtures.GetValidEmployeeCreateModel();
         model.BirthDate = DateTime.Today.AddYears(-17); // Only 17 years old
 
-        var result = await _sut.TestValidateAsync(model);
+        var result = await _sut.TestValidateAsync(model, cancellationToken: TestContext.Current.CancellationToken);
 
         result.ShouldHaveValidationErrorFor(x => x.BirthDate)
             .WithErrorCode("Rule-20");
@@ -132,7 +132,7 @@ public sealed class CreateEmployeeValidatorTests : UnitTestBase
         var model = HumanResourcesDomainFixtures.GetValidEmployeeCreateModel();
         model.EmailAddress = emailAddress;
 
-        var result = await _sut.TestValidateAsync(model);
+        var result = await _sut.TestValidateAsync(model, cancellationToken: TestContext.Current.CancellationToken);
 
         result.ShouldHaveValidationErrorFor(x => x.EmailAddress)
             .WithErrorCode("Rule-24");
@@ -144,7 +144,7 @@ public sealed class CreateEmployeeValidatorTests : UnitTestBase
         var model = HumanResourcesDomainFixtures.GetValidEmployeeCreateModel();
         model.EmailAddress = new string('a', 45) + "@test.com"; // 54 characters - too long
 
-        var result = await _sut.TestValidateAsync(model);
+        var result = await _sut.TestValidateAsync(model, cancellationToken: TestContext.Current.CancellationToken);
 
         result.ShouldHaveValidationErrorFor(x => x.EmailAddress)
             .WithErrorCode("Rule-25");
@@ -158,7 +158,7 @@ public sealed class CreateEmployeeValidatorTests : UnitTestBase
         var model = HumanResourcesDomainFixtures.GetValidEmployeeCreateModel();
         model.AddressTypeId = addressTypeId;
 
-        var result = await _sut.TestValidateAsync(model);
+        var result = await _sut.TestValidateAsync(model, cancellationToken: TestContext.Current.CancellationToken);
 
         result.ShouldHaveValidationErrorFor(x => x.AddressTypeId)
             .WithErrorCode("Rule-29");
@@ -174,7 +174,7 @@ public sealed class CreateEmployeeValidatorTests : UnitTestBase
         var model = HumanResourcesDomainFixtures.GetValidEmployeeCreateModel();
         model.AddressTypeId = 999;
 
-        var result = await _sut.TestValidateAsync(model);
+        var result = await _sut.TestValidateAsync(model, cancellationToken: TestContext.Current.CancellationToken);
 
         result.ShouldHaveValidationErrorFor(x => x.AddressTypeId)
             .WithErrorCode("Rule-30");
@@ -189,7 +189,7 @@ public sealed class CreateEmployeeValidatorTests : UnitTestBase
 
         var model = HumanResourcesDomainFixtures.GetValidEmployeeCreateModel();
 
-        var result = await _sut.TestValidateAsync(model);
+        var result = await _sut.TestValidateAsync(model, cancellationToken: TestContext.Current.CancellationToken);
 
         result.ShouldHaveValidationErrorFor(x => x.NationalIdNumber)
             .WithErrorCode("Rule-31");
@@ -204,7 +204,7 @@ public sealed class CreateEmployeeValidatorTests : UnitTestBase
 
         var model = HumanResourcesDomainFixtures.GetValidEmployeeCreateModel();
 
-        var result = await _sut.TestValidateAsync(model);
+        var result = await _sut.TestValidateAsync(model, cancellationToken: TestContext.Current.CancellationToken);
 
         result.ShouldHaveValidationErrorFor(x => x.LoginId)
             .WithErrorCode("Rule-32");
@@ -215,7 +215,7 @@ public sealed class CreateEmployeeValidatorTests : UnitTestBase
     {
         var model = HumanResourcesDomainFixtures.GetValidEmployeeCreateModel();
 
-        var result = await _sut.TestValidateAsync(model);
+        var result = await _sut.TestValidateAsync(model, cancellationToken: TestContext.Current.CancellationToken);
 
         result.ShouldNotHaveAnyValidationErrors();
     }
@@ -230,7 +230,7 @@ public sealed class CreateEmployeeValidatorTests : UnitTestBase
         model.OrganizationLevel = null;
         model.Address.AddressLine2 = null;
 
-        var result = await _sut.TestValidateAsync(model);
+        var result = await _sut.TestValidateAsync(model, cancellationToken: TestContext.Current.CancellationToken);
 
         result.ShouldNotHaveAnyValidationErrors();
     }

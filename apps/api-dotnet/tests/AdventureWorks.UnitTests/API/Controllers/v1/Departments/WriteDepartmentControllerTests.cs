@@ -39,7 +39,7 @@ public sealed class WriteDepartmentControllerTests : UnitTestBase
     [Fact]
     public async Task PostAsync_returns_bad_request_when_model_is_nullAsync()
     {
-        var result = await _sut.PostAsync(null);
+        var result = await _sut.PostAsync(null, cancellationToken: TestContext.Current.CancellationToken);
 
         var objectResult = result as BadRequestObjectResult;
 
@@ -74,7 +74,7 @@ public sealed class WriteDepartmentControllerTests : UnitTestBase
 
         var input = new DepartmentCreateModel { Name = "Engineering", GroupName = "Research and Development" };
 
-        var result = await _sut.PostAsync(input);
+        var result = await _sut.PostAsync(input, cancellationToken: TestContext.Current.CancellationToken);
 
         var createdResult = result as CreatedAtRouteResult;
 
@@ -98,7 +98,7 @@ public sealed class WriteDepartmentControllerTests : UnitTestBase
     [Fact]
     public async Task PutAsync_returns_bad_request_when_model_is_nullAsync()
     {
-        var result = await _sut.PutAsync(1, null);
+        var result = await _sut.PutAsync(1, null, cancellationToken: TestContext.Current.CancellationToken);
 
         var objectResult = result as BadRequestObjectResult;
 
@@ -115,7 +115,7 @@ public sealed class WriteDepartmentControllerTests : UnitTestBase
     {
         var input = new DepartmentUpdateModel { Id = 5, Name = "Engineering", GroupName = "Research and Development" };
 
-        var result = await _sut.PutAsync(99, input);
+        var result = await _sut.PutAsync(99, input, cancellationToken: TestContext.Current.CancellationToken);
 
         var objectResult = result as BadRequestObjectResult;
 
@@ -148,7 +148,7 @@ public sealed class WriteDepartmentControllerTests : UnitTestBase
             .Setup(x => x.Send(It.IsAny<ReadDepartmentQuery>(), It.IsAny<CancellationToken>()))
             .ReturnsAsync(departmentModel);
 
-        var result = await _sut.PutAsync(1, input);
+        var result = await _sut.PutAsync(1, input, cancellationToken: TestContext.Current.CancellationToken);
 
         var objectResult = result as OkObjectResult;
 

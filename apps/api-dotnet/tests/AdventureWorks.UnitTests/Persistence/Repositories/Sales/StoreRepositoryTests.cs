@@ -35,7 +35,7 @@ public sealed class StoreRepositoryTests : PersistenceUnitTestBase
     {
         const int storeId = 1112;
 
-        var result = await _sut.GetStoreByIdAsync(storeId);
+        var result = await _sut.GetStoreByIdAsync(storeId, cancellationToken: TestContext.Current.CancellationToken);
 
         using (new AssertionScope())
         {
@@ -54,7 +54,7 @@ public sealed class StoreRepositoryTests : PersistenceUnitTestBase
     public async Task GetStoreById_multiple_addresses_succeedsAsync()
     {
         const int storeId = 1111;
-        var result = await _sut.GetStoreByIdAsync(storeId);
+        var result = await _sut.GetStoreByIdAsync(storeId, cancellationToken: TestContext.Current.CancellationToken);
 
         using (new AssertionScope())
         {
@@ -82,9 +82,9 @@ public sealed class StoreRepositoryTests : PersistenceUnitTestBase
             Demographics = "<root><hello>-856154035</hello></root>"
         };
 
-        var createResult = await _sut.AddAsync(newEntity);
+        var createResult = await _sut.AddAsync(newEntity, cancellationToken: TestContext.Current.CancellationToken);
 
-        var getResult = await _sut.GetByIdAsync(newEntity.BusinessEntityId);
+        var getResult = await _sut.GetByIdAsync(newEntity.BusinessEntityId, cancellationToken: TestContext.Current.CancellationToken);
 
         using (new AssertionScope())
         {
@@ -100,9 +100,9 @@ public sealed class StoreRepositoryTests : PersistenceUnitTestBase
         getResult.Demographics = "<root><goodBye>-856154035</goodBye></root>";
         getResult.ModifiedDate = new DateTime(2023, 01, 01);
 
-        await _sut.UpdateAsync(getResult);
+        await _sut.UpdateAsync(getResult, cancellationToken: TestContext.Current.CancellationToken);
 
-        var postUpdateEntity = await _sut.GetByIdAsync(newEntity.BusinessEntityId);
+        var postUpdateEntity = await _sut.GetByIdAsync(newEntity.BusinessEntityId, cancellationToken: TestContext.Current.CancellationToken);
 
         using (new AssertionScope())
         {
@@ -111,9 +111,9 @@ public sealed class StoreRepositoryTests : PersistenceUnitTestBase
             postUpdateEntity.Demographics.Should().Contain("<goodBye>-856154035</goodBye>");
         }
 
-        await _sut.DeleteAsync(postUpdateEntity);
+        await _sut.DeleteAsync(postUpdateEntity, cancellationToken: TestContext.Current.CancellationToken);
 
-        var deleteResult = await _sut.GetByIdAsync(newEntity.BusinessEntityId);
+        var deleteResult = await _sut.GetByIdAsync(newEntity.BusinessEntityId, cancellationToken: TestContext.Current.CancellationToken);
         
         deleteResult?.Should().BeNull("because the entity should have been deleted");
     }

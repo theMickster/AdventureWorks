@@ -28,7 +28,7 @@ public sealed class UpdateStoreValidatorTests : UnitTestBase
     public async Task Validator_should_have_store_name_errors(string name)
     {
         var model = new StoreUpdateModel { Name = name };
-        var result = await _sut.TestValidateAsync(model);
+        var result = await _sut.TestValidateAsync(model, cancellationToken: TestContext.Current.CancellationToken);
         result.ShouldHaveValidationErrorFor(x => x.Name);
     }
 
@@ -36,7 +36,7 @@ public sealed class UpdateStoreValidatorTests : UnitTestBase
     public async Task Validator_fails_when_store_name_is_too_long()
     {
         var model = new StoreUpdateModel { Name = new string('a', 51) };
-        var result = await _sut.TestValidateAsync(model);
+        var result = await _sut.TestValidateAsync(model, cancellationToken: TestContext.Current.CancellationToken);
         result.ShouldHaveValidationErrorFor(x => x.Name);
     }
 
@@ -44,7 +44,7 @@ public sealed class UpdateStoreValidatorTests : UnitTestBase
     public async Task Validator_succeeds_when_store_name_is_exactly_50_characters()
     {
         var model = new StoreUpdateModel { Name = new string('a', 50) };
-        var result = await _sut.TestValidateAsync(model);
+        var result = await _sut.TestValidateAsync(model, cancellationToken: TestContext.Current.CancellationToken);
         result.ShouldNotHaveValidationErrorFor(x => x.Name);
     }
 
@@ -52,7 +52,7 @@ public sealed class UpdateStoreValidatorTests : UnitTestBase
     public async Task Validator_succeeds_when_all_data_is_valid()
     {
         var model = new StoreUpdateModel { Name = "Valid Store Name" };
-        var result = await _sut.TestValidateAsync(model);
+        var result = await _sut.TestValidateAsync(model, cancellationToken: TestContext.Current.CancellationToken);
         result.ShouldNotHaveValidationErrorFor(x => x.Name);
     }
 
@@ -64,7 +64,7 @@ public sealed class UpdateStoreValidatorTests : UnitTestBase
             .ReturnsAsync(false);
         var model = new StoreUpdateModel { Name = "Valid Store Name", SalesPersonId = 1 };
 
-        var result = await _sut.TestValidateAsync(model);
+        var result = await _sut.TestValidateAsync(model, cancellationToken: TestContext.Current.CancellationToken);
 
         result.ShouldHaveValidationErrorFor(x => x.SalesPersonId)
               .WithErrorCode("Rule-03");
@@ -78,7 +78,7 @@ public sealed class UpdateStoreValidatorTests : UnitTestBase
             .ReturnsAsync(true);
         var model = new StoreUpdateModel { Name = "Valid Store Name", SalesPersonId = 1 };
 
-        var result = await _sut.TestValidateAsync(model);
+        var result = await _sut.TestValidateAsync(model, cancellationToken: TestContext.Current.CancellationToken);
 
         result.ShouldNotHaveValidationErrorFor(x => x.SalesPersonId);
     }
@@ -88,7 +88,7 @@ public sealed class UpdateStoreValidatorTests : UnitTestBase
     {
         var model = new StoreUpdateModel { Name = "Valid Store Name", SalesPersonId = null };
 
-        var result = await _sut.TestValidateAsync(model);
+        var result = await _sut.TestValidateAsync(model, cancellationToken: TestContext.Current.CancellationToken);
 
         result.ShouldNotHaveValidationErrorFor(x => x.SalesPersonId);
     }

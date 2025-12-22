@@ -42,7 +42,7 @@ public sealed class ReadStoreDemographicsControllerTests : UnitTestBase
     [InlineData(-999)]
     public async Task GetAsync_invalid_storeId_returns_bad_request(int storeId)
     {
-        var result = await _sut.GetAsync(storeId);
+        var result = await _sut.GetAsync(storeId, cancellationToken: TestContext.Current.CancellationToken);
         var objectResult = result as BadRequestObjectResult;
 
         using (new AssertionScope())
@@ -59,7 +59,7 @@ public sealed class ReadStoreDemographicsControllerTests : UnitTestBase
         _mockMediator.Setup(x => x.Send(It.IsAny<ReadStoreDemographicsQuery>(), It.IsAny<CancellationToken>()))
             .ReturnsAsync((StoreDemographicsModel?)null);
 
-        var result = await _sut.GetAsync(2534);
+        var result = await _sut.GetAsync(2534, cancellationToken: TestContext.Current.CancellationToken);
 
         var notFound = result as NotFoundObjectResult;
 
@@ -86,7 +86,7 @@ public sealed class ReadStoreDemographicsControllerTests : UnitTestBase
         _mockMediator.Setup(x => x.Send(It.IsAny<ReadStoreDemographicsQuery>(), It.IsAny<CancellationToken>()))
             .ReturnsAsync(output);
 
-        var result = await _sut.GetAsync(2534);
+        var result = await _sut.GetAsync(2534, cancellationToken: TestContext.Current.CancellationToken);
 
         var okResult = result as OkObjectResult;
 
@@ -113,7 +113,7 @@ public sealed class ReadStoreDemographicsControllerTests : UnitTestBase
         _mockMediator.Setup(x => x.Send(It.IsAny<ReadStoreDemographicsQuery>(), It.IsAny<CancellationToken>()))
             .ReturnsAsync(output);
 
-        var result = await _sut.GetAsync(800);
+        var result = await _sut.GetAsync(800, cancellationToken: TestContext.Current.CancellationToken);
 
         var okResult = result as OkObjectResult;
 
@@ -138,7 +138,7 @@ public sealed class ReadStoreDemographicsControllerTests : UnitTestBase
         _mockMediator.Setup(x => x.Send(It.IsAny<ReadStoreDemographicsQuery>(), It.IsAny<CancellationToken>()))
             .ReturnsAsync((StoreDemographicsModel?)null);
 
-        await _sut.GetAsync(storeId);
+        await _sut.GetAsync(storeId, cancellationToken: TestContext.Current.CancellationToken);
 
         _mockMediator.Verify(x => x.Send(
             It.Is<ReadStoreDemographicsQuery>(q => q.StoreId == storeId),

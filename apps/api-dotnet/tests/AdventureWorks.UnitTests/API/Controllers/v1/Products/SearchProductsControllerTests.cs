@@ -43,7 +43,7 @@ public sealed class SearchProductsControllerTests : UnitTestBase
         _mockMediator.Setup(x => x.Send(It.IsAny<SearchProductsQuery>(), It.IsAny<CancellationToken>()))
             .ReturnsAsync(new ProductSearchResultModel { Results = [new() { Id = 1, Name = "Mountain Bike" }] });
 
-        var result = await _sut.SearchProductsAsync(new ProductParameter(), new ProductSearchModel());
+        var result = await _sut.SearchProductsAsync(new ProductParameter(), new ProductSearchModel(), cancellationToken: TestContext.Current.CancellationToken);
         var objectResult = result as OkObjectResult;
 
         using (new AssertionScope())
@@ -59,7 +59,7 @@ public sealed class SearchProductsControllerTests : UnitTestBase
         _mockMediator.Setup(x => x.Send(It.IsAny<SearchProductsQuery>(), It.IsAny<CancellationToken>()))
             .ReturnsAsync(new ProductSearchResultModel { Results = null! });
 
-        var result = await _sut.SearchProductsAsync(new ProductParameter(), new ProductSearchModel());
+        var result = await _sut.SearchProductsAsync(new ProductParameter(), new ProductSearchModel(), cancellationToken: TestContext.Current.CancellationToken);
         var objectResult = result as OkObjectResult;
 
         using (new AssertionScope())
@@ -77,7 +77,7 @@ public sealed class SearchProductsControllerTests : UnitTestBase
         _mockMediator.Setup(x => x.Send(It.IsAny<SearchProductsQuery>(), It.IsAny<CancellationToken>()))
             .ReturnsAsync(new ProductSearchResultModel { Results = new List<ProductListModel>() });
 
-        var result = await _sut.SearchProductsAsync(new ProductParameter(), new ProductSearchModel());
+        var result = await _sut.SearchProductsAsync(new ProductParameter(), new ProductSearchModel(), cancellationToken: TestContext.Current.CancellationToken);
         var objectResult = result as OkObjectResult;
 
         using (new AssertionScope())

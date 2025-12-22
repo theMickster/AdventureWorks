@@ -28,7 +28,7 @@ public sealed class PersonEmailCreateValidatorTests : UnitTestBase
     {
         var model = new PersonEmailCreateModel { EmailAddress = email! };
 
-        var result = await _sut.TestValidateAsync(model);
+        var result = await _sut.TestValidateAsync(model, cancellationToken: TestContext.Current.CancellationToken);
 
         result.ShouldHaveValidationErrorFor(x => x.EmailAddress).WithErrorCode("Rule-01");
     }
@@ -41,7 +41,7 @@ public sealed class PersonEmailCreateValidatorTests : UnitTestBase
     {
         var model = new PersonEmailCreateModel { EmailAddress = email };
 
-        var result = await _sut.TestValidateAsync(model);
+        var result = await _sut.TestValidateAsync(model, cancellationToken: TestContext.Current.CancellationToken);
 
         result.ShouldHaveValidationErrorFor(x => x.EmailAddress).WithErrorCode("Rule-02");
     }
@@ -53,7 +53,7 @@ public sealed class PersonEmailCreateValidatorTests : UnitTestBase
     {
         var model = new PersonEmailCreateModel { EmailAddress = email };
 
-        var result = await _sut.TestValidateAsync(model);
+        var result = await _sut.TestValidateAsync(model, cancellationToken: TestContext.Current.CancellationToken);
 
         result.ShouldNotHaveValidationErrorFor(x => x.EmailAddress);
     }
@@ -64,7 +64,7 @@ public sealed class PersonEmailCreateValidatorTests : UnitTestBase
         // 44-char local part + @example.com = 56 chars total
         var model = new PersonEmailCreateModel { EmailAddress = new string('a', 44) + "@example.com" };
 
-        var result = await _sut.TestValidateAsync(model);
+        var result = await _sut.TestValidateAsync(model, cancellationToken: TestContext.Current.CancellationToken);
 
         result.ShouldHaveValidationErrorFor(x => x.EmailAddress).WithErrorCode("Rule-04");
     }

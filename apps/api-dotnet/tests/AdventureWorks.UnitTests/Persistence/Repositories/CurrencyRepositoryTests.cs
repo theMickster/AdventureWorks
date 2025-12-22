@@ -42,7 +42,7 @@ public sealed class CurrencyRepositoryTests : PersistenceUnitTestBase
     [Fact]
     public async Task ListAllAsync_is_correctAsync()
     {
-        var result = await _sut.ListAllAsync();
+        var result = await _sut.ListAllAsync(cancellationToken: TestContext.Current.CancellationToken);
 
         using (new AssertionScope())
         {
@@ -55,7 +55,7 @@ public sealed class CurrencyRepositoryTests : PersistenceUnitTestBase
     [Fact]
     public async Task ListAllAsync_uses_no_tracking()
     {
-        var result = await _sut.ListAllAsync();
+        var result = await _sut.ListAllAsync(cancellationToken: TestContext.Current.CancellationToken);
 
         var entry = DbContext.Entry(result[0]);
         entry.State.Should().Be(EntityState.Detached);
@@ -67,7 +67,7 @@ public sealed class CurrencyRepositoryTests : PersistenceUnitTestBase
     [InlineData("GBP")]
     public async Task GetByIdAsync_is_correctAsync(string code)
     {
-        var result = await _sut.GetByIdAsync(code);
+        var result = await _sut.GetByIdAsync(code, cancellationToken: TestContext.Current.CancellationToken);
 
         using (new AssertionScope())
         {
@@ -79,7 +79,7 @@ public sealed class CurrencyRepositoryTests : PersistenceUnitTestBase
     [Fact]
     public async Task GetByIdAsync_returns_null_for_nonexistent_code()
     {
-        var result = await _sut.GetByIdAsync("ZZZ");
+        var result = await _sut.GetByIdAsync("ZZZ", cancellationToken: TestContext.Current.CancellationToken);
 
         result.Should().BeNull();
     }
@@ -87,7 +87,7 @@ public sealed class CurrencyRepositoryTests : PersistenceUnitTestBase
     [Fact]
     public async Task GetByIdAsync_uses_no_tracking()
     {
-        var result = await _sut.GetByIdAsync("USD");
+        var result = await _sut.GetByIdAsync("USD", cancellationToken: TestContext.Current.CancellationToken);
 
         var entry = DbContext.Entry(result!);
         entry.State.Should().Be(EntityState.Detached);

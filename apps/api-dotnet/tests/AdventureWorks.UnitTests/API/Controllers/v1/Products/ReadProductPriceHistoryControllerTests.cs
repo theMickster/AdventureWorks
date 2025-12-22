@@ -41,7 +41,7 @@ public sealed class ReadProductPriceHistoryControllerTests : UnitTestBase
     [InlineData(-999)]
     public async Task GetPriceHistoryAsync_invalid_id_returns_bad_requestAsync(int id)
     {
-        var result = await _sut.GetPriceHistoryAsync(id);
+        var result = await _sut.GetPriceHistoryAsync(id, cancellationToken: TestContext.Current.CancellationToken);
 
         var objectResult = result as BadRequestObjectResult;
 
@@ -65,7 +65,7 @@ public sealed class ReadProductPriceHistoryControllerTests : UnitTestBase
         _mockMediator.Setup(x => x.Send(It.IsAny<ReadProductPriceHistoryQuery>(), It.IsAny<CancellationToken>()))
             .ReturnsAsync(history);
 
-        var result = await _sut.GetPriceHistoryAsync(1);
+        var result = await _sut.GetPriceHistoryAsync(1, cancellationToken: TestContext.Current.CancellationToken);
         var objectResult = result as OkObjectResult;
 
         using (new AssertionScope())

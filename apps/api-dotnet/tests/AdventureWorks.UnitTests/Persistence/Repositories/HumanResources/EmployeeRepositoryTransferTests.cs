@@ -44,7 +44,7 @@ public sealed class EmployeeRepositoryTransferTests : PersistenceUnitTestBase
                 EndDate = null,
                 ModifiedDate = StandardModifiedDate
             });
-        await DbContext.SaveChangesAsync();
+        await DbContext.SaveChangesAsync(cancellationToken: TestContext.Current.CancellationToken);
 
         Func<Task> act = async () => await _sut.TransferEmployeeDepartmentAsync(
             businessEntityId: 1,
@@ -69,14 +69,14 @@ public sealed class EmployeeRepositoryTransferTests : PersistenceUnitTestBase
             EndDate = null,
             ModifiedDate = StandardModifiedDate
         });
-        await DbContext.SaveChangesAsync();
+        await DbContext.SaveChangesAsync(cancellationToken: TestContext.Current.CancellationToken);
 
         await _sut.TransferEmployeeDepartmentAsync(
             businessEntityId: 1,
             newDepartmentId: 2,
             newShiftId: 1,
             transferDate: Today,
-            modifiedDate: StandardModifiedDate);
+            modifiedDate: StandardModifiedDate, cancellationToken: TestContext.Current.CancellationToken);
 
         var allRecords = DbContext.EmployeeDepartmentHistories
             .Where(dh => dh.BusinessEntityId == 1)
@@ -108,7 +108,7 @@ public sealed class EmployeeRepositoryTransferTests : PersistenceUnitTestBase
             EndDate = Yesterday,
             ModifiedDate = StandardModifiedDate
         });
-        await DbContext.SaveChangesAsync();
+        await DbContext.SaveChangesAsync(cancellationToken: TestContext.Current.CancellationToken);
 
         Func<Task> act = async () => await _sut.TransferEmployeeDepartmentAsync(
             businessEntityId: 1,

@@ -48,7 +48,7 @@ public sealed class ReadScrapReasonControllerTests : UnitTestBase
     [Fact]
     public async Task GetByIdAsync_returns_bad_request_when_id_is_zero()
     {
-        var result = await _sut.GetByIdAsync(0);
+        var result = await _sut.GetByIdAsync(0, cancellationToken: TestContext.Current.CancellationToken);
         var objectResult = result as BadRequestObjectResult;
         var outputModel = objectResult!.Value as string;
 
@@ -63,7 +63,7 @@ public sealed class ReadScrapReasonControllerTests : UnitTestBase
     [Fact]
     public async Task GetByIdAsync_returns_bad_request_when_id_is_negative()
     {
-        var result = await _sut.GetByIdAsync(-1);
+        var result = await _sut.GetByIdAsync(-1, cancellationToken: TestContext.Current.CancellationToken);
         var objectResult = result as BadRequestObjectResult;
         var outputModel = objectResult!.Value as string;
 
@@ -78,7 +78,7 @@ public sealed class ReadScrapReasonControllerTests : UnitTestBase
     [Fact]
     public async Task GetByIdAsync_returns_bad_request_when_id_exceeds_short_max()
     {
-        var result = await _sut.GetByIdAsync((int)short.MaxValue + 1);
+        var result = await _sut.GetByIdAsync((int)short.MaxValue + 1, cancellationToken: TestContext.Current.CancellationToken);
         var objectResult = result as BadRequestObjectResult;
         var outputModel = objectResult!.Value as string;
 
@@ -96,7 +96,7 @@ public sealed class ReadScrapReasonControllerTests : UnitTestBase
         _mockMediator.Setup(x => x.Send(It.IsAny<ReadScrapReasonQuery>(), It.IsAny<CancellationToken>()))
             .ReturnsAsync((ScrapReasonModel)null!);
 
-        var result = await _sut.GetByIdAsync(999);
+        var result = await _sut.GetByIdAsync(999, cancellationToken: TestContext.Current.CancellationToken);
         var objectResult = result as NotFoundObjectResult;
         var outputModel = objectResult!.Value as string;
 
@@ -120,7 +120,7 @@ public sealed class ReadScrapReasonControllerTests : UnitTestBase
                 ModifiedDate = new DateTime(2026, 5, 4, 0, 0, 0, DateTimeKind.Utc)
             });
 
-        var result = await _sut.GetByIdAsync(1);
+        var result = await _sut.GetByIdAsync(1, cancellationToken: TestContext.Current.CancellationToken);
         var objectResult = result as OkObjectResult;
 
         using (new AssertionScope())
@@ -138,7 +138,7 @@ public sealed class ReadScrapReasonControllerTests : UnitTestBase
                 x => x.Send(It.IsAny<ReadScrapReasonListQuery>(), It.IsAny<CancellationToken>()))
             .ReturnsAsync(new List<ScrapReasonModel>());
 
-        var result = await _sut.GetListAsync();
+        var result = await _sut.GetListAsync(cancellationToken: TestContext.Current.CancellationToken);
         var objectResult = result as NotFoundObjectResult;
         var outputModel = objectResult!.Value as string;
 
@@ -161,7 +161,7 @@ public sealed class ReadScrapReasonControllerTests : UnitTestBase
                 new() { ScrapReasonId = (short)2, Name = "Color incorrect", ModifiedDate = new DateTime(2026, 5, 4, 0, 0, 0, DateTimeKind.Utc) }
             });
 
-        var result = await _sut.GetListAsync();
+        var result = await _sut.GetListAsync(cancellationToken: TestContext.Current.CancellationToken);
         var objectResult = result as OkObjectResult;
 
         using (new AssertionScope())

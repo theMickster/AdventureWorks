@@ -42,7 +42,7 @@ public sealed class UnitMeasureRepositoryTests : PersistenceUnitTestBase
     [Fact]
     public async Task ListAllAsync_returns_correct_count()
     {
-        var result = await _sut.ListAllAsync();
+        var result = await _sut.ListAllAsync(cancellationToken: TestContext.Current.CancellationToken);
 
         using (new AssertionScope())
         {
@@ -55,7 +55,7 @@ public sealed class UnitMeasureRepositoryTests : PersistenceUnitTestBase
     [Fact]
     public async Task ListAllAsync_uses_no_tracking()
     {
-        var result = await _sut.ListAllAsync();
+        var result = await _sut.ListAllAsync(cancellationToken: TestContext.Current.CancellationToken);
 
         var entry = DbContext.Entry(result[0]);
         entry.State.Should().Be(EntityState.Detached);
@@ -66,7 +66,7 @@ public sealed class UnitMeasureRepositoryTests : PersistenceUnitTestBase
     [InlineData("LB")]
     public async Task GetByCodeAsync_returns_correct_entity(string code)
     {
-        var result = await _sut.GetByCodeAsync(code);
+        var result = await _sut.GetByCodeAsync(code, cancellationToken: TestContext.Current.CancellationToken);
 
         using (new AssertionScope())
         {
@@ -78,7 +78,7 @@ public sealed class UnitMeasureRepositoryTests : PersistenceUnitTestBase
     [Fact]
     public async Task GetByCodeAsync_returns_null_for_nonexistent_code()
     {
-        var result = await _sut.GetByCodeAsync("ZZZ");
+        var result = await _sut.GetByCodeAsync("ZZZ", cancellationToken: TestContext.Current.CancellationToken);
 
         result.Should().BeNull();
     }
@@ -86,7 +86,7 @@ public sealed class UnitMeasureRepositoryTests : PersistenceUnitTestBase
     [Fact]
     public async Task GetByCodeAsync_uses_no_tracking()
     {
-        var result = await _sut.GetByCodeAsync("EA");
+        var result = await _sut.GetByCodeAsync("EA", cancellationToken: TestContext.Current.CancellationToken);
 
         var entry = DbContext.Entry(result!);
         entry.State.Should().Be(EntityState.Detached);

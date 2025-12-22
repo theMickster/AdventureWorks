@@ -52,7 +52,7 @@ public sealed class UpdateEmployeeValidatorTests : UnitTestBase
         var model = HumanResourcesDomainFixtures.GetValidEmployeeUpdateModel();
         model.Id = id;
 
-        var result = await _sut.TestValidateAsync(model);
+        var result = await _sut.TestValidateAsync(model, cancellationToken: TestContext.Current.CancellationToken);
 
         result.ShouldHaveValidationErrorFor(x => x.Id)
             .WithErrorCode("Rule-01");
@@ -67,7 +67,7 @@ public sealed class UpdateEmployeeValidatorTests : UnitTestBase
             .Setup(x => x.GetEmployeeByIdAsync(999))
             .ReturnsAsync((EmployeeEntity?)null);
 
-        var result = await _sut.TestValidateAsync(model);
+        var result = await _sut.TestValidateAsync(model, cancellationToken: TestContext.Current.CancellationToken);
 
         result.ShouldHaveValidationErrorFor(x => x.Id)
             .WithErrorCode("Rule-02");
@@ -81,7 +81,7 @@ public sealed class UpdateEmployeeValidatorTests : UnitTestBase
         var model = HumanResourcesDomainFixtures.GetValidEmployeeUpdateModel();
         model.FirstName = firstName!;
 
-        var result = await _sut.TestValidateAsync(model);
+        var result = await _sut.TestValidateAsync(model, cancellationToken: TestContext.Current.CancellationToken);
 
         result.ShouldHaveValidationErrorFor(x => x.FirstName)
             .WithErrorCode("Rule-03");
@@ -93,7 +93,7 @@ public sealed class UpdateEmployeeValidatorTests : UnitTestBase
         var model = HumanResourcesDomainFixtures.GetValidEmployeeUpdateModel();
         model.FirstName = new string('a', 51);
 
-        var result = await _sut.TestValidateAsync(model);
+        var result = await _sut.TestValidateAsync(model, cancellationToken: TestContext.Current.CancellationToken);
 
         result.ShouldHaveValidationErrorFor(x => x.FirstName)
             .WithErrorCode("Rule-04");
@@ -107,7 +107,7 @@ public sealed class UpdateEmployeeValidatorTests : UnitTestBase
         var model = HumanResourcesDomainFixtures.GetValidEmployeeUpdateModel();
         model.LastName = lastName!;
 
-        var result = await _sut.TestValidateAsync(model);
+        var result = await _sut.TestValidateAsync(model, cancellationToken: TestContext.Current.CancellationToken);
 
         result.ShouldHaveValidationErrorFor(x => x.LastName)
             .WithErrorCode("Rule-05");
@@ -119,7 +119,7 @@ public sealed class UpdateEmployeeValidatorTests : UnitTestBase
         var model = HumanResourcesDomainFixtures.GetValidEmployeeUpdateModel();
         model.LastName = new string('a', 51);
 
-        var result = await _sut.TestValidateAsync(model);
+        var result = await _sut.TestValidateAsync(model, cancellationToken: TestContext.Current.CancellationToken);
 
         result.ShouldHaveValidationErrorFor(x => x.LastName)
             .WithErrorCode("Rule-06");
@@ -131,7 +131,7 @@ public sealed class UpdateEmployeeValidatorTests : UnitTestBase
         var model = HumanResourcesDomainFixtures.GetValidEmployeeUpdateModel();
         model.MiddleName = new string('a', 51);
 
-        var result = await _sut.TestValidateAsync(model);
+        var result = await _sut.TestValidateAsync(model, cancellationToken: TestContext.Current.CancellationToken);
 
         result.ShouldHaveValidationErrorFor(x => x.MiddleName)
             .WithErrorCode("Rule-07");
@@ -143,7 +143,7 @@ public sealed class UpdateEmployeeValidatorTests : UnitTestBase
         var model = HumanResourcesDomainFixtures.GetValidEmployeeUpdateModel();
         model.Title = new string('a', 9);
 
-        var result = await _sut.TestValidateAsync(model);
+        var result = await _sut.TestValidateAsync(model, cancellationToken: TestContext.Current.CancellationToken);
 
         result.ShouldHaveValidationErrorFor(x => x.Title)
             .WithErrorCode("Rule-08");
@@ -155,7 +155,7 @@ public sealed class UpdateEmployeeValidatorTests : UnitTestBase
         var model = HumanResourcesDomainFixtures.GetValidEmployeeUpdateModel();
         model.Suffix = new string('a', 11);
 
-        var result = await _sut.TestValidateAsync(model);
+        var result = await _sut.TestValidateAsync(model, cancellationToken: TestContext.Current.CancellationToken);
 
         result.ShouldHaveValidationErrorFor(x => x.Suffix)
             .WithErrorCode("Rule-09");
@@ -170,7 +170,7 @@ public sealed class UpdateEmployeeValidatorTests : UnitTestBase
         var model = HumanResourcesDomainFixtures.GetValidEmployeeUpdateModel();
         model.MaritalStatus = maritalStatus;
 
-        var result = await _sut.TestValidateAsync(model);
+        var result = await _sut.TestValidateAsync(model, cancellationToken: TestContext.Current.CancellationToken);
 
         result.ShouldHaveValidationErrorFor(x => x.MaritalStatus)
             .WithErrorCode("Rule-10");
@@ -185,7 +185,7 @@ public sealed class UpdateEmployeeValidatorTests : UnitTestBase
         var model = HumanResourcesDomainFixtures.GetValidEmployeeUpdateModel();
         model.Gender = gender;
 
-        var result = await _sut.TestValidateAsync(model);
+        var result = await _sut.TestValidateAsync(model, cancellationToken: TestContext.Current.CancellationToken);
 
         result.ShouldHaveValidationErrorFor(x => x.Gender)
             .WithErrorCode("Rule-11");
@@ -199,7 +199,7 @@ public sealed class UpdateEmployeeValidatorTests : UnitTestBase
         var model = HumanResourcesDomainFixtures.GetValidEmployeeUpdateModel();
         model.JobTitle = jobTitle!;
 
-        var result = await _sut.TestValidateAsync(model);
+        var result = await _sut.TestValidateAsync(model, cancellationToken: TestContext.Current.CancellationToken);
 
         result.ShouldHaveValidationErrorFor(x => x.JobTitle)
             .WithErrorCode("Rule-12");
@@ -211,7 +211,7 @@ public sealed class UpdateEmployeeValidatorTests : UnitTestBase
         var model = HumanResourcesDomainFixtures.GetValidEmployeeUpdateModel();
         model.JobTitle = new string('a', 51);
 
-        var result = await _sut.TestValidateAsync(model);
+        var result = await _sut.TestValidateAsync(model, cancellationToken: TestContext.Current.CancellationToken);
 
         result.ShouldHaveValidationErrorFor(x => x.JobTitle)
             .WithErrorCode("Rule-13");
@@ -222,7 +222,7 @@ public sealed class UpdateEmployeeValidatorTests : UnitTestBase
     {
         var model = HumanResourcesDomainFixtures.GetValidEmployeeUpdateModel();
 
-        var result = await _sut.TestValidateAsync(model);
+        var result = await _sut.TestValidateAsync(model, cancellationToken: TestContext.Current.CancellationToken);
 
         result.ShouldNotHaveAnyValidationErrors();
     }
@@ -235,7 +235,7 @@ public sealed class UpdateEmployeeValidatorTests : UnitTestBase
         model.Title = null;
         model.Suffix = null;
 
-        var result = await _sut.TestValidateAsync(model);
+        var result = await _sut.TestValidateAsync(model, cancellationToken: TestContext.Current.CancellationToken);
 
         result.ShouldNotHaveAnyValidationErrors();
     }

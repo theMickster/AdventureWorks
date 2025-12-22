@@ -29,7 +29,7 @@ public sealed class EmployeePhoneValidatorTests : UnitTestBase
     {
         var model = HumanResourcesDomainFixtures.GetValidPhoneModel(new string('5', length));
 
-        var result = await _sut.TestValidateAsync(model);
+        var result = await _sut.TestValidateAsync(model, cancellationToken: TestContext.Current.CancellationToken);
 
         result.ShouldHaveValidationErrorFor(x => x.PhoneNumber)
             .WithErrorCode("Rule-01");
@@ -42,7 +42,7 @@ public sealed class EmployeePhoneValidatorTests : UnitTestBase
     {
         var model = HumanResourcesDomainFixtures.GetValidPhoneModel(phoneNumberTypeId: phoneNumberTypeId);
 
-        var result = await _sut.TestValidateAsync(model);
+        var result = await _sut.TestValidateAsync(model, cancellationToken: TestContext.Current.CancellationToken);
 
         result.ShouldHaveValidationErrorFor(x => x.PhoneNumberTypeId)
             .WithErrorCode("Rule-02");
@@ -57,7 +57,7 @@ public sealed class EmployeePhoneValidatorTests : UnitTestBase
 
         var model = HumanResourcesDomainFixtures.GetValidPhoneModel(phoneNumberTypeId: 999);
 
-        var result = await _sut.TestValidateAsync(model);
+        var result = await _sut.TestValidateAsync(model, cancellationToken: TestContext.Current.CancellationToken);
 
         result.ShouldHaveValidationErrorFor(x => x.PhoneNumberTypeId)
             .WithErrorCode("Rule-03");
@@ -68,7 +68,7 @@ public sealed class EmployeePhoneValidatorTests : UnitTestBase
     {
         var model = HumanResourcesDomainFixtures.GetValidPhoneModel();
 
-        var result = await _sut.TestValidateAsync(model);
+        var result = await _sut.TestValidateAsync(model, cancellationToken: TestContext.Current.CancellationToken);
 
         result.ShouldNotHaveAnyValidationErrors();
     }
@@ -82,7 +82,7 @@ public sealed class EmployeePhoneValidatorTests : UnitTestBase
     {
         var model = HumanResourcesDomainFixtures.GetValidPhoneModel(phoneNumber);
 
-        var result = await _sut.TestValidateAsync(model);
+        var result = await _sut.TestValidateAsync(model, cancellationToken: TestContext.Current.CancellationToken);
 
         result.ShouldNotHaveValidationErrorFor(x => x.PhoneNumber);
     }

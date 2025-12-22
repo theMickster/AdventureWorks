@@ -41,7 +41,7 @@ public sealed class ReadStorePerformanceControllerTests : UnitTestBase
     [InlineData(-999)]
     public async Task GetAsync_invalid_storeId_returns_bad_request(int storeId)
     {
-        var result = await _sut.GetAsync(storeId);
+        var result = await _sut.GetAsync(storeId, cancellationToken: TestContext.Current.CancellationToken);
         var objectResult = result as BadRequestObjectResult;
 
         using (new AssertionScope())
@@ -58,7 +58,7 @@ public sealed class ReadStorePerformanceControllerTests : UnitTestBase
         _mockMediator.Setup(x => x.Send(It.IsAny<ReadStorePerformanceQuery>(), It.IsAny<CancellationToken>()))
             .ReturnsAsync((StorePerformanceModel?)null);
 
-        var result = await _sut.GetAsync(2534);
+        var result = await _sut.GetAsync(2534, cancellationToken: TestContext.Current.CancellationToken);
 
         var notFound = result as NotFoundObjectResult;
 
@@ -87,7 +87,7 @@ public sealed class ReadStorePerformanceControllerTests : UnitTestBase
         _mockMediator.Setup(x => x.Send(It.IsAny<ReadStorePerformanceQuery>(), It.IsAny<CancellationToken>()))
             .ReturnsAsync(output);
 
-        var result = await _sut.GetAsync(2534);
+        var result = await _sut.GetAsync(2534, cancellationToken: TestContext.Current.CancellationToken);
 
         var okResult = result as OkObjectResult;
 
@@ -107,7 +107,7 @@ public sealed class ReadStorePerformanceControllerTests : UnitTestBase
         _mockMediator.Setup(x => x.Send(It.IsAny<ReadStorePerformanceQuery>(), It.IsAny<CancellationToken>()))
             .ReturnsAsync((StorePerformanceModel?)null);
 
-        await _sut.GetAsync(storeId);
+        await _sut.GetAsync(storeId, cancellationToken: TestContext.Current.CancellationToken);
 
         _mockMediator.Verify(x => x.Send(
             It.Is<ReadStorePerformanceQuery>(q => q.StoreId == storeId),
@@ -151,7 +151,7 @@ public sealed class ReadStorePerformanceControllerTests : UnitTestBase
         _mockMediator.Setup(x => x.Send(It.IsAny<ReadStorePerformanceQuery>(), It.IsAny<CancellationToken>()))
             .ReturnsAsync(output);
 
-        var result = await _sut.GetAsync(999);
+        var result = await _sut.GetAsync(999, cancellationToken: TestContext.Current.CancellationToken);
 
         var okResult = result as OkObjectResult;
 

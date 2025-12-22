@@ -22,7 +22,7 @@ public sealed class SalesOrderSearchEndpointTests(CustomWebApplicationFactory fa
         var client = CreateAuthenticatedClient();
         var body = new { accountNumber = "10-4020-000676", status = 5 };
 
-        var response = await client.PostAsJsonAsync(SearchUrl, body);
+        var response = await client.PostAsJsonAsync(SearchUrl, body, cancellationToken: TestContext.Current.CancellationToken);
 
         response.StatusCode.Should().Be(HttpStatusCode.OK);
 
@@ -37,7 +37,7 @@ public sealed class SalesOrderSearchEndpointTests(CustomWebApplicationFactory fa
         var client = CreateAuthenticatedClient();
         var body = new { };
 
-        var response = await client.PostAsJsonAsync(SearchUrl, body);
+        var response = await client.PostAsJsonAsync(SearchUrl, body, cancellationToken: TestContext.Current.CancellationToken);
 
         response.StatusCode.Should().Be(HttpStatusCode.OK);
 
@@ -52,7 +52,7 @@ public sealed class SalesOrderSearchEndpointTests(CustomWebApplicationFactory fa
         var client = CreateAnonymousClient();
         var body = new { };
 
-        var response = await client.PostAsJsonAsync(SearchUrl, body);
+        var response = await client.PostAsJsonAsync(SearchUrl, body, cancellationToken: TestContext.Current.CancellationToken);
 
         response.StatusCode.Should().Be(HttpStatusCode.Unauthorized);
     }
@@ -64,7 +64,7 @@ public sealed class SalesOrderSearchEndpointTests(CustomWebApplicationFactory fa
         // AccountNumber exceeds the 15-character limit validated by Rule-08
         var body = new { accountNumber = "1234567890123456" };
 
-        var response = await client.PostAsJsonAsync(SearchUrl, body);
+        var response = await client.PostAsJsonAsync(SearchUrl, body, cancellationToken: TestContext.Current.CancellationToken);
 
         response.StatusCode.Should().Be(HttpStatusCode.BadRequest);
     }

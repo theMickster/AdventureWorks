@@ -44,7 +44,7 @@ public sealed class ReadEmployeeOrgTreeControllerTests : UnitTestBase
             .Setup(x => x.Send(It.IsAny<ReadEmployeeOrgTreeQuery>(), It.IsAny<CancellationToken>()))
             .ReturnsAsync(emptyList);
 
-        var result = await _sut.GetOrgTreeAsync();
+        var result = await _sut.GetOrgTreeAsync(cancellationToken: TestContext.Current.CancellationToken);
 
         var objectResult = result as OkObjectResult;
 
@@ -76,7 +76,7 @@ public sealed class ReadEmployeeOrgTreeControllerTests : UnitTestBase
             .Setup(x => x.Send(It.IsAny<ReadEmployeeOrgTreeQuery>(), It.IsAny<CancellationToken>()))
             .ReturnsAsync(orgTree.AsReadOnly());
 
-        var result = await _sut.GetOrgTreeAsync();
+        var result = await _sut.GetOrgTreeAsync(cancellationToken: TestContext.Current.CancellationToken);
 
         var objectResult = result as OkObjectResult;
 

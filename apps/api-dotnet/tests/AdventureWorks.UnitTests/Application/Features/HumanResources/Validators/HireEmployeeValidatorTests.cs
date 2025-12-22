@@ -19,7 +19,7 @@ public sealed class HireEmployeeValidatorTests : UnitTestBase
         var model = GetValidHireEmployeeModel();
         model.EmployeeId = employeeId;
 
-        var result = await _sut.TestValidateAsync(model);
+        var result = await _sut.TestValidateAsync(model, cancellationToken: TestContext.Current.CancellationToken);
 
         result.ShouldHaveValidationErrorFor(x => x.EmployeeId)
             .WithErrorMessage("EmployeeId must be greater than 0.");
@@ -31,7 +31,7 @@ public sealed class HireEmployeeValidatorTests : UnitTestBase
         var model = GetValidHireEmployeeModel();
         model.HireDate = default;
 
-        var result = await _sut.TestValidateAsync(model);
+        var result = await _sut.TestValidateAsync(model, cancellationToken: TestContext.Current.CancellationToken);
 
         result.ShouldHaveValidationErrorFor(x => x.HireDate)
             .WithErrorMessage("HireDate is required.");
@@ -43,7 +43,7 @@ public sealed class HireEmployeeValidatorTests : UnitTestBase
         var model = GetValidHireEmployeeModel();
         model.HireDate = DateTime.UtcNow.AddDays(31); // More than 30 days in future
 
-        var result = await _sut.TestValidateAsync(model);
+        var result = await _sut.TestValidateAsync(model, cancellationToken: TestContext.Current.CancellationToken);
 
         result.ShouldHaveValidationErrorFor(x => x.HireDate)
             .WithErrorMessage("HireDate cannot be more than 30 days in the future.");
@@ -57,7 +57,7 @@ public sealed class HireEmployeeValidatorTests : UnitTestBase
         var model = GetValidHireEmployeeModel();
         model.DepartmentId = departmentId;
 
-        var result = await _sut.TestValidateAsync(model);
+        var result = await _sut.TestValidateAsync(model, cancellationToken: TestContext.Current.CancellationToken);
 
         result.ShouldHaveValidationErrorFor(x => x.DepartmentId)
             .WithErrorMessage("DepartmentId must be greater than 0.");
@@ -72,7 +72,7 @@ public sealed class HireEmployeeValidatorTests : UnitTestBase
         var model = GetValidHireEmployeeModel();
         model.ShiftId = shiftId;
 
-        var result = await _sut.TestValidateAsync(model);
+        var result = await _sut.TestValidateAsync(model, cancellationToken: TestContext.Current.CancellationToken);
 
         result.ShouldHaveValidationErrorFor(x => x.ShiftId)
             .WithErrorMessage("ShiftId must be between 1 and 3 (1=Day, 2=Evening, 3=Night).");
@@ -87,7 +87,7 @@ public sealed class HireEmployeeValidatorTests : UnitTestBase
         var model = GetValidHireEmployeeModel();
         model.InitialPayRate = initialPayRate;
 
-        var result = await _sut.TestValidateAsync(model);
+        var result = await _sut.TestValidateAsync(model, cancellationToken: TestContext.Current.CancellationToken);
 
         result.ShouldHaveValidationErrorFor(x => x.InitialPayRate)
             .WithErrorMessage("InitialPayRate must be greater than 0.");
@@ -102,7 +102,7 @@ public sealed class HireEmployeeValidatorTests : UnitTestBase
         var model = GetValidHireEmployeeModel();
         model.InitialPayRate = initialPayRate;
 
-        var result = await _sut.TestValidateAsync(model);
+        var result = await _sut.TestValidateAsync(model, cancellationToken: TestContext.Current.CancellationToken);
 
         result.ShouldHaveValidationErrorFor(x => x.InitialPayRate)
             .WithErrorMessage("InitialPayRate cannot exceed $500.00.");
@@ -117,7 +117,7 @@ public sealed class HireEmployeeValidatorTests : UnitTestBase
         var model = GetValidHireEmployeeModel();
         model.PayFrequency = payFrequency;
 
-        var result = await _sut.TestValidateAsync(model);
+        var result = await _sut.TestValidateAsync(model, cancellationToken: TestContext.Current.CancellationToken);
 
         result.ShouldHaveValidationErrorFor(x => x.PayFrequency)
             .WithErrorMessage("PayFrequency must be 1 (Monthly) or 2 (Bi-weekly).");
@@ -132,7 +132,7 @@ public sealed class HireEmployeeValidatorTests : UnitTestBase
         var model = GetValidHireEmployeeModel();
         model.ManagerId = managerId;
 
-        var result = await _sut.TestValidateAsync(model);
+        var result = await _sut.TestValidateAsync(model, cancellationToken: TestContext.Current.CancellationToken);
 
         result.ShouldHaveValidationErrorFor(x => x.ManagerId)
             .WithErrorMessage("ManagerId must be greater than 0 when provided.");
@@ -144,7 +144,7 @@ public sealed class HireEmployeeValidatorTests : UnitTestBase
         var model = GetValidHireEmployeeModel();
         model.ManagerId = null;
 
-        var result = await _sut.TestValidateAsync(model);
+        var result = await _sut.TestValidateAsync(model, cancellationToken: TestContext.Current.CancellationToken);
 
         result.ShouldNotHaveValidationErrorFor(x => x.ManagerId);
     }
@@ -157,7 +157,7 @@ public sealed class HireEmployeeValidatorTests : UnitTestBase
         var model = GetValidHireEmployeeModel();
         model.InitialVacationHours = vacationHours;
 
-        var result = await _sut.TestValidateAsync(model);
+        var result = await _sut.TestValidateAsync(model, cancellationToken: TestContext.Current.CancellationToken);
 
         result.ShouldHaveValidationErrorFor(x => x.InitialVacationHours)
             .WithErrorMessage("InitialVacationHours must be greater than or equal to 0.");
@@ -172,7 +172,7 @@ public sealed class HireEmployeeValidatorTests : UnitTestBase
         var model = GetValidHireEmployeeModel();
         model.InitialVacationHours = vacationHours;
 
-        var result = await _sut.TestValidateAsync(model);
+        var result = await _sut.TestValidateAsync(model, cancellationToken: TestContext.Current.CancellationToken);
 
         result.ShouldHaveValidationErrorFor(x => x.InitialVacationHours)
             .WithErrorMessage("InitialVacationHours cannot exceed 240 hours.");
@@ -186,7 +186,7 @@ public sealed class HireEmployeeValidatorTests : UnitTestBase
         var model = GetValidHireEmployeeModel();
         model.InitialSickLeaveHours = sickLeaveHours;
 
-        var result = await _sut.TestValidateAsync(model);
+        var result = await _sut.TestValidateAsync(model, cancellationToken: TestContext.Current.CancellationToken);
 
         result.ShouldHaveValidationErrorFor(x => x.InitialSickLeaveHours)
             .WithErrorMessage("InitialSickLeaveHours must be greater than or equal to 0.");
@@ -201,7 +201,7 @@ public sealed class HireEmployeeValidatorTests : UnitTestBase
         var model = GetValidHireEmployeeModel();
         model.InitialSickLeaveHours = sickLeaveHours;
 
-        var result = await _sut.TestValidateAsync(model);
+        var result = await _sut.TestValidateAsync(model, cancellationToken: TestContext.Current.CancellationToken);
 
         result.ShouldHaveValidationErrorFor(x => x.InitialSickLeaveHours)
             .WithErrorMessage("InitialSickLeaveHours cannot exceed 480 hours.");
@@ -213,7 +213,7 @@ public sealed class HireEmployeeValidatorTests : UnitTestBase
         var model = GetValidHireEmployeeModel();
         model.Notes = new string('a', 501); // 501 characters
 
-        var result = await _sut.TestValidateAsync(model);
+        var result = await _sut.TestValidateAsync(model, cancellationToken: TestContext.Current.CancellationToken);
 
         result.ShouldHaveValidationErrorFor(x => x.Notes)
             .WithErrorMessage("Notes cannot exceed 500 characters.");
@@ -225,7 +225,7 @@ public sealed class HireEmployeeValidatorTests : UnitTestBase
         var model = GetValidHireEmployeeModel();
         model.Notes = null;
 
-        var result = await _sut.TestValidateAsync(model);
+        var result = await _sut.TestValidateAsync(model, cancellationToken: TestContext.Current.CancellationToken);
 
         result.ShouldNotHaveValidationErrorFor(x => x.Notes);
     }
@@ -235,7 +235,7 @@ public sealed class HireEmployeeValidatorTests : UnitTestBase
     {
         var model = GetValidHireEmployeeModel();
 
-        var result = await _sut.TestValidateAsync(model);
+        var result = await _sut.TestValidateAsync(model, cancellationToken: TestContext.Current.CancellationToken);
 
         result.ShouldNotHaveAnyValidationErrors();
     }
@@ -246,7 +246,7 @@ public sealed class HireEmployeeValidatorTests : UnitTestBase
         var model = GetValidHireEmployeeModel();
         model.HireDate = DateTime.UtcNow;
 
-        var result = await _sut.TestValidateAsync(model);
+        var result = await _sut.TestValidateAsync(model, cancellationToken: TestContext.Current.CancellationToken);
 
         result.ShouldNotHaveValidationErrorFor(x => x.HireDate);
     }
@@ -257,7 +257,7 @@ public sealed class HireEmployeeValidatorTests : UnitTestBase
         var model = GetValidHireEmployeeModel();
         model.HireDate = DateTime.UtcNow.Date.AddDays(30);
 
-        var result = await _sut.TestValidateAsync(model);
+        var result = await _sut.TestValidateAsync(model, cancellationToken: TestContext.Current.CancellationToken);
 
         result.ShouldNotHaveValidationErrorFor(x => x.HireDate);
     }
@@ -268,7 +268,7 @@ public sealed class HireEmployeeValidatorTests : UnitTestBase
         var model = GetValidHireEmployeeModel();
         model.InitialPayRate = 500.00m;
 
-        var result = await _sut.TestValidateAsync(model);
+        var result = await _sut.TestValidateAsync(model, cancellationToken: TestContext.Current.CancellationToken);
 
         result.ShouldNotHaveValidationErrorFor(x => x.InitialPayRate);
     }
@@ -281,7 +281,7 @@ public sealed class HireEmployeeValidatorTests : UnitTestBase
         model.InitialSickLeaveHours = 480; // Max
         model.Notes = new string('a', 500); // Max length
 
-        var result = await _sut.TestValidateAsync(model);
+        var result = await _sut.TestValidateAsync(model, cancellationToken: TestContext.Current.CancellationToken);
 
         result.ShouldNotHaveAnyValidationErrors();
     }

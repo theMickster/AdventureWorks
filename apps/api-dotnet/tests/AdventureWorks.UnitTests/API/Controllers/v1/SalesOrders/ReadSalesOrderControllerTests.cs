@@ -51,7 +51,7 @@ public sealed class ReadSalesOrderControllerTests
             .ReturnsAsync(searchResult);
 
         // Act
-        var result = await _sut.GetAsync(parameters);
+        var result = await _sut.GetAsync(parameters, cancellationToken: TestContext.Current.CancellationToken);
 
         // Assert
         result.Should().BeOfType<OkObjectResult>();
@@ -76,7 +76,7 @@ public sealed class ReadSalesOrderControllerTests
             .ReturnsAsync(searchResult);
 
         // Act
-        var result = await _sut.GetAsync(parameters);
+        var result = await _sut.GetAsync(parameters, cancellationToken: TestContext.Current.CancellationToken);
 
         // Assert
         result.Should().BeOfType<OkObjectResult>();
@@ -99,7 +99,7 @@ public sealed class ReadSalesOrderControllerTests
             .ReturnsAsync(searchResult);
 
         // Act
-        var result = await _sut.GetAsync(parameters);
+        var result = await _sut.GetAsync(parameters, cancellationToken: TestContext.Current.CancellationToken);
 
         // Assert - PageNumber 0 is clamped to 1, so it should not return BadRequest
         result.Should().BeOfType<OkObjectResult>();
@@ -123,7 +123,7 @@ public sealed class ReadSalesOrderControllerTests
             .ReturnsAsync(searchResult);
 
         // Act
-        var result = await _sut.GetAsync(parameters);
+        var result = await _sut.GetAsync(parameters, cancellationToken: TestContext.Current.CancellationToken);
 
         // Assert
         result.Should().BeOfType<OkObjectResult>();

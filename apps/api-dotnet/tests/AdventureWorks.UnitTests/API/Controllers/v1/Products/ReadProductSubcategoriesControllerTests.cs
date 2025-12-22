@@ -47,7 +47,7 @@ public sealed class ReadProductSubcategoriesControllerTests : UnitTestBase
         _mockMediator.Setup(x => x.Send(It.IsAny<ReadProductSubcategoriesQuery>(), It.IsAny<CancellationToken>()))
             .ReturnsAsync(subcategories);
 
-        var result = await _sut.GetSubcategoriesAsync();
+        var result = await _sut.GetSubcategoriesAsync(cancellationToken: TestContext.Current.CancellationToken);
         var objectResult = result as OkObjectResult;
 
         using (new AssertionScope())
@@ -72,7 +72,7 @@ public sealed class ReadProductSubcategoriesControllerTests : UnitTestBase
         _mockMediator.Setup(x => x.Send(It.IsAny<ReadProductSubcategoriesQuery>(), It.IsAny<CancellationToken>()))
             .ReturnsAsync(subcategories);
 
-        var result = await _sut.GetSubcategoriesAsync(1);
+        var result = await _sut.GetSubcategoriesAsync(1, cancellationToken: TestContext.Current.CancellationToken);
         var objectResult = result as OkObjectResult;
 
         using (new AssertionScope())

@@ -48,7 +48,7 @@ public sealed class ReadUnitMeasureControllerTests : UnitTestBase
     [Fact]
     public async Task GetByCodeAsync_returns_bad_request_when_code_is_empty()
     {
-        var result = await _sut.GetByCodeAsync(string.Empty);
+        var result = await _sut.GetByCodeAsync(string.Empty, cancellationToken: TestContext.Current.CancellationToken);
         var objectResult = result as BadRequestObjectResult;
         var outputModel = objectResult!.Value as string;
 
@@ -63,7 +63,7 @@ public sealed class ReadUnitMeasureControllerTests : UnitTestBase
     [Fact]
     public async Task GetByCodeAsync_returns_bad_request_when_code_is_whitespace()
     {
-        var result = await _sut.GetByCodeAsync("   ");
+        var result = await _sut.GetByCodeAsync("   ", cancellationToken: TestContext.Current.CancellationToken);
         var objectResult = result as BadRequestObjectResult;
         var outputModel = objectResult!.Value as string;
 
@@ -81,7 +81,7 @@ public sealed class ReadUnitMeasureControllerTests : UnitTestBase
         _mockMediator.Setup(x => x.Send(It.IsAny<ReadUnitMeasureQuery>(), It.IsAny<CancellationToken>()))
             .ReturnsAsync((UnitMeasureModel)null!);
 
-        var result = await _sut.GetByCodeAsync("ZZZ");
+        var result = await _sut.GetByCodeAsync("ZZZ", cancellationToken: TestContext.Current.CancellationToken);
         var objectResult = result as NotFoundObjectResult;
         var outputModel = objectResult!.Value as string;
 
@@ -105,7 +105,7 @@ public sealed class ReadUnitMeasureControllerTests : UnitTestBase
                 ModifiedDate = new DateTime(2026, 5, 4, 0, 0, 0, DateTimeKind.Utc)
             });
 
-        var result = await _sut.GetByCodeAsync("EA");
+        var result = await _sut.GetByCodeAsync("EA", cancellationToken: TestContext.Current.CancellationToken);
         var objectResult = result as OkObjectResult;
 
         using (new AssertionScope())
@@ -123,7 +123,7 @@ public sealed class ReadUnitMeasureControllerTests : UnitTestBase
                 x => x.Send(It.IsAny<ReadUnitMeasureListQuery>(), It.IsAny<CancellationToken>()))
             .ReturnsAsync(new List<UnitMeasureModel>());
 
-        var result = await _sut.GetListAsync();
+        var result = await _sut.GetListAsync(cancellationToken: TestContext.Current.CancellationToken);
         var objectResult = result as NotFoundObjectResult;
         var outputModel = objectResult!.Value as string;
 
@@ -146,7 +146,7 @@ public sealed class ReadUnitMeasureControllerTests : UnitTestBase
                 new() { UnitMeasureCode = "LB", Name = "Pound", ModifiedDate = new DateTime(2026, 5, 4, 0, 0, 0, DateTimeKind.Utc) }
             });
 
-        var result = await _sut.GetListAsync();
+        var result = await _sut.GetListAsync(cancellationToken: TestContext.Current.CancellationToken);
         var objectResult = result as OkObjectResult;
 
         using (new AssertionScope())

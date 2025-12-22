@@ -50,7 +50,7 @@ public sealed class CreateStoreAddressValidatorTests : UnitTestBase
 
         var model = new StoreAddressCreateModel { AddressId = 100, AddressTypeId = addressTypeId };
 
-        var result = await _sut.TestValidateAsync(model);
+        var result = await _sut.TestValidateAsync(model, cancellationToken: TestContext.Current.CancellationToken);
 
         result.ShouldHaveValidationErrorFor(x => x.AddressTypeId).WithErrorCode("Rule-01");
     }
@@ -65,7 +65,7 @@ public sealed class CreateStoreAddressValidatorTests : UnitTestBase
 
         var model = new StoreAddressCreateModel { AddressId = 100, AddressTypeId = 999 };
 
-        var result = await _sut.TestValidateAsync(model);
+        var result = await _sut.TestValidateAsync(model, cancellationToken: TestContext.Current.CancellationToken);
 
         result.ShouldHaveValidationErrorFor(x => x.AddressTypeId).WithErrorCode("Rule-01");
     }
@@ -80,7 +80,7 @@ public sealed class CreateStoreAddressValidatorTests : UnitTestBase
 
         var model = new StoreAddressCreateModel { AddressId = addressId, AddressTypeId = 2 };
 
-        var result = await _sut.TestValidateAsync(model);
+        var result = await _sut.TestValidateAsync(model, cancellationToken: TestContext.Current.CancellationToken);
 
         result.ShouldHaveValidationErrorFor(x => x.AddressId).WithErrorCode("Rule-02");
     }
@@ -95,7 +95,7 @@ public sealed class CreateStoreAddressValidatorTests : UnitTestBase
 
         var model = new StoreAddressCreateModel { AddressId = 999, AddressTypeId = 2 };
 
-        var result = await _sut.TestValidateAsync(model);
+        var result = await _sut.TestValidateAsync(model, cancellationToken: TestContext.Current.CancellationToken);
 
         result.ShouldHaveValidationErrorFor(x => x.AddressId).WithErrorCode("Rule-02");
     }
@@ -110,7 +110,7 @@ public sealed class CreateStoreAddressValidatorTests : UnitTestBase
 
         var model = new StoreAddressCreateModel { AddressId = 100, AddressTypeId = 2 };
 
-        var result = await _sut.TestValidateAsync(model);
+        var result = await _sut.TestValidateAsync(model, cancellationToken: TestContext.Current.CancellationToken);
 
         using (new AssertionScope())
         {

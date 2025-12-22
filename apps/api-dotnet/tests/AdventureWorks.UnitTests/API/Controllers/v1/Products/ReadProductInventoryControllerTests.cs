@@ -41,7 +41,7 @@ public sealed class ReadProductInventoryControllerTests : UnitTestBase
     [InlineData(-999)]
     public async Task GetInventoryAsync_invalid_id_returns_bad_requestAsync(int id)
     {
-        var result = await _sut.GetInventoryAsync(id);
+        var result = await _sut.GetInventoryAsync(id, cancellationToken: TestContext.Current.CancellationToken);
 
         var objectResult = result as BadRequestObjectResult;
 
@@ -65,7 +65,7 @@ public sealed class ReadProductInventoryControllerTests : UnitTestBase
         _mockMediator.Setup(x => x.Send(It.IsAny<ReadProductInventoryQuery>(), It.IsAny<CancellationToken>()))
             .ReturnsAsync(inventory);
 
-        var result = await _sut.GetInventoryAsync(1);
+        var result = await _sut.GetInventoryAsync(1, cancellationToken: TestContext.Current.CancellationToken);
         var objectResult = result as OkObjectResult;
 
         using (new AssertionScope())

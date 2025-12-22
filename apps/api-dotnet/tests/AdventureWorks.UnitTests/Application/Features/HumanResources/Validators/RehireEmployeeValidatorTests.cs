@@ -19,7 +19,7 @@ public sealed class RehireEmployeeValidatorTests : UnitTestBase
         var model = GetValidRehireEmployeeModel();
         model.EmployeeId = employeeId;
 
-        var result = await _sut.TestValidateAsync(model);
+        var result = await _sut.TestValidateAsync(model, cancellationToken: TestContext.Current.CancellationToken);
 
         result.ShouldHaveValidationErrorFor(x => x.EmployeeId)
             .WithErrorMessage("EmployeeId must be greater than 0.");
@@ -31,7 +31,7 @@ public sealed class RehireEmployeeValidatorTests : UnitTestBase
         var model = GetValidRehireEmployeeModel();
         model.RehireDate = default;
 
-        var result = await _sut.TestValidateAsync(model);
+        var result = await _sut.TestValidateAsync(model, cancellationToken: TestContext.Current.CancellationToken);
 
         result.ShouldHaveValidationErrorFor(x => x.RehireDate)
             .WithErrorMessage("RehireDate is required.");
@@ -43,7 +43,7 @@ public sealed class RehireEmployeeValidatorTests : UnitTestBase
         var model = GetValidRehireEmployeeModel();
         model.RehireDate = DateTime.UtcNow.Date.AddDays(-1); // Yesterday
 
-        var result = await _sut.TestValidateAsync(model);
+        var result = await _sut.TestValidateAsync(model, cancellationToken: TestContext.Current.CancellationToken);
 
         result.ShouldHaveValidationErrorFor(x => x.RehireDate)
             .WithErrorMessage("RehireDate cannot be in the past.");
@@ -57,7 +57,7 @@ public sealed class RehireEmployeeValidatorTests : UnitTestBase
         var model = GetValidRehireEmployeeModel();
         model.DepartmentId = departmentId;
 
-        var result = await _sut.TestValidateAsync(model);
+        var result = await _sut.TestValidateAsync(model, cancellationToken: TestContext.Current.CancellationToken);
 
         result.ShouldHaveValidationErrorFor(x => x.DepartmentId)
             .WithErrorMessage("DepartmentId must be greater than 0.");
@@ -72,7 +72,7 @@ public sealed class RehireEmployeeValidatorTests : UnitTestBase
         var model = GetValidRehireEmployeeModel();
         model.ShiftId = shiftId;
 
-        var result = await _sut.TestValidateAsync(model);
+        var result = await _sut.TestValidateAsync(model, cancellationToken: TestContext.Current.CancellationToken);
 
         result.ShouldHaveValidationErrorFor(x => x.ShiftId)
             .WithErrorMessage("ShiftId must be between 1 and 3 (1=Day, 2=Evening, 3=Night).");
@@ -87,7 +87,7 @@ public sealed class RehireEmployeeValidatorTests : UnitTestBase
         var model = GetValidRehireEmployeeModel();
         model.PayRate = payRate;
 
-        var result = await _sut.TestValidateAsync(model);
+        var result = await _sut.TestValidateAsync(model, cancellationToken: TestContext.Current.CancellationToken);
 
         result.ShouldHaveValidationErrorFor(x => x.PayRate)
             .WithErrorMessage("PayRate must be greater than 0.");
@@ -102,7 +102,7 @@ public sealed class RehireEmployeeValidatorTests : UnitTestBase
         var model = GetValidRehireEmployeeModel();
         model.PayRate = payRate;
 
-        var result = await _sut.TestValidateAsync(model);
+        var result = await _sut.TestValidateAsync(model, cancellationToken: TestContext.Current.CancellationToken);
 
         result.ShouldHaveValidationErrorFor(x => x.PayRate)
             .WithErrorMessage("PayRate cannot exceed $500.00.");
@@ -117,7 +117,7 @@ public sealed class RehireEmployeeValidatorTests : UnitTestBase
         var model = GetValidRehireEmployeeModel();
         model.PayFrequency = payFrequency;
 
-        var result = await _sut.TestValidateAsync(model);
+        var result = await _sut.TestValidateAsync(model, cancellationToken: TestContext.Current.CancellationToken);
 
         result.ShouldHaveValidationErrorFor(x => x.PayFrequency)
             .WithErrorMessage("PayFrequency must be 1 (Monthly) or 2 (Bi-weekly).");
@@ -132,7 +132,7 @@ public sealed class RehireEmployeeValidatorTests : UnitTestBase
         var model = GetValidRehireEmployeeModel();
         model.ManagerId = managerId;
 
-        var result = await _sut.TestValidateAsync(model);
+        var result = await _sut.TestValidateAsync(model, cancellationToken: TestContext.Current.CancellationToken);
 
         result.ShouldHaveValidationErrorFor(x => x.ManagerId)
             .WithErrorMessage("ManagerId must be greater than 0 when provided.");
@@ -144,7 +144,7 @@ public sealed class RehireEmployeeValidatorTests : UnitTestBase
         var model = GetValidRehireEmployeeModel();
         model.ManagerId = null;
 
-        var result = await _sut.TestValidateAsync(model);
+        var result = await _sut.TestValidateAsync(model, cancellationToken: TestContext.Current.CancellationToken);
 
         result.ShouldNotHaveValidationErrorFor(x => x.ManagerId);
     }
@@ -155,7 +155,7 @@ public sealed class RehireEmployeeValidatorTests : UnitTestBase
         var model = GetValidRehireEmployeeModel();
         model.Notes = new string('a', 501); // 501 characters
 
-        var result = await _sut.TestValidateAsync(model);
+        var result = await _sut.TestValidateAsync(model, cancellationToken: TestContext.Current.CancellationToken);
 
         result.ShouldHaveValidationErrorFor(x => x.Notes)
             .WithErrorMessage("Notes cannot exceed 500 characters.");
@@ -167,7 +167,7 @@ public sealed class RehireEmployeeValidatorTests : UnitTestBase
         var model = GetValidRehireEmployeeModel();
         model.Notes = null;
 
-        var result = await _sut.TestValidateAsync(model);
+        var result = await _sut.TestValidateAsync(model, cancellationToken: TestContext.Current.CancellationToken);
 
         result.ShouldNotHaveValidationErrorFor(x => x.Notes);
     }
@@ -177,7 +177,7 @@ public sealed class RehireEmployeeValidatorTests : UnitTestBase
     {
         var model = GetValidRehireEmployeeModel();
 
-        var result = await _sut.TestValidateAsync(model);
+        var result = await _sut.TestValidateAsync(model, cancellationToken: TestContext.Current.CancellationToken);
 
         result.ShouldNotHaveAnyValidationErrors();
     }
@@ -188,7 +188,7 @@ public sealed class RehireEmployeeValidatorTests : UnitTestBase
         var model = GetValidRehireEmployeeModel();
         model.RehireDate = DateTime.UtcNow.Date;
 
-        var result = await _sut.TestValidateAsync(model);
+        var result = await _sut.TestValidateAsync(model, cancellationToken: TestContext.Current.CancellationToken);
 
         result.ShouldNotHaveValidationErrorFor(x => x.RehireDate);
     }
@@ -199,7 +199,7 @@ public sealed class RehireEmployeeValidatorTests : UnitTestBase
         var model = GetValidRehireEmployeeModel();
         model.RehireDate = DateTime.UtcNow.Date.AddDays(30);
 
-        var result = await _sut.TestValidateAsync(model);
+        var result = await _sut.TestValidateAsync(model, cancellationToken: TestContext.Current.CancellationToken);
 
         result.ShouldNotHaveValidationErrorFor(x => x.RehireDate);
     }
@@ -210,7 +210,7 @@ public sealed class RehireEmployeeValidatorTests : UnitTestBase
         var model = GetValidRehireEmployeeModel();
         model.PayRate = 500.00m;
 
-        var result = await _sut.TestValidateAsync(model);
+        var result = await _sut.TestValidateAsync(model, cancellationToken: TestContext.Current.CancellationToken);
 
         result.ShouldNotHaveValidationErrorFor(x => x.PayRate);
     }
@@ -221,7 +221,7 @@ public sealed class RehireEmployeeValidatorTests : UnitTestBase
         var model = GetValidRehireEmployeeModel();
         model.Notes = new string('a', 500);
 
-        var result = await _sut.TestValidateAsync(model);
+        var result = await _sut.TestValidateAsync(model, cancellationToken: TestContext.Current.CancellationToken);
 
         result.ShouldNotHaveValidationErrorFor(x => x.Notes);
     }
@@ -234,7 +234,7 @@ public sealed class RehireEmployeeValidatorTests : UnitTestBase
         var model = GetValidRehireEmployeeModel();
         model.RestoreSeniority = restoreSeniority;
 
-        var result = await _sut.TestValidateAsync(model);
+        var result = await _sut.TestValidateAsync(model, cancellationToken: TestContext.Current.CancellationToken);
 
         result.ShouldNotHaveAnyValidationErrors();
     }
@@ -247,7 +247,7 @@ public sealed class RehireEmployeeValidatorTests : UnitTestBase
         var model = GetValidRehireEmployeeModel();
         model.ShiftId = shiftId;
 
-        var result = await _sut.TestValidateAsync(model);
+        var result = await _sut.TestValidateAsync(model, cancellationToken: TestContext.Current.CancellationToken);
 
         result.ShouldNotHaveValidationErrorFor(x => x.ShiftId);
     }
@@ -260,7 +260,7 @@ public sealed class RehireEmployeeValidatorTests : UnitTestBase
         var model = GetValidRehireEmployeeModel();
         model.PayFrequency = payFrequency;
 
-        var result = await _sut.TestValidateAsync(model);
+        var result = await _sut.TestValidateAsync(model, cancellationToken: TestContext.Current.CancellationToken);
 
         result.ShouldNotHaveValidationErrorFor(x => x.PayFrequency);
     }

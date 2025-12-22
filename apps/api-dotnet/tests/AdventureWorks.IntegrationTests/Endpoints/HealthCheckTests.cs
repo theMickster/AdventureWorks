@@ -10,10 +10,10 @@ public sealed class HealthCheckTests(CustomWebApplicationFactory factory) : Inte
     {
         var client = CreateAnonymousClient();
 
-        var response = await client.GetAsync("/health");
+        var response = await client.GetAsync("/health", TestContext.Current.CancellationToken);
 
         response.StatusCode.Should().Be(HttpStatusCode.OK);
-        var body = await response.Content.ReadAsStringAsync();
+        var body = await response.Content.ReadAsStringAsync(TestContext.Current.CancellationToken);
         body.Should().Be("Healthy");
     }
 }

@@ -36,7 +36,7 @@ public sealed class ProductReviewRepositoryTests : PersistenceUnitTestBase
     {
         var parameters = new ProductReviewParameter { PageNumber = 1, PageSize = 10 };
 
-        var (results, totalCount) = await _sut.GetProductReviewsByProductIdAsync(937, parameters);
+        var (results, totalCount) = await _sut.GetProductReviewsByProductIdAsync(937, parameters, cancellationToken: TestContext.Current.CancellationToken);
 
         using (new AssertionScope())
         {
@@ -51,7 +51,7 @@ public sealed class ProductReviewRepositoryTests : PersistenceUnitTestBase
     {
         var parameters = new ProductReviewParameter { PageNumber = 1, PageSize = 10 };
 
-        var (results, totalCount) = await _sut.GetProductReviewsByProductIdAsync(9999, parameters);
+        var (results, totalCount) = await _sut.GetProductReviewsByProductIdAsync(9999, parameters, cancellationToken: TestContext.Current.CancellationToken);
 
         using (new AssertionScope())
         {
@@ -66,7 +66,7 @@ public sealed class ProductReviewRepositoryTests : PersistenceUnitTestBase
     {
         var parameters = new ProductReviewParameter { PageNumber = 1, PageSize = 10, OrderBy = "rating", SortOrder = "desc" };
 
-        var (results, _) = await _sut.GetProductReviewsByProductIdAsync(937, parameters);
+        var (results, _) = await _sut.GetProductReviewsByProductIdAsync(937, parameters, cancellationToken: TestContext.Current.CancellationToken);
 
         using (new AssertionScope())
         {
@@ -82,7 +82,7 @@ public sealed class ProductReviewRepositoryTests : PersistenceUnitTestBase
     {
         var parameters = new ProductReviewParameter { PageNumber = 1, PageSize = 2 };
 
-        var (results, totalCount) = await _sut.GetProductReviewsByProductIdAsync(937, parameters);
+        var (results, totalCount) = await _sut.GetProductReviewsByProductIdAsync(937, parameters, cancellationToken: TestContext.Current.CancellationToken);
 
         using (new AssertionScope())
         {
@@ -94,7 +94,7 @@ public sealed class ProductReviewRepositoryTests : PersistenceUnitTestBase
     [Fact]
     public async Task GetRatingDistributionByProductIdAsync_returns_empty_dictionary_when_no_reviews_exist_Async()
     {
-        var result = await _sut.GetRatingDistributionByProductIdAsync(9999);
+        var result = await _sut.GetRatingDistributionByProductIdAsync(9999, cancellationToken: TestContext.Current.CancellationToken);
 
         result.Should().NotBeNull();
         result.Should().BeEmpty();
@@ -112,9 +112,9 @@ public sealed class ProductReviewRepositoryTests : PersistenceUnitTestBase
             new() { ProductReviewId = 13, ProductId = 100, ReviewerName = "U4", ReviewDate = StandardModifiedDate, EmailAddress = "u4@test.com", Rating = 1, ModifiedDate = StandardModifiedDate },
             new() { ProductReviewId = 14, ProductId = 100, ReviewerName = "U5", ReviewDate = StandardModifiedDate, EmailAddress = "u5@test.com", Rating = 5, ModifiedDate = StandardModifiedDate }
         });
-        await DbContext.SaveChangesAsync();
+        await DbContext.SaveChangesAsync(cancellationToken: TestContext.Current.CancellationToken);
 
-        var result = await _sut.GetRatingDistributionByProductIdAsync(100);
+        var result = await _sut.GetRatingDistributionByProductIdAsync(100, cancellationToken: TestContext.Current.CancellationToken);
 
         using (new AssertionScope())
         {
@@ -133,9 +133,9 @@ public sealed class ProductReviewRepositoryTests : PersistenceUnitTestBase
             new() { ProductReviewId = 20, ProductId = 937, ReviewerName = "P1", ReviewDate = StandardModifiedDate, EmailAddress = "p1@test.com", Rating = 4, ModifiedDate = StandardModifiedDate },
             new() { ProductReviewId = 21, ProductId = 938, ReviewerName = "P2", ReviewDate = StandardModifiedDate, EmailAddress = "p2@test.com", Rating = 2, ModifiedDate = StandardModifiedDate }
         });
-        await DbContext.SaveChangesAsync();
+        await DbContext.SaveChangesAsync(cancellationToken: TestContext.Current.CancellationToken);
 
-        var result = await _sut.GetRatingDistributionByProductIdAsync(937);
+        var result = await _sut.GetRatingDistributionByProductIdAsync(937, cancellationToken: TestContext.Current.CancellationToken);
 
         using (new AssertionScope())
         {

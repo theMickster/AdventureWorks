@@ -56,7 +56,7 @@ public sealed class UpdateEmployeeAddressValidatorTests : UnitTestBase
         var model = HumanResourcesDomainFixtures.GetValidEmployeeAddressUpdateModel();
         model.AddressId = addressId;
 
-        var result = await _sut.TestValidateAsync(model);
+        var result = await _sut.TestValidateAsync(model, cancellationToken: TestContext.Current.CancellationToken);
 
         result.ShouldHaveValidationErrorFor(x => x.AddressId)
             .WithErrorCode("Rule-01");
@@ -71,7 +71,7 @@ public sealed class UpdateEmployeeAddressValidatorTests : UnitTestBase
             .Setup(x => x.GetByIdAsync(999, It.IsAny<CancellationToken>()))
             .ReturnsAsync((AddressEntity?)null);
 
-        var result = await _sut.TestValidateAsync(model);
+        var result = await _sut.TestValidateAsync(model, cancellationToken: TestContext.Current.CancellationToken);
 
         result.ShouldHaveValidationErrorFor(x => x.AddressId)
             .WithErrorCode("Rule-02");
@@ -85,7 +85,7 @@ public sealed class UpdateEmployeeAddressValidatorTests : UnitTestBase
         var model = HumanResourcesDomainFixtures.GetValidEmployeeAddressUpdateModel();
         model.AddressLine1 = addressLine1!;
 
-        var result = await _sut.TestValidateAsync(model);
+        var result = await _sut.TestValidateAsync(model, cancellationToken: TestContext.Current.CancellationToken);
 
         result.ShouldHaveValidationErrorFor(x => x.AddressLine1)
             .WithErrorCode("Rule-03");
@@ -97,7 +97,7 @@ public sealed class UpdateEmployeeAddressValidatorTests : UnitTestBase
         var model = HumanResourcesDomainFixtures.GetValidEmployeeAddressUpdateModel();
         model.AddressLine1 = new string('a', 61);
 
-        var result = await _sut.TestValidateAsync(model);
+        var result = await _sut.TestValidateAsync(model, cancellationToken: TestContext.Current.CancellationToken);
 
         result.ShouldHaveValidationErrorFor(x => x.AddressLine1)
             .WithErrorCode("Rule-04");
@@ -109,7 +109,7 @@ public sealed class UpdateEmployeeAddressValidatorTests : UnitTestBase
         var model = HumanResourcesDomainFixtures.GetValidEmployeeAddressUpdateModel();
         model.AddressLine2 = new string('a', 61);
 
-        var result = await _sut.TestValidateAsync(model);
+        var result = await _sut.TestValidateAsync(model, cancellationToken: TestContext.Current.CancellationToken);
 
         result.ShouldHaveValidationErrorFor(x => x.AddressLine2)
             .WithErrorCode("Rule-05");
@@ -123,7 +123,7 @@ public sealed class UpdateEmployeeAddressValidatorTests : UnitTestBase
         var model = HumanResourcesDomainFixtures.GetValidEmployeeAddressUpdateModel();
         model.City = city!;
 
-        var result = await _sut.TestValidateAsync(model);
+        var result = await _sut.TestValidateAsync(model, cancellationToken: TestContext.Current.CancellationToken);
 
         result.ShouldHaveValidationErrorFor(x => x.City)
             .WithErrorCode("Rule-06");
@@ -135,7 +135,7 @@ public sealed class UpdateEmployeeAddressValidatorTests : UnitTestBase
         var model = HumanResourcesDomainFixtures.GetValidEmployeeAddressUpdateModel();
         model.City = new string('a', 31);
 
-        var result = await _sut.TestValidateAsync(model);
+        var result = await _sut.TestValidateAsync(model, cancellationToken: TestContext.Current.CancellationToken);
 
         result.ShouldHaveValidationErrorFor(x => x.City)
             .WithErrorCode("Rule-07");
@@ -149,7 +149,7 @@ public sealed class UpdateEmployeeAddressValidatorTests : UnitTestBase
         var model = HumanResourcesDomainFixtures.GetValidEmployeeAddressUpdateModel();
         model.StateProvinceId = stateProvinceId;
 
-        var result = await _sut.TestValidateAsync(model);
+        var result = await _sut.TestValidateAsync(model, cancellationToken: TestContext.Current.CancellationToken);
 
         result.ShouldHaveValidationErrorFor(x => x.StateProvinceId)
             .WithErrorCode("Rule-08");
@@ -165,7 +165,7 @@ public sealed class UpdateEmployeeAddressValidatorTests : UnitTestBase
             .Setup(x => x.GetByIdAsync(999, It.IsAny<CancellationToken>()))
             .ReturnsAsync((StateProvinceEntity?)null);
 
-        var result = await _sut.TestValidateAsync(model);
+        var result = await _sut.TestValidateAsync(model, cancellationToken: TestContext.Current.CancellationToken);
 
         result.ShouldHaveValidationErrorFor(x => x.StateProvinceId)
             .WithErrorCode("Rule-09");
@@ -179,7 +179,7 @@ public sealed class UpdateEmployeeAddressValidatorTests : UnitTestBase
         var model = HumanResourcesDomainFixtures.GetValidEmployeeAddressUpdateModel();
         model.PostalCode = postalCode!;
 
-        var result = await _sut.TestValidateAsync(model);
+        var result = await _sut.TestValidateAsync(model, cancellationToken: TestContext.Current.CancellationToken);
 
         result.ShouldHaveValidationErrorFor(x => x.PostalCode)
             .WithErrorCode("Rule-10");
@@ -191,7 +191,7 @@ public sealed class UpdateEmployeeAddressValidatorTests : UnitTestBase
         var model = HumanResourcesDomainFixtures.GetValidEmployeeAddressUpdateModel();
         model.PostalCode = new string('a', 16);
 
-        var result = await _sut.TestValidateAsync(model);
+        var result = await _sut.TestValidateAsync(model, cancellationToken: TestContext.Current.CancellationToken);
 
         result.ShouldHaveValidationErrorFor(x => x.PostalCode)
             .WithErrorCode("Rule-11");
@@ -202,7 +202,7 @@ public sealed class UpdateEmployeeAddressValidatorTests : UnitTestBase
     {
         var model = HumanResourcesDomainFixtures.GetValidEmployeeAddressUpdateModel();
 
-        var result = await _sut.TestValidateAsync(model);
+        var result = await _sut.TestValidateAsync(model, cancellationToken: TestContext.Current.CancellationToken);
 
         result.ShouldNotHaveAnyValidationErrors();
     }
@@ -213,7 +213,7 @@ public sealed class UpdateEmployeeAddressValidatorTests : UnitTestBase
         var model = HumanResourcesDomainFixtures.GetValidEmployeeAddressUpdateModel();
         model.AddressLine2 = null;
 
-        var result = await _sut.TestValidateAsync(model);
+        var result = await _sut.TestValidateAsync(model, cancellationToken: TestContext.Current.CancellationToken);
 
         result.ShouldNotHaveAnyValidationErrors();
     }

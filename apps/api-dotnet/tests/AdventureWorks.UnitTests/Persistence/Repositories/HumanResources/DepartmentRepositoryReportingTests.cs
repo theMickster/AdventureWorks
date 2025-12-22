@@ -50,7 +50,7 @@ public sealed class DepartmentRepositoryReportingTests : PersistenceUnitTestBase
     public async Task GetDepartmentHeadcountAsync_counts_only_active_employees_with_open_assignmentAsync()
     {
         // Dept 1: employee 1 and 2 are active+open. Employee 3 inactive. Employee 4 closed assignment.
-        var count = await _sut.GetDepartmentHeadcountAsync(1);
+        var count = await _sut.GetDepartmentHeadcountAsync(1, cancellationToken: TestContext.Current.CancellationToken);
 
         count.Should().Be(2);
     }
@@ -59,7 +59,7 @@ public sealed class DepartmentRepositoryReportingTests : PersistenceUnitTestBase
     public async Task GetDepartmentHeadcountAsync_returns_zero_for_department_with_no_active_assignmentsAsync()
     {
         // Dept 2 has no assignments at all
-        var count = await _sut.GetDepartmentHeadcountAsync(2);
+        var count = await _sut.GetDepartmentHeadcountAsync(2, cancellationToken: TestContext.Current.CancellationToken);
 
         count.Should().Be(0);
     }
@@ -67,7 +67,7 @@ public sealed class DepartmentRepositoryReportingTests : PersistenceUnitTestBase
     [Fact]
     public async Task GetDepartmentHeadcountSummaryAsync_includes_zero_count_departments_ordered_descAsync()
     {
-        var result = await _sut.GetDepartmentHeadcountSummaryAsync();
+        var result = await _sut.GetDepartmentHeadcountSummaryAsync(cancellationToken: TestContext.Current.CancellationToken);
 
         using (new AssertionScope())
         {
@@ -82,7 +82,7 @@ public sealed class DepartmentRepositoryReportingTests : PersistenceUnitTestBase
     [Fact]
     public async Task GetEmployeesByDepartmentAsync_returns_only_active_employees_with_open_assignmentAsync()
     {
-        var (employees, totalCount) = await _sut.GetEmployeesByDepartmentAsync(1, 1, 20);
+        var (employees, totalCount) = await _sut.GetEmployeesByDepartmentAsync(1, 1, 20, cancellationToken: TestContext.Current.CancellationToken);
 
         using (new AssertionScope())
         {
@@ -97,7 +97,7 @@ public sealed class DepartmentRepositoryReportingTests : PersistenceUnitTestBase
     public async Task GetEmployeesByDepartmentAsync_paginates_correctlyAsync()
     {
         // Only 2 employees in dept 1; page 1 with pageSize 1 should return 1 record
-        var (employees, totalCount) = await _sut.GetEmployeesByDepartmentAsync(1, 1, 1);
+        var (employees, totalCount) = await _sut.GetEmployeesByDepartmentAsync(1, 1, 1, cancellationToken: TestContext.Current.CancellationToken);
 
         using (new AssertionScope())
         {
@@ -110,7 +110,7 @@ public sealed class DepartmentRepositoryReportingTests : PersistenceUnitTestBase
     public async Task GetEmployeesByDepartmentAsync_returns_empty_for_department_with_no_active_employeesAsync()
     {
         // Dept 2 has no assignments
-        var (employees, totalCount) = await _sut.GetEmployeesByDepartmentAsync(2, 1, 20);
+        var (employees, totalCount) = await _sut.GetEmployeesByDepartmentAsync(2, 1, 20, cancellationToken: TestContext.Current.CancellationToken);
 
         using (new AssertionScope())
         {

@@ -52,7 +52,7 @@ public sealed class SalesOrderRepositoryTests : PersistenceUnitTestBase
         };
 
         DbContext.SalesOrderHeaders.AddRange(salesOrders);
-        await DbContext.SaveChangesAsync();
+        await DbContext.SaveChangesAsync(cancellationToken: TestContext.Current.CancellationToken);
 
         var parameters = new SalesOrderParameter { PageNumber = 1, PageSize = 10 };
 
@@ -86,7 +86,7 @@ public sealed class SalesOrderRepositoryTests : PersistenceUnitTestBase
             .ToArray();
 
         DbContext.SalesOrderHeaders.AddRange(salesOrders);
-        await DbContext.SaveChangesAsync();
+        await DbContext.SaveChangesAsync(cancellationToken: TestContext.Current.CancellationToken);
 
         var parameters = new SalesOrderParameter { PageNumber = 2, PageSize = 10 };
 
@@ -113,7 +113,7 @@ public sealed class SalesOrderRepositoryTests : PersistenceUnitTestBase
         };
 
         DbContext.SalesOrderHeaders.AddRange(salesOrders);
-        await DbContext.SaveChangesAsync();
+        await DbContext.SaveChangesAsync(cancellationToken: TestContext.Current.CancellationToken);
 
         var parameters = new SalesOrderParameter { PageNumber = 1, PageSize = 10 };
         var searchModel = new SalesOrderSearchModel
@@ -144,7 +144,7 @@ public sealed class SalesOrderRepositoryTests : PersistenceUnitTestBase
         };
 
         DbContext.SalesOrderHeaders.AddRange(salesOrders);
-        await DbContext.SaveChangesAsync();
+        await DbContext.SaveChangesAsync(cancellationToken: TestContext.Current.CancellationToken);
 
         var parameters = new SalesOrderParameter { PageNumber = 1, PageSize = 10 };
         var searchModel = new SalesOrderSearchModel { Status = 5 };
@@ -172,7 +172,7 @@ public sealed class SalesOrderRepositoryTests : PersistenceUnitTestBase
         };
 
         DbContext.SalesOrderHeaders.AddRange(salesOrders);
-        await DbContext.SaveChangesAsync();
+        await DbContext.SaveChangesAsync(cancellationToken: TestContext.Current.CancellationToken);
 
         var parameters = new SalesOrderParameter { PageNumber = 1, PageSize = 10 };
         var searchModel = new SalesOrderSearchModel { SalesPersonId = 1 };
@@ -200,7 +200,7 @@ public sealed class SalesOrderRepositoryTests : PersistenceUnitTestBase
         };
 
         DbContext.SalesOrderHeaders.AddRange(salesOrders);
-        await DbContext.SaveChangesAsync();
+        await DbContext.SaveChangesAsync(cancellationToken: TestContext.Current.CancellationToken);
 
         var parameters = new SalesOrderParameter { PageNumber = 1, PageSize = 10 };
         var searchModel = new SalesOrderSearchModel { TerritoryId = 1 };
@@ -222,7 +222,7 @@ public sealed class SalesOrderRepositoryTests : PersistenceUnitTestBase
         var salesOrder = new SalesOrderHeader { SalesOrderId = 1, SalesOrderNumber = "SO1", OrderDate = new DateTime(2014, 1, 1), Status = 5, TotalDue = 1000m, CustomerId = 1, CustomerEntity = customer };
 
         DbContext.SalesOrderHeaders.Add(salesOrder);
-        await DbContext.SaveChangesAsync();
+        await DbContext.SaveChangesAsync(cancellationToken: TestContext.Current.CancellationToken);
 
         var parameters = new SalesOrderParameter { PageNumber = 1, PageSize = 10 };
 
@@ -246,7 +246,7 @@ public sealed class SalesOrderRepositoryTests : PersistenceUnitTestBase
         };
 
         DbContext.SalesOrderHeaders.AddRange(salesOrders);
-        await DbContext.SaveChangesAsync();
+        await DbContext.SaveChangesAsync(cancellationToken: TestContext.Current.CancellationToken);
 
         var parameters = new SalesOrderParameter { PageNumber = 1, PageSize = 10 };
         var searchModel = new SalesOrderSearchModel { AccountNumber = "10-4020-000676" };
@@ -273,7 +273,7 @@ public sealed class SalesOrderRepositoryTests : PersistenceUnitTestBase
         };
 
         DbContext.SalesOrderHeaders.AddRange(salesOrders);
-        await DbContext.SaveChangesAsync();
+        await DbContext.SaveChangesAsync(cancellationToken: TestContext.Current.CancellationToken);
 
         var parameters = new SalesOrderParameter { PageNumber = 1, PageSize = 10 };
         var searchModel = new SalesOrderSearchModel { AccountNumber = null };
@@ -294,7 +294,7 @@ public sealed class SalesOrderRepositoryTests : PersistenceUnitTestBase
             new SalesOrderHeader { SalesOrderId = 1, SalesOrderNumber = "SO1", OrderDate = new DateTime(2014, 1, 15), Status = 5, TotalDue = 500m, CustomerId = 1 },
             new SalesOrderHeader { SalesOrderId = 2, SalesOrderNumber = "SO2", OrderDate = new DateTime(2014, 1, 31), Status = 5, TotalDue = 1000m, CustomerId = 1 }
         );
-        await DbContext.SaveChangesAsync();
+        await DbContext.SaveChangesAsync(cancellationToken: TestContext.Current.CancellationToken);
 
         // Act
         var result = await _sut.GetSalesOrderAnalyticsAsync(null, CancellationToken.None);
@@ -312,7 +312,7 @@ public sealed class SalesOrderRepositoryTests : PersistenceUnitTestBase
             new SalesOrderHeader { SalesOrderId = 1, SalesOrderNumber = "SO1", OrderDate = new DateTime(2014, 1, 1), Status = 5, TotalDue = 500m, CustomerId = 1 },
             new SalesOrderHeader { SalesOrderId = 2, SalesOrderNumber = "SO2", OrderDate = new DateTime(2014, 1, 15), Status = 5, TotalDue = 1000m, CustomerId = 1 }
         );
-        await DbContext.SaveChangesAsync();
+        await DbContext.SaveChangesAsync(cancellationToken: TestContext.Current.CancellationToken);
 
         // Act
         var result = await _sut.GetSalesOrderAnalyticsAsync(null, CancellationToken.None);
@@ -330,7 +330,7 @@ public sealed class SalesOrderRepositoryTests : PersistenceUnitTestBase
             new SalesOrderHeader { SalesOrderId = 1, SalesOrderNumber = "SO1", OrderDate = new DateTime(2014, 1, 31), Status = 5, TotalDue = 100m, CustomerId = 1 },
             new SalesOrderHeader { SalesOrderId = 2, SalesOrderNumber = "SO2", OrderDate = new DateTime(2014, 2, 10), Status = 5, TotalDue = 200m, CustomerId = 1 }
         );
-        await DbContext.SaveChangesAsync();
+        await DbContext.SaveChangesAsync(cancellationToken: TestContext.Current.CancellationToken);
 
         // Act
         var result = await _sut.GetSalesOrderAnalyticsAsync(null, CancellationToken.None);
@@ -387,7 +387,7 @@ public sealed class SalesOrderRepositoryTests : PersistenceUnitTestBase
         }
 
         DbContext.SalesOrderHeaders.AddRange(orders);
-        await DbContext.SaveChangesAsync();
+        await DbContext.SaveChangesAsync(cancellationToken: TestContext.Current.CancellationToken);
 
         // Act
         var result = await _sut.GetSalesOrderAnalyticsAsync(null, CancellationToken.None);

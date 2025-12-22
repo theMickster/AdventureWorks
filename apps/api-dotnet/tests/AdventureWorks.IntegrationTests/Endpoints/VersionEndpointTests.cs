@@ -11,11 +11,11 @@ public sealed class VersionEndpointTests(CustomWebApplicationFactory factory) : 
     {
         var client = CreateAnonymousClient();
 
-        var response = await client.GetAsync("/version");
+        var response = await client.GetAsync("/version", TestContext.Current.CancellationToken);
 
         response.StatusCode.Should().Be(HttpStatusCode.OK);
         response.Content.Headers.ContentType?.MediaType.Should().Contain("application/json");
-        var json = await response.Content.ReadAsStringAsync();
+        var json = await response.Content.ReadAsStringAsync(TestContext.Current.CancellationToken);
         var doc = JsonDocument.Parse(json);
         doc.RootElement.ValueKind.Should().Be(JsonValueKind.Object);
     }

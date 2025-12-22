@@ -66,7 +66,7 @@ public sealed class SalesOrderDetailRepositoryTests : PersistenceUnitTestBase
         };
 
         DbContext.SalesOrderHeaders.Add(salesOrder);
-        await DbContext.SaveChangesAsync();
+        await DbContext.SaveChangesAsync(cancellationToken: TestContext.Current.CancellationToken);
 
         // Act
         var result = await _sut.GetSalesOrderDetailAsync(43659, CancellationToken.None);
@@ -118,7 +118,7 @@ public sealed class SalesOrderDetailRepositoryTests : PersistenceUnitTestBase
         };
 
         DbContext.SalesOrderHeaders.Add(salesOrder);
-        await DbContext.SaveChangesAsync();
+        await DbContext.SaveChangesAsync(cancellationToken: TestContext.Current.CancellationToken);
         DbContext.ChangeTracker.Clear();
 
         // Act

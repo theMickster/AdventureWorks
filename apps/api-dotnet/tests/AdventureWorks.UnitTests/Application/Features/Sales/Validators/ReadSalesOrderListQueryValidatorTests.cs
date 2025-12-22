@@ -19,7 +19,7 @@ public sealed class ReadSalesOrderListQueryValidatorTests
         };
 
         // Act
-        var result = await _sut.ValidateAsync(query);
+        var result = await _sut.ValidateAsync(query, cancellation:TestContext.Current.CancellationToken);
 
         // Assert
         result.IsValid.Should().BeTrue();
@@ -35,7 +35,7 @@ public sealed class ReadSalesOrderListQueryValidatorTests
         };
 
         // Act
-        var result = await _sut.ValidateAsync(query);
+        var result = await _sut.ValidateAsync(query, cancellation:TestContext.Current.CancellationToken);
 
         // Assert
         result.IsValid.Should().BeFalse();
@@ -52,7 +52,7 @@ public sealed class ReadSalesOrderListQueryValidatorTests
         };
 
         // Act
-        var result = await _sut.ValidateAsync(query);
+        var result = await _sut.ValidateAsync(query, cancellation:TestContext.Current.CancellationToken);
 
         // Assert - should be valid because PageNumber is clamped to 1
         result.IsValid.Should().BeTrue();
@@ -69,7 +69,7 @@ public sealed class ReadSalesOrderListQueryValidatorTests
         };
 
         // Act
-        var result = await _sut.ValidateAsync(query);
+        var result = await _sut.ValidateAsync(query, cancellation:TestContext.Current.CancellationToken);
 
         // Assert - should be valid because PageSize is clamped to 50
         result.IsValid.Should().BeTrue();
@@ -91,7 +91,7 @@ public sealed class ReadSalesOrderListQueryValidatorTests
         };
 
         // Act
-        var result = await _sut.ValidateAsync(query);
+        var result = await _sut.ValidateAsync(query, cancellation:TestContext.Current.CancellationToken);
 
         // Assert
         result.IsValid.Should().BeFalse();
@@ -114,7 +114,7 @@ public sealed class ReadSalesOrderListQueryValidatorTests
         };
 
         // Act
-        var result = await _sut.ValidateAsync(query);
+        var result = await _sut.ValidateAsync(query, cancellation:TestContext.Current.CancellationToken);
 
         // Assert
         result.IsValid.Should().BeTrue();
@@ -133,7 +133,7 @@ public sealed class ReadSalesOrderListQueryValidatorTests
         };
 
         // Act
-        var result = await _sut.ValidateAsync(query);
+        var result = await _sut.ValidateAsync(query, cancellation:TestContext.Current.CancellationToken);
 
         // Assert
         result.IsValid.Should().BeFalse();
@@ -153,7 +153,7 @@ public sealed class ReadSalesOrderListQueryValidatorTests
         };
 
         // Act
-        var result = await _sut.ValidateAsync(query);
+        var result = await _sut.ValidateAsync(query, cancellation:TestContext.Current.CancellationToken);
 
         // Assert
         result.IsValid.Should().BeFalse();
@@ -171,7 +171,7 @@ public sealed class ReadSalesOrderListQueryValidatorTests
         };
 
         // Act
-        var result = await _sut.ValidateAsync(query);
+        var result = await _sut.ValidateAsync(query, cancellation:TestContext.Current.CancellationToken);
 
         // Assert
         result.IsValid.Should().BeTrue();
@@ -188,7 +188,7 @@ public sealed class ReadSalesOrderListQueryValidatorTests
         };
 
         // Act
-        var result = await _sut.ValidateAsync(query);
+        var result = await _sut.ValidateAsync(query, cancellation:TestContext.Current.CancellationToken);
 
         // Assert
         result.IsValid.Should().BeTrue();
@@ -208,7 +208,7 @@ public sealed class ReadSalesOrderListQueryValidatorTests
         };
 
         // Act
-        var result = await _sut.ValidateAsync(query);
+        var result = await _sut.ValidateAsync(query, cancellation:TestContext.Current.CancellationToken);
 
         // Assert
         result.IsValid.Should().BeFalse();
@@ -229,7 +229,7 @@ public sealed class ReadSalesOrderListQueryValidatorTests
         };
 
         // Act
-        var result = await _sut.ValidateAsync(query);
+        var result = await _sut.ValidateAsync(query, cancellation:TestContext.Current.CancellationToken);
 
         // Assert
         result.IsValid.Should().BeTrue();
@@ -246,7 +246,7 @@ public sealed class ReadSalesOrderListQueryValidatorTests
         };
 
         // Act
-        var result = await _sut.ValidateAsync(query);
+        var result = await _sut.ValidateAsync(query, cancellation:TestContext.Current.CancellationToken);
 
         // Assert
         result.IsValid.Should().BeTrue();
@@ -263,7 +263,7 @@ public sealed class ReadSalesOrderListQueryValidatorTests
         };
 
         // Act
-        var result = await _sut.ValidateAsync(query);
+        var result = await _sut.ValidateAsync(query, cancellation:TestContext.Current.CancellationToken);
 
         // Assert
         result.IsValid.Should().BeTrue();
@@ -280,7 +280,7 @@ public sealed class ReadSalesOrderListQueryValidatorTests
         };
 
         // Act
-        var result = await _sut.ValidateAsync(query);
+        var result = await _sut.ValidateAsync(query, cancellation:TestContext.Current.CancellationToken);
 
         // Assert
         result.IsValid.Should().BeFalse();

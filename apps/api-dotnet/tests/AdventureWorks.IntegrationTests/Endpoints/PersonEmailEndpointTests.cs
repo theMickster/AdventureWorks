@@ -15,7 +15,7 @@ public sealed class PersonEmailEndpointTests(CustomWebApplicationFactory factory
     {
         var client = CreateAnonymousClient();
 
-        var response = await client.GetAsync(BaseUrl);
+        var response = await client.GetAsync(BaseUrl, TestContext.Current.CancellationToken);
 
         response.StatusCode.Should().Be(HttpStatusCode.Unauthorized);
     }
@@ -25,7 +25,7 @@ public sealed class PersonEmailEndpointTests(CustomWebApplicationFactory factory
     {
         var client = CreateAuthenticatedClient();
 
-        var response = await client.GetAsync(BaseUrl);
+        var response = await client.GetAsync(BaseUrl, TestContext.Current.CancellationToken);
 
         response.StatusCode.Should().Be(HttpStatusCode.OK);
         var emails = await DeserializeAsync<List<PersonEmailModel>>(response);
@@ -37,7 +37,7 @@ public sealed class PersonEmailEndpointTests(CustomWebApplicationFactory factory
     {
         var client = CreateAuthenticatedClient();
 
-        var response = await client.GetAsync(NonExistentPersonUrl);
+        var response = await client.GetAsync(NonExistentPersonUrl, TestContext.Current.CancellationToken);
 
         response.StatusCode.Should().Be(HttpStatusCode.NotFound);
     }
@@ -48,7 +48,7 @@ public sealed class PersonEmailEndpointTests(CustomWebApplicationFactory factory
         var client = CreateAnonymousClient();
         var body = new { emailAddress = "anon@example.com" };
 
-        var response = await client.PostAsJsonAsync(BaseUrl, body);
+        var response = await client.PostAsJsonAsync(BaseUrl, body, cancellationToken: TestContext.Current.CancellationToken);
 
         response.StatusCode.Should().Be(HttpStatusCode.Unauthorized);
     }
@@ -60,7 +60,7 @@ public sealed class PersonEmailEndpointTests(CustomWebApplicationFactory factory
         var uniqueEmail = $"test-{Guid.NewGuid():N}@example.com";
         var body = new { emailAddress = uniqueEmail };
 
-        var response = await client.PostAsJsonAsync(BaseUrl, body);
+        var response = await client.PostAsJsonAsync(BaseUrl, body, cancellationToken: TestContext.Current.CancellationToken);
 
         response.StatusCode.Should().Be(HttpStatusCode.Created);
         response.Headers.Location.Should().NotBeNull();
@@ -72,7 +72,7 @@ public sealed class PersonEmailEndpointTests(CustomWebApplicationFactory factory
         var client = CreateAuthenticatedClient();
         var body = new { emailAddress = "test@example.com" };
 
-        var response = await client.PostAsJsonAsync(NonExistentPersonUrl, body);
+        var response = await client.PostAsJsonAsync(NonExistentPersonUrl, body, cancellationToken: TestContext.Current.CancellationToken);
 
         response.StatusCode.Should().Be(HttpStatusCode.NotFound);
     }
@@ -83,7 +83,7 @@ public sealed class PersonEmailEndpointTests(CustomWebApplicationFactory factory
         var client = CreateAuthenticatedClient();
         var body = new { emailAddress = "not-an-email" };
 
-        var response = await client.PostAsJsonAsync(BaseUrl, body);
+        var response = await client.PostAsJsonAsync(BaseUrl, body, cancellationToken: TestContext.Current.CancellationToken);
 
         response.StatusCode.Should().Be(HttpStatusCode.BadRequest);
     }
@@ -94,7 +94,7 @@ public sealed class PersonEmailEndpointTests(CustomWebApplicationFactory factory
         var client = CreateAnonymousClient();
         var body = new { emailAddress = "updated@example.com" };
 
-        var response = await client.PutAsJsonAsync($"{BaseUrl}/1", body);
+        var response = await client.PutAsJsonAsync($"{BaseUrl}/1", body, cancellationToken: TestContext.Current.CancellationToken);
 
         response.StatusCode.Should().Be(HttpStatusCode.Unauthorized);
     }
@@ -105,7 +105,7 @@ public sealed class PersonEmailEndpointTests(CustomWebApplicationFactory factory
         var client = CreateAuthenticatedClient();
         var body = new { emailAddress = "updated@example.com" };
 
-        var response = await client.PutAsJsonAsync($"{BaseUrl}/99999", body);
+        var response = await client.PutAsJsonAsync($"{BaseUrl}/99999", body, cancellationToken: TestContext.Current.CancellationToken);
 
         response.StatusCode.Should().Be(HttpStatusCode.NotFound);
     }
@@ -115,7 +115,7 @@ public sealed class PersonEmailEndpointTests(CustomWebApplicationFactory factory
     {
         var client = CreateAnonymousClient();
 
-        var response = await client.DeleteAsync($"{BaseUrl}/1");
+        var response = await client.DeleteAsync($"{BaseUrl}/1", TestContext.Current.CancellationToken);
 
         response.StatusCode.Should().Be(HttpStatusCode.Unauthorized);
     }
@@ -125,7 +125,7 @@ public sealed class PersonEmailEndpointTests(CustomWebApplicationFactory factory
     {
         var client = CreateAuthenticatedClient();
 
-        var response = await client.DeleteAsync($"{BaseUrl}/99999");
+        var response = await client.DeleteAsync($"{BaseUrl}/99999", TestContext.Current.CancellationToken);
 
         response.StatusCode.Should().Be(HttpStatusCode.NotFound);
     }

@@ -40,7 +40,7 @@ public sealed class CountryRegionRepositoryTests : PersistenceUnitTestBase
     [Fact]
     public async Task ListAllAsync_is_correctAsync()
     {
-        var result = await _sut.ListAllAsync();
+        var result = await _sut.ListAllAsync(cancellationToken: TestContext.Current.CancellationToken);
 
         using (new AssertionScope())
         {

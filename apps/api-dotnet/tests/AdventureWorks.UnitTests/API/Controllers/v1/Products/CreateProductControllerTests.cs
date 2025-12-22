@@ -41,7 +41,7 @@ public sealed class CreateProductControllerTests : UnitTestBase
     [Fact]
     public async Task PostAsync_null_input_returns_bad_requestAsync()
     {
-        var result = await _sut.PostAsync(null);
+        var result = await _sut.PostAsync(null, cancellationToken: TestContext.Current.CancellationToken);
 
         var objectResult = result as ObjectResult;
 
@@ -104,14 +104,14 @@ public sealed class CreateProductControllerTests : UnitTestBase
         };
 
         _mockMediator
-            .Setup(x => x.Send(It.IsAny<CreateProductCommand>(), CancellationToken.None))
+            .Setup(x => x.Send(It.IsAny<CreateProductCommand>(), It.IsAny<CancellationToken>()))
             .ReturnsAsync(newProductId);
 
         _mockMediator
-            .Setup(x => x.Send(It.IsAny<ReadProductQuery>(), CancellationToken.None))
+            .Setup(x => x.Send(It.IsAny<ReadProductQuery>(), It.IsAny<CancellationToken>()))
             .ReturnsAsync(productModel);
 
-        var result = await _sut.PostAsync(input);
+        var result = await _sut.PostAsync(input, cancellationToken: TestContext.Current.CancellationToken);
 
         var createdResult = result as CreatedAtRouteResult;
 

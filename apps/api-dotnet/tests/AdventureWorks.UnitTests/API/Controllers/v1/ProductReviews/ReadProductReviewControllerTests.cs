@@ -45,7 +45,7 @@ public sealed class ReadProductReviewControllerTests : UnitTestBase
                 Results = [new() { ProductReviewId = 1, ProductId = 937, ReviewerName = "Alice", EmailAddress = "alice@example.com", Rating = 5 }]
             });
 
-        var result = await _sut.GetProductReviewListAsync(937, new ProductReviewParameter());
+        var result = await _sut.GetProductReviewListAsync(937, new ProductReviewParameter(), cancellationToken: TestContext.Current.CancellationToken);
         var objectResult = result as OkObjectResult;
 
         using (new AssertionScope())
@@ -64,7 +64,7 @@ public sealed class ReadProductReviewControllerTests : UnitTestBase
                 Results = new List<ProductReviewModel>()
             });
 
-        var result = await _sut.GetProductReviewListAsync(937, new ProductReviewParameter());
+        var result = await _sut.GetProductReviewListAsync(937, new ProductReviewParameter(), cancellationToken: TestContext.Current.CancellationToken);
         var objectResult = result as OkObjectResult;
 
         using (new AssertionScope())
@@ -79,7 +79,7 @@ public sealed class ReadProductReviewControllerTests : UnitTestBase
     [InlineData(-1)]
     public async Task GetProductReviewListAsync_returns_bad_request_for_invalid_productId_Async(int productId)
     {
-        var result = await _sut.GetProductReviewListAsync(productId, new ProductReviewParameter());
+        var result = await _sut.GetProductReviewListAsync(productId, new ProductReviewParameter(), cancellationToken: TestContext.Current.CancellationToken);
         var objectResult = result as BadRequestObjectResult;
         var outputModel = objectResult!.Value! as string;
 

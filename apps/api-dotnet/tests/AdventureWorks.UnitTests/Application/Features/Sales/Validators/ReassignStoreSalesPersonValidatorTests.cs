@@ -16,7 +16,7 @@ public sealed class ReassignStoreSalesPersonValidatorTests : UnitTestBase
     {
         var model = new StoreSalesPersonAssignmentCreateModel { SalesPersonId = salesPersonId };
 
-        var result = await _sut.TestValidateAsync(model);
+        var result = await _sut.TestValidateAsync(model, cancellationToken: TestContext.Current.CancellationToken);
 
         result.ShouldHaveValidationErrorFor(x => x.SalesPersonId).WithErrorCode("Rule-01");
     }
@@ -28,7 +28,7 @@ public sealed class ReassignStoreSalesPersonValidatorTests : UnitTestBase
     {
         var model = new StoreSalesPersonAssignmentCreateModel { SalesPersonId = salesPersonId };
 
-        var result = await _sut.TestValidateAsync(model);
+        var result = await _sut.TestValidateAsync(model, cancellationToken: TestContext.Current.CancellationToken);
 
         result.ShouldNotHaveValidationErrorFor(x => x.SalesPersonId);
     }

@@ -36,8 +36,8 @@ public sealed class StoreRepositorySearchTests : PersistenceUnitTestBase
         var ascParams = new StoreParameter { OrderBy = "id", SortOrder = "asc", PageSize = 25, PageNumber = 1 };
         var descParams = new StoreParameter { OrderBy = "id", SortOrder = "descending", PageSize = 25, PageNumber = 1 };
 
-        var (ascResults, ascTotalCount) = await _sut.GetStoresAsync(ascParams);
-        var (descResults, descTotalCount) = await _sut.GetStoresAsync(descParams);
+        var (ascResults, ascTotalCount) = await _sut.GetStoresAsync(ascParams, cancellationToken: TestContext.Current.CancellationToken);
+        var (descResults, descTotalCount) = await _sut.GetStoresAsync(descParams, cancellationToken: TestContext.Current.CancellationToken);
 
         var firstAscRecord = ascResults.First();
         var lastAscRecord = ascResults.Last();
@@ -77,8 +77,8 @@ public sealed class StoreRepositorySearchTests : PersistenceUnitTestBase
         var ascParams = new StoreParameter { OrderBy = "name", SortOrder = "asc", PageSize = 25, PageNumber = 1 };
         var descParams = new StoreParameter { OrderBy = "name", SortOrder = "descending", PageSize = 25, PageNumber = 1 };
 
-        var (ascResults, ascTotalCount) = await _sut.GetStoresAsync(ascParams);
-        var (descResults, descTotalCount) = await _sut.GetStoresAsync(descParams);
+        var (ascResults, ascTotalCount) = await _sut.GetStoresAsync(ascParams, cancellationToken: TestContext.Current.CancellationToken);
+        var (descResults, descTotalCount) = await _sut.GetStoresAsync(descParams, cancellationToken: TestContext.Current.CancellationToken);
 
         var firstAscRecord = ascResults.First();
         var lastAscRecord = ascResults.Last();
@@ -119,7 +119,7 @@ public sealed class StoreRepositorySearchTests : PersistenceUnitTestBase
         var queryParams = new StoreParameter { OrderBy = "id", SortOrder = sortOrder };
         var searchParams = new StoreSearchModel { Id = storeId };
 
-        var (ascResults, totalCount) = await _sut.SearchStoresAsync(queryParams, searchParams);
+        var (ascResults, totalCount) = await _sut.SearchStoresAsync(queryParams, searchParams, cancellationToken: TestContext.Current.CancellationToken);
         var firstRecord = ascResults.First();
 
         using (new AssertionScope())
@@ -138,7 +138,7 @@ public sealed class StoreRepositorySearchTests : PersistenceUnitTestBase
         var queryParams = new StoreParameter { OrderBy = "Name", SortOrder = sortOrder };
         var searchParams = new StoreSearchModel { Name = storeName };
 
-        var (ascResults, totalCountOutput) = await _sut.SearchStoresAsync(queryParams, searchParams);
+        var (ascResults, totalCountOutput) = await _sut.SearchStoresAsync(queryParams, searchParams, cancellationToken: TestContext.Current.CancellationToken);
         var firstRecord = ascResults.First();
 
         using (new AssertionScope())

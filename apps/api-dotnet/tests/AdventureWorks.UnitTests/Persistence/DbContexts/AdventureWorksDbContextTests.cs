@@ -23,12 +23,12 @@ public sealed class AdventureWorksDbContextTests : PersistenceUnitTestBase
         };
 
         DbContext.PersonCreditCards.Add(entity);
-        await DbContext.SaveChangesAsync();
+        await DbContext.SaveChangesAsync(cancellationToken: TestContext.Current.CancellationToken);
 
         var fetched = await DbContext.PersonCreditCards
             .AsNoTracking()
             .SingleOrDefaultAsync(x =>
-                x.BusinessEntityId == 1 && x.CreditCardId == 100);
+                x.BusinessEntityId == 1 && x.CreditCardId == 100, cancellationToken: TestContext.Current.CancellationToken);
 
         fetched.Should().NotBeNull();
         fetched!.ModifiedDate.Should().Be(StandardModifiedDate);

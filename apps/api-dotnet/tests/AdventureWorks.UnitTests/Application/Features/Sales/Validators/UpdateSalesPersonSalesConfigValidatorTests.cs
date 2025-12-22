@@ -52,7 +52,7 @@ public sealed class UpdateSalesPersonSalesConfigValidatorTests : UnitTestBase
         var model = GetValidModel();
         model.Id = id;
 
-        var result = await _sut.TestValidateAsync(model);
+        var result = await _sut.TestValidateAsync(model, cancellationToken: TestContext.Current.CancellationToken);
         result.ShouldHaveValidationErrorFor(x => x.Id);
     }
 
@@ -64,7 +64,7 @@ public sealed class UpdateSalesPersonSalesConfigValidatorTests : UnitTestBase
         var model = GetValidModel();
         model.CommissionPct = commissionPct;
 
-        var result = await _sut.TestValidateAsync(model);
+        var result = await _sut.TestValidateAsync(model, cancellationToken: TestContext.Current.CancellationToken);
         result.ShouldHaveValidationErrorFor(x => x.CommissionPct);
     }
 
@@ -74,7 +74,7 @@ public sealed class UpdateSalesPersonSalesConfigValidatorTests : UnitTestBase
         var model = GetValidModel();
         model.Bonus = -100;
 
-        var result = await _sut.TestValidateAsync(model);
+        var result = await _sut.TestValidateAsync(model, cancellationToken: TestContext.Current.CancellationToken);
         result.ShouldHaveValidationErrorFor(x => x.Bonus);
     }
 
@@ -84,7 +84,7 @@ public sealed class UpdateSalesPersonSalesConfigValidatorTests : UnitTestBase
         var model = GetValidModel();
         model.SalesQuota = 0;
 
-        var result = await _sut.TestValidateAsync(model);
+        var result = await _sut.TestValidateAsync(model, cancellationToken: TestContext.Current.CancellationToken);
         result.ShouldHaveValidationErrorFor(x => x.SalesQuota);
     }
 
@@ -95,7 +95,7 @@ public sealed class UpdateSalesPersonSalesConfigValidatorTests : UnitTestBase
         model.TerritoryId = 0;
 
         // Rule-05 (base: > 0 when set) fires; Rule-07 (exists) is skipped because TerritoryId == 0
-        var result = await _sut.TestValidateAsync(model);
+        var result = await _sut.TestValidateAsync(model, cancellationToken: TestContext.Current.CancellationToken);
         result.ShouldHaveValidationErrorFor(x => x.TerritoryId);
     }
 
@@ -109,7 +109,7 @@ public sealed class UpdateSalesPersonSalesConfigValidatorTests : UnitTestBase
         var model = GetValidModel();
         model.TerritoryId = 999;
 
-        var result = await _sut.TestValidateAsync(model);
+        var result = await _sut.TestValidateAsync(model, cancellationToken: TestContext.Current.CancellationToken);
         result.ShouldHaveValidationErrorFor(x => x.TerritoryId)
             .WithErrorCode("Rule-07");
     }
@@ -119,7 +119,7 @@ public sealed class UpdateSalesPersonSalesConfigValidatorTests : UnitTestBase
     {
         var model = GetValidModel();
 
-        var result = await _sut.TestValidateAsync(model);
+        var result = await _sut.TestValidateAsync(model, cancellationToken: TestContext.Current.CancellationToken);
         result.ShouldNotHaveAnyValidationErrors();
     }
 
@@ -131,7 +131,7 @@ public sealed class UpdateSalesPersonSalesConfigValidatorTests : UnitTestBase
         model.SalesQuota = null;
 
         // Async rule is skipped when TerritoryId is null; no repository call made
-        var result = await _sut.TestValidateAsync(model);
+        var result = await _sut.TestValidateAsync(model, cancellationToken: TestContext.Current.CancellationToken);
         result.ShouldNotHaveAnyValidationErrors();
     }
 }

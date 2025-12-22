@@ -40,7 +40,7 @@ public sealed class ReadProductControllerTests : UnitTestBase
     [InlineData(-1)]
     public async Task GetByIdAsync_invalid_id_returns_bad_requestAsync(int id)
     {
-        var result = await _sut.GetByIdAsync(id);
+        var result = await _sut.GetByIdAsync(id, cancellationToken: TestContext.Current.CancellationToken);
         var objectResult = result as ObjectResult;
 
         using (new AssertionScope())
@@ -53,10 +53,10 @@ public sealed class ReadProductControllerTests : UnitTestBase
     [Fact]
     public async Task GetByIdAsync_not_found_returns_404Async()
     {
-        _mockMediator.Setup(x => x.Send(It.IsAny<ReadProductQuery>(), CancellationToken.None))
+        _mockMediator.Setup(x => x.Send(It.IsAny<ReadProductQuery>(), It.IsAny<CancellationToken>()))
             .ReturnsAsync((ProductDetailModel?)null);
 
-        var result = await _sut.GetByIdAsync(999);
+        var result = await _sut.GetByIdAsync(999, cancellationToken: TestContext.Current.CancellationToken);
         var objectResult = result as ObjectResult;
 
         objectResult!.StatusCode.Should().Be((int)HttpStatusCode.NotFound);
@@ -67,10 +67,10 @@ public sealed class ReadProductControllerTests : UnitTestBase
     {
         var model = new ProductDetailModel { Id = 1, Name = "Mountain Bike", ProductNumber = "BK-M82S-38" };
 
-        _mockMediator.Setup(x => x.Send(It.IsAny<ReadProductQuery>(), CancellationToken.None))
+        _mockMediator.Setup(x => x.Send(It.IsAny<ReadProductQuery>(), It.IsAny<CancellationToken>()))
             .ReturnsAsync(model);
 
-        var result = await _sut.GetByIdAsync(1);
+        var result = await _sut.GetByIdAsync(1, cancellationToken: TestContext.Current.CancellationToken);
         var okResult = result as OkObjectResult;
 
         using (new AssertionScope())

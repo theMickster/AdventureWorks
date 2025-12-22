@@ -40,7 +40,7 @@ public sealed class ReadProductReviewStatisticsControllerTests : UnitTestBase
     [InlineData(-1)]
     public async Task GetProductReviewStatisticsAsync_returns_bad_request_for_invalid_productId_Async(int productId)
     {
-        var result = await _sut.GetProductReviewStatisticsAsync(productId);
+        var result = await _sut.GetProductReviewStatisticsAsync(productId, cancellationToken: TestContext.Current.CancellationToken);
         var objectResult = result as BadRequestObjectResult;
 
         using (new AssertionScope())
@@ -65,7 +65,7 @@ public sealed class ReadProductReviewStatisticsControllerTests : UnitTestBase
         _mockMediator.Setup(x => x.Send(It.IsAny<ReadProductReviewStatisticsQuery>(), It.IsAny<CancellationToken>()))
             .ReturnsAsync(expected);
 
-        var result = await _sut.GetProductReviewStatisticsAsync(937);
+        var result = await _sut.GetProductReviewStatisticsAsync(937, cancellationToken: TestContext.Current.CancellationToken);
         var okResult = result as OkObjectResult;
 
         using (new AssertionScope())
@@ -90,7 +90,7 @@ public sealed class ReadProductReviewStatisticsControllerTests : UnitTestBase
         _mockMediator.Setup(x => x.Send(It.IsAny<ReadProductReviewStatisticsQuery>(), It.IsAny<CancellationToken>()))
             .ReturnsAsync(expected);
 
-        var result = await _sut.GetProductReviewStatisticsAsync(99999);
+        var result = await _sut.GetProductReviewStatisticsAsync(99999, cancellationToken: TestContext.Current.CancellationToken);
         var okResult = result as OkObjectResult;
 
         using (new AssertionScope())

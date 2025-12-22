@@ -49,7 +49,7 @@ public sealed class SalesTerritoryRepositoryTests : PersistenceUnitTestBase
     [Fact]
     public async Task ListAllAsync_is_correctAsync()
     {
-        var result = await _sut.ListAllAsync();
+        var result = await _sut.ListAllAsync(cancellationToken: TestContext.Current.CancellationToken);
 
         using (new AssertionScope())
         {
@@ -67,7 +67,7 @@ public sealed class SalesTerritoryRepositoryTests : PersistenceUnitTestBase
     [InlineData(3)]
     public async Task GetByIdAsync_is_correctAsync(int id)
     {
-        var result = await _sut.GetByIdAsync(id);
+        var result = await _sut.GetByIdAsync(id, cancellationToken: TestContext.Current.CancellationToken);
 
         using (new AssertionScope())
         {

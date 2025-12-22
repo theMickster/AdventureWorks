@@ -57,7 +57,7 @@ public sealed class HttpRequestSenderTests : IDisposable
     {
         var authToken = "test-token";
         var exception = await Assert.ThrowsAsync<ArgumentNullException>(
-            async () => await _httpRequestSender.GetAsync(null!, authToken));
+            async () => await _httpRequestSender.GetAsync(null!, authToken, cancellationToken: TestContext.Current.CancellationToken));
         exception.ParamName.Should().Be("uri");
     }
 
@@ -68,7 +68,7 @@ public sealed class HttpRequestSenderTests : IDisposable
     {
         var uri = new Uri("https://test.api.com/resource");
         var exception = await Assert.ThrowsAsync<ArgumentException>(
-            async () => await _httpRequestSender.GetAsync(uri, authToken!));
+            async () => await _httpRequestSender.GetAsync(uri, authToken!, cancellationToken: TestContext.Current.CancellationToken));
         exception.ParamName.Should().Be("authToken");
     }
 
@@ -86,7 +86,7 @@ public sealed class HttpRequestSenderTests : IDisposable
                 ItExpr.IsAny<HttpRequestMessage>(),
                 ItExpr.IsAny<CancellationToken>())
             .ReturnsAsync(expectedResponse);
-        await _httpRequestSender.GetAsync(uri, authToken);
+        await _httpRequestSender.GetAsync(uri, authToken, cancellationToken: TestContext.Current.CancellationToken);
         _httpClient.DefaultRequestHeaders.Authorization.Should().NotBeNull();
         _httpClient.DefaultRequestHeaders.Authorization!.Scheme.Should().Be("Bearer");
         _httpClient.DefaultRequestHeaders.Authorization.Parameter.Should().Be(authToken);
@@ -108,7 +108,7 @@ public sealed class HttpRequestSenderTests : IDisposable
                     req.RequestUri == uri),
                 ItExpr.IsAny<CancellationToken>())
             .ReturnsAsync(expectedResponse);
-        var result = await _httpRequestSender.GetAsync(uri, authToken);
+        var result = await _httpRequestSender.GetAsync(uri, authToken, cancellationToken: TestContext.Current.CancellationToken);
         result.Should().NotBeNull();
         result.StatusCode.Should().Be(HttpStatusCode.OK);
     }
@@ -149,7 +149,7 @@ public sealed class HttpRequestSenderTests : IDisposable
         var payload = new { Name = "Test" };
         var authToken = "test-token";
         var exception = await Assert.ThrowsAsync<ArgumentNullException>(
-            async () => await _httpRequestSender.PostAsync(null!, payload, authToken));
+            async () => await _httpRequestSender.PostAsync(null!, payload, authToken, cancellationToken: TestContext.Current.CancellationToken));
         exception.ParamName.Should().Be("uri");
     }
 
@@ -159,7 +159,7 @@ public sealed class HttpRequestSenderTests : IDisposable
         var uri = new Uri("https://test.api.com/resource");
         var payload = new { Name = "Test" };
         var exception = await Assert.ThrowsAsync<ArgumentNullException>(
-            async () => await _httpRequestSender.PostAsync(uri, payload, null!));
+            async () => await _httpRequestSender.PostAsync(uri, payload, null!, cancellationToken: TestContext.Current.CancellationToken));
         exception.ParamName.Should().Be("authToken");
     }
 
@@ -178,7 +178,7 @@ public sealed class HttpRequestSenderTests : IDisposable
                 ItExpr.IsAny<HttpRequestMessage>(),
                 ItExpr.IsAny<CancellationToken>())
             .ReturnsAsync(expectedResponse);
-        await _httpRequestSender.PostAsync(uri, payload, authToken);
+        await _httpRequestSender.PostAsync(uri, payload, authToken, cancellationToken: TestContext.Current.CancellationToken);
         _httpClient.DefaultRequestHeaders.Authorization.Should().NotBeNull();
         _httpClient.DefaultRequestHeaders.Authorization!.Scheme.Should().Be("Bearer");
         _httpClient.DefaultRequestHeaders.Authorization.Parameter.Should().Be(authToken);
@@ -203,7 +203,7 @@ public sealed class HttpRequestSenderTests : IDisposable
                     req.Content.Headers.ContentType!.MediaType == "application/json"),
                 ItExpr.IsAny<CancellationToken>())
             .ReturnsAsync(expectedResponse);
-        var result = await _httpRequestSender.PostAsync(uri, payload, authToken);
+        var result = await _httpRequestSender.PostAsync(uri, payload, authToken, cancellationToken: TestContext.Current.CancellationToken);
         result.Should().NotBeNull();
         result.StatusCode.Should().Be(HttpStatusCode.Created);
     }
@@ -245,7 +245,7 @@ public sealed class HttpRequestSenderTests : IDisposable
         var patchDoc = new JsonPatchDocument<TestModel>();
         var authToken = "test-token";
         var exception = await Assert.ThrowsAsync<ArgumentNullException>(
-            async () => await _httpRequestSender.PatchAsync(null!, patchDoc, authToken));
+            async () => await _httpRequestSender.PatchAsync(null!, patchDoc, authToken, cancellationToken: TestContext.Current.CancellationToken));
         exception.ParamName.Should().Be("uri");
     }
 
@@ -255,7 +255,7 @@ public sealed class HttpRequestSenderTests : IDisposable
         var uri = new Uri("https://test.api.com/resource");
         var patchDoc = new JsonPatchDocument<TestModel>();
         var exception = await Assert.ThrowsAsync<ArgumentNullException>(
-            async () => await _httpRequestSender.PatchAsync(uri, patchDoc, null!));
+            async () => await _httpRequestSender.PatchAsync(uri, patchDoc, null!, cancellationToken: TestContext.Current.CancellationToken));
         exception.ParamName.Should().Be("authToken");
     }
 
@@ -275,7 +275,7 @@ public sealed class HttpRequestSenderTests : IDisposable
                 ItExpr.IsAny<HttpRequestMessage>(),
                 ItExpr.IsAny<CancellationToken>())
             .ReturnsAsync(expectedResponse);
-        await _httpRequestSender.PatchAsync(uri, patchDoc, authToken);
+        await _httpRequestSender.PatchAsync(uri, patchDoc, authToken, cancellationToken: TestContext.Current.CancellationToken);
         _httpClient.DefaultRequestHeaders.Authorization.Should().NotBeNull();
         _httpClient.DefaultRequestHeaders.Authorization!.Scheme.Should().Be("Bearer");
         _httpClient.DefaultRequestHeaders.Authorization.Parameter.Should().Be(authToken);
@@ -301,7 +301,7 @@ public sealed class HttpRequestSenderTests : IDisposable
                     req.Content.Headers.ContentType!.MediaType == "application/json-patch+json"),
                 ItExpr.IsAny<CancellationToken>())
             .ReturnsAsync(expectedResponse);
-        var result = await _httpRequestSender.PatchAsync(uri, patchDoc, authToken);
+        var result = await _httpRequestSender.PatchAsync(uri, patchDoc, authToken, cancellationToken: TestContext.Current.CancellationToken);
         result.Should().NotBeNull();
         result.StatusCode.Should().Be(HttpStatusCode.OK);
     }
@@ -342,7 +342,7 @@ public sealed class HttpRequestSenderTests : IDisposable
     {
         var authToken = "test-token";
         var exception = await Assert.ThrowsAsync<ArgumentNullException>(
-            async () => await _httpRequestSender.DeleteAsync(null!, authToken));
+            async () => await _httpRequestSender.DeleteAsync(null!, authToken, cancellationToken: TestContext.Current.CancellationToken));
         exception.ParamName.Should().Be("uri");
     }
 
@@ -351,7 +351,7 @@ public sealed class HttpRequestSenderTests : IDisposable
     {
         var uri = new Uri("https://test.api.com/resource");
         var exception = await Assert.ThrowsAsync<ArgumentNullException>(
-            async () => await _httpRequestSender.DeleteAsync(uri, null!));
+            async () => await _httpRequestSender.DeleteAsync(uri, null!, cancellationToken: TestContext.Current.CancellationToken));
         exception.ParamName.Should().Be("authToken");
     }
 
@@ -369,7 +369,7 @@ public sealed class HttpRequestSenderTests : IDisposable
                 ItExpr.IsAny<HttpRequestMessage>(),
                 ItExpr.IsAny<CancellationToken>())
             .ReturnsAsync(expectedResponse);
-        await _httpRequestSender.DeleteAsync(uri, authToken);
+        await _httpRequestSender.DeleteAsync(uri, authToken, cancellationToken: TestContext.Current.CancellationToken);
         _httpClient.DefaultRequestHeaders.Authorization.Should().NotBeNull();
         _httpClient.DefaultRequestHeaders.Authorization!.Scheme.Should().Be("Bearer");
         _httpClient.DefaultRequestHeaders.Authorization.Parameter.Should().Be(authToken);
@@ -391,7 +391,7 @@ public sealed class HttpRequestSenderTests : IDisposable
                     req.RequestUri == uri),
                 ItExpr.IsAny<CancellationToken>())
             .ReturnsAsync(expectedResponse);
-        var result = await _httpRequestSender.DeleteAsync(uri, authToken);
+        var result = await _httpRequestSender.DeleteAsync(uri, authToken, cancellationToken: TestContext.Current.CancellationToken);
         result.Should().NotBeNull();
         result.StatusCode.Should().Be(HttpStatusCode.NoContent);
     }

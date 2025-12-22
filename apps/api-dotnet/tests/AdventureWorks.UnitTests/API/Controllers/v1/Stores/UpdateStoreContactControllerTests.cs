@@ -39,7 +39,7 @@ public sealed class UpdateStoreContactControllerTests : UnitTestBase
     [Fact]
     public async Task PatchAsync_null_input_returns_bad_requestAsync()
     {
-        var result = await _sut.PatchAsync(2534, 100, 11, null);
+        var result = await _sut.PatchAsync(2534, 100, 11, null, cancellationToken: TestContext.Current.CancellationToken);
 
         var objectResult = result as BadRequestObjectResult;
 
@@ -62,7 +62,7 @@ public sealed class UpdateStoreContactControllerTests : UnitTestBase
     {
         var input = new StoreContactUpdateModel { ContactTypeId = 12 };
 
-        var result = await _sut.PatchAsync(storeId, personId, contactTypeId, input);
+        var result = await _sut.PatchAsync(storeId, personId, contactTypeId, input, cancellationToken: TestContext.Current.CancellationToken);
 
         var objectResult = result as BadRequestObjectResult;
 
@@ -128,7 +128,7 @@ public sealed class UpdateStoreContactControllerTests : UnitTestBase
             .Setup(x => x.Send(It.IsAny<ReadStoreContactQuery>(), It.IsAny<CancellationToken>()))
             .ReturnsAsync(output);
 
-        var result = await _sut.PatchAsync(storeId, 100, 11, input);
+        var result = await _sut.PatchAsync(storeId, 100, 11, input, cancellationToken: TestContext.Current.CancellationToken);
 
         var okResult = result as OkObjectResult;
 

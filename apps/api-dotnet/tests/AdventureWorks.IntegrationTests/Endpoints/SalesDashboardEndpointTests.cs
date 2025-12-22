@@ -18,7 +18,7 @@ public sealed class SalesDashboardEndpointTests(CustomWebApplicationFactory fact
     {
         var client = CreateAuthenticatedClient();
 
-        var response = await client.GetAsync(DashboardUrl);
+        var response = await client.GetAsync(DashboardUrl, TestContext.Current.CancellationToken);
 
         response.StatusCode.Should().Be(HttpStatusCode.OK);
 
@@ -34,7 +34,7 @@ public sealed class SalesDashboardEndpointTests(CustomWebApplicationFactory fact
     {
         var client = CreateAnonymousClient();
 
-        var response = await client.GetAsync(DashboardUrl);
+        var response = await client.GetAsync(DashboardUrl, TestContext.Current.CancellationToken);
 
         response.StatusCode.Should().Be(HttpStatusCode.Unauthorized);
     }

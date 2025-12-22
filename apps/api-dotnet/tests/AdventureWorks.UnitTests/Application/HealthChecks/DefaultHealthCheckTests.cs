@@ -46,7 +46,7 @@ public sealed class DefaultHealthCheckTests
     {
         var healthCheck = new DefaultHealthCheck();
         var context = new HealthCheckContext();
-        var result = await healthCheck.CheckHealthAsync(context);
+        var result = await healthCheck.CheckHealthAsync(context, cancellationToken: TestContext.Current.CancellationToken);
         result.Should().NotBeNull();
         result.Status.Should().Be(HealthStatus.Healthy);
     }
@@ -56,7 +56,7 @@ public sealed class DefaultHealthCheckTests
     {
         var healthCheck = new DefaultHealthCheck();
         var context = new HealthCheckContext();
-        var result = await healthCheck.CheckHealthAsync(context);
+        var result = await healthCheck.CheckHealthAsync(context, cancellationToken: TestContext.Current.CancellationToken);
         result.Data.Should().NotBeNull();
         result.Data.Should().ContainKey("Info");
         result.Data.Should().ContainKey("Dependencies");
@@ -67,7 +67,7 @@ public sealed class DefaultHealthCheckTests
     {
         var healthCheck = new DefaultHealthCheck();
         var context = new HealthCheckContext();
-        var result = await healthCheck.CheckHealthAsync(context);
+        var result = await healthCheck.CheckHealthAsync(context, cancellationToken: TestContext.Current.CancellationToken);
         result.Description.Should().NotBeNullOrEmpty();
         result.Description.Should().Contain("is");
         result.Description.Should().Contain(HealthStatus.Healthy.ToString());
@@ -78,7 +78,7 @@ public sealed class DefaultHealthCheckTests
     {
         var healthCheck = new DefaultHealthCheck();
         var context = new HealthCheckContext();
-        var result = await healthCheck.CheckHealthAsync(context);
+        var result = await healthCheck.CheckHealthAsync(context, cancellationToken: TestContext.Current.CancellationToken);
         result.Data.Should().ContainKey("Dependencies");
         var dependencies = result.Data["Dependencies"] as Dictionary<string, object>;
         dependencies.Should().NotBeNull();
@@ -103,7 +103,7 @@ public sealed class DefaultHealthCheckTests
 
         var healthCheck = new DefaultHealthCheck(statusFunc);
         var context = new HealthCheckContext();
-        var result = await healthCheck.CheckHealthAsync(context);
+        var result = await healthCheck.CheckHealthAsync(context, cancellationToken: TestContext.Current.CancellationToken);
         result.Status.Should().Be(HealthStatus.Healthy);
         result.Data["Dependencies"].Should().Be(dependencies);
     }
@@ -122,7 +122,7 @@ public sealed class DefaultHealthCheckTests
 
         var healthCheck = new DefaultHealthCheck(statusFunc);
         var context = new HealthCheckContext();
-        var result = await healthCheck.CheckHealthAsync(context);
+        var result = await healthCheck.CheckHealthAsync(context, cancellationToken: TestContext.Current.CancellationToken);
         result.Status.Should().Be(HealthStatus.Degraded);
         result.Description.Should().Contain(HealthStatus.Degraded.ToString());
         result.Data["Dependencies"].Should().Be(dependencies);
@@ -142,7 +142,7 @@ public sealed class DefaultHealthCheckTests
 
         var healthCheck = new DefaultHealthCheck(statusFunc);
         var context = new HealthCheckContext();
-        var result = await healthCheck.CheckHealthAsync(context);
+        var result = await healthCheck.CheckHealthAsync(context, cancellationToken: TestContext.Current.CancellationToken);
         result.Status.Should().Be(HealthStatus.Unhealthy);
         result.Description.Should().Contain(HealthStatus.Unhealthy.ToString());
         result.Data["Dependencies"].Should().Be(dependencies);
@@ -163,7 +163,7 @@ public sealed class DefaultHealthCheckTests
 
         var healthCheck = new DefaultHealthCheck(statusFunc);
         var context = new HealthCheckContext();
-        var result = await healthCheck.CheckHealthAsync(context);
+        var result = await healthCheck.CheckHealthAsync(context, cancellationToken: TestContext.Current.CancellationToken);
         result.Data.Should().ContainKey("Dependencies");
         var actualDependencies = result.Data["Dependencies"] as Dictionary<string, object>;
         actualDependencies.Should().NotBeNull();
@@ -180,7 +180,7 @@ public sealed class DefaultHealthCheckTests
 
         var healthCheck = new DefaultHealthCheck(statusFunc);
         var context = new HealthCheckContext();
-        var result = await healthCheck.CheckHealthAsync(context);
+        var result = await healthCheck.CheckHealthAsync(context, cancellationToken: TestContext.Current.CancellationToken);
         result.Data.Should().ContainKey("Dependencies");
         var dependencies = result.Data["Dependencies"] as Dictionary<string, object>;
         dependencies.Should().NotBeNull();
@@ -196,7 +196,7 @@ public sealed class DefaultHealthCheckTests
     {
         var healthCheck = new DefaultHealthCheck();
         var context = new HealthCheckContext();
-        var result = await healthCheck.CheckHealthAsync(context);
+        var result = await healthCheck.CheckHealthAsync(context, cancellationToken: TestContext.Current.CancellationToken);
         using (new AssertionScope())
         {
             result.Data.Should().HaveCount(2);
@@ -210,7 +210,7 @@ public sealed class DefaultHealthCheckTests
     {
         var healthCheck = new DefaultHealthCheck();
         var context = new HealthCheckContext();
-        var result = await healthCheck.CheckHealthAsync(context);
+        var result = await healthCheck.CheckHealthAsync(context, cancellationToken: TestContext.Current.CancellationToken);
         result.Data["Info"].Should().BeAssignableTo<Dictionary<string, object>>();
     }
 
@@ -219,7 +219,7 @@ public sealed class DefaultHealthCheckTests
     {
         var healthCheck = new DefaultHealthCheck();
         var context = new HealthCheckContext();
-        var result = await healthCheck.CheckHealthAsync(context);
+        var result = await healthCheck.CheckHealthAsync(context, cancellationToken: TestContext.Current.CancellationToken);
         result.Data["Dependencies"].Should().BeAssignableTo<Dictionary<string, object>>();
     }
 
@@ -244,7 +244,7 @@ public sealed class DefaultHealthCheckTests
     {
         var healthCheck = new DefaultHealthCheck();
         var context = new HealthCheckContext();
-        var result = await healthCheck.CheckHealthAsync(context, default);
+        var result = await healthCheck.CheckHealthAsync(context, TestContext.Current.CancellationToken);
         result.Should().NotBeNull();
         result.Status.Should().Be(HealthStatus.Healthy);
     }
@@ -264,7 +264,7 @@ public sealed class DefaultHealthCheckTests
 
         var healthCheck = new DefaultHealthCheck(statusFunc);
         var context = new HealthCheckContext();
-        var result = await healthCheck.CheckHealthAsync(context);
+        var result = await healthCheck.CheckHealthAsync(context, cancellationToken: TestContext.Current.CancellationToken);
         result.Status.Should().Be(expectedStatus);
         result.Description.Should().Contain(expectedStatus.ToString());
     }
@@ -290,7 +290,7 @@ public sealed class DefaultHealthCheckTests
 
         var healthCheck = new DefaultHealthCheck(statusFunc);
         var context = new HealthCheckContext();
-        var result = await healthCheck.CheckHealthAsync(context);
+        var result = await healthCheck.CheckHealthAsync(context, cancellationToken: TestContext.Current.CancellationToken);
         var resultDependencies = result.Data["Dependencies"] as Dictionary<string, object>;
         resultDependencies.Should().HaveCount(5);
         resultDependencies.Should().ContainKeys("Database1", "Database2", "Cache", "MessageQueue", "ExternalAPI1");
@@ -316,7 +316,7 @@ public sealed class DefaultHealthCheckTests
 
         var healthCheck = new DefaultHealthCheck(statusFunc);
         var context = new HealthCheckContext();
-        var result = await healthCheck.CheckHealthAsync(context);
+        var result = await healthCheck.CheckHealthAsync(context, cancellationToken: TestContext.Current.CancellationToken);
         var resultDependencies = result.Data["Dependencies"] as Dictionary<string, object>;
         resultDependencies!["Database"].Should().Be(complexValue);
     }
@@ -339,9 +339,9 @@ public sealed class DefaultHealthCheckTests
 
         var healthCheck = new DefaultHealthCheck(statusFunc);
         var context = new HealthCheckContext();
-        var result1 = await healthCheck.CheckHealthAsync(context);
-        var result2 = await healthCheck.CheckHealthAsync(context);
-        var result3 = await healthCheck.CheckHealthAsync(context);
+        var result1 = await healthCheck.CheckHealthAsync(context, cancellationToken: TestContext.Current.CancellationToken);
+        var result2 = await healthCheck.CheckHealthAsync(context, cancellationToken: TestContext.Current.CancellationToken);
+        var result3 = await healthCheck.CheckHealthAsync(context, cancellationToken: TestContext.Current.CancellationToken);
         using (new AssertionScope())
         {
             callCount.Should().Be(3);
@@ -356,7 +356,7 @@ public sealed class DefaultHealthCheckTests
     {
         var healthCheck = new DefaultHealthCheck();
         var context = new HealthCheckContext();
-        var result = await healthCheck.CheckHealthAsync(context);
+        var result = await healthCheck.CheckHealthAsync(context, cancellationToken: TestContext.Current.CancellationToken);
         result.Should().NotBeNull();
         result.Status.Should().Be(HealthStatus.Healthy);
         result.Data.Should().NotBeNull();

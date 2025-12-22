@@ -21,7 +21,7 @@ public sealed class UpdateProductReviewValidatorTests : UnitTestBase
     [Fact]
     public async Task Validator_passes_for_valid_model_Async()
     {
-        var result = await _sut.TestValidateAsync(GetValidModel());
+        var result = await _sut.TestValidateAsync(GetValidModel(), cancellationToken: TestContext.Current.CancellationToken);
         result.ShouldNotHaveAnyValidationErrors();
     }
 
@@ -31,7 +31,7 @@ public sealed class UpdateProductReviewValidatorTests : UnitTestBase
         var model = GetValidModel();
         model.Id = 0;
 
-        var result = await _sut.TestValidateAsync(model);
+        var result = await _sut.TestValidateAsync(model, cancellationToken: TestContext.Current.CancellationToken);
         result.ShouldHaveValidationErrorFor(x => x.Id).WithErrorCode("Rule-08");
     }
 
@@ -41,7 +41,7 @@ public sealed class UpdateProductReviewValidatorTests : UnitTestBase
         var model = GetValidModel();
         model.Id = -1;
 
-        var result = await _sut.TestValidateAsync(model);
+        var result = await _sut.TestValidateAsync(model, cancellationToken: TestContext.Current.CancellationToken);
         result.ShouldHaveValidationErrorFor(x => x.Id).WithErrorCode("Rule-08");
     }
 
@@ -51,7 +51,7 @@ public sealed class UpdateProductReviewValidatorTests : UnitTestBase
         var model = GetValidModel();
         model.ReviewerName = "";
 
-        var result = await _sut.TestValidateAsync(model);
+        var result = await _sut.TestValidateAsync(model, cancellationToken: TestContext.Current.CancellationToken);
         result.ShouldHaveValidationErrorFor(x => x.ReviewerName).WithErrorCode("Rule-01");
     }
 
@@ -61,7 +61,7 @@ public sealed class UpdateProductReviewValidatorTests : UnitTestBase
         var model = GetValidModel();
         model.ReviewerName = new string('A', 51);
 
-        var result = await _sut.TestValidateAsync(model);
+        var result = await _sut.TestValidateAsync(model, cancellationToken: TestContext.Current.CancellationToken);
         result.ShouldHaveValidationErrorFor(x => x.ReviewerName).WithErrorCode("Rule-02");
     }
 
@@ -71,7 +71,7 @@ public sealed class UpdateProductReviewValidatorTests : UnitTestBase
         var model = GetValidModel();
         model.EmailAddress = "";
 
-        var result = await _sut.TestValidateAsync(model);
+        var result = await _sut.TestValidateAsync(model, cancellationToken: TestContext.Current.CancellationToken);
         result.ShouldHaveValidationErrorFor(x => x.EmailAddress).WithErrorCode("Rule-03");
     }
 
@@ -81,7 +81,7 @@ public sealed class UpdateProductReviewValidatorTests : UnitTestBase
         var model = GetValidModel();
         model.EmailAddress = "not-an-email";
 
-        var result = await _sut.TestValidateAsync(model);
+        var result = await _sut.TestValidateAsync(model, cancellationToken: TestContext.Current.CancellationToken);
         result.ShouldHaveValidationErrorFor(x => x.EmailAddress).WithErrorCode("Rule-04");
     }
 
@@ -91,7 +91,7 @@ public sealed class UpdateProductReviewValidatorTests : UnitTestBase
         var model = GetValidModel();
         model.EmailAddress = new string('a', 45) + "@b.com"; // 51 chars
 
-        var result = await _sut.TestValidateAsync(model);
+        var result = await _sut.TestValidateAsync(model, cancellationToken: TestContext.Current.CancellationToken);
         result.ShouldHaveValidationErrorFor(x => x.EmailAddress).WithErrorCode("Rule-05");
     }
 
@@ -103,7 +103,7 @@ public sealed class UpdateProductReviewValidatorTests : UnitTestBase
         var model = GetValidModel();
         model.Rating = rating;
 
-        var result = await _sut.TestValidateAsync(model);
+        var result = await _sut.TestValidateAsync(model, cancellationToken: TestContext.Current.CancellationToken);
         result.ShouldHaveValidationErrorFor(x => x.Rating).WithErrorCode("Rule-06");
     }
 
@@ -115,7 +115,7 @@ public sealed class UpdateProductReviewValidatorTests : UnitTestBase
         var model = GetValidModel();
         model.Rating = rating;
 
-        var result = await _sut.TestValidateAsync(model);
+        var result = await _sut.TestValidateAsync(model, cancellationToken: TestContext.Current.CancellationToken);
         result.ShouldNotHaveValidationErrorFor(x => x.Rating);
     }
 
@@ -125,7 +125,7 @@ public sealed class UpdateProductReviewValidatorTests : UnitTestBase
         var model = GetValidModel();
         model.Comments = new string('x', 3851);
 
-        var result = await _sut.TestValidateAsync(model);
+        var result = await _sut.TestValidateAsync(model, cancellationToken: TestContext.Current.CancellationToken);
         result.ShouldHaveValidationErrorFor(x => x.Comments).WithErrorCode("Rule-07");
     }
 
@@ -135,7 +135,7 @@ public sealed class UpdateProductReviewValidatorTests : UnitTestBase
         var model = GetValidModel();
         model.Comments = null;
 
-        var result = await _sut.TestValidateAsync(model);
+        var result = await _sut.TestValidateAsync(model, cancellationToken: TestContext.Current.CancellationToken);
         result.ShouldNotHaveValidationErrorFor(x => x.Comments);
     }
 }

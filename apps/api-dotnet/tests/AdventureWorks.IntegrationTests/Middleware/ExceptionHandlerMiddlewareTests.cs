@@ -13,10 +13,10 @@ public sealed class ExceptionHandlerMiddlewareTests(CustomWebApplicationFactory 
         var client = CreateAuthenticatedClient();
         var invalidBody = new { };
 
-        var response = await client.PostAsJsonAsync("/api/v1.0/stores", invalidBody);
+        var response = await client.PostAsJsonAsync("/api/v1.0/stores", invalidBody, cancellationToken: TestContext.Current.CancellationToken);
 
         response.StatusCode.Should().Be(HttpStatusCode.BadRequest);
-        var json = await response.Content.ReadAsStringAsync();
+        var json = await response.Content.ReadAsStringAsync(TestContext.Current.CancellationToken);
         using var doc = JsonDocument.Parse(json);
         var root = doc.RootElement;
         root.ValueKind.Should().Be(JsonValueKind.Array,

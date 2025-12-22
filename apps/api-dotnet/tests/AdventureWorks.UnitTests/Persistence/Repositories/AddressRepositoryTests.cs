@@ -79,7 +79,7 @@ public sealed class AddressRepositoryTests : PersistenceUnitTestBase
     [InlineData(395)]
     public async Task GetByIdAsync_succeeds_Async(int addressId)
     {
-        var result = await _sut.GetByIdAsync(addressId);
+        var result = await _sut.GetByIdAsync(addressId, cancellationToken: TestContext.Current.CancellationToken);
 
         using (new AssertionScope())
         {

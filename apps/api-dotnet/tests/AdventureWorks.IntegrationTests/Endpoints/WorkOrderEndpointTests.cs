@@ -21,7 +21,7 @@ public sealed class WorkOrderEndpointTests(CustomWebApplicationFactory factory) 
         var productId = await SeedWorkOrdersAsync(count: 2);
         var client = CreateAuthenticatedClient();
 
-        var response = await client.GetAsync($"{ListUrl}?productId={productId}");
+        var response = await client.GetAsync($"{ListUrl}?productId={productId}", TestContext.Current.CancellationToken);
 
         response.StatusCode.Should().Be(HttpStatusCode.OK);
 
@@ -39,7 +39,7 @@ public sealed class WorkOrderEndpointTests(CustomWebApplicationFactory factory) 
         var productId = await SeedWorkOrdersAsync(count: 2);
         var client = CreateAuthenticatedClient();
 
-        var response = await client.GetAsync($"{ListUrl}?productId={productId}&pageNumber=999&pageSize=10");
+        var response = await client.GetAsync($"{ListUrl}?productId={productId}&pageNumber=999&pageSize=10", TestContext.Current.CancellationToken);
 
         response.StatusCode.Should().Be(HttpStatusCode.OK);
 
@@ -55,7 +55,7 @@ public sealed class WorkOrderEndpointTests(CustomWebApplicationFactory factory) 
         var client = CreateAuthenticatedClient();
 
         // startDate after endDate violates Rule-02
-        var response = await client.GetAsync($"{ListUrl}?startDate=2014-06-30&endDate=2014-01-01");
+        var response = await client.GetAsync($"{ListUrl}?startDate=2014-06-30&endDate=2014-01-01", TestContext.Current.CancellationToken);
 
         response.StatusCode.Should().Be(HttpStatusCode.BadRequest);
     }
@@ -65,7 +65,7 @@ public sealed class WorkOrderEndpointTests(CustomWebApplicationFactory factory) 
     {
         var client = CreateAnonymousClient();
 
-        var response = await client.GetAsync(ListUrl);
+        var response = await client.GetAsync(ListUrl, TestContext.Current.CancellationToken);
 
         response.StatusCode.Should().Be(HttpStatusCode.Unauthorized);
     }

@@ -26,7 +26,7 @@ public sealed class PersonSearchEndpointTests(CustomWebApplicationFactory factor
     public async Task SearchPersons_Anonymous_Returns401()
     {
         var client = CreateAnonymousClient();
-        var response = await client.GetAsync($"{BaseUrl}?firstName=Ken");
+        var response = await client.GetAsync($"{BaseUrl}?firstName=Ken", TestContext.Current.CancellationToken);
         response.StatusCode.Should().Be(HttpStatusCode.Unauthorized);
     }
 
@@ -38,9 +38,9 @@ public sealed class PersonSearchEndpointTests(CustomWebApplicationFactory factor
     public async Task SearchPersons_NoFilters_Returns400()
     {
         var client = CreateAuthenticatedClient();
-        var response = await client.GetAsync($"{BaseUrl}?page=1&pageSize=10");
+        var response = await client.GetAsync($"{BaseUrl}?page=1&pageSize=10", TestContext.Current.CancellationToken);
         response.StatusCode.Should().Be(HttpStatusCode.BadRequest);
-        var content = await response.Content.ReadAsStringAsync();
+        var content = await response.Content.ReadAsStringAsync(TestContext.Current.CancellationToken);
         content.Should().Contain("At least one search criterion");
     }
 
@@ -48,9 +48,9 @@ public sealed class PersonSearchEndpointTests(CustomWebApplicationFactory factor
     public async Task SearchPersons_PageSizeExceeds100_Returns400()
     {
         var client = CreateAuthenticatedClient();
-        var response = await client.GetAsync($"{BaseUrl}?firstName=Ken&pageSize=101");
+        var response = await client.GetAsync($"{BaseUrl}?firstName=Ken&pageSize=101", TestContext.Current.CancellationToken);
         response.StatusCode.Should().Be(HttpStatusCode.BadRequest);
-        var content = await response.Content.ReadAsStringAsync();
+        var content = await response.Content.ReadAsStringAsync(TestContext.Current.CancellationToken);
         content.ToLower().Should().Contain("pagesize");
     }
 
@@ -58,7 +58,7 @@ public sealed class PersonSearchEndpointTests(CustomWebApplicationFactory factor
     public async Task SearchPersons_PageIsZero_Returns400()
     {
         var client = CreateAuthenticatedClient();
-        var response = await client.GetAsync($"{BaseUrl}?firstName=Ken&page=0");
+        var response = await client.GetAsync($"{BaseUrl}?firstName=Ken&page=0", TestContext.Current.CancellationToken);
         response.StatusCode.Should().Be(HttpStatusCode.BadRequest);
     }
 
@@ -66,7 +66,7 @@ public sealed class PersonSearchEndpointTests(CustomWebApplicationFactory factor
     public async Task SearchPersons_PageIsNegative_Returns400()
     {
         var client = CreateAuthenticatedClient();
-        var response = await client.GetAsync($"{BaseUrl}?firstName=Ken&page=-1");
+        var response = await client.GetAsync($"{BaseUrl}?firstName=Ken&page=-1", TestContext.Current.CancellationToken);
         response.StatusCode.Should().Be(HttpStatusCode.BadRequest);
     }
 
@@ -74,7 +74,7 @@ public sealed class PersonSearchEndpointTests(CustomWebApplicationFactory factor
     public async Task SearchPersons_PageSizeIsZero_Returns400()
     {
         var client = CreateAuthenticatedClient();
-        var response = await client.GetAsync($"{BaseUrl}?firstName=Ken&pageSize=0");
+        var response = await client.GetAsync($"{BaseUrl}?firstName=Ken&pageSize=0", TestContext.Current.CancellationToken);
         response.StatusCode.Should().Be(HttpStatusCode.BadRequest);
     }
 
@@ -86,7 +86,7 @@ public sealed class PersonSearchEndpointTests(CustomWebApplicationFactory factor
     public async Task SearchPersons_ByFirstName_Returns200()
     {
         var client = CreateAuthenticatedClient();
-        var response = await client.GetAsync($"{BaseUrl}?firstName=Integration&page=1&pageSize=10");
+        var response = await client.GetAsync($"{BaseUrl}?firstName=Integration&page=1&pageSize=10", TestContext.Current.CancellationToken);
 
         response.StatusCode.Should().Be(HttpStatusCode.OK);
 
@@ -108,7 +108,7 @@ public sealed class PersonSearchEndpointTests(CustomWebApplicationFactory factor
     public async Task SearchPersons_ByPersonTypeCode_Returns200()
     {
         var client = CreateAuthenticatedClient();
-        var response = await client.GetAsync($"{BaseUrl}?personTypeCode=EM&page=1&pageSize=10");
+        var response = await client.GetAsync($"{BaseUrl}?personTypeCode=EM&page=1&pageSize=10", TestContext.Current.CancellationToken);
 
         response.StatusCode.Should().Be(HttpStatusCode.OK);
 
@@ -127,7 +127,7 @@ public sealed class PersonSearchEndpointTests(CustomWebApplicationFactory factor
     public async Task SearchPersons_WithMultipleFilters_Returns200()
     {
         var client = CreateAuthenticatedClient();
-        var response = await client.GetAsync($"{BaseUrl}?firstName=Integration&personTypeCode=EM&page=1&pageSize=10");
+        var response = await client.GetAsync($"{BaseUrl}?firstName=Integration&personTypeCode=EM&page=1&pageSize=10", TestContext.Current.CancellationToken);
 
         response.StatusCode.Should().Be(HttpStatusCode.OK);
 
@@ -149,7 +149,7 @@ public sealed class PersonSearchEndpointTests(CustomWebApplicationFactory factor
     public async Task SearchPersons_FirstPage_Returns200()
     {
         var client = CreateAuthenticatedClient();
-        var response = await client.GetAsync($"{BaseUrl}?firstName=Integration&page=1&pageSize=5");
+        var response = await client.GetAsync($"{BaseUrl}?firstName=Integration&page=1&pageSize=5", TestContext.Current.CancellationToken);
 
         response.StatusCode.Should().Be(HttpStatusCode.OK);
 
@@ -168,7 +168,7 @@ public sealed class PersonSearchEndpointTests(CustomWebApplicationFactory factor
     public async Task SearchPersons_NoMatches_Returns200WithEmptyResults()
     {
         var client = CreateAuthenticatedClient();
-        var response = await client.GetAsync($"{BaseUrl}?firstName=ZZZZZZZZZZZZZZZZZZZZ&page=1&pageSize=10");
+        var response = await client.GetAsync($"{BaseUrl}?firstName=ZZZZZZZZZZZZZZZZZZZZ&page=1&pageSize=10", TestContext.Current.CancellationToken);
 
         response.StatusCode.Should().Be(HttpStatusCode.OK);
 
@@ -187,10 +187,10 @@ public sealed class PersonSearchEndpointTests(CustomWebApplicationFactory factor
     {
         var client = CreateAuthenticatedClient();
 
-        var responseLower = await client.GetAsync($"{BaseUrl}?firstName=integration&page=1&pageSize=10");
+        var responseLower = await client.GetAsync($"{BaseUrl}?firstName=integration&page=1&pageSize=10", TestContext.Current.CancellationToken);
         var resultLower = await DeserializeAsync<SearchPersonsQueryResult>(responseLower);
 
-        var responseMixed = await client.GetAsync($"{BaseUrl}?firstName=Integration&page=1&pageSize=10");
+        var responseMixed = await client.GetAsync($"{BaseUrl}?firstName=Integration&page=1&pageSize=10", TestContext.Current.CancellationToken);
         var resultMixed = await DeserializeAsync<SearchPersonsQueryResult>(responseMixed);
 
         resultLower?.TotalCount.Should().Be(resultMixed?.TotalCount);
@@ -200,7 +200,7 @@ public sealed class PersonSearchEndpointTests(CustomWebApplicationFactory factor
     public async Task SearchPersons_ByLastName_Returns200()
     {
         var client = CreateAuthenticatedClient();
-        var response = await client.GetAsync($"{BaseUrl}?lastName=TestPerson&page=1&pageSize=10");
+        var response = await client.GetAsync($"{BaseUrl}?lastName=TestPerson&page=1&pageSize=10", TestContext.Current.CancellationToken);
 
         response.StatusCode.Should().Be(HttpStatusCode.OK);
 
@@ -219,7 +219,7 @@ public sealed class PersonSearchEndpointTests(CustomWebApplicationFactory factor
     public async Task SearchPersons_ResponseStructure_ContainsAllRequiredFields()
     {
         var client = CreateAuthenticatedClient();
-        var response = await client.GetAsync($"{BaseUrl}?firstName=Integration&page=1&pageSize=10");
+        var response = await client.GetAsync($"{BaseUrl}?firstName=Integration&page=1&pageSize=10", TestContext.Current.CancellationToken);
 
         response.StatusCode.Should().Be(HttpStatusCode.OK);
 
@@ -284,7 +284,7 @@ public sealed class PersonSearchEndpointTests(CustomWebApplicationFactory factor
         });
 
         var client = CreateAuthenticatedClient();
-        var response = await client.GetAsync($"{BaseUrl}?firstName=SearchTest&page=1&pageSize=10");
+        var response = await client.GetAsync($"{BaseUrl}?firstName=SearchTest&page=1&pageSize=10", TestContext.Current.CancellationToken);
 
         response.StatusCode.Should().Be(HttpStatusCode.OK);
 
@@ -301,7 +301,7 @@ public sealed class PersonSearchEndpointTests(CustomWebApplicationFactory factor
     public async Task SearchPersons_MultiplePersonTypes_Returns200()
     {
         var client = CreateAuthenticatedClient();
-        var response = await client.GetAsync($"{BaseUrl}?personTypeCode=EM&page=1&pageSize=5");
+        var response = await client.GetAsync($"{BaseUrl}?personTypeCode=EM&page=1&pageSize=5", TestContext.Current.CancellationToken);
 
         response.StatusCode.Should().Be(HttpStatusCode.OK);
 
@@ -319,7 +319,7 @@ public sealed class PersonSearchEndpointTests(CustomWebApplicationFactory factor
     public async Task SearchPersons_PartialNameMatch_Returns200()
     {
         var client = CreateAuthenticatedClient();
-        var response = await client.GetAsync($"{BaseUrl}?firstName=Test&page=1&pageSize=10");
+        var response = await client.GetAsync($"{BaseUrl}?firstName=Test&page=1&pageSize=10", TestContext.Current.CancellationToken);
 
         response.StatusCode.Should().Be(HttpStatusCode.OK);
 

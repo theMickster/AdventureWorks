@@ -42,7 +42,7 @@ public sealed class ReadStoreCustomersControllerTests : UnitTestBase
     [InlineData(-999)]
     public async Task GetAsync_invalid_storeId_returns_bad_request(int storeId)
     {
-        var result = await _sut.GetAsync(storeId, new StoreCustomerParameter());
+        var result = await _sut.GetAsync(storeId, new StoreCustomerParameter(), cancellationToken: TestContext.Current.CancellationToken);
         var objectResult = result as BadRequestObjectResult;
 
         using (new AssertionScope())
@@ -59,7 +59,7 @@ public sealed class ReadStoreCustomersControllerTests : UnitTestBase
         _mockMediator.Setup(x => x.Send(It.IsAny<ReadStoreCustomerListQuery>(), It.IsAny<CancellationToken>()))
             .ReturnsAsync((StoreCustomerSearchResultModel?)null);
 
-        var result = await _sut.GetAsync(2534, new StoreCustomerParameter());
+        var result = await _sut.GetAsync(2534, new StoreCustomerParameter(), cancellationToken: TestContext.Current.CancellationToken);
 
         var notFound = result as NotFoundObjectResult;
 
@@ -96,7 +96,7 @@ public sealed class ReadStoreCustomersControllerTests : UnitTestBase
         _mockMediator.Setup(x => x.Send(It.IsAny<ReadStoreCustomerListQuery>(), It.IsAny<CancellationToken>()))
             .ReturnsAsync(output);
 
-        var result = await _sut.GetAsync(2534, new StoreCustomerParameter());
+        var result = await _sut.GetAsync(2534, new StoreCustomerParameter(), cancellationToken: TestContext.Current.CancellationToken);
 
         var okResult = result as OkObjectResult;
 
@@ -117,7 +117,7 @@ public sealed class ReadStoreCustomersControllerTests : UnitTestBase
         _mockMediator.Setup(x => x.Send(It.IsAny<ReadStoreCustomerListQuery>(), It.IsAny<CancellationToken>()))
             .ReturnsAsync((StoreCustomerSearchResultModel?)null);
 
-        await _sut.GetAsync(storeId, parameters);
+        await _sut.GetAsync(storeId, parameters, cancellationToken: TestContext.Current.CancellationToken);
 
         _mockMediator.Verify(x => x.Send(
             It.Is<ReadStoreCustomerListQuery>(q => q.StoreId == storeId && q.Parameters == parameters),

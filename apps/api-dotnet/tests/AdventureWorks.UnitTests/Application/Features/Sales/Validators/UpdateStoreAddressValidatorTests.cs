@@ -30,7 +30,7 @@ public sealed class UpdateStoreAddressValidatorTests : UnitTestBase
     {
         var model = new StoreAddressUpdateModel { AddressTypeId = addressTypeId };
 
-        var result = await _sut.TestValidateAsync(model);
+        var result = await _sut.TestValidateAsync(model, cancellationToken: TestContext.Current.CancellationToken);
 
         result.ShouldHaveValidationErrorFor(x => x.AddressTypeId).WithErrorCode("Rule-01");
     }
@@ -43,7 +43,7 @@ public sealed class UpdateStoreAddressValidatorTests : UnitTestBase
 
         var model = new StoreAddressUpdateModel { AddressTypeId = 999 };
 
-        var result = await _sut.TestValidateAsync(model);
+        var result = await _sut.TestValidateAsync(model, cancellationToken: TestContext.Current.CancellationToken);
 
         result.ShouldHaveValidationErrorFor(x => x.AddressTypeId).WithErrorCode("Rule-01");
     }
@@ -56,7 +56,7 @@ public sealed class UpdateStoreAddressValidatorTests : UnitTestBase
 
         var model = new StoreAddressUpdateModel { AddressTypeId = 2 };
 
-        var result = await _sut.TestValidateAsync(model);
+        var result = await _sut.TestValidateAsync(model, cancellationToken: TestContext.Current.CancellationToken);
 
         result.ShouldNotHaveValidationErrorFor(x => x.AddressTypeId);
     }

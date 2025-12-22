@@ -40,7 +40,7 @@ public sealed class CreateProductReviewControllerTests : UnitTestBase
     [Fact]
     public async Task CreateProductReviewAsync_returns_bad_request_when_model_is_null_Async()
     {
-        var result = await _sut.CreateProductReviewAsync(null);
+        var result = await _sut.CreateProductReviewAsync(null, cancellationToken: TestContext.Current.CancellationToken);
 
         var objectResult = result as BadRequestObjectResult;
 
@@ -69,7 +69,7 @@ public sealed class CreateProductReviewControllerTests : UnitTestBase
         _mockMediator.Setup(x => x.Send(It.IsAny<CreateProductReviewCommand>(), It.IsAny<CancellationToken>()))
             .ReturnsAsync(newReviewId);
 
-        var result = await _sut.CreateProductReviewAsync(model);
+        var result = await _sut.CreateProductReviewAsync(model, cancellationToken: TestContext.Current.CancellationToken);
 
         var createdResult = result as CreatedAtRouteResult;
 

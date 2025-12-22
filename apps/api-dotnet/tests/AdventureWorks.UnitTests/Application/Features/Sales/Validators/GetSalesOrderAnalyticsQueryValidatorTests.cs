@@ -15,7 +15,7 @@ public sealed class GetSalesOrderAnalyticsQueryValidatorTests
         var query = new GetSalesOrderAnalyticsQuery { Filter = null };
 
         // Act
-        var result = await _sut.ValidateAsync(query);
+        var result = await _sut.ValidateAsync(query, cancellation:TestContext.Current.CancellationToken);
 
         // Assert
         result.IsValid.Should().BeTrue();
@@ -38,7 +38,7 @@ public sealed class GetSalesOrderAnalyticsQueryValidatorTests
         };
 
         // Act
-        var result = await _sut.ValidateAsync(query);
+        var result = await _sut.ValidateAsync(query, cancellation:TestContext.Current.CancellationToken);
 
         // Assert
         result.IsValid.Should().BeTrue();
@@ -58,7 +58,7 @@ public sealed class GetSalesOrderAnalyticsQueryValidatorTests
         };
 
         // Act
-        var result = await _sut.ValidateAsync(query);
+        var result = await _sut.ValidateAsync(query, cancellation:TestContext.Current.CancellationToken);
 
         // Assert
         result.IsValid.Should().BeFalse();
@@ -77,7 +77,7 @@ public sealed class GetSalesOrderAnalyticsQueryValidatorTests
         };
 
         // Act
-        var result = await _sut.ValidateAsync(query);
+        var result = await _sut.ValidateAsync(query, cancellation:TestContext.Current.CancellationToken);
 
         // Assert
         result.IsValid.Should().BeFalse();
@@ -96,7 +96,7 @@ public sealed class GetSalesOrderAnalyticsQueryValidatorTests
         };
 
         // Act
-        var result = await _sut.ValidateAsync(query);
+        var result = await _sut.ValidateAsync(query, cancellation:TestContext.Current.CancellationToken);
 
         // Assert
         result.IsValid.Should().BeFalse();
@@ -115,7 +115,7 @@ public sealed class GetSalesOrderAnalyticsQueryValidatorTests
         };
 
         // Act
-        var result = await _sut.ValidateAsync(query);
+        var result = await _sut.ValidateAsync(query, cancellation:TestContext.Current.CancellationToken);
 
         // Assert
         result.IsValid.Should().BeFalse();
@@ -135,7 +135,7 @@ public sealed class GetSalesOrderAnalyticsQueryValidatorTests
         };
 
         // Act
-        var result = await _sut.ValidateAsync(query);
+        var result = await _sut.ValidateAsync(query, cancellation:TestContext.Current.CancellationToken);
 
         // Assert
         result.IsValid.Should().BeTrue();
@@ -151,7 +151,7 @@ public sealed class GetSalesOrderAnalyticsQueryValidatorTests
         };
 
         // Act
-        var result = await _sut.ValidateAsync(query);
+        var result = await _sut.ValidateAsync(query, cancellation:TestContext.Current.CancellationToken);
 
         // Assert
         result.IsValid.Should().BeFalse();
@@ -168,7 +168,7 @@ public sealed class GetSalesOrderAnalyticsQueryValidatorTests
         };
 
         // Act
-        var result = await _sut.ValidateAsync(query);
+        var result = await _sut.ValidateAsync(query, cancellation:TestContext.Current.CancellationToken);
 
         // Assert
         result.IsValid.Should().BeTrue();

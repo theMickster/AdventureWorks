@@ -15,7 +15,7 @@ public sealed class PersonPhoneEndpointTests(CustomWebApplicationFactory factory
     {
         var client = CreateAnonymousClient();
 
-        var response = await client.GetAsync(BaseUrl);
+        var response = await client.GetAsync(BaseUrl, TestContext.Current.CancellationToken);
 
         response.StatusCode.Should().Be(HttpStatusCode.Unauthorized);
     }
@@ -25,7 +25,7 @@ public sealed class PersonPhoneEndpointTests(CustomWebApplicationFactory factory
     {
         var client = CreateAuthenticatedClient();
 
-        var response = await client.GetAsync(BaseUrl);
+        var response = await client.GetAsync(BaseUrl, TestContext.Current.CancellationToken);
 
         response.StatusCode.Should().Be(HttpStatusCode.OK);
         var phones = await DeserializeAsync<List<PersonPhoneModel>>(response);
@@ -37,7 +37,7 @@ public sealed class PersonPhoneEndpointTests(CustomWebApplicationFactory factory
     {
         var client = CreateAuthenticatedClient();
 
-        var response = await client.GetAsync(NonExistentPersonUrl);
+        var response = await client.GetAsync(NonExistentPersonUrl, TestContext.Current.CancellationToken);
 
         response.StatusCode.Should().Be(HttpStatusCode.NotFound);
     }
@@ -48,7 +48,7 @@ public sealed class PersonPhoneEndpointTests(CustomWebApplicationFactory factory
         var client = CreateAnonymousClient();
         var body = new { phoneNumber = "555-000-0001", phoneNumberTypeId = TestConstants.SeededPhoneNumberTypeId };
 
-        var response = await client.PostAsJsonAsync(BaseUrl, body);
+        var response = await client.PostAsJsonAsync(BaseUrl, body, cancellationToken: TestContext.Current.CancellationToken);
 
         response.StatusCode.Should().Be(HttpStatusCode.Unauthorized);
     }
@@ -60,7 +60,7 @@ public sealed class PersonPhoneEndpointTests(CustomWebApplicationFactory factory
         var uniquePhone = $"555-{Guid.NewGuid():N}"[..14];
         var body = new { phoneNumber = uniquePhone, phoneNumberTypeId = TestConstants.SeededPhoneNumberTypeId };
 
-        var response = await client.PostAsJsonAsync(BaseUrl, body);
+        var response = await client.PostAsJsonAsync(BaseUrl, body, cancellationToken: TestContext.Current.CancellationToken);
 
         response.StatusCode.Should().Be(HttpStatusCode.Created);
         response.Headers.Location.Should().NotBeNull();
@@ -72,7 +72,7 @@ public sealed class PersonPhoneEndpointTests(CustomWebApplicationFactory factory
         var client = CreateAuthenticatedClient();
         var body = new { phoneNumber = "555-000-0099", phoneNumberTypeId = TestConstants.SeededPhoneNumberTypeId };
 
-        var response = await client.PostAsJsonAsync(NonExistentPersonUrl, body);
+        var response = await client.PostAsJsonAsync(NonExistentPersonUrl, body, cancellationToken: TestContext.Current.CancellationToken);
 
         response.StatusCode.Should().Be(HttpStatusCode.NotFound);
     }
@@ -83,7 +83,7 @@ public sealed class PersonPhoneEndpointTests(CustomWebApplicationFactory factory
         var client = CreateAuthenticatedClient();
         var body = new { phoneNumber = string.Empty, phoneNumberTypeId = TestConstants.SeededPhoneNumberTypeId };
 
-        var response = await client.PostAsJsonAsync(BaseUrl, body);
+        var response = await client.PostAsJsonAsync(BaseUrl, body, cancellationToken: TestContext.Current.CancellationToken);
 
         response.StatusCode.Should().Be(HttpStatusCode.BadRequest);
     }
@@ -94,7 +94,7 @@ public sealed class PersonPhoneEndpointTests(CustomWebApplicationFactory factory
         var client = CreateAuthenticatedClient();
         var body = new { phoneNumber = new string('1', 26), phoneNumberTypeId = TestConstants.SeededPhoneNumberTypeId };
 
-        var response = await client.PostAsJsonAsync(BaseUrl, body);
+        var response = await client.PostAsJsonAsync(BaseUrl, body, cancellationToken: TestContext.Current.CancellationToken);
 
         response.StatusCode.Should().Be(HttpStatusCode.BadRequest);
     }
@@ -105,7 +105,7 @@ public sealed class PersonPhoneEndpointTests(CustomWebApplicationFactory factory
         var client = CreateAuthenticatedClient();
         var body = new { phoneNumber = "555-000-0001", phoneNumberTypeId = 9999 };
 
-        var response = await client.PostAsJsonAsync(BaseUrl, body);
+        var response = await client.PostAsJsonAsync(BaseUrl, body, cancellationToken: TestContext.Current.CancellationToken);
 
         response.StatusCode.Should().Be(HttpStatusCode.BadRequest);
     }
@@ -116,7 +116,7 @@ public sealed class PersonPhoneEndpointTests(CustomWebApplicationFactory factory
         var client = CreateAnonymousClient();
         var body = new { phoneNumber = "555-000-9999" };
 
-        var response = await client.PutAsJsonAsync($"{BaseUrl}/9999", body);
+        var response = await client.PutAsJsonAsync($"{BaseUrl}/9999", body, cancellationToken: TestContext.Current.CancellationToken);
 
         response.StatusCode.Should().Be(HttpStatusCode.Unauthorized);
     }
@@ -127,7 +127,7 @@ public sealed class PersonPhoneEndpointTests(CustomWebApplicationFactory factory
         var client = CreateAuthenticatedClient();
         var body = new { phoneNumber = "555-000-9999" };
 
-        var response = await client.PutAsJsonAsync($"{BaseUrl}/9999", body);
+        var response = await client.PutAsJsonAsync($"{BaseUrl}/9999", body, cancellationToken: TestContext.Current.CancellationToken);
 
         response.StatusCode.Should().Be(HttpStatusCode.NotFound);
     }
@@ -137,7 +137,7 @@ public sealed class PersonPhoneEndpointTests(CustomWebApplicationFactory factory
     {
         var client = CreateAnonymousClient();
 
-        var response = await client.DeleteAsync($"{BaseUrl}/9999");
+        var response = await client.DeleteAsync($"{BaseUrl}/9999", TestContext.Current.CancellationToken);
 
         response.StatusCode.Should().Be(HttpStatusCode.Unauthorized);
     }
@@ -147,7 +147,7 @@ public sealed class PersonPhoneEndpointTests(CustomWebApplicationFactory factory
     {
         var client = CreateAuthenticatedClient();
 
-        var response = await client.DeleteAsync($"{BaseUrl}/9999");
+        var response = await client.DeleteAsync($"{BaseUrl}/9999", TestContext.Current.CancellationToken);
 
         response.StatusCode.Should().Be(HttpStatusCode.NotFound);
     }

@@ -15,7 +15,7 @@ public sealed class TransferEmployeeValidatorTests : UnitTestBase
         var model = GetValidTransferModel();
         model.DepartmentId = 0;
 
-        var result = await _sut.TestValidateAsync(model);
+        var result = await _sut.TestValidateAsync(model, cancellationToken: TestContext.Current.CancellationToken);
 
         result.ShouldHaveValidationErrorFor(x => x.DepartmentId);
     }
@@ -26,7 +26,7 @@ public sealed class TransferEmployeeValidatorTests : UnitTestBase
         var model = GetValidTransferModel();
         model.ShiftId = 0;
 
-        var result = await _sut.TestValidateAsync(model);
+        var result = await _sut.TestValidateAsync(model, cancellationToken: TestContext.Current.CancellationToken);
 
         result.ShouldHaveValidationErrorFor(x => x.ShiftId)
             .WithErrorCode("Rule-02");
@@ -38,7 +38,7 @@ public sealed class TransferEmployeeValidatorTests : UnitTestBase
         var model = GetValidTransferModel();
         model.ShiftId = 4;
 
-        var result = await _sut.TestValidateAsync(model);
+        var result = await _sut.TestValidateAsync(model, cancellationToken: TestContext.Current.CancellationToken);
 
         result.ShouldHaveValidationErrorFor(x => x.ShiftId)
             .WithErrorCode("Rule-02");
@@ -49,7 +49,7 @@ public sealed class TransferEmployeeValidatorTests : UnitTestBase
     {
         var model = GetValidTransferModel();
 
-        var result = await _sut.TestValidateAsync(model);
+        var result = await _sut.TestValidateAsync(model, cancellationToken: TestContext.Current.CancellationToken);
 
         result.ShouldNotHaveAnyValidationErrors();
     }

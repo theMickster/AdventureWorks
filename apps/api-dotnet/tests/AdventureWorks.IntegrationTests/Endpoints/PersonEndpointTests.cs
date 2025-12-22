@@ -16,7 +16,7 @@ public sealed class PersonEndpointTests(CustomWebApplicationFactory factory) : I
     {
         var client = CreateAnonymousClient();
 
-        var response = await client.GetAsync(BaseUrl);
+        var response = await client.GetAsync(BaseUrl, TestContext.Current.CancellationToken);
 
         response.StatusCode.Should().Be(HttpStatusCode.Unauthorized);
     }
@@ -26,7 +26,7 @@ public sealed class PersonEndpointTests(CustomWebApplicationFactory factory) : I
     {
         var client = CreateAuthenticatedClient();
 
-        var response = await client.GetAsync(BaseUrl);
+        var response = await client.GetAsync(BaseUrl, TestContext.Current.CancellationToken);
 
         response.StatusCode.Should().Be(HttpStatusCode.OK);
 
@@ -45,7 +45,7 @@ public sealed class PersonEndpointTests(CustomWebApplicationFactory factory) : I
     {
         var client = CreateAuthenticatedClient();
 
-        var response = await client.GetAsync(NonExistentPersonUrl);
+        var response = await client.GetAsync(NonExistentPersonUrl, TestContext.Current.CancellationToken);
 
         response.StatusCode.Should().Be(HttpStatusCode.NotFound);
     }
@@ -55,7 +55,7 @@ public sealed class PersonEndpointTests(CustomWebApplicationFactory factory) : I
     {
         var client = CreateAuthenticatedClient();
 
-        var response = await client.GetAsync(InvalidPersonUrl);
+        var response = await client.GetAsync(InvalidPersonUrl, TestContext.Current.CancellationToken);
 
         response.StatusCode.Should().Be(HttpStatusCode.BadRequest);
     }

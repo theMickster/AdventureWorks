@@ -56,7 +56,7 @@ public sealed class ReadCurrencyControllerTests : UnitTestBase
                 ModifiedDate = new DateTime(2026, 5, 4, 0, 0, 0, DateTimeKind.Utc)
             });
 
-        var result = await _sut.GetByIdAsync("USD");
+        var result = await _sut.GetByIdAsync("USD", cancellationToken: TestContext.Current.CancellationToken);
         var objectResult = result as OkObjectResult;
 
         using (new AssertionScope())
@@ -73,7 +73,7 @@ public sealed class ReadCurrencyControllerTests : UnitTestBase
         _mockMediator.Setup(x => x.Send(It.IsAny<ReadCurrencyQuery>(), It.IsAny<CancellationToken>()))
             .ReturnsAsync((CurrencyModel)null!);
 
-        var result = await _sut.GetByIdAsync("ZZZ");
+        var result = await _sut.GetByIdAsync("ZZZ", cancellationToken: TestContext.Current.CancellationToken);
         var objectResult = result as NotFoundObjectResult;
         var outputModel = objectResult!.Value as string;
 
@@ -91,7 +91,7 @@ public sealed class ReadCurrencyControllerTests : UnitTestBase
     [InlineData("\t")]
     public async Task GetById_returns_bad_request_Async(string code)
     {
-        var result = await _sut.GetByIdAsync(code);
+        var result = await _sut.GetByIdAsync(code, cancellationToken: TestContext.Current.CancellationToken);
         var objectResult = result as BadRequestObjectResult;
         var outputModel = objectResult!.Value as string;
 
@@ -125,7 +125,7 @@ public sealed class ReadCurrencyControllerTests : UnitTestBase
                     }
                 });
 
-        var result = await _sut.GetListAsync();
+        var result = await _sut.GetListAsync(cancellationToken: TestContext.Current.CancellationToken);
         var objectResult = result as OkObjectResult;
 
         using (new AssertionScope())
@@ -142,7 +142,7 @@ public sealed class ReadCurrencyControllerTests : UnitTestBase
                 x => x.Send(It.IsAny<ReadCurrencyListQuery>(), It.IsAny<CancellationToken>()))
             .ReturnsAsync(new List<CurrencyModel>());
 
-        var result = await _sut.GetListAsync();
+        var result = await _sut.GetListAsync(cancellationToken: TestContext.Current.CancellationToken);
         var objectResult = result as NotFoundObjectResult;
         var outputModel = objectResult!.Value as string;
 

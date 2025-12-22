@@ -42,7 +42,7 @@ public sealed class ScrapReasonRepositoryTests : PersistenceUnitTestBase
     [Fact]
     public async Task ListAllAsync_returns_correct_count()
     {
-        var result = await _sut.ListAllAsync();
+        var result = await _sut.ListAllAsync(cancellationToken: TestContext.Current.CancellationToken);
 
         using (new AssertionScope())
         {
@@ -55,7 +55,7 @@ public sealed class ScrapReasonRepositoryTests : PersistenceUnitTestBase
     [Fact]
     public async Task ListAllAsync_uses_no_tracking()
     {
-        var result = await _sut.ListAllAsync();
+        var result = await _sut.ListAllAsync(cancellationToken: TestContext.Current.CancellationToken);
 
         var entry = DbContext.Entry(result[0]);
         entry.State.Should().Be(EntityState.Detached);
@@ -66,7 +66,7 @@ public sealed class ScrapReasonRepositoryTests : PersistenceUnitTestBase
     [InlineData(2)]
     public async Task GetByIdAsync_returns_correct_entity(int id)
     {
-        var result = await _sut.GetByIdAsync(id);
+        var result = await _sut.GetByIdAsync(id, cancellationToken: TestContext.Current.CancellationToken);
 
         using (new AssertionScope())
         {
@@ -78,7 +78,7 @@ public sealed class ScrapReasonRepositoryTests : PersistenceUnitTestBase
     [Fact]
     public async Task GetByIdAsync_returns_null_for_nonexistent_id()
     {
-        var result = await _sut.GetByIdAsync(9999);
+        var result = await _sut.GetByIdAsync(9999, cancellationToken: TestContext.Current.CancellationToken);
 
         result.Should().BeNull();
     }
@@ -86,7 +86,7 @@ public sealed class ScrapReasonRepositoryTests : PersistenceUnitTestBase
     [Fact]
     public async Task GetByIdAsync_uses_no_tracking()
     {
-        var result = await _sut.GetByIdAsync(1);
+        var result = await _sut.GetByIdAsync(1, cancellationToken: TestContext.Current.CancellationToken);
 
         var entry = DbContext.Entry(result!);
         entry.State.Should().Be(EntityState.Detached);

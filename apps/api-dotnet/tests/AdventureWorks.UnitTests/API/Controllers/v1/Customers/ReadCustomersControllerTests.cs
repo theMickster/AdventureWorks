@@ -62,7 +62,7 @@ public sealed class ReadCustomersControllerTests : UnitTestBase
         _mockMediator.Setup(x => x.Send(It.IsAny<ReadCustomerListQuery>(), It.IsAny<CancellationToken>()))
             .ReturnsAsync(output);
 
-        var result = await _sut.GetAsync(new CustomerParameter());
+        var result = await _sut.GetAsync(new CustomerParameter(), cancellationToken: TestContext.Current.CancellationToken);
 
         var okResult = result as OkObjectResult;
 
@@ -82,7 +82,7 @@ public sealed class ReadCustomersControllerTests : UnitTestBase
         _mockMediator.Setup(x => x.Send(It.IsAny<ReadCustomerListQuery>(), It.IsAny<CancellationToken>()))
             .ReturnsAsync(new CustomerSearchResultModel());
 
-        await _sut.GetAsync(parameters);
+        await _sut.GetAsync(parameters, cancellationToken: TestContext.Current.CancellationToken);
 
         _mockMediator.Verify(x => x.Send(
             It.Is<ReadCustomerListQuery>(q => q.Parameters == parameters),

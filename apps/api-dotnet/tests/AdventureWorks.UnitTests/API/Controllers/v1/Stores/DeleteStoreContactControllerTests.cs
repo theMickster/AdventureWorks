@@ -41,7 +41,7 @@ public sealed class DeleteStoreContactControllerTests : UnitTestBase
     [InlineData(2534, 100, -7, "A valid contact type id must be specified.")]
     public async Task DeleteAsync_invalid_route_values_return_bad_requestAsync(int storeId, int personId, int contactTypeId, string expectedMessage)
     {
-        var result = await _sut.DeleteAsync(storeId, personId, contactTypeId);
+        var result = await _sut.DeleteAsync(storeId, personId, contactTypeId, cancellationToken: TestContext.Current.CancellationToken);
 
         var objectResult = result as BadRequestObjectResult;
 
@@ -72,7 +72,7 @@ public sealed class DeleteStoreContactControllerTests : UnitTestBase
             .Setup(x => x.Send(It.IsAny<DeleteStoreContactCommand>(), It.IsAny<CancellationToken>()))
             .ReturnsAsync(Unit.Value);
 
-        var result = await _sut.DeleteAsync(2534, 100, 11);
+        var result = await _sut.DeleteAsync(2534, 100, 11, cancellationToken: TestContext.Current.CancellationToken);
 
         var noContent = result as NoContentResult;
 

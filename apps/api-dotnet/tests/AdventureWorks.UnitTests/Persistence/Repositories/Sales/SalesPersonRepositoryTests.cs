@@ -73,9 +73,9 @@ public sealed class SalesPersonRepositoryTests : PersistenceUnitTestBase
         var salesPerson = SalesDomainFixtures.GetCompleteSalesPersonEntity(
             100, "Test", "User", "Sales Rep", 1, "Northwest", "test.user@adventure-works.com");
         DbContext.SalesPersons.Add(salesPerson);
-        await DbContext.SaveChangesAsync();
+        await DbContext.SaveChangesAsync(cancellationToken: TestContext.Current.CancellationToken);
 
-        var result = await _sut.GetSalesPersonByIdAsync(100);
+        var result = await _sut.GetSalesPersonByIdAsync(100, cancellationToken: TestContext.Current.CancellationToken);
 
         using (new AssertionScope())
         {
@@ -95,7 +95,7 @@ public sealed class SalesPersonRepositoryTests : PersistenceUnitTestBase
     [Fact]
     public async Task GetSalesPersonByIdAsync_returns_null_for_nonexistent_id()
     {
-        var result = await _sut.GetSalesPersonByIdAsync(99999);
+        var result = await _sut.GetSalesPersonByIdAsync(99999, cancellationToken: TestContext.Current.CancellationToken);
 
         result.Should().BeNull();
     }
@@ -105,9 +105,9 @@ public sealed class SalesPersonRepositoryTests : PersistenceUnitTestBase
     {
         var salesPerson = SalesDomainFixtures.GetCompleteSalesPersonEntity();
         DbContext.SalesPersons.Add(salesPerson);
-        await DbContext.SaveChangesAsync();
+        await DbContext.SaveChangesAsync(cancellationToken: TestContext.Current.CancellationToken);
 
-        var result = await _sut.GetSalesPersonByIdAsync(100);
+        var result = await _sut.GetSalesPersonByIdAsync(100, cancellationToken: TestContext.Current.CancellationToken);
 
         var entry = DbContext.Entry(result!);
         entry.State.Should().Be(EntityState.Detached);
@@ -122,11 +122,11 @@ public sealed class SalesPersonRepositoryTests : PersistenceUnitTestBase
     {
         var salesPersons = SalesDomainFixtures.GetSalesPersonListForPaging();
         DbContext.SalesPersons.AddRange(salesPersons);
-        await DbContext.SaveChangesAsync();
+        await DbContext.SaveChangesAsync(cancellationToken: TestContext.Current.CancellationToken);
 
         var parameters = new SalesPersonParameter { PageNumber = 1, PageSize = 3 };
 
-        var (result, totalCount) = await _sut.GetSalesPersonsAsync(parameters);
+        var (result, totalCount) = await _sut.GetSalesPersonsAsync(parameters, cancellationToken: TestContext.Current.CancellationToken);
 
         using (new AssertionScope())
         {
@@ -146,11 +146,11 @@ public sealed class SalesPersonRepositoryTests : PersistenceUnitTestBase
     {
         var salesPersons = SalesDomainFixtures.GetSalesPersonListForPaging();
         DbContext.SalesPersons.AddRange(salesPersons);
-        await DbContext.SaveChangesAsync();
+        await DbContext.SaveChangesAsync(cancellationToken: TestContext.Current.CancellationToken);
 
         var parameters = new SalesPersonParameter { PageNumber = 2, PageSize = 2 };
 
-        var (result, totalCount) = await _sut.GetSalesPersonsAsync(parameters);
+        var (result, totalCount) = await _sut.GetSalesPersonsAsync(parameters, cancellationToken: TestContext.Current.CancellationToken);
 
         using (new AssertionScope())
         {
@@ -166,7 +166,7 @@ public sealed class SalesPersonRepositoryTests : PersistenceUnitTestBase
     {
         var salesPersons = SalesDomainFixtures.GetSalesPersonListForPaging();
         DbContext.SalesPersons.AddRange(salesPersons);
-        await DbContext.SaveChangesAsync();
+        await DbContext.SaveChangesAsync(cancellationToken: TestContext.Current.CancellationToken);
 
         var parameters = new SalesPersonParameter
         {
@@ -176,7 +176,7 @@ public sealed class SalesPersonRepositoryTests : PersistenceUnitTestBase
             SortOrder = SortedResultConstants.Ascending
         };
 
-        var (result, _) = await _sut.GetSalesPersonsAsync(parameters);
+        var (result, _) = await _sut.GetSalesPersonsAsync(parameters, cancellationToken: TestContext.Current.CancellationToken);
 
         using (new AssertionScope())
         {
@@ -191,7 +191,7 @@ public sealed class SalesPersonRepositoryTests : PersistenceUnitTestBase
     {
         var salesPersons = SalesDomainFixtures.GetSalesPersonListForPaging();
         DbContext.SalesPersons.AddRange(salesPersons);
-        await DbContext.SaveChangesAsync();
+        await DbContext.SaveChangesAsync(cancellationToken: TestContext.Current.CancellationToken);
 
         var parameters = new SalesPersonParameter
         {
@@ -201,7 +201,7 @@ public sealed class SalesPersonRepositoryTests : PersistenceUnitTestBase
             SortOrder = SortedResultConstants.Descending
         };
 
-        var (result, _) = await _sut.GetSalesPersonsAsync(parameters);
+        var (result, _) = await _sut.GetSalesPersonsAsync(parameters, cancellationToken: TestContext.Current.CancellationToken);
 
         using (new AssertionScope())
         {
@@ -216,7 +216,7 @@ public sealed class SalesPersonRepositoryTests : PersistenceUnitTestBase
     {
         var salesPersons = SalesDomainFixtures.GetSalesPersonListForPaging();
         DbContext.SalesPersons.AddRange(salesPersons);
-        await DbContext.SaveChangesAsync();
+        await DbContext.SaveChangesAsync(cancellationToken: TestContext.Current.CancellationToken);
 
         var parameters = new SalesPersonParameter
         {
@@ -226,7 +226,7 @@ public sealed class SalesPersonRepositoryTests : PersistenceUnitTestBase
             SortOrder = SortedResultConstants.Ascending
         };
 
-        var (result, _) = await _sut.GetSalesPersonsAsync(parameters);
+        var (result, _) = await _sut.GetSalesPersonsAsync(parameters, cancellationToken: TestContext.Current.CancellationToken);
 
         using (new AssertionScope())
         {
@@ -241,7 +241,7 @@ public sealed class SalesPersonRepositoryTests : PersistenceUnitTestBase
     {
         var salesPersons = SalesDomainFixtures.GetSalesPersonListForPaging();
         DbContext.SalesPersons.AddRange(salesPersons);
-        await DbContext.SaveChangesAsync();
+        await DbContext.SaveChangesAsync(cancellationToken: TestContext.Current.CancellationToken);
 
         var parameters = new SalesPersonParameter
         {
@@ -251,7 +251,7 @@ public sealed class SalesPersonRepositoryTests : PersistenceUnitTestBase
             SortOrder = SortedResultConstants.Descending
         };
 
-        var (result, _) = await _sut.GetSalesPersonsAsync(parameters);
+        var (result, _) = await _sut.GetSalesPersonsAsync(parameters, cancellationToken: TestContext.Current.CancellationToken);
 
         using (new AssertionScope())
         {
@@ -265,7 +265,7 @@ public sealed class SalesPersonRepositoryTests : PersistenceUnitTestBase
     {
         var parameters = new SalesPersonParameter { PageNumber = 1, PageSize = 10 };
 
-        var (result, totalCount) = await _sut.GetSalesPersonsAsync(parameters);
+        var (result, totalCount) = await _sut.GetSalesPersonsAsync(parameters, cancellationToken: TestContext.Current.CancellationToken);
 
         using (new AssertionScope())
         {
@@ -282,11 +282,11 @@ public sealed class SalesPersonRepositoryTests : PersistenceUnitTestBase
         var salesPerson = SalesDomainFixtures.GetCompleteSalesPersonEntity(
             1, "Test", "User", "Sales Rep", 1, "Northwest", "test.user@adventure-works.com");
         DbContext.SalesPersons.Add(salesPerson);
-        await DbContext.SaveChangesAsync();
+        await DbContext.SaveChangesAsync(cancellationToken: TestContext.Current.CancellationToken);
 
         var parameters = new SalesPersonParameter { PageNumber = 1, PageSize = 10 };
 
-        var (result, _) = await _sut.GetSalesPersonsAsync(parameters);
+        var (result, _) = await _sut.GetSalesPersonsAsync(parameters, cancellationToken: TestContext.Current.CancellationToken);
 
         using (new AssertionScope())
         {
@@ -306,11 +306,11 @@ public sealed class SalesPersonRepositoryTests : PersistenceUnitTestBase
     {
         var salesPerson = SalesDomainFixtures.GetCompleteSalesPersonEntity();
         DbContext.SalesPersons.Add(salesPerson);
-        await DbContext.SaveChangesAsync();
+        await DbContext.SaveChangesAsync(cancellationToken: TestContext.Current.CancellationToken);
 
         var parameters = new SalesPersonParameter { PageNumber = 1, PageSize = 10 };
 
-        var (result, _) = await _sut.GetSalesPersonsAsync(parameters);
+        var (result, _) = await _sut.GetSalesPersonsAsync(parameters, cancellationToken: TestContext.Current.CancellationToken);
 
         var entry = DbContext.Entry(result[0]);
         entry.State.Should().Be(EntityState.Detached);
@@ -325,12 +325,12 @@ public sealed class SalesPersonRepositoryTests : PersistenceUnitTestBase
     {
         var salesPersons = SalesDomainFixtures.GetSalesPersonListForPaging();
         DbContext.SalesPersons.AddRange(salesPersons);
-        await DbContext.SaveChangesAsync();
+        await DbContext.SaveChangesAsync(cancellationToken: TestContext.Current.CancellationToken);
 
         var parameters = new SalesPersonParameter { PageNumber = 1, PageSize = 10 };
         var searchModel = new SalesPersonSearchModel { Id = 3 };
 
-        var (result, totalCount) = await _sut.SearchSalesPersonsAsync(parameters, searchModel);
+        var (result, totalCount) = await _sut.SearchSalesPersonsAsync(parameters, searchModel, cancellationToken: TestContext.Current.CancellationToken);
 
         using (new AssertionScope())
         {
@@ -345,12 +345,12 @@ public sealed class SalesPersonRepositoryTests : PersistenceUnitTestBase
     {
         var salesPersons = SalesDomainFixtures.GetSalesPersonListForPaging();
         DbContext.SalesPersons.AddRange(salesPersons);
-        await DbContext.SaveChangesAsync();
+        await DbContext.SaveChangesAsync(cancellationToken: TestContext.Current.CancellationToken);
 
         var parameters = new SalesPersonParameter { PageNumber = 1, PageSize = 10 };
         var searchModel = new SalesPersonSearchModel { FirstName = "bob" };
 
-        var (result, totalCount) = await _sut.SearchSalesPersonsAsync(parameters, searchModel);
+        var (result, totalCount) = await _sut.SearchSalesPersonsAsync(parameters, searchModel, cancellationToken: TestContext.Current.CancellationToken);
 
         using (new AssertionScope())
         {
@@ -365,12 +365,12 @@ public sealed class SalesPersonRepositoryTests : PersistenceUnitTestBase
     {
         var salesPersons = SalesDomainFixtures.GetSalesPersonListForPaging();
         DbContext.SalesPersons.AddRange(salesPersons);
-        await DbContext.SaveChangesAsync();
+        await DbContext.SaveChangesAsync(cancellationToken: TestContext.Current.CancellationToken);
 
         var parameters = new SalesPersonParameter { PageNumber = 1, PageSize = 10 };
         var searchModel = new SalesPersonSearchModel { LastName = "davis" };
 
-        var (result, totalCount) = await _sut.SearchSalesPersonsAsync(parameters, searchModel);
+        var (result, totalCount) = await _sut.SearchSalesPersonsAsync(parameters, searchModel, cancellationToken: TestContext.Current.CancellationToken);
 
         using (new AssertionScope())
         {
@@ -385,12 +385,12 @@ public sealed class SalesPersonRepositoryTests : PersistenceUnitTestBase
     {
         var salesPersons = SalesDomainFixtures.GetSalesPersonListForPaging();
         DbContext.SalesPersons.AddRange(salesPersons);
-        await DbContext.SaveChangesAsync();
+        await DbContext.SaveChangesAsync(cancellationToken: TestContext.Current.CancellationToken);
 
         var parameters = new SalesPersonParameter { PageNumber = 1, PageSize = 10 };
         var searchModel = new SalesPersonSearchModel { SalesTerritoryId = 1 };
 
-        var (result, totalCount) = await _sut.SearchSalesPersonsAsync(parameters, searchModel);
+        var (result, totalCount) = await _sut.SearchSalesPersonsAsync(parameters, searchModel, cancellationToken: TestContext.Current.CancellationToken);
 
         using (new AssertionScope())
         {
@@ -408,7 +408,7 @@ public sealed class SalesPersonRepositoryTests : PersistenceUnitTestBase
         var parameters = new SalesPersonParameter { PageNumber = 1, PageSize = 10 };
         var searchModel = new SalesPersonSearchModel { SalesTerritoryName = "northeast" };
 
-        var (result, totalCount) = await _sut.SearchSalesPersonsAsync(parameters, searchModel);
+        var (result, totalCount) = await _sut.SearchSalesPersonsAsync(parameters, searchModel, cancellationToken: TestContext.Current.CancellationToken);
 
         using (new AssertionScope())
         {
@@ -426,7 +426,7 @@ public sealed class SalesPersonRepositoryTests : PersistenceUnitTestBase
         var parameters = new SalesPersonParameter { PageNumber = 1, PageSize = 10 };
         var searchModel = new SalesPersonSearchModel { SalesTerritoryGroupName = "north america" };
 
-        var (result, totalCount) = await _sut.SearchSalesPersonsAsync(parameters, searchModel);
+        var (result, totalCount) = await _sut.SearchSalesPersonsAsync(parameters, searchModel, cancellationToken: TestContext.Current.CancellationToken);
 
         using (new AssertionScope())
         {
@@ -441,12 +441,12 @@ public sealed class SalesPersonRepositoryTests : PersistenceUnitTestBase
     {
         var salesPersons = SalesDomainFixtures.GetSalesPersonListForPaging();
         DbContext.SalesPersons.AddRange(salesPersons);
-        await DbContext.SaveChangesAsync();
+        await DbContext.SaveChangesAsync(cancellationToken: TestContext.Current.CancellationToken);
 
         var parameters = new SalesPersonParameter { PageNumber = 1, PageSize = 10 };
         var searchModel = new SalesPersonSearchModel { EmailAddress = "charlie.chen" };
 
-        var (result, totalCount) = await _sut.SearchSalesPersonsAsync(parameters, searchModel);
+        var (result, totalCount) = await _sut.SearchSalesPersonsAsync(parameters, searchModel, cancellationToken: TestContext.Current.CancellationToken);
 
         using (new AssertionScope())
         {
@@ -461,7 +461,7 @@ public sealed class SalesPersonRepositoryTests : PersistenceUnitTestBase
     {
         var salesPersons = SalesDomainFixtures.GetSalesPersonListForPaging();
         DbContext.SalesPersons.AddRange(salesPersons);
-        await DbContext.SaveChangesAsync();
+        await DbContext.SaveChangesAsync(cancellationToken: TestContext.Current.CancellationToken);
 
         var parameters = new SalesPersonParameter { PageNumber = 1, PageSize = 10 };
         var searchModel = new SalesPersonSearchModel
@@ -471,7 +471,7 @@ public sealed class SalesPersonRepositoryTests : PersistenceUnitTestBase
             SalesTerritoryId = 2
         };
 
-        var (result, totalCount) = await _sut.SearchSalesPersonsAsync(parameters, searchModel);
+        var (result, totalCount) = await _sut.SearchSalesPersonsAsync(parameters, searchModel, cancellationToken: TestContext.Current.CancellationToken);
 
         using (new AssertionScope())
         {
@@ -488,12 +488,12 @@ public sealed class SalesPersonRepositoryTests : PersistenceUnitTestBase
     {
         var salesPersons = SalesDomainFixtures.GetSalesPersonListForPaging();
         DbContext.SalesPersons.AddRange(salesPersons);
-        await DbContext.SaveChangesAsync();
+        await DbContext.SaveChangesAsync(cancellationToken: TestContext.Current.CancellationToken);
 
         var parameters = new SalesPersonParameter { PageNumber = 1, PageSize = 10 };
         var searchModel = new SalesPersonSearchModel { FirstName = "NonExistent" };
 
-        var (result, totalCount) = await _sut.SearchSalesPersonsAsync(parameters, searchModel);
+        var (result, totalCount) = await _sut.SearchSalesPersonsAsync(parameters, searchModel, cancellationToken: TestContext.Current.CancellationToken);
 
         using (new AssertionScope())
         {
@@ -507,12 +507,12 @@ public sealed class SalesPersonRepositoryTests : PersistenceUnitTestBase
     {
         var salesPersons = SalesDomainFixtures.GetSalesPersonListForPaging();
         DbContext.SalesPersons.AddRange(salesPersons);
-        await DbContext.SaveChangesAsync();
+        await DbContext.SaveChangesAsync(cancellationToken: TestContext.Current.CancellationToken);
 
         var parameters = new SalesPersonParameter { PageNumber = 1, PageSize = 10 };
         var searchModel = new SalesPersonSearchModel { FirstName = "CHARLIE" };
 
-        var (result, totalCount) = await _sut.SearchSalesPersonsAsync(parameters, searchModel);
+        var (result, totalCount) = await _sut.SearchSalesPersonsAsync(parameters, searchModel, cancellationToken: TestContext.Current.CancellationToken);
 
         using (new AssertionScope())
         {
@@ -527,12 +527,12 @@ public sealed class SalesPersonRepositoryTests : PersistenceUnitTestBase
     {
         var salesPersons = SalesDomainFixtures.GetSalesPersonListForPaging();
         DbContext.SalesPersons.AddRange(salesPersons);
-        await DbContext.SaveChangesAsync();
+        await DbContext.SaveChangesAsync(cancellationToken: TestContext.Current.CancellationToken);
 
         var parameters = new SalesPersonParameter { PageNumber = 2, PageSize = 2 };
         var searchModel = new SalesPersonSearchModel();
 
-        var (result, totalCount) = await _sut.SearchSalesPersonsAsync(parameters, searchModel);
+        var (result, totalCount) = await _sut.SearchSalesPersonsAsync(parameters, searchModel, cancellationToken: TestContext.Current.CancellationToken);
 
         using (new AssertionScope())
         {
@@ -546,7 +546,7 @@ public sealed class SalesPersonRepositoryTests : PersistenceUnitTestBase
     {
         var salesPersons = SalesDomainFixtures.GetSalesPersonListForPaging();
         DbContext.SalesPersons.AddRange(salesPersons);
-        await DbContext.SaveChangesAsync();
+        await DbContext.SaveChangesAsync(cancellationToken: TestContext.Current.CancellationToken);
 
         var parameters = new SalesPersonParameter
         {
@@ -557,7 +557,7 @@ public sealed class SalesPersonRepositoryTests : PersistenceUnitTestBase
         };
         var searchModel = new SalesPersonSearchModel();
 
-        var (result, _) = await _sut.SearchSalesPersonsAsync(parameters, searchModel);
+        var (result, _) = await _sut.SearchSalesPersonsAsync(parameters, searchModel, cancellationToken: TestContext.Current.CancellationToken);
 
         result.Should().BeInAscendingOrder(sp => sp.Employee.PersonBusinessEntity.FirstName);
     }
@@ -567,12 +567,12 @@ public sealed class SalesPersonRepositoryTests : PersistenceUnitTestBase
     {
         var salesPerson = SalesDomainFixtures.GetCompleteSalesPersonEntity();
         DbContext.SalesPersons.Add(salesPerson);
-        await DbContext.SaveChangesAsync();
+        await DbContext.SaveChangesAsync(cancellationToken: TestContext.Current.CancellationToken);
 
         var parameters = new SalesPersonParameter { PageNumber = 1, PageSize = 10 };
         var searchModel = new SalesPersonSearchModel();
 
-        var (result, _) = await _sut.SearchSalesPersonsAsync(parameters, searchModel);
+        var (result, _) = await _sut.SearchSalesPersonsAsync(parameters, searchModel, cancellationToken: TestContext.Current.CancellationToken);
 
         var entry = DbContext.Entry(result[0]);
         entry.State.Should().Be(EntityState.Detached);

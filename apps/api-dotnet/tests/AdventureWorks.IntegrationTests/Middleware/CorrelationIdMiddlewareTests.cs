@@ -9,7 +9,7 @@ public sealed class CorrelationIdMiddlewareTests(CustomWebApplicationFactory fac
     {
         var client = CreateAnonymousClient();
 
-        var response = await client.GetAsync("/health");
+        var response = await client.GetAsync("/health", TestContext.Current.CancellationToken);
 
         response.Headers.Contains("X-Correlation-ID").Should().BeTrue();
         var correlationId = response.Headers.GetValues("X-Correlation-ID").First();
@@ -24,7 +24,7 @@ public sealed class CorrelationIdMiddlewareTests(CustomWebApplicationFactory fac
         var client = CreateAnonymousClient();
         client.DefaultRequestHeaders.Add("X-Correlation-ID", expectedCorrelationId);
 
-        var response = await client.GetAsync("/health");
+        var response = await client.GetAsync("/health", TestContext.Current.CancellationToken);
 
         response.Headers.Contains("X-Correlation-ID").Should().BeTrue();
         var correlationId = response.Headers.GetValues("X-Correlation-ID").First();

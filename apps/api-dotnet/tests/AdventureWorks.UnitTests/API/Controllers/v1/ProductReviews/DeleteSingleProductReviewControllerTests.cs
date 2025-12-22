@@ -39,7 +39,7 @@ public sealed class DeleteSingleProductReviewControllerTests : UnitTestBase
     [InlineData(-1)]
     public async Task DeleteProductReviewAsync_returns_bad_request_when_review_id_is_invalid_Async(int reviewId)
     {
-        var result = await _sut.DeleteProductReviewAsync(reviewId);
+        var result = await _sut.DeleteProductReviewAsync(reviewId, cancellationToken: TestContext.Current.CancellationToken);
 
         var objectResult = result as BadRequestObjectResult;
 
@@ -58,7 +58,7 @@ public sealed class DeleteSingleProductReviewControllerTests : UnitTestBase
         _mockMediator.Setup(x => x.Send(It.IsAny<DeleteProductReviewCommand>(), It.IsAny<CancellationToken>()))
             .Returns(Task.FromResult(Unit.Value));
 
-        var result = await _sut.DeleteProductReviewAsync(reviewId);
+        var result = await _sut.DeleteProductReviewAsync(reviewId, cancellationToken: TestContext.Current.CancellationToken);
 
         var noContentResult = result as NoContentResult;
 

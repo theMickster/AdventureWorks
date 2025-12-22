@@ -50,7 +50,7 @@ public sealed class CreateAddressValidatorTests : UnitTestBase
             PostalCode = StringGenerator.GetRandomString(15)
         };
 
-        var validationResult = await _sut.TestValidateAsync(validAddress);
+        var validationResult = await _sut.TestValidateAsync(validAddress, cancellationToken: TestContext.Current.CancellationToken);
 
         using (new AssertionScope())
         {
@@ -68,7 +68,7 @@ public sealed class CreateAddressValidatorTests : UnitTestBase
 
         using (new AssertionScope())
         {
-            var validationResult = await _sut.TestValidateAsync(new AddressCreateModel());
+            var validationResult = await _sut.TestValidateAsync(new AddressCreateModel(), cancellationToken: TestContext.Current.CancellationToken);
 
             validationResult.ShouldHaveValidationErrorFor(a => a.AddressLine1)
                 .WithErrorCode("Rule-01");
@@ -77,7 +77,7 @@ public sealed class CreateAddressValidatorTests : UnitTestBase
                     new AddressCreateModel
                     {
                         AddressLine1 = string.Empty
-                    })
+                    }, cancellationToken: TestContext.Current.CancellationToken)
                 ;
 
             validationResult.ShouldHaveValidationErrorFor(a => a.AddressLine1)
@@ -87,7 +87,7 @@ public sealed class CreateAddressValidatorTests : UnitTestBase
                     new AddressCreateModel
                     {
                         AddressLine1 = StringGenerator.GetRandomString(61)
-                    })
+                    }, cancellationToken: TestContext.Current.CancellationToken)
                 ;
 
             validationResult.ShouldHaveValidationErrorFor(a => a.AddressLine1)
@@ -116,7 +116,7 @@ public sealed class CreateAddressValidatorTests : UnitTestBase
                     Code = "ABCDEFG",
                     Name = string.Empty
                 }
-            })
+            }, cancellationToken: TestContext.Current.CancellationToken)
                 ;
 
             validationResult.ShouldHaveValidationErrorFor(a => a.StateProvince)

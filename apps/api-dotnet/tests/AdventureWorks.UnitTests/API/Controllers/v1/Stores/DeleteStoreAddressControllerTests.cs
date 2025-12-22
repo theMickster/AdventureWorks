@@ -41,7 +41,7 @@ public sealed class DeleteStoreAddressControllerTests : UnitTestBase
     [InlineData(2534, 100, -7, "A valid address type id must be specified.")]
     public async Task DeleteAsync_invalid_route_values_return_bad_requestAsync(int storeId, int addressId, int addressTypeId, string expectedMessage)
     {
-        var result = await _sut.DeleteAsync(storeId, addressId, addressTypeId);
+        var result = await _sut.DeleteAsync(storeId, addressId, addressTypeId, cancellationToken: TestContext.Current.CancellationToken);
 
         var objectResult = result as BadRequestObjectResult;
 
@@ -72,7 +72,7 @@ public sealed class DeleteStoreAddressControllerTests : UnitTestBase
             .Setup(x => x.Send(It.IsAny<DeleteStoreAddressCommand>(), It.IsAny<CancellationToken>()))
             .ReturnsAsync(Unit.Value);
 
-        var result = await _sut.DeleteAsync(2534, 100, 2);
+        var result = await _sut.DeleteAsync(2534, 100, 2, cancellationToken: TestContext.Current.CancellationToken);
 
         var noContent = result as NoContentResult;
 

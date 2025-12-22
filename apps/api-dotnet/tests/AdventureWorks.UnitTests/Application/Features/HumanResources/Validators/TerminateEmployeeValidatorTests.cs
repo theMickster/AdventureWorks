@@ -19,7 +19,7 @@ public sealed class TerminateEmployeeValidatorTests : UnitTestBase
         var model = GetValidTerminateEmployeeModel();
         model.EmployeeId = employeeId;
 
-        var result = await _sut.TestValidateAsync(model);
+        var result = await _sut.TestValidateAsync(model, cancellationToken: TestContext.Current.CancellationToken);
 
         result.ShouldHaveValidationErrorFor(x => x.EmployeeId)
             .WithErrorMessage("EmployeeId must be greater than 0.");
@@ -31,7 +31,7 @@ public sealed class TerminateEmployeeValidatorTests : UnitTestBase
         var model = GetValidTerminateEmployeeModel();
         model.TerminationDate = default;
 
-        var result = await _sut.TestValidateAsync(model);
+        var result = await _sut.TestValidateAsync(model, cancellationToken: TestContext.Current.CancellationToken);
 
         result.ShouldHaveValidationErrorFor(x => x.TerminationDate)
             .WithErrorMessage("TerminationDate is required.");
@@ -43,7 +43,7 @@ public sealed class TerminateEmployeeValidatorTests : UnitTestBase
         var model = GetValidTerminateEmployeeModel();
         model.TerminationDate = DateTime.UtcNow.AddDays(91); // More than 90 days in future
 
-        var result = await _sut.TestValidateAsync(model);
+        var result = await _sut.TestValidateAsync(model, cancellationToken: TestContext.Current.CancellationToken);
 
         result.ShouldHaveValidationErrorFor(x => x.TerminationDate)
             .WithErrorMessage("TerminationDate cannot be more than 90 days in the future.");
@@ -58,7 +58,7 @@ public sealed class TerminateEmployeeValidatorTests : UnitTestBase
         var model = GetValidTerminateEmployeeModel();
         model.Reason = reason!;
 
-        var result = await _sut.TestValidateAsync(model);
+        var result = await _sut.TestValidateAsync(model, cancellationToken: TestContext.Current.CancellationToken);
 
         result.ShouldHaveValidationErrorFor(x => x.Reason)
             .WithErrorMessage("Termination reason is required.");
@@ -70,7 +70,7 @@ public sealed class TerminateEmployeeValidatorTests : UnitTestBase
         var model = GetValidTerminateEmployeeModel();
         model.Reason = new string('a', 501); // 501 characters
 
-        var result = await _sut.TestValidateAsync(model);
+        var result = await _sut.TestValidateAsync(model, cancellationToken: TestContext.Current.CancellationToken);
 
         result.ShouldHaveValidationErrorFor(x => x.Reason)
             .WithErrorMessage("Reason cannot exceed 500 characters.");
@@ -85,7 +85,7 @@ public sealed class TerminateEmployeeValidatorTests : UnitTestBase
         var model = GetValidTerminateEmployeeModel();
         model.TerminationType = terminationType!;
 
-        var result = await _sut.TestValidateAsync(model);
+        var result = await _sut.TestValidateAsync(model, cancellationToken: TestContext.Current.CancellationToken);
 
         result.ShouldHaveValidationErrorFor(x => x.TerminationType)
             .WithErrorMessage("TerminationType is required.");
@@ -102,7 +102,7 @@ public sealed class TerminateEmployeeValidatorTests : UnitTestBase
         var model = GetValidTerminateEmployeeModel();
         model.TerminationType = terminationType;
 
-        var result = await _sut.TestValidateAsync(model);
+        var result = await _sut.TestValidateAsync(model, cancellationToken: TestContext.Current.CancellationToken);
 
         result.ShouldHaveValidationErrorFor(x => x.TerminationType)
             .WithErrorMessage("TerminationType must be one of: Voluntary, Involuntary, Retirement, Layoff.");
@@ -118,7 +118,7 @@ public sealed class TerminateEmployeeValidatorTests : UnitTestBase
         var model = GetValidTerminateEmployeeModel();
         model.TerminationType = terminationType;
 
-        var result = await _sut.TestValidateAsync(model);
+        var result = await _sut.TestValidateAsync(model, cancellationToken: TestContext.Current.CancellationToken);
 
         result.ShouldNotHaveValidationErrorFor(x => x.TerminationType);
     }
@@ -129,7 +129,7 @@ public sealed class TerminateEmployeeValidatorTests : UnitTestBase
         var model = GetValidTerminateEmployeeModel();
         model.Notes = new string('a', 1001); // 1001 characters
 
-        var result = await _sut.TestValidateAsync(model);
+        var result = await _sut.TestValidateAsync(model, cancellationToken: TestContext.Current.CancellationToken);
 
         result.ShouldHaveValidationErrorFor(x => x.Notes)
             .WithErrorMessage("Notes cannot exceed 1000 characters.");
@@ -141,7 +141,7 @@ public sealed class TerminateEmployeeValidatorTests : UnitTestBase
         var model = GetValidTerminateEmployeeModel();
         model.Notes = null;
 
-        var result = await _sut.TestValidateAsync(model);
+        var result = await _sut.TestValidateAsync(model, cancellationToken: TestContext.Current.CancellationToken);
 
         result.ShouldNotHaveValidationErrorFor(x => x.Notes);
     }
@@ -151,7 +151,7 @@ public sealed class TerminateEmployeeValidatorTests : UnitTestBase
     {
         var model = GetValidTerminateEmployeeModel();
 
-        var result = await _sut.TestValidateAsync(model);
+        var result = await _sut.TestValidateAsync(model, cancellationToken: TestContext.Current.CancellationToken);
 
         result.ShouldNotHaveAnyValidationErrors();
     }
@@ -162,7 +162,7 @@ public sealed class TerminateEmployeeValidatorTests : UnitTestBase
         var model = GetValidTerminateEmployeeModel();
         model.TerminationDate = DateTime.UtcNow;
 
-        var result = await _sut.TestValidateAsync(model);
+        var result = await _sut.TestValidateAsync(model, cancellationToken: TestContext.Current.CancellationToken);
 
         result.ShouldNotHaveValidationErrorFor(x => x.TerminationDate);
     }
@@ -173,7 +173,7 @@ public sealed class TerminateEmployeeValidatorTests : UnitTestBase
         var model = GetValidTerminateEmployeeModel();
         model.TerminationDate = DateTime.UtcNow.Date.AddDays(90);
 
-        var result = await _sut.TestValidateAsync(model);
+        var result = await _sut.TestValidateAsync(model, cancellationToken: TestContext.Current.CancellationToken);
 
         result.ShouldNotHaveValidationErrorFor(x => x.TerminationDate);
     }
@@ -184,7 +184,7 @@ public sealed class TerminateEmployeeValidatorTests : UnitTestBase
         var model = GetValidTerminateEmployeeModel();
         model.Reason = new string('a', 500);
 
-        var result = await _sut.TestValidateAsync(model);
+        var result = await _sut.TestValidateAsync(model, cancellationToken: TestContext.Current.CancellationToken);
 
         result.ShouldNotHaveValidationErrorFor(x => x.Reason);
     }
@@ -195,7 +195,7 @@ public sealed class TerminateEmployeeValidatorTests : UnitTestBase
         var model = GetValidTerminateEmployeeModel();
         model.Notes = new string('a', 1000);
 
-        var result = await _sut.TestValidateAsync(model);
+        var result = await _sut.TestValidateAsync(model, cancellationToken: TestContext.Current.CancellationToken);
 
         result.ShouldNotHaveValidationErrorFor(x => x.Notes);
     }
@@ -208,7 +208,7 @@ public sealed class TerminateEmployeeValidatorTests : UnitTestBase
         var model = GetValidTerminateEmployeeModel();
         model.EligibleForRehire = eligibleForRehire;
 
-        var result = await _sut.TestValidateAsync(model);
+        var result = await _sut.TestValidateAsync(model, cancellationToken: TestContext.Current.CancellationToken);
 
         result.ShouldNotHaveAnyValidationErrors();
     }
@@ -221,7 +221,7 @@ public sealed class TerminateEmployeeValidatorTests : UnitTestBase
         var model = GetValidTerminateEmployeeModel();
         model.PayoutPto = payoutPto;
 
-        var result = await _sut.TestValidateAsync(model);
+        var result = await _sut.TestValidateAsync(model, cancellationToken: TestContext.Current.CancellationToken);
 
         result.ShouldNotHaveAnyValidationErrors();
     }

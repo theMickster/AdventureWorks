@@ -20,7 +20,7 @@ public sealed class VendorSearchEndpointTests(CustomWebApplicationFactory factor
     {
         var client = CreateAuthenticatedClient();
 
-        var response = await client.GetAsync(VendorsUrl);
+        var response = await client.GetAsync(VendorsUrl, TestContext.Current.CancellationToken);
 
         response.StatusCode.Should().Be(HttpStatusCode.OK);
 
@@ -34,7 +34,7 @@ public sealed class VendorSearchEndpointTests(CustomWebApplicationFactory factor
     {
         var client = CreateAuthenticatedClient();
 
-        var response = await client.GetAsync(VendorsUrl);
+        var response = await client.GetAsync(VendorsUrl, TestContext.Current.CancellationToken);
 
         response.StatusCode.Should().Be(HttpStatusCode.OK);
 
@@ -47,7 +47,7 @@ public sealed class VendorSearchEndpointTests(CustomWebApplicationFactory factor
     {
         var client = CreateAnonymousClient();
 
-        var response = await client.GetAsync(VendorsUrl);
+        var response = await client.GetAsync(VendorsUrl, TestContext.Current.CancellationToken);
 
         response.StatusCode.Should().Be(HttpStatusCode.Unauthorized);
     }
@@ -57,7 +57,7 @@ public sealed class VendorSearchEndpointTests(CustomWebApplicationFactory factor
     {
         var client = CreateAuthenticatedClient();
 
-        var response = await client.GetAsync($"{VendorsUrl}?creditRating=9");
+        var response = await client.GetAsync($"{VendorsUrl}?creditRating=9", TestContext.Current.CancellationToken);
 
         response.StatusCode.Should().Be(HttpStatusCode.BadRequest);
     }
@@ -69,7 +69,7 @@ public sealed class VendorSearchEndpointTests(CustomWebApplicationFactory factor
     {
         var client = CreateAuthenticatedClient();
 
-        var response = await client.GetAsync($"{VendorsUrl}?creditRating={validCreditRating}");
+        var response = await client.GetAsync($"{VendorsUrl}?creditRating={validCreditRating}", TestContext.Current.CancellationToken);
 
         response.StatusCode.Should().Be(HttpStatusCode.OK);
     }
@@ -79,10 +79,10 @@ public sealed class VendorSearchEndpointTests(CustomWebApplicationFactory factor
     {
         var client = CreateAuthenticatedClient();
 
-        var firstPageResponse = await client.GetAsync(VendorsUrl);
+        var firstPageResponse = await client.GetAsync(VendorsUrl, TestContext.Current.CancellationToken);
         var firstPage = await DeserializeAsync<VendorSearchResultModel>(firstPageResponse);
 
-        var response = await client.GetAsync($"{VendorsUrl}?pageNumber=999999&pageSize=25");
+        var response = await client.GetAsync($"{VendorsUrl}?pageNumber=999999&pageSize=25", TestContext.Current.CancellationToken);
 
         response.StatusCode.Should().Be(HttpStatusCode.OK);
 
@@ -96,7 +96,7 @@ public sealed class VendorSearchEndpointTests(CustomWebApplicationFactory factor
     {
         var client = CreateAuthenticatedClient();
 
-        var response = await client.GetAsync($"{VendorsUrl}?preferredVendorStatus=true");
+        var response = await client.GetAsync($"{VendorsUrl}?preferredVendorStatus=true", TestContext.Current.CancellationToken);
 
         response.StatusCode.Should().Be(HttpStatusCode.OK);
     }
@@ -106,7 +106,7 @@ public sealed class VendorSearchEndpointTests(CustomWebApplicationFactory factor
     {
         var client = CreateAuthenticatedClient();
 
-        var response = await client.GetAsync($"{VendorsUrl}?activeFlag=true");
+        var response = await client.GetAsync($"{VendorsUrl}?activeFlag=true", TestContext.Current.CancellationToken);
 
         response.StatusCode.Should().Be(HttpStatusCode.OK);
     }

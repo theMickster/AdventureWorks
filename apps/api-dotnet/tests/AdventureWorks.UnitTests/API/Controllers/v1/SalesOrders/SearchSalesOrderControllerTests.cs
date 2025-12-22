@@ -52,7 +52,7 @@ public sealed class SearchSalesOrderControllerTests
             .ReturnsAsync(searchResult);
 
         // Act
-        var result = await _sut.SearchAsync(parameters, searchModel);
+        var result = await _sut.SearchAsync(parameters, searchModel, cancellationToken: TestContext.Current.CancellationToken);
 
         // Assert
         result.Should().BeOfType<OkObjectResult>();
@@ -77,7 +77,7 @@ public sealed class SearchSalesOrderControllerTests
             .ReturnsAsync(searchResult);
 
         // Act
-        var result = await _sut.SearchAsync(parameters, null);
+        var result = await _sut.SearchAsync(parameters, null, cancellationToken: TestContext.Current.CancellationToken);
 
         // Assert
         result.Should().BeOfType<OkObjectResult>();

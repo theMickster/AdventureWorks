@@ -28,7 +28,7 @@ public sealed class EmployeeRepositoryPayTests : PersistenceUnitTestBase
             ModifiedDate = StandardModifiedDate
         };
 
-        await _sut.RecordPayChangeAsync(record);
+        await _sut.RecordPayChangeAsync(record, cancellationToken: TestContext.Current.CancellationToken);
 
         var inserted = DbContext.EmployeePayHistories
             .Single(x => x.BusinessEntityId == 1);
@@ -64,9 +64,9 @@ public sealed class EmployeeRepositoryPayTests : PersistenceUnitTestBase
                 PayFrequency = 2,
                 ModifiedDate = StandardModifiedDate
             });
-        await DbContext.SaveChangesAsync();
+        await DbContext.SaveChangesAsync(cancellationToken: TestContext.Current.CancellationToken);
 
-        var result = await _sut.GetEmployeePayHistoryAsync(1);
+        var result = await _sut.GetEmployeePayHistoryAsync(1, cancellationToken: TestContext.Current.CancellationToken);
 
         using (new AssertionScope())
         {
@@ -79,7 +79,7 @@ public sealed class EmployeeRepositoryPayTests : PersistenceUnitTestBase
     [Fact]
     public async Task GetEmployeePayHistoryAsync_returns_empty_list_for_employee_with_no_historyAsync()
     {
-        var result = await _sut.GetEmployeePayHistoryAsync(999);
+        var result = await _sut.GetEmployeePayHistoryAsync(999, cancellationToken: TestContext.Current.CancellationToken);
 
         result.Should().NotBeNull();
         result.Should().BeEmpty();

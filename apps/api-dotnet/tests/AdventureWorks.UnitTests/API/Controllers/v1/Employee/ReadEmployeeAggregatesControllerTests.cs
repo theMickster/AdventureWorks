@@ -62,7 +62,7 @@ public sealed class ReadEmployeeAggregatesControllerTests : UnitTestBase
             .Setup(x => x.Send(It.IsAny<ReadEmployeeAggregatesQuery>(), It.IsAny<CancellationToken>()))
             .ReturnsAsync(aggregatesModel);
 
-        var result = await _sut.GetAggregatesAsync();
+        var result = await _sut.GetAggregatesAsync(cancellationToken: TestContext.Current.CancellationToken);
 
         var objectResult = result as OkObjectResult;
 

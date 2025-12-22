@@ -12,7 +12,7 @@ public sealed class AuthorizationGateTests(CustomWebApplicationFactory factory) 
     {
         var client = CreateAnonymousClient();
 
-        var response = await client.GetAsync($"/api/v1.0/stores/{TestConstants.SeededStoreId}");
+        var response = await client.GetAsync($"/api/v1.0/stores/{TestConstants.SeededStoreId}", TestContext.Current.CancellationToken);
 
         response.StatusCode.Should().Be(HttpStatusCode.Unauthorized);
     }
@@ -22,10 +22,10 @@ public sealed class AuthorizationGateTests(CustomWebApplicationFactory factory) 
     {
         var client = CreateAuthenticatedClient();
 
-        var response = await client.GetAsync($"/api/v1.0/stores/{TestConstants.SeededStoreId}");
+        var response = await client.GetAsync($"/api/v1.0/stores/{TestConstants.SeededStoreId}", TestContext.Current.CancellationToken);
 
         response.StatusCode.Should().Be(HttpStatusCode.OK);
-        var json = await response.Content.ReadAsStringAsync();
+        var json = await response.Content.ReadAsStringAsync(TestContext.Current.CancellationToken);
         using var doc = JsonDocument.Parse(json);
         doc.RootElement.EnumerateObject()
             .Any(p => p.Name.Equals("Id", StringComparison.OrdinalIgnoreCase))
@@ -38,7 +38,7 @@ public sealed class AuthorizationGateTests(CustomWebApplicationFactory factory) 
         var client = CreateAnonymousClient();
         var body = new { name = "Test Store" };
 
-        var response = await client.PostAsJsonAsync("/api/v1.0/stores", body);
+        var response = await client.PostAsJsonAsync("/api/v1.0/stores", body, cancellationToken: TestContext.Current.CancellationToken);
 
         response.StatusCode.Should().Be(HttpStatusCode.Unauthorized);
     }
@@ -49,7 +49,7 @@ public sealed class AuthorizationGateTests(CustomWebApplicationFactory factory) 
         var client = CreateAuthenticatedClient();
         var body = new { name = $"IT-{Guid.NewGuid():N}"[..20] };
 
-        var response = await client.PostAsJsonAsync("/api/v1.0/stores", body);
+        var response = await client.PostAsJsonAsync("/api/v1.0/stores", body, cancellationToken: TestContext.Current.CancellationToken);
 
         response.StatusCode.Should().Be(HttpStatusCode.Created);
         response.Headers.Location.Should().NotBeNull(
@@ -98,7 +98,7 @@ public sealed class AuthorizationGateTests(CustomWebApplicationFactory factory) 
     {
         var client = CreateAnonymousClient();
 
-        var response = await client.GetAsync(requestUri);
+        var response = await client.GetAsync(requestUri, TestContext.Current.CancellationToken);
 
         response.StatusCode.Should().Be(HttpStatusCode.Unauthorized);
     }
@@ -109,7 +109,7 @@ public sealed class AuthorizationGateTests(CustomWebApplicationFactory factory) 
     {
         var client = CreateAuthenticatedClient();
 
-        var response = await client.GetAsync(requestUri);
+        var response = await client.GetAsync(requestUri, TestContext.Current.CancellationToken);
 
         response.StatusCode.Should().NotBe(HttpStatusCode.Unauthorized);
     }
@@ -120,7 +120,7 @@ public sealed class AuthorizationGateTests(CustomWebApplicationFactory factory) 
         var client = CreateAnonymousClient();
         var body = new { id = TestConstants.SeededStoreId };
 
-        var response = await client.PutAsJsonAsync($"/api/v1.0/addresses/{TestConstants.SeededStoreId}", body);
+        var response = await client.PutAsJsonAsync($"/api/v1.0/addresses/{TestConstants.SeededStoreId}", body, cancellationToken: TestContext.Current.CancellationToken);
 
         response.StatusCode.Should().Be(HttpStatusCode.Unauthorized);
     }
@@ -131,7 +131,7 @@ public sealed class AuthorizationGateTests(CustomWebApplicationFactory factory) 
         var client = CreateAuthenticatedClient();
         var body = new { id = TestConstants.SeededStoreId };
 
-        var response = await client.PutAsJsonAsync($"/api/v1.0/addresses/{TestConstants.SeededStoreId}", body);
+        var response = await client.PutAsJsonAsync($"/api/v1.0/addresses/{TestConstants.SeededStoreId}", body, cancellationToken: TestContext.Current.CancellationToken);
 
         response.StatusCode.Should().NotBe(HttpStatusCode.Unauthorized);
     }
@@ -142,7 +142,7 @@ public sealed class AuthorizationGateTests(CustomWebApplicationFactory factory) 
     {
         var client = CreateAnonymousClient();
 
-        var response = await client.GetAsync(requestUri);
+        var response = await client.GetAsync(requestUri, TestContext.Current.CancellationToken);
 
         response.StatusCode.Should().NotBe(HttpStatusCode.Unauthorized);
     }

@@ -29,7 +29,7 @@ public sealed class SalesOrderSagaInputValidatorTests : UnitTestBase
     [Fact]
     public async Task Validator_succeeds_when_all_data_is_validAsync()
     {
-        var result = await _sut.TestValidateAsync(ValidInput());
+        var result = await _sut.TestValidateAsync(ValidInput(), cancellationToken: TestContext.Current.CancellationToken);
 
         result.ShouldNotHaveAnyValidationErrors();
     }
@@ -41,7 +41,7 @@ public sealed class SalesOrderSagaInputValidatorTests : UnitTestBase
     {
         var input = ValidInput(customerId: customerId);
 
-        var result = await _sut.TestValidateAsync(input);
+        var result = await _sut.TestValidateAsync(input, cancellationToken: TestContext.Current.CancellationToken);
 
         result.ShouldHaveValidationErrorFor(x => x.CustomerId)
             .WithErrorCode("Rule-01");
@@ -52,7 +52,7 @@ public sealed class SalesOrderSagaInputValidatorTests : UnitTestBase
     {
         var input = ValidInput(lines: []);
 
-        var result = await _sut.TestValidateAsync(input);
+        var result = await _sut.TestValidateAsync(input, cancellationToken: TestContext.Current.CancellationToken);
 
         result.ShouldHaveValidationErrorFor(x => x.Lines)
             .WithErrorCode("Rule-02");
@@ -65,7 +65,7 @@ public sealed class SalesOrderSagaInputValidatorTests : UnitTestBase
     {
         var input = ValidInput(lines: [new SalesOrderSagaLineItem { ProductId = productId, OrderQty = 1, UnitPrice = 10m }]);
 
-        var result = await _sut.TestValidateAsync(input);
+        var result = await _sut.TestValidateAsync(input, cancellationToken: TestContext.Current.CancellationToken);
 
         result.ShouldHaveValidationErrorFor("Lines[0].ProductId")
             .WithErrorCode("Rule-03");
@@ -78,7 +78,7 @@ public sealed class SalesOrderSagaInputValidatorTests : UnitTestBase
     {
         var input = ValidInput(lines: [new SalesOrderSagaLineItem { ProductId = 776, OrderQty = orderQty, UnitPrice = 10m }]);
 
-        var result = await _sut.TestValidateAsync(input);
+        var result = await _sut.TestValidateAsync(input, cancellationToken: TestContext.Current.CancellationToken);
 
         result.ShouldHaveValidationErrorFor("Lines[0].OrderQty")
             .WithErrorCode("Rule-04");

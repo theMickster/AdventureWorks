@@ -66,7 +66,7 @@ public sealed class ReadSpecialOfferControllerTests : UnitTestBase
                 ModifiedDate = new DateTime(2026, 5, 4, 0, 0, 0, DateTimeKind.Utc)
             });
 
-        var result = await _sut.GetByIdAsync(1);
+        var result = await _sut.GetByIdAsync(1, cancellationToken: TestContext.Current.CancellationToken);
         var objectResult = result as OkObjectResult;
 
         using (new AssertionScope())
@@ -83,7 +83,7 @@ public sealed class ReadSpecialOfferControllerTests : UnitTestBase
         _mockMediator.Setup(x => x.Send(It.IsAny<ReadSpecialOfferQuery>(), It.IsAny<CancellationToken>()))
             .ReturnsAsync((SpecialOfferModel)null!);
 
-        var result = await _sut.GetByIdAsync(999);
+        var result = await _sut.GetByIdAsync(999, cancellationToken: TestContext.Current.CancellationToken);
         var objectResult = result as NotFoundObjectResult;
         var outputModel = objectResult!.Value as string;
 
@@ -100,7 +100,7 @@ public sealed class ReadSpecialOfferControllerTests : UnitTestBase
     [InlineData(-1)]
     public async Task GetById_returns_bad_request_Async(int id)
     {
-        var result = await _sut.GetByIdAsync(id);
+        var result = await _sut.GetByIdAsync(id, cancellationToken: TestContext.Current.CancellationToken);
         var objectResult = result as BadRequestObjectResult;
         var outputModel = objectResult!.Value as string;
 
@@ -152,7 +152,7 @@ public sealed class ReadSpecialOfferControllerTests : UnitTestBase
                     }
                 });
 
-        var result = await _sut.GetListAsync();
+        var result = await _sut.GetListAsync(cancellationToken: TestContext.Current.CancellationToken);
         var objectResult = result as OkObjectResult;
 
         using (new AssertionScope())
@@ -169,7 +169,7 @@ public sealed class ReadSpecialOfferControllerTests : UnitTestBase
                 x => x.Send(It.IsAny<ReadSpecialOfferListQuery>(), It.IsAny<CancellationToken>()))
             .ReturnsAsync(new List<SpecialOfferModel>());
 
-        var result = await _sut.GetListAsync();
+        var result = await _sut.GetListAsync(cancellationToken: TestContext.Current.CancellationToken);
         var objectResult = result as NotFoundObjectResult;
         var outputModel = objectResult!.Value as string;
 

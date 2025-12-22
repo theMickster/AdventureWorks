@@ -41,7 +41,7 @@ public sealed class UpdateProductControllerTests : UnitTestBase
     [Fact]
     public async Task PutAsync_null_input_returns_bad_requestAsync()
     {
-        var result = await _sut.PutAsync(1, null);
+        var result = await _sut.PutAsync(1, null, cancellationToken: TestContext.Current.CancellationToken);
 
         var objectResult = result as BadRequestObjectResult;
 
@@ -59,7 +59,7 @@ public sealed class UpdateProductControllerTests : UnitTestBase
     [InlineData(-999)]
     public async Task PutAsync_invalid_id_returns_bad_requestAsync(int id)
     {
-        var result = await _sut.PutAsync(id, new ProductUpdateModel { Id = 1, Name = "test", ProductNumber = "TP-001" });
+        var result = await _sut.PutAsync(id, new ProductUpdateModel { Id = 1, Name = "test", ProductNumber = "TP-001" }, cancellationToken: TestContext.Current.CancellationToken);
 
         var objectResult = result as BadRequestObjectResult;
 
@@ -74,7 +74,7 @@ public sealed class UpdateProductControllerTests : UnitTestBase
     [Fact]
     public async Task PutAsync_mismatched_ids_returns_bad_requestAsync()
     {
-        var result = await _sut.PutAsync(1, new ProductUpdateModel { Id = 2, Name = "test", ProductNumber = "TP-001" });
+        var result = await _sut.PutAsync(1, new ProductUpdateModel { Id = 2, Name = "test", ProductNumber = "TP-001" }, cancellationToken: TestContext.Current.CancellationToken);
 
         var objectResult = result as BadRequestObjectResult;
 
@@ -137,7 +137,7 @@ public sealed class UpdateProductControllerTests : UnitTestBase
         _mockMediator.Setup(x => x.Send(It.IsAny<ReadProductQuery>(), It.IsAny<CancellationToken>()))
             .ReturnsAsync(productModel);
 
-        var result = await _sut.PutAsync(productId, input);
+        var result = await _sut.PutAsync(productId, input, cancellationToken: TestContext.Current.CancellationToken);
 
         var objectResult = result as OkObjectResult;
         var outputModel = objectResult!.Value! as ProductDetailModel;

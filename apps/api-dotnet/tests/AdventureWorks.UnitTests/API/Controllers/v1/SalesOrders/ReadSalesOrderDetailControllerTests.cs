@@ -68,7 +68,7 @@ public sealed class ReadSalesOrderDetailControllerTests
             .ReturnsAsync(model);
 
         // Act
-        var result = await _sut.GetDetailAsync(43659);
+        var result = await _sut.GetDetailAsync(43659, cancellationToken: TestContext.Current.CancellationToken);
 
         // Assert
         result.Should().BeOfType<OkObjectResult>();
@@ -85,7 +85,7 @@ public sealed class ReadSalesOrderDetailControllerTests
             .ReturnsAsync((SalesOrderDetailModel?)null);
 
         // Act
-        var result = await _sut.GetDetailAsync(999999);
+        var result = await _sut.GetDetailAsync(999999, cancellationToken: TestContext.Current.CancellationToken);
 
         // Assert
         result.Should().BeOfType<NotFoundResult>();
@@ -112,7 +112,7 @@ public sealed class ReadSalesOrderDetailControllerTests
             });
 
         // Act
-        var result = await _sut.GetDetailAsync(43659);
+        var result = await _sut.GetDetailAsync(43659, cancellationToken: TestContext.Current.CancellationToken);
 
         // Assert
         result.Should().BeOfType<OkObjectResult>();
@@ -153,7 +153,7 @@ public sealed class ReadSalesOrderDetailControllerTests
     public async Task GetDetailAsync_returns_400_when_sales_order_id_is_zero_or_negative()
     {
         // Act
-        var result = await _sut.GetDetailAsync(0);
+        var result = await _sut.GetDetailAsync(0, cancellationToken: TestContext.Current.CancellationToken);
 
         // Assert
         result.Should().BeOfType<BadRequestResult>();

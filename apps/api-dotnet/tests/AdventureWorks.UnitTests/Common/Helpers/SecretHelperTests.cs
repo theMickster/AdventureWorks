@@ -32,7 +32,7 @@ public sealed class SecretHelperTests : UnitTestBase
     [Fact]
     public async Task WhenKeyIsFound_GetSecretAsyncSucceedsAsync()
     {
-        var result = await SecretHelper.GetSecretAsync("foo1");
+        var result = await SecretHelper.GetSecretAsync("foo1", cancellationToken: TestContext.Current.CancellationToken);
 
         using (new AssertionScope())
         {
@@ -56,7 +56,7 @@ public sealed class SecretHelperTests : UnitTestBase
     [Fact]
     public async Task WhenKeyIsNotFound_GetSecretAsyncSucceedsAsync()
     {
-        var result = await SecretHelper.GetSecretAsync("something-else-async-goes-here")
+        var result = await SecretHelper.GetSecretAsync("something-else-async-goes-here", cancellationToken: TestContext.Current.CancellationToken)
             ;
 
         using (new AssertionScope())

@@ -52,7 +52,7 @@ public sealed class ReadWorkOrderControllerTests
             .ReturnsAsync(searchResult);
 
         // Act
-        var result = await _sut.GetAsync(parameters);
+        var result = await _sut.GetAsync(parameters, cancellationToken: TestContext.Current.CancellationToken);
 
         // Assert
         result.Should().BeOfType<OkObjectResult>();
@@ -77,7 +77,7 @@ public sealed class ReadWorkOrderControllerTests
             .ReturnsAsync(searchResult);
 
         // Act
-        var result = await _sut.GetAsync(parameters);
+        var result = await _sut.GetAsync(parameters, cancellationToken: TestContext.Current.CancellationToken);
 
         // Assert
         result.Should().BeOfType<OkObjectResult>();
@@ -94,7 +94,7 @@ public sealed class ReadWorkOrderControllerTests
             .ReturnsAsync(searchResult);
 
         // Act
-        await _sut.GetAsync(parameters);
+        await _sut.GetAsync(parameters, cancellationToken: TestContext.Current.CancellationToken);
 
         // Assert
         _mockMediator.Verify(x => x.Send(
@@ -114,7 +114,7 @@ public sealed class ReadWorkOrderControllerTests
             .ReturnsAsync(searchResult);
 
         // Act
-        await _sut.GetAsync(parameters);
+        await _sut.GetAsync(parameters, cancellationToken: TestContext.Current.CancellationToken);
 
         // Assert
         _mockMediator.Verify(x => x.Send(
@@ -136,7 +136,7 @@ public sealed class ReadWorkOrderControllerTests
             .ReturnsAsync(searchResult);
 
         // Act
-        var result = await _sut.GetAsync(parameters);
+        var result = await _sut.GetAsync(parameters, cancellationToken: TestContext.Current.CancellationToken);
 
         // Assert
         result.Should().BeOfType<OkObjectResult>();

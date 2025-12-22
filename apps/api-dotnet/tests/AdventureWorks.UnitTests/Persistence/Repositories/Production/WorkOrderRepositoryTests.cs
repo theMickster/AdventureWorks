@@ -41,7 +41,7 @@ public sealed class WorkOrderRepositoryTests : PersistenceUnitTestBase
         };
 
         DbContext.WorkOrders.AddRange(workOrders);
-        await DbContext.SaveChangesAsync();
+        await DbContext.SaveChangesAsync(cancellationToken: TestContext.Current.CancellationToken);
 
         var parameters = new WorkOrderParameter { PageNumber = 1, PageSize = 10 };
 
@@ -75,7 +75,7 @@ public sealed class WorkOrderRepositoryTests : PersistenceUnitTestBase
             .ToArray();
 
         DbContext.WorkOrders.AddRange(workOrders);
-        await DbContext.SaveChangesAsync();
+        await DbContext.SaveChangesAsync(cancellationToken: TestContext.Current.CancellationToken);
 
         var parameters = new WorkOrderParameter { PageNumber = 1, PageSize = 25 };
 
@@ -100,7 +100,7 @@ public sealed class WorkOrderRepositoryTests : PersistenceUnitTestBase
         };
 
         DbContext.WorkOrders.AddRange(workOrders);
-        await DbContext.SaveChangesAsync();
+        await DbContext.SaveChangesAsync(cancellationToken: TestContext.Current.CancellationToken);
 
         var parameters = new WorkOrderParameter { PageNumber = 1, PageSize = 10 };
 
@@ -126,7 +126,7 @@ public sealed class WorkOrderRepositoryTests : PersistenceUnitTestBase
         };
 
         DbContext.WorkOrders.AddRange(workOrders);
-        await DbContext.SaveChangesAsync();
+        await DbContext.SaveChangesAsync(cancellationToken: TestContext.Current.CancellationToken);
 
         var parameters = new WorkOrderParameter { PageNumber = 1, PageSize = 10 };
         var searchModel = new WorkOrderSearchModel { ProductId = 518 };
@@ -153,7 +153,7 @@ public sealed class WorkOrderRepositoryTests : PersistenceUnitTestBase
         };
 
         DbContext.WorkOrders.AddRange(workOrders);
-        await DbContext.SaveChangesAsync();
+        await DbContext.SaveChangesAsync(cancellationToken: TestContext.Current.CancellationToken);
 
         var parameters = new WorkOrderParameter { PageNumber = 1, PageSize = 10 };
         var searchModel = new WorkOrderSearchModel { StartDate = new DateTime(2011, 5, 1), EndDate = new DateTime(2011, 12, 31) };
@@ -180,7 +180,7 @@ public sealed class WorkOrderRepositoryTests : PersistenceUnitTestBase
         };
 
         DbContext.WorkOrders.AddRange(workOrders);
-        await DbContext.SaveChangesAsync();
+        await DbContext.SaveChangesAsync(cancellationToken: TestContext.Current.CancellationToken);
 
         var parameters = new WorkOrderParameter { PageNumber = 1, PageSize = 10 };
         var searchModel = new WorkOrderSearchModel { HasScrapped = true };
@@ -207,7 +207,7 @@ public sealed class WorkOrderRepositoryTests : PersistenceUnitTestBase
         };
 
         DbContext.WorkOrders.AddRange(workOrders);
-        await DbContext.SaveChangesAsync();
+        await DbContext.SaveChangesAsync(cancellationToken: TestContext.Current.CancellationToken);
 
         var parameters = new WorkOrderParameter { PageNumber = 1, PageSize = 10 };
         var searchModel = new WorkOrderSearchModel { ScrapReasonId = 11 };
@@ -227,7 +227,7 @@ public sealed class WorkOrderRepositoryTests : PersistenceUnitTestBase
         // Arrange
         var product = new Product { ProductId = 747, Name = "Frame A" };
         DbContext.WorkOrders.Add(new WorkOrder { WorkOrderId = 1, ProductId = 747, OrderQty = 4, StockedQty = 4, ScrappedQty = 0, StartDate = new DateTime(2011, 6, 1), EndDate = new DateTime(2011, 6, 10), DueDate = new DateTime(2011, 6, 14), Product = product });
-        await DbContext.SaveChangesAsync();
+        await DbContext.SaveChangesAsync(cancellationToken: TestContext.Current.CancellationToken);
 
         var parameters = new WorkOrderParameter { PageNumber = 1, PageSize = 10 };
 

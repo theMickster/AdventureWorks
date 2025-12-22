@@ -50,7 +50,7 @@ public sealed class ReadVendorControllerTests
             .ReturnsAsync(searchResult);
 
         // Act
-        var result = await _sut.GetAsync(parameters);
+        var result = await _sut.GetAsync(parameters, cancellationToken: TestContext.Current.CancellationToken);
 
         // Assert
         result.Should().BeOfType<OkObjectResult>();
@@ -75,7 +75,7 @@ public sealed class ReadVendorControllerTests
             .ReturnsAsync(searchResult);
 
         // Act
-        var result = await _sut.GetAsync(parameters);
+        var result = await _sut.GetAsync(parameters, cancellationToken: TestContext.Current.CancellationToken);
 
         // Assert
         result.Should().BeOfType<OkObjectResult>();
@@ -94,7 +94,7 @@ public sealed class ReadVendorControllerTests
             .ReturnsAsync(searchResult);
 
         // Act
-        var result = await _sut.GetAsync(parameters);
+        var result = await _sut.GetAsync(parameters, cancellationToken: TestContext.Current.CancellationToken);
 
         // Assert
         result.Should().BeOfType<OkObjectResult>();

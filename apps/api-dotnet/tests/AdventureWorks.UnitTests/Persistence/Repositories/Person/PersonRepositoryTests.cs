@@ -54,7 +54,7 @@ public sealed class PersonRepositoryTests : UnitTestBase
         context.BusinessEntities.Add(businessEntity);
         context.PersonTypes.Add(personType);
         context.Persons.Add(personEntity);
-        await context.SaveChangesAsync();
+        await context.SaveChangesAsync(cancellationToken: TestContext.Current.CancellationToken);
 
         var repository = new PersonRepository(context);
 
@@ -109,7 +109,7 @@ public sealed class PersonRepositoryTests : UnitTestBase
         context.BusinessEntities.Add(businessEntity);
         context.PersonTypes.Add(personType);
         context.Persons.Add(personEntity);
-        await context.SaveChangesAsync();
+        await context.SaveChangesAsync(cancellationToken: TestContext.Current.CancellationToken);
 
         var repository = new PersonRepository(context);
 
@@ -163,7 +163,7 @@ public sealed class PersonRepositoryTests : UnitTestBase
         context.BusinessEntities.Add(businessEntity);
         context.PersonTypes.Add(personType);
         context.Persons.Add(personEntity);
-        await context.SaveChangesAsync();
+        await context.SaveChangesAsync(cancellationToken: TestContext.Current.CancellationToken);
 
         var repository = new PersonRepository(context);
 
@@ -219,7 +219,7 @@ public sealed class PersonRepositoryTests : UnitTestBase
         context.BusinessEntities.Add(businessEntity);
         context.PersonTypes.Add(personType);
         context.Persons.Add(personEntity);
-        await context.SaveChangesAsync();
+        await context.SaveChangesAsync(cancellationToken: TestContext.Current.CancellationToken);
 
         var repository = new PersonRepository(context);
 
@@ -268,7 +268,7 @@ public sealed class PersonRepositoryTests : UnitTestBase
         context.BusinessEntities.Add(businessEntity);
         context.PersonTypes.Add(personType);
         context.Persons.Add(personEntity);
-        await context.SaveChangesAsync();
+        await context.SaveChangesAsync(cancellationToken: TestContext.Current.CancellationToken);
 
         var repository = new PersonRepository(context);
 
@@ -296,7 +296,7 @@ public sealed class PersonRepositoryTests : UnitTestBase
 
         // Add BusinessEntity but NOT Person
         context.BusinessEntities.Add(businessEntity);
-        await context.SaveChangesAsync();
+        await context.SaveChangesAsync(cancellationToken: TestContext.Current.CancellationToken);
 
         var repository = new PersonRepository(context);
 
@@ -364,7 +364,7 @@ public sealed class PersonRepositoryTests : UnitTestBase
         context.BusinessEntities.Add(businessEntity);
         context.PersonTypes.Add(personType);
         context.Persons.Add(personEntity);
-        await context.SaveChangesAsync();
+        await context.SaveChangesAsync(cancellationToken: TestContext.Current.CancellationToken);
 
         var repository = new PersonRepository(context);
 
@@ -428,7 +428,7 @@ public sealed class PersonRepositoryTests : UnitTestBase
             PhoneNumberTypeId = 2,
             ModifiedDate = DefaultAuditDate
         });
-        await context.SaveChangesAsync();
+        await context.SaveChangesAsync(cancellationToken: TestContext.Current.CancellationToken);
 
         var repository = new PersonRepository(context);
 
@@ -473,7 +473,7 @@ public sealed class PersonRepositoryTests : UnitTestBase
 
         context.PersonTypes.Add(personType);
         context.Persons.Add(person);
-        await context.SaveChangesAsync();
+        await context.SaveChangesAsync(cancellationToken: TestContext.Current.CancellationToken);
 
         var repository = new PersonRepository(context);
 
@@ -518,7 +518,7 @@ public sealed class PersonRepositoryTests : UnitTestBase
             Rowguid = Guid.NewGuid(),
             ModifiedDate = DefaultAuditDate
         });
-        await context.SaveChangesAsync();
+        await context.SaveChangesAsync(cancellationToken: TestContext.Current.CancellationToken);
 
         var repository = new PersonRepository(context);
 

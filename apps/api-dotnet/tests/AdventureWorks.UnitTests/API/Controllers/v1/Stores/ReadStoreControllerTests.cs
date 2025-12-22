@@ -45,7 +45,7 @@ public sealed class ReadStoreControllerTests : UnitTestBase
         _mockMediator.Setup(x => x.Send(It.IsAny<ReadStoreQuery>(), It.IsAny<CancellationToken>()))
             .ReturnsAsync(new StoreModel { Id = id, Name = "test" });
 
-        var result = await _sut.GetByIdAsync(7);
+        var result = await _sut.GetByIdAsync(7, cancellationToken: TestContext.Current.CancellationToken);
 
         var objectResult = result as ObjectResult;
 
@@ -63,7 +63,7 @@ public sealed class ReadStoreControllerTests : UnitTestBase
         _mockMediator.Setup(x => x.Send(It.IsAny<ReadStoreQuery>(), It.IsAny<CancellationToken>()))!
             .ReturnsAsync((StoreModel?)null);
 
-        var result = await _sut.GetByIdAsync(7);
+        var result = await _sut.GetByIdAsync(7, cancellationToken: TestContext.Current.CancellationToken);
         var objectResult = result as NotFoundObjectResult;
         var outputModel = objectResult!.Value! as string;
 
@@ -83,7 +83,7 @@ public sealed class ReadStoreControllerTests : UnitTestBase
     [InlineData(-10)]
     public async Task GetById_returns_bad_request_Async(int addressId)
     {
-        var result = await _sut.GetByIdAsync(addressId);
+        var result = await _sut.GetByIdAsync(addressId, cancellationToken: TestContext.Current.CancellationToken);
         var objectResult = result as BadRequestObjectResult;
         var outputModel = objectResult!.Value! as string;
 
@@ -103,7 +103,7 @@ public sealed class ReadStoreControllerTests : UnitTestBase
         _mockMediator.Setup(x => x.Send(It.IsAny<ReadStoreListQuery>(), It.IsAny<CancellationToken>()))
             .ReturnsAsync(new StoreSearchResultModel { Results = [new(){Id = 1, Name = "test" }] });
 
-        var result = await _sut.GetStoreListAsync(new StoreParameter());
+        var result = await _sut.GetStoreListAsync(new StoreParameter(), cancellationToken: TestContext.Current.CancellationToken);
         var objectResult = result as ObjectResult;
 
         using (new AssertionScope())
@@ -120,7 +120,7 @@ public sealed class ReadStoreControllerTests : UnitTestBase
         _mockMediator.Setup(x => x.Send(It.IsAny<ReadStoreListQuery>(), It.IsAny<CancellationToken>()))
             .ReturnsAsync(new StoreSearchResultModel { Results = null! });
 
-        var result = await _sut.GetStoreListAsync(new StoreParameter());
+        var result = await _sut.GetStoreListAsync(new StoreParameter(), cancellationToken: TestContext.Current.CancellationToken);
         var objectResult = result as OkObjectResult;
 
         using (new AssertionScope())
@@ -138,7 +138,7 @@ public sealed class ReadStoreControllerTests : UnitTestBase
         _mockMediator.Setup(x => x.Send(It.IsAny<ReadStoreListQuery>(), It.IsAny<CancellationToken>()))
             .ReturnsAsync(new StoreSearchResultModel { Results = new List<StoreModel>() });
 
-        var result = await _sut.GetStoreListAsync(new StoreParameter());
+        var result = await _sut.GetStoreListAsync(new StoreParameter(), cancellationToken: TestContext.Current.CancellationToken);
         var objectResult = result as OkObjectResult;
 
         using (new AssertionScope())
@@ -156,7 +156,7 @@ public sealed class ReadStoreControllerTests : UnitTestBase
         _mockMediator.Setup(x => x.Send(It.IsAny<ReadStoreListQuery>(), It.IsAny<CancellationToken>()))
             .ReturnsAsync(new StoreSearchResultModel { Results = [new() { Id = 1, Name = "test" }] });
 
-        var result = await _sut.SearchStoresAsync(new StoreParameter(), new StoreSearchModel());
+        var result = await _sut.SearchStoresAsync(new StoreParameter(), new StoreSearchModel(), cancellationToken: TestContext.Current.CancellationToken);
         var objectResult = result as ObjectResult;
 
         using (new AssertionScope())
@@ -173,7 +173,7 @@ public sealed class ReadStoreControllerTests : UnitTestBase
         _mockMediator.Setup(x => x.Send(It.IsAny<ReadStoreListQuery>(), It.IsAny<CancellationToken>()))
                     .ReturnsAsync(new StoreSearchResultModel { Results = null! });
 
-        var result = await _sut.SearchStoresAsync(new StoreParameter(), new StoreSearchModel());
+        var result = await _sut.SearchStoresAsync(new StoreParameter(), new StoreSearchModel(), cancellationToken: TestContext.Current.CancellationToken);
         var objectResult = result as OkObjectResult;
 
         using (new AssertionScope())
@@ -191,7 +191,7 @@ public sealed class ReadStoreControllerTests : UnitTestBase
         _mockMediator.Setup(x => x.Send(It.IsAny<ReadStoreListQuery>(), It.IsAny<CancellationToken>()))
             .ReturnsAsync(new StoreSearchResultModel { Results = new List<StoreModel>() });
 
-        var result = await _sut.SearchStoresAsync(new StoreParameter(), new StoreSearchModel());
+        var result = await _sut.SearchStoresAsync(new StoreParameter(), new StoreSearchModel(), cancellationToken: TestContext.Current.CancellationToken);
         var objectResult = result as OkObjectResult;
 
         using (new AssertionScope())

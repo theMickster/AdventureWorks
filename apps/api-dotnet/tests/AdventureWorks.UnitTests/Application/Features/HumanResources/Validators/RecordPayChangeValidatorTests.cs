@@ -14,7 +14,7 @@ public sealed class RecordPayChangeValidatorTests : UnitTestBase
     {
         var model = new EmployeePayChangeCreateModel { Rate = 0m, PayFrequency = 1 };
 
-        var result = await _sut.TestValidateAsync(model);
+        var result = await _sut.TestValidateAsync(model, cancellationToken: TestContext.Current.CancellationToken);
 
         result.ShouldHaveValidationErrorFor(x => x.Rate)
             .WithErrorCode("Rule-01");
@@ -25,7 +25,7 @@ public sealed class RecordPayChangeValidatorTests : UnitTestBase
     {
         var model = new EmployeePayChangeCreateModel { Rate = -1m, PayFrequency = 1 };
 
-        var result = await _sut.TestValidateAsync(model);
+        var result = await _sut.TestValidateAsync(model, cancellationToken: TestContext.Current.CancellationToken);
 
         result.ShouldHaveValidationErrorFor(x => x.Rate)
             .WithErrorCode("Rule-01");
@@ -36,7 +36,7 @@ public sealed class RecordPayChangeValidatorTests : UnitTestBase
     {
         var model = new EmployeePayChangeCreateModel { Rate = 6.49m, PayFrequency = 1 };
 
-        var result = await _sut.TestValidateAsync(model);
+        var result = await _sut.TestValidateAsync(model, cancellationToken: TestContext.Current.CancellationToken);
 
         result.ShouldHaveValidationErrorFor(x => x.Rate)
             .WithErrorCode("Rule-01");
@@ -47,7 +47,7 @@ public sealed class RecordPayChangeValidatorTests : UnitTestBase
     {
         var model = new EmployeePayChangeCreateModel { Rate = 6.50m, PayFrequency = 1 };
 
-        var result = await _sut.TestValidateAsync(model);
+        var result = await _sut.TestValidateAsync(model, cancellationToken: TestContext.Current.CancellationToken);
 
         result.ShouldNotHaveValidationErrorFor(x => x.Rate);
     }
@@ -57,7 +57,7 @@ public sealed class RecordPayChangeValidatorTests : UnitTestBase
     {
         var model = new EmployeePayChangeCreateModel { Rate = 200.01m, PayFrequency = 1 };
 
-        var result = await _sut.TestValidateAsync(model);
+        var result = await _sut.TestValidateAsync(model, cancellationToken: TestContext.Current.CancellationToken);
 
         result.ShouldHaveValidationErrorFor(x => x.Rate)
             .WithErrorCode("Rule-02");
@@ -68,7 +68,7 @@ public sealed class RecordPayChangeValidatorTests : UnitTestBase
     {
         var model = new EmployeePayChangeCreateModel { Rate = 200m, PayFrequency = 1 };
 
-        var result = await _sut.TestValidateAsync(model);
+        var result = await _sut.TestValidateAsync(model, cancellationToken: TestContext.Current.CancellationToken);
 
         result.ShouldNotHaveValidationErrorFor(x => x.Rate);
     }
@@ -78,7 +78,7 @@ public sealed class RecordPayChangeValidatorTests : UnitTestBase
     {
         var model = new EmployeePayChangeCreateModel { Rate = 50m, PayFrequency = 1 };
 
-        var result = await _sut.TestValidateAsync(model);
+        var result = await _sut.TestValidateAsync(model, cancellationToken: TestContext.Current.CancellationToken);
 
         result.ShouldNotHaveValidationErrorFor(x => x.Rate);
     }
@@ -88,7 +88,7 @@ public sealed class RecordPayChangeValidatorTests : UnitTestBase
     {
         var model = new EmployeePayChangeCreateModel { Rate = 50m, PayFrequency = 0 };
 
-        var result = await _sut.TestValidateAsync(model);
+        var result = await _sut.TestValidateAsync(model, cancellationToken: TestContext.Current.CancellationToken);
 
         result.ShouldHaveValidationErrorFor(x => x.PayFrequency)
             .WithErrorCode("Rule-03");
@@ -99,7 +99,7 @@ public sealed class RecordPayChangeValidatorTests : UnitTestBase
     {
         var model = new EmployeePayChangeCreateModel { Rate = 50m, PayFrequency = 3 };
 
-        var result = await _sut.TestValidateAsync(model);
+        var result = await _sut.TestValidateAsync(model, cancellationToken: TestContext.Current.CancellationToken);
 
         result.ShouldHaveValidationErrorFor(x => x.PayFrequency)
             .WithErrorCode("Rule-03");
@@ -110,7 +110,7 @@ public sealed class RecordPayChangeValidatorTests : UnitTestBase
     {
         var model = new EmployeePayChangeCreateModel { Rate = 50m, PayFrequency = 1 };
 
-        var result = await _sut.TestValidateAsync(model);
+        var result = await _sut.TestValidateAsync(model, cancellationToken: TestContext.Current.CancellationToken);
 
         result.ShouldNotHaveValidationErrorFor(x => x.PayFrequency);
     }
@@ -120,7 +120,7 @@ public sealed class RecordPayChangeValidatorTests : UnitTestBase
     {
         var model = new EmployeePayChangeCreateModel { Rate = 50m, PayFrequency = 2 };
 
-        var result = await _sut.TestValidateAsync(model);
+        var result = await _sut.TestValidateAsync(model, cancellationToken: TestContext.Current.CancellationToken);
 
         result.ShouldNotHaveValidationErrorFor(x => x.PayFrequency);
     }

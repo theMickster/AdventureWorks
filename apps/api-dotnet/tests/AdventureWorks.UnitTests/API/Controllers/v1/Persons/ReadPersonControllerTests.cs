@@ -47,7 +47,7 @@ public sealed class ReadPersonControllerTests : UnitTestBase
                 PersonTypeName = "Employee"
             });
 
-        var result = await _sut.GetByIdAsync(123);
+        var result = await _sut.GetByIdAsync(123, cancellationToken: TestContext.Current.CancellationToken);
         var objectResult = result as OkObjectResult;
 
         using (new AssertionScope())
@@ -64,7 +64,7 @@ public sealed class ReadPersonControllerTests : UnitTestBase
         _mockMediator.Setup(x => x.Send(It.IsAny<ReadPersonQuery>(), It.IsAny<CancellationToken>()))
             .ReturnsAsync((PersonDetailModel?)null);
 
-        var result = await _sut.GetByIdAsync(9999);
+        var result = await _sut.GetByIdAsync(9999, cancellationToken: TestContext.Current.CancellationToken);
         var objectResult = result as NotFoundObjectResult;
         var outputModel = objectResult!.Value as string;
 
@@ -79,7 +79,7 @@ public sealed class ReadPersonControllerTests : UnitTestBase
     [Fact]
     public async Task GetById_returns_bad_request_Async()
     {
-        var result = await _sut.GetByIdAsync(-1);
+        var result = await _sut.GetByIdAsync(-1, cancellationToken: TestContext.Current.CancellationToken);
         var objectResult = result as BadRequestObjectResult;
         var outputModel = objectResult!.Value as string;
 

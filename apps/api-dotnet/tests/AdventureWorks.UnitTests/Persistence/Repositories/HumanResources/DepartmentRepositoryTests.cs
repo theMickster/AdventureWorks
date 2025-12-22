@@ -41,7 +41,7 @@ public sealed class DepartmentRepositoryTests : PersistenceUnitTestBase
     [Fact]
     public async Task ListAllAsync_is_correctAsync()
     {
-        var result = await _sut.ListAllAsync();
+        var result = await _sut.ListAllAsync(cancellationToken: TestContext.Current.CancellationToken);
 
         using (new AssertionScope())
         {
@@ -56,7 +56,7 @@ public sealed class DepartmentRepositoryTests : PersistenceUnitTestBase
     [InlineData(3)]
     public async Task GetByIdAsync_is_correctAsync(int id)
     {
-        var result = await _sut.GetByIdAsync(id);
+        var result = await _sut.GetByIdAsync(id, cancellationToken: TestContext.Current.CancellationToken);
 
         using (new AssertionScope())
         {
@@ -68,7 +68,7 @@ public sealed class DepartmentRepositoryTests : PersistenceUnitTestBase
     [Fact]
     public async Task ExistsByNameAsync_returns_true_when_name_existsAsync()
     {
-        var result = await _sut.ExistsByNameAsync("Engineering");
+        var result = await _sut.ExistsByNameAsync("Engineering", cancellationToken: TestContext.Current.CancellationToken);
 
         result.Should().BeTrue();
     }
@@ -76,7 +76,7 @@ public sealed class DepartmentRepositoryTests : PersistenceUnitTestBase
     [Fact]
     public async Task ExistsByNameAsync_returns_false_when_name_does_not_existAsync()
     {
-        var result = await _sut.ExistsByNameAsync("NonExistentDepartment");
+        var result = await _sut.ExistsByNameAsync("NonExistentDepartment", cancellationToken: TestContext.Current.CancellationToken);
 
         result.Should().BeFalse();
     }
@@ -85,7 +85,7 @@ public sealed class DepartmentRepositoryTests : PersistenceUnitTestBase
     public async Task ExistsByNameExcludingIdAsync_returns_false_when_name_belongs_to_excluded_idAsync()
     {
         // "Engineering" is department ID 1; excluding ID 1 should return false
-        var result = await _sut.ExistsByNameExcludingIdAsync("Engineering", excludeId: 1);
+        var result = await _sut.ExistsByNameExcludingIdAsync("Engineering", excludeId: 1, cancellationToken: TestContext.Current.CancellationToken);
 
         result.Should().BeFalse();
     }
@@ -94,7 +94,7 @@ public sealed class DepartmentRepositoryTests : PersistenceUnitTestBase
     public async Task ExistsByNameExcludingIdAsync_returns_true_when_name_belongs_to_different_departmentAsync()
     {
         // "Engineering" belongs to ID 1; excluding ID 2 means ID 1 still matches
-        var result = await _sut.ExistsByNameExcludingIdAsync("Engineering", excludeId: 2);
+        var result = await _sut.ExistsByNameExcludingIdAsync("Engineering", excludeId: 2, cancellationToken: TestContext.Current.CancellationToken);
 
         result.Should().BeTrue();
     }

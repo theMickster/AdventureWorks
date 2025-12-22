@@ -202,7 +202,7 @@ public sealed class EmployeeRepositoryTests : PersistenceUnitTestBase
             address,
             addressTypeId: 2,
             StandardModifiedDate,
-            rowGuid);
+            rowGuid, cancellationToken: TestContext.Current.CancellationToken);
 
         using (new AssertionScope())
         {
@@ -210,13 +210,13 @@ public sealed class EmployeeRepositoryTests : PersistenceUnitTestBase
             businessEntityId.Should().BeGreaterThan(0);
 
             var createdBusinessEntity = await DbContext.BusinessEntities
-                .FirstOrDefaultAsync(be => be.BusinessEntityId == businessEntityId);
+                .FirstOrDefaultAsync(be => be.BusinessEntityId == businessEntityId, cancellationToken: TestContext.Current.CancellationToken);
             createdBusinessEntity.Should().NotBeNull();
             createdBusinessEntity!.Rowguid.Should().Be(rowGuid);
 
             // Verify Person was created
             var createdPerson = await DbContext.Persons
-                .FirstOrDefaultAsync(p => p.BusinessEntityId == businessEntityId);
+                .FirstOrDefaultAsync(p => p.BusinessEntityId == businessEntityId, cancellationToken: TestContext.Current.CancellationToken);
             createdPerson.Should().NotBeNull();
             createdPerson!.FirstName.Should().Be("John");
             createdPerson.LastName.Should().Be("Doe");
@@ -224,7 +224,7 @@ public sealed class EmployeeRepositoryTests : PersistenceUnitTestBase
 
             // Verify Employee was created
             var createdEmployee = await DbContext.Employees
-                .FirstOrDefaultAsync(e => e.BusinessEntityId == businessEntityId);
+                .FirstOrDefaultAsync(e => e.BusinessEntityId == businessEntityId, cancellationToken: TestContext.Current.CancellationToken);
             createdEmployee.Should().NotBeNull();
             createdEmployee!.NationalIdnumber.Should().Be("123456789");
             createdEmployee.LoginId.Should().Be("adventure-works\\john.doe");
@@ -235,20 +235,20 @@ public sealed class EmployeeRepositoryTests : PersistenceUnitTestBase
 
             // Verify PersonPhone was created
             var createdPhone = await DbContext.PersonPhones
-                .FirstOrDefaultAsync(pp => pp.BusinessEntityId == businessEntityId);
+                .FirstOrDefaultAsync(pp => pp.BusinessEntityId == businessEntityId, cancellationToken: TestContext.Current.CancellationToken);
             createdPhone.Should().NotBeNull();
             createdPhone!.PhoneNumber.Should().Be("555-123-4567");
             createdPhone.PhoneNumberTypeId.Should().Be(1);
 
             // Verify EmailAddress was created
             var createdEmail = await DbContext.EmailAddresses
-                .FirstOrDefaultAsync(ea => ea.BusinessEntityId == businessEntityId);
+                .FirstOrDefaultAsync(ea => ea.BusinessEntityId == businessEntityId, cancellationToken: TestContext.Current.CancellationToken);
             createdEmail.Should().NotBeNull();
             createdEmail!.EmailAddressName.Should().Be("john.doe@adventure-works.com");
 
             // Verify Address was created
             var createdAddress = await DbContext.Addresses
-                .FirstOrDefaultAsync(a => a.AddressLine1 == "123 Main Street");
+                .FirstOrDefaultAsync(a => a.AddressLine1 == "123 Main Street", cancellationToken: TestContext.Current.CancellationToken);
             createdAddress.Should().NotBeNull();
             createdAddress!.City.Should().Be("Seattle");
             createdAddress.PostalCode.Should().Be("98101");
@@ -256,7 +256,7 @@ public sealed class EmployeeRepositoryTests : PersistenceUnitTestBase
 
             // Verify BusinessEntityAddress was created
             var createdBusinessEntityAddress = await DbContext.BusinessEntityAddresses
-                .FirstOrDefaultAsync(bea => bea.BusinessEntityId == businessEntityId);
+                .FirstOrDefaultAsync(bea => bea.BusinessEntityId == businessEntityId, cancellationToken: TestContext.Current.CancellationToken);
             createdBusinessEntityAddress.Should().NotBeNull();
             createdBusinessEntityAddress!.AddressId.Should().Be(createdAddress.AddressId);
             createdBusinessEntityAddress.AddressTypeId.Should().Be(2);
@@ -282,19 +282,19 @@ public sealed class EmployeeRepositoryTests : PersistenceUnitTestBase
             address,
             addressTypeId: 1,
             testDate,
-            rowGuid);
+            rowGuid, cancellationToken: TestContext.Current.CancellationToken);
 
         using (new AssertionScope())
         {
             var createdPerson = await DbContext.Persons
-                .FirstAsync(p => p.BusinessEntityId == businessEntityId);
+                .FirstAsync(p => p.BusinessEntityId == businessEntityId, cancellationToken: TestContext.Current.CancellationToken);
             createdPerson.ModifiedDate.Should().Be(testDate);
             createdPerson.NameStyle.Should().BeFalse();
             createdPerson.EmailPromotion.Should().Be(0);
             createdPerson.Rowguid.Should().NotBeEmpty();
 
             var createdEmployee = await DbContext.Employees
-                .FirstAsync(e => e.BusinessEntityId == businessEntityId);
+                .FirstAsync(e => e.BusinessEntityId == businessEntityId, cancellationToken: TestContext.Current.CancellationToken);
             createdEmployee.ModifiedDate.Should().Be(testDate);
             createdEmployee.Rowguid.Should().NotBeEmpty();
         }
@@ -318,10 +318,10 @@ public sealed class EmployeeRepositoryTests : PersistenceUnitTestBase
             address,
             addressTypeId: 1,
             StandardModifiedDate,
-            Guid.NewGuid());
+            Guid.NewGuid(), cancellationToken: TestContext.Current.CancellationToken);
 
         // Now retrieve it
-        var result = await _sut.GetEmployeeByIdAsync(businessEntityId);
+        var result = await _sut.GetEmployeeByIdAsync(businessEntityId, cancellationToken: TestContext.Current.CancellationToken);
 
         using (new AssertionScope())
         {
@@ -340,7 +340,7 @@ public sealed class EmployeeRepositoryTests : PersistenceUnitTestBase
     [Fact]
     public async Task GetEmployeeByIdAsync_returns_null_for_nonexistent_idAsync()
     {
-        var result = await _sut.GetEmployeeByIdAsync(99999);
+        var result = await _sut.GetEmployeeByIdAsync(99999, cancellationToken: TestContext.Current.CancellationToken);
 
         result.Should().BeNull();
     }
@@ -363,10 +363,10 @@ public sealed class EmployeeRepositoryTests : PersistenceUnitTestBase
             address,
             addressTypeId: 1,
             StandardModifiedDate,
-            Guid.NewGuid());
+            Guid.NewGuid(), cancellationToken: TestContext.Current.CancellationToken);
 
         // Retrieve the employee
-        var result = await _sut.GetEmployeeByIdAsync(businessEntityId);
+        var result = await _sut.GetEmployeeByIdAsync(businessEntityId, cancellationToken: TestContext.Current.CancellationToken);
 
         // Verify it's tracked
         var entry = DbContext.Entry(result!);
@@ -380,11 +380,11 @@ public sealed class EmployeeRepositoryTests : PersistenceUnitTestBase
     {
         var employees = HumanResourcesDomainFixtures.GetEmployeeListForPaging();
         DbContext.Employees.AddRange(employees);
-        await DbContext.SaveChangesAsync();
+        await DbContext.SaveChangesAsync(cancellationToken: TestContext.Current.CancellationToken);
 
         var parameters = new EmployeeParameter { PageNumber = 1, PageSize = 3 };
 
-        var (result, totalCount) = await _sut.GetEmployeesAsync(parameters);
+        var (result, totalCount) = await _sut.GetEmployeesAsync(parameters, cancellationToken: TestContext.Current.CancellationToken);
 
         using (new AssertionScope())
         {
@@ -400,11 +400,11 @@ public sealed class EmployeeRepositoryTests : PersistenceUnitTestBase
     {
         var employees = HumanResourcesDomainFixtures.GetEmployeeListForPaging();
         DbContext.Employees.AddRange(employees);
-        await DbContext.SaveChangesAsync();
+        await DbContext.SaveChangesAsync(cancellationToken: TestContext.Current.CancellationToken);
 
         var parameters = new EmployeeParameter { PageNumber = 2, PageSize = 2 };
 
-        var (result, totalCount) = await _sut.GetEmployeesAsync(parameters);
+        var (result, totalCount) = await _sut.GetEmployeesAsync(parameters, cancellationToken: TestContext.Current.CancellationToken);
 
         using (new AssertionScope())
         {
@@ -420,7 +420,7 @@ public sealed class EmployeeRepositoryTests : PersistenceUnitTestBase
     {
         var employees = HumanResourcesDomainFixtures.GetEmployeeListForPaging();
         DbContext.Employees.AddRange(employees);
-        await DbContext.SaveChangesAsync();
+        await DbContext.SaveChangesAsync(cancellationToken: TestContext.Current.CancellationToken);
 
         var parameters = new EmployeeParameter
         {
@@ -430,7 +430,7 @@ public sealed class EmployeeRepositoryTests : PersistenceUnitTestBase
             SortOrder = SortedResultConstants.Ascending
         };
 
-        var (result, _) = await _sut.GetEmployeesAsync(parameters);
+        var (result, _) = await _sut.GetEmployeesAsync(parameters, cancellationToken: TestContext.Current.CancellationToken);
 
         using (new AssertionScope())
         {
@@ -445,7 +445,7 @@ public sealed class EmployeeRepositoryTests : PersistenceUnitTestBase
     {
         var employees = HumanResourcesDomainFixtures.GetEmployeeListForPaging();
         DbContext.Employees.AddRange(employees);
-        await DbContext.SaveChangesAsync();
+        await DbContext.SaveChangesAsync(cancellationToken: TestContext.Current.CancellationToken);
 
         var parameters = new EmployeeParameter
         {
@@ -455,7 +455,7 @@ public sealed class EmployeeRepositoryTests : PersistenceUnitTestBase
             SortOrder = SortedResultConstants.Descending
         };
 
-        var (result, _) = await _sut.GetEmployeesAsync(parameters);
+        var (result, _) = await _sut.GetEmployeesAsync(parameters, cancellationToken: TestContext.Current.CancellationToken);
 
         using (new AssertionScope())
         {
@@ -470,7 +470,7 @@ public sealed class EmployeeRepositoryTests : PersistenceUnitTestBase
     {
         var employees = HumanResourcesDomainFixtures.GetEmployeeListForPaging();
         DbContext.Employees.AddRange(employees);
-        await DbContext.SaveChangesAsync();
+        await DbContext.SaveChangesAsync(cancellationToken: TestContext.Current.CancellationToken);
 
         var parameters = new EmployeeParameter
         {
@@ -480,7 +480,7 @@ public sealed class EmployeeRepositoryTests : PersistenceUnitTestBase
             SortOrder = SortedResultConstants.Ascending
         };
 
-        var (result, _) = await _sut.GetEmployeesAsync(parameters);
+        var (result, _) = await _sut.GetEmployeesAsync(parameters, cancellationToken: TestContext.Current.CancellationToken);
 
         using (new AssertionScope())
         {
@@ -495,7 +495,7 @@ public sealed class EmployeeRepositoryTests : PersistenceUnitTestBase
     {
         var employees = HumanResourcesDomainFixtures.GetEmployeeListForPaging();
         DbContext.Employees.AddRange(employees);
-        await DbContext.SaveChangesAsync();
+        await DbContext.SaveChangesAsync(cancellationToken: TestContext.Current.CancellationToken);
 
         var parameters = new EmployeeParameter
         {
@@ -505,7 +505,7 @@ public sealed class EmployeeRepositoryTests : PersistenceUnitTestBase
             SortOrder = SortedResultConstants.Descending
         };
 
-        var (result, _) = await _sut.GetEmployeesAsync(parameters);
+        var (result, _) = await _sut.GetEmployeesAsync(parameters, cancellationToken: TestContext.Current.CancellationToken);
 
         using (new AssertionScope())
         {
@@ -519,7 +519,7 @@ public sealed class EmployeeRepositoryTests : PersistenceUnitTestBase
     {
         var parameters = new EmployeeParameter { PageNumber = 1, PageSize = 10 };
 
-        var (result, totalCount) = await _sut.GetEmployeesAsync(parameters);
+        var (result, totalCount) = await _sut.GetEmployeesAsync(parameters, cancellationToken: TestContext.Current.CancellationToken);
 
         using (new AssertionScope())
         {
@@ -533,11 +533,11 @@ public sealed class EmployeeRepositoryTests : PersistenceUnitTestBase
     {
         var employee = HumanResourcesDomainFixtures.GetCompleteEmployeeEntity(1, "Test", "User", "Tester", "999999999", "adventure-works\\test.user", "test.user@adventure-works.com");
         DbContext.Employees.Add(employee);
-        await DbContext.SaveChangesAsync();
+        await DbContext.SaveChangesAsync(cancellationToken: TestContext.Current.CancellationToken);
 
         var parameters = new EmployeeParameter { PageNumber = 1, PageSize = 10 };
 
-        var (result, _) = await _sut.GetEmployeesAsync(parameters);
+        var (result, _) = await _sut.GetEmployeesAsync(parameters, cancellationToken: TestContext.Current.CancellationToken);
 
         using (new AssertionScope())
         {
@@ -555,11 +555,11 @@ public sealed class EmployeeRepositoryTests : PersistenceUnitTestBase
     {
         var employee = HumanResourcesDomainFixtures.GetCompleteEmployeeEntity();
         DbContext.Employees.Add(employee);
-        await DbContext.SaveChangesAsync();
+        await DbContext.SaveChangesAsync(cancellationToken: TestContext.Current.CancellationToken);
 
         var parameters = new EmployeeParameter { PageNumber = 1, PageSize = 10 };
 
-        var (result, _) = await _sut.GetEmployeesAsync(parameters);
+        var (result, _) = await _sut.GetEmployeesAsync(parameters, cancellationToken: TestContext.Current.CancellationToken);
 
         var entry = DbContext.Entry(result[0]);
         entry.State.Should().Be(EntityState.Detached);
@@ -586,11 +586,11 @@ public sealed class EmployeeRepositoryTests : PersistenceUnitTestBase
             ModifiedDate = StandardModifiedDate
         };
         DbContext.Shifts.Add(shift);
-        await DbContext.SaveChangesAsync();
+        await DbContext.SaveChangesAsync(cancellationToken: TestContext.Current.CancellationToken);
 
         var employee = HumanResourcesDomainFixtures.GetCompleteEmployeeEntity();
         DbContext.Employees.Add(employee);
-        await DbContext.SaveChangesAsync();
+        await DbContext.SaveChangesAsync(cancellationToken: TestContext.Current.CancellationToken);
 
         DbContext.EmployeeDepartmentHistories.Add(new EmployeeDepartmentHistory
         {
@@ -601,11 +601,11 @@ public sealed class EmployeeRepositoryTests : PersistenceUnitTestBase
             EndDate = null,
             ModifiedDate = StandardModifiedDate
         });
-        await DbContext.SaveChangesAsync();
+        await DbContext.SaveChangesAsync(cancellationToken: TestContext.Current.CancellationToken);
 
         var parameters = new EmployeeParameter { PageNumber = 1, PageSize = 10 };
 
-        var (result, _) = await _sut.GetEmployeesAsync(parameters);
+        var (result, _) = await _sut.GetEmployeesAsync(parameters, cancellationToken: TestContext.Current.CancellationToken);
 
         using (new AssertionScope())
         {
@@ -620,11 +620,11 @@ public sealed class EmployeeRepositoryTests : PersistenceUnitTestBase
     {
         var employee = HumanResourcesDomainFixtures.GetCompleteEmployeeEntity();
         DbContext.Employees.Add(employee);
-        await DbContext.SaveChangesAsync();
+        await DbContext.SaveChangesAsync(cancellationToken: TestContext.Current.CancellationToken);
 
         var parameters = new EmployeeParameter { PageNumber = 1, PageSize = 10 };
 
-        var (result, _) = await _sut.GetEmployeesAsync(parameters);
+        var (result, _) = await _sut.GetEmployeesAsync(parameters, cancellationToken: TestContext.Current.CancellationToken);
 
         result[0].EmployeeDepartmentHistory.Should().BeEmpty();
     }
@@ -638,12 +638,12 @@ public sealed class EmployeeRepositoryTests : PersistenceUnitTestBase
     {
         var employees = HumanResourcesDomainFixtures.GetEmployeeListForPaging();
         DbContext.Employees.AddRange(employees);
-        await DbContext.SaveChangesAsync();
+        await DbContext.SaveChangesAsync(cancellationToken: TestContext.Current.CancellationToken);
 
         var parameters = new EmployeeParameter { PageNumber = 1, PageSize = 10 };
         var searchModel = new EmployeeSearchModel { Id = 3 };
 
-        var (result, totalCount) = await _sut.SearchEmployeesAsync(parameters, searchModel);
+        var (result, totalCount) = await _sut.SearchEmployeesAsync(parameters, searchModel, cancellationToken: TestContext.Current.CancellationToken);
 
         using (new AssertionScope())
         {
@@ -658,12 +658,12 @@ public sealed class EmployeeRepositoryTests : PersistenceUnitTestBase
     {
         var employees = HumanResourcesDomainFixtures.GetEmployeeListForPaging();
         DbContext.Employees.AddRange(employees);
-        await DbContext.SaveChangesAsync();
+        await DbContext.SaveChangesAsync(cancellationToken: TestContext.Current.CancellationToken);
 
         var parameters = new EmployeeParameter { PageNumber = 1, PageSize = 10 };
         var searchModel = new EmployeeSearchModel { FirstName = "bob" };
 
-        var (result, totalCount) = await _sut.SearchEmployeesAsync(parameters, searchModel);
+        var (result, totalCount) = await _sut.SearchEmployeesAsync(parameters, searchModel, cancellationToken: TestContext.Current.CancellationToken);
 
         using (new AssertionScope())
         {
@@ -678,12 +678,12 @@ public sealed class EmployeeRepositoryTests : PersistenceUnitTestBase
     {
         var employees = HumanResourcesDomainFixtures.GetEmployeeListForPaging();
         DbContext.Employees.AddRange(employees);
-        await DbContext.SaveChangesAsync();
+        await DbContext.SaveChangesAsync(cancellationToken: TestContext.Current.CancellationToken);
 
         var parameters = new EmployeeParameter { PageNumber = 1, PageSize = 10 };
         var searchModel = new EmployeeSearchModel { LastName = "davis" };
 
-        var (result, totalCount) = await _sut.SearchEmployeesAsync(parameters, searchModel);
+        var (result, totalCount) = await _sut.SearchEmployeesAsync(parameters, searchModel, cancellationToken: TestContext.Current.CancellationToken);
 
         using (new AssertionScope())
         {
@@ -698,12 +698,12 @@ public sealed class EmployeeRepositoryTests : PersistenceUnitTestBase
     {
         var employees = HumanResourcesDomainFixtures.GetEmployeeListForPaging();
         DbContext.Employees.AddRange(employees);
-        await DbContext.SaveChangesAsync();
+        await DbContext.SaveChangesAsync(cancellationToken: TestContext.Current.CancellationToken);
 
         var parameters = new EmployeeParameter { PageNumber = 1, PageSize = 10 };
         var searchModel = new EmployeeSearchModel { JobTitle = "developer" };
 
-        var (result, totalCount) = await _sut.SearchEmployeesAsync(parameters, searchModel);
+        var (result, totalCount) = await _sut.SearchEmployeesAsync(parameters, searchModel, cancellationToken: TestContext.Current.CancellationToken);
 
         using (new AssertionScope())
         {
@@ -718,12 +718,12 @@ public sealed class EmployeeRepositoryTests : PersistenceUnitTestBase
     {
         var employees = HumanResourcesDomainFixtures.GetEmployeeListForPaging();
         DbContext.Employees.AddRange(employees);
-        await DbContext.SaveChangesAsync();
+        await DbContext.SaveChangesAsync(cancellationToken: TestContext.Current.CancellationToken);
 
         var parameters = new EmployeeParameter { PageNumber = 1, PageSize = 10 };
         var searchModel = new EmployeeSearchModel { EmailAddress = "charlie.chen" };
 
-        var (result, totalCount) = await _sut.SearchEmployeesAsync(parameters, searchModel);
+        var (result, totalCount) = await _sut.SearchEmployeesAsync(parameters, searchModel, cancellationToken: TestContext.Current.CancellationToken);
 
         using (new AssertionScope())
         {
@@ -738,12 +738,12 @@ public sealed class EmployeeRepositoryTests : PersistenceUnitTestBase
     {
         var employees = HumanResourcesDomainFixtures.GetEmployeeListForPaging();
         DbContext.Employees.AddRange(employees);
-        await DbContext.SaveChangesAsync();
+        await DbContext.SaveChangesAsync(cancellationToken: TestContext.Current.CancellationToken);
 
         var parameters = new EmployeeParameter { PageNumber = 1, PageSize = 10 };
         var searchModel = new EmployeeSearchModel { NationalIdNumber = "444444444" };
 
-        var (result, totalCount) = await _sut.SearchEmployeesAsync(parameters, searchModel);
+        var (result, totalCount) = await _sut.SearchEmployeesAsync(parameters, searchModel, cancellationToken: TestContext.Current.CancellationToken);
 
         using (new AssertionScope())
         {
@@ -758,12 +758,12 @@ public sealed class EmployeeRepositoryTests : PersistenceUnitTestBase
     {
         var employees = HumanResourcesDomainFixtures.GetEmployeeListForPaging();
         DbContext.Employees.AddRange(employees);
-        await DbContext.SaveChangesAsync();
+        await DbContext.SaveChangesAsync(cancellationToken: TestContext.Current.CancellationToken);
 
         var parameters = new EmployeeParameter { PageNumber = 1, PageSize = 10 };
         var searchModel = new EmployeeSearchModel { LoginId = "alice.anderson" };
 
-        var (result, totalCount) = await _sut.SearchEmployeesAsync(parameters, searchModel);
+        var (result, totalCount) = await _sut.SearchEmployeesAsync(parameters, searchModel, cancellationToken: TestContext.Current.CancellationToken);
 
         using (new AssertionScope())
         {
@@ -778,7 +778,7 @@ public sealed class EmployeeRepositoryTests : PersistenceUnitTestBase
     {
         var employees = HumanResourcesDomainFixtures.GetEmployeeListForPaging();
         DbContext.Employees.AddRange(employees);
-        await DbContext.SaveChangesAsync();
+        await DbContext.SaveChangesAsync(cancellationToken: TestContext.Current.CancellationToken);
 
         var parameters = new EmployeeParameter { PageNumber = 1, PageSize = 10 };
         var searchModel = new EmployeeSearchModel
@@ -788,7 +788,7 @@ public sealed class EmployeeRepositoryTests : PersistenceUnitTestBase
             JobTitle = "developer"
         };
 
-        var (result, totalCount) = await _sut.SearchEmployeesAsync(parameters, searchModel);
+        var (result, totalCount) = await _sut.SearchEmployeesAsync(parameters, searchModel, cancellationToken: TestContext.Current.CancellationToken);
 
         using (new AssertionScope())
         {
@@ -805,12 +805,12 @@ public sealed class EmployeeRepositoryTests : PersistenceUnitTestBase
     {
         var employees = HumanResourcesDomainFixtures.GetEmployeeListForPaging();
         DbContext.Employees.AddRange(employees);
-        await DbContext.SaveChangesAsync();
+        await DbContext.SaveChangesAsync(cancellationToken: TestContext.Current.CancellationToken);
 
         var parameters = new EmployeeParameter { PageNumber = 1, PageSize = 10 };
         var searchModel = new EmployeeSearchModel { FirstName = "NonExistent" };
 
-        var (result, totalCount) = await _sut.SearchEmployeesAsync(parameters, searchModel);
+        var (result, totalCount) = await _sut.SearchEmployeesAsync(parameters, searchModel, cancellationToken: TestContext.Current.CancellationToken);
 
         using (new AssertionScope())
         {
@@ -824,12 +824,12 @@ public sealed class EmployeeRepositoryTests : PersistenceUnitTestBase
     {
         var employees = HumanResourcesDomainFixtures.GetEmployeeListForPaging();
         DbContext.Employees.AddRange(employees);
-        await DbContext.SaveChangesAsync();
+        await DbContext.SaveChangesAsync(cancellationToken: TestContext.Current.CancellationToken);
 
         var parameters = new EmployeeParameter { PageNumber = 1, PageSize = 10 };
         var searchModel = new EmployeeSearchModel { FirstName = "CHARLIE" };
 
-        var (result, totalCount) = await _sut.SearchEmployeesAsync(parameters, searchModel);
+        var (result, totalCount) = await _sut.SearchEmployeesAsync(parameters, searchModel, cancellationToken: TestContext.Current.CancellationToken);
 
         using (new AssertionScope())
         {
@@ -844,12 +844,12 @@ public sealed class EmployeeRepositoryTests : PersistenceUnitTestBase
     {
         var employees = HumanResourcesDomainFixtures.GetEmployeeListForPaging();
         DbContext.Employees.AddRange(employees);
-        await DbContext.SaveChangesAsync();
+        await DbContext.SaveChangesAsync(cancellationToken: TestContext.Current.CancellationToken);
 
         var parameters = new EmployeeParameter { PageNumber = 2, PageSize = 2 };
         var searchModel = new EmployeeSearchModel();
 
-        var (result, totalCount) = await _sut.SearchEmployeesAsync(parameters, searchModel);
+        var (result, totalCount) = await _sut.SearchEmployeesAsync(parameters, searchModel, cancellationToken: TestContext.Current.CancellationToken);
 
         using (new AssertionScope())
         {
@@ -863,7 +863,7 @@ public sealed class EmployeeRepositoryTests : PersistenceUnitTestBase
     {
         var employees = HumanResourcesDomainFixtures.GetEmployeeListForPaging();
         DbContext.Employees.AddRange(employees);
-        await DbContext.SaveChangesAsync();
+        await DbContext.SaveChangesAsync(cancellationToken: TestContext.Current.CancellationToken);
 
         var parameters = new EmployeeParameter
         {
@@ -874,7 +874,7 @@ public sealed class EmployeeRepositoryTests : PersistenceUnitTestBase
         };
         var searchModel = new EmployeeSearchModel();
 
-        var (result, _) = await _sut.SearchEmployeesAsync(parameters, searchModel);
+        var (result, _) = await _sut.SearchEmployeesAsync(parameters, searchModel, cancellationToken: TestContext.Current.CancellationToken);
 
         result.Should().BeInAscendingOrder(e => e.PersonBusinessEntity.FirstName);
     }
@@ -884,12 +884,12 @@ public sealed class EmployeeRepositoryTests : PersistenceUnitTestBase
     {
         var employee = HumanResourcesDomainFixtures.GetCompleteEmployeeEntity();
         DbContext.Employees.Add(employee);
-        await DbContext.SaveChangesAsync();
+        await DbContext.SaveChangesAsync(cancellationToken: TestContext.Current.CancellationToken);
 
         var parameters = new EmployeeParameter { PageNumber = 1, PageSize = 10 };
         var searchModel = new EmployeeSearchModel();
 
-        var (result, _) = await _sut.SearchEmployeesAsync(parameters, searchModel);
+        var (result, _) = await _sut.SearchEmployeesAsync(parameters, searchModel, cancellationToken: TestContext.Current.CancellationToken);
 
         var entry = DbContext.Entry(result[0]);
         entry.State.Should().Be(EntityState.Detached);
@@ -901,12 +901,12 @@ public sealed class EmployeeRepositoryTests : PersistenceUnitTestBase
         var employees = HumanResourcesDomainFixtures.GetEmployeeListForPaging();
         employees[0].CurrentFlag = false;
         DbContext.Employees.AddRange(employees);
-        await DbContext.SaveChangesAsync();
+        await DbContext.SaveChangesAsync(cancellationToken: TestContext.Current.CancellationToken);
 
         var parameters = new EmployeeParameter { PageNumber = 1, PageSize = 10 };
         var searchModel = new EmployeeSearchModel { CurrentFlag = true };
 
-        var (result, totalCount) = await _sut.SearchEmployeesAsync(parameters, searchModel);
+        var (result, totalCount) = await _sut.SearchEmployeesAsync(parameters, searchModel, cancellationToken: TestContext.Current.CancellationToken);
 
         using (new AssertionScope())
         {
@@ -922,12 +922,12 @@ public sealed class EmployeeRepositoryTests : PersistenceUnitTestBase
         var employees = HumanResourcesDomainFixtures.GetEmployeeListForPaging();
         employees[0].CurrentFlag = false;
         DbContext.Employees.AddRange(employees);
-        await DbContext.SaveChangesAsync();
+        await DbContext.SaveChangesAsync(cancellationToken: TestContext.Current.CancellationToken);
 
         var parameters = new EmployeeParameter { PageNumber = 1, PageSize = 10 };
         var searchModel = new EmployeeSearchModel { CurrentFlag = false };
 
-        var (result, totalCount) = await _sut.SearchEmployeesAsync(parameters, searchModel);
+        var (result, totalCount) = await _sut.SearchEmployeesAsync(parameters, searchModel, cancellationToken: TestContext.Current.CancellationToken);
 
         using (new AssertionScope())
         {
@@ -943,12 +943,12 @@ public sealed class EmployeeRepositoryTests : PersistenceUnitTestBase
         var employees = HumanResourcesDomainFixtures.GetEmployeeListForPaging();
         employees[0].CurrentFlag = false;
         DbContext.Employees.AddRange(employees);
-        await DbContext.SaveChangesAsync();
+        await DbContext.SaveChangesAsync(cancellationToken: TestContext.Current.CancellationToken);
 
         var parameters = new EmployeeParameter { PageNumber = 1, PageSize = 10 };
         var searchModel = new EmployeeSearchModel { CurrentFlag = null };
 
-        var (result, totalCount) = await _sut.SearchEmployeesAsync(parameters, searchModel);
+        var (result, totalCount) = await _sut.SearchEmployeesAsync(parameters, searchModel, cancellationToken: TestContext.Current.CancellationToken);
 
         using (new AssertionScope())
         {
@@ -978,11 +978,11 @@ public sealed class EmployeeRepositoryTests : PersistenceUnitTestBase
             ModifiedDate = StandardModifiedDate
         };
         DbContext.Shifts.Add(shift);
-        await DbContext.SaveChangesAsync();
+        await DbContext.SaveChangesAsync(cancellationToken: TestContext.Current.CancellationToken);
 
         var employee = HumanResourcesDomainFixtures.GetCompleteEmployeeEntity();
         DbContext.Employees.Add(employee);
-        await DbContext.SaveChangesAsync();
+        await DbContext.SaveChangesAsync(cancellationToken: TestContext.Current.CancellationToken);
 
         DbContext.EmployeeDepartmentHistories.Add(new EmployeeDepartmentHistory
         {
@@ -993,12 +993,12 @@ public sealed class EmployeeRepositoryTests : PersistenceUnitTestBase
             EndDate = null,
             ModifiedDate = StandardModifiedDate
         });
-        await DbContext.SaveChangesAsync();
+        await DbContext.SaveChangesAsync(cancellationToken: TestContext.Current.CancellationToken);
 
         var parameters = new EmployeeParameter { PageNumber = 1, PageSize = 10 };
         var searchModel = new EmployeeSearchModel();
 
-        var (result, _) = await _sut.SearchEmployeesAsync(parameters, searchModel);
+        var (result, _) = await _sut.SearchEmployeesAsync(parameters, searchModel, cancellationToken: TestContext.Current.CancellationToken);
 
         using (new AssertionScope())
         {
@@ -1029,11 +1029,11 @@ public sealed class EmployeeRepositoryTests : PersistenceUnitTestBase
             ModifiedDate = StandardModifiedDate
         };
         DbContext.Shifts.Add(shift);
-        await DbContext.SaveChangesAsync();
+        await DbContext.SaveChangesAsync(cancellationToken: TestContext.Current.CancellationToken);
 
         var employee = HumanResourcesDomainFixtures.GetCompleteEmployeeEntity();
         DbContext.Employees.Add(employee);
-        await DbContext.SaveChangesAsync();
+        await DbContext.SaveChangesAsync(cancellationToken: TestContext.Current.CancellationToken);
 
         DbContext.EmployeeDepartmentHistories.Add(new EmployeeDepartmentHistory
         {
@@ -1044,12 +1044,12 @@ public sealed class EmployeeRepositoryTests : PersistenceUnitTestBase
             EndDate = new DateTime(2019, 12, 31),
             ModifiedDate = StandardModifiedDate
         });
-        await DbContext.SaveChangesAsync();
+        await DbContext.SaveChangesAsync(cancellationToken: TestContext.Current.CancellationToken);
 
         var parameters = new EmployeeParameter { PageNumber = 1, PageSize = 10 };
         var searchModel = new EmployeeSearchModel();
 
-        var (result, _) = await _sut.SearchEmployeesAsync(parameters, searchModel);
+        var (result, _) = await _sut.SearchEmployeesAsync(parameters, searchModel, cancellationToken: TestContext.Current.CancellationToken);
 
         using (new AssertionScope())
         {
@@ -1079,7 +1079,7 @@ public sealed class EmployeeRepositoryTests : PersistenceUnitTestBase
             address,
             addressTypeId: 1,
             StandardModifiedDate,
-            Guid.NewGuid());
+            Guid.NewGuid(), cancellationToken: TestContext.Current.CancellationToken);
 
         var secondAddress = new AddressEntity
         {
@@ -1091,7 +1091,7 @@ public sealed class EmployeeRepositoryTests : PersistenceUnitTestBase
             ModifiedDate = StandardModifiedDate
         };
         DbContext.Addresses.Add(secondAddress);
-        await DbContext.SaveChangesAsync();
+        await DbContext.SaveChangesAsync(cancellationToken: TestContext.Current.CancellationToken);
 
         var secondBea = new BusinessEntityAddressEntity
         {
@@ -1102,9 +1102,9 @@ public sealed class EmployeeRepositoryTests : PersistenceUnitTestBase
             ModifiedDate = StandardModifiedDate
         };
         DbContext.BusinessEntityAddresses.Add(secondBea);
-        await DbContext.SaveChangesAsync();
+        await DbContext.SaveChangesAsync(cancellationToken: TestContext.Current.CancellationToken);
 
-        var result = await _sut.GetEmployeeAddressesAsync(businessEntityId);
+        var result = await _sut.GetEmployeeAddressesAsync(businessEntityId, cancellationToken: TestContext.Current.CancellationToken);
 
         using (new AssertionScope())
         {
@@ -1123,7 +1123,7 @@ public sealed class EmployeeRepositoryTests : PersistenceUnitTestBase
     [Fact]
     public async Task GetEmployeeAddressesAsync_returns_empty_when_no_addressesAsync()
     {
-        var result = await _sut.GetEmployeeAddressesAsync(99999);
+        var result = await _sut.GetEmployeeAddressesAsync(99999, cancellationToken: TestContext.Current.CancellationToken);
 
         result.Should().BeEmpty();
     }
@@ -1145,9 +1145,9 @@ public sealed class EmployeeRepositoryTests : PersistenceUnitTestBase
             address,
             addressTypeId: 1,
             StandardModifiedDate,
-            Guid.NewGuid());
+            Guid.NewGuid(), cancellationToken: TestContext.Current.CancellationToken);
 
-        var result = await _sut.GetEmployeeAddressesAsync(businessEntityId);
+        var result = await _sut.GetEmployeeAddressesAsync(businessEntityId, cancellationToken: TestContext.Current.CancellationToken);
 
         using (new AssertionScope())
         {
@@ -1177,9 +1177,9 @@ public sealed class EmployeeRepositoryTests : PersistenceUnitTestBase
             address,
             addressTypeId: 1,
             StandardModifiedDate,
-            Guid.NewGuid());
+            Guid.NewGuid(), cancellationToken: TestContext.Current.CancellationToken);
 
-        var result = await _sut.GetEmployeeAddressesAsync(businessEntityId);
+        var result = await _sut.GetEmployeeAddressesAsync(businessEntityId, cancellationToken: TestContext.Current.CancellationToken);
 
         var entry = DbContext.Entry(result[0]);
         entry.State.Should().Be(EntityState.Detached);
@@ -1206,12 +1206,12 @@ public sealed class EmployeeRepositoryTests : PersistenceUnitTestBase
             address,
             addressTypeId: 1,
             StandardModifiedDate,
-            Guid.NewGuid());
+            Guid.NewGuid(), cancellationToken: TestContext.Current.CancellationToken);
 
         var createdAddress = await DbContext.Addresses
-            .FirstAsync(a => a.AddressLine1 == "123 Main Street");
+            .FirstAsync(a => a.AddressLine1 == "123 Main Street", cancellationToken: TestContext.Current.CancellationToken);
 
-        var result = await _sut.GetEmployeeAddressByIdAsync(businessEntityId, createdAddress.AddressId);
+        var result = await _sut.GetEmployeeAddressByIdAsync(businessEntityId, createdAddress.AddressId, cancellationToken: TestContext.Current.CancellationToken);
 
         using (new AssertionScope())
         {
@@ -1226,7 +1226,7 @@ public sealed class EmployeeRepositoryTests : PersistenceUnitTestBase
     [Fact]
     public async Task GetEmployeeAddressByIdAsync_returns_null_when_not_foundAsync()
     {
-        var result = await _sut.GetEmployeeAddressByIdAsync(99999, 99999);
+        var result = await _sut.GetEmployeeAddressByIdAsync(99999, 99999, cancellationToken: TestContext.Current.CancellationToken);
 
         result.Should().BeNull();
     }
@@ -1241,7 +1241,7 @@ public sealed class EmployeeRepositoryTests : PersistenceUnitTestBase
         var address1 = CreateTestAddress();
 
         var businessEntityId1 = await _sut.CreateEmployeeWithPersonAsync(
-            employee1, person1, phone1, email1, address1, 1, StandardModifiedDate, Guid.NewGuid());
+            employee1, person1, phone1, email1, address1, 1, StandardModifiedDate, Guid.NewGuid(), cancellationToken: TestContext.Current.CancellationToken);
 
         var employee2 = new EmployeeEntity
         {
@@ -1266,11 +1266,11 @@ public sealed class EmployeeRepositoryTests : PersistenceUnitTestBase
         };
 
         var businessEntityId2 = await _sut.CreateEmployeeWithPersonAsync(
-            employee2, person2, phone2, email2, address2, 1, StandardModifiedDate, Guid.NewGuid());
+            employee2, person2, phone2, email2, address2, 1, StandardModifiedDate, Guid.NewGuid(), cancellationToken: TestContext.Current.CancellationToken);
 
-        var employee2Address = await DbContext.Addresses.FirstAsync(a => a.AddressLine1 == "789 Elm Street");
+        var employee2Address = await DbContext.Addresses.FirstAsync(a => a.AddressLine1 == "789 Elm Street", cancellationToken: TestContext.Current.CancellationToken);
 
-        var result = await _sut.GetEmployeeAddressByIdAsync(businessEntityId1, employee2Address.AddressId);
+        var result = await _sut.GetEmployeeAddressByIdAsync(businessEntityId1, employee2Address.AddressId, cancellationToken: TestContext.Current.CancellationToken);
 
         result.Should().BeNull();
     }
@@ -1292,11 +1292,11 @@ public sealed class EmployeeRepositoryTests : PersistenceUnitTestBase
             address,
             addressTypeId: 1,
             StandardModifiedDate,
-            Guid.NewGuid());
+            Guid.NewGuid(), cancellationToken: TestContext.Current.CancellationToken);
 
-        var createdAddress = await DbContext.Addresses.FirstAsync(a => a.AddressLine1 == "123 Main Street");
+        var createdAddress = await DbContext.Addresses.FirstAsync(a => a.AddressLine1 == "123 Main Street", cancellationToken: TestContext.Current.CancellationToken);
 
-        var result = await _sut.GetEmployeeAddressByIdAsync(businessEntityId, createdAddress.AddressId);
+        var result = await _sut.GetEmployeeAddressByIdAsync(businessEntityId, createdAddress.AddressId, cancellationToken: TestContext.Current.CancellationToken);
 
         using (new AssertionScope())
         {
@@ -1328,11 +1328,11 @@ public sealed class EmployeeRepositoryTests : PersistenceUnitTestBase
             address,
             addressTypeId: 1,
             StandardModifiedDate,
-            Guid.NewGuid());
+            Guid.NewGuid(), cancellationToken: TestContext.Current.CancellationToken);
 
-        var createdAddress = await DbContext.Addresses.FirstAsync(a => a.AddressLine1 == "123 Main Street");
+        var createdAddress = await DbContext.Addresses.FirstAsync(a => a.AddressLine1 == "123 Main Street", cancellationToken: TestContext.Current.CancellationToken);
 
-        var result = await _sut.GetEmployeeAddressByIdAsync(businessEntityId, createdAddress.AddressId);
+        var result = await _sut.GetEmployeeAddressByIdAsync(businessEntityId, createdAddress.AddressId, cancellationToken: TestContext.Current.CancellationToken);
 
         var entry = DbContext.Entry(result!);
         entry.State.Should().Be(EntityState.Detached);
@@ -1364,7 +1364,7 @@ public sealed class EmployeeRepositoryTests : PersistenceUnitTestBase
             ModifiedDate = StandardModifiedDate
         };
         DbContext.Shifts.Add(shift);
-        await DbContext.SaveChangesAsync();
+        await DbContext.SaveChangesAsync(cancellationToken: TestContext.Current.CancellationToken);
 
         // Create employee
         var employeeEntity = CreateTestEmployeeEntity();
@@ -1381,11 +1381,11 @@ public sealed class EmployeeRepositoryTests : PersistenceUnitTestBase
             address,
             addressTypeId: 1,
             StandardModifiedDate,
-            Guid.NewGuid());
+            Guid.NewGuid(), cancellationToken: TestContext.Current.CancellationToken);
 
         // Add department history
         // Retrieve the employee to add history record
-        var employee = await DbContext.Employees.FindAsync(businessEntityId);
+        var employee = await DbContext.Employees.FindAsync([businessEntityId], TestContext.Current.CancellationToken);
         employee!.EmployeeDepartmentHistory = new List<EmployeeDepartmentHistory>
         {
             new EmployeeDepartmentHistory
@@ -1398,10 +1398,10 @@ public sealed class EmployeeRepositoryTests : PersistenceUnitTestBase
                 ModifiedDate = StandardModifiedDate
             }
         };
-        await DbContext.SaveChangesAsync();
+        await DbContext.SaveChangesAsync(cancellationToken: TestContext.Current.CancellationToken);
 
         // Act
-        var result = await _sut.GetEmployeeByIdWithDepartmentHistoryAsync(businessEntityId);
+        var result = await _sut.GetEmployeeByIdWithDepartmentHistoryAsync(businessEntityId, cancellationToken: TestContext.Current.CancellationToken);
 
         // Assert
         using (new AssertionScope())
@@ -1424,7 +1424,7 @@ public sealed class EmployeeRepositoryTests : PersistenceUnitTestBase
     [Fact]
     public async Task GetEmployeeByIdWithDepartmentHistoryAsync_returns_null_for_nonexistent_employeeAsync()
     {
-        var result = await _sut.GetEmployeeByIdWithDepartmentHistoryAsync(99999);
+        var result = await _sut.GetEmployeeByIdWithDepartmentHistoryAsync(99999, cancellationToken: TestContext.Current.CancellationToken);
 
         result.Should().BeNull();
     }
@@ -1458,7 +1458,7 @@ public sealed class EmployeeRepositoryTests : PersistenceUnitTestBase
             ModifiedDate = StandardModifiedDate
         };
         DbContext.Shifts.Add(shift);
-        await DbContext.SaveChangesAsync();
+        await DbContext.SaveChangesAsync(cancellationToken: TestContext.Current.CancellationToken);
 
         // Create employee
         var employeeEntity = CreateTestEmployeeEntity();
@@ -1475,11 +1475,11 @@ public sealed class EmployeeRepositoryTests : PersistenceUnitTestBase
             address,
             addressTypeId: 1,
             StandardModifiedDate,
-            Guid.NewGuid());
+            Guid.NewGuid(), cancellationToken: TestContext.Current.CancellationToken);
 
         // Add two department history records (transfer scenario)
         // Retrieve the employee to add history records
-        var employee = await DbContext.Employees.FindAsync(businessEntityId);
+        var employee = await DbContext.Employees.FindAsync([businessEntityId], TestContext.Current.CancellationToken);
         employee!.EmployeeDepartmentHistory = new List<EmployeeDepartmentHistory>
         {
             new EmployeeDepartmentHistory
@@ -1501,10 +1501,10 @@ public sealed class EmployeeRepositoryTests : PersistenceUnitTestBase
                 ModifiedDate = StandardModifiedDate
             }
         };
-        await DbContext.SaveChangesAsync();
+        await DbContext.SaveChangesAsync(cancellationToken: TestContext.Current.CancellationToken);
 
         // Act
-        var result = await _sut.GetEmployeeByIdWithDepartmentHistoryAsync(businessEntityId);
+        var result = await _sut.GetEmployeeByIdWithDepartmentHistoryAsync(businessEntityId, cancellationToken: TestContext.Current.CancellationToken);
 
         // Assert
         using (new AssertionScope())
@@ -1538,7 +1538,7 @@ public sealed class EmployeeRepositoryTests : PersistenceUnitTestBase
             ModifiedDate = StandardModifiedDate
         };
         DbContext.Shifts.Add(shift);
-        await DbContext.SaveChangesAsync();
+        await DbContext.SaveChangesAsync(cancellationToken: TestContext.Current.CancellationToken);
 
         // Create employee with department history
         var employeeEntity = CreateTestEmployeeEntity();
@@ -1555,10 +1555,10 @@ public sealed class EmployeeRepositoryTests : PersistenceUnitTestBase
             address,
             addressTypeId: 1,
             StandardModifiedDate,
-            Guid.NewGuid());
+            Guid.NewGuid(), cancellationToken: TestContext.Current.CancellationToken);
 
         // Retrieve the employee to add history record
-        var employee = await DbContext.Employees.FindAsync(businessEntityId);
+        var employee = await DbContext.Employees.FindAsync([businessEntityId], TestContext.Current.CancellationToken);
         employee!.EmployeeDepartmentHistory = new List<EmployeeDepartmentHistory>
         {
             new EmployeeDepartmentHistory
@@ -1571,10 +1571,10 @@ public sealed class EmployeeRepositoryTests : PersistenceUnitTestBase
                 ModifiedDate = StandardModifiedDate
             }
         };
-        await DbContext.SaveChangesAsync();
+        await DbContext.SaveChangesAsync(cancellationToken: TestContext.Current.CancellationToken);
 
         // Act
-        var result = await _sut.GetEmployeeByIdWithDepartmentHistoryAsync(businessEntityId);
+        var result = await _sut.GetEmployeeByIdWithDepartmentHistoryAsync(businessEntityId, cancellationToken: TestContext.Current.CancellationToken);
 
         // Assert - Should be tracked for update scenarios
         var entry = DbContext.Entry(result!);
@@ -1607,7 +1607,7 @@ public sealed class EmployeeRepositoryTests : PersistenceUnitTestBase
             ModifiedDate = StandardModifiedDate
         };
         DbContext.Shifts.Add(shift);
-        await DbContext.SaveChangesAsync();
+        await DbContext.SaveChangesAsync(cancellationToken: TestContext.Current.CancellationToken);
 
         // Create employee
         var employeeEntity = CreateTestEmployeeEntity();
@@ -1624,10 +1624,10 @@ public sealed class EmployeeRepositoryTests : PersistenceUnitTestBase
             address,
             addressTypeId: 1,
             StandardModifiedDate,
-            Guid.NewGuid());
+            Guid.NewGuid(), cancellationToken: TestContext.Current.CancellationToken);
 
         // Add department history and pay history through employee entity
-        var employee = await DbContext.Employees.FindAsync(businessEntityId);
+        var employee = await DbContext.Employees.FindAsync([businessEntityId], TestContext.Current.CancellationToken);
         employee!.EmployeeDepartmentHistory = new List<EmployeeDepartmentHistory>
         {
             new EmployeeDepartmentHistory
@@ -1651,10 +1651,10 @@ public sealed class EmployeeRepositoryTests : PersistenceUnitTestBase
                 ModifiedDate = StandardModifiedDate
             }
         };
-        await DbContext.SaveChangesAsync();
+        await DbContext.SaveChangesAsync(cancellationToken: TestContext.Current.CancellationToken);
 
         // Act
-        var result = await _sut.GetEmployeeByIdWithLifecycleDataAsync(businessEntityId);
+        var result = await _sut.GetEmployeeByIdWithLifecycleDataAsync(businessEntityId, cancellationToken: TestContext.Current.CancellationToken);
 
         // Assert
         using (new AssertionScope())
@@ -1686,7 +1686,7 @@ public sealed class EmployeeRepositoryTests : PersistenceUnitTestBase
     [Fact]
     public async Task GetEmployeeByIdWithLifecycleDataAsync_returns_null_for_nonexistent_employeeAsync()
     {
-        var result = await _sut.GetEmployeeByIdWithLifecycleDataAsync(99999);
+        var result = await _sut.GetEmployeeByIdWithLifecycleDataAsync(99999, cancellationToken: TestContext.Current.CancellationToken);
 
         result.Should().BeNull();
     }
@@ -1709,10 +1709,10 @@ public sealed class EmployeeRepositoryTests : PersistenceUnitTestBase
             address,
             addressTypeId: 1,
             StandardModifiedDate,
-            Guid.NewGuid());
+            Guid.NewGuid(), cancellationToken: TestContext.Current.CancellationToken);
 
         // Act
-        var result = await _sut.GetEmployeeByIdWithLifecycleDataAsync(businessEntityId);
+        var result = await _sut.GetEmployeeByIdWithLifecycleDataAsync(businessEntityId, cancellationToken: TestContext.Current.CancellationToken);
 
         // Assert
         using (new AssertionScope())
@@ -1746,7 +1746,7 @@ public sealed class EmployeeRepositoryTests : PersistenceUnitTestBase
             ModifiedDate = StandardModifiedDate
         };
         DbContext.Shifts.Add(shift);
-        await DbContext.SaveChangesAsync();
+        await DbContext.SaveChangesAsync(cancellationToken: TestContext.Current.CancellationToken);
 
         // Create employee
         var employeeEntity = CreateTestEmployeeEntity();
@@ -1763,10 +1763,10 @@ public sealed class EmployeeRepositoryTests : PersistenceUnitTestBase
             address,
             addressTypeId: 1,
             StandardModifiedDate,
-            Guid.NewGuid());
+            Guid.NewGuid(), cancellationToken: TestContext.Current.CancellationToken);
 
         // Add multiple pay history records (raises scenario) through employee entity
-        var employee = await DbContext.Employees.FindAsync(businessEntityId);
+        var employee = await DbContext.Employees.FindAsync([businessEntityId], TestContext.Current.CancellationToken);
         employee!.EmployeePayHistory = new List<EmployeePayHistory>
         {
             new EmployeePayHistory
@@ -1794,10 +1794,10 @@ public sealed class EmployeeRepositoryTests : PersistenceUnitTestBase
                 ModifiedDate = StandardModifiedDate
             }
         };
-        await DbContext.SaveChangesAsync();
+        await DbContext.SaveChangesAsync(cancellationToken: TestContext.Current.CancellationToken);
 
         // Act
-        var result = await _sut.GetEmployeeByIdWithLifecycleDataAsync(businessEntityId);
+        var result = await _sut.GetEmployeeByIdWithLifecycleDataAsync(businessEntityId, cancellationToken: TestContext.Current.CancellationToken);
 
         // Assert
         using (new AssertionScope())
@@ -1832,7 +1832,7 @@ public sealed class EmployeeRepositoryTests : PersistenceUnitTestBase
             ModifiedDate = StandardModifiedDate
         };
         DbContext.Shifts.Add(shift);
-        await DbContext.SaveChangesAsync();
+        await DbContext.SaveChangesAsync(cancellationToken: TestContext.Current.CancellationToken);
 
         // Create employee
         var employeeEntity = CreateTestEmployeeEntity();
@@ -1849,10 +1849,10 @@ public sealed class EmployeeRepositoryTests : PersistenceUnitTestBase
             address,
             addressTypeId: 1,
             StandardModifiedDate,
-            Guid.NewGuid());
+            Guid.NewGuid(), cancellationToken: TestContext.Current.CancellationToken);
 
         // Retrieve the employee to add history record
-        var employee = await DbContext.Employees.FindAsync(businessEntityId);
+        var employee = await DbContext.Employees.FindAsync([businessEntityId], TestContext.Current.CancellationToken);
         employee!.EmployeeDepartmentHistory = new List<EmployeeDepartmentHistory>
         {
             new EmployeeDepartmentHistory
@@ -1865,10 +1865,10 @@ public sealed class EmployeeRepositoryTests : PersistenceUnitTestBase
                 ModifiedDate = StandardModifiedDate
             }
         };
-        await DbContext.SaveChangesAsync();
+        await DbContext.SaveChangesAsync(cancellationToken: TestContext.Current.CancellationToken);
 
         // Act
-        var result = await _sut.GetEmployeeByIdWithLifecycleDataAsync(businessEntityId);
+        var result = await _sut.GetEmployeeByIdWithLifecycleDataAsync(businessEntityId, cancellationToken: TestContext.Current.CancellationToken);
 
         // Assert - Should NOT be tracked (read-only query for status)
         var entry = DbContext.Entry(result!);

@@ -48,7 +48,7 @@ public sealed class ReadProductModelControllerTests : UnitTestBase
     [Fact]
     public async Task GetByIdAsync_returns_bad_request_when_id_is_zero()
     {
-        var result = await _sut.GetByIdAsync(0);
+        var result = await _sut.GetByIdAsync(0, cancellationToken: TestContext.Current.CancellationToken);
         var objectResult = result as BadRequestObjectResult;
         var outputModel = objectResult!.Value as string;
 
@@ -63,7 +63,7 @@ public sealed class ReadProductModelControllerTests : UnitTestBase
     [Fact]
     public async Task GetByIdAsync_returns_bad_request_when_id_is_negative()
     {
-        var result = await _sut.GetByIdAsync(-1);
+        var result = await _sut.GetByIdAsync(-1, cancellationToken: TestContext.Current.CancellationToken);
         var objectResult = result as BadRequestObjectResult;
         var outputModel = objectResult!.Value as string;
 
@@ -81,7 +81,7 @@ public sealed class ReadProductModelControllerTests : UnitTestBase
         _mockMediator.Setup(x => x.Send(It.IsAny<ReadProductModelQuery>(), It.IsAny<CancellationToken>()))
             .ReturnsAsync((ProductModelDetailModel)null!);
 
-        var result = await _sut.GetByIdAsync(999);
+        var result = await _sut.GetByIdAsync(999, cancellationToken: TestContext.Current.CancellationToken);
         var objectResult = result as NotFoundObjectResult;
         var outputModel = objectResult!.Value as string;
 
@@ -106,7 +106,7 @@ public sealed class ReadProductModelControllerTests : UnitTestBase
                 ModifiedDate = new DateTime(2026, 5, 4, 0, 0, 0, DateTimeKind.Utc)
             });
 
-        var result = await _sut.GetByIdAsync(1);
+        var result = await _sut.GetByIdAsync(1, cancellationToken: TestContext.Current.CancellationToken);
         var objectResult = result as OkObjectResult;
 
         using (new AssertionScope())
@@ -124,7 +124,7 @@ public sealed class ReadProductModelControllerTests : UnitTestBase
                 x => x.Send(It.IsAny<ReadProductModelListQuery>(), It.IsAny<CancellationToken>()))
             .ReturnsAsync(new List<ProductModelListModel>());
 
-        var result = await _sut.GetListAsync();
+        var result = await _sut.GetListAsync(cancellationToken: TestContext.Current.CancellationToken);
         var objectResult = result as NotFoundObjectResult;
         var outputModel = objectResult!.Value as string;
 
@@ -147,7 +147,7 @@ public sealed class ReadProductModelControllerTests : UnitTestBase
                 new() { ProductModelId = 2, Name = "Long-Sleeve Logo Jersey", ModifiedDate = new DateTime(2026, 5, 4, 0, 0, 0, DateTimeKind.Utc) }
             });
 
-        var result = await _sut.GetListAsync();
+        var result = await _sut.GetListAsync(cancellationToken: TestContext.Current.CancellationToken);
         var objectResult = result as OkObjectResult;
 
         using (new AssertionScope())

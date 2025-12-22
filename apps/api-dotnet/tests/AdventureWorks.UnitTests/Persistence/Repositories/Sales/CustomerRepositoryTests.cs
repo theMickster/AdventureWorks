@@ -102,7 +102,7 @@ public sealed class CustomerRepositoryTests : PersistenceUnitTestBase
     {
         SeedCustomers();
 
-        var (results, totalCount) = await _sut.GetCustomersAsync(new CustomerParameter { PageNumber = 1, PageSize = 50 });
+        var (results, totalCount) = await _sut.GetCustomersAsync(new CustomerParameter { PageNumber = 1, PageSize = 50 }, cancellationToken: TestContext.Current.CancellationToken);
 
         using (new AssertionScope())
         {
@@ -132,7 +132,7 @@ public sealed class CustomerRepositoryTests : PersistenceUnitTestBase
     {
         SeedCustomers();
 
-        var (results, _) = await _sut.GetCustomersAsync(new CustomerParameter { PageNumber = 1, PageSize = 50 });
+        var (results, _) = await _sut.GetCustomersAsync(new CustomerParameter { PageNumber = 1, PageSize = 50 }, cancellationToken: TestContext.Current.CancellationToken);
 
         var zeroSpendCustomers = results.Where(r => r.TotalSpend == 0m).OrderBy(r => r.CustomerId).ToList();
 
@@ -153,7 +153,7 @@ public sealed class CustomerRepositoryTests : PersistenceUnitTestBase
     {
         SeedCustomers();
 
-        var (results, _) = await _sut.GetCustomersAsync(new CustomerParameter { PageNumber = 1, PageSize = 50 });
+        var (results, _) = await _sut.GetCustomersAsync(new CustomerParameter { PageNumber = 1, PageSize = 50 }, cancellationToken: TestContext.Current.CancellationToken);
 
         var neverOrdered = results.Single(r => r.CustomerId == 11001);
 
@@ -173,7 +173,7 @@ public sealed class CustomerRepositoryTests : PersistenceUnitTestBase
 
         // Most recent order across the dataset is 2026-05-01 (customer 11000).
         // Customer 11002's last order is 2024-01-01, well past the 12-month cutoff.
-        var (results, _) = await _sut.GetCustomersAsync(new CustomerParameter { PageNumber = 1, PageSize = 50 });
+        var (results, _) = await _sut.GetCustomersAsync(new CustomerParameter { PageNumber = 1, PageSize = 50 }, cancellationToken: TestContext.Current.CancellationToken);
 
         var mostRecentCustomer = results.Single(r => r.CustomerId == 11000);
         var staleCustomer = results.Single(r => r.CustomerId == 11002);
@@ -190,11 +190,11 @@ public sealed class CustomerRepositoryTests : PersistenceUnitTestBase
     {
         SeedCustomers();
 
-        var (unfiltered, _) = await _sut.GetCustomersAsync(new CustomerParameter { PageNumber = 1, PageSize = 50 });
+        var (unfiltered, _) = await _sut.GetCustomersAsync(new CustomerParameter { PageNumber = 1, PageSize = 50 }, cancellationToken: TestContext.Current.CancellationToken);
         var expectedRank = unfiltered.Single(r => r.CustomerId == 11002).LtvRank;
 
         var (results, totalCount) = await _sut.GetCustomersAsync(
-            new CustomerParameter { PageNumber = 1, PageSize = 50, Search = "OLD" });
+            new CustomerParameter { PageNumber = 1, PageSize = 50, Search = "OLD" }, cancellationToken: TestContext.Current.CancellationToken);
 
         using (new AssertionScope())
         {
@@ -210,8 +210,8 @@ public sealed class CustomerRepositoryTests : PersistenceUnitTestBase
     {
         SeedCustomers();
 
-        var (page1, totalCount) = await _sut.GetCustomersAsync(new CustomerParameter { PageNumber = 1, PageSize = 2 });
-        var (page2, _) = await _sut.GetCustomersAsync(new CustomerParameter { PageNumber = 2, PageSize = 2 });
+        var (page1, totalCount) = await _sut.GetCustomersAsync(new CustomerParameter { PageNumber = 1, PageSize = 2 }, cancellationToken: TestContext.Current.CancellationToken);
+        var (page2, _) = await _sut.GetCustomersAsync(new CustomerParameter { PageNumber = 2, PageSize = 2 }, cancellationToken: TestContext.Current.CancellationToken);
 
         using (new AssertionScope())
         {
@@ -225,7 +225,7 @@ public sealed class CustomerRepositoryTests : PersistenceUnitTestBase
     [Fact]
     public async Task GetCustomersAsync_returns_empty_when_no_customers_existAsync()
     {
-        var (results, totalCount) = await _sut.GetCustomersAsync(new CustomerParameter { PageNumber = 1, PageSize = 10 });
+        var (results, totalCount) = await _sut.GetCustomersAsync(new CustomerParameter { PageNumber = 1, PageSize = 10 }, cancellationToken: TestContext.Current.CancellationToken);
 
         using (new AssertionScope())
         {

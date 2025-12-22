@@ -150,7 +150,7 @@ public sealed class VendorRepositoryTests : PersistenceUnitTestBase
     {
         // Arrange
         SeedFullVendorPopulation();
-        await DbContext.SaveChangesAsync();
+        await DbContext.SaveChangesAsync(cancellationToken: TestContext.Current.CancellationToken);
 
         // Act — page through at the max allowed page size (50) to observe the full population.
         var (results, totalCount) = await GetAllVendorsAsync();
@@ -177,7 +177,7 @@ public sealed class VendorRepositoryTests : PersistenceUnitTestBase
     {
         // Arrange
         SeedFullVendorPopulation();
-        await DbContext.SaveChangesAsync();
+        await DbContext.SaveChangesAsync(cancellationToken: TestContext.Current.CancellationToken);
 
         // Act
         var (results, _) = await GetAllVendorsAsync();
@@ -196,7 +196,7 @@ public sealed class VendorRepositoryTests : PersistenceUnitTestBase
         SeedVendor(1, spend: 100m);
         SeedVendor(2, spend: 300m);
         SeedVendor(3, spend: 200m);
-        await DbContext.SaveChangesAsync();
+        await DbContext.SaveChangesAsync(cancellationToken: TestContext.Current.CancellationToken);
 
         var parameters = new VendorParameter { PageNumber = 1, PageSize = 10 };
 
@@ -214,7 +214,7 @@ public sealed class VendorRepositoryTests : PersistenceUnitTestBase
         // Arrange
         SeedVendor(1, spend: 100m);
         SeedVendor(2, spend: 200m);
-        await DbContext.SaveChangesAsync();
+        await DbContext.SaveChangesAsync(cancellationToken: TestContext.Current.CancellationToken);
 
         var parameters = new VendorParameter { PageNumber = 5, PageSize = 10 };
 
@@ -233,7 +233,7 @@ public sealed class VendorRepositoryTests : PersistenceUnitTestBase
         SeedVendor(1, spend: 100m, creditRating: 1);
         SeedVendor(2, spend: 200m, creditRating: 4);
         SeedVendor(3, spend: 300m, creditRating: 4);
-        await DbContext.SaveChangesAsync();
+        await DbContext.SaveChangesAsync(cancellationToken: TestContext.Current.CancellationToken);
 
         var parameters = new VendorParameter { PageNumber = 1, PageSize = 10, CreditRating = 4 };
 
@@ -251,7 +251,7 @@ public sealed class VendorRepositoryTests : PersistenceUnitTestBase
         // Arrange
         SeedVendor(1, spend: 100m, preferredVendorStatus: true);
         SeedVendor(2, spend: 200m, preferredVendorStatus: false);
-        await DbContext.SaveChangesAsync();
+        await DbContext.SaveChangesAsync(cancellationToken: TestContext.Current.CancellationToken);
 
         var parameters = new VendorParameter { PageNumber = 1, PageSize = 10, PreferredVendorStatus = false };
 
@@ -269,7 +269,7 @@ public sealed class VendorRepositoryTests : PersistenceUnitTestBase
         // Arrange
         SeedVendor(1, spend: 100m, activeFlag: true);
         SeedVendor(2, spend: 200m, activeFlag: false);
-        await DbContext.SaveChangesAsync();
+        await DbContext.SaveChangesAsync(cancellationToken: TestContext.Current.CancellationToken);
 
         var parameters = new VendorParameter { PageNumber = 1, PageSize = 10, ActiveFlag = false };
 
@@ -288,7 +288,7 @@ public sealed class VendorRepositoryTests : PersistenceUnitTestBase
         SeedVendor(1, spend: 100m, creditRating: 4, preferredVendorStatus: true, activeFlag: true);
         SeedVendor(2, spend: 200m, creditRating: 4, preferredVendorStatus: false, activeFlag: true);
         SeedVendor(3, spend: 300m, creditRating: 1, preferredVendorStatus: true, activeFlag: true);
-        await DbContext.SaveChangesAsync();
+        await DbContext.SaveChangesAsync(cancellationToken: TestContext.Current.CancellationToken);
 
         var parameters = new VendorParameter
         {
@@ -334,7 +334,7 @@ public sealed class VendorRepositoryTests : PersistenceUnitTestBase
             SeedVendor(vendorId, spend: 1000m - vendorId, creditRating: 4);
         }
 
-        await DbContext.SaveChangesAsync();
+        await DbContext.SaveChangesAsync(cancellationToken: TestContext.Current.CancellationToken);
 
         // Act — filter to only the CreditRating=4 vendors.
         var (filteredResults, filteredTotalCount) = await GetAllVendorsAsync(creditRating: 4);
@@ -363,7 +363,7 @@ public sealed class VendorRepositoryTests : PersistenceUnitTestBase
         // high-risk since IsHighRisk requires CreditRating >= 4 AND rank <= 52.
         SeedVendor(1, spend: 1000m, creditRating: 3);
         SeedVendor(2, spend: 500m, creditRating: 4);
-        await DbContext.SaveChangesAsync();
+        await DbContext.SaveChangesAsync(cancellationToken: TestContext.Current.CancellationToken);
 
         var parameters = new VendorParameter { PageNumber = 1, PageSize = 10 };
 
@@ -384,7 +384,7 @@ public sealed class VendorRepositoryTests : PersistenceUnitTestBase
         SeedVendor(3, spend: 80m, creditRating: 3);
         SeedVendor(4, spend: 70m, creditRating: 4);
         SeedVendor(5, spend: 60m, creditRating: 5);
-        await DbContext.SaveChangesAsync();
+        await DbContext.SaveChangesAsync(cancellationToken: TestContext.Current.CancellationToken);
 
         var parameters = new VendorParameter { PageNumber = 1, PageSize = 10 };
 
@@ -408,7 +408,7 @@ public sealed class VendorRepositoryTests : PersistenceUnitTestBase
             SeedVendor(vendorId, spend: (11 - vendorId) * 100m);
         }
 
-        await DbContext.SaveChangesAsync();
+        await DbContext.SaveChangesAsync(cancellationToken: TestContext.Current.CancellationToken);
 
         var parameters = new VendorParameter { PageNumber = 2, PageSize = 4 };
 
