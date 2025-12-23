@@ -19,6 +19,8 @@ import type { DepartmentCreate } from '../models/department-create.model';
 import type { DepartmentUpdate } from '../models/department-update.model';
 import type { DepartmentHeadcount } from '../models/department-headcount.model';
 import type { EmployeeAggregates } from '../models/employee-aggregates.model';
+import type { EmployeeDepartmentHistory } from '../models/employee-department-history.model';
+import type { EmployeePayHistory } from '../models/employee-pay-history.model';
 import type { Department, SearchResult } from '@adventureworks-web/shared/data-access';
 
 const mockEnvironment = {
@@ -458,6 +460,65 @@ describe('HrApiService', () => {
       const req = httpTesting.expectOne(`${BASE_URL}/v1/employees/aggregates`);
       expect(req.request.method).toBe('GET');
       req.flush(mockAggregates);
+    });
+  });
+
+  describe('Department History', () => {
+    // Employee 250 (Sheela Word) — verified against the local AdventureWorks DB
+    const mockDepartmentHistory: EmployeeDepartmentHistory[] = [
+      {
+        departmentId: 5,
+        departmentName: 'Purchasing',
+        shiftId: 1,
+        shiftName: 'Day',
+        startDate: '2012-07-15',
+        endDate: null,
+      },
+      {
+        departmentId: 13,
+        departmentName: 'Quality Assurance',
+        shiftId: 1,
+        shiftName: 'Day',
+        startDate: '2011-07-31',
+        endDate: '2012-07-14',
+      },
+      {
+        departmentId: 4,
+        departmentName: 'Marketing',
+        shiftId: 1,
+        shiftName: 'Day',
+        startDate: '2011-02-25',
+        endDate: '2011-07-30',
+      },
+    ];
+
+    it('should GET department history for an employee', () => {
+      service.getDepartmentHistory(250).subscribe((result) => {
+        expect(result).toEqual(mockDepartmentHistory);
+      });
+
+      const req = httpTesting.expectOne(`${BASE_URL}/v1/employees/250/department-history`);
+      expect(req.request.method).toBe('GET');
+      req.flush(mockDepartmentHistory);
+    });
+  });
+
+  describe('Pay History', () => {
+    // Employee 250 (Sheela Word) — verified against the local AdventureWorks DB
+    const mockPayHistory: EmployeePayHistory[] = [
+      { rateChangeDate: '2012-07-14', rate: 30.0, payFrequency: 2, payFrequencyLabel: 'Bi-Weekly' },
+      { rateChangeDate: '2011-07-30', rate: 22.5, payFrequency: 2, payFrequencyLabel: 'Bi-Weekly' },
+      { rateChangeDate: '2011-02-21', rate: 9.86, payFrequency: 2, payFrequencyLabel: 'Bi-Weekly' },
+    ];
+
+    it('should GET pay history for an employee', () => {
+      service.getPayHistory(250).subscribe((result) => {
+        expect(result).toEqual(mockPayHistory);
+      });
+
+      const req = httpTesting.expectOne(`${BASE_URL}/v1/employees/250/pay-history`);
+      expect(req.request.method).toBe('GET');
+      req.flush(mockPayHistory);
     });
   });
 });

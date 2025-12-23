@@ -1,0 +1,31 @@
+<div id="aw-department-timeline">
+  @for (item of sortedHistory(); track item.departmentId + item.startDate; let last = $last) {
+    <div
+      [id]="'aw-department-timeline-entry-' + $index"
+      [class.rounded-lg]="item.endDate === null"
+      [class.border]="item.endDate === null"
+      [class.border-success]="item.endDate === null"
+      [class.p-3]="item.endDate === null"
+    >
+      <aw-timeline-entry
+        icon="fa-solid fa-building"
+        [variant]="item.endDate === null ? 'success' : 'primary'"
+        [title]="item.departmentName"
+        [subtitle]="'Shift: ' + item.shiftName"
+        [isLast]="last"
+      >
+        <p class="text-sm text-secondary">
+          {{ item.startDate | date: 'mediumDate' }} &ndash;
+          {{ item.endDate ? (item.endDate | date: 'mediumDate') : 'Present' }}
+        </p>
+        @if (item.endDate === null) {
+          <aw-status-badge
+            [fieldId]="'aw-department-timeline-current-badge-' + $index"
+            status="current"
+            [statusMap]="currentBadgeMap"
+          />
+        }
+      </aw-timeline-entry>
+    </div>
+  }
+</div>

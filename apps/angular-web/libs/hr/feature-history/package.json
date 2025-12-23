@@ -1,0 +1,11 @@
+{
+  "name": "@adventureworks-web/hr/feature-history",
+  "version": "0.0.1",
+  "peerDependencies": {
+    "@angular/common": "^21.2.0",
+    "@angular/core": "^21.2.0",
+    "@adventureworks-web/hr/data-access": "0.0.1",
+    "@adventureworks-web/shared/ui": "0.0.1"
+  },
+  "sideEffects": false
+}

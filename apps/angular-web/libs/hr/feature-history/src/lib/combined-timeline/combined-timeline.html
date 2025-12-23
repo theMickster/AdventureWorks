@@ -1,0 +1,65 @@
+<div id="aw-combined-timeline">
+  <div id="aw-combined-timeline-filter" class="join mb-4" role="group" aria-label="Filter timeline events">
+    <button
+      type="button"
+      class="btn btn-sm join-item"
+      [class.btn-active]="filter() === 'all'"
+      (click)="onFilterChange('all')"
+    >
+      All Events
+    </button>
+    <button
+      type="button"
+      class="btn btn-sm join-item"
+      [class.btn-active]="filter() === 'departments'"
+      (click)="onFilterChange('departments')"
+    >
+      Departments Only
+    </button>
+    <button
+      type="button"
+      class="btn btn-sm join-item"
+      [class.btn-active]="filter() === 'pay'"
+      (click)="onFilterChange('pay')"
+    >
+      Pay Only
+    </button>
+  </div>
+
+  @if (filteredGroups().length === 0) {
+    <p id="aw-combined-timeline-empty" class="text-secondary">No events to display.</p>
+  } @else {
+    @for (group of filteredGroups(); track group.date; let lastGroup = $last) {
+      <div [id]="'aw-combined-timeline-group-' + $index">
+        <p class="mb-2 text-sm font-semibold text-secondary">{{ group.date | date: 'mediumDate' }}</p>
+        @for (event of group.events; track event.kind; let lastEvent = $last) {
+          @if (event.kind === 'department') {
+            <aw-timeline-entry
+              icon="fa-solid fa-building"
+              [variant]="event.isCurrent ? 'success' : 'primary'"
+              [title]="event.departmentName"
+              [subtitle]="'Shift: ' + event.shiftName"
+              [isLast]="lastGroup && lastEvent"
+            />
+          } @else {
+            <aw-timeline-entry
+              icon="fa-solid fa-dollar-sign"
+              variant="accent"
+              [title]="(event.rate | currency) + ' / ' + event.payFrequencyLabel"
+              [subtitle]="
+                event.delta.kind === 'increase'
+                  ? 'Increase of ' + (event.delta.amount | currency)
+                  : event.delta.kind === 'decrease'
+                    ? 'Decrease of ' + (event.delta.amount | currency)
+                    : event.delta.kind === 'initial'
+                      ? 'Initial rate'
+                      : 'No change'
+              "
+              [isLast]="lastGroup && lastEvent"
+            />
+          }
+        }
+      </div>
+    }
+  }
+</div>

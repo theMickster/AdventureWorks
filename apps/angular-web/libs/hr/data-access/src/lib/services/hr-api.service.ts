@@ -21,6 +21,8 @@ import type { DepartmentUpdate } from '../models/department-update.model';
 import type { DepartmentHeadcount } from '../models/department-headcount.model';
 import type { DepartmentEmployeesParams } from '../models/department-employees-params.model';
 import type { EmployeeAggregates } from '../models/employee-aggregates.model';
+import type { EmployeeDepartmentHistory } from '../models/employee-department-history.model';
+import type { EmployeePayHistory } from '../models/employee-pay-history.model';
 
 /** HTTP client for HR domain endpoints (Employees, Employee Lifecycle, and Departments). */
 @Injectable({ providedIn: 'root' })
@@ -107,5 +109,15 @@ export class HrApiService {
   /** HR dashboard aggregate statistics: stat card counts, department headcounts, tenure distribution, and pay band summary. */
   getAggregates(): Observable<EmployeeAggregates> {
     return this.apiService.get<EmployeeAggregates>('/v1/employees/aggregates');
+  }
+
+  /** An employee's complete department assignment history, ordered by start date descending. */
+  getDepartmentHistory(id: number): Observable<EmployeeDepartmentHistory[]> {
+    return this.apiService.get<EmployeeDepartmentHistory[]>(`/v1/employees/${id}/department-history`);
+  }
+
+  /** An employee's complete pay rate change history, ordered by rate change date descending. */
+  getPayHistory(id: number): Observable<EmployeePayHistory[]> {
+    return this.apiService.get<EmployeePayHistory[]>(`/v1/employees/${id}/pay-history`);
   }
 }

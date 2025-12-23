@@ -2,10 +2,41 @@ import { of, throwError } from 'rxjs';
 import { ActivatedRoute, Router } from '@angular/router';
 import { provideTranslateService } from '@ngx-translate/core';
 import { HrApiService } from '@adventureworks-web/hr/data-access';
-import type { Employee, EmployeeLifecycleStatus, EmployeeUpdate } from '@adventureworks-web/hr/data-access';
+import type {
+  Employee,
+  EmployeeDepartmentHistory,
+  EmployeeLifecycleStatus,
+  EmployeePayHistory,
+  EmployeeUpdate,
+} from '@adventureworks-web/hr/data-access';
 import { ApiValidationError, NotificationService } from '@adventureworks-web/shared/util';
 import { renderEmployeeComponent } from '../testing/render-employee-component';
 import { EmployeeDetailComponent } from './employee-detail';
+
+// Employee 250 (Sheela Word) — verified against the local AdventureWorks DB
+const mockDepartmentHistory: EmployeeDepartmentHistory[] = [
+  {
+    departmentId: 5,
+    departmentName: 'Purchasing',
+    shiftId: 1,
+    shiftName: 'Day',
+    startDate: '2012-07-15',
+    endDate: null,
+  },
+  {
+    departmentId: 13,
+    departmentName: 'Quality Assurance',
+    shiftId: 1,
+    shiftName: 'Day',
+    startDate: '2011-07-31',
+    endDate: '2012-07-14',
+  },
+];
+
+const mockPayHistory: EmployeePayHistory[] = [
+  { rateChangeDate: '2012-07-14', rate: 30.0, payFrequency: 2, payFrequencyLabel: 'Bi-Weekly' },
+  { rateChangeDate: '2011-07-30', rate: 22.5, payFrequency: 2, payFrequencyLabel: 'Bi-Weekly' },
+];
 
 const mockEmployee: Employee = {
   id: 2,
@@ -83,12 +114,16 @@ describe('EmployeeDetailComponent', () => {
   ) {
     const route = buildRoute(options.id, options.queryParams);
     const mockHrApi = {
-      getEmployee: vi.fn().mockReturnValue(
-        options.error ? throwError(() => new Error('Network error')) : of(options.employee ?? mockEmployee),
-      ),
+      getEmployee: vi
+        .fn()
+        .mockReturnValue(
+          options.error ? throwError(() => new Error('Network error')) : of(options.employee ?? mockEmployee),
+        ),
       getLifecycleStatus: vi.fn().mockReturnValue(of(options.lifecycle ?? mockActiveLifecycle)),
       updateEmployee: vi.fn(),
       getDepartments: vi.fn().mockReturnValue(of([])),
+      getDepartmentHistory: vi.fn().mockReturnValue(of(mockDepartmentHistory)),
+      getPayHistory: vi.fn().mockReturnValue(of(mockPayHistory)),
     };
     const mockNotificationService = { error: vi.fn(), success: vi.fn(), info: vi.fn() };
     const navigateSpy = vi.spyOn(Router.prototype, 'navigate').mockResolvedValue(true);
@@ -194,7 +229,12 @@ describe('EmployeeDetailComponent', () => {
       // API's eligibleForRehire only means "was terminated at least once" — the 90-day
       // cooling-off period is computed client-side from terminationDate, not read from this flag.
       const { fixture } = await setup({
-        lifecycle: { ...mockActiveLifecycle, employmentStatus: 'Terminated', terminationDate: daysAgo(89), eligibleForRehire: false },
+        lifecycle: {
+          ...mockActiveLifecycle,
+          employmentStatus: 'Terminated',
+          terminationDate: daysAgo(89),
+          eligibleForRehire: false,
+        },
       });
 
       const eligibility = fixture.nativeElement.querySelector('#aw-employee-detail-eligibility');
@@ -203,7 +243,12 @@ describe('EmployeeDetailComponent', () => {
 
     it('is eligible for rehire at exactly the 90-day cooling-off boundary', async () => {
       const { fixture } = await setup({
-        lifecycle: { ...mockActiveLifecycle, employmentStatus: 'Terminated', terminationDate: daysAgo(90), eligibleForRehire: true },
+        lifecycle: {
+          ...mockActiveLifecycle,
+          employmentStatus: 'Terminated',
+          terminationDate: daysAgo(90),
+          eligibleForRehire: true,
+        },
       });
 
       const eligibility = fixture.nativeElement.querySelector('#aw-employee-detail-eligibility');
@@ -212,7 +257,12 @@ describe('EmployeeDetailComponent', () => {
 
     it('is eligible for rehire once the 90-day cooling-off period has fully elapsed', async () => {
       const { fixture } = await setup({
-        lifecycle: { ...mockActiveLifecycle, employmentStatus: 'Terminated', terminationDate: daysAgo(91), eligibleForRehire: true },
+        lifecycle: {
+          ...mockActiveLifecycle,
+          employmentStatus: 'Terminated',
+          terminationDate: daysAgo(91),
+          eligibleForRehire: true,
+        },
       });
 
       const eligibility = fixture.nativeElement.querySelector('#aw-employee-detail-eligibility');
@@ -322,7 +372,14 @@ describe('EmployeeDetailComponent', () => {
         throwError(
           () =>
             new ApiValidationError(
-              [{ propertyName: 'JobTitle', errorCode: 'Rule-12', errorMessage: 'Job title is required', correlationId: 'abc' }],
+              [
+                {
+                  propertyName: 'JobTitle',
+                  errorCode: 'Rule-12',
+                  errorMessage: 'Job title is required',
+                  correlationId: 'abc',
+                },
+              ],
               'abc',
             ),
         ),
@@ -345,7 +402,14 @@ describe('EmployeeDetailComponent', () => {
         throwError(
           () =>
             new ApiValidationError(
-              [{ propertyName: 'Id', errorCode: 'Rule-02', errorMessage: 'Employee ID must exist prior to update', correlationId: 'abc' }],
+              [
+                {
+                  propertyName: 'Id',
+                  errorCode: 'Rule-02',
+                  errorMessage: 'Employee ID must exist prior to update',
+                  correlationId: 'abc',
+                },
+              ],
               'abc',
             ),
         ),
@@ -452,6 +516,179 @@ describe('EmployeeDetailComponent', () => {
       expect(mockHrApi.getLifecycleStatus).toHaveBeenCalledWith(mockEmployee.id);
       expect(component['lifecycle']()).toEqual(mockActiveLifecycle);
       expect(mockNotificationService.success).toHaveBeenCalledWith('Employee rehired successfully.');
+    });
+  });
+
+  describe('History tabs (Feature 721)', () => {
+    it('lazy-loads department history only on first activation of the History tab', async () => {
+      const { fixture, component, mockHrApi } = await setup();
+
+      component['onTabChange']('history');
+      fixture.detectChanges();
+      component['onTabChange']('profile');
+      component['onTabChange']('history');
+      fixture.detectChanges();
+
+      expect(mockHrApi.getDepartmentHistory).toHaveBeenCalledTimes(1);
+      expect(mockHrApi.getDepartmentHistory).toHaveBeenCalledWith(mockEmployee.id);
+      expect(component['departmentHistory']()).toEqual(mockDepartmentHistory);
+    });
+
+    it('lazy-loads pay history only on first activation of the Pay History tab', async () => {
+      const { fixture, component, mockHrApi } = await setup();
+
+      component['onTabChange']('payHistory');
+      fixture.detectChanges();
+      component['onTabChange']('profile');
+      component['onTabChange']('payHistory');
+      fixture.detectChanges();
+
+      expect(mockHrApi.getPayHistory).toHaveBeenCalledTimes(1);
+      expect(mockHrApi.getPayHistory).toHaveBeenCalledWith(mockEmployee.id);
+      expect(component['payHistory']()).toEqual(mockPayHistory);
+    });
+
+    it('lazy-loads both datasets only on first activation of the All Events tab', async () => {
+      const { fixture, component, mockHrApi } = await setup();
+
+      component['onTabChange']('allEvents');
+      fixture.detectChanges();
+      component['onTabChange']('profile');
+      component['onTabChange']('allEvents');
+      fixture.detectChanges();
+
+      expect(mockHrApi.getDepartmentHistory).toHaveBeenCalledTimes(1);
+      expect(mockHrApi.getPayHistory).toHaveBeenCalledTimes(1);
+    });
+
+    it('visiting History then All Events does not re-fetch department history — only pay history is fetched', async () => {
+      const { fixture, component, mockHrApi } = await setup();
+
+      component['onTabChange']('history');
+      fixture.detectChanges();
+      component['onTabChange']('allEvents');
+      fixture.detectChanges();
+
+      expect(mockHrApi.getDepartmentHistory).toHaveBeenCalledTimes(1);
+      expect(mockHrApi.getPayHistory).toHaveBeenCalledTimes(1);
+      expect(component['departmentHistory']()).toEqual(mockDepartmentHistory);
+      expect(component['payHistory']()).toEqual(mockPayHistory);
+    });
+
+    it('visiting Pay History then All Events does not re-fetch pay history — only department history is fetched', async () => {
+      const { fixture, component, mockHrApi } = await setup();
+
+      component['onTabChange']('payHistory');
+      fixture.detectChanges();
+      component['onTabChange']('allEvents');
+      fixture.detectChanges();
+
+      expect(mockHrApi.getPayHistory).toHaveBeenCalledTimes(1);
+      expect(mockHrApi.getDepartmentHistory).toHaveBeenCalledTimes(1);
+    });
+
+    it('an error loading department history does not affect pay history state', async () => {
+      const { fixture, component, mockHrApi } = await setup();
+      mockHrApi.getDepartmentHistory.mockReturnValue(throwError(() => new Error('Network error')));
+
+      component['onTabChange']('history');
+      fixture.detectChanges();
+      expect(fixture.nativeElement.querySelector('#aw-employee-detail-history-error')).toBeTruthy();
+
+      component['onTabChange']('payHistory');
+      fixture.detectChanges();
+
+      expect(component['hasDepartmentHistoryError']()).toBe(true);
+      expect(component['hasPayHistoryError']()).toBe(false);
+      expect(component['payHistory']()).toEqual(mockPayHistory);
+    });
+
+    it('an error loading pay history does not affect department history state', async () => {
+      const { fixture, component, mockHrApi } = await setup();
+      mockHrApi.getPayHistory.mockReturnValue(throwError(() => new Error('Network error')));
+
+      component['onTabChange']('payHistory');
+      fixture.detectChanges();
+      expect(fixture.nativeElement.querySelector('#aw-employee-detail-pay-history-error')).toBeTruthy();
+
+      component['onTabChange']('history');
+      fixture.detectChanges();
+
+      expect(component['hasPayHistoryError']()).toBe(true);
+      expect(component['hasDepartmentHistoryError']()).toBe(false);
+      expect(component['departmentHistory']()).toEqual(mockDepartmentHistory);
+    });
+
+    it('entering All Events for the first time with only department history failing sets only that error and still loads pay history', async () => {
+      const { fixture, component, mockHrApi } = await setup();
+      mockHrApi.getDepartmentHistory.mockReturnValue(throwError(() => new Error('Network error')));
+
+      component['onTabChange']('allEvents');
+      fixture.detectChanges();
+
+      expect(component['hasDepartmentHistoryError']()).toBe(true);
+      expect(component['hasPayHistoryError']()).toBe(false);
+      expect(component['payHistory']()).toEqual(mockPayHistory);
+      expect(component['departmentHistory']()).toBeNull();
+    });
+
+    it('Retry on the History tab re-calls getDepartmentHistory and clears the error on success', async () => {
+      const { fixture, component, mockHrApi } = await setup();
+      mockHrApi.getDepartmentHistory.mockReturnValueOnce(throwError(() => new Error('Network error')));
+
+      component['onTabChange']('history');
+      fixture.detectChanges();
+      expect(component['hasDepartmentHistoryError']()).toBe(true);
+
+      mockHrApi.getDepartmentHistory.mockReturnValue(of(mockDepartmentHistory));
+      component['onRetryDepartmentHistory']();
+      fixture.detectChanges();
+
+      expect(component['hasDepartmentHistoryError']()).toBe(false);
+      expect(component['departmentHistory']()).toEqual(mockDepartmentHistory);
+    });
+
+    it('Retry on the Pay History tab re-calls getPayHistory and clears the error on success', async () => {
+      const { fixture, component, mockHrApi } = await setup();
+      mockHrApi.getPayHistory.mockReturnValueOnce(throwError(() => new Error('Network error')));
+
+      component['onTabChange']('payHistory');
+      fixture.detectChanges();
+      expect(component['hasPayHistoryError']()).toBe(true);
+
+      mockHrApi.getPayHistory.mockReturnValue(of(mockPayHistory));
+      component['onRetryPayHistory']();
+      fixture.detectChanges();
+
+      expect(component['hasPayHistoryError']()).toBe(false);
+      expect(component['payHistory']()).toEqual(mockPayHistory);
+    });
+
+    it('renders the department timeline once loaded', async () => {
+      const { fixture, component } = await setup();
+
+      component['onTabChange']('history');
+      fixture.detectChanges();
+
+      expect(fixture.nativeElement.querySelector('#aw-employee-detail-history')).toBeTruthy();
+    });
+
+    it('renders the pay history table once loaded', async () => {
+      const { fixture, component } = await setup();
+
+      component['onTabChange']('payHistory');
+      fixture.detectChanges();
+
+      expect(fixture.nativeElement.querySelector('#aw-employee-detail-pay-history')).toBeTruthy();
+    });
+
+    it('renders the combined timeline once both datasets are loaded', async () => {
+      const { fixture, component } = await setup();
+
+      component['onTabChange']('allEvents');
+      fixture.detectChanges();
+
+      expect(fixture.nativeElement.querySelector('#aw-employee-detail-all-events')).toBeTruthy();
     });
   });
 });

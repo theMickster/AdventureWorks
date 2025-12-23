@@ -23,6 +23,8 @@ export type {
   TenureDistribution,
   PayBandSummary,
 } from './lib/models/employee-aggregates.model';
+export type { EmployeeDepartmentHistory } from './lib/models/employee-department-history.model';
+export type { EmployeePayHistory } from './lib/models/employee-pay-history.model';
 
 // Services
 export { HrApiService } from './lib/services/hr-api.service';

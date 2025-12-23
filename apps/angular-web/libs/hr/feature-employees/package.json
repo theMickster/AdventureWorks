@@ -8,6 +8,7 @@
     "@angular/router": "^21.2.0",
     "rxjs": "^7.8.0",
     "@adventureworks-web/hr/data-access": "0.0.1",
+    "@adventureworks-web/hr/feature-history": "0.0.1",
     "@adventureworks-web/shared/data-access": "0.0.1",
     "@adventureworks-web/shared/ui": "0.0.1",
     "@adventureworks-web/shared/util": "0.0.1"

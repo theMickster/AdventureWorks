@@ -28,183 +28,284 @@
     </div>
   } @else if (employee(); as e) {
     @if (lifecycle(); as l) {
-      <div id="aw-employee-detail-cards" class="mb-6 grid gap-4 sm:grid-cols-2">
-        <aw-card fieldId="aw-employee-detail-personal-card" title="Personal Info">
-          @if (isEditing()) {
-            <form id="aw-employee-detail-personal-form" [formGroup]="personalInfoForm" class="space-y-4">
-              <aw-input-field
-                fieldId="aw-employee-detail-first-name"
-                label="First Name"
-                formControlName="firstName"
-                [required]="true"
-                [errors]="firstNameErrors()"
-              />
-              <aw-input-field
-                fieldId="aw-employee-detail-middle-name"
-                label="Middle Name"
-                formControlName="middleName"
-                [errors]="middleNameErrors()"
-              />
-              <aw-input-field
-                fieldId="aw-employee-detail-last-name"
-                label="Last Name"
-                formControlName="lastName"
-                [required]="true"
-                [errors]="lastNameErrors()"
-              />
-              <aw-input-field
-                fieldId="aw-employee-detail-job-title"
-                label="Job Title"
-                formControlName="jobTitle"
-                [required]="true"
-                [errors]="jobTitleErrors()"
-              />
-              <aw-select-field
-                fieldId="aw-employee-detail-marital-status"
-                label="Marital Status"
-                emptyOptionLabel="— Select status —"
-                formControlName="maritalStatus"
-                [options]="[
-                  { value: 'M', label: 'Married' },
-                  { value: 'S', label: 'Single' },
-                ]"
-                [required]="true"
-                [errors]="maritalStatusErrors()"
-              />
-              <aw-select-field
-                fieldId="aw-employee-detail-gender"
-                label="Gender"
-                emptyOptionLabel="— Select gender —"
-                formControlName="gender"
-                [options]="[
-                  { value: 'M', label: 'Male' },
-                  { value: 'F', label: 'Female' },
-                ]"
-                [required]="true"
-                [errors]="genderErrors()"
-              />
+      <div id="aw-employee-detail-tabs" role="tablist" class="tabs tabs-bordered mb-6">
+        <button
+          id="aw-employee-detail-tab-profile"
+          role="tab"
+          class="tab"
+          [class.tab-active]="activeTab() === 'profile'"
+          (click)="onTabChange('profile')"
+        >
+          Profile
+        </button>
+        <button
+          id="aw-employee-detail-tab-history"
+          role="tab"
+          class="tab"
+          [class.tab-active]="activeTab() === 'history'"
+          (click)="onTabChange('history')"
+        >
+          Department History
+        </button>
+        <button
+          id="aw-employee-detail-tab-pay-history"
+          role="tab"
+          class="tab"
+          [class.tab-active]="activeTab() === 'payHistory'"
+          (click)="onTabChange('payHistory')"
+        >
+          Pay History
+        </button>
+        <button
+          id="aw-employee-detail-tab-all-events"
+          role="tab"
+          class="tab"
+          [class.tab-active]="activeTab() === 'allEvents'"
+          (click)="onTabChange('allEvents')"
+        >
+          All Events
+        </button>
+      </div>
+    }
+
+    @if (activeTab() === 'history') {
+      @if (hasDepartmentHistoryError()) {
+        <div id="aw-employee-detail-history-error" class="alert alert-error" role="alert">
+          <span>Failed to load department history. Please try again.</span>
+          <button type="button" class="btn btn-sm" (click)="onRetryDepartmentHistory()">Retry</button>
+        </div>
+      } @else if (isLoadingDepartmentHistory()) {
+        <div id="aw-employee-detail-history-loading" class="space-y-4">
+          <aw-skeleton height="4rem" />
+          <aw-skeleton height="4rem" />
+          <aw-skeleton height="4rem" />
+        </div>
+      } @else if (departmentHistory(); as history) {
+        <aw-department-timeline id="aw-employee-detail-history" [departmentHistory]="history" />
+      }
+    } @else if (activeTab() === 'payHistory') {
+      @if (hasPayHistoryError()) {
+        <div id="aw-employee-detail-pay-history-error" class="alert alert-error" role="alert">
+          <span>Failed to load pay history. Please try again.</span>
+          <button type="button" class="btn btn-sm" (click)="onRetryPayHistory()">Retry</button>
+        </div>
+      } @else if (isLoadingPayHistory()) {
+        <div id="aw-employee-detail-pay-history-loading" class="space-y-4">
+          <aw-skeleton height="2.5rem" />
+          <aw-skeleton height="2.5rem" />
+          <aw-skeleton height="2.5rem" />
+        </div>
+      } @else if (payHistory(); as history) {
+        <aw-pay-history-table id="aw-employee-detail-pay-history" [payHistory]="history" />
+      }
+    } @else if (activeTab() === 'allEvents') {
+      @if (hasDepartmentHistoryError()) {
+        <div id="aw-employee-detail-all-events-history-error" class="alert alert-error" role="alert">
+          <span>Failed to load department history. Please try again.</span>
+          <button type="button" class="btn btn-sm" (click)="onRetryDepartmentHistory()">Retry</button>
+        </div>
+      }
+      @if (hasPayHistoryError()) {
+        <div id="aw-employee-detail-all-events-pay-error" class="alert alert-error" role="alert">
+          <span>Failed to load pay history. Please try again.</span>
+          <button type="button" class="btn btn-sm" (click)="onRetryPayHistory()">Retry</button>
+        </div>
+      }
+      @if (isLoadingDepartmentHistory() || isLoadingPayHistory()) {
+        <div id="aw-employee-detail-all-events-loading" class="space-y-4">
+          <aw-skeleton height="4rem" />
+          <aw-skeleton height="4rem" />
+          <aw-skeleton height="4rem" />
+        </div>
+      } @else if (!hasDepartmentHistoryError() && !hasPayHistoryError()) {
+        <aw-combined-timeline
+          id="aw-employee-detail-all-events"
+          [departmentHistory]="departmentHistory() ?? []"
+          [payHistory]="payHistory() ?? []"
+        />
+      }
+    }
+
+    @if (lifecycle(); as l) {
+      @if (activeTab() === 'profile') {
+        <div id="aw-employee-detail-cards" class="mb-6 grid gap-4 sm:grid-cols-2">
+          <aw-card fieldId="aw-employee-detail-personal-card" title="Personal Info">
+            @if (isEditing()) {
+              <form id="aw-employee-detail-personal-form" [formGroup]="personalInfoForm" class="space-y-4">
+                <aw-input-field
+                  fieldId="aw-employee-detail-first-name"
+                  label="First Name"
+                  formControlName="firstName"
+                  [required]="true"
+                  [errors]="firstNameErrors()"
+                />
+                <aw-input-field
+                  fieldId="aw-employee-detail-middle-name"
+                  label="Middle Name"
+                  formControlName="middleName"
+                  [errors]="middleNameErrors()"
+                />
+                <aw-input-field
+                  fieldId="aw-employee-detail-last-name"
+                  label="Last Name"
+                  formControlName="lastName"
+                  [required]="true"
+                  [errors]="lastNameErrors()"
+                />
+                <aw-input-field
+                  fieldId="aw-employee-detail-job-title"
+                  label="Job Title"
+                  formControlName="jobTitle"
+                  [required]="true"
+                  [errors]="jobTitleErrors()"
+                />
+                <aw-select-field
+                  fieldId="aw-employee-detail-marital-status"
+                  label="Marital Status"
+                  emptyOptionLabel="— Select status —"
+                  formControlName="maritalStatus"
+                  [options]="[
+                    { value: 'M', label: 'Married' },
+                    { value: 'S', label: 'Single' },
+                  ]"
+                  [required]="true"
+                  [errors]="maritalStatusErrors()"
+                />
+                <aw-select-field
+                  fieldId="aw-employee-detail-gender"
+                  label="Gender"
+                  emptyOptionLabel="— Select gender —"
+                  formControlName="gender"
+                  [options]="[
+                    { value: 'M', label: 'Male' },
+                    { value: 'F', label: 'Female' },
+                  ]"
+                  [required]="true"
+                  [errors]="genderErrors()"
+                />
+                <dl class="grid grid-cols-2 gap-1 text-sm">
+                  <dt class="text-secondary">Birth Date</dt>
+                  <dd>{{ e.birthDate | slice: 0 : 10 }}</dd>
+                </dl>
+              </form>
+            } @else {
               <dl class="grid grid-cols-2 gap-1 text-sm">
+                <dt class="text-secondary">Name</dt>
+                <dd>{{ e.firstName }} {{ e.middleName ? e.middleName + ' ' : '' }}{{ e.lastName }}</dd>
+                <dt class="text-secondary">Marital Status</dt>
+                <dd>{{ e.maritalStatus === 'M' ? 'Married' : 'Single' }}</dd>
+                <dt class="text-secondary">Gender</dt>
+                <dd>{{ e.gender === 'M' ? 'Male' : 'Female' }}</dd>
                 <dt class="text-secondary">Birth Date</dt>
                 <dd>{{ e.birthDate | slice: 0 : 10 }}</dd>
               </dl>
-            </form>
-          } @else {
+            }
+            <div card-actions>
+              @if (isEditing()) {
+                <button
+                  id="aw-employee-detail-save-btn"
+                  type="button"
+                  class="btn btn-primary btn-sm"
+                  [disabled]="isSaving()"
+                  (click)="onSaveClick()"
+                >
+                  Save
+                </button>
+                <button
+                  id="aw-employee-detail-cancel-btn"
+                  type="button"
+                  class="btn btn-ghost btn-sm"
+                  (click)="onCancelClick()"
+                >
+                  Cancel
+                </button>
+              } @else {
+                <button
+                  id="aw-employee-detail-edit-btn"
+                  type="button"
+                  class="btn btn-primary btn-sm"
+                  (click)="onEditClick()"
+                >
+                  Edit
+                </button>
+              }
+            </div>
+          </aw-card>
+
+          <aw-card fieldId="aw-employee-detail-employment-card" title="Employment Info">
             <dl class="grid grid-cols-2 gap-1 text-sm">
-              <dt class="text-secondary">Name</dt>
-              <dd>{{ e.firstName }} {{ e.middleName ? e.middleName + ' ' : '' }}{{ e.lastName }}</dd>
-              <dt class="text-secondary">Marital Status</dt>
-              <dd>{{ e.maritalStatus === 'M' ? 'Married' : 'Single' }}</dd>
-              <dt class="text-secondary">Gender</dt>
-              <dd>{{ e.gender === 'M' ? 'Male' : 'Female' }}</dd>
-              <dt class="text-secondary">Birth Date</dt>
-              <dd>{{ e.birthDate | slice: 0 : 10 }}</dd>
+              <dt class="text-secondary">Job Title</dt>
+              <dd>{{ e.jobTitle }}</dd>
+              <dt class="text-secondary">Department</dt>
+              <dd>{{ l.currentDepartment ?? '—' }}</dd>
+              <dt class="text-secondary">Hire Date</dt>
+              <dd>{{ l.hireDate | slice: 0 : 10 }}</dd>
+              <dt class="text-secondary">Shift</dt>
+              <dd>{{ l.currentShift ?? '—' }}</dd>
+              <dt class="text-secondary">Pay Rate</dt>
+              <dd>{{ l.currentPayRate !== null ? (l.currentPayRate | currency) : '—' }}</dd>
             </dl>
-          }
-          <div card-actions>
-            @if (isEditing()) {
-              <button
-                id="aw-employee-detail-save-btn"
-                type="button"
-                class="btn btn-primary btn-sm"
-                [disabled]="isSaving()"
-                (click)="onSaveClick()"
-              >
-                Save
-              </button>
-              <button
-                id="aw-employee-detail-cancel-btn"
-                type="button"
-                class="btn btn-ghost btn-sm"
-                (click)="onCancelClick()"
-              >
-                Cancel
-              </button>
-            } @else {
-              <button
-                id="aw-employee-detail-edit-btn"
-                type="button"
-                class="btn btn-primary btn-sm"
-                (click)="onEditClick()"
-              >
-                Edit
-              </button>
-            }
-          </div>
-        </aw-card>
+          </aw-card>
 
-        <aw-card fieldId="aw-employee-detail-employment-card" title="Employment Info">
-          <dl class="grid grid-cols-2 gap-1 text-sm">
-            <dt class="text-secondary">Job Title</dt>
-            <dd>{{ e.jobTitle }}</dd>
-            <dt class="text-secondary">Department</dt>
-            <dd>{{ l.currentDepartment ?? '—' }}</dd>
-            <dt class="text-secondary">Hire Date</dt>
-            <dd>{{ l.hireDate | slice: 0 : 10 }}</dd>
-            <dt class="text-secondary">Shift</dt>
-            <dd>{{ l.currentShift ?? '—' }}</dd>
-            <dt class="text-secondary">Pay Rate</dt>
-            <dd>{{ l.currentPayRate !== null ? (l.currentPayRate | currency) : '—' }}</dd>
-          </dl>
-        </aw-card>
+          <aw-card fieldId="aw-employee-detail-pto-card" title="PTO Balances">
+            <dl class="grid grid-cols-2 gap-1 text-sm">
+              <dt class="text-secondary">Vacation Hours</dt>
+              <dd>{{ l.vacationHoursBalance }}</dd>
+              <dt class="text-secondary">Sick Leave Hours</dt>
+              <dd>{{ l.sickLeaveHoursBalance }}</dd>
+            </dl>
+          </aw-card>
 
-        <aw-card fieldId="aw-employee-detail-pto-card" title="PTO Balances">
-          <dl class="grid grid-cols-2 gap-1 text-sm">
-            <dt class="text-secondary">Vacation Hours</dt>
-            <dd>{{ l.vacationHoursBalance }}</dd>
-            <dt class="text-secondary">Sick Leave Hours</dt>
-            <dd>{{ l.sickLeaveHoursBalance }}</dd>
-          </dl>
-        </aw-card>
+          <aw-card fieldId="aw-employee-detail-lifecycle-card" title="Lifecycle Status">
+            <dl class="grid grid-cols-2 gap-1 text-sm">
+              <dt class="text-secondary">Status</dt>
+              <dd>{{ l.employmentStatus }}</dd>
+              <dt class="text-secondary">Days Employed</dt>
+              <dd>{{ l.daysEmployed ?? '—' }}</dd>
 
-        <aw-card fieldId="aw-employee-detail-lifecycle-card" title="Lifecycle Status">
-          <dl class="grid grid-cols-2 gap-1 text-sm">
-            <dt class="text-secondary">Status</dt>
-            <dd>{{ l.employmentStatus }}</dd>
-            <dt class="text-secondary">Days Employed</dt>
-            <dd>{{ l.daysEmployed ?? '—' }}</dd>
+              @if (l.employmentStatus === 'Terminated') {
+                <dt class="text-secondary">Termination Date</dt>
+                <dd>{{ l.terminationDate | slice: 0 : 10 }}</dd>
+                <dt class="text-secondary">Days Since Termination</dt>
+                <dd>{{ daysSinceTermination() ?? '—' }}</dd>
+                <dt class="text-secondary">Eligible for Rehire</dt>
+                <dd id="aw-employee-detail-eligibility">{{ isPastRehireWaitingPeriod() ? 'Yes' : 'No' }}</dd>
+              }
+            </dl>
 
-            @if (l.employmentStatus === 'Terminated') {
-              <dt class="text-secondary">Termination Date</dt>
-              <dd>{{ l.terminationDate | slice: 0 : 10 }}</dd>
-              <dt class="text-secondary">Days Since Termination</dt>
-              <dd>{{ daysSinceTermination() ?? '—' }}</dd>
-              <dt class="text-secondary">Eligible for Rehire</dt>
-              <dd id="aw-employee-detail-eligibility">{{ isPastRehireWaitingPeriod() ? 'Yes' : 'No' }}</dd>
-            }
-          </dl>
-
-          <div card-actions>
-            @if (l.employmentStatus === 'Active') {
-              <button
-                id="aw-employee-detail-terminate-btn"
-                type="button"
-                class="btn btn-error btn-sm"
-                (click)="onTerminateClick()"
-              >
-                Terminate
-              </button>
-            } @else if (l.employmentStatus === 'Terminated') {
-              <button
-                id="aw-employee-detail-rehire-btn"
-                type="button"
-                class="btn btn-primary btn-sm"
-                (click)="onRehireClick()"
-              >
-                Rehire
-              </button>
-            } @else if (l.employmentStatus === 'OnLeave') {
-              <button
-                id="aw-employee-detail-hire-btn"
-                type="button"
-                class="btn btn-primary btn-sm"
-                (click)="onHireClick()"
-              >
-                Hire
-              </button>
-            }
-          </div>
-        </aw-card>
-      </div>
+            <div card-actions>
+              @if (l.employmentStatus === 'Active') {
+                <button
+                  id="aw-employee-detail-terminate-btn"
+                  type="button"
+                  class="btn btn-error btn-sm"
+                  (click)="onTerminateClick()"
+                >
+                  Terminate
+                </button>
+              } @else if (l.employmentStatus === 'Terminated') {
+                <button
+                  id="aw-employee-detail-rehire-btn"
+                  type="button"
+                  class="btn btn-primary btn-sm"
+                  (click)="onRehireClick()"
+                >
+                  Rehire
+                </button>
+              } @else if (l.employmentStatus === 'OnLeave') {
+                <button
+                  id="aw-employee-detail-hire-btn"
+                  type="button"
+                  class="btn btn-primary btn-sm"
+                  (click)="onHireClick()"
+                >
+                  Hire
+                </button>
+              }
+            </div>
+          </aw-card>
+        </div>
+      }
 
       <aw-employee-hire-modal [employeeId]="e.id" [(open)]="hireModalOpen" (hired)="onHireConfirmed()" />
       <aw-employee-terminate-modal

@@ -1,0 +1,31 @@
+<aw-data-table
+  fieldId="aw-pay-history-table"
+  [columns]="columns"
+  [data]="rows()"
+  emptyTitle="No pay history"
+  emptyDescription="This employee has no recorded pay rate changes."
+>
+  <ng-template awColumnDef="rateChangeDate" let-row>
+    {{ $any(row)['rateChangeDate'] | date: 'mediumDate' }}
+  </ng-template>
+  <ng-template awColumnDef="rate" let-row>
+    {{ $any(row)['rate'] | currency }}
+  </ng-template>
+  <ng-template awColumnDef="delta" let-row>
+    @if ($any(row)['delta'].kind === 'initial') {
+      <aw-status-badge status="initial" [statusMap]="initialBadgeMap" />
+    } @else if ($any(row)['delta'].kind === 'increase') {
+      <span class="text-success">
+        <i class="fa-solid fa-arrow-up" aria-hidden="true"></i>
+        {{ $any(row)['delta'].amount | currency }}
+      </span>
+    } @else if ($any(row)['delta'].kind === 'decrease') {
+      <span class="text-error">
+        <i class="fa-solid fa-arrow-down" aria-hidden="true"></i>
+        {{ $any(row)['delta'].amount | currency }}
+      </span>
+    } @else {
+      <span class="text-secondary">&mdash;</span>
+    }
+  </ng-template>
+</aw-data-table>

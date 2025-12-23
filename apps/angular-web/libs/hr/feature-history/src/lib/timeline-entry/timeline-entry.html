@@ -1,0 +1,20 @@
+<div [id]="fieldId()" class="flex gap-4">
+  <div class="flex flex-col items-center">
+    <span
+      class="flex h-8 w-8 shrink-0 items-center justify-center rounded-full text-primary-content"
+      [class]="nodeClass()"
+    >
+      <i [class]="icon()" aria-hidden="true"></i>
+    </span>
+    @if (!isLast()) {
+      <span class="mt-1 w-px flex-1 bg-base-300"></span>
+    }
+  </div>
+  <div class="min-w-0 flex-1 pb-6" [class.opacity-70]="muted()">
+    <p class="font-medium text-base-content">{{ title() }}</p>
+    @if (subtitle()) {
+      <p class="text-sm text-secondary">{{ subtitle() }}</p>
+    }
+    <ng-content />
+  </div>
+</div>

@@ -3,9 +3,20 @@ import { ChangeDetectionStrategy, Component, computed, DestroyRef, inject, OnIni
 import { takeUntilDestroyed, toSignal } from '@angular/core/rxjs-interop';
 import { FormBuilder, ReactiveFormsModule, Validators } from '@angular/forms';
 import { ActivatedRoute, Router, RouterLink } from '@angular/router';
-import { forkJoin } from 'rxjs';
+import { catchError, forkJoin, of } from 'rxjs';
 import { HrApiService } from '@adventureworks-web/hr/data-access';
-import type { Employee, EmployeeLifecycleStatus, EmployeeUpdate } from '@adventureworks-web/hr/data-access';
+import type {
+  Employee,
+  EmployeeDepartmentHistory,
+  EmployeeLifecycleStatus,
+  EmployeePayHistory,
+  EmployeeUpdate,
+} from '@adventureworks-web/hr/data-access';
+import {
+  CombinedTimelineComponent,
+  DepartmentTimelineComponent,
+  PayHistoryTableComponent,
+} from '@adventureworks-web/hr/feature-history';
 import {
   CardComponent,
   EmptyStateComponent,
@@ -20,6 +31,9 @@ import { extractEmployeeListNavParams } from '../employee-list-nav-params';
 import { EmployeeHireModalComponent } from './employee-hire-modal';
 import { EmployeeTerminateModalComponent } from './employee-terminate-modal';
 import { EmployeeRehireModalComponent } from './employee-rehire-modal';
+
+/** Tab keys for the detail page's tab bar; `'history'`/`'payHistory'`/`'allEvents'` lazy-load on first activation (Feature 721). */
+type ActiveTab = 'profile' | 'history' | 'payHistory' | 'allEvents';
 
 /**
  * Maps a server `propertyName` to its form control. `ExceptionHandlerMiddleware`'s `CamelCaseOptions`
@@ -69,6 +83,9 @@ const SERVER_ERROR_FIELD_MAP: Record<string, string> = {
     EmployeeHireModalComponent,
     EmployeeTerminateModalComponent,
     EmployeeRehireModalComponent,
+    DepartmentTimelineComponent,
+    PayHistoryTableComponent,
+    CombinedTimelineComponent,
   ],
   templateUrl: './employee-detail.html',
   changeDetection: ChangeDetectionStrategy.OnPush,
@@ -92,6 +109,14 @@ export class EmployeeDetailComponent implements OnInit {
   protected readonly rehireModalOpen = signal(false);
   // Flipped to true on first save attempt; drives field errors to show even before touch
   protected readonly submitted = signal(false);
+
+  protected readonly activeTab = signal<ActiveTab>('profile');
+  protected readonly departmentHistory = signal<EmployeeDepartmentHistory[] | null>(null);
+  protected readonly payHistory = signal<EmployeePayHistory[] | null>(null);
+  protected readonly isLoadingDepartmentHistory = signal(false);
+  protected readonly isLoadingPayHistory = signal(false);
+  protected readonly hasDepartmentHistoryError = signal(false);
+  protected readonly hasPayHistoryError = signal(false);
 
   protected readonly personalInfoForm = this.fb.group({
     firstName: ['', [Validators.required, Validators.maxLength(50)]],
@@ -293,6 +318,125 @@ export class EmployeeDetailComponent implements OnInit {
           this.notificationService.error('Failed to load employee. Please try again.');
         },
       });
+  }
+
+  /**
+   * Switches tabs and lazy-loads each tab's data on first activation only (US-768/769/770).
+   * `'history'`/`'payHistory'` each guard on `!signal() && !isLoadingSignal()`, mirroring
+   * `SalesPersonDetailComponent.onTabChange`. `'allEvents'` needs both datasets but must not
+   * re-fetch one already cached from a prior visit to its own tab — only the still-missing
+   * dataset(s) are requested via `forkJoin`.
+   */
+  protected onTabChange(tab: ActiveTab): void {
+    this.activeTab.set(tab);
+
+    if (tab === 'history' && !this.departmentHistory() && !this.isLoadingDepartmentHistory()) {
+      this.loadDepartmentHistory();
+    } else if (tab === 'payHistory' && !this.payHistory() && !this.isLoadingPayHistory()) {
+      this.loadPayHistory();
+    } else if (tab === 'allEvents') {
+      this.loadAllEventsData();
+    }
+  }
+
+  private loadAllEventsData(): void {
+    const id = this.employee()?.id;
+    if (!id) {
+      return;
+    }
+
+    const needsDepartmentHistory = !this.departmentHistory() && !this.isLoadingDepartmentHistory();
+    const needsPayHistory = !this.payHistory() && !this.isLoadingPayHistory();
+
+    if (needsDepartmentHistory && needsPayHistory) {
+      this.hasDepartmentHistoryError.set(false);
+      this.hasPayHistoryError.set(false);
+      this.isLoadingDepartmentHistory.set(true);
+      this.isLoadingPayHistory.set(true);
+      forkJoin({
+        departmentHistory: this.hrApi.getDepartmentHistory(id).pipe(
+          catchError(() => {
+            this.hasDepartmentHistoryError.set(true);
+            return of(null);
+          }),
+        ),
+        payHistory: this.hrApi.getPayHistory(id).pipe(
+          catchError(() => {
+            this.hasPayHistoryError.set(true);
+            return of(null);
+          }),
+        ),
+      })
+        .pipe(takeUntilDestroyed(this.destroyRef))
+        .subscribe((result) => {
+          this.isLoadingDepartmentHistory.set(false);
+          this.isLoadingPayHistory.set(false);
+          if (result.departmentHistory !== null) {
+            this.departmentHistory.set(result.departmentHistory);
+          }
+          if (result.payHistory !== null) {
+            this.payHistory.set(result.payHistory);
+          }
+        });
+    } else if (needsDepartmentHistory) {
+      this.loadDepartmentHistory();
+    } else if (needsPayHistory) {
+      this.loadPayHistory();
+    }
+  }
+
+  private loadDepartmentHistory(): void {
+    const id = this.employee()?.id;
+    if (!id) {
+      return;
+    }
+    this.hasDepartmentHistoryError.set(false);
+    this.isLoadingDepartmentHistory.set(true);
+    this.hrApi
+      .getDepartmentHistory(id)
+      .pipe(takeUntilDestroyed(this.destroyRef))
+      .subscribe({
+        next: (history) => {
+          this.departmentHistory.set(history);
+          this.isLoadingDepartmentHistory.set(false);
+        },
+        error: () => {
+          this.isLoadingDepartmentHistory.set(false);
+          this.hasDepartmentHistoryError.set(true);
+        },
+      });
+  }
+
+  private loadPayHistory(): void {
+    const id = this.employee()?.id;
+    if (!id) {
+      return;
+    }
+    this.hasPayHistoryError.set(false);
+    this.isLoadingPayHistory.set(true);
+    this.hrApi
+      .getPayHistory(id)
+      .pipe(takeUntilDestroyed(this.destroyRef))
+      .subscribe({
+        next: (history) => {
+          this.payHistory.set(history);
+          this.isLoadingPayHistory.set(false);
+        },
+        error: () => {
+          this.isLoadingPayHistory.set(false);
+          this.hasPayHistoryError.set(true);
+        },
+      });
+  }
+
+  /** Retries the department-history load; independent of pay-history's error state. */
+  protected onRetryDepartmentHistory(): void {
+    this.loadDepartmentHistory();
+  }
+
+  /** Retries the pay-history load; independent of department-history's error state. */
+  protected onRetryPayHistory(): void {
+    this.loadPayHistory();
   }
 
   protected onHireClick(): void {
