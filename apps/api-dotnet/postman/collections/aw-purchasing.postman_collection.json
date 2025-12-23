@@ -554,6 +554,469 @@
 					"response": []
 				}
 			]
+		},
+		{
+			"name": "Detail",
+			"id": "fdc923c5-de79-48e1-8f2c-16bfb578035b",
+			"item": [
+				{
+					"name": "Get Vendor Detail By Id",
+					"id": "0b0a16ec-2093-49a6-ba8e-b6cd7cf53644",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"Status is 200\", function () {",
+									"    pm.response.to.have.status(200);",
+									"});",
+									"",
+									"pm.test(\"Has X-Correlation-Id header\", function () {",
+									"    pm.response.to.have.header(\"X-Correlation-Id\");",
+									"});",
+									"",
+									"var body = pm.response.json();",
+									"",
+									"pm.test(\"Response has vendor detail shape\", function () {",
+									"    pm.expect(body).to.have.property(\"vendorId\");",
+									"    pm.expect(body).to.have.property(\"name\");",
+									"    pm.expect(body).to.have.property(\"accountNumber\");",
+									"    pm.expect(body).to.have.property(\"creditRatingLabel\");",
+									"    pm.expect(body).to.have.property(\"preferredVendorStatus\");",
+									"    pm.expect(body).to.have.property(\"activeFlag\");",
+									"    pm.expect(body).to.have.property(\"totalSpend\");",
+									"    pm.expect(body).to.have.property(\"poCount\");",
+									"    pm.expect(body).to.have.property(\"avgPoValue\");",
+									"});",
+									"",
+									"pm.test(\"vendorId matches the requested id\", function () {",
+									"    pm.expect(body.vendorId).to.eql(1496);",
+									"});",
+									"",
+									"pm.test(\"avgPoValue is consistent with totalSpend / poCount\", function () {",
+									"    if (body.poCount === 0) {",
+									"        pm.expect(body.avgPoValue).to.eql(0);",
+									"    } else {",
+									"        pm.expect(body.avgPoValue).to.be.closeTo(body.totalSpend / body.poCount, 0.01);",
+									"    }",
+									"});"
+								],
+								"type": "text/javascript",
+								"packages": {},
+								"requests": {}
+							}
+						}
+					],
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{adventureWorksApi}}/{{apiVersion}}/vendors/1496",
+							"host": [
+								"{{adventureWorksApi}}"
+							],
+							"path": [
+								"{{apiVersion}}",
+								"vendors",
+								"1496"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Get Vendor Detail - Not Found (404)",
+					"id": "7889c974-df46-4f79-9b02-4c5965f2dfec",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"Status should be Not Found\", function () {",
+									"    pm.response.to.have.status(404);",
+									"});",
+									"",
+									"var body = pm.response.json();",
+									"",
+									"pm.test(\"Response has structured error body\", function () {",
+									"    pm.expect(body).to.have.property(\"error\");",
+									"    pm.expect(body).to.have.property(\"correlationId\");",
+									"    pm.expect(body).to.have.property(\"timestamp\");",
+									"});"
+								],
+								"type": "text/javascript",
+								"packages": {},
+								"requests": {}
+							}
+						}
+					],
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{adventureWorksApi}}/{{apiVersion}}/vendors/9999999",
+							"host": [
+								"{{adventureWorksApi}}"
+							],
+							"path": [
+								"{{apiVersion}}",
+								"vendors",
+								"9999999"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Get Vendor Detail - Invalid Id (400)",
+					"id": "36ce3532-6cfc-46f3-9342-6e4146bb18c1",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"Status should be Bad Request\", function () {",
+									"    pm.response.to.have.status(400);",
+									"});"
+								],
+								"type": "text/javascript",
+								"packages": {},
+								"requests": {}
+							}
+						}
+					],
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{adventureWorksApi}}/{{apiVersion}}/vendors/0",
+							"host": [
+								"{{adventureWorksApi}}"
+							],
+							"path": [
+								"{{apiVersion}}",
+								"vendors",
+								"0"
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "Purchase Order History",
+			"id": "407b651c-932f-4b4e-9523-7cdce2dd0161",
+			"item": [
+				{
+					"name": "Get Purchase Order History (default list)",
+					"id": "1d7e2708-1b88-4d95-ac3b-34d914914087",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"Status is 200\", function () {",
+									"    pm.response.to.have.status(200);",
+									"});",
+									"",
+									"pm.test(\"Has X-Correlation-Id header\", function () {",
+									"    pm.response.to.have.header(\"X-Correlation-Id\");",
+									"});",
+									"",
+									"var body = pm.response.json();",
+									"",
+									"pm.test(\"Response has paginated shape\", function () {",
+									"    pm.expect(body.results).to.be.an(\"array\");",
+									"    pm.expect(body).to.have.property(\"pageNumber\");",
+									"    pm.expect(body).to.have.property(\"pageSize\");",
+									"    pm.expect(body).to.have.property(\"totalRecords\");",
+									"});",
+									"",
+									"pm.test(\"Defaults to pageSize 25\", function () {",
+									"    pm.expect(body.pageSize).to.eql(25);",
+									"});",
+									"",
+									"pm.test(\"Each result has required fields\", function () {",
+									"    if (body.results.length === 0) return;",
+									"    var r = body.results[0];",
+									"    pm.expect(r).to.have.property(\"purchaseOrderId\");",
+									"    pm.expect(r).to.have.property(\"orderDate\");",
+									"    pm.expect(r).to.have.property(\"dueDate\");",
+									"    pm.expect(r).to.have.property(\"status\");",
+									"    pm.expect(r).to.have.property(\"statusLabel\");",
+									"    pm.expect(r).to.have.property(\"totalDue\");",
+									"});",
+									"",
+									"pm.test(\"Results are ordered by orderDate descending\", function () {",
+									"    for (var i = 1; i < body.results.length; i++) {",
+									"        pm.expect(new Date(body.results[i - 1].orderDate).getTime()).to.be.at.least(new Date(body.results[i].orderDate).getTime());",
+									"    }",
+									"});"
+								],
+								"type": "text/javascript",
+								"packages": {},
+								"requests": {}
+							}
+						}
+					],
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{adventureWorksApi}}/{{apiVersion}}/vendors/1496/purchase-orders",
+							"host": [
+								"{{adventureWorksApi}}"
+							],
+							"path": [
+								"{{apiVersion}}",
+								"vendors",
+								"1496",
+								"purchase-orders"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Filter by Status",
+					"id": "97f22866-ff8a-4117-89c4-c9745d247ebc",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"Status is 200\", function () {",
+									"    pm.response.to.have.status(200);",
+									"});",
+									"",
+									"var body = pm.response.json();",
+									"",
+									"pm.test(\"All results have the Complete status label\", function () {",
+									"    body.results.forEach(function (r) {",
+									"        pm.expect(r.statusLabel).to.eql(\"Complete\");",
+									"    });",
+									"});"
+								],
+								"type": "text/javascript",
+								"packages": {},
+								"requests": {}
+							}
+						}
+					],
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{adventureWorksApi}}/{{apiVersion}}/vendors/1496/purchase-orders?status=4",
+							"host": [
+								"{{adventureWorksApi}}"
+							],
+							"path": [
+								"{{apiVersion}}",
+								"vendors",
+								"1496",
+								"purchase-orders"
+							],
+							"query": [
+								{
+									"key": "status",
+									"value": "4"
+								}
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Filter by Date Range",
+					"id": "91a3594a-f02f-4c7d-bb0d-c09cef1a8ee1",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"Status is 200\", function () {",
+									"    pm.response.to.have.status(200);",
+									"});",
+									"",
+									"var body = pm.response.json();",
+									"",
+									"pm.test(\"All results fall within the requested date range\", function () {",
+									"    body.results.forEach(function (r) {",
+									"        var orderDate = new Date(r.orderDate).getTime();",
+									"        pm.expect(orderDate).to.be.at.least(new Date(\"2014-01-01\").getTime());",
+									"        pm.expect(orderDate).to.be.at.most(new Date(\"2014-12-31\").getTime());",
+									"    });",
+									"});"
+								],
+								"type": "text/javascript",
+								"packages": {},
+								"requests": {}
+							}
+						}
+					],
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{adventureWorksApi}}/{{apiVersion}}/vendors/1496/purchase-orders?startDate=2014-01-01&endDate=2014-12-31",
+							"host": [
+								"{{adventureWorksApi}}"
+							],
+							"path": [
+								"{{apiVersion}}",
+								"vendors",
+								"1496",
+								"purchase-orders"
+							],
+							"query": [
+								{
+									"key": "startDate",
+									"value": "2014-01-01"
+								},
+								{
+									"key": "endDate",
+									"value": "2014-12-31"
+								}
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Validation - Invalid Status (400)",
+					"id": "9e857c12-23c0-4d8c-9a18-bbe82deed607",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"Status should be Bad Request\", function () {",
+									"    pm.response.to.have.status(400);",
+									"});"
+								],
+								"type": "text/javascript",
+								"packages": {},
+								"requests": {}
+							}
+						}
+					],
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{adventureWorksApi}}/{{apiVersion}}/vendors/1496/purchase-orders?status=9",
+							"host": [
+								"{{adventureWorksApi}}"
+							],
+							"path": [
+								"{{apiVersion}}",
+								"vendors",
+								"1496",
+								"purchase-orders"
+							],
+							"query": [
+								{
+									"key": "status",
+									"value": "9"
+								}
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Validation - Invalid Date Range (400)",
+					"id": "94947b62-d5c8-4aae-a60d-c4b2f79711de",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"Status should be Bad Request\", function () {",
+									"    pm.response.to.have.status(400);",
+									"});"
+								],
+								"type": "text/javascript",
+								"packages": {},
+								"requests": {}
+							}
+						}
+					],
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{adventureWorksApi}}/{{apiVersion}}/vendors/1496/purchase-orders?startDate=2014-12-31&endDate=2014-01-01",
+							"host": [
+								"{{adventureWorksApi}}"
+							],
+							"path": [
+								"{{apiVersion}}",
+								"vendors",
+								"1496",
+								"purchase-orders"
+							],
+							"query": [
+								{
+									"key": "startDate",
+									"value": "2014-12-31"
+								},
+								{
+									"key": "endDate",
+									"value": "2014-01-01"
+								}
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Not Found - Unknown Vendor (404)",
+					"id": "af5b9d5d-3466-4ecf-94cd-df3afc3b1c4f",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"Status should be Not Found\", function () {",
+									"    pm.response.to.have.status(404);",
+									"});",
+									"",
+									"var body = pm.response.json();",
+									"",
+									"pm.test(\"Response has structured error body\", function () {",
+									"    pm.expect(body).to.have.property(\"error\");",
+									"    pm.expect(body).to.have.property(\"correlationId\");",
+									"    pm.expect(body).to.have.property(\"timestamp\");",
+									"});"
+								],
+								"type": "text/javascript",
+								"packages": {},
+								"requests": {}
+							}
+						}
+					],
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{adventureWorksApi}}/{{apiVersion}}/vendors/9999999/purchase-orders",
+							"host": [
+								"{{adventureWorksApi}}"
+							],
+							"path": [
+								"{{apiVersion}}",
+								"vendors",
+								"9999999",
+								"purchase-orders"
+							]
+						}
+					},
+					"response": []
+				}
+			]
 		}
 	],
 	"variable": [

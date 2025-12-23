@@ -272,4 +272,15 @@ describe('VendorListComponent', () => {
     expect(empty).toBeTruthy();
     httpTesting.verify();
   });
+
+  it('View button navigates to the correct vendor detail URL', () => {
+    fixture.detectChanges();
+
+    patchState(unprotected(vendorStore), setAllEntities([mockVendor], { selectId }));
+    fixture.detectChanges();
+
+    component['onViewClick']({ vendorId: 1576 });
+
+    expect(router.navigate).toHaveBeenCalledWith(['/purchasing/vendors', 1576]);
+  });
 });

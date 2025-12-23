@@ -9,4 +9,18 @@ export const purchasingRoutes: Route[] = [
     loadComponent: () =>
       import('@adventureworks-web/purchasing/feature-vendors').then((m) => m.VendorListComponent),
   },
+  {
+    path: 'vendors/:id',
+    title: 'Vendor Detail',
+    data: { breadcrumb: 'Vendor Detail' },
+    loadComponent: () =>
+      import('@adventureworks-web/purchasing/feature-vendors').then((m) => m.VendorDetailComponent),
+  },
+  {
+    path: 'purchase-orders/:id',
+    title: 'Purchase Order Detail',
+    data: { breadcrumb: 'Purchase Order Detail' },
+    loadComponent: () =>
+      import('@adventureworks-web/purchasing/feature-vendors').then((m) => m.PurchaseOrderDetailPlaceholderComponent),
+  },
 ];

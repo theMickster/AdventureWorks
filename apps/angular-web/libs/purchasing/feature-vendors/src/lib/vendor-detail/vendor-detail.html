@@ -1,0 +1,185 @@
+<div id="aw-vendor-detail-page">
+  <div id="aw-vendor-detail-header" class="mb-6 flex items-center gap-4">
+    <a id="aw-vendor-detail-back" [routerLink]="['/purchasing/vendors']" class="btn btn-ghost btn-sm">
+      <i class="fa-solid fa-arrow-left" aria-hidden="true"></i>
+      Vendors
+    </a>
+  </div>
+
+  @if (isLoadingVendor()) {
+    <div id="aw-vendor-detail-loading" class="space-y-4">
+      <aw-skeleton height="2rem" width="20rem" />
+      <aw-skeleton height="6rem" />
+      <aw-skeleton height="10rem" />
+    </div>
+  } @else if (vendorNotFound()) {
+    <aw-empty-state
+      fieldId="aw-vendor-detail-not-found"
+      icon="fa-solid fa-circle-exclamation"
+      title="Vendor not found"
+      description="The requested vendor could not be found."
+    />
+  } @else if (vendorHasError()) {
+    <aw-empty-state
+      fieldId="aw-vendor-detail-error"
+      icon="fa-solid fa-circle-exclamation"
+      title="Failed to load vendor"
+      description="Please go back and try again."
+    />
+  } @else if (vendor(); as v) {
+    <!-- Header card -->
+    <div id="aw-vendor-detail-info" class="card bg-base-100 shadow mb-6">
+      <div class="card-body">
+        <div class="flex flex-wrap items-start justify-between gap-4">
+          <div>
+            <h1 id="aw-vendor-detail-name" class="card-title text-2xl font-bold text-base-content">
+              {{ v.name }}
+            </h1>
+            <p class="text-sm text-secondary mt-1">
+              Account:
+              <span id="aw-vendor-detail-account-number" class="font-medium text-base-content">{{
+                v.accountNumber
+              }}</span>
+            </p>
+          </div>
+          <div class="flex items-center gap-2">
+            <aw-status-badge
+              fieldId="aw-vendor-detail-preferred-badge"
+              [status]="v.preferredVendorStatus ? 'preferred' : 'standard'"
+              [statusMap]="preferredBadgeMap"
+            />
+            <aw-status-badge
+              fieldId="aw-vendor-detail-active-badge"
+              [status]="v.activeFlag ? 'active' : 'inactive'"
+              [statusMap]="activeBadgeMap"
+            />
+          </div>
+        </div>
+
+        <div class="mt-2 text-sm">
+          <p class="text-secondary">Credit Rating</p>
+          <p id="aw-vendor-detail-credit-rating" class="font-medium">{{ v.creditRatingLabel }}</p>
+        </div>
+      </div>
+    </div>
+
+    <!-- Spend metric tiles -->
+    <div id="aw-vendor-detail-metrics" class="grid grid-cols-1 sm:grid-cols-3 gap-4 mb-6">
+      <aw-card fieldId="aw-vendor-detail-total-spend-tile" title="Total Spend">
+        <p id="aw-vendor-detail-total-spend" class="text-2xl font-bold text-primary">{{ v.totalSpend | currency }}</p>
+      </aw-card>
+      <aw-card fieldId="aw-vendor-detail-po-count-tile" title="Purchase Orders">
+        <p id="aw-vendor-detail-po-count" class="text-2xl font-bold text-primary">{{ v.poCount }}</p>
+      </aw-card>
+      <aw-card fieldId="aw-vendor-detail-avg-po-value-tile" title="Avg. PO Value">
+        <p id="aw-vendor-detail-avg-po-value" class="text-2xl font-bold text-primary">{{ v.avgPoValue | currency }}</p>
+      </aw-card>
+    </div>
+
+    <!-- Purchase order history -->
+    <div id="aw-vendor-detail-po-history">
+      <h2 class="text-lg font-bold text-base-content mb-3">Purchase Order History</h2>
+
+      <form id="aw-vendor-detail-po-filters" [formGroup]="filterForm" class="mb-4" (ngSubmit)="onApplyFilters()">
+        <div class="grid grid-cols-1 gap-3 sm:grid-cols-2 lg:grid-cols-4">
+          <fieldset class="fieldset">
+            <legend class="fieldset-legend">
+              <label for="aw-vendor-detail-po-filter-status">Status</label>
+            </legend>
+            <select
+              id="aw-vendor-detail-po-filter-status"
+              class="select select-bordered w-full"
+              formControlName="status"
+            >
+              <option value="">All statuses</option>
+              @for (option of statusOptions; track option.value) {
+                <option [value]="option.value">{{ option.label }}</option>
+              }
+            </select>
+          </fieldset>
+
+          <fieldset class="fieldset">
+            <legend class="fieldset-legend">
+              <label for="aw-vendor-detail-po-filter-start-date">Start Date</label>
+            </legend>
+            <input
+              id="aw-vendor-detail-po-filter-start-date"
+              type="date"
+              class="input input-bordered w-full"
+              formControlName="startDate"
+            />
+          </fieldset>
+
+          <fieldset class="fieldset">
+            <legend class="fieldset-legend">
+              <label for="aw-vendor-detail-po-filter-end-date">End Date</label>
+            </legend>
+            <input
+              id="aw-vendor-detail-po-filter-end-date"
+              type="date"
+              class="input input-bordered w-full"
+              formControlName="endDate"
+            />
+          </fieldset>
+        </div>
+
+        <div class="mt-3 flex items-center gap-2">
+          <button id="aw-vendor-detail-po-filter-apply-btn" type="submit" class="btn btn-primary">
+            <i class="fa-solid fa-filter" aria-hidden="true"></i>
+            Apply
+          </button>
+          <button
+            id="aw-vendor-detail-po-filter-reset-btn"
+            type="button"
+            class="btn btn-ghost"
+            (click)="onResetFilters()"
+          >
+            <i class="fa-solid fa-xmark" aria-hidden="true"></i>
+            Reset Filters
+          </button>
+        </div>
+      </form>
+
+      @if (purchaseOrdersHasError()) {
+        <aw-empty-state
+          fieldId="aw-vendor-detail-po-error"
+          icon="fa-solid fa-circle-exclamation"
+          title="Failed to load purchase orders"
+          description="Please try again."
+        />
+      } @else {
+        <aw-data-table
+          fieldId="aw-vendor-detail-po-table"
+          [columns]="columns"
+          [data]="rows()"
+          [loading]="isLoadingPurchaseOrders()"
+          [pageNumber]="poPageNumber()"
+          [pageSize]="poPageSize()"
+          [totalPages]="poTotalPages()"
+          [totalRecords]="poTotalRecords()"
+          emptyTitle="No purchase orders found"
+          emptyDescription="Try adjusting your filters."
+          (pageChange)="onPageChange($event)"
+        >
+          <ng-template awColumnDef="purchaseOrderId" let-row>
+            <a class="link link-primary" [routerLink]="['/purchasing/purchase-orders', $any(row)['purchaseOrderId']]">
+              PO{{ $any(row)['purchaseOrderId'] }}
+            </a>
+          </ng-template>
+          <ng-template awColumnDef="orderDate" let-row>
+            {{ $any(row)['orderDate'] | date: 'mediumDate' }}
+          </ng-template>
+          <ng-template awColumnDef="dueDate" let-row>
+            {{ $any(row)['dueDate'] ? ($any(row)['dueDate'] | date: 'mediumDate') : '—' }}
+          </ng-template>
+          <ng-template awColumnDef="statusLabel" let-row>
+            <aw-status-badge [status]="$any(row)['statusKey']" [statusMap]="poStatusBadgeMap" />
+          </ng-template>
+          <ng-template awColumnDef="totalDue" let-row>
+            {{ $any(row)['totalDue'] | currency }}
+          </ng-template>
+        </aw-data-table>
+      }
+    </div>
+  }
+</div>

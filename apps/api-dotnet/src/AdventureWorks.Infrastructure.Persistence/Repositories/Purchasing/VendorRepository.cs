@@ -146,4 +146,146 @@ public sealed class VendorRepository(AdventureWorksDbContext dbContext)
 
         return (pagedVendors.AsReadOnly(), totalCount);
     }
+
+    /// <summary>
+    /// Retrieves a single vendor's profile and spend metrics.
+    /// </summary>
+    /// <remarks>
+    /// Two queries, both scoped to the single <paramref name="vendorId"/> (unlike <see cref="GetVendorsAsync"/>'s
+    /// full-table join-free pattern, which exists to avoid a client-side join across all 104 vendors) — a
+    /// single-vendor aggregate is cheap to run as a real SQL <c>GROUP BY</c> plus a scalar vendor lookup.
+    /// </remarks>
+    /// <param name="vendorId">the vendor primary key</param>
+    /// <param name="cancellationToken">token to cancel the operation</param>
+    /// <returns>The vendor detail, or <c>null</c> if no vendor with that id exists</returns>
+    public async Task<VendorDetailModel?> GetVendorDetailAsync(int vendorId, CancellationToken cancellationToken = default)
+    {
+        var vendor = await DbContext.Vendors
+            .AsNoTracking()
+            .FirstOrDefaultAsync(v => v.BusinessEntityId == vendorId, cancellationToken);
+
+        if (vendor is null)
+        {
+            return null;
+        }
+
+        var spend = await DbContext.PurchaseOrderHeaders
+            .AsNoTracking()
+            .Where(p => p.VendorId == vendorId)
+            .GroupBy(p => p.VendorId)
+            .Select(g => new { TotalSpend = g.Sum(p => p.TotalDue), PoCount = g.Count() })
+            .SingleOrDefaultAsync(cancellationToken);
+
+        var totalSpend = spend?.TotalSpend ?? 0m;
+        var poCount = spend?.PoCount ?? 0;
+
+        return new VendorDetailModel
+        {
+            VendorId = vendor.BusinessEntityId,
+            Name = vendor.Name,
+            AccountNumber = vendor.AccountNumber,
+            CreditRatingLabel = CreditRatingLabels.GetLabel(vendor.CreditRating),
+            PreferredVendorStatus = vendor.PreferredVendorStatus,
+            ActiveFlag = vendor.ActiveFlag,
+            TotalSpend = totalSpend,
+            PoCount = poCount,
+            // Guard divide-by-zero: a vendor with no purchase orders has an average of 0, not NaN/exception.
+            AvgPoValue = poCount == 0 ? 0m : totalSpend / poCount
+        };
+    }
+
+    /// <summary>
+    /// Retrieves a paginated, filterable page of a single vendor's purchase order history.
+    /// </summary>
+    /// <remarks>
+    /// <para>
+    /// <b>Vendor-existence short-circuit:</b> An <c>AnyAsync</c> existence check runs before the paged
+    /// query. This lets the handler translate "no such vendor" into a 404 without running the (more
+    /// expensive) paged/filtered query first, and lets a real "vendor exists, zero purchase orders
+    /// matched the filter" case return an empty page rather than a false 404.
+    /// </para>
+    /// <para>
+    /// <b>DueDate is <c>MIN</c> of line-item due dates, computed per row:</b> <c>PurchaseOrderHeader</c>
+    /// has no <c>DueDate</c> column — <c>p.PurchaseOrderDetails.Min(d => (DateTime?)d.DueDate)</c> inside
+    /// the paged <c>Select</c> projection is a correlated subquery, scoped to that single PO's own detail
+    /// rows. This is intentionally a real SQL join/subquery, unlike <see cref="GetVendorsAsync"/>'s
+    /// join-free, in-memory-joined pattern: that pattern exists specifically to avoid EF Core's
+    /// GroupBy-forces-client-eval trap when aggregating across the *entire* (104-row) vendor table. Here
+    /// the query is already scoped to one vendor's purchase orders (bounded, typically a few dozen rows),
+    /// so a real per-row correlated subquery is cheap and translates cleanly to SQL — do not "fix" this to
+    /// match the full-table pattern.
+    /// </para>
+    /// </remarks>
+    /// <param name="vendorId">the vendor primary key</param>
+    /// <param name="parameters">pagination and filter parameters (status, order date range)</param>
+    /// <param name="cancellationToken">token to cancel the operation</param>
+    /// <returns>A tuple containing the paginated purchase orders, the total matching count, and whether the vendor exists at all</returns>
+    public async Task<(IReadOnlyList<PurchaseOrderSummaryModel> Results, int TotalCount, bool VendorExists)> GetVendorPurchaseOrdersAsync(
+        int vendorId,
+        VendorPurchaseOrderParameter parameters,
+        CancellationToken cancellationToken = default)
+    {
+        ArgumentNullException.ThrowIfNull(parameters);
+
+        var vendorExists = await DbContext.Vendors
+            .AsNoTracking()
+            .AnyAsync(v => v.BusinessEntityId == vendorId, cancellationToken);
+
+        if (!vendorExists)
+        {
+            return (Array.Empty<PurchaseOrderSummaryModel>(), 0, false);
+        }
+
+        IQueryable<PurchaseOrderHeader> query = DbContext.PurchaseOrderHeaders
+            .AsNoTracking()
+            .Where(p => p.VendorId == vendorId);
+
+        if (parameters.Status.HasValue)
+        {
+            query = query.Where(p => p.Status == parameters.Status.Value);
+        }
+
+        if (parameters.StartDate.HasValue)
+        {
+            query = query.Where(p => p.OrderDate >= parameters.StartDate.Value);
+        }
+
+        if (parameters.EndDate.HasValue)
+        {
+            query = query.Where(p => p.OrderDate <= parameters.EndDate.Value);
+        }
+
+        var totalCount = await query.CountAsync(cancellationToken);
+
+        // Project raw, SQL-translatable scalars first (including the correlated DueDate-MIN subquery);
+        // StatusLabel is a C# switch that cannot translate to SQL, so it is mapped after materialization.
+        var pagedRows = await query
+            .OrderByDescending(p => p.OrderDate)
+            .ThenByDescending(p => p.PurchaseOrderId)
+            .Skip(parameters.GetRecordsToSkip())
+            .Take(parameters.PageSize)
+            .Select(p => new
+            {
+                p.PurchaseOrderId,
+                p.OrderDate,
+                DueDate = p.PurchaseOrderDetails.Min(d => (DateTime?)d.DueDate),
+                p.Status,
+                p.TotalDue
+            })
+            .ToListAsync(cancellationToken);
+
+        var results = pagedRows
+            .Select(p => new PurchaseOrderSummaryModel
+            {
+                PurchaseOrderId = p.PurchaseOrderId,
+                OrderDate = p.OrderDate,
+                DueDate = p.DueDate,
+                Status = p.Status,
+                StatusLabel = PurchaseOrderStatusLabels.GetLabel(p.Status),
+                TotalDue = p.TotalDue
+            })
+            .ToList();
+
+        return (results.AsReadOnly(), totalCount, true);
+    }
 }

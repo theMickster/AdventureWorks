@@ -420,4 +420,246 @@ public sealed class VendorRepositoryTests : PersistenceUnitTestBase
         results.Should().HaveCount(4);
         results.Select(x => x.VendorId).Should().ContainInOrder(5, 6, 7, 8);
     }
+
+    /// <summary>
+    /// Seeds a single purchase order header with an explicit status/order date/total, so PO-history
+    /// tests can build a specific shape without going through the aggregate-spend helper above.
+    /// Callers must seed the vendor's <see cref="BusinessEntity"/>/<see cref="Vendor"/> parents
+    /// separately (e.g. via <see cref="SeedVendor"/>) before calling this.
+    /// </summary>
+    private void SeedPurchaseOrder(
+        int purchaseOrderId,
+        int vendorId,
+        byte status,
+        DateTime orderDate,
+        decimal totalDue = 100m)
+    {
+        DbContext.PurchaseOrderHeaders.Add(new PurchaseOrderHeader
+        {
+            PurchaseOrderId = purchaseOrderId,
+            RevisionNumber = 1,
+            Status = status,
+            EmployeeId = 1,
+            VendorId = vendorId,
+            ShipMethodId = 1,
+            OrderDate = orderDate,
+            SubTotal = totalDue,
+            TaxAmt = 0m,
+            Freight = 0m,
+            TotalDue = totalDue,
+            ModifiedDate = StandardModifiedDate
+        });
+    }
+
+    private void SeedPurchaseOrderDetail(int purchaseOrderId, int purchaseOrderDetailId, DateTime dueDate)
+    {
+        DbContext.Add(new PurchaseOrderDetail
+        {
+            PurchaseOrderId = purchaseOrderId,
+            PurchaseOrderDetailId = purchaseOrderDetailId,
+            DueDate = dueDate,
+            OrderQty = 1,
+            ProductId = 1,
+            UnitPrice = 10m,
+            LineTotal = 10m,
+            ReceivedQty = 0m,
+            RejectedQty = 0m,
+            StockedQty = 0m,
+            ModifiedDate = StandardModifiedDate
+        });
+    }
+
+    [Fact]
+    public async Task GetVendorDetailAsync_UnknownVendor_ReturnsNull()
+    {
+        // Act
+        var result = await _sut.GetVendorDetailAsync(9999, TestContext.Current.CancellationToken);
+
+        // Assert
+        result.Should().BeNull();
+    }
+
+    [Fact]
+    public async Task GetVendorDetailAsync_ZeroPoVendor_ReturnsZeroSpendZeroCountZeroAverage()
+    {
+        // Arrange — real AdventureWorks zero-PO vendor shape (e.g. "Cycling Master", id 1502).
+        SeedVendor(1502, spend: null, creditRating: 1);
+        await DbContext.SaveChangesAsync(cancellationToken: TestContext.Current.CancellationToken);
+
+        // Act
+        var result = await _sut.GetVendorDetailAsync(1502, TestContext.Current.CancellationToken);
+
+        // Assert — guards the AvgPoValue divide-by-zero case: 0, not NaN/exception.
+        result.Should().NotBeNull();
+        result!.TotalSpend.Should().Be(0m);
+        result.PoCount.Should().Be(0);
+        result.AvgPoValue.Should().Be(0m);
+    }
+
+    [Fact]
+    public async Task GetVendorDetailAsync_VendorWithPurchaseOrders_ComputesSpendMetrics()
+    {
+        // Arrange — real AdventureWorks vendor shape ("Advanced Bicycles", id 1496).
+        DbContext.BusinessEntities.Add(new BusinessEntity
+        {
+            BusinessEntityId = 1496,
+            Rowguid = Guid.NewGuid(),
+            ModifiedDate = StandardModifiedDate
+        });
+        DbContext.Vendors.Add(new Vendor
+        {
+            BusinessEntityId = 1496,
+            Name = "Advanced Bicycles",
+            AccountNumber = "ADVANCED0001",
+            CreditRating = 1,
+            PreferredVendorStatus = true,
+            ActiveFlag = true,
+            PurchasingWebServiceUrl = string.Empty,
+            ModifiedDate = StandardModifiedDate
+        });
+        SeedPurchaseOrder(3932, 1496, status: 1, orderDate: new DateTime(2014, 7, 30), totalDue: 302.44m);
+        SeedPurchaseOrder(3853, 1496, status: 1, orderDate: new DateTime(2014, 7, 25), totalDue: 460.50m);
+        await DbContext.SaveChangesAsync(cancellationToken: TestContext.Current.CancellationToken);
+
+        // Act
+        var result = await _sut.GetVendorDetailAsync(1496, TestContext.Current.CancellationToken);
+
+        // Assert
+        result.Should().NotBeNull();
+        result!.Name.Should().Be("Advanced Bicycles");
+        result.CreditRatingLabel.Should().Be("Superior");
+        result.PoCount.Should().Be(2);
+        result.TotalSpend.Should().Be(762.94m);
+        result.AvgPoValue.Should().Be(381.47m);
+    }
+
+    [Fact]
+    public async Task GetVendorPurchaseOrdersAsync_UnknownVendor_ReturnsVendorExistsFalse()
+    {
+        // Act
+        var (results, totalCount, vendorExists) = await _sut.GetVendorPurchaseOrdersAsync(
+            9999, new VendorPurchaseOrderParameter { PageNumber = 1 }, TestContext.Current.CancellationToken);
+
+        // Assert
+        vendorExists.Should().BeFalse();
+        results.Should().BeEmpty();
+        totalCount.Should().Be(0);
+    }
+
+    [Fact]
+    public async Task GetVendorPurchaseOrdersAsync_ZeroPoVendor_ReturnsVendorExistsTrueWithEmptyPage()
+    {
+        // Arrange
+        SeedVendor(1502, spend: null);
+        await DbContext.SaveChangesAsync(cancellationToken: TestContext.Current.CancellationToken);
+
+        // Act
+        var (results, totalCount, vendorExists) = await _sut.GetVendorPurchaseOrdersAsync(
+            1502, new VendorPurchaseOrderParameter { PageNumber = 1 }, TestContext.Current.CancellationToken);
+
+        // Assert
+        vendorExists.Should().BeTrue();
+        results.Should().BeEmpty();
+        totalCount.Should().Be(0);
+    }
+
+    [Fact]
+    public async Task GetVendorPurchaseOrdersAsync_DueDate_IsMinimumOfLineItemDueDates()
+    {
+        // Arrange — regression test for the DueDate-as-MIN decision: PurchaseOrderHeader has no
+        // DueDate column, so the PO's due date must be derived as the earliest line-item DueDate.
+        SeedVendor(1496, spend: null);
+        SeedPurchaseOrder(3932, 1496, status: 1, orderDate: new DateTime(2014, 7, 30));
+        SeedPurchaseOrderDetail(3932, 1, dueDate: new DateTime(2014, 8, 20));
+        SeedPurchaseOrderDetail(3932, 2, dueDate: new DateTime(2014, 8, 13));
+        SeedPurchaseOrderDetail(3932, 3, dueDate: new DateTime(2014, 8, 27));
+        await DbContext.SaveChangesAsync(cancellationToken: TestContext.Current.CancellationToken);
+
+        // Act
+        var (results, _, _) = await _sut.GetVendorPurchaseOrdersAsync(
+            1496, new VendorPurchaseOrderParameter { PageNumber = 1 }, TestContext.Current.CancellationToken);
+
+        // Assert — the earliest of the three due dates (8/13) wins, not the first-seeded or last-seeded row.
+        results.Should().ContainSingle();
+        results[0].DueDate.Should().Be(new DateTime(2014, 8, 13));
+    }
+
+    [Fact]
+    public async Task GetVendorPurchaseOrdersAsync_FiltersByStatus()
+    {
+        // Arrange
+        SeedVendor(1496, spend: null);
+        SeedPurchaseOrder(1, 1496, status: 1, orderDate: new DateTime(2014, 1, 1));
+        SeedPurchaseOrder(2, 1496, status: 4, orderDate: new DateTime(2014, 1, 2));
+        await DbContext.SaveChangesAsync(cancellationToken: TestContext.Current.CancellationToken);
+
+        // Act
+        var (results, totalCount, _) = await _sut.GetVendorPurchaseOrdersAsync(
+            1496, new VendorPurchaseOrderParameter { PageNumber = 1, Status = 4 }, TestContext.Current.CancellationToken);
+
+        // Assert
+        totalCount.Should().Be(1);
+        results.Single().PurchaseOrderId.Should().Be(2);
+        results.Single().StatusLabel.Should().Be("Complete");
+    }
+
+    [Fact]
+    public async Task GetVendorPurchaseOrdersAsync_FiltersByDateRange()
+    {
+        // Arrange
+        SeedVendor(1496, spend: null);
+        SeedPurchaseOrder(1, 1496, status: 1, orderDate: new DateTime(2014, 1, 1));
+        SeedPurchaseOrder(2, 1496, status: 1, orderDate: new DateTime(2014, 6, 15));
+        SeedPurchaseOrder(3, 1496, status: 1, orderDate: new DateTime(2014, 12, 31));
+        await DbContext.SaveChangesAsync(cancellationToken: TestContext.Current.CancellationToken);
+
+        // Act
+        var (results, totalCount, _) = await _sut.GetVendorPurchaseOrdersAsync(
+            1496,
+            new VendorPurchaseOrderParameter { PageNumber = 1, StartDate = new DateTime(2014, 3, 1), EndDate = new DateTime(2014, 9, 1) },
+            TestContext.Current.CancellationToken);
+
+        // Assert
+        totalCount.Should().Be(1);
+        results.Single().PurchaseOrderId.Should().Be(2);
+    }
+
+    [Fact]
+    public async Task GetVendorPurchaseOrdersAsync_OrdersByOrderDateDescending()
+    {
+        // Arrange
+        SeedVendor(1496, spend: null);
+        SeedPurchaseOrder(1, 1496, status: 1, orderDate: new DateTime(2014, 1, 1));
+        SeedPurchaseOrder(2, 1496, status: 1, orderDate: new DateTime(2014, 6, 15));
+        SeedPurchaseOrder(3, 1496, status: 1, orderDate: new DateTime(2014, 3, 1));
+        await DbContext.SaveChangesAsync(cancellationToken: TestContext.Current.CancellationToken);
+
+        // Act
+        var (results, _, _) = await _sut.GetVendorPurchaseOrdersAsync(
+            1496, new VendorPurchaseOrderParameter { PageNumber = 1 }, TestContext.Current.CancellationToken);
+
+        // Assert
+        results.Select(x => x.PurchaseOrderId).Should().ContainInOrder(2, 3, 1);
+    }
+
+    [Fact]
+    public async Task GetVendorPurchaseOrdersAsync_RespectsPagination()
+    {
+        // Arrange
+        SeedVendor(1496, spend: null);
+        for (var i = 1; i <= 5; i++)
+        {
+            SeedPurchaseOrder(i, 1496, status: 1, orderDate: new DateTime(2014, 1, i));
+        }
+
+        await DbContext.SaveChangesAsync(cancellationToken: TestContext.Current.CancellationToken);
+
+        // Act
+        var (results, totalCount, _) = await _sut.GetVendorPurchaseOrdersAsync(
+            1496, new VendorPurchaseOrderParameter { PageNumber = 2, PageSize = 2 }, TestContext.Current.CancellationToken);
+
+        // Assert — page 2 of 2, ordered by OrderDate desc: [5,4] page1, [3,2] page2.
+        totalCount.Should().Be(5);
+        results.Select(x => x.PurchaseOrderId).Should().ContainInOrder(3, 2);
+    }
 }

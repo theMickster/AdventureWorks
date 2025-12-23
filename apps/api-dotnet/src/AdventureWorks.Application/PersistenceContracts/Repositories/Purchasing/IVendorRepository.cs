@@ -41,4 +41,29 @@ public interface IVendorRepository : IAsyncRepository<Vendor>
     Task<(IReadOnlyList<VendorModel>, int)> GetVendorsAsync(
         VendorParameter parameters,
         CancellationToken cancellationToken = default);
+
+    /// <summary>
+    /// Retrieves a single vendor's profile and spend metrics.
+    /// </summary>
+    /// <param name="vendorId">the vendor primary key</param>
+    /// <param name="cancellationToken">token to cancel the operation</param>
+    /// <returns>The vendor detail, or <c>null</c> if no vendor with that id exists</returns>
+    Task<VendorDetailModel?> GetVendorDetailAsync(int vendorId, CancellationToken cancellationToken = default);
+
+    /// <summary>
+    /// Retrieves a paginated, filterable page of a single vendor's purchase order history.
+    /// </summary>
+    /// <remarks>
+    /// <b>Vendor-existence short-circuit:</b> <c>VendorExists</c> is checked before running the paged
+    /// query, so callers can distinguish "vendor not found" (404) from "vendor found, zero purchase
+    /// orders matched the filter" (200 with an empty page) without a second round trip.
+    /// </remarks>
+    /// <param name="vendorId">the vendor primary key</param>
+    /// <param name="parameters">pagination and filter parameters (status, order date range)</param>
+    /// <param name="cancellationToken">token to cancel the operation</param>
+    /// <returns>A tuple containing the paginated purchase orders, the total matching count, and whether the vendor exists at all</returns>
+    Task<(IReadOnlyList<PurchaseOrderSummaryModel> Results, int TotalCount, bool VendorExists)> GetVendorPurchaseOrdersAsync(
+        int vendorId,
+        VendorPurchaseOrderParameter parameters,
+        CancellationToken cancellationToken = default);
 }

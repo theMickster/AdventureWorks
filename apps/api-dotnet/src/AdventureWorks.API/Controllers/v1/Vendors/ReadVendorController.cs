@@ -64,4 +64,74 @@ public sealed class ReadVendorController : ControllerBase
 
         return Ok(searchResult);
     }
+
+    /// <summary>
+    /// Retrieve a single vendor's profile and spend metrics.
+    /// </summary>
+    /// <param name="vendorId">the vendor primary key</param>
+    /// <param name="cancellationToken">Cancellation token</param>
+    /// <returns>The vendor detail</returns>
+    [HttpGet("{vendorId:int}")]
+    [ProducesResponseType(StatusCodes.Status200OK, Type = typeof(VendorDetailModel))]
+    [ProducesResponseType(StatusCodes.Status400BadRequest)]
+    [ProducesResponseType(StatusCodes.Status401Unauthorized)]
+    [ProducesResponseType(StatusCodes.Status404NotFound)]
+    public async Task<IActionResult> GetVendorDetailAsync(
+        [FromRoute] int vendorId,
+        CancellationToken cancellationToken = default)
+    {
+        if (vendorId <= 0)
+        {
+            return BadRequest();
+        }
+
+        // A missing vendor throws KeyNotFoundException, which ExceptionHandlerMiddleware translates
+        // to a structured 404 body — deliberately left to bubble up rather than checked here.
+        var result = await _mediator.Send(new ReadVendorDetailQuery { VendorId = vendorId }, cancellationToken);
+
+        return Ok(result);
+    }
+
+    /// <summary>
+    /// Retrieve a paginated, filterable page of a single vendor's purchase order history.
+    /// </summary>
+    /// <remarks>
+    /// ## Filtering
+    /// - `status`: Filter by purchase order status (1=Pending, 2=Approved, 3=Rejected, 4=Complete)
+    /// - `startDate` and `endDate`: Filter by order date range (inclusive)
+    ///
+    /// ## Sorting
+    /// Results are always ordered by order date descending — there is no client-facing sort parameter.
+    ///
+    /// ## Pagination
+    /// - `pageNumber`: Page number (1-based). Defaults to 1.
+    /// - `pageSize`: Number of records per page (max 50). Defaults to 25.
+    /// </remarks>
+    /// <param name="vendorId">the vendor primary key</param>
+    /// <param name="parameters">Purchase order pagination and filter query parameters</param>
+    /// <param name="cancellationToken">Cancellation token</param>
+    /// <returns>Paginated purchase order history for the vendor</returns>
+    [HttpGet("{vendorId:int}/purchase-orders")]
+    [ProducesResponseType(StatusCodes.Status200OK, Type = typeof(PurchaseOrderSearchResultModel))]
+    [ProducesResponseType(StatusCodes.Status400BadRequest)]
+    [ProducesResponseType(StatusCodes.Status401Unauthorized)]
+    [ProducesResponseType(StatusCodes.Status404NotFound)]
+    public async Task<IActionResult> GetVendorPurchaseOrdersAsync(
+        [FromRoute] int vendorId,
+        [FromQuery] VendorPurchaseOrderParameter parameters,
+        CancellationToken cancellationToken = default)
+    {
+        if (vendorId <= 0)
+        {
+            return BadRequest();
+        }
+
+        var query = new ReadVendorPurchaseOrdersQuery { VendorId = vendorId, Parameters = parameters };
+
+        // A missing vendor throws KeyNotFoundException, which ExceptionHandlerMiddleware translates
+        // to a structured 404 body — deliberately left to bubble up rather than checked here.
+        var searchResult = await _mediator.Send(query, cancellationToken);
+
+        return Ok(searchResult);
+    }
 }

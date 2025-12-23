@@ -123,4 +123,94 @@ public sealed class ReadVendorControllerTests
         // Assert
         result.Should().BeOfType<OkObjectResult>();
     }
+
+    [Fact]
+    public async Task GetVendorDetailAsync_returns_ok_result_with_detail()
+    {
+        // Arrange
+        var detail = new VendorDetailModel
+        {
+            VendorId = 1496,
+            Name = "Advanced Bicycles",
+            AccountNumber = "ADVANCED0001",
+            CreditRatingLabel = "Superior",
+            PreferredVendorStatus = true,
+            ActiveFlag = true,
+            TotalSpend = 762.94m,
+            PoCount = 2,
+            AvgPoValue = 381.47m
+        };
+
+        _mockMediator.Setup(x => x.Send(It.IsAny<ReadVendorDetailQuery>(), It.IsAny<CancellationToken>()))
+            .ReturnsAsync(detail);
+
+        // Act
+        var result = await _sut.GetVendorDetailAsync(1496, TestContext.Current.CancellationToken);
+
+        // Assert
+        result.Should().BeOfType<OkObjectResult>();
+        var okResult = (OkObjectResult)result;
+        okResult.Value.Should().BeEquivalentTo(detail);
+    }
+
+    [Fact]
+    public async Task GetVendorDetailAsync_invalid_id_returns_bad_request()
+    {
+        // Act
+        var result = await _sut.GetVendorDetailAsync(0, TestContext.Current.CancellationToken);
+
+        // Assert
+        result.Should().BeOfType<BadRequestResult>();
+        _mockMediator.Verify(x => x.Send(It.IsAny<ReadVendorDetailQuery>(), It.IsAny<CancellationToken>()), Times.Never);
+    }
+
+    [Fact]
+    public async Task GetVendorPurchaseOrdersAsync_returns_ok_result_with_results()
+    {
+        // Arrange
+        var parameters = new VendorPurchaseOrderParameter { PageNumber = 1, PageSize = 25 };
+        var searchResult = new PurchaseOrderSearchResultModel
+        {
+            PageNumber = 1,
+            PageSize = 25,
+            TotalRecords = 1,
+            Results = new List<PurchaseOrderSummaryModel>
+            {
+                new()
+                {
+                    PurchaseOrderId = 3932,
+                    OrderDate = new DateTime(2014, 7, 30),
+                    DueDate = new DateTime(2014, 8, 13),
+                    Status = 1,
+                    StatusLabel = "Pending",
+                    TotalDue = 302.44m
+                }
+            }
+        };
+
+        _mockMediator.Setup(x => x.Send(It.IsAny<ReadVendorPurchaseOrdersQuery>(), It.IsAny<CancellationToken>()))
+            .ReturnsAsync(searchResult);
+
+        // Act
+        var result = await _sut.GetVendorPurchaseOrdersAsync(1496, parameters, TestContext.Current.CancellationToken);
+
+        // Assert
+        result.Should().BeOfType<OkObjectResult>();
+        var okResult = (OkObjectResult)result;
+        okResult.Value.Should().BeEquivalentTo(searchResult);
+    }
+
+    [Fact]
+    public async Task GetVendorPurchaseOrdersAsync_invalid_id_returns_bad_request()
+    {
+        // Arrange
+        var parameters = new VendorPurchaseOrderParameter { PageNumber = 1 };
+
+        // Act
+        var result = await _sut.GetVendorPurchaseOrdersAsync(-1, parameters, TestContext.Current.CancellationToken);
+
+        // Assert
+        result.Should().BeOfType<BadRequestResult>();
+        _mockMediator.Verify(x => x.Send(It.IsAny<ReadVendorPurchaseOrdersQuery>(), It.IsAny<CancellationToken>()), Times.Never);
+    }
 }

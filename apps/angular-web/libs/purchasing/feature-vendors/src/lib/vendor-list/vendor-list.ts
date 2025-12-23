@@ -89,6 +89,7 @@ export class VendorListComponent implements OnInit {
     { key: 'totalSpend', label: 'Total Spend', sortable: false, headerClass: 'text-right', cellClass: 'text-right' },
     { key: 'poCount', label: 'PO Count', sortable: false, headerClass: 'text-right', cellClass: 'text-right' },
     { key: 'risk', label: 'Risk', sortable: false },
+    { key: 'view', label: '', sortable: false },
   ];
 
   /** Flattens vendor entities to flat key-value rows for DataTableComponent. */
@@ -151,6 +152,11 @@ export class VendorListComponent implements OnInit {
       queryParams: { pageNumber: page },
       queryParamsHandling: 'merge',
     });
+  }
+
+  /** Navigates to the vendor detail page — mirrors WorkOrderListComponent's View-button row navigation. */
+  protected onViewClick(row: Record<string, unknown>): void {
+    void this.router.navigate(['/purchasing/vendors', row['vendorId']]);
   }
 
   /**

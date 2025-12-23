@@ -56,5 +56,8 @@
     <ng-template awColumnDef="risk" let-row>
       <aw-status-badge [status]="$any(row)['riskKey']" [statusMap]="riskBadgeMap" />
     </ng-template>
+    <ng-template awColumnDef="view" let-row>
+      <button type="button" class="btn btn-ghost btn-xs" (click)="onViewClick(row)">View</button>
+    </ng-template>
   </aw-data-table>
 </div>
