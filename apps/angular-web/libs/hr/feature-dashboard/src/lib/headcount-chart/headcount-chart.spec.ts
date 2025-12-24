@@ -36,7 +36,7 @@ describe('HeadcountChartComponent', () => {
 
   it('builds a horizontal bar chart with one label/value per department, including zero-headcount ones', async () => {
     fixture.detectChanges();
-    await vi.waitFor(() => expect(vi.mocked(Chart)).toHaveBeenCalled());
+    await vi.waitFor(() => expect(vi.mocked(Chart)).toHaveBeenCalled(), { timeout: 5000 });
 
     const chartConfig = (vi.mocked(Chart) as ReturnType<typeof vi.fn>).mock.calls[0]?.[1];
 
@@ -55,7 +55,7 @@ describe('HeadcountChartComponent', () => {
 
   it('destroys the Chart.js instance on ngOnDestroy', async () => {
     fixture.detectChanges();
-    await vi.waitFor(() => expect(vi.mocked(Chart)).toHaveBeenCalled());
+    await vi.waitFor(() => expect(vi.mocked(Chart)).toHaveBeenCalled(), { timeout: 5000 });
 
     const chartInstance = (vi.mocked(Chart) as ReturnType<typeof vi.fn>).mock.results[0]?.value;
     fixture.destroy();

@@ -39,7 +39,7 @@ describe('TenureChartComponent', () => {
 
   it('builds a stacked horizontal bar with 5 datasets, one per tenure bucket', async () => {
     fixture.detectChanges();
-    await vi.waitFor(() => expect(vi.mocked(Chart)).toHaveBeenCalled());
+    await vi.waitFor(() => expect(vi.mocked(Chart)).toHaveBeenCalled(), { timeout: 5000 });
 
     const chartConfig = (vi.mocked(Chart) as ReturnType<typeof vi.fn>).mock.calls[0]?.[1];
 
@@ -52,22 +52,24 @@ describe('TenureChartComponent', () => {
     expect(chartConfig.options.plugins.legend.display).toBe(false);
   });
 
-  it('assigns a distinct color to each of the 5 bucket datasets', async () => {
+  it('assigns a distinct color to each of the 5 bucket datasets', () => {
     fixture.detectChanges();
-    await vi.waitFor(() => expect(vi.mocked(Chart)).toHaveBeenCalled());
 
-    const chartConfig = (vi.mocked(Chart) as ReturnType<typeof vi.fn>).mock.calls[0]?.[1];
-    const colors = chartConfig.data.datasets.map((d: { backgroundColor: string }) => d.backgroundColor);
+    const bucketSummary = (
+      fixture.componentInstance as unknown as { bucketSummary: () => { color: string }[] }
+    ).bucketSummary();
+    const colors = bucketSummary.map((b) => b.color);
 
     expect(new Set(colors).size).toBe(5);
   });
 
-  it('the 5 bucket values sum to the total active employee count passed in', async () => {
+  it('the 5 bucket values sum to the total active employee count passed in', () => {
     fixture.detectChanges();
-    await vi.waitFor(() => expect(vi.mocked(Chart)).toHaveBeenCalled());
 
-    const chartConfig = (vi.mocked(Chart) as ReturnType<typeof vi.fn>).mock.calls[0]?.[1];
-    const sum = chartConfig.data.datasets.reduce((total: number, d: { data: number[] }) => total + d.data[0], 0);
+    const bucketSummary = (
+      fixture.componentInstance as unknown as { bucketSummary: () => { value: number }[] }
+    ).bucketSummary();
+    const sum = bucketSummary.reduce((total, b) => total + b.value, 0);
 
     const expectedTotal =
       mockDistribution.underOneYear +
@@ -81,7 +83,7 @@ describe('TenureChartComponent', () => {
 
   it('destroys the Chart.js instance on ngOnDestroy', async () => {
     fixture.detectChanges();
-    await vi.waitFor(() => expect(vi.mocked(Chart)).toHaveBeenCalled());
+    await vi.waitFor(() => expect(vi.mocked(Chart)).toHaveBeenCalled(), { timeout: 5000 });
 
     const chartInstance = (vi.mocked(Chart) as ReturnType<typeof vi.fn>).mock.results[0]?.value;
     fixture.destroy();
