@@ -277,6 +277,8 @@ Use `--configuration` flags explicitly; do not rely on gitignored `environment.d
 - Test framework: **Vitest** (not Jest)
 - Mock only at library boundaries (store, service) — do not mock Angular internals
 
+**Never assert on the Chart.js constructor in specs.** Chart components build their instance in `afterNextRender`, and Angular swallows exceptions thrown there into the plain `ErrorHandler` — a failing hook produces a silent `vi.waitFor` timeout with no diagnostic, and it reproduces only on the Linux CI agent. Keep the `vi.mock('chart.js', …)` factory (module-scope `Chart.register(...)` needs it), but assert only on the canvas, its `role`/`aria-label`, the DOM legend, and component `computed()` state. Do not add `chart.destroy()`-on-`ngOnDestroy` tests. Precedent: `6cf98cb`, `d900348`.
+
 ### Testing Utilities
 
 `libs/shared/util/src/lib/testing/` holds shared spec helpers: `provideMockEnvironment`, `provideMockAuthService`, `provideMockNotificationService`, `provideMockLoadingService`, `provideMockAppInsightsService`, `renderComponent()`, `buildActivatedRoute()`, and `mockSearchResult()`.

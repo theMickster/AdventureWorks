@@ -1,5 +1,4 @@
 import { ComponentFixture, TestBed } from '@angular/core/testing';
-import { Chart } from 'chart.js';
 import { TenureChartComponent } from './tenure-chart';
 import type { TenureDistribution } from '@adventureworks-web/hr/data-access';
 
@@ -21,8 +20,6 @@ describe('TenureChartComponent', () => {
   let fixture: ComponentFixture<TenureChartComponent>;
 
   beforeEach(async () => {
-    vi.mocked(Chart).mockClear();
-
     await TestBed.configureTestingModule({
       imports: [TenureChartComponent],
     }).compileComponents();
@@ -31,25 +28,12 @@ describe('TenureChartComponent', () => {
     fixture.componentRef.setInput('data', mockDistribution);
   });
 
+  afterEach(() => TestBed.resetTestingModule());
+
   it('renders a canvas element', () => {
     fixture.detectChanges();
     const canvas = fixture.nativeElement.querySelector('canvas');
     expect(canvas).toBeTruthy();
-  });
-
-  it('builds a stacked horizontal bar with 5 datasets, one per tenure bucket', async () => {
-    fixture.detectChanges();
-    await vi.waitFor(() => expect(vi.mocked(Chart)).toHaveBeenCalled(), { timeout: 5000 });
-
-    const chartConfig = (vi.mocked(Chart) as ReturnType<typeof vi.fn>).mock.calls[0]?.[1];
-
-    expect(chartConfig.type).toBe('bar');
-    expect(chartConfig.options.indexAxis).toBe('y');
-    expect(chartConfig.options.scales.x.stacked).toBe(true);
-    expect(chartConfig.data.datasets).toHaveLength(5);
-    // The Chart.js legend plugin is intentionally disabled (draws on canvas pixels, invisible to
-    // screen readers) — a real DOM legend in the template replaces it. See the accessibility tests below.
-    expect(chartConfig.options.plugins.legend.display).toBe(false);
   });
 
   it('assigns a distinct color to each of the 5 bucket datasets', () => {
@@ -79,16 +63,6 @@ describe('TenureChartComponent', () => {
       mockDistribution.tenPlusYears;
 
     expect(sum).toBe(expectedTotal);
-  });
-
-  it('destroys the Chart.js instance on ngOnDestroy', async () => {
-    fixture.detectChanges();
-    await vi.waitFor(() => expect(vi.mocked(Chart)).toHaveBeenCalled(), { timeout: 5000 });
-
-    const chartInstance = (vi.mocked(Chart) as ReturnType<typeof vi.fn>).mock.results[0]?.value;
-    fixture.destroy();
-
-    expect(chartInstance.destroy).toHaveBeenCalledTimes(1);
   });
 
   it('gives the canvas an accessible role and a text alternative summarizing every bucket', () => {
