@@ -1017,6 +1017,202 @@
 					"response": []
 				}
 			]
+		},
+		{
+			"name": "Purchase Order Detail",
+			"id": "2410a805-9ffc-4aff-9412-5e034db64293",
+			"item": [
+				{
+					"name": "Get Purchase Order Detail By Id",
+					"id": "a0ff82f8-f35c-4dda-ad8f-8c305202ce51",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"Status is 200\", function () {",
+									"    pm.response.to.have.status(200);",
+									"});",
+									"",
+									"pm.test(\"Has X-Correlation-Id header\", function () {",
+									"    pm.response.to.have.header(\"X-Correlation-Id\");",
+									"});",
+									"",
+									"var body = pm.response.json();",
+									"",
+									"pm.test(\"Response has purchase order detail shape\", function () {",
+									"    pm.expect(body).to.have.property(\"purchaseOrderId\");",
+									"    pm.expect(body).to.have.property(\"status\");",
+									"    pm.expect(body).to.have.property(\"statusLabel\");",
+									"    pm.expect(body).to.have.property(\"orderDate\");",
+									"    pm.expect(body).to.have.property(\"dueDate\");",
+									"    pm.expect(body).to.have.property(\"vendorId\");",
+									"    pm.expect(body).to.have.property(\"employeeId\");",
+									"    pm.expect(body).to.have.property(\"approvingEmployeeFullName\");",
+									"    pm.expect(body).to.have.property(\"shipMethodId\");",
+									"    pm.expect(body).to.have.property(\"subTotal\");",
+									"    pm.expect(body).to.have.property(\"taxAmt\");",
+									"    pm.expect(body).to.have.property(\"freight\");",
+									"    pm.expect(body).to.have.property(\"totalDue\");",
+									"    pm.expect(body).to.have.property(\"lineItems\");",
+									"});",
+									"",
+									"pm.test(\"purchaseOrderId matches the requested id\", function () {",
+									"    pm.expect(body.purchaseOrderId).to.eql(4);",
+									"});",
+									"",
+									"pm.test(\"approvingEmployeeFullName is a non-empty string\", function () {",
+									"    pm.expect(body.approvingEmployeeFullName).to.be.a(\"string\").and.not.empty;",
+									"});",
+									"",
+									"pm.test(\"lineItems is an array\", function () {",
+									"    pm.expect(body.lineItems).to.be.an(\"array\");",
+									"});"
+								],
+								"type": "text/javascript",
+								"packages": {},
+								"requests": {}
+							}
+						}
+					],
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{adventureWorksApi}}/{{apiVersion}}/purchase-orders/4",
+							"host": [
+								"{{adventureWorksApi}}"
+							],
+							"path": [
+								"{{apiVersion}}",
+								"purchase-orders",
+								"4"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Get Purchase Order Detail - Not Found (404)",
+					"id": "8f5361f0-1baf-46d2-b363-ec2544111ecd",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"Status should be Not Found\", function () {",
+									"    pm.response.to.have.status(404);",
+									"});",
+									"",
+									"var body = pm.response.json();",
+									"",
+									"pm.test(\"Response has structured error body\", function () {",
+									"    pm.expect(body).to.have.property(\"error\");",
+									"    pm.expect(body).to.have.property(\"correlationId\");",
+									"    pm.expect(body).to.have.property(\"timestamp\");",
+									"});",
+									"",
+									"pm.test(\"Error body does not leak a stack trace\", function () {",
+									"    pm.expect(JSON.stringify(body)).to.not.include(\"   at \");",
+									"});"
+								],
+								"type": "text/javascript",
+								"packages": {},
+								"requests": {}
+							}
+						}
+					],
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{adventureWorksApi}}/{{apiVersion}}/purchase-orders/9999999",
+							"host": [
+								"{{adventureWorksApi}}"
+							],
+							"path": [
+								"{{apiVersion}}",
+								"purchase-orders",
+								"9999999"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Get Purchase Order Detail - Invalid Id (400)",
+					"id": "b7e68bd2-c2b4-46f9-bd0d-b857481372c8",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"Status should be Bad Request\", function () {",
+									"    pm.response.to.have.status(400);",
+									"});"
+								],
+								"type": "text/javascript",
+								"packages": {},
+								"requests": {}
+							}
+						}
+					],
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{adventureWorksApi}}/{{apiVersion}}/purchase-orders/0",
+							"host": [
+								"{{adventureWorksApi}}"
+							],
+							"path": [
+								"{{apiVersion}}",
+								"purchase-orders",
+								"0"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Get Purchase Order Detail - Unauthenticated (401)",
+					"id": "4b03bfdc-fc72-4a93-90fc-03b2d634bc18",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"Status should be Unauthorized\", function () {",
+									"    pm.response.to.have.status(401);",
+									"});"
+								],
+								"type": "text/javascript",
+								"packages": {},
+								"requests": {}
+							}
+						}
+					],
+					"request": {
+						"auth": {
+							"type": "noauth"
+						},
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{adventureWorksApi}}/{{apiVersion}}/purchase-orders/4",
+							"host": [
+								"{{adventureWorksApi}}"
+							],
+							"path": [
+								"{{apiVersion}}",
+								"purchase-orders",
+								"4"
+							]
+						}
+					},
+					"response": []
+				}
+			]
 		}
 	],
 	"variable": [
