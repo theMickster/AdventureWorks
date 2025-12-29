@@ -21,6 +21,6 @@ export const purchasingRoutes: Route[] = [
     title: 'Purchase Order Detail',
     data: { breadcrumb: 'Purchase Order Detail' },
     loadComponent: () =>
-      import('@adventureworks-web/purchasing/feature-vendors').then((m) => m.PurchaseOrderDetailPlaceholderComponent),
+      import('@adventureworks-web/purchasing/feature-vendors').then((m) => m.PurchaseOrderDetailComponent),
   },
 ];

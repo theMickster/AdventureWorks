@@ -60,7 +60,10 @@ public sealed class PurchaseOrderRepository(AdventureWorksDbContext dbContext)
     {
         var purchaseOrder = await DbContext.PurchaseOrderHeaders
             .AsNoTracking()
+            .Include(p => p.Vendor)
+            .Include(p => p.ShipMethod)
             .Include(p => p.PurchaseOrderDetails)
+                .ThenInclude(d => d.Product)
             .FirstOrDefaultAsync(p => p.PurchaseOrderId == purchaseOrderId, cancellationToken);
 
         if (purchaseOrder is null)
@@ -73,6 +76,7 @@ public sealed class PurchaseOrderRepository(AdventureWorksDbContext dbContext)
             {
                 PurchaseOrderDetailId = d.PurchaseOrderDetailId,
                 ProductId = d.ProductId,
+                ProductName = d.Product.Name,
                 DueDate = d.DueDate,
                 OrderQty = d.OrderQty,
                 UnitPrice = d.UnitPrice,
@@ -109,9 +113,11 @@ public sealed class PurchaseOrderRepository(AdventureWorksDbContext dbContext)
             DueDate = dueDate,
             ShipDate = purchaseOrder.ShipDate,
             VendorId = purchaseOrder.VendorId,
+            VendorName = purchaseOrder.Vendor.Name,
             EmployeeId = purchaseOrder.EmployeeId,
             ApprovingEmployeeFullName = approvingEmployeeFullName,
             ShipMethodId = purchaseOrder.ShipMethodId,
+            ShipMethodName = purchaseOrder.ShipMethod.Name,
             SubTotal = purchaseOrder.SubTotal,
             TaxAmt = purchaseOrder.TaxAmt,
             Freight = purchaseOrder.Freight,

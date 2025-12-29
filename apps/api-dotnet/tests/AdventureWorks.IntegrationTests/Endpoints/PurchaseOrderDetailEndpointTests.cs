@@ -1,9 +1,11 @@
 using AdventureWorks.Domain.Entities.HumanResources;
 using AdventureWorks.Domain.Entities.Person;
+using AdventureWorks.Domain.Entities.Production;
 using AdventureWorks.Domain.Entities.Purchasing;
 using AdventureWorks.IntegrationTests.Setup;
 using AdventureWorks.Models.Features.Purchasing;
 using FluentAssertions;
+using Microsoft.EntityFrameworkCore;
 using System.Diagnostics.CodeAnalysis;
 using System.Net;
 using System.Text.Json;
@@ -24,8 +26,71 @@ public sealed class PurchaseOrderDetailEndpointTests(CustomWebApplicationFactory
     private const int SeededEmployeeId = 90102;
     private const int SeededNullEmployeePurchaseOrderId = 90103;
 
+    /// <summary>
+    /// Seeds the Vendor (1650), ShipMethod (5), and Product (4) rows referenced by every
+    /// purchase order in this test class — required navigations for EF Core's InMemory provider,
+    /// which drops the root row entirely (rather than leaving the navigation null) when a
+    /// required FK doesn't resolve. Guarded with existence checks because both seed methods in
+    /// this class share the collection-scoped database and must not insert duplicate keys.
+    /// </summary>
+    private async Task SeedVendorShipMethodAndProductAsync()
+    {
+        await SeedAsync(async context =>
+        {
+            if (!await context.Vendors.AnyAsync(v => v.BusinessEntityId == 1650))
+            {
+                context.Vendors.Add(new Vendor
+                {
+                    BusinessEntityId = 1650,
+                    Name = "American Bicycles and Wheels",
+                    AccountNumber = "AMERBIKE0001",
+                    CreditRating = 1,
+                    PreferredVendorStatus = true,
+                    ActiveFlag = true,
+                    PurchasingWebServiceUrl = string.Empty,
+                    ModifiedDate = DateTime.UtcNow
+                });
+            }
+
+            if (!await context.Set<ShipMethod>().AnyAsync(s => s.ShipMethodId == 5))
+            {
+                context.Set<ShipMethod>().Add(new ShipMethod
+                {
+                    ShipMethodId = 5,
+                    Name = "CARGO TRANSPORT 5",
+                    ShipBase = 3.95m,
+                    ShipRate = 1.25m,
+                    Rowguid = Guid.NewGuid(),
+                    ModifiedDate = DateTime.UtcNow
+                });
+            }
+
+            if (!await context.Products.AnyAsync(p => p.ProductId == 4))
+            {
+                context.Products.Add(new Product
+                {
+                    ProductId = 4,
+                    Name = "Headset Ball Bearings",
+                    ProductNumber = "BE-2908",
+                    MakeFlag = false,
+                    FinishedGoodsFlag = false,
+                    SafetyStockLevel = 1000,
+                    ReorderPoint = 750,
+                    StandardCost = 0m,
+                    ListPrice = 0m,
+                    DaysToManufacture = 0,
+                    SellStartDate = new DateTime(2008, 4, 30),
+                    Rowguid = Guid.NewGuid(),
+                    ModifiedDate = DateTime.UtcNow
+                });
+            }
+        });
+    }
+
     private async Task SeedPurchaseOrderAsync()
     {
+        await SeedVendorShipMethodAndProductAsync();
+
         await SeedAsync(async context =>
         {
             context.BusinessEntities.Add(new BusinessEntity
@@ -97,6 +162,8 @@ public sealed class PurchaseOrderDetailEndpointTests(CustomWebApplicationFactory
 
     private async Task SeedPurchaseOrderWithUnresolvableEmployeeAsync()
     {
+        await SeedVendorShipMethodAndProductAsync();
+
         await SeedAsync(async context =>
         {
             context.PurchaseOrderHeaders.Add(new PurchaseOrderHeader
@@ -134,8 +201,11 @@ public sealed class PurchaseOrderDetailEndpointTests(CustomWebApplicationFactory
         result!.PurchaseOrderId.Should().Be(SeededPurchaseOrderId);
         result.StatusLabel.Should().Be("Pending");
         result.ApprovingEmployeeFullName.Should().Be("Integration Approver");
+        result.VendorName.Should().Be("American Bicycles and Wheels");
+        result.ShipMethodName.Should().Be("CARGO TRANSPORT 5");
         result.LineItems.Should().ContainSingle();
         result.DueDate.Should().Be(new DateTime(2014, 1, 15));
+        result.LineItems[0].ProductName.Should().Be("Headset Ball Bearings");
     }
 
     [Fact]

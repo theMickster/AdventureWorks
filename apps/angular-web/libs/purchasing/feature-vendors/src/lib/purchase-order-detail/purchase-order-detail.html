@@ -1,0 +1,153 @@
+<div id="aw-purchase-order-detail-page">
+  <div id="aw-purchase-order-detail-header" class="mb-6 flex items-center gap-4">
+    <a id="aw-purchase-order-detail-back" [routerLink]="['/purchasing/vendors']" class="btn btn-ghost btn-sm">
+      <i class="fa-solid fa-arrow-left" aria-hidden="true"></i>
+      Vendors
+    </a>
+  </div>
+
+  @if (isLoading()) {
+    <div id="aw-purchase-order-detail-loading" class="space-y-4">
+      <aw-skeleton height="2rem" width="20rem" />
+      <aw-skeleton height="6rem" />
+      <aw-skeleton height="10rem" />
+    </div>
+  } @else if (notFound()) {
+    <aw-empty-state
+      fieldId="aw-purchase-order-detail-not-found"
+      icon="fa-solid fa-circle-exclamation"
+      title="Purchase order not found"
+      description="The requested purchase order could not be found."
+    />
+  } @else if (hasError()) {
+    <aw-empty-state
+      fieldId="aw-purchase-order-detail-error"
+      icon="fa-solid fa-circle-exclamation"
+      title="Failed to load purchase order"
+      description="Please go back and try again."
+    />
+  } @else if (purchaseOrder(); as po) {
+    <!-- Header card -->
+    <div id="aw-purchase-order-detail-info" class="card bg-base-100 shadow mb-6">
+      <div class="card-body">
+        <div class="flex flex-wrap items-start justify-between gap-4">
+          <div>
+            <h1 id="aw-purchase-order-detail-title" class="card-title text-2xl font-bold text-base-content">
+              PO{{ po.purchaseOrderId }}
+            </h1>
+            <p class="text-sm text-secondary mt-1">
+              Vendor:
+              <a
+                id="aw-purchase-order-detail-vendor-link"
+                class="link link-primary font-medium"
+                [routerLink]="['/purchasing/vendors', po.vendorId]"
+              >
+                {{ po.vendorName }}
+              </a>
+            </p>
+          </div>
+          <aw-status-badge
+            fieldId="aw-purchase-order-detail-status-badge"
+            [status]="po.statusLabel.toLowerCase()"
+            [statusMap]="statusBadgeMap"
+          />
+        </div>
+
+        <div class="mt-4 grid grid-cols-1 gap-4 text-sm sm:grid-cols-2 lg:grid-cols-4">
+          <div>
+            <p class="text-secondary">Approving Employee</p>
+            <p id="aw-purchase-order-detail-employee" class="font-medium">{{ po.approvingEmployeeFullName }}</p>
+          </div>
+          <div>
+            <p class="text-secondary">Ship Method</p>
+            <p id="aw-purchase-order-detail-ship-method" class="font-medium">{{ po.shipMethodName }}</p>
+          </div>
+          <div>
+            <p class="text-secondary">Order Date</p>
+            <p id="aw-purchase-order-detail-order-date" class="font-medium">{{ po.orderDate | date: 'mediumDate' }}</p>
+          </div>
+          <div>
+            <p class="text-secondary">Due Date</p>
+            <p id="aw-purchase-order-detail-due-date" class="font-medium">{{ po.dueDate | date: 'mediumDate' }}</p>
+          </div>
+          <div>
+            <p class="text-secondary">Ship Date</p>
+            <p id="aw-purchase-order-detail-ship-date" class="font-medium">
+              {{ po.shipDate ? (po.shipDate | date: 'mediumDate') : '—' }}
+            </p>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Metric tiles -->
+    <div id="aw-purchase-order-detail-metrics" class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 mb-6">
+      <aw-card fieldId="aw-purchase-order-detail-subtotal-tile" title="SubTotal">
+        <p id="aw-purchase-order-detail-subtotal" class="text-2xl font-bold text-primary">
+          {{ po.subTotal | currency }}
+        </p>
+      </aw-card>
+      <aw-card fieldId="aw-purchase-order-detail-tax-tile" title="Tax">
+        <p id="aw-purchase-order-detail-tax" class="text-2xl font-bold text-primary">{{ po.taxAmt | currency }}</p>
+      </aw-card>
+      <aw-card fieldId="aw-purchase-order-detail-freight-tile" title="Freight">
+        <p id="aw-purchase-order-detail-freight" class="text-2xl font-bold text-primary">{{ po.freight | currency }}</p>
+      </aw-card>
+      <aw-card fieldId="aw-purchase-order-detail-total-due-tile" title="Total Due">
+        <p id="aw-purchase-order-detail-total-due" class="text-2xl font-bold text-primary">
+          {{ po.totalDue | currency }}
+        </p>
+      </aw-card>
+    </div>
+
+    <!-- Line items -->
+    <div id="aw-purchase-order-detail-line-items" class="card bg-base-100 shadow">
+      <div class="card-body">
+        <h2 class="card-title text-base mb-2">Line Items</h2>
+        @if (po.lineItems.length === 0) {
+          <aw-empty-state
+            fieldId="aw-purchase-order-detail-line-items-empty"
+            icon="fa-solid fa-inbox"
+            title="No line items found"
+          />
+        } @else {
+          <div class="overflow-x-auto">
+            <table id="aw-purchase-order-detail-line-items-table" class="table table-zebra w-full">
+              <thead>
+                <tr>
+                  <th>Product</th>
+                  <th class="text-right">Ordered Qty</th>
+                  <th class="text-right">Unit Price</th>
+                  <th class="text-right">Line Total</th>
+                  <th class="text-right">Received Qty</th>
+                  <th class="text-right">Rejected Qty</th>
+                </tr>
+              </thead>
+              <tbody>
+                @for (item of po.lineItems; track item.purchaseOrderDetailId) {
+                  <tr>
+                    <td>{{ item.productName }}</td>
+                    <td class="text-right">{{ item.orderQty }}</td>
+                    <td class="text-right">{{ item.unitPrice | currency }}</td>
+                    <td class="text-right">{{ item.lineTotal | currency }}</td>
+                    <td class="text-right">{{ item.receivedQty }}</td>
+                    <td class="text-right">{{ item.rejectedQty }}</td>
+                  </tr>
+                }
+              </tbody>
+              <tfoot>
+                <tr class="font-bold">
+                  <td colspan="3" class="text-right">Total</td>
+                  <td id="aw-purchase-order-detail-line-items-total" class="text-right">
+                    {{ po.subTotal | currency }}
+                  </td>
+                  <td colspan="2"></td>
+                </tr>
+              </tfoot>
+            </table>
+          </div>
+        }
+      </div>
+    </div>
+  }
+</div>

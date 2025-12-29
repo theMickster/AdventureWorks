@@ -16,6 +16,7 @@ import {
   StatusBadgeComponent,
 } from '@adventureworks-web/shared/ui';
 import type { ColumnConfig } from '@adventureworks-web/shared/ui';
+import { PURCHASE_ORDER_STATUS_BADGE_MAP } from '../purchase-order-status-badge';
 
 const PAGE_SIZE = 25;
 const MIN_STATUS = 1;
@@ -102,12 +103,7 @@ export class VendorDetailComponent implements OnInit {
   };
 
   /** Purchase order status badge, keyed by the lowercased server-provided statusLabel. */
-  protected readonly poStatusBadgeMap: Record<string, string> = {
-    pending: 'badge-warning',
-    approved: 'badge-info',
-    rejected: 'badge-error',
-    complete: 'badge-success',
-  };
+  protected readonly poStatusBadgeMap = PURCHASE_ORDER_STATUS_BADGE_MAP;
 
   protected readonly filterForm = this.fb.group({
     status: [''],

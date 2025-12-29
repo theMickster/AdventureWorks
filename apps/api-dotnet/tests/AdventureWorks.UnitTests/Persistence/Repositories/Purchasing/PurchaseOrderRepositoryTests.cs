@@ -1,5 +1,6 @@
 using AdventureWorks.Domain.Entities.HumanResources;
 using AdventureWorks.Domain.Entities.Person;
+using AdventureWorks.Domain.Entities.Production;
 using AdventureWorks.Domain.Entities.Purchasing;
 using AdventureWorks.Infrastructure.Persistence.Repositories.Purchasing;
 using AdventureWorks.UnitTests.Setup;
@@ -18,6 +19,71 @@ public sealed class PurchaseOrderRepositoryTests : PersistenceUnitTestBase
     }
 
     /// <summary>
+    /// Seeds the Vendor and ShipMethod rows referenced by every purchase order header in this
+    /// test class (BusinessEntityId 1650 / ShipMethodId 5) — required navigations for EF Core's
+    /// InMemory provider, which drops the root row entirely (rather than leaving the navigation
+    /// null) when a required FK doesn't resolve.
+    /// </summary>
+    private void SeedVendorAndShipMethod()
+    {
+        if (!DbContext.Vendors.Local.Any(v => v.BusinessEntityId == 1650) && !DbContext.Vendors.Any(v => v.BusinessEntityId == 1650))
+        {
+            DbContext.Vendors.Add(new Vendor
+            {
+                BusinessEntityId = 1650,
+                AccountNumber = "AMERBIKE0001",
+                Name = "American Bicycles and Wheels",
+                CreditRating = 1,
+                PreferredVendorStatus = true,
+                ActiveFlag = true,
+                ModifiedDate = StandardModifiedDate
+            });
+        }
+
+        if (!DbContext.Set<ShipMethod>().Local.Any(s => s.ShipMethodId == 5) && !DbContext.Set<ShipMethod>().Any(s => s.ShipMethodId == 5))
+        {
+            DbContext.Set<ShipMethod>().Add(new ShipMethod
+            {
+                ShipMethodId = 5,
+                Name = "CARGO TRANSPORT 5",
+                ShipBase = 3.95m,
+                ShipRate = 1.25m,
+                Rowguid = Guid.NewGuid(),
+                ModifiedDate = StandardModifiedDate
+            });
+        }
+    }
+
+    /// <summary>
+    /// Seeds the Product row referenced by <see cref="SeedPurchaseOrderDetail"/> (ProductId 4) —
+    /// same required-navigation rationale as <see cref="SeedVendorAndShipMethod"/>. Checks both
+    /// the local change tracker and the store, since <see cref="SeedPurchaseOrderDetail"/> may be
+    /// called multiple times within one test before <c>SaveChangesAsync</c> is ever invoked.
+    /// </summary>
+    private void SeedProduct()
+    {
+        if (!DbContext.Products.Local.Any(p => p.ProductId == 4) && !DbContext.Products.Any(p => p.ProductId == 4))
+        {
+            DbContext.Products.Add(new Product
+            {
+                ProductId = 4,
+                Name = "Headset Ball Bearings",
+                ProductNumber = "BE-2908",
+                MakeFlag = false,
+                FinishedGoodsFlag = false,
+                SafetyStockLevel = 1000,
+                ReorderPoint = 750,
+                StandardCost = 0m,
+                ListPrice = 0m,
+                DaysToManufacture = 0,
+                SellStartDate = new DateTime(2008, 4, 30),
+                Rowguid = Guid.NewGuid(),
+                ModifiedDate = StandardModifiedDate
+            });
+        }
+    }
+
+    /// <summary>
     /// Seeds a purchase order header with a fully resolvable employee/person join.
     /// </summary>
     private void SeedPurchaseOrderWithEmployee(
@@ -27,6 +93,8 @@ public sealed class PurchaseOrderRepositoryTests : PersistenceUnitTestBase
         string firstName = "Reinout",
         string lastName = "Hillmann")
     {
+        SeedVendorAndShipMethod();
+
         DbContext.BusinessEntities.Add(new BusinessEntity
         {
             BusinessEntityId = employeeId,
@@ -78,6 +146,8 @@ public sealed class PurchaseOrderRepositoryTests : PersistenceUnitTestBase
 
     private void SeedPurchaseOrderDetail(int purchaseOrderId, int purchaseOrderDetailId, DateTime dueDate)
     {
+        SeedProduct();
+
         DbContext.Add(new PurchaseOrderDetail
         {
             PurchaseOrderId = purchaseOrderId,
@@ -121,9 +191,11 @@ public sealed class PurchaseOrderRepositoryTests : PersistenceUnitTestBase
         result.Status.Should().Be(3);
         result.StatusLabel.Should().Be("Rejected");
         result.VendorId.Should().Be(1650);
+        result.VendorName.Should().Be("American Bicycles and Wheels");
         result.EmployeeId.Should().Be(261);
         result.ApprovingEmployeeFullName.Should().Be("Reinout Hillmann");
         result.ShipMethodId.Should().Be(5);
+        result.ShipMethodName.Should().Be("CARGO TRANSPORT 5");
         result.OrderDate.Should().Be(new DateTime(2011, 4, 16));
         result.DueDate.Should().Be(new DateTime(2011, 4, 30));
         result.SubTotal.Should().Be(171.0765m);
@@ -133,6 +205,7 @@ public sealed class PurchaseOrderRepositoryTests : PersistenceUnitTestBase
         result.LineItems.Should().ContainSingle();
         result.LineItems[0].PurchaseOrderDetailId.Should().Be(5);
         result.LineItems[0].ProductId.Should().Be(4);
+        result.LineItems[0].ProductName.Should().Be("Headset Ball Bearings");
     }
 
     [Theory]
@@ -160,6 +233,8 @@ public sealed class PurchaseOrderRepositoryTests : PersistenceUnitTestBase
         // Arrange — regression test for the null-employee-join functional requirement: EmployeeId
         // references a non-existent employee. The purchase order must still be returned, not
         // treated as not-found.
+        SeedVendorAndShipMethod();
+
         DbContext.PurchaseOrderHeaders.Add(new PurchaseOrderHeader
         {
             PurchaseOrderId = 5001,
@@ -191,6 +266,8 @@ public sealed class PurchaseOrderRepositoryTests : PersistenceUnitTestBase
         // Arrange — the employee row exists, but its BusinessEntityId does not resolve to a Person
         // row (orphaned employee->person join). This shape does not occur naturally in the real
         // AdventureWorks dataset (confirmed via direct query), so it is constructed here.
+        SeedVendorAndShipMethod();
+
         DbContext.BusinessEntities.Add(new BusinessEntity
         {
             BusinessEntityId = 5002,

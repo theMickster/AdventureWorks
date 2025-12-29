@@ -7,6 +7,7 @@ import type { VendorListItem } from '../models/vendor-list-item.model';
 import type { VendorListParams } from '../models/vendor-params.model';
 import type { VendorDetail } from '../models/vendor-detail.model';
 import type { PurchaseOrderSummary, VendorPurchaseOrderParams } from '../models/purchase-order-summary.model';
+import type { PurchaseOrderDetail } from '../models/purchase-order-detail.model';
 
 /** HTTP client for Purchasing domain endpoints (Vendors). */
 @Injectable({ providedIn: 'root' })
@@ -31,5 +32,10 @@ export class PurchasingApiService {
   ): Observable<SearchResult<PurchaseOrderSummary>> {
     const query = params ? toQueryString(params) : '';
     return this.apiService.get<SearchResult<PurchaseOrderSummary>>(`/v1/vendors/${vendorId}/purchase-orders${query}`);
+  }
+
+  /** Fetches a single purchase order's full detail, including line items, from GET /v1/purchase-orders/:id. */
+  getPurchaseOrderDetail(purchaseOrderId: number): Observable<PurchaseOrderDetail> {
+    return this.apiService.get<PurchaseOrderDetail>(`/v1/purchase-orders/${purchaseOrderId}`);
   }
 }

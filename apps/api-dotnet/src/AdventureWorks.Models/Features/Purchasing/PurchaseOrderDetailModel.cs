@@ -43,6 +43,11 @@ public sealed class PurchaseOrderDetailModel
     public int VendorId { get; set; }
 
     /// <summary>
+    /// The vendor's name.
+    /// </summary>
+    public string VendorName { get; set; } = string.Empty;
+
+    /// <summary>
     /// The approving employee's primary key.
     /// </summary>
     public int EmployeeId { get; set; }
@@ -60,6 +65,11 @@ public sealed class PurchaseOrderDetailModel
     /// The shipping method's primary key.
     /// </summary>
     public int ShipMethodId { get; set; }
+
+    /// <summary>
+    /// The shipping method's name.
+    /// </summary>
+    public string ShipMethodName { get; set; } = string.Empty;
 
     /// <summary>
     /// The sum of all line item totals, before tax and freight.

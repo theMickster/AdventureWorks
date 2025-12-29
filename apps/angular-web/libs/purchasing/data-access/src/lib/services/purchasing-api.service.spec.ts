@@ -7,6 +7,7 @@ import { PurchasingApiService } from './purchasing-api.service';
 import type { VendorListItem } from '../models/vendor-list-item.model';
 import type { VendorDetail } from '../models/vendor-detail.model';
 import type { PurchaseOrderSummary } from '../models/purchase-order-summary.model';
+import type { PurchaseOrderDetail } from '../models/purchase-order-detail.model';
 
 const mockEnvironment = {
   production: false,
@@ -196,6 +197,51 @@ describe('PurchasingApiService', () => {
       const req = httpTesting.expectOne(
         `${BASE_URL}/v1/vendors/1496/purchase-orders?pageNumber=1&pageSize=25&status=1&startDate=2014-01-01&endDate=2014-12-31`,
       );
+      expect(req.request.method).toBe('GET');
+      req.flush(mockData);
+    });
+  });
+
+  describe('getPurchaseOrderDetail', () => {
+    it('should GET a single purchase order detail by id', () => {
+      const mockData: PurchaseOrderDetail = {
+        purchaseOrderId: 3932,
+        status: 1,
+        statusLabel: 'Pending',
+        orderDate: '2014-07-30',
+        dueDate: '2014-08-13',
+        shipDate: null,
+        vendorId: 1650,
+        vendorName: 'American Bicycles and Wheels',
+        employeeId: 261,
+        approvingEmployeeFullName: 'Reinout Hillmann',
+        shipMethodId: 5,
+        shipMethodName: 'CARGO TRANSPORT 5',
+        subTotal: 171.0765,
+        taxAmt: 13.6861,
+        freight: 4.2769,
+        totalDue: 189.0395,
+        lineItems: [
+          {
+            purchaseOrderDetailId: 5,
+            productId: 4,
+            productName: 'Headset Ball Bearings',
+            dueDate: '2014-08-13',
+            orderQty: 3,
+            unitPrice: 57.0255,
+            lineTotal: 171.0765,
+            receivedQty: 2,
+            rejectedQty: 1,
+            stockedQty: 1,
+          },
+        ],
+      };
+
+      service.getPurchaseOrderDetail(3932).subscribe((result) => {
+        expect(result).toEqual(mockData);
+      });
+
+      const req = httpTesting.expectOne(`${BASE_URL}/v1/purchase-orders/3932`);
       expect(req.request.method).toBe('GET');
       req.flush(mockData);
     });

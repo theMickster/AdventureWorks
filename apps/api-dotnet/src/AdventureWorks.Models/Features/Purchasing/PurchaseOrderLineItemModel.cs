@@ -16,6 +16,11 @@ public sealed class PurchaseOrderLineItemModel
     public int ProductId { get; set; }
 
     /// <summary>
+    /// The ordered product's name.
+    /// </summary>
+    public string ProductName { get; set; } = string.Empty;
+
+    /// <summary>
     /// The date this line item is expected to be received.
     /// </summary>
     public DateTime DueDate { get; set; }
