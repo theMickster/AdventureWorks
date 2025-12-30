@@ -1,0 +1,10 @@
+{
+  "name": "@adventureworks-web/purchasing/ui-pareto-chart",
+  "version": "0.0.1",
+  "peerDependencies": {
+    "@angular/core": "^21.2.0",
+    "chart.js": "^4.5.1",
+    "@adventureworks-web/shared/ui": "0.0.1"
+  },
+  "sideEffects": false
+}

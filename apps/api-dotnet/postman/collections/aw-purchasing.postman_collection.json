@@ -1213,6 +1213,133 @@
 					"response": []
 				}
 			]
+		},
+		{
+			"name": "Purchasing Analytics",
+			"id": "cb3be9e7-8fc7-4b76-aa02-409941ebdd85",
+			"item": [
+				{
+					"name": "Get Purchasing Analytics",
+					"id": "9bab852c-e3a9-4a9d-8b7c-0ecb4f158978",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"Status is 200\", function () {",
+									"    pm.response.to.have.status(200);",
+									"});",
+									"",
+									"pm.test(\"Has X-Correlation-Id header\", function () {",
+									"    pm.response.to.have.header(\"X-Correlation-Id\");",
+									"});",
+									"",
+									"var body = pm.response.json();",
+									"",
+									"pm.test(\"Response has purchasing analytics shape\", function () {",
+									"    pm.expect(body).to.have.property(\"paretoData\");",
+									"    pm.expect(body).to.have.property(\"pipelineSummary\");",
+									"    pm.expect(body.paretoData).to.be.an(\"array\");",
+									"    pm.expect(body.pipelineSummary).to.be.an(\"array\");",
+									"});",
+									"",
+									"pm.test(\"paretoData includes every vendor (104)\", function () {",
+									"    pm.expect(body.paretoData.length).to.eql(104);",
+									"});",
+									"",
+									"pm.test(\"paretoData entries have vendor spend shape\", function () {",
+									"    var first = body.paretoData[0];",
+									"    pm.expect(first).to.have.property(\"vendorId\");",
+									"    pm.expect(first).to.have.property(\"vendorName\");",
+									"    pm.expect(first).to.have.property(\"totalSpend\");",
+									"    pm.expect(first).to.have.property(\"cumulativePercent\");",
+									"});",
+									"",
+									"pm.test(\"paretoData is ordered by totalSpend descending\", function () {",
+									"    for (var i = 1; i < body.paretoData.length; i++) {",
+									"        pm.expect(body.paretoData[i].totalSpend).to.be.at.most(body.paretoData[i - 1].totalSpend);",
+									"    }",
+									"});",
+									"",
+									"pm.test(\"cumulativePercent of the last entry is exactly 100\", function () {",
+									"    pm.expect(body.paretoData[body.paretoData.length - 1].cumulativePercent).to.eql(100);",
+									"});",
+									"",
+									"pm.test(\"pipelineSummary reports all four statuses in order\", function () {",
+									"    pm.expect(body.pipelineSummary.length).to.eql(4);",
+									"    pm.expect(body.pipelineSummary.map(function (x) { return x.statusLabel; }))",
+									"        .to.eql([\"Pending\", \"Approved\", \"Rejected\", \"Complete\"]);",
+									"});",
+									"",
+									"pm.test(\"pipelineSummary entries have count and value\", function () {",
+									"    body.pipelineSummary.forEach(function (entry) {",
+									"        pm.expect(entry).to.have.property(\"poCount\");",
+									"        pm.expect(entry).to.have.property(\"totalValue\");",
+									"    });",
+									"});"
+								],
+								"type": "text/javascript",
+								"packages": {},
+								"requests": {}
+							}
+						}
+					],
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{adventureWorksApi}}/{{apiVersion}}/purchasing/analytics",
+							"host": [
+								"{{adventureWorksApi}}"
+							],
+							"path": [
+								"{{apiVersion}}",
+								"purchasing",
+								"analytics"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Get Purchasing Analytics - Unauthenticated (401)",
+					"id": "4a0f9784-56a8-4c48-8446-2a0cfd6ee7c2",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"Status should be Unauthorized\", function () {",
+									"    pm.response.to.have.status(401);",
+									"});"
+								],
+								"type": "text/javascript",
+								"packages": {},
+								"requests": {}
+							}
+						}
+					],
+					"request": {
+						"auth": {
+							"type": "noauth"
+						},
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{adventureWorksApi}}/{{apiVersion}}/purchasing/analytics",
+							"host": [
+								"{{adventureWorksApi}}"
+							],
+							"path": [
+								"{{apiVersion}}",
+								"purchasing",
+								"analytics"
+							]
+						}
+					},
+					"response": []
+				}
+			]
 		}
 	],
 	"variable": [

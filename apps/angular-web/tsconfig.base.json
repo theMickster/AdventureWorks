@@ -35,7 +35,8 @@
       "@adventureworks-web/purchasing/data-access": ["libs/purchasing/data-access/src/index.ts"],
       "@adventureworks-web/purchasing/feature-vendors": ["libs/purchasing/feature-vendors/src/index.ts"],
       "@adventureworks-web/hr/feature-dashboard": ["libs/hr/feature-dashboard/src/index.ts"],
-      "@adventureworks-web/hr/feature-history": ["libs/hr/feature-history/src/index.ts"]
+      "@adventureworks-web/hr/feature-history": ["libs/hr/feature-history/src/index.ts"],
+      "@adventureworks-web/purchasing/ui-pareto-chart": ["libs/purchasing/ui-pareto-chart/src/index.ts"]
     }
   },
   "exclude": ["node_modules", "tmp"]

@@ -36,7 +36,7 @@ export class HeadcountChartComponent implements OnDestroy {
     return `Bar chart of active employee headcount by department. ${summary}`;
   });
   private readonly chartCanvas = viewChild.required<ElementRef<HTMLCanvasElement>>('chartCanvas');
-  private chart: Chart | null = null;
+  private chart: Chart<'bar', number[], string> | null = null;
 
   constructor() {
     afterNextRender(() => {

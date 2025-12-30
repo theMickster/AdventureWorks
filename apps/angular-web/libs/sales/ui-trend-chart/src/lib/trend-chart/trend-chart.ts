@@ -37,7 +37,7 @@ export class TrendChartComponent implements OnDestroy {
    * the canvas element and leaks GPU/memory resources when the component is
    * removed from the DOM.
    */
-  private chart: Chart | null = null;
+  private chart: Chart<'line', number[], string> | null = null;
 
   constructor() {
     /**

@@ -165,6 +165,10 @@ Powers `GET /api/v1/purchase-orders/{id}` (US-986) — a single purchase order's
 
 **DueDate fallback:** `PurchaseOrderHeader` has no header-level `DueDate` column. It is derived as `MIN(PurchaseOrderDetails.DueDate)`, falling back to `OrderDate` when the purchase order has zero line items (a data-integrity edge case, not expected in practice, but must not throw or return null).
 
+#### Purchasing Analytics Repository (`PurchasingAnalyticsRepository`)
+
+Powers `GET /api/v1/purchasing/analytics` (US-988) — Pareto vendor-spend data plus a 4-status PO pipeline summary. Follows `VendorRepository.GetVendorsAsync`'s join-free, two-step aggregate pattern (all 104 vendors always appear, `TotalSpend` defaults to 0 for zero-PO vendors), but the running cumulative spend percent is computed in C# after ordering, with the last row forced to exactly `100` to avoid floating-point drift. Pipeline statuses are backfilled to zero when a status has no POs, reusing `PurchaseOrderStatusLabels.GetLabel(byte)`.
+
 #### Real-Time Infrastructure (SignalR + MediatR Notification Pipeline)
 
 - **Hub endpoint**: `/hubs/dashboard` — `DashboardHub`, requires JWT via `[Authorize(Policy = "DashboardAccess")]`. WebSocket auth passes the token as a query string (`access_token`); the middleware in `Program.cs` maps it to the `Authorization` header automatically.

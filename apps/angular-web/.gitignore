@@ -54,3 +54,7 @@ __screenshots__/
 
 # Test results
 **/test-results/
+
+.claude/worktrees
+.nx/polygraph
+.nx/self-healing

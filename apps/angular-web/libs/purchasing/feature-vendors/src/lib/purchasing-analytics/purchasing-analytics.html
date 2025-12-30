@@ -1,0 +1,55 @@
+<div id="aw-purchasing-analytics-page">
+  <div id="aw-purchasing-analytics-header" class="mb-6 flex items-center gap-4">
+    <a id="aw-purchasing-analytics-back" [routerLink]="['/purchasing/vendors']" class="btn btn-ghost btn-sm">
+      <i class="fa-solid fa-arrow-left" aria-hidden="true"></i>
+      Vendors
+    </a>
+    <h1 id="aw-purchasing-analytics-title" class="text-2xl font-bold text-base-content">Purchasing Analytics</h1>
+  </div>
+
+  @if (isLoading()) {
+    <div id="aw-purchasing-analytics-loading" class="space-y-6">
+      <aw-skeleton id="aw-purchasing-analytics-chart-skeleton" height="24rem" />
+      <div class="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-4">
+        <aw-skeleton id="aw-purchasing-analytics-tile-skeleton-1" height="6rem" />
+        <aw-skeleton id="aw-purchasing-analytics-tile-skeleton-2" height="6rem" />
+        <aw-skeleton id="aw-purchasing-analytics-tile-skeleton-3" height="6rem" />
+        <aw-skeleton id="aw-purchasing-analytics-tile-skeleton-4" height="6rem" />
+      </div>
+    </div>
+  } @else if (hasError()) {
+    <aw-empty-state
+      fieldId="aw-purchasing-analytics-error"
+      icon="fa-solid fa-circle-exclamation"
+      title="Failed to load purchasing analytics"
+      description="Please go back and try again."
+    />
+  } @else if (analytics(); as data) {
+    <!-- Vendor spend Pareto chart -->
+    <div id="aw-purchasing-analytics-chart" class="card bg-base-100 shadow mb-6">
+      <div class="card-body">
+        <h2 class="card-title text-base mb-2">Vendor Spend Concentration</h2>
+        <p class="text-sm text-secondary mb-2">
+          Bars show total spend per vendor; the line shows the cumulative share of total spend, with 80% and 95%
+          reference lines. Click a vendor to open its detail page.
+        </p>
+        <aw-pareto-chart [paretoData]="data.paretoData" (vendorClick)="onVendorClick($event)" />
+      </div>
+    </div>
+
+    <!-- Purchase order pipeline tiles -->
+    <div id="aw-purchasing-analytics-pipeline" class="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-4">
+      @for (tile of data.pipelineSummary; track tile.statusLabel) {
+        @let slug = tileId(tile.statusLabel);
+        <aw-card [fieldId]="'aw-purchasing-analytics-' + slug + '-tile'" [title]="tile.statusLabel">
+          <p [id]="'aw-purchasing-analytics-' + slug + '-count'" class="text-2xl font-bold text-primary">
+            {{ tile.poCount }}
+          </p>
+          <p [id]="'aw-purchasing-analytics-' + slug + '-value'" class="text-sm text-secondary">
+            {{ tile.totalValue | currency }}
+          </p>
+        </aw-card>
+      }
+    </div>
+  }
+</div>

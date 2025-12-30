@@ -32,7 +32,7 @@ const TENURE_BUCKET_COLORS = ['#0891b2', '#14b8a6', '#d97706', '#64748b', '#0596
 export class TenureChartComponent implements OnDestroy {
   readonly data = input.required<TenureDistribution>();
   private readonly chartCanvas = viewChild.required<ElementRef<HTMLCanvasElement>>('chartCanvas');
-  private chart: Chart | null = null;
+  private chart: Chart<'bar', number[], string> | null = null;
 
   /**
    * Real DOM legend, rendered below the canvas — Chart.js's built-in legend plugin draws directly

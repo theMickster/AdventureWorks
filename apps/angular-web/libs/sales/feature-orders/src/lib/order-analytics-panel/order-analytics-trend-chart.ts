@@ -29,7 +29,7 @@ export class OrderAnalyticsTrendChartComponent implements OnDestroy {
    */
   readonly monthlyTrend = input.required<SalesOrderMonthlyTrend[]>();
   private readonly chartCanvas = viewChild.required<ElementRef<HTMLCanvasElement>>('chartCanvas');
-  private chart: Chart | null = null;
+  private chart: Chart<'line', number[], string> | null = null;
   private isRendered = false;
 
   private readonly formatter = new Intl.NumberFormat('en-US', { style: 'currency', currency: 'USD', maximumFractionDigits: 0 });

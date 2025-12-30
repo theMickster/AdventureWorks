@@ -8,6 +8,7 @@ import type { VendorListParams } from '../models/vendor-params.model';
 import type { VendorDetail } from '../models/vendor-detail.model';
 import type { PurchaseOrderSummary, VendorPurchaseOrderParams } from '../models/purchase-order-summary.model';
 import type { PurchaseOrderDetail } from '../models/purchase-order-detail.model';
+import type { PurchasingAnalyticsDto } from '../models/purchasing-analytics.model';
 
 /** HTTP client for Purchasing domain endpoints (Vendors). */
 @Injectable({ providedIn: 'root' })
@@ -37,5 +38,10 @@ export class PurchasingApiService {
   /** Fetches a single purchase order's full detail, including line items, from GET /v1/purchase-orders/:id. */
   getPurchaseOrderDetail(purchaseOrderId: number): Observable<PurchaseOrderDetail> {
     return this.apiService.get<PurchaseOrderDetail>(`/v1/purchase-orders/${purchaseOrderId}`);
+  }
+
+  /** Fetches the Pareto vendor-spend data and purchase order pipeline summary from GET /v1/purchasing/analytics. */
+  getPurchasingAnalytics(): Observable<PurchasingAnalyticsDto> {
+    return this.apiService.get<PurchasingAnalyticsDto>('/v1/purchasing/analytics');
   }
 }

@@ -4,6 +4,11 @@ export type { VendorListParams } from './lib/models/vendor-params.model';
 export type { VendorDetail } from './lib/models/vendor-detail.model';
 export type { PurchaseOrderSummary, VendorPurchaseOrderParams } from './lib/models/purchase-order-summary.model';
 export type { PurchaseOrderDetail, PurchaseOrderLineItem } from './lib/models/purchase-order-detail.model';
+export type {
+  PurchasingAnalyticsDto,
+  VendorSpendDto,
+  PipelineSummaryItemDto,
+} from './lib/models/purchasing-analytics.model';
 
 // Services
 export { PurchasingApiService } from './lib/services/purchasing-api.service';

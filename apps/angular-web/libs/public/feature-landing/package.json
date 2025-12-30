@@ -4,7 +4,7 @@
   "peerDependencies": {
     "@angular/common": "^21.2.0",
     "@angular/core": "^21.2.0",
-    "@angular/router": "21.2.17",
+    "@angular/router": "^21.2.0",
     "@adventureworks-web/shared/util": "0.0.1"
   },
   "sideEffects": false

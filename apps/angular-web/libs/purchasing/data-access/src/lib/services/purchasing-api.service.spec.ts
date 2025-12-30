@@ -8,6 +8,7 @@ import type { VendorListItem } from '../models/vendor-list-item.model';
 import type { VendorDetail } from '../models/vendor-detail.model';
 import type { PurchaseOrderSummary } from '../models/purchase-order-summary.model';
 import type { PurchaseOrderDetail } from '../models/purchase-order-detail.model';
+import type { PurchasingAnalyticsDto } from '../models/purchasing-analytics.model';
 
 const mockEnvironment = {
   production: false,
@@ -189,7 +190,13 @@ describe('PurchasingApiService', () => {
       };
 
       service
-        .getVendorPurchaseOrders(1496, { pageNumber: 1, pageSize: 25, status: 1, startDate: '2014-01-01', endDate: '2014-12-31' })
+        .getVendorPurchaseOrders(1496, {
+          pageNumber: 1,
+          pageSize: 25,
+          status: 1,
+          startDate: '2014-01-01',
+          endDate: '2014-12-31',
+        })
         .subscribe((result) => {
           expect(result).toEqual(mockData);
         });
@@ -242,6 +249,31 @@ describe('PurchasingApiService', () => {
       });
 
       const req = httpTesting.expectOne(`${BASE_URL}/v1/purchase-orders/3932`);
+      expect(req.request.method).toBe('GET');
+      req.flush(mockData);
+    });
+  });
+
+  describe('getPurchasingAnalytics', () => {
+    it('should GET the purchasing analytics payload', () => {
+      const mockData: PurchasingAnalyticsDto = {
+        paretoData: [
+          { vendorId: 1576, vendorName: 'Superior Bicycles', totalSpend: 5034266.74, cumulativePercent: 6.1 },
+          { vendorId: 1602, vendorName: 'Vision Cycles, Inc', totalSpend: 4894060.4, cumulativePercent: 100 },
+        ],
+        pipelineSummary: [
+          { statusLabel: 'Pending', poCount: 4, totalValue: 1250.5 },
+          { statusLabel: 'Approved', poCount: 12, totalValue: 98000.25 },
+          { statusLabel: 'Rejected', poCount: 0, totalValue: 0 },
+          { statusLabel: 'Complete', poCount: 3996, totalValue: 82000000 },
+        ],
+      };
+
+      service.getPurchasingAnalytics().subscribe((result) => {
+        expect(result).toEqual(mockData);
+      });
+
+      const req = httpTesting.expectOne(`${BASE_URL}/v1/purchasing/analytics`);
       expect(req.request.method).toBe('GET');
       req.flush(mockData);
     });

@@ -1,0 +1,16 @@
+@if (hasData()) {
+  <div class="h-96 w-full">
+    <canvas
+      #chartCanvas
+      role="img"
+      aria-label="Pareto chart of vendor spend with a cumulative percentage of total spend line"
+    ></canvas>
+  </div>
+} @else {
+  <aw-empty-state
+    fieldId="aw-pareto-chart-empty"
+    icon="fa-solid fa-chart-column"
+    title="No vendor spend data"
+    description="There is no vendor spend data available to chart."
+  />
+}

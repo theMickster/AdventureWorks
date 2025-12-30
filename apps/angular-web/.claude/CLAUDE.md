@@ -182,6 +182,8 @@ Deviations from the List Component Invariants above:
 
 **PurchaseOrderDetailPlaceholderComponent** — bare-bones stub at `/purchasing/purchase-orders/:id`, colocated in this lib (not a new library) per a deliberate scope decision: the PO-history table's row link is an explicit US-985 AC scenario, but no PO detail feature exists anywhere in the app yet. Echoes the PO id and links back to `/purchasing/vendors`; a future story can replace it with a real detail view. This stub is justified precisely because US-985's AC explicitly calls for the PO row link's destination — the "product decision" `WorkOrderListComponent`'s known-gap rule (see above) requires before stubbing a fake detail route. `WorkOrderListComponent`'s gap has no such AC and, per that rule, must not be stubbed without one; the two cases are not the same situation. Follows the same invalid-id-redirects-to-list pattern as `VendorDetailComponent`.
 
+**PurchasingAnalyticsComponent** (Feature 980, US-988/989/990) — Pareto vendor-spend chart + PO pipeline tiles at `/purchasing/analytics`. Direct `PurchasingApiService` call, one-shot fetch (`purchase-order-detail.ts`'s pattern), no store. Chart rendering lives in the new `libs/purchasing/ui-pareto-chart` (`ParetoChartComponent`) — mirrors `sales/ui-trend-chart`'s one-shot `afterNextRender` Chart.js pattern, but annotates the 80%/95% Pareto thresholds via an inline `afterDatasetsDraw` plugin object instead of `chartjs-plugin-annotation` (no new npm dependency).
+
 ## HR Feature Libraries
 
 ### `libs/hr/feature-departments`
