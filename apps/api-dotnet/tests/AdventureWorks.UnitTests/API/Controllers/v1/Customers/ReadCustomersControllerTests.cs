@@ -105,4 +105,57 @@ public sealed class ReadCustomersControllerTests : UnitTestBase
             It.Is<ReadCustomerListQuery>(q => q.Parameters == parameters),
             cts.Token), Times.Once);
     }
+
+    [Fact]
+    public async Task GetByIdAsync_returns_bad_request_when_customerId_is_not_positiveAsync()
+    {
+        var result = await _sut.GetByIdAsync(0, cancellationToken: TestContext.Current.CancellationToken);
+
+        result.Should().BeOfType<BadRequestResult>();
+    }
+
+    [Fact]
+    public async Task GetByIdAsync_returns_ok_with_modelAsync()
+    {
+        var output = new CustomerDetailModel
+        {
+            CustomerId = 11000,
+            DisplayName = "Jon Yang",
+            LtvRank = 1,
+            TotalCustomerCount = 6,
+            TotalSpend = 900m,
+            OrderCount = 3,
+            AvgOrderValue = 300m,
+            CustomerType = "Individual",
+            FirstName = "Jon",
+            LastName = "Yang"
+        };
+
+        _mockMediator.Setup(x => x.Send(It.IsAny<ReadCustomerDetailQuery>(), It.IsAny<CancellationToken>()))
+            .ReturnsAsync(output);
+
+        var result = await _sut.GetByIdAsync(11000, cancellationToken: TestContext.Current.CancellationToken);
+
+        var okResult = result as OkObjectResult;
+
+        using (new AssertionScope())
+        {
+            okResult.Should().NotBeNull();
+            okResult!.StatusCode.Should().Be((int)HttpStatusCode.OK);
+            okResult.Value.Should().Be(output);
+        }
+    }
+
+    [Fact]
+    public async Task GetByIdAsync_sends_correct_customerId_to_mediatorAsync()
+    {
+        _mockMediator.Setup(x => x.Send(It.IsAny<ReadCustomerDetailQuery>(), It.IsAny<CancellationToken>()))
+            .ReturnsAsync(new CustomerDetailModel());
+
+        await _sut.GetByIdAsync(11000, cancellationToken: TestContext.Current.CancellationToken);
+
+        _mockMediator.Verify(x => x.Send(
+            It.Is<ReadCustomerDetailQuery>(q => q.CustomerId == 11000),
+            It.IsAny<CancellationToken>()), Times.Once);
+    }
 }

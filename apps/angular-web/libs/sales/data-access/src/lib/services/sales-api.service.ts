@@ -15,6 +15,7 @@ import type { StoreSearchBody } from '../models/store-search.model';
 import type { SalesPersonSearchBody } from '../models/sales-person-search.model';
 import type { CustomerListItem } from '../models/customer-list-item.model';
 import type { CustomerParams } from '../models/customer-params.model';
+import type { CustomerDetail } from '../models/customer-detail.model';
 
 /** HTTP client for Sales domain endpoints (Stores and Sales Persons). */
 @Injectable({ providedIn: 'root' })
@@ -98,5 +99,10 @@ export class SalesApiService {
   getCustomers(params?: CustomerParams): Observable<SearchResult<CustomerListItem>> {
     const query = params ? toQueryString(params) : '';
     return this.apiService.get<SearchResult<CustomerListItem>>(`/v1/customers${query}`);
+  }
+
+  /** Fetches full detail — LTV rank and lifetime-spend metrics — for a single customer from GET /v1/customers/:id. */
+  getCustomerDetail(id: number): Observable<CustomerDetail> {
+    return this.apiService.get<CustomerDetail>(`/v1/customers/${id}`);
   }
 }

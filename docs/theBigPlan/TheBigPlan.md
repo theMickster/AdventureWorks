@@ -9,7 +9,7 @@
 - ✅ Infrastructure: Epic #570 complete (all 5 features done)
 - 🚧 Testing Foundation: Epic #565 in progress (#669, #923, #672 done; #670, #671 remaining)
 - 🚧 UI pipeline in ADO: #561 in progress (US-739 done, Feature 934 done); #562 now In Progress (Departments CRUD implemented); #563 currently New
-- ✅ #935 Customer Module complete (2026-07-07) — Feature 947, US-951/952/953 (Customer LTV list, API + Angular)
+- ✅ #935 Customer Module complete (2026-07-07) — Feature 947, US-951/952/953 (Customer LTV list, API + Angular); ✅ Feature 948, US-954/955/956 (Customer detail profile — LTV rank, metric tiles, inactive badge, store link)
 - 🚧 Additional Initiative #559 backlog epics: #936 (Work Orders/Manufacturing) In Progress — ✅ US-966 Work Orders List API (`GET /api/v1/work-orders`, `WorkOrderRepository.GetWorkOrdersAsync`/`SearchWorkOrdersAsync`, server-computed `yieldRate`/`isCompletedLate`); ✅ Feature 962, US-967/968 (Angular `WorkOrderStore` + `WorkOrderListComponent`, `/manufacturing/work-orders` — new `libs/manufacturing/data-access` and `libs/manufacturing/feature-work-orders`, `scope:manufacturing`); ✅ Feature 963, US-969/970 (Work Order Detail — `GET /api/v1/work-orders/{id}` with `daysLate`/`scrapReasonName`, `WorkOrderDetailComponent` at `/manufacturing/work-orders/:id`); #937 (Purchasing/Vendor) In Progress — ✅ Feature 977, US-981/982/983 (Vendor list ranked by spend with credit risk indicators, API + Angular UI); ✅ Feature 978, US-984/985 (Vendor Detail API + profile UI with PO history — `GET /api/v1/vendors/{id}`, `VendorRepository.GetVendorDetailAsync`); ✅ Feature 979, US-986/987 (Purchase Order Detail API + Angular UI — `GET /api/v1/purchase-orders/{id}`, `PurchaseOrderRepository.GetPurchaseOrderDetailAsync`, null-safe approving-employee name via explicit LEFT JOIN, plus additive `VendorName`/`ShipMethodName`/`ProductName` server-side joins; `PurchaseOrderDetailComponent` in `libs/purchasing/feature-vendors` at `/purchasing/purchase-orders/:id` replaces the earlier placeholder); ✅ Feature 980, US-988/989/990 (Procurement Analytics — Pareto Chart + Pipeline Summary; `GET /api/v1/purchasing/analytics`, `PurchasingAnalyticsRepository` with C#-computed cumulative spend percent over all 104 vendors and a 4-status pipeline summary; new `libs/purchasing/ui-pareto-chart` Chart.js mixed bar/line component with inline 80%/95% reference-line plugin, `PurchasingAnalyticsComponent` at `/purchasing/analytics` — completes #937)
 - 🚧 Epic #569 (Polyglot Azure Functions Architecture) started: US 806 Sales Order Saga scaffold in place; ✅ US-807 (validate order, fan-out inventory check, transactional stock reservation) done
 - 📋 Future infrastructure/function backlog: #567, #568 (#566 marked Removed)
@@ -70,6 +70,9 @@
 - ✅ US-951 Customer LTV List API (`GET /v1/customers`, LTV rank + inactivity computed via `CustomerRepository.GetCustomersAsync`)
 - ✅ US-952 Angular Customer State (`CustomerStore` in `sales/data-access`, server-side paginated)
 - ✅ US-953 Angular Customer UI (`CustomerListComponent` in `sales/feature-customers`, ranked list with search)
+- ✅ Feature #948, US-954/955/956 (Customer detail profile — LTV rank, metric tiles, inactive badge, store link)
+- ✅ US-954 Customer Detail API (`GET /v1/customers/{id}`, `CustomerRepository.GetCustomerDetailAsync` shares its full-table ranking method with `GetCustomersAsync` so `ltvRank` agrees between the list and detail endpoints)
+- ✅ US-955/956 Angular Customer Detail UI (`CustomerDetailComponent` in `sales/feature-customers` at `/sales/customers/:id` — store name links to `/sales/stores/:id`, metric tiles for Total Spend/Order Count/Avg Order Value/Last Order Date, inactive badge via the shared `StatusBadgeComponent`)
 
 #### Additional Initiative 1 Epics (ADO status)
 
@@ -177,6 +180,6 @@
 
 ---
 
-**Document Version**: 3.9  
-**Last Updated**: 2026-07-31  
+**Document Version**: 3.10  
+**Last Updated**: 2026-08-05  
 **Status**: Active execution

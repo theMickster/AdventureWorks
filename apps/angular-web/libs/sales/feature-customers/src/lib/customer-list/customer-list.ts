@@ -100,7 +100,7 @@ export class CustomerListComponent implements OnInit {
     });
   }
 
-  /** Routes a clicked row to the customer detail view at /sales/customers/:customerId (detail page not yet built). */
+  /** Routes a clicked row to the customer detail view at /sales/customers/:customerId. */
   protected onRowClick(row: Record<string, unknown>): void {
     void this.router.navigate(['/sales/customers', row['customerId']]);
   }

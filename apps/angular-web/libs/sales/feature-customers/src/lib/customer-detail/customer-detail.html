@@ -1,0 +1,85 @@
+<div id="aw-customer-detail-page">
+  <div id="aw-customer-detail-header" class="mb-6 flex items-center gap-4">
+    <a id="aw-customer-detail-back" [routerLink]="['/sales/customers']" class="btn btn-ghost btn-sm">
+      <i class="fa-solid fa-arrow-left" aria-hidden="true"></i>
+      Customers
+    </a>
+  </div>
+
+  @if (isLoading()) {
+    <div id="aw-customer-detail-loading" class="space-y-4">
+      <aw-skeleton height="2rem" width="20rem" />
+      <aw-skeleton height="6rem" />
+      <aw-skeleton height="10rem" />
+    </div>
+  } @else if (notFound()) {
+    <aw-empty-state
+      fieldId="aw-customer-detail-not-found"
+      icon="fa-solid fa-circle-exclamation"
+      title="Customer not found"
+      description="The requested customer could not be found."
+    />
+  } @else if (hasError()) {
+    <aw-empty-state
+      fieldId="aw-customer-detail-error"
+      icon="fa-solid fa-circle-exclamation"
+      title="Failed to load customer"
+      description="Please go back and try again."
+    />
+  } @else if (customer(); as c) {
+    <!-- Header card -->
+    <div id="aw-customer-detail-info" class="card bg-base-100 shadow mb-6">
+      <div class="card-body">
+        <div class="flex flex-wrap items-start justify-between gap-4">
+          <div>
+            @if (c.customerType === 'Store') {
+              <a
+                id="aw-customer-detail-name-link"
+                class="link link-primary card-title text-2xl font-bold"
+                [routerLink]="['/sales/stores', c.storeId]"
+              >
+                {{ c.displayName }}
+              </a>
+            } @else {
+              <h1 id="aw-customer-detail-name" class="card-title text-2xl font-bold text-base-content">
+                {{ c.displayName }}
+              </h1>
+            }
+            <p id="aw-customer-detail-rank" class="text-sm text-secondary mt-1">
+              #{{ c.ltvRank }} of {{ c.totalCustomerCount | number }}
+            </p>
+          </div>
+          @if (c.isInactive) {
+            <aw-status-badge fieldId="aw-customer-detail-inactive-badge" status="inactive" />
+          }
+        </div>
+      </div>
+    </div>
+
+    <!-- Metric tiles -->
+    <div id="aw-customer-detail-metrics" class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 mb-6">
+      <aw-card fieldId="aw-customer-detail-total-spend-tile" title="Total Spend">
+        <p id="aw-customer-detail-total-spend" class="text-2xl font-bold text-primary">
+          {{ c.totalSpend | currency }}
+        </p>
+      </aw-card>
+      <aw-card fieldId="aw-customer-detail-order-count-tile" title="Order Count">
+        <p id="aw-customer-detail-order-count" class="text-2xl font-bold text-primary">{{ c.orderCount }}</p>
+      </aw-card>
+      <aw-card fieldId="aw-customer-detail-avg-order-value-tile" title="Avg Order Value">
+        <p id="aw-customer-detail-avg-order-value" class="text-2xl font-bold text-primary">
+          {{ c.avgOrderValue | currency }}
+        </p>
+      </aw-card>
+      <aw-card fieldId="aw-customer-detail-last-order-date-tile" title="Last Order Date">
+        <p id="aw-customer-detail-last-order-date" class="text-2xl font-bold text-primary">
+          {{ c.lastOrderDate ? (c.lastOrderDate | date: 'mediumDate') : '—' }}
+        </p>
+      </aw-card>
+    </div>
+
+    @if (c.orderCount === 0) {
+      <aw-empty-state fieldId="aw-customer-detail-no-orders" icon="fa-solid fa-inbox" title="No orders found" />
+    }
+  }
+</div>

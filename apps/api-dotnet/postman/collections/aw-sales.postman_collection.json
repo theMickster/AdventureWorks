@@ -4357,6 +4357,243 @@
       ]
     },
     {
+      "name": "Customer Detail",
+      "id": "b15f9ed1-a8ba-45b3-a8b1-33f2c4ab60b5",
+      "item": [
+        {
+          "name": "Get Customer Detail - Store Customer",
+          "id": "4a48260e-011f-4e5f-b4b9-a781385c3908",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test(\"Status is 200\", function () {",
+                  "    pm.response.to.have.status(200);",
+                  "});",
+                  "",
+                  "pm.test(\"Has X-Correlation-Id header\", function () {",
+                  "    pm.response.to.have.header(\"X-Correlation-Id\");",
+                  "});",
+                  "",
+                  "var body = pm.response.json();",
+                  "",
+                  "pm.test(\"Response has customer detail shape\", function () {",
+                  "    pm.expect(body).to.have.property(\"customerId\");",
+                  "    pm.expect(body).to.have.property(\"displayName\");",
+                  "    pm.expect(body).to.have.property(\"ltvRank\");",
+                  "    pm.expect(body).to.have.property(\"totalCustomerCount\");",
+                  "    pm.expect(body).to.have.property(\"totalSpend\");",
+                  "    pm.expect(body).to.have.property(\"orderCount\");",
+                  "    pm.expect(body).to.have.property(\"avgOrderValue\");",
+                  "    pm.expect(body).to.have.property(\"isInactive\");",
+                  "    pm.expect(body).to.have.property(\"customerType\");",
+                  "});",
+                  "",
+                  "pm.test(\"customerId matches the requested id\", function () {",
+                  "    pm.expect(body.customerId).to.eql(29486);",
+                  "});",
+                  "",
+                  "pm.test(\"customerType is Store with storeId/storeName populated\", function () {",
+                  "    pm.expect(body.customerType).to.eql(\"Store\");",
+                  "    pm.expect(body.storeId).to.be.a(\"number\");",
+                  "    pm.expect(body.storeName).to.be.a(\"string\").and.not.empty;",
+                  "});"
+                ],
+                "type": "text/javascript",
+                "packages": {},
+                "requests": {}
+              }
+            }
+          ],
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{adventureWorksApi}}/{{apiVersion}}/customers/29486",
+              "host": [
+                "{{adventureWorksApi}}"
+              ],
+              "path": [
+                "{{apiVersion}}",
+                "customers",
+                "29486"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Get Customer Detail - Individual Customer",
+          "id": "785a4015-50d9-4ddd-a802-6000d0c0bbda",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test(\"Status is 200\", function () {",
+                  "    pm.response.to.have.status(200);",
+                  "});",
+                  "",
+                  "var body = pm.response.json();",
+                  "",
+                  "pm.test(\"customerId matches the requested id\", function () {",
+                  "    pm.expect(body.customerId).to.eql(11091);",
+                  "});",
+                  "",
+                  "pm.test(\"customerType is Individual with firstName/lastName populated\", function () {",
+                  "    pm.expect(body.customerType).to.eql(\"Individual\");",
+                  "    pm.expect(body.firstName).to.be.a(\"string\").and.not.empty;",
+                  "    pm.expect(body.lastName).to.be.a(\"string\").and.not.empty;",
+                  "    pm.expect(body.storeId).to.be.null;",
+                  "});"
+                ],
+                "type": "text/javascript",
+                "packages": {},
+                "requests": {}
+              }
+            }
+          ],
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{adventureWorksApi}}/{{apiVersion}}/customers/11091",
+              "host": [
+                "{{adventureWorksApi}}"
+              ],
+              "path": [
+                "{{apiVersion}}",
+                "customers",
+                "11091"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Get Customer Detail - Not Found (404)",
+          "id": "99e49b51-e71b-4ebd-9c93-3f882a2dccd3",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test(\"Status should be Not Found\", function () {",
+                  "    pm.response.to.have.status(404);",
+                  "});",
+                  "",
+                  "var body = pm.response.json();",
+                  "",
+                  "pm.test(\"Response has structured error body\", function () {",
+                  "    pm.expect(body).to.have.property(\"error\");",
+                  "    pm.expect(body).to.have.property(\"correlationId\");",
+                  "    pm.expect(body).to.have.property(\"timestamp\");",
+                  "});",
+                  "",
+                  "pm.test(\"Error body does not leak a stack trace\", function () {",
+                  "    pm.expect(JSON.stringify(body)).to.not.include(\"   at \");",
+                  "});"
+                ],
+                "type": "text/javascript",
+                "packages": {},
+                "requests": {}
+              }
+            }
+          ],
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{adventureWorksApi}}/{{apiVersion}}/customers/9999999",
+              "host": [
+                "{{adventureWorksApi}}"
+              ],
+              "path": [
+                "{{apiVersion}}",
+                "customers",
+                "9999999"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Get Customer Detail - Invalid Id (400)",
+          "id": "bf80e63b-1e9f-493b-bcf1-0880323a80d0",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test(\"Status should be Bad Request\", function () {",
+                  "    pm.response.to.have.status(400);",
+                  "});"
+                ],
+                "type": "text/javascript",
+                "packages": {},
+                "requests": {}
+              }
+            }
+          ],
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{adventureWorksApi}}/{{apiVersion}}/customers/0",
+              "host": [
+                "{{adventureWorksApi}}"
+              ],
+              "path": [
+                "{{apiVersion}}",
+                "customers",
+                "0"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Get Customer Detail - Unauthenticated (401)",
+          "id": "e247c64d-d6a2-484f-ac6c-66f6e5c6911a",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test(\"Status should be Unauthorized\", function () {",
+                  "    pm.response.to.have.status(401);",
+                  "});"
+                ],
+                "type": "text/javascript",
+                "packages": {},
+                "requests": {}
+              }
+            }
+          ],
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{adventureWorksApi}}/{{apiVersion}}/customers/29486",
+              "host": [
+                "{{adventureWorksApi}}"
+              ],
+              "path": [
+                "{{apiVersion}}",
+                "customers",
+                "29486"
+              ]
+            },
+            "auth": {
+              "type": "noauth"
+            }
+          },
+          "response": []
+        }
+      ]
+    },
+    {
       "name": "SalesReason",
       "item": [
         {

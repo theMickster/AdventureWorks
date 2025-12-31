@@ -233,4 +233,72 @@ public sealed class CustomerRepositoryTests : PersistenceUnitTestBase
             results.Should().BeEmpty();
         }
     }
+
+    [Fact]
+    public async Task GetCustomerDetailAsync_returns_store_customer_with_matching_rankAsync()
+    {
+        SeedCustomers();
+
+        var (customer, totalCount) = await _sut.GetCustomerDetailAsync(11003, cancellationToken: TestContext.Current.CancellationToken);
+
+        using (new AssertionScope())
+        {
+            customer.Should().NotBeNull();
+            totalCount.Should().Be(6);
+            customer!.CustomerId.Should().Be(11003);
+            customer.CustomerType.Should().Be("Store");
+            customer.DisplayName.Should().Be("Topnotch Bikes");
+            customer.StoreName.Should().Be("Topnotch Bikes");
+            customer.FirstName.Should().BeNull();
+            customer.LastName.Should().BeNull();
+            customer.LtvRank.Should().Be(2);
+        }
+    }
+
+    [Fact]
+    public async Task GetCustomerDetailAsync_returns_individual_customer_with_matching_rankAsync()
+    {
+        SeedCustomers();
+
+        var (customer, totalCount) = await _sut.GetCustomerDetailAsync(11000, cancellationToken: TestContext.Current.CancellationToken);
+
+        using (new AssertionScope())
+        {
+            customer.Should().NotBeNull();
+            totalCount.Should().Be(6);
+            customer!.CustomerId.Should().Be(11000);
+            customer.CustomerType.Should().Be("Individual");
+            customer.StoreName.Should().BeNull();
+            customer.FirstName.Should().Be("Jon");
+            customer.LastName.Should().Be("Yang");
+            customer.LtvRank.Should().Be(1);
+        }
+    }
+
+    [Fact]
+    public async Task GetCustomerDetailAsync_returns_null_customer_when_not_foundAsync()
+    {
+        SeedCustomers();
+
+        var (customer, totalCount) = await _sut.GetCustomerDetailAsync(9999999, cancellationToken: TestContext.Current.CancellationToken);
+
+        using (new AssertionScope())
+        {
+            customer.Should().BeNull();
+            totalCount.Should().Be(6);
+        }
+    }
+
+    [Fact]
+    public async Task GetCustomerDetailAsync_rank_matches_GetCustomersAsync_rank_for_the_same_customerAsync()
+    {
+        SeedCustomers();
+
+        var (listResults, _) = await _sut.GetCustomersAsync(new CustomerParameter { PageNumber = 1, PageSize = 50 }, cancellationToken: TestContext.Current.CancellationToken);
+        var (detail, _) = await _sut.GetCustomerDetailAsync(11002, cancellationToken: TestContext.Current.CancellationToken);
+
+        var listRank = listResults.Single(r => r.CustomerId == 11002).LtvRank;
+
+        detail!.LtvRank.Should().Be(listRank, "because both endpoints must rank via the same shared ranking method");
+    }
 }

@@ -23,6 +23,15 @@ public sealed record CustomerLtvProjection
     /// <summary>Either <c>"Store"</c> or <c>"Individual"</c>.</summary>
     public required string CustomerType { get; init; }
 
+    /// <summary>The customer's store name, or <c>null</c> for an individual customer.</summary>
+    public string? StoreName { get; init; }
+
+    /// <summary>The customer's first name, or <c>null</c> for a store customer.</summary>
+    public string? FirstName { get; init; }
+
+    /// <summary>The customer's last name, or <c>null</c> for a store customer.</summary>
+    public string? LastName { get; init; }
+
     /// <summary>Sum of <c>SalesOrderHeader.TotalDue</c> across every order placed by this customer.</summary>
     public required decimal TotalSpend { get; init; }
 
@@ -57,4 +66,15 @@ public interface ICustomerRepository : IAsyncRepository<CustomerEntity>
     /// <param name="parameters">paging and search parameters</param>
     /// <param name="cancellationToken">token to cancel the operation</param>
     Task<(IReadOnlyList<CustomerLtvProjection>, int)> GetCustomersAsync(CustomerParameter parameters, CancellationToken cancellationToken = default);
+
+    /// <summary>
+    /// Retrieves a single customer's LTV-ranked projection, along with the total number of
+    /// customers ranked. Rank is computed via the same full-table ranking method as
+    /// <see cref="GetCustomersAsync"/>, so a customer's rank is identical between the list and
+    /// detail endpoints.
+    /// </summary>
+    /// <param name="customerId">the customer primary key</param>
+    /// <param name="cancellationToken">token to cancel the operation</param>
+    /// <returns>The customer's projection (or <c>null</c> if not found) and the total ranked customer count.</returns>
+    Task<(CustomerLtvProjection? Customer, int TotalCustomerCount)> GetCustomerDetailAsync(int customerId, CancellationToken cancellationToken = default);
 }

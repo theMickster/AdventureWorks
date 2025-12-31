@@ -83,4 +83,11 @@ export const salesRoutes: Route[] = [
     loadComponent: () =>
       import('@adventureworks-web/sales/feature-customers').then((m) => m.CustomerListComponent),
   },
+  {
+    path: 'customers/:id',
+    title: 'Customer Detail',
+    data: { breadcrumb: 'Customer Detail' },
+    loadComponent: () =>
+      import('@adventureworks-web/sales/feature-customers').then((m) => m.CustomerDetailComponent),
+  },
 ];

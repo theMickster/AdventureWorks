@@ -28,6 +28,7 @@ export type { StoreSearchBody } from './lib/models/store-search.model';
 export type { SalesPersonSearchBody } from './lib/models/sales-person-search.model';
 export type { CustomerListItem } from './lib/models/customer-list-item.model';
 export type { CustomerParams } from './lib/models/customer-params.model';
+export type { CustomerDetail } from './lib/models/customer-detail.model';
 
 // Services
 export { SalesApiService } from './lib/services/sales-api.service';
