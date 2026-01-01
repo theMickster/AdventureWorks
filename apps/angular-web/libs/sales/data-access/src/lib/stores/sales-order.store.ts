@@ -97,6 +97,7 @@ export const SalesOrderStore = signalStore(
         status: params.status,
         salesPersonId: params.salesPersonId,
         territoryId: params.territoryId,
+        customerId: params.customerId,
       });
     }
 

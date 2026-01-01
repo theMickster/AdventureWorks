@@ -26,10 +26,15 @@ public sealed class SalesOrderRepository(AdventureWorksDbContext dbContext)
         SalesOrderParameter parameters,
         CancellationToken cancellationToken = default)
     {
-        var totalCount = await DbContext.SalesOrderHeaders.CountAsync(cancellationToken);
-
         var salesOrderQuery = BuildSalesOrderQuery()
             .AsQueryable();
+
+        if (parameters.CustomerId.HasValue)
+        {
+            salesOrderQuery = salesOrderQuery.Where(x => x.CustomerId == parameters.CustomerId.Value);
+        }
+
+        var totalCount = await salesOrderQuery.CountAsync(cancellationToken);
 
         salesOrderQuery = ApplyOrdering(salesOrderQuery, parameters);
         salesOrderQuery = salesOrderQuery.Skip(parameters.GetRecordsToSkip()).Take(parameters.PageSize);
@@ -77,6 +82,11 @@ public sealed class SalesOrderRepository(AdventureWorksDbContext dbContext)
         if (searchModel.TerritoryId.HasValue)
         {
             salesOrderQuery = salesOrderQuery.Where(x => x.TerritoryId == searchModel.TerritoryId.Value);
+        }
+
+        if (searchModel.CustomerId.HasValue)
+        {
+            salesOrderQuery = salesOrderQuery.Where(x => x.CustomerId == searchModel.CustomerId.Value);
         }
 
         if (!string.IsNullOrWhiteSpace(searchModel.AccountNumber))
@@ -175,6 +185,11 @@ public sealed class SalesOrderRepository(AdventureWorksDbContext dbContext)
             if (filter.TerritoryId.HasValue)
             {
                 filteredQuery = filteredQuery.Where(x => x.TerritoryId == filter.TerritoryId.Value);
+            }
+
+            if (filter.CustomerId.HasValue)
+            {
+                filteredQuery = filteredQuery.Where(x => x.CustomerId == filter.CustomerId.Value);
             }
 
             if (!string.IsNullOrWhiteSpace(filter.AccountNumber))

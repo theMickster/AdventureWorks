@@ -93,13 +93,13 @@ Sales config edit form at `/sales/persons/:id/edit`. Direct `SalesApiService` PA
 - **Filters changed** → `store.applyFilters(params)` dispatches both `loadPage` and `loadAnalytics`.
 - **Page/sort only** → `store.loadPage(params)` skips the analytics re-fetch.
 
-`_lastFilterHash` must be updated only in the `filtersChanged` branch, and the hash must include all five filter fields (`orderDateFrom`, `orderDateTo`, `status`, `salesPersonId`, `territoryId`). Adding a new filter param requires updating `parseFilterParams` so the hash detects the change.
+`_lastFilterHash` must be updated only in the `filtersChanged` branch, and the hash must include all six filter fields (`orderDateFrom`, `orderDateTo`, `status`, `salesPersonId`, `territoryId`, `customerId`). Adding a new filter param requires updating `parseFilterParams` so the hash detects the change.
 
 ### OrderDetailComponent
 
 Read-only at `/sales/orders/:id`. Calls `SalesApiService.getSalesOrder()` directly; no NgRx store. Mirrors `StoreDetailComponent` pattern.
 
-- `backQueryParams` calls `extractOrderListNavParams` from `'../order-list-nav-params'` (feature-orders-local; handles the 8 order-list filter params). Snapshot read is intentional — do not refactor to `toSignal(route.queryParams)`.
+- `backQueryParams` calls `extractOrderListNavParams` from `'../order-list-nav-params'` (feature-orders-local; handles the 9 order-list filter/navigation params, including `customerId`). Snapshot read is intentional — do not refactor to `toSignal(route.queryParams)`.
 - `STATUS_BADGE_MAP` lives in `order-status-badge.ts` (shared with `OrderListComponent`) — do not duplicate
 - 404 response sets `notFound` signal; non-404 errors set `hasError` signal
 - `BillToAddress` / `ShipToAddress` are always present — NOT NULL in schema

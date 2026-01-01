@@ -2,7 +2,7 @@ import type { Params } from '@angular/router';
 
 /**
  * Extracts the order-list navigation params (orderDateFrom, orderDateTo, status, salesPersonId,
- * territoryId, pageNumber, orderBy, sortOrder) from a route snapshot so OrderDetailComponent can
+ * territoryId, customerId, pageNumber, orderBy, sortOrder) from a route snapshot so OrderDetailComponent can
  * reconstruct the exact order-list URL on back-navigation.
  * Reads from a snapshot (not a live observable) intentionally — the params are captured once at
  * navigation time; making this reactive would cause the back-link to drift as the URL changes.
@@ -14,6 +14,7 @@ export function extractOrderListNavParams(queryParams: Params): Record<string, s
     'status',
     'salesPersonId',
     'territoryId',
+    'customerId',
     'pageNumber',
     'orderBy',
     'sortOrder',

@@ -69,4 +69,9 @@ public sealed class SalesOrderParameter : QueryStringParamsBase
     /// Filter by territory identifier.
     /// </summary>
     public int? TerritoryId { get; set; }
+
+    /// <summary>
+    /// Filter by customer identifier.
+    /// </summary>
+    public int? CustomerId { get; set; }
 }

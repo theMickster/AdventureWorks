@@ -5,7 +5,8 @@ namespace AdventureWorks.Application.Features.Sales.Validators;
 
 /// <summary>
 /// Validates <see cref="GetSalesOrderAnalyticsQuery"/>. All rules are conditional on <c>Filter != null</c>:
-/// Rule-04 date ordering, Rule-05/06 positive IDs, Rule-07 status 1–6, Rule-08 AccountNumber max 15 chars.
+/// Rule-04 date ordering, Rule-05/06 positive IDs, Rule-07 status 1–6, Rule-08 AccountNumber max 15 chars,
+/// and Rule-09 positive CustomerId.
 /// </summary>
 public sealed class GetSalesOrderAnalyticsQueryValidator : AbstractValidator<GetSalesOrderAnalyticsQuery>
 {
@@ -42,6 +43,12 @@ public sealed class GetSalesOrderAnalyticsQueryValidator : AbstractValidator<Get
                 .WithErrorCode("Rule-08")
                 .WithMessage("AccountNumber must not exceed 15 characters.")
                 .When(x => x.Filter?.AccountNumber != null);
+
+            RuleFor(x => x.Filter!.CustomerId)
+                .GreaterThan(0)
+                .When(x => x.Filter!.CustomerId.HasValue)
+                .WithErrorCode("Rule-09")
+                .WithMessage("CustomerId must be greater than 0");
         });
     }
 }

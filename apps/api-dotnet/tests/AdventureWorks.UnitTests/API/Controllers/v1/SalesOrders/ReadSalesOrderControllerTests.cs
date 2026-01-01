@@ -134,6 +134,32 @@ public sealed class ReadSalesOrderControllerTests
     }
 
     [Fact]
+    public async Task GetAsync_builds_customer_filter_search_model()
+    {
+        // Arrange
+        var parameters = new SalesOrderParameter { CustomerId = 29486 };
+        var searchResult = new SalesOrderSearchResultModel();
+
+        _mockMediator.Setup(x => x.Send(
+            It.Is<ReadSalesOrderListQuery>(q =>
+                q.Parameters.CustomerId == 29486 &&
+                q.SearchModel != null &&
+                q.SearchModel.CustomerId == 29486),
+            It.IsAny<CancellationToken>()))
+            .ReturnsAsync(searchResult);
+
+        // Act
+        var result = await _sut.GetAsync(parameters, cancellationToken: TestContext.Current.CancellationToken);
+
+        // Assert
+        result.Should().BeOfType<OkObjectResult>();
+        _mockMediator.Verify(x => x.Send(
+            It.Is<ReadSalesOrderListQuery>(q => q.SearchModel!.CustomerId == 29486),
+            It.IsAny<CancellationToken>()),
+            Times.Once);
+    }
+
+    [Fact]
     public async Task GetAsync_forwards_cancellation_token()
     {
         // Arrange
@@ -151,5 +177,30 @@ public sealed class ReadSalesOrderControllerTests
 
         // Assert
         result.Should().BeOfType<OkObjectResult>();
+    }
+
+    [Fact]
+    public async Task GetAnalyticsAsync_forwards_filter_and_cancellation_token()
+    {
+        // Arrange
+        var filter = new SalesOrderSearchModel { CustomerId = 29486 };
+        var cancellationToken = TestContext.Current.CancellationToken;
+        var analytics = new SalesOrderAnalyticsModel { OrderCount = 1, TotalRevenue = 100m };
+
+        _mockMediator.Setup(x => x.Send(
+                It.Is<GetSalesOrderAnalyticsQuery>(query => query.Filter == filter),
+                cancellationToken))
+            .ReturnsAsync(analytics);
+
+        // Act
+        var result = await _sut.GetAnalyticsAsync(filter, cancellationToken);
+
+        // Assert
+        result.Should().BeOfType<OkObjectResult>()
+            .Which.Value.Should().BeSameAs(analytics);
+        _mockMediator.Verify(x => x.Send(
+                It.Is<GetSalesOrderAnalyticsQuery>(query => query.Filter == filter),
+                cancellationToken),
+            Times.Once);
     }
 }

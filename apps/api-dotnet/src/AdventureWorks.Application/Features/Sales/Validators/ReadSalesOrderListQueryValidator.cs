@@ -46,6 +46,12 @@ public sealed class ReadSalesOrderListQueryValidator : AbstractValidator<ReadSal
                 .WithErrorCode("Rule-08")
                 .WithMessage("AccountNumber must not exceed 15 characters.")
                 .When(x => x.SearchModel?.AccountNumber != null);
+
+            RuleFor(x => x.SearchModel!.CustomerId)
+                .GreaterThan(0)
+                .When(x => x.SearchModel!.CustomerId.HasValue)
+                .WithErrorCode("Rule-09")
+                .WithMessage("CustomerId must be greater than 0");
         });
     }
 }

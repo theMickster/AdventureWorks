@@ -2,13 +2,14 @@ import { describe, expect, it } from 'vitest';
 import { extractOrderListNavParams } from './order-list-nav-params';
 
 describe('extractOrderListNavParams', () => {
-  it('returns all 8 keys when all params are present', () => {
+  it('returns all 9 keys when all params are present', () => {
     const params = {
       orderDateFrom: '2025-01-01',
       orderDateTo: '2025-01-31',
       status: '5',
       salesPersonId: '275',
       territoryId: '3',
+      customerId: '29486',
       pageNumber: '2',
       orderBy: 'orderDate',
       sortOrder: 'desc',
@@ -22,6 +23,7 @@ describe('extractOrderListNavParams', () => {
       status: '5',
       salesPersonId: '275',
       territoryId: '3',
+      customerId: '29486',
       pageNumber: '2',
       orderBy: 'orderDate',
       sortOrder: 'desc',
@@ -70,5 +72,11 @@ describe('extractOrderListNavParams', () => {
 
     expect(typeof result['salesPersonId']).toBe('string');
     expect(result['salesPersonId']).toBe('275');
+  });
+
+  it('preserves customerId for the order detail back-link', () => {
+    const result = extractOrderListNavParams({ customerId: '29486' });
+
+    expect(result).toEqual({ customerId: '29486' });
   });
 });

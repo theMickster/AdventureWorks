@@ -26,4 +26,5 @@ export interface SalesOrderAnalyticsFilter {
   readonly status?: number;
   readonly salesPersonId?: number;
   readonly territoryId?: number;
+  readonly customerId?: number;
 }

@@ -7,7 +7,7 @@ import { HttpErrorResponse } from '@angular/common/http';
 import { of, Subject, throwError } from 'rxjs';
 import { ENVIRONMENT } from '@adventureworks-web/shared/util';
 import { SalesApiService } from '@adventureworks-web/sales/data-access';
-import type { CustomerDetail } from '@adventureworks-web/sales/data-access';
+import type { CustomerDetail, SalesOrder } from '@adventureworks-web/sales/data-access';
 import { CustomerDetailComponent } from './customer-detail';
 
 const mockEnvironment = {
@@ -71,6 +71,27 @@ const mockZeroOrderCustomer: CustomerDetail = {
   lastName: 'Orders',
 };
 
+const mockRecentOrder: SalesOrder = {
+  salesOrderId: 43659,
+  salesOrderNumber: 'SO43659',
+  orderDate: '2014-05-01T00:00:00',
+  status: 5,
+  statusDescription: 'Shipped',
+  totalDue: 119961.7161,
+  customerName: 'Riders Company',
+  salesPersonName: 'Michael Blythe',
+};
+
+const emptyOrderResult = {
+  pageNumber: 1,
+  pageSize: 5,
+  totalPages: 0,
+  totalRecords: 0,
+  hasPreviousPage: false,
+  hasNextPage: false,
+  results: [],
+};
+
 function buildRoute(id = '29486') {
   return {
     snapshot: {
@@ -102,6 +123,7 @@ describe('CustomerDetailComponent', () => {
     }).compileComponents();
 
     salesApiService = TestBed.inject(SalesApiService);
+    vi.spyOn(salesApiService, 'getSalesOrders').mockReturnValue(of(emptyOrderResult));
     router = TestBed.inject(Router);
     vi.spyOn(router, 'navigate').mockResolvedValue(true);
 
@@ -196,6 +218,66 @@ describe('CustomerDetailComponent', () => {
     expect(totalSpend.textContent).toContain('$0.00');
     expect(avgOrderValue.textContent).toContain('$0.00');
     expect(emptyState).toBeTruthy();
+  });
+
+  it('loads the five most recent customer orders with the customer-scoped API contract', async () => {
+    await setup();
+    vi.spyOn(salesApiService, 'getCustomerDetail').mockReturnValue(of(mockStoreCustomer));
+
+    fixture.detectChanges();
+
+    expect(salesApiService.getSalesOrders).toHaveBeenCalledWith({
+      customerId: 29486,
+      pageNumber: 1,
+      pageSize: 5,
+      orderBy: 'orderDate',
+      sortOrder: 'desc',
+    });
+  });
+
+  it('renders recent order detail links and customer-scoped View Orders navigation', async () => {
+    await setup();
+    vi.spyOn(salesApiService, 'getCustomerDetail').mockReturnValue(of(mockStoreCustomer));
+    vi.spyOn(salesApiService, 'getSalesOrders').mockReturnValue(of({ ...emptyOrderResult, results: [mockRecentOrder] }));
+
+    fixture.detectChanges();
+
+    const viewOrders = fixture.nativeElement.querySelector('#aw-customer-detail-view-orders') as HTMLAnchorElement;
+    const viewAll = fixture.nativeElement.querySelector('#aw-customer-detail-view-all-orders') as HTMLAnchorElement;
+    const orderLink = fixture.nativeElement.querySelector('#aw-customer-detail-order-43659') as HTMLAnchorElement;
+    expect(viewOrders.getAttribute('href')).toBe('/sales/orders?customerId=29486');
+    expect(viewAll.getAttribute('href')).toBe('/sales/orders?customerId=29486');
+    expect(orderLink.getAttribute('href')).toBe('/sales/orders/43659?customerId=29486&orderBy=orderDate&sortOrder=desc');
+  });
+
+  it('shows a recent-orders loading state until the orders request resolves', async () => {
+    await setup();
+    const recentOrders = new Subject<typeof emptyOrderResult>();
+    vi.spyOn(salesApiService, 'getCustomerDetail').mockReturnValue(of(mockStoreCustomer));
+    vi.spyOn(salesApiService, 'getSalesOrders').mockReturnValue(recentOrders.asObservable());
+
+    fixture.detectChanges();
+
+    expect(fixture.nativeElement.querySelector('#aw-customer-detail-recent-orders-loading')).toBeTruthy();
+  });
+
+  it('shows a recent-orders error state when the order request fails', async () => {
+    await setup();
+    vi.spyOn(salesApiService, 'getCustomerDetail').mockReturnValue(of(mockStoreCustomer));
+    vi.spyOn(salesApiService, 'getSalesOrders').mockReturnValue(throwError(() => new HttpErrorResponse({ status: 500 })));
+
+    fixture.detectChanges();
+
+    expect(fixture.nativeElement.querySelector('#aw-customer-detail-recent-orders-error')).toBeTruthy();
+  });
+
+  it('shows a recent-orders empty state when the customer has orders but no list rows are returned', async () => {
+    await setup();
+    vi.spyOn(salesApiService, 'getCustomerDetail').mockReturnValue(of(mockStoreCustomer));
+
+    fixture.detectChanges();
+
+    expect(fixture.nativeElement.querySelector('#aw-customer-detail-recent-orders-empty')).toBeTruthy();
   });
 
   it('shows loading skeleton before the API resolves', async () => {

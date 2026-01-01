@@ -4,7 +4,7 @@ import { ChangeDetectionStrategy, Component, DestroyRef, OnInit, inject, signal 
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { ActivatedRoute, Router, RouterLink } from '@angular/router';
 import { SalesApiService } from '@adventureworks-web/sales/data-access';
-import type { CustomerDetail as CustomerDetailModel } from '@adventureworks-web/sales/data-access';
+import type { CustomerDetail as CustomerDetailModel, SalesOrder } from '@adventureworks-web/sales/data-access';
 import { CardComponent, EmptyStateComponent, SkeletonComponent, StatusBadgeComponent } from '@adventureworks-web/shared/ui';
 
 @Component({
@@ -32,6 +32,9 @@ export class CustomerDetailComponent implements OnInit {
   protected readonly isLoading = signal(false);
   protected readonly notFound = signal(false);
   protected readonly hasError = signal(false);
+  protected readonly recentOrders = signal<SalesOrder[]>([]);
+  protected readonly isLoadingRecentOrders = signal(false);
+  protected readonly hasRecentOrdersError = signal(false);
 
   ngOnInit(): void {
     const rawId = this.route.snapshot.paramMap.get('id');
@@ -53,6 +56,9 @@ export class CustomerDetailComponent implements OnInit {
         next: (detail) => {
           this.customer.set(detail);
           this.isLoading.set(false);
+          if (detail.orderCount > 0) {
+            this.loadRecentOrders(detail.customerId);
+          }
         },
         error: (err: HttpErrorResponse) => {
           if (err.status === 404) {
@@ -61,6 +67,30 @@ export class CustomerDetailComponent implements OnInit {
             this.hasError.set(true);
           }
           this.isLoading.set(false);
+        },
+      });
+  }
+
+  private loadRecentOrders(customerId: number): void {
+    this.isLoadingRecentOrders.set(true);
+    this.hasRecentOrdersError.set(false);
+    this.salesApi
+      .getSalesOrders({
+        customerId,
+        pageNumber: 1,
+        pageSize: 5,
+        orderBy: 'orderDate',
+        sortOrder: 'desc',
+      })
+      .pipe(takeUntilDestroyed(this.destroyRef))
+      .subscribe({
+        next: (result) => {
+          this.recentOrders.set(result.results ?? []);
+          this.isLoadingRecentOrders.set(false);
+        },
+        error: () => {
+          this.hasRecentOrdersError.set(true);
+          this.isLoadingRecentOrders.set(false);
         },
       });
   }

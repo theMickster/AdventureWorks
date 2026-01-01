@@ -31,6 +31,11 @@ public sealed class SalesOrderSearchModel
     public int? TerritoryId { get; set; }
 
     /// <summary>
+    /// The unique integer identifier of the customer.
+    /// </summary>
+    public int? CustomerId { get; set; }
+
+    /// <summary>
     /// The customer account number to filter by (exact match, e.g. 10-4020-000676).
     /// </summary>
     public string? AccountNumber { get; set; }

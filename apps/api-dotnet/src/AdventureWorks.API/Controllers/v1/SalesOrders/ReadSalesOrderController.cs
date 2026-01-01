@@ -48,6 +48,7 @@ public sealed class ReadSalesOrderController : ControllerBase
     /// - `status`: Filter by order status (1=In process, 2=Approved, 3=Backordered, 4=Rejected, 5=Shipped, 6=Cancelled)
     /// - `salesPersonId`: Filter by sales person identifier
     /// - `territoryId`: Filter by territory identifier
+    /// - `customerId`: Filter by customer identifier
     ///
     /// ## Sorting
     /// - `orderBy`: Sort field (salesOrderId, orderDate, totalDue, salesOrderNumber). Defaults to salesOrderId.
@@ -72,7 +73,7 @@ public sealed class ReadSalesOrderController : ControllerBase
         SalesOrderSearchModel? searchModel = null;
         if (parameters.OrderDateFrom.HasValue || parameters.OrderDateTo.HasValue ||
             parameters.Status.HasValue || parameters.SalesPersonId.HasValue ||
-            parameters.TerritoryId.HasValue)
+            parameters.TerritoryId.HasValue || parameters.CustomerId.HasValue)
         {
             searchModel = new SalesOrderSearchModel
             {
@@ -80,7 +81,8 @@ public sealed class ReadSalesOrderController : ControllerBase
                 OrderDateTo = parameters.OrderDateTo,
                 Status = parameters.Status,
                 SalesPersonId = parameters.SalesPersonId,
-                TerritoryId = parameters.TerritoryId
+                TerritoryId = parameters.TerritoryId,
+                CustomerId = parameters.CustomerId
             };
         }
 
@@ -148,7 +150,7 @@ public sealed class ReadSalesOrderController : ControllerBase
     /// An empty body returns the same result as the GET list endpoint.
     /// </summary>
     /// <param name="parameters">Pagination and sort query parameters</param>
-    /// <param name="searchModel">Filter criteria (AccountNumber, Status, date range, salesPersonId, territoryId)</param>
+    /// <param name="searchModel">Filter criteria (AccountNumber, Status, date range, salesPersonId, territoryId, customerId)</param>
     /// <param name="cancellationToken">Cancellation token</param>
     /// <returns>Paginated list of sales orders matching the search criteria</returns>
     [HttpPost("search")]

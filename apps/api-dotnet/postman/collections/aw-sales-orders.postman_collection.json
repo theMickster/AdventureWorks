@@ -874,6 +874,67 @@
                 }
               },
               "response": []
+            },
+            {
+              "name": "Sales Orders - Filter by CustomerId = 29486",
+              "event": [
+                {
+                  "listen": "test",
+                  "script": {
+                    "exec": [
+                      "pm.test(\"Status should be OK\", function () {\r",
+                      "    pm.response.to.have.status(200);\r",
+                      "});\r",
+                      "\r",
+                      "var response = pm.response.json();\r",
+                      "\r",
+                      "pm.test(\"Response has the paginated sales-order shape\", function() {\r",
+                      "    pm.expect(response.results).to.be.an(\"array\");\r",
+                      "    pm.expect(response.pageNumber).to.be.a(\"number\");\r",
+                      "    pm.expect(response.pageSize).to.be.a(\"number\");\r",
+                      "    pm.expect(response.totalRecords).to.be.a(\"number\");\r",
+                      "    pm.expect(response.totalPages).to.be.a(\"number\");\r",
+                      "    pm.expect(response).to.have.property(\"hasPreviousPage\");\r",
+                      "    pm.expect(response).to.have.property(\"hasNextPage\");\r",
+                      "});\r",
+                      "\r",
+                      "pm.test(\"Customer filter returns matching orders\", function() {\r",
+                      "    pm.expect(response.totalRecords).to.be.above(0);\r",
+                      "    pm.expect(response.results.length).to.be.above(0);\r",
+                      "    response.results.forEach(function(order) {\r",
+                      "        pm.expect(order.customerName).to.eql(\"Riders Company\");\r",
+                      "    });\r",
+                      "});\r",
+                      "\r",
+                      "pm.test(\"Has X-Correlation-Id header\", function() {\r",
+                      "    pm.response.to.have.header(\"X-Correlation-Id\");\r",
+                      "});"
+                    ],
+                    "type": "text/javascript"
+                  }
+                }
+              ],
+              "request": {
+                "method": "GET",
+                "header": [],
+                "url": {
+                  "raw": "{{adventureWorksApi}}/{{apiVersion}}/sales-orders?CustomerId=29486",
+                  "host": [
+                    "{{adventureWorksApi}}"
+                  ],
+                  "path": [
+                    "{{apiVersion}}",
+                    "sales-orders"
+                  ],
+                  "query": [
+                    {
+                      "key": "CustomerId",
+                      "value": "29486"
+                    }
+                  ]
+                }
+              },
+              "response": []
             }
           ]
         },
@@ -1148,6 +1209,98 @@
               "response": []
             },
             {
+              "name": "Sales Orders Analytics - With Customer Filter",
+              "event": [
+                {
+                  "listen": "test",
+                  "script": {
+                    "exec": [
+                      "pm.test(\"Status is 200 OK\", () => pm.response.to.have.status(200));\r",
+                      "const body = pm.response.json();\r",
+                      "pm.test(\"Response has the analytics shape\", () => {\r",
+                      "    pm.expect(body.totalRevenue).to.be.a(\"number\");\r",
+                      "    pm.expect(body.orderCount).to.be.a(\"number\");\r",
+                      "    pm.expect(body.percentageOfTotal).to.be.a(\"number\");\r",
+                      "    pm.expect(body.monthlyTrend).to.be.an(\"array\");\r",
+                      "});\r",
+                      "pm.test(\"Has X-Correlation-Id header\", () => pm.response.to.have.header(\"X-Correlation-Id\"));\r",
+                      "pm.test(\"Customer filter matches customer detail and filtered sales-order list\", (done) => {\r",
+                      "    const authHeader = pm.request.headers.get(\"Authorization\");\r",
+                      "    pm.expect(authHeader, \"Expected Postman to attach the bearer token to this request\").to.be.a(\"string\").and.not.empty;\r",
+                      "    const apiBase = `${pm.variables.get(\"adventureWorksApi\")}/${pm.variables.get(\"apiVersion\")}`;\r",
+                      "\r",
+                      "    pm.sendRequest({\r",
+                      "        url: `${apiBase}/customers/29486`,\r",
+                      "        method: \"GET\",\r",
+                      "        header: { Authorization: authHeader }\r",
+                      "    }, (detailError, detailResponse) => {\r",
+                      "        pm.expect(detailError).to.equal(null);\r",
+                      "        pm.expect(detailResponse.code).to.eql(200);\r",
+                      "\r",
+                      "        const detailBody = detailResponse.json();\r",
+                      "        pm.expect(detailBody.customerId).to.eql(29486);\r",
+                      "        pm.expect(detailBody.displayName).to.be.a(\"string\").and.not.empty;\r",
+                      "        pm.expect(detailBody.orderCount).to.be.above(0);\r",
+                      "        pm.expect(detailBody.totalSpend).to.be.a(\"number\");\r",
+                      "\r",
+                      "        pm.sendRequest({\r",
+                      "            url: `${apiBase}/sales-orders?CustomerId=29486&PageNumber=1&PageSize=50`,\r",
+                      "            method: \"GET\",\r",
+                      "            header: { Authorization: authHeader }\r",
+                      "        }, (listError, listResponse) => {\r",
+                      "            pm.expect(listError).to.equal(null);\r",
+                      "            pm.expect(listResponse.code).to.eql(200);\r",
+                      "\r",
+                      "            const listBody = listResponse.json();\r",
+                      "            pm.expect(listBody.totalRecords).to.eql(detailBody.orderCount);\r",
+                      "            pm.expect(listBody.results).to.be.an(\"array\").that.is.not.empty;\r",
+                      "            listBody.results.forEach((order) => {\r",
+                      "                pm.expect(order.customerName).to.eql(detailBody.displayName);\r",
+                      "            });\r",
+                      "\r",
+                      "            pm.expect(body.orderCount).to.eql(listBody.totalRecords);\r",
+                      "            pm.expect(body.totalRevenue).to.eql(detailBody.totalSpend);\r",
+                      "            done();\r",
+                      "        });\r",
+                      "    });\r",
+                      "});"
+                    ],
+                    "type": "text/javascript"
+                  }
+                }
+              ],
+              "request": {
+                "method": "POST",
+                "header": [
+                  {
+                    "key": "Content-Type",
+                    "value": "application/json"
+                  }
+                ],
+                "body": {
+                  "mode": "raw",
+                  "raw": "{\n  \"customerId\": 29486\n}",
+                  "options": {
+                    "raw": {
+                      "language": "json"
+                    }
+                  }
+                },
+                "url": {
+                  "raw": "{{adventureWorksApi}}/{{apiVersion}}/sales-orders/analytics",
+                  "host": [
+                    "{{adventureWorksApi}}"
+                  ],
+                  "path": [
+                    "{{apiVersion}}",
+                    "sales-orders",
+                    "analytics"
+                  ]
+                }
+              },
+              "response": []
+            },
+            {
               "name": "Sales Orders Analytics - With Filter (2013, Territory 2)",
               "event": [
                 {
@@ -1384,6 +1537,52 @@
                     {
                       "key": "OrderDateTo",
                       "value": "2013-01-01"
+                    }
+                  ]
+                }
+              },
+              "response": []
+            },
+            {
+              "name": "Sales Orders - Validation - Invalid CustomerId = 0",
+              "event": [
+                {
+                  "listen": "test",
+                  "script": {
+                    "exec": [
+                      "pm.test(\"Status should be Bad Request\", function () {\r",
+                      "    pm.response.to.have.status(400);\r",
+                      "});\r",
+                      "\r",
+                      "var response = pm.response.json();\r",
+                      "\r",
+                      "pm.test(\"Response should contain the customerId validation error\", function() {\r",
+                      "    pm.expect(response).to.be.an(\"array\");\r",
+                      "    var customerError = response.find(function(e) { return e.errorCode === \"Rule-09\"; });\r",
+                      "    pm.expect(customerError).to.exist;\r",
+                      "    pm.expect(customerError.errorMessage).to.include(\"CustomerId must be greater than 0\");\r",
+                      "});"
+                    ],
+                    "type": "text/javascript"
+                  }
+                }
+              ],
+              "request": {
+                "method": "GET",
+                "header": [],
+                "url": {
+                  "raw": "{{adventureWorksApi}}/{{apiVersion}}/sales-orders?CustomerId=0",
+                  "host": [
+                    "{{adventureWorksApi}}"
+                  ],
+                  "path": [
+                    "{{apiVersion}}",
+                    "sales-orders"
+                  ],
+                  "query": [
+                    {
+                      "key": "CustomerId",
+                      "value": "0"
                     }
                   ]
                 }

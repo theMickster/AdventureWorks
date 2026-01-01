@@ -152,6 +152,25 @@ public sealed class GetSalesOrderAnalyticsQueryHandlerTests : UnitTestBase
     }
 
     [Fact]
+    public async Task Handle_forwards_customer_scoped_filter_to_repository()
+    {
+        // Arrange
+        var filter = new SalesOrderSearchModel { CustomerId = 29486 };
+        var query = new GetSalesOrderAnalyticsQuery { Filter = filter };
+        _mockSalesOrderRepository
+            .Setup(x => x.GetSalesOrderAnalyticsAsync(filter, It.IsAny<CancellationToken>()))
+            .ReturnsAsync(new SalesOrderAnalyticsModel { MonthlyTrend = [] });
+
+        // Act
+        await _sut.Handle(query, TestContext.Current.CancellationToken);
+
+        // Assert
+        _mockSalesOrderRepository.Verify(
+            x => x.GetSalesOrderAnalyticsAsync(filter, TestContext.Current.CancellationToken),
+            Times.Once);
+    }
+
+    [Fact]
     public async Task Handle_throws_validation_exception_when_query_is_invalid()
     {
         // Arrange

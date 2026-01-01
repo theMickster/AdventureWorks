@@ -134,6 +134,7 @@ describe('OrderListComponent', () => {
       status: '5',
       salesPersonId: '279',
       territoryId: '4',
+      customerId: '29486',
     });
 
     fixture.detectChanges();
@@ -148,6 +149,7 @@ describe('OrderListComponent', () => {
       status: 5,
       salesPersonId: 279,
       territoryId: 4,
+      customerId: 29486,
     });
   });
 
@@ -257,6 +259,7 @@ describe('OrderListComponent', () => {
           status: null,
           salesPersonId: null,
           territoryId: null,
+          customerId: null,
           pageNumber: 1,
         },
         queryParamsHandling: 'merge',
@@ -271,6 +274,7 @@ describe('OrderListComponent', () => {
       status: '2',
       salesPersonId: '283',
       territoryId: '6',
+      customerId: '29486',
       pageNumber: '4',
       orderBy: 'totalDue',
       sortOrder: 'asc',
@@ -288,6 +292,7 @@ describe('OrderListComponent', () => {
       status: 2,
       salesPersonId: 283,
       territoryId: 6,
+      customerId: 29486,
     });
   });
 
@@ -363,6 +368,7 @@ describe('OrderListComponent', () => {
       status: '',
       salesPersonId: '',
       territoryId: '',
+      customerId: '',
     });
     expect(router.navigate).toHaveBeenCalledWith(
       [],
@@ -373,6 +379,7 @@ describe('OrderListComponent', () => {
           status: null,
           salesPersonId: null,
           territoryId: null,
+          customerId: null,
           pageNumber: null,
           orderBy: null,
           sortOrder: null,
@@ -438,7 +445,28 @@ describe('OrderListComponent', () => {
 
     component['onRowClick']({ salesOrderId: 43659 });
 
-    expect(router.navigate).toHaveBeenCalledWith(['/sales/orders', 43659]);
+    expect(router.navigate).toHaveBeenCalledWith(['/sales/orders', 43659], { queryParamsHandling: 'preserve' });
+  });
+
+  it('drops an invalid customerId URL param instead of forwarding it to the API', () => {
+    queryParamsSub.next({ customerId: '0' });
+    fixture.detectChanges();
+
+    const lastCall = (salesOrderStore.applyFilters as ReturnType<typeof vi.spyOn>).mock.calls.at(-1)?.[0] as Record<
+      string,
+      unknown
+    >;
+    expect('customerId' in lastCall).toBe(false);
+  });
+
+  it('treats customerId as a filter change so analytics remain customer-scoped', () => {
+    fixture.detectChanges();
+    queryParamsSub.next({ customerId: '29486' });
+    fixture.detectChanges();
+
+    expect(salesOrderStore.applyFilters).toHaveBeenLastCalledWith(
+      expect.objectContaining({ customerId: 29486 }),
+    );
   });
 
   it('shows an error toast when the store reports an error', async () => {

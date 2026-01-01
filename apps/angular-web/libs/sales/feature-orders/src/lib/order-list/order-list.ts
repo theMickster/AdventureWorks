@@ -26,6 +26,7 @@ interface SalesOrderFilters {
   status?: number;
   salesPersonId?: number;
   territoryId?: number;
+  customerId?: number;
 }
 
 @Component({
@@ -87,6 +88,7 @@ export class OrderListComponent implements OnInit {
     status: [''],
     salesPersonId: [''],
     territoryId: [''],
+    customerId: [''],
   });
 
   protected readonly columns: ColumnConfig[] = [
@@ -179,7 +181,7 @@ export class OrderListComponent implements OnInit {
    * params are nulled so the merge strips them; the list reloads at page 1 with only the default sort.
    */
   protected onResetFilters(): void {
-    this.filterForm.reset({ orderDateFrom: '', orderDateTo: '', status: '', salesPersonId: '', territoryId: '' });
+    this.filterForm.reset({ orderDateFrom: '', orderDateTo: '', status: '', salesPersonId: '', territoryId: '', customerId: '' });
     this.sortColumn.set('');
     this.sortDirection.set(DEFAULT_SORT_ORDER);
     void this.router.navigate([], {
@@ -190,6 +192,7 @@ export class OrderListComponent implements OnInit {
         status: null,
         salesPersonId: null,
         territoryId: null,
+        customerId: null,
         pageNumber: null,
         orderBy: null,
         sortOrder: null,
@@ -223,9 +226,9 @@ export class OrderListComponent implements OnInit {
     });
   }
 
-  /** Routes a clicked row to the order detail view at /sales/orders/:id (US-737). */
+  /** Routes a clicked row to the order detail view while preserving the current list URL for its back-link. */
   protected onRowClick(row: Record<string, unknown>): void {
-    void this.router.navigate(['/sales/orders', row['salesOrderId']]);
+    void this.router.navigate(['/sales/orders', row['salesOrderId']], { queryParamsHandling: 'preserve' });
   }
 
   /** Restores filter-bar form values and sort signals from the emitted URL params. */
@@ -236,6 +239,7 @@ export class OrderListComponent implements OnInit {
       status: params['status'] ?? '',
       salesPersonId: params['salesPersonId'] ?? '',
       territoryId: params['territoryId'] ?? '',
+      customerId: params['customerId'] ?? '',
     });
 
     const orderBy = this.parseOrderBy(params['orderBy']);
@@ -292,6 +296,9 @@ export class OrderListComponent implements OnInit {
     if (src['status'] && Number.isFinite(Number(src['status'])))               { filters.status        = Number(src['status']); }
     if (src['salesPersonId'] && Number.isFinite(Number(src['salesPersonId']))) { filters.salesPersonId = Number(src['salesPersonId']); }
     if (src['territoryId'] && Number.isFinite(Number(src['territoryId'])))     { filters.territoryId   = Number(src['territoryId']); }
+    if (src['customerId'] && Number.isInteger(Number(src['customerId'])) && Number(src['customerId']) > 0) {
+      filters.customerId = Number(src['customerId']);
+    }
     return filters;
   }
 
@@ -308,6 +315,7 @@ export class OrderListComponent implements OnInit {
       status: filters.status ?? null,
       salesPersonId: filters.salesPersonId ?? null,
       territoryId: filters.territoryId ?? null,
+      customerId: filters.customerId ?? null,
     };
   }
 }

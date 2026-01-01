@@ -52,6 +52,15 @@
           @if (c.isInactive) {
             <aw-status-badge fieldId="aw-customer-detail-inactive-badge" status="inactive" />
           }
+          <a
+            id="aw-customer-detail-view-orders"
+            [routerLink]="['/sales/orders']"
+            [queryParams]="{ customerId: c.customerId }"
+            class="btn btn-outline btn-sm"
+          >
+            <i class="fa-solid fa-list" aria-hidden="true"></i>
+            View Orders
+          </a>
         </div>
       </div>
     </div>
@@ -80,6 +89,75 @@
 
     @if (c.orderCount === 0) {
       <aw-empty-state fieldId="aw-customer-detail-no-orders" icon="fa-solid fa-inbox" title="No orders found" />
+    } @else {
+      <section id="aw-customer-detail-recent-orders" class="card bg-base-100 shadow">
+        <div class="card-body">
+          <div class="flex items-center justify-between gap-4">
+            <h2 class="card-title text-lg">Recent Orders</h2>
+            <a
+              id="aw-customer-detail-view-all-orders"
+              [routerLink]="['/sales/orders']"
+              [queryParams]="{ customerId: c.customerId }"
+              class="btn btn-ghost btn-sm"
+            >
+              View All Orders
+            </a>
+          </div>
+
+          @if (isLoadingRecentOrders()) {
+            <div id="aw-customer-detail-recent-orders-loading" class="space-y-2">
+              <aw-skeleton height="2rem" />
+              <aw-skeleton height="2rem" />
+              <aw-skeleton height="2rem" />
+            </div>
+          } @else if (hasRecentOrdersError()) {
+            <aw-empty-state
+              fieldId="aw-customer-detail-recent-orders-error"
+              icon="fa-solid fa-circle-exclamation"
+              title="Recent orders unavailable"
+              description="Please try again."
+            />
+          } @else if (recentOrders().length === 0) {
+            <aw-empty-state
+              fieldId="aw-customer-detail-recent-orders-empty"
+              icon="fa-solid fa-inbox"
+              title="No recent orders found"
+            />
+          } @else {
+            <div class="overflow-x-auto">
+              <table class="table table-sm w-full">
+                <thead>
+                  <tr>
+                    <th>Order</th>
+                    <th>Order Date</th>
+                    <th>Status</th>
+                    <th class="text-right">Total Due</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  @for (order of recentOrders(); track order.salesOrderId) {
+                    <tr>
+                      <td>
+                        <a
+                          [id]="'aw-customer-detail-order-' + order.salesOrderId"
+                          [routerLink]="['/sales/orders', order.salesOrderId]"
+                          [queryParams]="{ customerId: c.customerId, orderBy: 'orderDate', sortOrder: 'desc' }"
+                          class="link link-primary"
+                        >
+                          {{ order.salesOrderNumber }}
+                        </a>
+                      </td>
+                      <td>{{ order.orderDate | date: 'mediumDate' }}</td>
+                      <td>{{ order.statusDescription }}</td>
+                      <td class="text-right">{{ order.totalDue | currency }}</td>
+                    </tr>
+                  }
+                </tbody>
+              </table>
+            </div>
+          }
+        </div>
+      </section>
     }
   }
 </div>

@@ -137,6 +137,26 @@ public sealed class ReadSalesOrderListQueryHandlerTests : UnitTestBase
     }
 
     [Fact]
+    public async Task Handle_forwards_customer_filter_to_search_repository()
+    {
+        // Arrange
+        var parameters = new SalesOrderParameter { CustomerId = 29486 };
+        var searchModel = new SalesOrderSearchModel { CustomerId = 29486 };
+        var query = new ReadSalesOrderListQuery { Parameters = parameters, SearchModel = searchModel };
+        _mockSalesOrderRepository
+            .Setup(x => x.SearchSalesOrdersAsync(parameters, searchModel, It.IsAny<CancellationToken>()))
+            .ReturnsAsync((new List<SalesOrderHeader>().AsReadOnly(), 0));
+
+        // Act
+        await _sut.Handle(query, TestContext.Current.CancellationToken);
+
+        // Assert
+        _mockSalesOrderRepository.Verify(
+            x => x.SearchSalesOrdersAsync(parameters, searchModel, TestContext.Current.CancellationToken),
+            Times.Once);
+    }
+
+    [Fact]
     public async Task Handle_handles_null_salesperson()
     {
         // Arrange

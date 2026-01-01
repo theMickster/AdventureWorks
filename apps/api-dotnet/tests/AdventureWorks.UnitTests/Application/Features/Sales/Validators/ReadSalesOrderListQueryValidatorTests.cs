@@ -286,4 +286,41 @@ public sealed class ReadSalesOrderListQueryValidatorTests
         result.IsValid.Should().BeFalse();
         result.Errors.Should().Contain(x => x.ErrorCode == "Rule-08");
     }
+
+    [Theory]
+    [InlineData(0)]
+    [InlineData(-1)]
+    public async Task Validation_fails_when_customer_id_invalid(int invalidCustomerId)
+    {
+        // Arrange
+        var query = new ReadSalesOrderListQuery
+        {
+            Parameters = new SalesOrderParameter(),
+            SearchModel = new SalesOrderSearchModel { CustomerId = invalidCustomerId }
+        };
+
+        // Act
+        var result = await _sut.ValidateAsync(query, cancellation: TestContext.Current.CancellationToken);
+
+        // Assert
+        result.IsValid.Should().BeFalse();
+        result.Errors.Should().Contain(x => x.ErrorCode == "Rule-09");
+    }
+
+    [Fact]
+    public async Task Validation_succeeds_when_customer_id_is_positive()
+    {
+        // Arrange
+        var query = new ReadSalesOrderListQuery
+        {
+            Parameters = new SalesOrderParameter(),
+            SearchModel = new SalesOrderSearchModel { CustomerId = 29486 }
+        };
+
+        // Act
+        var result = await _sut.ValidateAsync(query, cancellation: TestContext.Current.CancellationToken);
+
+        // Assert
+        result.IsValid.Should().BeTrue();
+    }
 }

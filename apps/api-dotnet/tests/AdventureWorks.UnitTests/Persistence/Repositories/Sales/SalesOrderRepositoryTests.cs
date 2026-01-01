@@ -215,6 +215,57 @@ public sealed class SalesOrderRepositoryTests : PersistenceUnitTestBase
     }
 
     [Fact]
+    public async Task GetSalesOrdersAsync_filters_by_customer_id()
+    {
+        // Arrange
+        var customers = new[]
+        {
+            new CustomerEntity { CustomerId = 1, Person = new PersonEntity { BusinessEntityId = 1, FirstName = "John", LastName = "Doe" } },
+            new CustomerEntity { CustomerId = 2, Person = new PersonEntity { BusinessEntityId = 2, FirstName = "Jane", LastName = "Smith" } }
+        };
+        DbContext.SalesOrderHeaders.AddRange(
+            new SalesOrderHeader { SalesOrderId = 1, SalesOrderNumber = "SO1", CustomerId = 1, CustomerEntity = customers[0], OrderDate = new DateTime(2014, 1, 1), Status = 5, TotalDue = 100m },
+            new SalesOrderHeader { SalesOrderId = 2, SalesOrderNumber = "SO2", CustomerId = 2, CustomerEntity = customers[1], OrderDate = new DateTime(2014, 1, 2), Status = 5, TotalDue = 200m }
+        );
+        await DbContext.SaveChangesAsync(cancellationToken: TestContext.Current.CancellationToken);
+
+        // Act
+        var (results, totalCount) = await _sut.GetSalesOrdersAsync(
+            new SalesOrderParameter { CustomerId = 1 },
+            TestContext.Current.CancellationToken);
+
+        // Assert
+        totalCount.Should().Be(1);
+        results.Should().ContainSingle().Which.CustomerId.Should().Be(1);
+    }
+
+    [Fact]
+    public async Task SearchSalesOrdersAsync_filters_by_customer_id()
+    {
+        // Arrange
+        var customers = new[]
+        {
+            new CustomerEntity { CustomerId = 1, Person = new PersonEntity { BusinessEntityId = 1, FirstName = "John", LastName = "Doe" } },
+            new CustomerEntity { CustomerId = 2, Person = new PersonEntity { BusinessEntityId = 2, FirstName = "Jane", LastName = "Smith" } }
+        };
+        DbContext.SalesOrderHeaders.AddRange(
+            new SalesOrderHeader { SalesOrderId = 1, SalesOrderNumber = "SO1", CustomerId = 1, CustomerEntity = customers[0], OrderDate = new DateTime(2014, 1, 1), Status = 5, TotalDue = 100m },
+            new SalesOrderHeader { SalesOrderId = 2, SalesOrderNumber = "SO2", CustomerId = 2, CustomerEntity = customers[1], OrderDate = new DateTime(2014, 1, 2), Status = 5, TotalDue = 200m }
+        );
+        await DbContext.SaveChangesAsync(cancellationToken: TestContext.Current.CancellationToken);
+
+        // Act
+        var (results, totalCount) = await _sut.SearchSalesOrdersAsync(
+            new SalesOrderParameter(),
+            new SalesOrderSearchModel { CustomerId = 2 },
+            TestContext.Current.CancellationToken);
+
+        // Assert
+        totalCount.Should().Be(1);
+        results.Should().ContainSingle().Which.CustomerId.Should().Be(2);
+    }
+
+    [Fact]
     public async Task GetSalesOrdersAsync_uses_no_tracking()
     {
         // Arrange
@@ -356,6 +407,27 @@ public sealed class SalesOrderRepositoryTests : PersistenceUnitTestBase
         // Assert
         result.MonthlyTrend.Should().BeEmpty();
         result.OrderCount.Should().Be(0);
+    }
+
+    [Fact]
+    public async Task GetSalesOrderAnalyticsAsync_filters_by_customer_id()
+    {
+        // Arrange
+        DbContext.SalesOrderHeaders.AddRange(
+            new SalesOrderHeader { SalesOrderId = 1, SalesOrderNumber = "SO1", CustomerId = 1, OrderDate = new DateTime(2014, 1, 1), Status = 5, TotalDue = 100m },
+            new SalesOrderHeader { SalesOrderId = 2, SalesOrderNumber = "SO2", CustomerId = 2, OrderDate = new DateTime(2014, 1, 2), Status = 5, TotalDue = 200m }
+        );
+        await DbContext.SaveChangesAsync(cancellationToken: TestContext.Current.CancellationToken);
+
+        // Act
+        var result = await _sut.GetSalesOrderAnalyticsAsync(
+            new SalesOrderSearchModel { CustomerId = 2 },
+            TestContext.Current.CancellationToken);
+
+        // Assert
+        result.OrderCount.Should().Be(1);
+        result.TotalRevenue.Should().Be(200m);
+        result.PercentageOfTotal.Should().Be(200m / 300m * 100m);
     }
 
     [Fact]
