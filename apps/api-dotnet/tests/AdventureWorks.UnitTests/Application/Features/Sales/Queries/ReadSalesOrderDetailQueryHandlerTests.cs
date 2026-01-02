@@ -98,6 +98,7 @@ public sealed class ReadSalesOrderDetailQueryHandlerTests : UnitTestBase
         result.StatusDescription.Should().Be("Shipped");
         result.SalesPersonId.Should().Be(275);
         result.SalesPersonName.Should().Be("Linda Mitchell");
+        result.CustomerId.Should().Be(676);
         result.CustomerName.Should().Be("Jon Yang");
         result.TerritoryName.Should().Be("Northwest");
         result.BillToAddress!.AddressLine1.Should().Be("123 Main St");
@@ -168,6 +169,94 @@ public sealed class ReadSalesOrderDetailQueryHandlerTests : UnitTestBase
         result!.SalesPersonName.Should().BeNull();
         result.TerritoryName.Should().BeNull();
         result.LineItems.Should().BeEmpty();
+    }
+
+    [Fact]
+    public async Task Handle_maps_store_customer_id_and_name()
+    {
+        // Arrange
+        var entity = new SalesOrderHeader
+        {
+            SalesOrderId = 43663,
+            SalesOrderNumber = "SO43663",
+            OrderDate = new DateTime(2011, 5, 31),
+            DueDate = new DateTime(2011, 6, 12),
+            Status = 5,
+            CustomerEntity = new CustomerEntity
+            {
+                CustomerId = 29486,
+                StoreEntity = new StoreEntity { BusinessEntityId = 296, Name = "Riders Company" }
+            },
+            BillToAddressEntity = new AddressEntity
+            {
+                AddressLine1 = "1 Store St",
+                City = "Seattle",
+                PostalCode = "98101",
+                StateProvince = new StateProvinceEntity { Name = "Washington" }
+            },
+            ShipToAddressEntity = new AddressEntity
+            {
+                AddressLine1 = "1 Store St",
+                City = "Seattle",
+                PostalCode = "98101",
+                StateProvince = new StateProvinceEntity { Name = "Washington" }
+            },
+            SalesOrderDetails = []
+        };
+
+        _mockSalesOrderRepository
+            .Setup(x => x.GetSalesOrderDetailAsync(43663, It.IsAny<CancellationToken>()))
+            .ReturnsAsync(entity);
+
+        // Act
+        var result = await _sut.Handle(new ReadSalesOrderDetailQuery { SalesOrderId = 43663 }, CancellationToken.None);
+
+        // Assert
+        result.Should().NotBeNull();
+        result!.CustomerId.Should().Be(29486);
+        result.CustomerName.Should().Be("Riders Company");
+    }
+
+    [Fact]
+    public async Task Handle_returns_zero_customer_id_and_empty_name_when_customer_is_not_available()
+    {
+        // Arrange
+        var entity = new SalesOrderHeader
+        {
+            SalesOrderId = 43664,
+            SalesOrderNumber = "SO43664",
+            OrderDate = new DateTime(2011, 5, 31),
+            DueDate = new DateTime(2011, 6, 12),
+            Status = 1,
+            CustomerEntity = null,
+            BillToAddressEntity = new AddressEntity
+            {
+                AddressLine1 = "2 Test St",
+                City = "Portland",
+                PostalCode = "97201",
+                StateProvince = new StateProvinceEntity { Name = "Oregon" }
+            },
+            ShipToAddressEntity = new AddressEntity
+            {
+                AddressLine1 = "2 Test St",
+                City = "Portland",
+                PostalCode = "97201",
+                StateProvince = new StateProvinceEntity { Name = "Oregon" }
+            },
+            SalesOrderDetails = []
+        };
+
+        _mockSalesOrderRepository
+            .Setup(x => x.GetSalesOrderDetailAsync(43664, It.IsAny<CancellationToken>()))
+            .ReturnsAsync(entity);
+
+        // Act
+        var result = await _sut.Handle(new ReadSalesOrderDetailQuery { SalesOrderId = 43664 }, CancellationToken.None);
+
+        // Assert
+        result.Should().NotBeNull();
+        result!.CustomerId.Should().Be(0);
+        result.CustomerName.Should().BeEmpty();
     }
 
     [Fact]

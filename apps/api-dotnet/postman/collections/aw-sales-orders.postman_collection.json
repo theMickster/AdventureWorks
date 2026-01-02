@@ -423,6 +423,8 @@
                       "    pm.expect(response.dueDate).to.exist;\r",
                       "    pm.expect(response.status).to.be.a(\"number\");\r",
                       "    pm.expect(response.statusDescription).to.be.a(\"string\");\r",
+                      "    pm.expect(response.customerId).to.be.a(\"number\");\r",
+                      "    pm.expect(response.customerId).to.be.above(0);\r",
                       "    pm.expect(response.subTotal).to.be.a(\"number\");\r",
                       "    pm.expect(response.taxAmt).to.be.a(\"number\");\r",
                       "    pm.expect(response.freight).to.be.a(\"number\");\r",

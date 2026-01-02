@@ -66,6 +66,8 @@ export interface SalesOrderDetail {
   readonly totalDue: number;
   /** Display name of the customer. */
   readonly customerName: string;
+  /** Customer identifier; zero when no customer is available. */
+  readonly customerId: number;
   /** BusinessEntityID of the assigned sales person; null for online orders. */
   readonly salesPersonId: number | null;
   /** Display name of the sales person; null for online orders. */

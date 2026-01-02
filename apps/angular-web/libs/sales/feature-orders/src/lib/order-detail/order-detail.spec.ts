@@ -32,6 +32,7 @@ const mockOrder: SalesOrderDetail = {
   freight: 616.0984,
   totalDue: 23153.2339,
   customerName: 'Jon Yang',
+  customerId: 676,
   salesPersonId: 279,
   salesPersonName: 'Linda Mitchell',
   billToAddress: {
@@ -175,8 +176,37 @@ describe('OrderDetailComponent', () => {
   it('renders line items table with correct row count', () => {
     fixture.detectChanges();
 
-    const rows = fixture.nativeElement.querySelectorAll('#aw-order-detail-line-items tbody tr') as NodeListOf<HTMLElement>;
+    const rows = fixture.nativeElement.querySelectorAll(
+      '#aw-order-detail-line-items tbody tr',
+    ) as NodeListOf<HTMLElement>;
     expect(rows.length).toBe(3);
+  });
+
+  it('renders customer name as a link to the customer profile', () => {
+    fixture.detectChanges();
+
+    const link = fixture.nativeElement.querySelector('#aw-order-detail-customer-link') as HTMLAnchorElement;
+    expect(link).toBeTruthy();
+    expect(link.textContent?.trim()).toBe('Jon Yang');
+    expect(link.getAttribute('href')).toBe('/sales/customers/676');
+  });
+
+  it('shows unknown customer as plain text when customer details are unavailable', () => {
+    const consoleError = vi.spyOn(console, 'error').mockImplementation(() => undefined);
+    vi.spyOn(salesApiService, 'getSalesOrder').mockReturnValue(of({ ...mockOrder, customerName: '', customerId: 0 }));
+
+    try {
+      fixture.detectChanges();
+
+      const link = fixture.nativeElement.querySelector('#aw-order-detail-customer-link');
+      expect(link).toBeNull();
+
+      const none = fixture.nativeElement.querySelector('#aw-order-detail-customer-none') as HTMLElement;
+      expect(none.textContent?.trim()).toBe('Unknown customer');
+      expect(consoleError).not.toHaveBeenCalled();
+    } finally {
+      consoleError.mockRestore();
+    }
   });
 
   it('renders salesperson name as a link when salesPersonName is non-null', () => {

@@ -55,6 +55,9 @@ public sealed class SalesOrderDetailModel
     /// </summary>
     public string CustomerName { get; set; } = string.Empty;
 
+    /// <summary>The customer identifier, or zero when the customer is unavailable.</summary>
+    public int CustomerId { get; set; }
+
     /// <summary>The name of the sales territory, or null if unassigned.</summary>
     public string? TerritoryName { get; set; }
 

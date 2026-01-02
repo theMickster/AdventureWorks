@@ -36,7 +36,17 @@
             </h1>
             <p class="text-sm text-secondary mt-1">
               Customer:
-              <span id="aw-order-detail-customer" class="font-medium text-base-content">{{ o.customerName }}</span>
+              @if (o.customerName && o.customerId) {
+                <a
+                  id="aw-order-detail-customer-link"
+                  [routerLink]="['/sales/customers', o.customerId]"
+                  class="font-medium text-primary hover:underline"
+                >
+                  {{ o.customerName }}
+                </a>
+              } @else {
+                <span id="aw-order-detail-customer-none" class="font-medium text-base-content">Unknown customer</span>
+              }
             </p>
           </div>
           <aw-status-badge

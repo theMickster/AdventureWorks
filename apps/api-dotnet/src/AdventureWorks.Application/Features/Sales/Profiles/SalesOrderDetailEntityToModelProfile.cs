@@ -20,6 +20,7 @@ public sealed class SalesOrderDetailEntityToModelProfile : Profile
             .ForMember(dest => dest.SalesPersonId, opt => opt.MapFrom(src => src.SalesPersonId))
             .ForMember(dest => dest.SalesPersonName, opt => opt.MapFrom<DetailSalesPersonNameResolver>())
             .ForMember(dest => dest.CustomerName, opt => opt.MapFrom<DetailCustomerNameResolver>())
+            .ForMember(dest => dest.CustomerId, opt => opt.MapFrom(src => src.CustomerEntity != null ? src.CustomerEntity.CustomerId : 0))
             .ForMember(dest => dest.TerritoryName, opt => opt.MapFrom(src => src.TerritoryEntity != null ? src.TerritoryEntity.Name : null))
             .ForMember(dest => dest.BillToAddress, opt => opt.MapFrom(src => src.BillToAddressEntity))
             .ForMember(dest => dest.ShipToAddress, opt => opt.MapFrom(src => src.ShipToAddressEntity))
