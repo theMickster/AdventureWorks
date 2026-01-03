@@ -1,0 +1,46 @@
+<div id="aw-manufacturing-kpi-dashboard-page">
+  <div id="aw-manufacturing-kpi-dashboard-header" class="mb-6">
+    <h1 id="aw-manufacturing-kpi-dashboard-title" class="text-2xl font-bold text-base-content">
+      Manufacturing Dashboard
+    </h1>
+  </div>
+
+  @if (isLoading()) {
+    <div id="aw-manufacturing-kpi-dashboard-loading" class="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-4">
+      <aw-skeleton id="aw-manufacturing-kpi-dashboard-skeleton-1" height="6rem" />
+      <aw-skeleton id="aw-manufacturing-kpi-dashboard-skeleton-2" height="6rem" />
+      <aw-skeleton id="aw-manufacturing-kpi-dashboard-skeleton-3" height="6rem" />
+      <aw-skeleton id="aw-manufacturing-kpi-dashboard-skeleton-4" height="6rem" />
+    </div>
+  } @else if (hasError()) {
+    <aw-empty-state
+      fieldId="aw-manufacturing-kpi-dashboard-error"
+      icon="fa-solid fa-circle-exclamation"
+      title="Manufacturing data unavailable"
+      description="Please go back and try again."
+    />
+  } @else if (kpis(); as data) {
+    <div id="aw-manufacturing-kpi-dashboard-tiles" class="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-4">
+      <aw-card fieldId="aw-manufacturing-kpi-total-work-orders" title="Total Work Orders">
+        <p id="aw-manufacturing-kpi-total-work-orders-value" class="text-2xl font-bold text-primary">
+          {{ data.totalWorkOrders }}
+        </p>
+      </aw-card>
+      <aw-card fieldId="aw-manufacturing-kpi-yield-rate" title="Yield Rate">
+        <p id="aw-manufacturing-kpi-yield-rate-value" class="text-2xl font-bold text-primary">
+          {{ data.overallYieldPct }}%
+        </p>
+      </aw-card>
+      <aw-card fieldId="aw-manufacturing-kpi-scrap-rate" title="Scrap Rate">
+        <p id="aw-manufacturing-kpi-scrap-rate-value" class="text-2xl font-bold text-primary">
+          {{ data.overallScrapPct }}%
+        </p>
+      </aw-card>
+      <aw-card fieldId="aw-manufacturing-kpi-total-units-scrapped" title="Total Units Scrapped">
+        <p id="aw-manufacturing-kpi-total-units-scrapped-value" class="text-2xl font-bold text-primary">
+          {{ data.totalScrapped }}
+        </p>
+      </aw-card>
+    </div>
+  }
+</div>

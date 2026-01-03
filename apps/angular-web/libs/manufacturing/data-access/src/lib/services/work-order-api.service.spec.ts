@@ -5,6 +5,7 @@ import { ENVIRONMENT } from '@adventureworks-web/shared/util';
 import type { SearchResult } from '@adventureworks-web/shared/data-access';
 import type { WorkOrder } from '../models/work-order.model';
 import type { WorkOrderDetail } from '../models/work-order-detail.model';
+import type { ManufacturingKpisDto } from '../models/manufacturing-kpis.model';
 import { WorkOrderApiService } from './work-order-api.service';
 
 const mockEnvironment = {
@@ -86,7 +87,9 @@ describe('WorkOrderApiService', () => {
       expect(result).toEqual(mockData);
     });
 
-    const req = httpTesting.expectOne(`${BASE_URL}/v1/work-orders?pageNumber=2&pageSize=25&orderBy=dueDate&sortOrder=asc`);
+    const req = httpTesting.expectOne(
+      `${BASE_URL}/v1/work-orders?pageNumber=2&pageSize=25&orderBy=dueDate&sortOrder=asc`,
+    );
     expect(req.request.method).toBe('GET');
     req.flush(mockData);
   });
@@ -151,6 +154,25 @@ describe('WorkOrderApiService', () => {
     const req = httpTesting.expectOne(`${BASE_URL}/v1/work-orders/41`);
     expect(req.request.method).toBe('GET');
     req.flush(mockDetail);
+  });
+
+  it('should GET manufacturing KPIs', () => {
+    const mockData: ManufacturingKpisDto = {
+      totalWorkOrders: 72591,
+      totalOrdered: 100000,
+      totalStocked: 99000,
+      totalScrapped: 1000,
+      overallYieldPct: 99,
+      overallScrapPct: 1,
+    };
+
+    service.getKpis().subscribe((result) => {
+      expect(result).toEqual(mockData);
+    });
+
+    const req = httpTesting.expectOne(`${BASE_URL}/v1/manufacturing/kpis`);
+    expect(req.request.method).toBe('GET');
+    req.flush(mockData);
   });
 
   it('should pass through a 404 error when the work order does not exist', () => {

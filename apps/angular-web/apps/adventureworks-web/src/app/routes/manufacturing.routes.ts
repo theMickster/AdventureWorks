@@ -1,7 +1,13 @@
 import { Route } from '@angular/router';
 
 export const manufacturingRoutes: Route[] = [
-  { path: '', redirectTo: 'work-orders', pathMatch: 'full' },
+  {
+    path: '',
+    title: 'Manufacturing Dashboard',
+    data: { breadcrumb: 'Manufacturing Dashboard' },
+    loadComponent: () =>
+      import('@adventureworks-web/manufacturing/feature-work-orders').then((m) => m.ManufacturingKpiDashboardComponent),
+  },
   {
     path: 'work-orders',
     title: 'Work Orders',
