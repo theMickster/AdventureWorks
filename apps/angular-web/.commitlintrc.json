@@ -2,6 +2,11 @@
   "extends": ["@commitlint/config-conventional"],
   "rules": {
     "type-empty": [1, "never"],
+    "type-enum": [
+      2,
+      "always",
+      ["build", "chore", "ci", "deps", "docs", "feat", "fix", "perf", "refactor", "revert", "style", "test"]
+    ],
     "subject-empty": [1, "never"],
     "scope-enum": [1, "always", ["api", "web", "db", "auth", "sales", "hr", "shared", "app", "e2e", "deps", "ci"]]
   }

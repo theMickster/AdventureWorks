@@ -11,5 +11,8 @@
     "@types/node": "^20.19.9",
     "tsx": "^4.19.0",
     "vitest": "^4.1.0"
+  },
+  "overrides": {
+    "postcss": ">=8.5.23"
   }
 }
