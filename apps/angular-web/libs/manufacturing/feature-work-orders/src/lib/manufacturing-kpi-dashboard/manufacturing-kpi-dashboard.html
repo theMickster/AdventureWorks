@@ -43,4 +43,138 @@
       </aw-card>
     </div>
   }
+
+  @if (isScorecardLoading()) {
+    <div id="aw-manufacturing-quality-scorecard-loading" class="grid grid-cols-1 gap-6 lg:grid-cols-3">
+      <aw-card fieldId="aw-manufacturing-quality-scorecard-top-scrapped-loading" [loading]="true" />
+      <aw-card fieldId="aw-manufacturing-quality-scorecard-bottom-yield-loading" [loading]="true" />
+      <aw-card fieldId="aw-manufacturing-quality-scorecard-scrap-reasons-loading" [loading]="true" />
+    </div>
+  } @else if (hasScorecardError()) {
+    <aw-empty-state
+      fieldId="aw-manufacturing-quality-scorecard-error"
+      icon="fa-solid fa-circle-exclamation"
+      title="Quality scorecard unavailable"
+      description="Please go back and try again."
+    />
+  } @else if (scorecard(); as data) {
+    <div id="aw-manufacturing-quality-scorecard" class="grid grid-cols-1 gap-6 lg:grid-cols-3">
+      <aw-card fieldId="aw-manufacturing-quality-scorecard-top-scrapped" title="Top 5 Products by Scrap">
+        @if (data.top5ByScrapped.length === 0) {
+          <aw-empty-state
+            fieldId="aw-manufacturing-quality-scorecard-top-scrapped-empty"
+            title="No scrap data"
+            description="No products have recorded scrap."
+          />
+        } @else {
+          <div class="overflow-x-auto">
+            <table class="table table-zebra w-full">
+              <thead>
+                <tr>
+                  <th>Product</th>
+                  <th class="text-right">Scrapped</th>
+                  <th class="text-right">Scrap %</th>
+                </tr>
+              </thead>
+              <tbody>
+                @for (product of data.top5ByScrapped; track product.productId) {
+                  <tr>
+                    <td>
+                      <a
+                        class="link link-primary font-medium"
+                        [routerLink]="['/manufacturing/work-orders']"
+                        [queryParams]="{ productId: product.productId }"
+                      >
+                        {{ product.productName }}
+                      </a>
+                    </td>
+                    <td class="text-right">{{ product.scrappedQty | number }}</td>
+                    <td class="text-right">{{ product.scrapPct }}%</td>
+                  </tr>
+                }
+              </tbody>
+            </table>
+          </div>
+        }
+      </aw-card>
+
+      <aw-card fieldId="aw-manufacturing-quality-scorecard-bottom-yield" title="Bottom 5 Products by Yield">
+        @if (data.bottom5ByYield.length === 0) {
+          <aw-empty-state
+            fieldId="aw-manufacturing-quality-scorecard-bottom-yield-empty"
+            title="No yield data"
+            description="No products have positive ordered quantities."
+          />
+        } @else {
+          <div class="overflow-x-auto">
+            <table class="table table-zebra w-full">
+              <thead>
+                <tr>
+                  <th>Product</th>
+                  <th class="text-right">Stocked</th>
+                  <th class="text-right">Yield %</th>
+                </tr>
+              </thead>
+              <tbody>
+                @for (product of data.bottom5ByYield; track product.productId) {
+                  <tr>
+                    <td>
+                      <a
+                        class="link link-primary font-medium"
+                        [routerLink]="['/manufacturing/work-orders']"
+                        [queryParams]="{ productId: product.productId }"
+                      >
+                        {{ product.productName }}
+                      </a>
+                    </td>
+                    <td class="text-right">{{ product.stockedQty | number }}</td>
+                    <td class="text-right">{{ product.yieldPct }}%</td>
+                  </tr>
+                }
+              </tbody>
+            </table>
+          </div>
+        }
+      </aw-card>
+
+      <aw-card fieldId="aw-manufacturing-quality-scorecard-scrap-reasons" title="Scrap by Reason">
+        @if (data.scrapReasonBreakdown.length === 0) {
+          <aw-empty-state
+            fieldId="aw-manufacturing-quality-scorecard-scrap-reasons-empty"
+            title="No scrap reasons"
+            description="No scrap has been recorded by reason."
+          />
+        } @else {
+          <div class="overflow-x-auto">
+            <table class="table table-zebra w-full">
+              <thead>
+                <tr>
+                  <th>Reason</th>
+                  <th class="text-right">Scrapped</th>
+                  <th class="text-right">Share</th>
+                </tr>
+              </thead>
+              <tbody>
+                @for (reason of data.scrapReasonBreakdown; track reason.scrapReasonId) {
+                  <tr>
+                    <td>
+                      <a
+                        class="link link-primary font-medium"
+                        [routerLink]="['/manufacturing/work-orders']"
+                        [queryParams]="{ scrapReasonId: reason.scrapReasonId }"
+                      >
+                        {{ reason.scrapReasonName }}
+                      </a>
+                    </td>
+                    <td class="text-right">{{ reason.scrappedQty | number }}</td>
+                    <td class="text-right">{{ reason.scrapPct }}%</td>
+                  </tr>
+                }
+              </tbody>
+            </table>
+          </div>
+        }
+      </aw-card>
+    </div>
+  }
 </div>

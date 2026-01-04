@@ -7,6 +7,7 @@ import type { WorkOrder } from '../models/work-order.model';
 import type { WorkOrderDetail } from '../models/work-order-detail.model';
 import type { WorkOrderParams } from '../models/work-order-params.model';
 import type { ManufacturingKpisDto } from '../models/manufacturing-kpis.model';
+import type { ManufacturingQualityScorecard } from '../models/manufacturing-quality-scorecard.model';
 
 /** HTTP client for Manufacturing domain endpoints (Work Orders and KPIs). */
 @Injectable({ providedIn: 'root' })
@@ -27,5 +28,10 @@ export class WorkOrderApiService {
   /** Fetches aggregate manufacturing KPIs from GET /v1/manufacturing/kpis. */
   getKpis(): Observable<ManufacturingKpisDto> {
     return this.apiService.get<ManufacturingKpisDto>('/v1/manufacturing/kpis');
+  }
+
+  /** Fetches the manufacturing quality scorecard from GET /v1/manufacturing/quality-scorecard. */
+  getQualityScorecard(): Observable<ManufacturingQualityScorecard> {
+    return this.apiService.get<ManufacturingQualityScorecard>('/v1/manufacturing/quality-scorecard');
   }
 }

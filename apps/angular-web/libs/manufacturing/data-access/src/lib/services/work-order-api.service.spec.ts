@@ -6,6 +6,7 @@ import type { SearchResult } from '@adventureworks-web/shared/data-access';
 import type { WorkOrder } from '../models/work-order.model';
 import type { WorkOrderDetail } from '../models/work-order-detail.model';
 import type { ManufacturingKpisDto } from '../models/manufacturing-kpis.model';
+import type { ManufacturingQualityScorecard } from '../models/manufacturing-quality-scorecard.model';
 import { WorkOrderApiService } from './work-order-api.service';
 
 const mockEnvironment = {
@@ -171,6 +172,22 @@ describe('WorkOrderApiService', () => {
     });
 
     const req = httpTesting.expectOne(`${BASE_URL}/v1/manufacturing/kpis`);
+    expect(req.request.method).toBe('GET');
+    req.flush(mockData);
+  });
+
+  it('should GET the manufacturing quality scorecard', () => {
+    const mockData: ManufacturingQualityScorecard = {
+      top5ByScrapped: [],
+      bottom5ByYield: [],
+      scrapReasonBreakdown: [],
+    };
+
+    service.getQualityScorecard().subscribe((result) => {
+      expect(result).toEqual(mockData);
+    });
+
+    const req = httpTesting.expectOne(`${BASE_URL}/v1/manufacturing/quality-scorecard`);
     expect(req.request.method).toBe('GET');
     req.flush(mockData);
   });
