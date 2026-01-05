@@ -1,0 +1,12 @@
+<Project Sdk="Microsoft.NET.Sdk.Web">
+  <PropertyGroup>
+    <TargetFramework>net10.0</TargetFramework>
+    <Nullable>enable</Nullable>
+    <ImplicitUsings>enable</ImplicitUsings>
+  </PropertyGroup>
+  <ItemGroup>
+    <PackageReference Include="Azure.Messaging.ServiceBus" Version="7.20.2" />
+    <PackageReference Include="Microsoft.Data.SqlClient" Version="6.1.3" />
+    <ProjectReference Include="../../src/AdventureWorks.SalesOrderSaga.Contracts/AdventureWorks.SalesOrderSaga.Contracts.csproj" />
+  </ItemGroup>
+</Project>

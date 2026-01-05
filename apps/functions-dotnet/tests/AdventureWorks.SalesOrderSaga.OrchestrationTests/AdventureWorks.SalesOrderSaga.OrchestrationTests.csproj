@@ -1,0 +1,33 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <!-- Optional, second test layer (US 807 plan §6) — drives CheckInventorySubOrchestratorCore
+       and SalesOrderSagaOrchestratorCore through the real in-memory Durable Task engine via
+       Microsoft.DurableTask.InProcessTestHost, instead of mocking TaskOrchestrationContext.
+       That package is preview-only (no stable release as of this writing) — see this app's
+       CLAUDE.md Testing section for the preview-status caveat. -->
+
+  <PropertyGroup>
+    <TargetFramework>net10.0</TargetFramework>
+    <ImplicitUsings>enable</ImplicitUsings>
+    <Nullable>enable</Nullable>
+    <IsPackable>false</IsPackable>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <PackageReference Include="coverlet.collector" Version="10.0.1" />
+    <PackageReference Include="Microsoft.DurableTask.InProcessTestHost" Version="0.2.3-preview.1" />
+    <PackageReference Include="Microsoft.EntityFrameworkCore.InMemory" Version="10.0.9" />
+    <PackageReference Include="Microsoft.NET.Test.Sdk" Version="18.8.1" />
+    <PackageReference Include="xunit.v3" Version="3.2.2" />
+    <PackageReference Include="xunit.runner.visualstudio" Version="3.1.5" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Using Include="Xunit" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\..\src\AdventureWorks.SalesOrderSaga\AdventureWorks.SalesOrderSaga.csproj" />
+  </ItemGroup>
+
+</Project>

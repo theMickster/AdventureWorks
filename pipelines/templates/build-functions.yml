@@ -7,13 +7,16 @@ parameters:
     default: "apps/functions-dotnet/AdventureWorks.Functions.sln"
   - name: project
     type: string
-    default: "apps/functions-dotnet/src/AdventureWorks.Functions.SalesOrderSaga/AdventureWorks.Functions.SalesOrderSaga.csproj"
+    default: "apps/functions-dotnet/src/AdventureWorks.SalesOrderSaga/AdventureWorks.SalesOrderSaga.csproj"
   - name: testProject
     type: string
-    default: "apps/functions-dotnet/tests/AdventureWorks.Functions.SalesOrderSaga.UnitTests/AdventureWorks.Functions.SalesOrderSaga.UnitTests.csproj"
+    default: "apps/functions-dotnet/tests/AdventureWorks.SalesOrderSaga.UnitTests/AdventureWorks.SalesOrderSaga.UnitTests.csproj"
   - name: orchestrationTestProject
     type: string
-    default: "apps/functions-dotnet/tests/AdventureWorks.Functions.SalesOrderSaga.OrchestrationTests/AdventureWorks.Functions.SalesOrderSaga.OrchestrationTests.csproj"
+    default: "apps/functions-dotnet/tests/AdventureWorks.SalesOrderSaga.OrchestrationTests/AdventureWorks.SalesOrderSaga.OrchestrationTests.csproj"
+  - name: harnessTestProject
+    type: string
+    default: "apps/functions-dotnet/tests/AdventureWorks.SalesOrderSaga.TestHarness.Tests/AdventureWorks.SalesOrderSaga.TestHarness.Tests.csproj"
   - name: buildConfiguration
     type: string
     default: "Release"
@@ -68,6 +71,15 @@ steps:
       command: test
       projects: "${{ parameters.orchestrationTestProject }}"
       testRunTitle: "AdventureWorks.Functions OrchestrationTests - $(Build.BuildNumber)"
+      publishTestResults: true
+      arguments: '--configuration ${{ parameters.buildConfiguration }} --no-build --collect "XPlat Code Coverage" --verbosity $(dotnetVerbosity)'
+
+  - task: DotNetCoreCLI@2
+    displayName: "Run saga harness tests"
+    inputs:
+      command: test
+      projects: "${{ parameters.harnessTestProject }}"
+      testRunTitle: "AdventureWorks.SagaTestHarness - $(Build.BuildNumber)"
       publishTestResults: true
       arguments: '--configuration ${{ parameters.buildConfiguration }} --no-build --collect "XPlat Code Coverage" --verbosity $(dotnetVerbosity)'
 

@@ -1,3 +1,6 @@
 <Solution>
+  <Project Path="../../apps/functions-dotnet/src/AdventureWorks.SalesOrderSaga.Contracts/AdventureWorks.SalesOrderSaga.Contracts.csproj" />
+  <Project Path="../../apps/functions-dotnet/tests/AdventureWorks.SalesOrderSaga.TestHarness.Tests/AdventureWorks.SalesOrderSaga.TestHarness.Tests.csproj" />
+  <Project Path="../../apps/functions-dotnet/tests/AdventureWorks.SalesOrderSaga.TestHarness/AdventureWorks.SalesOrderSaga.TestHarness.csproj" />
   <Project Path="AdventureWorks.AppHost/AdventureWorks.AppHost.csproj" />
 </Solution>

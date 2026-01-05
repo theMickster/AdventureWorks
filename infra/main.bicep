@@ -33,6 +33,9 @@ param webRuntimeStack string = 'NODE|24-lts'
 @description('Whether to deploy the Sales Order Saga Function App slice (Feature 608/610). Dev-only for now — prod stays false until a later story provisions it.')
 param deploySalesOrderSaga bool = false
 
+@description('Required base URL for the payment authorization service.')
+param paymentAuthorizationBaseUrl string
+
 // --- Naming ---
 var envSuffix = environment == 'prod' ? '' : '-${environment}'
 var apiAppName = '${namingPrefix}-api${envSuffix}'
@@ -45,6 +48,7 @@ var salesOrderSagaFunctionAppName = '${namingPrefix}-saga${envSuffix}'
 var salesOrderSagaStorageAccountName = toLower('awsagafn${environment}')
 var salesOrderSagaTopicName = 'sales-order-events'
 var salesOrderSagaSubscriptionName = 'sales-order-saga'
+var salesOrderSagaPaymentSubscriptionName = 'sales-order-payment-results'
 
 // --- Tags ---
 var tags = {
@@ -130,6 +134,7 @@ module salesOrderSagaServiceBus 'modules/serviceBus.bicep' = if (deploySalesOrde
     location: location
     topicName: salesOrderSagaTopicName
     subscriptionName: salesOrderSagaSubscriptionName
+    paymentSubscriptionName: salesOrderSagaPaymentSubscriptionName
     publisherPrincipalId: apiAppService.outputs.principalId
     subscriberPrincipalId: salesOrderSagaFunctionApp.outputs.principalId
     tags: tags
@@ -147,6 +152,8 @@ module salesOrderSagaFunctionApp 'modules/functionApp.bicep' = if (deploySalesOr
     serviceBusFullyQualifiedNamespace: '${serviceBusNamespaceName}.servicebus.windows.net'
     serviceBusTopicName: salesOrderSagaTopicName
     serviceBusSubscriptionName: salesOrderSagaSubscriptionName
+    serviceBusPaymentSubscriptionName: salesOrderSagaPaymentSubscriptionName
+    paymentAuthorizationBaseUrl: paymentAuthorizationBaseUrl
     appInsightsConnectionString: appInsights.properties.ConnectionString
     tags: tags
   }

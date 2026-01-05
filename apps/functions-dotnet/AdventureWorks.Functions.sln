@@ -5,13 +5,19 @@ VisualStudioVersion = 17.0.31903.59
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "src", "src", "{827E0CD3-B72D-47B6-A68D-7590B98EB39B}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "AdventureWorks.Functions.SalesOrderSaga", "src\AdventureWorks.Functions.SalesOrderSaga\AdventureWorks.Functions.SalesOrderSaga.csproj", "{5F5D16E6-1054-4EDC-93B7-21FFDAA24F6D}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "AdventureWorks.SalesOrderSaga", "src\AdventureWorks.SalesOrderSaga\AdventureWorks.SalesOrderSaga.csproj", "{5F5D16E6-1054-4EDC-93B7-21FFDAA24F6D}"
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "tests", "tests", "{0AB3BF05-4346-4AA6-1389-037BE0695223}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "AdventureWorks.Functions.SalesOrderSaga.UnitTests", "tests\AdventureWorks.Functions.SalesOrderSaga.UnitTests\AdventureWorks.Functions.SalesOrderSaga.UnitTests.csproj", "{FB994525-D3A9-4CAD-B21F-A58B44C15E8B}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "AdventureWorks.SalesOrderSaga.UnitTests", "tests\AdventureWorks.SalesOrderSaga.UnitTests\AdventureWorks.SalesOrderSaga.UnitTests.csproj", "{FB994525-D3A9-4CAD-B21F-A58B44C15E8B}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "AdventureWorks.Functions.SalesOrderSaga.OrchestrationTests", "tests\AdventureWorks.Functions.SalesOrderSaga.OrchestrationTests\AdventureWorks.Functions.SalesOrderSaga.OrchestrationTests.csproj", "{C4303623-DEFE-4262-893E-D989E2E103E6}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "AdventureWorks.SalesOrderSaga.OrchestrationTests", "tests\AdventureWorks.SalesOrderSaga.OrchestrationTests\AdventureWorks.SalesOrderSaga.OrchestrationTests.csproj", "{C4303623-DEFE-4262-893E-D989E2E103E6}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "AdventureWorks.SalesOrderSaga.Contracts", "src\AdventureWorks.SalesOrderSaga.Contracts\AdventureWorks.SalesOrderSaga.Contracts.csproj", "{1729F08A-387D-449D-BACE-C502897D5DDE}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "AdventureWorks.SalesOrderSaga.TestHarness", "tests\AdventureWorks.SalesOrderSaga.TestHarness\AdventureWorks.SalesOrderSaga.TestHarness.csproj", "{992CB583-EB0C-447F-9493-4C9AED6E7228}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "AdventureWorks.SalesOrderSaga.TestHarness.Tests", "tests\AdventureWorks.SalesOrderSaga.TestHarness.Tests\AdventureWorks.SalesOrderSaga.TestHarness.Tests.csproj", "{0EA94772-75CA-47CA-9C53-BB461277AB28}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -59,13 +65,52 @@ Global
 		{C4303623-DEFE-4262-893E-D989E2E103E6}.Release|x64.Build.0 = Release|Any CPU
 		{C4303623-DEFE-4262-893E-D989E2E103E6}.Release|x86.ActiveCfg = Release|Any CPU
 		{C4303623-DEFE-4262-893E-D989E2E103E6}.Release|x86.Build.0 = Release|Any CPU
+		{1729F08A-387D-449D-BACE-C502897D5DDE}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{1729F08A-387D-449D-BACE-C502897D5DDE}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{1729F08A-387D-449D-BACE-C502897D5DDE}.Debug|x64.ActiveCfg = Debug|Any CPU
+		{1729F08A-387D-449D-BACE-C502897D5DDE}.Debug|x64.Build.0 = Debug|Any CPU
+		{1729F08A-387D-449D-BACE-C502897D5DDE}.Debug|x86.ActiveCfg = Debug|Any CPU
+		{1729F08A-387D-449D-BACE-C502897D5DDE}.Debug|x86.Build.0 = Debug|Any CPU
+		{1729F08A-387D-449D-BACE-C502897D5DDE}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{1729F08A-387D-449D-BACE-C502897D5DDE}.Release|Any CPU.Build.0 = Release|Any CPU
+		{1729F08A-387D-449D-BACE-C502897D5DDE}.Release|x64.ActiveCfg = Release|Any CPU
+		{1729F08A-387D-449D-BACE-C502897D5DDE}.Release|x64.Build.0 = Release|Any CPU
+		{1729F08A-387D-449D-BACE-C502897D5DDE}.Release|x86.ActiveCfg = Release|Any CPU
+		{1729F08A-387D-449D-BACE-C502897D5DDE}.Release|x86.Build.0 = Release|Any CPU
+		{992CB583-EB0C-447F-9493-4C9AED6E7228}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{992CB583-EB0C-447F-9493-4C9AED6E7228}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{992CB583-EB0C-447F-9493-4C9AED6E7228}.Debug|x64.ActiveCfg = Debug|Any CPU
+		{992CB583-EB0C-447F-9493-4C9AED6E7228}.Debug|x64.Build.0 = Debug|Any CPU
+		{992CB583-EB0C-447F-9493-4C9AED6E7228}.Debug|x86.ActiveCfg = Debug|Any CPU
+		{992CB583-EB0C-447F-9493-4C9AED6E7228}.Debug|x86.Build.0 = Debug|Any CPU
+		{992CB583-EB0C-447F-9493-4C9AED6E7228}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{992CB583-EB0C-447F-9493-4C9AED6E7228}.Release|Any CPU.Build.0 = Release|Any CPU
+		{992CB583-EB0C-447F-9493-4C9AED6E7228}.Release|x64.ActiveCfg = Release|Any CPU
+		{992CB583-EB0C-447F-9493-4C9AED6E7228}.Release|x64.Build.0 = Release|Any CPU
+		{992CB583-EB0C-447F-9493-4C9AED6E7228}.Release|x86.ActiveCfg = Release|Any CPU
+		{992CB583-EB0C-447F-9493-4C9AED6E7228}.Release|x86.Build.0 = Release|Any CPU
+		{0EA94772-75CA-47CA-9C53-BB461277AB28}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{0EA94772-75CA-47CA-9C53-BB461277AB28}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{0EA94772-75CA-47CA-9C53-BB461277AB28}.Debug|x64.ActiveCfg = Debug|Any CPU
+		{0EA94772-75CA-47CA-9C53-BB461277AB28}.Debug|x64.Build.0 = Debug|Any CPU
+		{0EA94772-75CA-47CA-9C53-BB461277AB28}.Debug|x86.ActiveCfg = Debug|Any CPU
+		{0EA94772-75CA-47CA-9C53-BB461277AB28}.Debug|x86.Build.0 = Debug|Any CPU
+		{0EA94772-75CA-47CA-9C53-BB461277AB28}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{0EA94772-75CA-47CA-9C53-BB461277AB28}.Release|Any CPU.Build.0 = Release|Any CPU
+		{0EA94772-75CA-47CA-9C53-BB461277AB28}.Release|x64.ActiveCfg = Release|Any CPU
+		{0EA94772-75CA-47CA-9C53-BB461277AB28}.Release|x64.Build.0 = Release|Any CPU
+		{0EA94772-75CA-47CA-9C53-BB461277AB28}.Release|x86.ActiveCfg = Release|Any CPU
+		{0EA94772-75CA-47CA-9C53-BB461277AB28}.Release|x86.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
 	EndGlobalSection
 	GlobalSection(NestedProjects) = preSolution
 		{5F5D16E6-1054-4EDC-93B7-21FFDAA24F6D} = {827E0CD3-B72D-47B6-A68D-7590B98EB39B}
+		{1729F08A-387D-449D-BACE-C502897D5DDE} = {827E0CD3-B72D-47B6-A68D-7590B98EB39B}
 		{FB994525-D3A9-4CAD-B21F-A58B44C15E8B} = {0AB3BF05-4346-4AA6-1389-037BE0695223}
 		{C4303623-DEFE-4262-893E-D989E2E103E6} = {0AB3BF05-4346-4AA6-1389-037BE0695223}
+		{992CB583-EB0C-447F-9493-4C9AED6E7228} = {0AB3BF05-4346-4AA6-1389-037BE0695223}
+		{0EA94772-75CA-47CA-9C53-BB461277AB28} = {0AB3BF05-4346-4AA6-1389-037BE0695223}
 	EndGlobalSection
 EndGlobal

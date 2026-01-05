@@ -25,6 +25,9 @@
                   "    const body = pm.response.json();",
                   "    pm.test(\"Response has instanceId\", () => pm.expect(body.instanceId).to.be.a(\"string\"));",
                   "    pm.test(\"Response has runtimeStatus\", () => pm.expect(body.runtimeStatus).to.be.a(\"string\"));",
+                  "    if (body.result) {",
+                  "        pm.test(\"Terminal saga status is recognized\", () => pm.expect(body.result.status).to.be.oneOf([\"Approved\", \"PaymentDeclined\", \"PaymentTimedOut\", \"CompensationFailed\", \"ValidationFailed\", \"InsufficientStock\"]));",
+                  "    }",
                   "}"
                 ]
               }

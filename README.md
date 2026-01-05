@@ -28,21 +28,17 @@ Adventure Works is a modern enterprise application built with **.NET 10**, **Ang
 - [SQL Server](https://www.microsoft.com/en-us/sql-server/) (local or Docker)
 - [SQL Server Management Studio](https://docs.microsoft.com/en-us/sql/ssms/download-sql-server-management-studio-ssms)
 
-### Quick Start
+### Quick Start (canonical local stack)
 
 ```bash
-# Backend API
-cd apps/api-dotnet
-dotnet restore && dotnet run
-
-# Frontend (separate terminal)
-cd apps/angular-web
-npm install && npx nx serve adventureworks-web
+dotnet run --project tools/aspire/AdventureWorks.AppHost
 ```
+
+The Aspire dashboard starts the API, Angular app, Functions, Azurite, Service Bus emulator, and the Sales Order Saga test harness. Configure `ConnectionStrings:DefaultConnection` in the AppHost user secrets first; see [`tools/aspire/README.md`](tools/aspire/README.md) for setup and dashboard smoke-test commands.
 
 ### Local Development Dashboard (Aspire)
 
-For a single-command launch of all services with a live dashboard — API, Angular, database migrations, and SQL Server health — see [`tools/aspire/README.md`](tools/aspire/README.md).
+For the containerized API/web-only workflow, see [`docker/README.md`](docker/README.md). Aspire remains the unified local-development workflow.
 
 ## Project Structure
 
@@ -51,11 +47,14 @@ AdventureWorks/
 ├── apps/
 │   ├── angular-web/             # Angular 21 SPA (Nx monorepo)
 │   ├── api-dotnet/              # .NET 10 REST API (Clean Architecture)
-│   └── functions-dotnet/        # .NET 10 isolated Azure Functions (Sales Order Saga orchestrator)
+│   └── functions-dotnet/        # .NET 10 isolated Azure Functions
+│       ├── src/                 # Sales Order Saga and its shared wire contracts
+│       └── tests/               # Unit, orchestration, harness, and harness test projects
 ├── database/
 │   ├── dbup/                    # DbUp migration runner and SQL scripts
 │   └── sql-change-automation/   # SQL Server Database Project (schema migrations)
 ├── docs/                        # Shared documentation
+├── docker/                      # Containerized API/web-only Compose workflow
 ├── infra/                       # Bicep IaC templates (Azure App Service, SQL, Key Vault)
 ├── pipelines/                   # Azure DevOps CI/CD pipeline templates
 └── tools/

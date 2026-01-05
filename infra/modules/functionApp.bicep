@@ -28,6 +28,12 @@ param serviceBusTopicName string
 @description('Name of the sales order saga Service Bus subscription')
 param serviceBusSubscriptionName string
 
+@description('Name of the payment-result Service Bus subscription')
+param serviceBusPaymentSubscriptionName string
+
+@description('Base URL of the payment authorization service')
+param paymentAuthorizationBaseUrl string
+
 @description('Application Insights connection string for this Function App')
 param appInsightsConnectionString string = ''
 
@@ -90,6 +96,8 @@ resource functionApp 'Microsoft.Web/sites@2024-04-01' = {
           { name: 'ServiceBusConnection__fullyQualifiedNamespace', value: serviceBusFullyQualifiedNamespace }
           { name: 'ServiceBusSalesOrderEventsTopicName', value: serviceBusTopicName }
           { name: 'ServiceBusSalesOrderSagaSubscriptionName', value: serviceBusSubscriptionName }
+          { name: 'ServiceBusSalesOrderPaymentSubscriptionName', value: serviceBusPaymentSubscriptionName }
+          { name: 'PaymentAuthorization__BaseUrl', value: paymentAuthorizationBaseUrl }
         ],
         empty(appInsightsConnectionString)
           ? []

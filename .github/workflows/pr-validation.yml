@@ -103,14 +103,19 @@ jobs:
         run: dotnet build AdventureWorks.Functions.sln --configuration Release --no-restore
 
       - name: Test
-        run: dotnet test tests/AdventureWorks.Functions.SalesOrderSaga.UnitTests/AdventureWorks.Functions.SalesOrderSaga.UnitTests.csproj --configuration Release --no-build --verbosity normal --logger "trx;LogFileName=test-results.trx" --collect:"XPlat Code Coverage"
+        run: dotnet test tests/AdventureWorks.SalesOrderSaga.UnitTests/AdventureWorks.SalesOrderSaga.UnitTests.csproj --configuration Release --no-build --verbosity normal --logger "trx;LogFileName=test-results.trx" --collect:"XPlat Code Coverage"
+
+      - name: Test saga harness
+        run: dotnet test tests/AdventureWorks.SalesOrderSaga.TestHarness.Tests/AdventureWorks.SalesOrderSaga.TestHarness.Tests.csproj --configuration Release --no-build --verbosity normal --logger "trx;LogFileName=test-results.trx" --collect:"XPlat Code Coverage"
 
       - name: Test Report
         uses: dorny/test-reporter@31a54ee7ebcacc03a09ea97a7e5465a47b84aea5 # v1.9.1
         if: always()
         with:
           name: Functions Test Results
-          path: apps/functions-dotnet/**/test-results.trx
+          path: |
+            apps/functions-dotnet/**/test-results.trx
+            apps/functions-dotnet/tests/AdventureWorks.SalesOrderSaga.TestHarness.Tests/**/test-results.trx
           reporter: dotnet-trx
 
   angular:

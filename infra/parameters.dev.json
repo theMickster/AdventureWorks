@@ -8,6 +8,7 @@
     "appInsightsName": { "value": "mick-adventureworks" },
     "keyVaultName": { "value": "MickKeyVaultWestUS" },
     "keyVaultResourceGroup": { "value": "Mick-West-US-DotNetDevTest" },
-    "deploySalesOrderSaga": { "value": true }
+    "deploySalesOrderSaga": { "value": true },
+    "paymentAuthorizationBaseUrl": { "value": "https://payment-authorization.dev.example.com/" }
   }
 }

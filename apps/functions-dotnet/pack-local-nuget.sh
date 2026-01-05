@@ -2,7 +2,7 @@
 # Packs AdventureWorks.Domain and AdventureWorks.Application — plus their ProjectReference
 # dependencies AdventureWorks.Common and AdventureWorks.Models, which `dotnet pack` turns into
 # NuGet package dependencies pinned to this same version — into the local NuGet feed consumed
-# by AdventureWorks.Functions.SalesOrderSaga. Run this before every restore/build of the
+# by AdventureWorks.SalesOrderSaga. Run this before every restore/build of the
 # Functions project after changing any of these four projects.
 #
 # The packed version is a fresh timestamp on every run — never a static string — so

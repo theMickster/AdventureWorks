@@ -1,59 +1,62 @@
-# AdventureWorks Aspire Dashboard
+# AdventureWorks local development with Aspire
 
-Single-command local orchestration of all AdventureWorks services — API, Angular, database migrations, and SQL Server health — via the .NET Aspire dashboard.
+Aspire is the canonical local experience. One AppHost starts the API, Angular app, Sales Order Functions, payment/test harness, session-scoped Azurite, and a session-scoped Service Bus emulator with its isolated companion SQL dependency. The existing AdventureWorks SQL Server remains external and is shown as `tosk-mssql` in the dashboard.
 
-## Prerequisites
+## Prerequisites and setup
 
-- .NET SDK 10 (already required by this repo)
-- Node.js / npm (already required for Angular)
-- OrbStack running with a SQL Server 2025 container
-- AppHost user secret configured (see below)
-
-## One-Time Setup
-
-Set the database connection string in the AppHost's user secrets:
+- .NET SDK 10, Node.js/npm, and a Docker-compatible container runtime
+- An AdventureWorks SQL Server with the latest DbUp scripts, including the saga allocation and outbox tables
+- The AppHost database secret:
 
 ```bash
-dotnet user-secrets set "ConnectionStrings:DefaultConnection" "CONNECTION_STRING_GOES_HERE" --project tools/aspire/AdventureWorks.AppHost
+dotnet user-secrets set "ConnectionStrings:DefaultConnection" "YOUR_CONNECTION_STRING" --project tools/aspire/AdventureWorks.AppHost
 ```
 
-> The AppHost holds its own copy of `DefaultConnection` independently of the API's user secrets, allowing the Aspire-injected connection string and the API's own secrets to coexist without conflict.
+DbUp keeps its separate `ConnectionStrings:AdventureWorks` user secret. If the external SQL container is not named `tosk-mssql`, set `SqlServer:ContainerName` in the AppHost configuration.
 
 ## Launch
-
-**CLI:**
 
 ```bash
 dotnet run --project tools/aspire/AdventureWorks.AppHost
 ```
 
-**VS Code:** Run & Debug → **AdventureWorks Aspire**
+Open the dashboard URL printed in the terminal. No emulator ports or connection strings need to be configured: Aspire injects them.
 
-The dashboard URL is printed to the terminal on startup. Open it in a browser.
+## Resources
 
-## Dashboard Resources
+| Resource                | Purpose                                                                     |
+| ----------------------- | --------------------------------------------------------------------------- |
+| `functions-storage`     | Session-scoped Azurite host and Durable storage                             |
+| `servicebus`            | Session-scoped emulator; its internal SQL is isolated from AdventureWorks   |
+| `sales-order-functions` | Durable saga, topic triggers, status endpoint, and outbox timer             |
+| `saga-test-harness`     | Payment simulator, fixture controller, evidence reader, and smoke scenarios |
+| `api` / `angular-web`   | Existing application workflow                                               |
+| `dbup`                  | Explicit-start migration runner                                             |
+| `tosk-mssql`            | Health-only representation of the externally managed database               |
 
-| Resource      | Initial state       | Notes                                                      |
-| ------------- | ------------------- | ---------------------------------------------------------- |
-| `tosk-mssql`  | Running / Unhealthy | TCP health check against the OrbStack container on :1433   |
-| `api`         | Running             | https://localhost:44369                                    |
-| `angular-web` | Running             | http://localhost:4200                                      |
-| `dbup`        | Not started         | Click ▶ **Start** to run migrations; **Restart** to re-run |
+The `sales-order-events` topic contains `sales-order-saga` and `sales-order-payment-results` subscriptions. Emulator state lasts only for the Aspire session.
 
-## Configuration
+## Test harness commands
 
-If your SQL Server container has a different name than `tosk-mssql`, override it in `AdventureWorks.AppHost/appsettings.json` or via environment variable:
+Open the `saga-test-harness` resource commands in the dashboard. Commands are enabled when the harness and its dependencies are healthy. You can start an order, list payments, approve or decline by ID, inspect combined evidence, run either complete scenario, or clean up fixtures.
 
-```json
-{
-  "SqlServer": {
-    "ContainerName": "your-container-name"
-  }
-}
+Follow the complete human verification procedure in [`SALES_ORDER_SAGA_TESTING.md`](SALES_ORDER_SAGA_TESTING.md).
+
+One-click scenarios keep generated rows for diagnosis and return structured assertions, elapsed time, and the failure stage. They allow two minutes so the one-minute outbox timer can dispatch. IDs begin at 900000 and remain monotonic for the AppHost session.
+
+Direct HTTP equivalents are under the harness `/test-control` route:
+
+```bash
+curl -X POST "$HARNESS_URL/test-control/scenarios/declined" -H 'Content-Type: application/json' -d '{}'
+curl "$HARNESS_URL/test-control/authorizations"
+curl "$HARNESS_URL/test-control/sagas/900000"
+curl -X DELETE "$HARNESS_URL/test-control/fixtures?confirm=true"
 ```
 
-## Limitations
+Cleanup requires both the dashboard confirmation and `confirm=true`. It selects only headers whose comment begins `AW-SAGA-HARNESS:` and removes their related details, saga allocations, transaction history, and outbox records. It never targets ordinary AdventureWorks orders.
 
-- **DbUp has its own connection string.** It reads `ConnectionStrings:AdventureWorks` from its own user secrets under `database/dbup/AdventureWorks.DbUp` — not from the AppHost. Set that secret separately before running migrations.
-- **API telemetry only flows to the Aspire dashboard when launched via the AppHost.** Running the API standalone routes telemetry to Application Insights only; the Aspire Traces and Metrics tabs will be empty.
-- **Do not change `isProxied` for the Angular resource.** Routing the Angular dev server through Aspire's reverse proxy breaks HMR WebSocket connections.
+## Standalone Functions fallback
+
+`local.settings.json` intentionally contains only `FUNCTIONS_WORKER_RUNTIME=dotnet-isolated`. Without Aspire, manually supply `AzureWebJobsStorage`, `ServiceBusConnection`, the three `ServiceBusSalesOrder...` topic/subscription settings, `ConnectionStrings__DefaultConnection` (or `SqlConnectionString`), and `PaymentAuthorization__BaseUrl`. Durable Functions shares `AzureWebJobsStorage`. Standalone mode does not start emulators or the payment simulator.
+
+The separate containerized API/web workflow is documented in [`../../docker/README.md`](../../docker/README.md).

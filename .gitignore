@@ -340,8 +340,7 @@ apps/angular-web/tmp/
 .env
 .env.*
 !.env.example
-!.env.docker.example
-!apps/functions-dotnet/local-dev/.env.local.example
+!docker/.env.example
 apps/angular-web/apps/adventureworks-web/src/environments/environment.development.ts
 apps/angular-web/apps/adventureworks-web/src/environments/environment.playwright.ts
 
@@ -374,7 +373,6 @@ apps/api-dotnet/tests/AdventureWorks.LoadTests.k6/results/*
 apps/functions-dotnet/local-nuget-feed/
 apps/functions-dotnet/eng/local-nuget-version.props
 apps/functions-dotnet/src/**/local.settings.json
-apps/functions-dotnet/local-dev/.env.local
 
 # Playwright MCP
 .playwright-mcp/

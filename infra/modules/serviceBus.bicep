@@ -15,6 +15,9 @@ param topicName string = 'sales-order-events'
 @description('Name of the sales order saga subscription')
 param subscriptionName string = 'sales-order-saga'
 
+@description('Name of the subscription receiving payment result events')
+param paymentSubscriptionName string = 'sales-order-payment-results'
+
 @description('Principal ID of the identity that publishes OrderCreated (granted Service Bus Data Sender)')
 param publisherPrincipalId string
 
@@ -39,6 +42,22 @@ resource topic 'Microsoft.ServiceBus/namespaces/topics@2024-01-01' = {
   name: topicName
   properties: {
     defaultMessageTimeToLive: 'P1D'
+    requiresDuplicateDetection: true
+    duplicateDetectionHistoryTimeWindow: 'PT10M'
+  }
+}
+
+// Replace each subscription's default TrueFilter so a Function does not consume unrelated
+// topic messages before the intended trigger can receive them.
+resource orderCreatedRule 'Microsoft.ServiceBus/namespaces/topics/subscriptions/rules@2024-01-01' = {
+  parent: subscription
+  name: '$Default'
+  properties: {
+    filterType: 'SqlFilter'
+    sqlFilter: {
+      sqlExpression: 'sys.Label = ''OrderCreated'''
+      compatibilityLevel: 20
+    }
   }
 }
 
@@ -49,6 +68,28 @@ resource subscription 'Microsoft.ServiceBus/namespaces/topics/subscriptions@2024
     defaultMessageTimeToLive: 'P1D'
     maxDeliveryCount: 10
     deadLetteringOnMessageExpiration: true
+  }
+}
+
+resource paymentSubscription 'Microsoft.ServiceBus/namespaces/topics/subscriptions@2024-01-01' = {
+  parent: topic
+  name: paymentSubscriptionName
+  properties: {
+    defaultMessageTimeToLive: 'P1D'
+    maxDeliveryCount: 10
+    deadLetteringOnMessageExpiration: true
+  }
+}
+
+resource paymentResultRule 'Microsoft.ServiceBus/namespaces/topics/subscriptions/rules@2024-01-01' = {
+  parent: paymentSubscription
+  name: '$Default'
+  properties: {
+    filterType: 'SqlFilter'
+    sqlFilter: {
+      sqlExpression: 'sys.Label IN (''PaymentApproved'', ''PaymentDeclined'')'
+      compatibilityLevel: 20
+    }
   }
 }
 
@@ -73,6 +114,17 @@ resource subscriberRoleAssignment 'Microsoft.Authorization/roleAssignments@2022-
   scope: topic
   properties: {
     roleDefinitionId: subscriptionResourceId('Microsoft.Authorization/roleDefinitions', serviceBusDataReceiverRoleId)
+    principalId: subscriberPrincipalId
+    principalType: 'ServicePrincipal'
+  }
+}
+
+// The Function publishes outbox messages as well as consuming its two subscriptions.
+resource functionPublisherRoleAssignment 'Microsoft.Authorization/roleAssignments@2022-04-01' = {
+  name: guid(topic.id, subscriberPrincipalId, serviceBusDataSenderRoleId)
+  scope: topic
+  properties: {
+    roleDefinitionId: subscriptionResourceId('Microsoft.Authorization/roleDefinitions', serviceBusDataSenderRoleId)
     principalId: subscriberPrincipalId
     principalType: 'ServicePrincipal'
   }

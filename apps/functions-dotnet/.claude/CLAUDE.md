@@ -22,7 +22,7 @@ dotnet test AdventureWorks.Functions.sln
 
 `SalesOrderSagaStarterTests` mocks `DurableTaskClient` directly (no Functions host) — matches `apps/api-dotnet/tests/AdventureWorks.UnitTests` conventions. It's also the only reliable way to exercise the starter's dedupe-on-`Running` branch — the orchestrator stub completes in milliseconds, too fast to race manually via the smoke test.
 
-`tests/AdventureWorks.Functions.SalesOrderSaga.OrchestrationTests` is an optional, second layer that drives `CheckInventorySubOrchestratorCore`/`SalesOrderSagaOrchestratorCore` through the real in-memory engine via `Microsoft.DurableTask.InProcessTestHost` — that package is preview-only (no stable release, no SLA) as of this writing; the required Moq coverage in `AdventureWorks.Functions.SalesOrderSaga.UnitTests` stands on its own regardless of that package's status.
+`tests/AdventureWorks.SalesOrderSaga.OrchestrationTests` is an optional, second layer that drives `CheckInventorySubOrchestratorCore`/`SalesOrderSagaOrchestratorCore` through the real in-memory engine via `Microsoft.DurableTask.InProcessTestHost` — that package is preview-only (no stable release, no SLA) as of this writing; the required Moq coverage in `AdventureWorks.SalesOrderSaga.UnitTests` stands on its own regardless of that package's status.
 
 ## Anti-Patterns
 
