@@ -1,0 +1,86 @@
+# Build console applications and Aspire: package local dependencies, restore, build, audit, and test.
+# Called as a job template from the main pipeline.
+
+parameters:
+  - name: consoleSolution
+    type: string
+    default: "tools/console-apps/AdventureWorks.ConsoleApps.slnx"
+  - name: aspireSolution
+    type: string
+    default: "tools/aspire/AdventureWorks.Aspire.slnx"
+  - name: consoleTestProject
+    type: string
+    default: "tools/console-apps/AdventureWorks.DbReset.Console.Tests/AdventureWorks.DbReset.Console.Tests.csproj"
+  - name: aspireTestProject
+    type: string
+    default: "apps/functions-dotnet/tests/AdventureWorks.SalesOrderSaga.TestHarness.Tests/AdventureWorks.SalesOrderSaga.TestHarness.Tests.csproj"
+  - name: buildConfiguration
+    type: string
+    default: "Release"
+  - name: dotNetSdkVersion
+    type: string
+    default: "10.0.x"
+
+steps:
+  - task: UseDotNet@2
+    displayName: "Install .NET SDK ${{ parameters.dotNetSdkVersion }}"
+    inputs:
+      packageType: sdk
+      version: "${{ parameters.dotNetSdkVersion }}"
+
+  - task: Cache@2
+    displayName: "Cache NuGet packages"
+    inputs:
+      key: 'nuget | "$(Agent.OS)" | tools/console-apps/**/*.csproj | tools/aspire/**/*.csproj | apps/api-dotnet/**/*.csproj | apps/functions-dotnet/**/*.csproj | database/dbup/**/*.csproj'
+      restoreKeys: 'nuget | "$(Agent.OS)"'
+      path: "$(HOME)/.nuget/packages"
+
+  - script: ./pack-local-nuget.sh
+    displayName: "Pack local NuGet feed (Domain/Application)"
+    workingDirectory: apps/functions-dotnet
+
+  - script: dotnet restore "${{ parameters.consoleSolution }}" --verbosity $(dotnetVerbosity)
+    displayName: "Restore console-app NuGet packages"
+
+  - script: dotnet restore "${{ parameters.aspireSolution }}" --verbosity $(dotnetVerbosity)
+    displayName: "Restore Aspire NuGet packages"
+
+  - task: DotNetCoreCLI@2
+    displayName: "Build console-app solution"
+    inputs:
+      command: build
+      projects: "${{ parameters.consoleSolution }}"
+      arguments: "--configuration ${{ parameters.buildConfiguration }} --no-restore --verbosity $(dotnetVerbosity)"
+
+  - task: DotNetCoreCLI@2
+    displayName: "Build Aspire solution"
+    inputs:
+      command: build
+      projects: "${{ parameters.aspireSolution }}"
+      arguments: "--configuration ${{ parameters.buildConfiguration }} --no-restore --verbosity $(dotnetVerbosity)"
+
+  - script: dotnet list "${{ parameters.consoleSolution }}" package --vulnerable --include-transitive
+    displayName: "Security scan (console-app vulnerable packages)"
+    continueOnError: true
+
+  - script: dotnet list "${{ parameters.aspireSolution }}" package --vulnerable --include-transitive
+    displayName: "Security scan (Aspire vulnerable packages)"
+    continueOnError: true
+
+  - task: DotNetCoreCLI@2
+    displayName: "Run console-app tests"
+    inputs:
+      command: test
+      projects: "${{ parameters.consoleTestProject }}"
+      testRunTitle: "AdventureWorks.DbReset.Console - $(Build.BuildNumber)"
+      publishTestResults: true
+      arguments: '--configuration ${{ parameters.buildConfiguration }} --no-build --collect "XPlat Code Coverage" --verbosity $(dotnetVerbosity)'
+
+  - task: DotNetCoreCLI@2
+    displayName: "Run Aspire test-harness tests"
+    inputs:
+      command: test
+      projects: "${{ parameters.aspireTestProject }}"
+      testRunTitle: "AdventureWorks.SagaTestHarness - $(Build.BuildNumber)"
+      publishTestResults: true
+      arguments: '--configuration ${{ parameters.buildConfiguration }} --no-build --collect "XPlat Code Coverage" --verbosity $(dotnetVerbosity)'

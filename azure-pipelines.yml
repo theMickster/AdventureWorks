@@ -63,6 +63,18 @@ stages:
               dotNetSdkVersion: $(dotNetSdkVersion)
               buildConfiguration: $(buildConfiguration)
 
+  - stage: BuildTools
+    displayName: 'Build Console Apps and Aspire'
+    dependsOn: []
+    jobs:
+      - job: BuildConsoleAppsAndAspire
+        displayName: 'Build Console Apps and Aspire'
+        steps:
+          - template: pipelines/templates/build-console-apps.yml
+            parameters:
+              dotNetSdkVersion: $(dotNetSdkVersion)
+              buildConfiguration: $(buildConfiguration)
+
   # --- Deploy Dev (auto on every main build) ---
 
   - template: pipelines/templates/deploy-stage.yml

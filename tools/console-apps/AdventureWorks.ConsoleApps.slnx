@@ -1,0 +1,14 @@
+<Solution>
+  <Folder Name="/ConsoleApps/">
+    <Project Path="AdventureWorks.DbReset.Console.Tests/AdventureWorks.DbReset.Console.Tests.csproj" />
+    <Project Path="AdventureWorks.DbReset.Console/AdventureWorks.DbReset.Console.csproj" />
+    <Project Path="AdventureWorks.Testing.Console/AdventureWorks.Testing.Console.csproj" />
+    <Project Path="AdventureWorks.UserSetup.Console/AdventureWorks.UserSetup.Console.csproj" />
+  </Folder>
+  <Folder Name="/src/">
+    <Project Path="../../apps/api-dotnet/src/AdventureWorks.Application/AdventureWorks.Application.csproj" />
+    <Project Path="../../apps/api-dotnet/src/AdventureWorks.Common/AdventureWorks.Common.csproj" />
+    <Project Path="../../apps/api-dotnet/src/AdventureWorks.Domain/AdventureWorks.Domain.csproj" />
+    <Project Path="../../apps/api-dotnet/src/AdventureWorks.Infrastructure.Persistence/AdventureWorks.Infrastructure.Persistence.csproj" />
+  </Folder>
+</Solution>
