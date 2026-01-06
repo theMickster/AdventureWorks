@@ -17,11 +17,11 @@ public class BusinessEntityContactConfiguration : IEntityTypeConfiguration<Busin
             .HasForeignKey(a => a.BusinessEntityId);
 
         builder.HasOne(a => a.Person)
-            .WithMany(b=>b.BusinessEntityContacts)
+            .WithMany(b => b.BusinessEntityContacts)
             .HasForeignKey(a => a.PersonId);
 
         builder.HasOne(a => a.ContactType)
-            .WithMany(b=>b.BusinessEntityContacts)
+            .WithMany(b => b.BusinessEntityContacts)
             .HasForeignKey(a => a.ContactTypeId);
 
     }

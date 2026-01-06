@@ -11,14 +11,14 @@ public class ProductInventoryConfiguration : IEntityTypeConfiguration<ProductInv
     {
         builder.ToTable("ProductInventory", "Production");
 
-        builder.HasKey(a => new {a.ProductId, a.LocationId});
+        builder.HasKey(a => new { a.ProductId, a.LocationId });
 
         builder.HasOne(a => a.Product)
-            .WithMany(b=>b.ProductInventory)
+            .WithMany(b => b.ProductInventory)
             .HasForeignKey(a => a.ProductId);
 
         builder.HasOne(a => a.Location)
-            .WithMany(b=> b.ProductInventory)
+            .WithMany(b => b.ProductInventory)
             .HasForeignKey(a => a.LocationId);
     }
 }

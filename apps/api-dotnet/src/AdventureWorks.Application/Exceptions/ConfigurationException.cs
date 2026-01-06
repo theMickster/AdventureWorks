@@ -34,7 +34,7 @@ public class ConfigurationException : Exception
         string message,
         Exception innerException) : base(message, innerException)
         => _errorMessages = errorMessages;
-    
+
     #endregion Constructors
 
     public override string ToString()

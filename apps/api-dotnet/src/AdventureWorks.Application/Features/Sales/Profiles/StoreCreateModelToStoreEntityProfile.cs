@@ -4,7 +4,7 @@ using AutoMapper;
 
 namespace AdventureWorks.Application.Features.Sales.Profiles;
 
-public sealed class StoreCreateModelToStoreEntityProfile :Profile
+public sealed class StoreCreateModelToStoreEntityProfile : Profile
 {
     public StoreCreateModelToStoreEntityProfile()
     {

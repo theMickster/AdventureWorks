@@ -11,7 +11,7 @@ public class ProductModelIllustrationConfiguration : IEntityTypeConfiguration<Pr
     {
         builder.ToTable("ProductModelIllustration", "Production");
 
-        builder.HasKey(a => new {a.ProductModelId, a.IllustrationId});
+        builder.HasKey(a => new { a.ProductModelId, a.IllustrationId });
 
         builder.HasOne(a => a.ProductModel)
             .WithMany()

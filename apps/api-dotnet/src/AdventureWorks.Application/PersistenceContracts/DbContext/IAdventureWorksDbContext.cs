@@ -62,7 +62,7 @@ public interface IAdventureWorksDbContext
     DbSet<ShiftEntity> Shifts { get; set; }
 
     DbSet<SalesTerritoryEntity> SalesTerritories { get; set; }
-    
+
     DbSet<StateProvinceEntity> StateProvinces { get; set; }
 
     DbSet<StoreEntity> Stores { get; set; }

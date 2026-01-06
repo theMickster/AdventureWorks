@@ -8,5 +8,5 @@ public sealed class ReadStoreListQuery : IRequest<StoreSearchResultModel>
 {
     public required StoreParameter Parameters { get; set; }
 
-    public StoreSearchModel? SearchModel { get; set; } 
+    public StoreSearchModel? SearchModel { get; set; }
 }

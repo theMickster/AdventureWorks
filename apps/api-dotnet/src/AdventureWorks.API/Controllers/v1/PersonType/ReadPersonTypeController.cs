@@ -52,7 +52,7 @@ public class ReadPersonTypeController : ControllerBase
 
         var model = await _mediator.Send(new ReadPersonTypeQuery { Id = id });
 
-        return model is null ? NotFound("Unable to locate the person type.") :  Ok(model);
+        return model is null ? NotFound("Unable to locate the person type.") : Ok(model);
     }
 
     /// <summary>
@@ -65,7 +65,7 @@ public class ReadPersonTypeController : ControllerBase
     {
         var model = await _mediator.Send(new ReadPersonTypeListQuery());
 
-        if (model is not { Count: > 0 } )
+        if (model is not { Count: > 0 })
         {
             return NotFound("Unable to locate records the person type list.");
         }

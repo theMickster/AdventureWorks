@@ -6,7 +6,7 @@ using MediatR;
 namespace AdventureWorks.Application.Features.AddressManagement.Queries;
 
 public sealed class ReadCountryRegionQueryHandler(
-    IMapper mapper, 
+    IMapper mapper,
     ICountryRegionRepository repository)
         : IRequestHandler<ReadCountryRegionQuery, CountryRegionModel>
 {

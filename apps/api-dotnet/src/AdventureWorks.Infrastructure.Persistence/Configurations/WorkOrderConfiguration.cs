@@ -14,11 +14,11 @@ public class WorkOrderConfiguration : IEntityTypeConfiguration<WorkOrder>
         builder.HasKey(a => a.WorkOrderId);
 
         builder.HasOne(a => a.Product)
-            .WithMany(b=>b.WorkOrders)
+            .WithMany(b => b.WorkOrders)
             .HasForeignKey(a => a.ProductId);
 
         builder.HasOne(a => a.ScrapReason)
-            .WithMany(b=>b.WorkOrders)
+            .WithMany(b => b.WorkOrders)
             .HasForeignKey(a => a.ScrapReasonId);
     }
 }

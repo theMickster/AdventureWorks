@@ -30,14 +30,14 @@ public sealed class ProductParameter : QueryStringParamsBase
         get
         {
             return _orderBy switch
-                {
-                    ProductIdField => SortedResultConstants.ProductId,
-                    ProductNameField => SortedResultConstants.Name,
-                    ProductNumberField => SortedResultConstants.ProductNumber,
-                    ListPriceField => SortedResultConstants.ListPrice,
-                    StandardCostField => SortedResultConstants.StandardCost,
-                    _ => SortedResultConstants.ProductId
-                };
+            {
+                ProductIdField => SortedResultConstants.ProductId,
+                ProductNameField => SortedResultConstants.Name,
+                ProductNumberField => SortedResultConstants.ProductNumber,
+                ListPriceField => SortedResultConstants.ListPrice,
+                StandardCostField => SortedResultConstants.StandardCost,
+                _ => SortedResultConstants.ProductId
+            };
         }
         set
         {

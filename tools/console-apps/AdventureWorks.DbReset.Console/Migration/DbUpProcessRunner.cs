@@ -21,9 +21,9 @@ internal sealed class DbUpProcessRunner : IDbUpProcessRunner
 
         var psi = new ProcessStartInfo
         {
-            FileName         = "dotnet",
+            FileName = "dotnet",
             WorkingDirectory = absoluteProjectPath,
-            UseShellExecute  = false,
+            UseShellExecute = false,
             // stdio intentionally NOT redirected — DbUp output streams verbatim to the operator's terminal.
         };
         psi.ArgumentList.Add("run");

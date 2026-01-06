@@ -58,10 +58,10 @@ public sealed class UpdateAddressController : ControllerBase
         {
             return BadRequest("The address id parameter must match the id of the address update request payload.");
         }
-        var cmd = new UpdateAddressCommand { Model = inputModel, ModifiedDate = DateTime.UtcNow};
+        var cmd = new UpdateAddressCommand { Model = inputModel, ModifiedDate = DateTime.UtcNow };
         await _mediator.Send(cmd);
         var model = await _mediator.Send(new ReadAddressQuery { Id = addressId });
-        
+
         return Ok(model);
     }
 }

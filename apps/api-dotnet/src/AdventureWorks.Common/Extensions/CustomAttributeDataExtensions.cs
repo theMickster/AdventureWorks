@@ -2,6 +2,7 @@
 #pragma warning disable CS8625
 
 namespace AdventureWorks.Common.Extensions;
+
 public static class CustomAttributeDataExtensions
 {
     /// <summary>

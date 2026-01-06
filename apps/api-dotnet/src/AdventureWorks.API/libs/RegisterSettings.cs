@@ -10,7 +10,7 @@ internal static class RegisterSettings
     internal static WebApplicationBuilder RegisterCommonSettings(this WebApplicationBuilder builder)
     {
         builder.Services.Configure<AkvExampleSettings>(config => config.MyFavoriteComedicMovie = SecretHelper.GetSecret("mick-favorite-comedy-movie"));
-        
+
         return builder;
     }
 }

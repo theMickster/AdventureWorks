@@ -11,7 +11,7 @@ public class ProductModelProductDescriptionCultureConfiguration : IEntityTypeCon
     {
         builder.ToTable("ProductModelProductDescriptionCulture", "Production");
 
-        builder.HasKey(a => new {a.ProductModelId, a.ProductDescriptionId, a.CultureId});
+        builder.HasKey(a => new { a.ProductModelId, a.ProductDescriptionId, a.CultureId });
 
         builder.HasOne(a => a.ProductModel)
             .WithMany()

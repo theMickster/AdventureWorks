@@ -61,10 +61,10 @@ public sealed class StoreCustomerParameter : QueryStringParamsBase
         get => _sortOrder;
         init => _sortOrder = value == null ? SortedResultConstants.Descending : value.Trim().ToLower()
             switch
-            {
-                "asc" or "ascending" => SortedResultConstants.Ascending,
-                "desc" or "descending" => SortedResultConstants.Descending,
-                _ => SortedResultConstants.Descending
-            };
+        {
+            "asc" or "ascending" => SortedResultConstants.Ascending,
+            "desc" or "descending" => SortedResultConstants.Descending,
+            _ => SortedResultConstants.Descending
+        };
     }
 }

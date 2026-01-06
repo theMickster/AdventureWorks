@@ -82,7 +82,11 @@ static void AddHarnessCommands(IResourceBuilder<ProjectResource> harness)
 
 static InteractionInput Number(string name, string label, string? value = null) => new()
 {
-    Name = name, Label = label, InputType = InputType.Number, Required = value is null, Value = value
+    Name = name,
+    Label = label,
+    InputType = InputType.Number,
+    Required = value is null,
+    Value = value
 };
 
 static void AddHttpCommand(

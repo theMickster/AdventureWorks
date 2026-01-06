@@ -7,7 +7,7 @@ namespace AdventureWorks.Application.Features.Sales.Queries;
 
 public sealed class ReadSalesTerritoryQueryHandler(
     IMapper mapper,
-    ISalesTerritoryRepository salesTerritoryRepository) 
+    ISalesTerritoryRepository salesTerritoryRepository)
         : IRequestHandler<ReadSalesTerritoryQuery, SalesTerritoryModel>
 {
     private readonly IMapper _mapper = mapper ?? throw new ArgumentNullException(nameof(mapper));

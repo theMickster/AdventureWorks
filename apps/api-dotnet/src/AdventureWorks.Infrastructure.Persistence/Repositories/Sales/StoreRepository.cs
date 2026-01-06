@@ -11,7 +11,7 @@ using Microsoft.EntityFrameworkCore;
 namespace AdventureWorks.Infrastructure.Persistence.Repositories.Sales;
 
 [ServiceLifetimeScoped]
-public sealed class StoreRepository(AdventureWorksDbContext dbContext) 
+public sealed class StoreRepository(AdventureWorksDbContext dbContext)
     : EfRepository<StoreEntity>(dbContext), IStoreRepository
 {
 
@@ -42,8 +42,8 @@ public sealed class StoreRepository(AdventureWorksDbContext dbContext)
         switch (parameters.OrderBy)
         {
             case SortedResultConstants.BusinessEntityId:
-                storeQuery = parameters.SortOrder == SortedResultConstants.Ascending ? 
-                    storeQuery.OrderBy(x => x.BusinessEntityId) : 
+                storeQuery = parameters.SortOrder == SortedResultConstants.Ascending ?
+                    storeQuery.OrderBy(x => x.BusinessEntityId) :
                     storeQuery.OrderByDescending(x => x.BusinessEntityId);
                 break;
             case SortedResultConstants.Name:
@@ -79,7 +79,7 @@ public sealed class StoreRepository(AdventureWorksDbContext dbContext)
         {
             if (storeSearchModel.Id != null)
             {
-                storeQuery = storeQuery.Where( y => y.BusinessEntityId == storeSearchModel.Id );
+                storeQuery = storeQuery.Where(y => y.BusinessEntityId == storeSearchModel.Id);
             }
 
             if (!string.IsNullOrWhiteSpace(storeSearchModel.Name))

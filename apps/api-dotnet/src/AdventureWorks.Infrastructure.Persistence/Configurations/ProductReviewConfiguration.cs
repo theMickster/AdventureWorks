@@ -14,7 +14,7 @@ public class ProductReviewConfiguration : IEntityTypeConfiguration<ProductReview
         builder.HasKey(a => a.ProductReviewId);
 
         builder.HasOne(a => a.Product)
-            .WithMany(b=>b.ProductReviews)
+            .WithMany(b => b.ProductReviews)
             .HasForeignKey(a => a.ProductId);
     }
 }

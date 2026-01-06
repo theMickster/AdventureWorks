@@ -14,7 +14,7 @@ public class TransactionHistoryConfiguration : IEntityTypeConfiguration<Transact
         builder.HasKey(a => a.TransactionId);
 
         builder.HasOne(a => a.Product)
-            .WithMany(b=>b.TransactionHistory)
+            .WithMany(b => b.TransactionHistory)
             .HasForeignKey(a => a.ProductId);
     }
 }

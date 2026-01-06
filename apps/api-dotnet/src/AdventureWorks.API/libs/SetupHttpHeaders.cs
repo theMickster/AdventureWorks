@@ -15,7 +15,8 @@ internal static class SetupHttpHeaders
         this IApplicationBuilder app, bool isDevelopment,
         string nonce)
     {
-        app.Use(async (context, next) => {
+        app.Use(async (context, next) =>
+        {
             context.Response.GetTypedHeaders().CacheControl = new Microsoft.Net.Http.Headers.CacheControlHeaderValue
             {
                 NoCache = true,

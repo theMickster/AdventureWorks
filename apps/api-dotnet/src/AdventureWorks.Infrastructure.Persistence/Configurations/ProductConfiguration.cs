@@ -14,19 +14,19 @@ public class ProductConfiguration : IEntityTypeConfiguration<Product>
         builder.HasKey(p => p.ProductId);
 
         builder.HasOne(p => p.ProductModel)
-            .WithMany(b=>b.Products)
+            .WithMany(b => b.Products)
             .HasForeignKey(p => p.ProductModelId);
 
         builder.HasOne(p => p.ProductSubcategory)
-            .WithMany(b=>b.Products)
+            .WithMany(b => b.Products)
             .HasForeignKey(p => p.ProductSubcategoryId);
 
         builder.HasOne(p => p.SizeUnitMeasureCodeNavigation)
-            .WithMany(b=>b.ProductSizeUnitMeasureCodeNavigation)
+            .WithMany(b => b.ProductSizeUnitMeasureCodeNavigation)
             .HasForeignKey(p => p.SizeUnitMeasureCode);
 
         builder.HasOne(p => p.WeightUnitMeasureCodeNavigation)
-            .WithMany(b=>b.ProductWeightUnitMeasureCodeNavigation)
+            .WithMany(b => b.ProductWeightUnitMeasureCodeNavigation)
             .HasForeignKey(p => p.WeightUnitMeasureCode);
     }
 }

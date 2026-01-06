@@ -37,7 +37,7 @@ internal class UpdateUserAccountService
             userAccount.PasswordHash = hash;
             _dbContext.UpdateUserAccountsAsync(userAccount);
         });
-        
+
 
         return true;
     }

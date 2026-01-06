@@ -11,14 +11,14 @@ public class ProductProductPhotoConfiguration : IEntityTypeConfiguration<Product
     {
         builder.ToTable("ProductProductPhoto", "Production");
 
-        builder.HasKey(a => new {a.ProductId, a.ProductPhotoId });
+        builder.HasKey(a => new { a.ProductId, a.ProductPhotoId });
 
         builder.HasOne(a => a.Product)
-            .WithMany(b=>b.ProductProductPhotos)
+            .WithMany(b => b.ProductProductPhotos)
             .HasForeignKey(a => a.ProductId);
 
         builder.HasOne(a => a.ProductPhoto)
-            .WithMany(b=> b.ProductProductPhotos)
+            .WithMany(b => b.ProductProductPhotos)
             .HasForeignKey(a => a.ProductPhotoId);
     }
 }

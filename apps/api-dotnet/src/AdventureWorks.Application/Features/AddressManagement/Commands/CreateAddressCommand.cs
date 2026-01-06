@@ -9,5 +9,5 @@ public sealed class CreateAddressCommand : IRequest<int>
 
     public DateTime ModifiedDate { get; set; }
 
-    public Guid RowGuid { get; set; } 
+    public Guid RowGuid { get; set; }
 }

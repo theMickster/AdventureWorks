@@ -14,7 +14,7 @@ public sealed class AddressRepository(AdventureWorksDbContext dbContext)
     {
         return await DbContext.Addresses
 
-            .Include( a => a.StateProvince)
+            .Include(a => a.StateProvince)
             .ThenInclude(b => b.CountryRegion)
             .Where(x => x.AddressId == addressId)
             .FirstOrDefaultAsync();

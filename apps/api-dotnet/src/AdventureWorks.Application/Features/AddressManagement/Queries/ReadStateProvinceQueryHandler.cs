@@ -5,9 +5,9 @@ using MediatR;
 
 namespace AdventureWorks.Application.Features.AddressManagement.Queries;
 
-public sealed class ReadStateProvinceQueryHandler (
+public sealed class ReadStateProvinceQueryHandler(
     IMapper mapper,
-    IStateProvinceRepository repository) 
+    IStateProvinceRepository repository)
         : IRequestHandler<ReadStateProvinceQuery, StateProvinceModel>
 {
     private readonly IMapper _mapper = mapper ?? throw new ArgumentNullException(nameof(mapper));

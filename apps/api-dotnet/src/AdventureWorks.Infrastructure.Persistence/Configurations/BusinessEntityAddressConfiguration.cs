@@ -11,7 +11,7 @@ public class BusinessEntityAddressConfiguration : IEntityTypeConfiguration<Busin
     {
         builder.ToTable("BusinessEntityAddress", "Person");
 
-        builder.HasKey(a => new {a.BusinessEntityId, a.AddressId, a.AddressTypeId });
+        builder.HasKey(a => new { a.BusinessEntityId, a.AddressId, a.AddressTypeId });
 
         builder.HasOne(a => a.BusinessEntity)
             .WithMany(b => b.BusinessEntityAddresses)

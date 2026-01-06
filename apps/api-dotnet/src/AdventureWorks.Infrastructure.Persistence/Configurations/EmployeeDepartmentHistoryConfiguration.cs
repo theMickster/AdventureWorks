@@ -11,7 +11,7 @@ public class EmployeeDepartmentHistoryConfiguration : IEntityTypeConfiguration<E
     {
         builder.ToTable("EmployeeDepartmentHistory", "HumanResources");
 
-        builder.HasKey(a => new {a.BusinessEntityId, a.DepartmentId, a.ShiftId, a.StartDate});
+        builder.HasKey(a => new { a.BusinessEntityId, a.DepartmentId, a.ShiftId, a.StartDate });
 
         builder.HasOne(a => a.BusinessEntity)
             .WithMany(b => b.EmployeeDepartmentHistory)

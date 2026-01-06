@@ -11,18 +11,18 @@ public class WorkOrderRoutingConfiguration : IEntityTypeConfiguration<WorkOrderR
     {
         builder.ToTable("WorkOrderRouting", "Production");
 
-        builder.HasKey(a => new {a.WorkOrderId, a.ProductId, a.OperationSequence});
+        builder.HasKey(a => new { a.WorkOrderId, a.ProductId, a.OperationSequence });
 
         builder.HasOne(a => a.WorkOrder)
-            .WithMany(b=>b.WorkOrderRoutings)
+            .WithMany(b => b.WorkOrderRoutings)
             .HasForeignKey(a => a.WorkOrderId);
 
         builder.HasOne(a => a.Product)
-            .WithMany(b=>b.WorkOrderRoutings)
+            .WithMany(b => b.WorkOrderRoutings)
             .HasForeignKey(a => a.ProductId);
 
         builder.HasOne(a => a.Location)
-            .WithMany(b=>b.WorkOrderRoutings)
+            .WithMany(b => b.WorkOrderRoutings)
             .HasForeignKey(a => a.LocationId);
 
     }

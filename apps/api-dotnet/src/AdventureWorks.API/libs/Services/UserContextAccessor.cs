@@ -26,17 +26,17 @@ internal sealed class UserContextAccessor(IHttpContextAccessor httpContextAccess
     }
 
     public Guid? EntraObjectId => CurrentContext?.EntraObjectId;
-    
+
     public string? UserPrincipalName => CurrentContext?.UserPrincipalName;
-    
+
     public string? DisplayName => CurrentContext?.DisplayName;
-    
+
     public int? BusinessEntityId => CurrentContext?.BusinessEntityId;
-    
+
     public string? PersonFullName => CurrentContext?.PersonFullName;
-    
+
     public bool IsAuthenticated => CurrentContext?.IsAuthenticated ?? false;
-    
+
     public bool IsLinkedToAdventureWorks => CurrentContext?.BusinessEntityId.HasValue ?? false;
 
     /// <summary>
@@ -45,7 +45,7 @@ internal sealed class UserContextAccessor(IHttpContextAccessor httpContextAccess
     public void SetUserContext(UserContext context)
     {
         ArgumentNullException.ThrowIfNull(context);
-        
+
         var httpContext = _httpContextAccessor.HttpContext;
         if (httpContext != null)
         {

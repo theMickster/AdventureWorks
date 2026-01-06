@@ -11,7 +11,7 @@ public class SalesTerritoryHistoryConfiguration : IEntityTypeConfiguration<Sales
     {
         builder.ToTable("SalesTerritoryHistory", "Sales");
 
-        builder.HasKey(a => new {a.BusinessEntityId, a.TerritoryId, a.StartDate});
+        builder.HasKey(a => new { a.BusinessEntityId, a.TerritoryId, a.StartDate });
 
         builder.HasOne(a => a.BusinessEntity)
             .WithMany(sp => sp.SalesTerritoryHistory)

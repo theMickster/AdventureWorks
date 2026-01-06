@@ -17,7 +17,7 @@ public sealed class ReadPersonTypeQueryHandler(
     /// </summary>
     /// <returns>A <see cref="PersonTypeModel"/> </returns>
     public async Task<PersonTypeModel> Handle(ReadPersonTypeQuery request, CancellationToken cancellationToken)
-    {        
+    {
         return _mapper.Map<PersonTypeModel>(await _personTypeRepository.GetByIdAsync(request.Id, cancellationToken));
     }
 }

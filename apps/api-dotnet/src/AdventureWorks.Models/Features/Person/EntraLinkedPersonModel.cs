@@ -10,47 +10,47 @@ public sealed record EntraLinkedPersonModel
     /// The BusinessEntityId of the person (primary key).
     /// </summary>
     public required int BusinessEntityId { get; init; }
-    
+
     /// <summary>
     /// The Microsoft Entra Object ID (oid claim) from BusinessEntity.Rowguid.
     /// </summary>
     public required Guid EntraObjectId { get; init; }
-    
+
     /// <summary>
     /// First name of the person.
     /// </summary>
     public required string FirstName { get; init; }
-    
+
     /// <summary>
     /// Last name of the person.
     /// </summary>
     public required string LastName { get; init; }
-    
+
     /// <summary>
     /// Middle name of the person (optional).
     /// </summary>
     public string? MiddleName { get; init; }
-    
+
     /// <summary>
     /// Title (e.g., Mr., Ms., Dr.) (optional).
     /// </summary>
     public string? Title { get; init; }
-    
+
     /// <summary>
     /// Primary email address of the person (optional).
     /// </summary>
     public string? EmailAddress { get; init; }
-    
+
     /// <summary>
     /// PersonType identifier.
     /// </summary>
     public required int PersonTypeId { get; init; }
-    
+
     /// <summary>
     /// PersonType name (e.g., Employee, Individual Customer).
     /// </summary>
     public required string PersonTypeName { get; init; }
-    
+
     /// <summary>
     /// Indicates if this person is flagged as an Entra user.
     /// </summary>

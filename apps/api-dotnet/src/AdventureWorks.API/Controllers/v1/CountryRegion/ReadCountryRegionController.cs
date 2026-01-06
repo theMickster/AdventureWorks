@@ -20,7 +20,7 @@ namespace AdventureWorks.API.Controllers.v1.CountryRegion;
 [ApiExplorerSettings(GroupName = "Country Region")]
 [Produces("application/json")]
 [Route("api/v{version:apiVersion}/countries", Name = "ReadCountryRegionControllerV1")]
-public  class ReadCountryRegionController : ControllerBase
+public class ReadCountryRegionController : ControllerBase
 {
     private readonly ILogger<ReadCountryRegionController> _logger;
     private readonly IMediator _mediator;
@@ -47,7 +47,7 @@ public  class ReadCountryRegionController : ControllerBase
     [Produces(typeof(CountryRegionModel))]
     public async Task<IActionResult> GetByIdAsync(string id)
     {
-        if ( string.IsNullOrWhiteSpace(id))
+        if (string.IsNullOrWhiteSpace(id))
         {
             return BadRequest("A valid country region id must be specified.");
         }

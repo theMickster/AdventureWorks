@@ -80,7 +80,7 @@ public sealed class ReadStoreController : ControllerBase
     [ProducesResponseType(StatusCodes.Status400BadRequest)]
     public async Task<IActionResult> GetStoreListAsync([FromQuery] StoreParameter parameters, CancellationToken cancellationToken = default)
     {
-        var searchResult = await _mediator.Send( new ReadStoreListQuery{Parameters = parameters}, cancellationToken);
+        var searchResult = await _mediator.Send(new ReadStoreListQuery { Parameters = parameters }, cancellationToken);
 
         if (searchResult.Results is null or { Count: 0 })
         {
@@ -113,7 +113,7 @@ public sealed class ReadStoreController : ControllerBase
     [ProducesResponseType(StatusCodes.Status400BadRequest)]
     public async Task<IActionResult> SearchStoresAsync([FromQuery] StoreParameter parameters, [FromBody] StoreSearchModel storeSearchModel, CancellationToken cancellationToken = default)
     {
-        var searchResult = await _mediator.Send(new ReadStoreListQuery { Parameters = parameters, SearchModel = storeSearchModel}, cancellationToken);
+        var searchResult = await _mediator.Send(new ReadStoreListQuery { Parameters = parameters, SearchModel = storeSearchModel }, cancellationToken);
 
         if (searchResult.Results is null or { Count: 0 })
         {

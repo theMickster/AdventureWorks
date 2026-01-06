@@ -11,7 +11,7 @@ public class SalesOrderDetailConfiguration : IEntityTypeConfiguration<SalesOrder
     {
         builder.ToTable("SalesOrderDetail", "Sales");
 
-        builder.HasKey(a => new {a.SalesOrderId, a.SalesOrderDetailId});
+        builder.HasKey(a => new { a.SalesOrderId, a.SalesOrderDetailId });
 
         builder.HasOne(a => a.SalesOrder)
             .WithMany(b => b.SalesOrderDetails)
@@ -19,7 +19,7 @@ public class SalesOrderDetailConfiguration : IEntityTypeConfiguration<SalesOrder
 
         builder.HasOne(a => a.SpecialOfferProduct)
             .WithMany(b => b.SalesOrderDetail)
-            .HasForeignKey(a => new {a.SpecialOfferId, a.ProductId});
+            .HasForeignKey(a => new { a.SpecialOfferId, a.ProductId });
 
     }
 }

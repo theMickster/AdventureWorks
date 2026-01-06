@@ -17,11 +17,11 @@ public sealed class StoreParameter : QueryStringParamsBase
         get
         {
             return _orderBy switch
-                {
-                    StoreIdField => SortedResultConstants.BusinessEntityId,
-                    StoreNameField => SortedResultConstants.Name,
-                    _ => SortedResultConstants.BusinessEntityId
-                };
+            {
+                StoreIdField => SortedResultConstants.BusinessEntityId,
+                StoreNameField => SortedResultConstants.Name,
+                _ => SortedResultConstants.BusinessEntityId
+            };
         }
         set =>
             _orderBy = value?.Trim().ToLower() == StoreIdField ? StoreIdField

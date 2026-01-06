@@ -11,7 +11,7 @@ public class SalesPersonQuotaHistoryConfiguration : IEntityTypeConfiguration<Sal
     {
         builder.ToTable("SalesPersonQuotaHistory", "Sales");
 
-        builder.HasKey(a => new {a.BusinessEntityId, a.QuotaDate});
+        builder.HasKey(a => new { a.BusinessEntityId, a.QuotaDate });
 
         builder.HasOne(a => a.BusinessEntity)
             .WithMany(sp => sp.SalesPersonQuotaHistory)

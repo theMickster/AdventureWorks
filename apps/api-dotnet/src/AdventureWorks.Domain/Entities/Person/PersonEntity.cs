@@ -44,6 +44,6 @@ public sealed class PersonEntity : BaseEntity
     public ICollection<EmployeeEntity> Employees { get; set; }
 
     public BusinessEntity BusinessEntity { get; set; }
-    
+
     public PersonTypeEntity PersonType { get; set; }
 }

@@ -21,13 +21,13 @@ public sealed class ReadEntraLinkedPersonQueryHandler(
     private readonly ILogger<ReadEntraLinkedPersonQueryHandler> _logger = logger ?? throw new ArgumentNullException(nameof(logger));
 
     public async Task<EntraLinkedPersonModel?> Handle(
-        ReadEntraLinkedPersonQuery request, 
+        ReadEntraLinkedPersonQuery request,
         CancellationToken cancellationToken)
     {
         ArgumentNullException.ThrowIfNull(request);
 
         var personEntity = await _repository.GetEntraLinkedPersonAsync(
-            request.EntraObjectId, 
+            request.EntraObjectId,
             cancellationToken);
 
         if (personEntity == null)

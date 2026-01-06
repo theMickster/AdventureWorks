@@ -8,7 +8,7 @@ namespace AdventureWorks.Application.Features.AddressManagement.Queries;
 public sealed class ReadAddressTypeListQueryHandler(
     IMapper mapper,
     IAddressTypeRepository addressTypeRepository)
-    : IRequestHandler<ReadAddressTypeListQuery, List<AddressTypeModel>> 
+    : IRequestHandler<ReadAddressTypeListQuery, List<AddressTypeModel>>
 {
     private readonly IMapper _mapper = mapper ?? throw new ArgumentNullException(nameof(mapper));
     private readonly IAddressTypeRepository _repository = addressTypeRepository ?? throw new ArgumentNullException(nameof(addressTypeRepository));

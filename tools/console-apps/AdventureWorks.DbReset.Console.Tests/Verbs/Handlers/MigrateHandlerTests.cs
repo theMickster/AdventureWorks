@@ -16,11 +16,11 @@ public sealed class MigrateHandlerTests
 
     private static DbResetOptions BuildOptions(string dbUpProjectPath = "database/dbup/AdventureWorks.DbUp") => new()
     {
-        DbUpProjectPath   = dbUpProjectPath,
-        DefaultTarget     = TargetName,
+        DbUpProjectPath = dbUpProjectPath,
+        DefaultTarget = TargetName,
         TargetNamePattern = "^AdventureWorks_(E2E|Test|Load)([A-Za-z0-9_]*)?$",
-        BaselinePath      = "/baselines/AdventureWorks_baseline.bak",
-        SnapshotSource    = "AdventureWorksDev",
+        BaselinePath = "/baselines/AdventureWorks_baseline.bak",
+        SnapshotSource = "AdventureWorksDev",
     };
 
     private static IConfiguration BuildConfig(string targetName, string cs) =>

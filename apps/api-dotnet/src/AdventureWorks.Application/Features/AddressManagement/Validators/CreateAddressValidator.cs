@@ -6,7 +6,7 @@ namespace AdventureWorks.Application.Features.AddressManagement.Validators;
 public sealed class CreateAddressValidator : AddressBaseModelValidator<AddressCreateModel>
 {
     public CreateAddressValidator(IStateProvinceRepository stateProvinceRepository)
-        :base(stateProvinceRepository)
+        : base(stateProvinceRepository)
     {
     }
 }

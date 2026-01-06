@@ -16,13 +16,13 @@ public sealed class StateProvinceEntityToModelProfile : Profile
             .ForPath(c => c.Code,
                 opt => opt.MapFrom(x => x.StateProvinceCode))
 
-            .ForPath( c => c.Name,
+            .ForPath(c => c.Name,
                 opt => opt.MapFrom(x => x.Name))
 
             .ForPath(c => c.IsStateProvinceCodeUnavailable,
                 opt => opt.MapFrom(x => x.IsOnlyStateProvinceFlag))
-            
-            .ForPath(c => c.CountryRegion.Code, 
+
+            .ForPath(c => c.CountryRegion.Code,
                 opt => opt.MapFrom(x => x.CountryRegion.CountryRegionCode))
 
             .ForPath(c => c.CountryRegion.Name,

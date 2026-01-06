@@ -32,10 +32,10 @@ internal sealed class MigrateHandler : IMigrateHandler
         ArgumentNullException.ThrowIfNull(configuration);
         ArgumentNullException.ThrowIfNull(options);
         ArgumentException.ThrowIfNullOrWhiteSpace(repoRoot);
-        _runner        = runner;
+        _runner = runner;
         _configuration = configuration;
-        _options       = options;
-        _repoRoot      = repoRoot;
+        _options = options;
+        _repoRoot = repoRoot;
     }
 
     /// <inheritdoc />
@@ -52,7 +52,7 @@ internal sealed class MigrateHandler : IMigrateHandler
         }
 
         var absoluteProjectPath = Path.GetFullPath(Path.Combine(_repoRoot, _options.DbUpProjectPath));
-        var repoRootNormalized  = _repoRoot.TrimEnd(Path.DirectorySeparatorChar, Path.AltDirectorySeparatorChar)
+        var repoRootNormalized = _repoRoot.TrimEnd(Path.DirectorySeparatorChar, Path.AltDirectorySeparatorChar)
                                   + Path.DirectorySeparatorChar;
         if (!absoluteProjectPath.StartsWith(repoRootNormalized, StringComparison.OrdinalIgnoreCase))
         {

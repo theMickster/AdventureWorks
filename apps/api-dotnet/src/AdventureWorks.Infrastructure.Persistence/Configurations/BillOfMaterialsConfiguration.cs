@@ -14,15 +14,15 @@ public class BillOfMaterialsConfiguration : IEntityTypeConfiguration<BillOfMater
         builder.HasKey(a => a.BillOfMaterialsId);
 
         builder.HasOne(a => a.Component)
-            .WithMany(b=>b.BillOfMaterialsComponents)
+            .WithMany(b => b.BillOfMaterialsComponents)
             .HasForeignKey(a => a.ComponentId);
 
         builder.HasOne(a => a.ProductAssembly)
-            .WithMany(b=>b.BillOfMaterialsProductAssemblies)
+            .WithMany(b => b.BillOfMaterialsProductAssemblies)
             .HasForeignKey(a => a.ProductAssemblyId);
 
         builder.HasOne(a => a.UnitMeasureCodeNavigation)
-            .WithMany(b=>b.BillOfMaterials)
+            .WithMany(b => b.BillOfMaterials)
             .HasForeignKey(a => a.UnitMeasureCode);
     }
 }

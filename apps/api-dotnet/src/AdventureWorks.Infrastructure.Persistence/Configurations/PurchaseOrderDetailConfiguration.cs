@@ -11,14 +11,14 @@ public class PurchaseOrderDetailConfiguration : IEntityTypeConfiguration<Purchas
     {
         builder.ToTable("PurchaseOrderDetail", "Purchasing");
 
-        builder.HasKey(a => new {a.PurchaseOrderId, a.PurchaseOrderDetailId});
+        builder.HasKey(a => new { a.PurchaseOrderId, a.PurchaseOrderDetailId });
 
         builder.HasOne(a => a.Product)
-            .WithMany(b=> b.PurchaseOrderDetails)
+            .WithMany(b => b.PurchaseOrderDetails)
             .HasForeignKey(a => a.ProductId);
 
         builder.HasOne(a => a.PurchaseOrder)
-            .WithMany(b=>b.PurchaseOrderDetails)
+            .WithMany(b => b.PurchaseOrderDetails)
             .HasForeignKey(a => a.PurchaseOrderId);
     }
 }

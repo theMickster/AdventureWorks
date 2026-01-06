@@ -11,14 +11,14 @@ public class PersonPhoneConfiguration : IEntityTypeConfiguration<PersonPhone>
     {
         builder.ToTable("PersonPhone", "Person");
 
-        builder.HasKey(a => new {a.BusinessEntityId, a.PhoneNumber, a.PhoneNumberTypeId});
+        builder.HasKey(a => new { a.BusinessEntityId, a.PhoneNumber, a.PhoneNumberTypeId });
 
         builder.HasOne(a => a.BusinessEntity)
-            .WithMany(b=>b.PersonPhones)
+            .WithMany(b => b.PersonPhones)
             .HasForeignKey(a => a.BusinessEntityId);
 
         builder.HasOne(a => a.PhoneNumberType)
-            .WithMany(b=>b.PersonPhones)
+            .WithMany(b => b.PersonPhones)
             .HasForeignKey(a => a.PhoneNumberTypeId);
     }
 }

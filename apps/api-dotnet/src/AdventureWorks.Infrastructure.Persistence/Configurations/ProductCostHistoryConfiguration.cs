@@ -11,10 +11,10 @@ public class ProductCostHistoryConfiguration : IEntityTypeConfiguration<ProductC
     {
         builder.ToTable("ProductCostHistory", "Production");
 
-        builder.HasKey(a => new {a.ProductId, a.StartDate});
+        builder.HasKey(a => new { a.ProductId, a.StartDate });
 
         builder.HasOne(a => a.Product)
-            .WithMany(b=>b.ProductCostHistory)
+            .WithMany(b => b.ProductCostHistory)
             .HasForeignKey(a => a.ProductId);
     }
 }

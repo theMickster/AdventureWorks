@@ -13,6 +13,6 @@ public class CreditCardConfiguration : IEntityTypeConfiguration<CreditCard>
 
         builder.HasKey(a => a.CreditCardId);
 
-           
+
     }
 }

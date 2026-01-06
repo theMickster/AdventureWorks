@@ -89,7 +89,7 @@ internal static class SetupLogging
         });
         return services;
     }
-    
+
 
     private static string RetrieveEnvironment(this IConfiguration configuration)
     {

@@ -2,7 +2,7 @@
 
 namespace AdventureWorks.Application.PersistenceContracts.Repositories.Person;
 
-public  interface IPersonTypeRepository : IReadOnlyAsyncRepository<PersonTypeEntity>
+public interface IPersonTypeRepository : IReadOnlyAsyncRepository<PersonTypeEntity>
 {
 
 }

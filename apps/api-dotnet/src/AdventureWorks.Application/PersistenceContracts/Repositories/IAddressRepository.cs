@@ -1,6 +1,7 @@
 ﻿using AdventureWorks.Domain.Entities.Person;
 
 namespace AdventureWorks.Application.PersistenceContracts.Repositories;
+
 public interface IAddressRepository : IAsyncRepository<AddressEntity>
 {
     /// <summary>

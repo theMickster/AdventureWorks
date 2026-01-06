@@ -15,7 +15,7 @@ public class AdventureWorksDbContext : DbContext, IAdventureWorksDbContext
 {
     private readonly ILogger<AdventureWorksDbContext> _logger;
 
-    public AdventureWorksDbContext(DbContextOptions<AdventureWorksDbContext> options) :base (options)
+    public AdventureWorksDbContext(DbContextOptions<AdventureWorksDbContext> options) : base(options)
     {
         _logger = new NullLogger<AdventureWorksDbContext>();
     }
@@ -26,7 +26,7 @@ public class AdventureWorksDbContext : DbContext, IAdventureWorksDbContext
     {
         _logger = factory.CreateLogger<AdventureWorksDbContext>();
     }
-        
+
     public DbSet<Product> Products { get; set; }
 
     public DbSet<ProductReview> ProductReviews { get; set; }

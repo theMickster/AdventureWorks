@@ -11,10 +11,10 @@ public class SalesOrderHeaderSalesReasonConfiguration : IEntityTypeConfiguration
     {
         builder.ToTable("SalesOrderHeaderSalesReason", "Sales");
 
-        builder.HasKey(a => new {a.SalesOrderId, a.SalesReasonId});
+        builder.HasKey(a => new { a.SalesOrderId, a.SalesReasonId });
 
         builder.HasOne(a => a.SalesOrder)
-            .WithMany(b=> b.SalesOrderHeaderSalesReasons)
+            .WithMany(b => b.SalesOrderHeaderSalesReasons)
             .HasForeignKey(a => a.SalesOrderId);
 
         builder.HasOne(a => a.SalesReason)

@@ -45,6 +45,6 @@ public class EmployeeEntity : BaseEntity
     public ICollection<PurchaseOrderHeader> PurchaseOrderHeaders { get; set; }
 
     public ICollection<SalesPersonEntity> SalesPersons { get; set; }
-        
+
     public PersonEntity PersonBusinessEntity { get; set; }
 }

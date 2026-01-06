@@ -11,7 +11,7 @@ public class CountryRegionCurrencyConfiguration : IEntityTypeConfiguration<Count
     {
         builder.ToTable("CountryRegionCurrency", "Sales");
 
-        builder.HasKey(a => new {a.CountryRegionCode, a.CurrencyCode});
+        builder.HasKey(a => new { a.CountryRegionCode, a.CurrencyCode });
 
         builder.HasOne(a => a.CountryRegionEntityCodeNavigation)
             .WithMany()

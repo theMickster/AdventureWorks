@@ -18,11 +18,11 @@ public class SalesOrderHeaderConfiguration : IEntityTypeConfiguration<SalesOrder
             .HasForeignKey(a => a.CustomerId);
 
         builder.HasOne(a => a.SalesPerson)
-            .WithMany(b=>b.SalesOrderHeaders)
+            .WithMany(b => b.SalesOrderHeaders)
             .HasForeignKey(a => a.SalesPersonId);
 
         builder.HasOne(a => a.TerritoryEntity)
-            .WithMany(b=> b.SalesOrderHeaders)
+            .WithMany(b => b.SalesOrderHeaders)
             .HasForeignKey(a => a.TerritoryId);
 
         builder.HasOne(a => a.BillToAddressEntity)
@@ -34,15 +34,15 @@ public class SalesOrderHeaderConfiguration : IEntityTypeConfiguration<SalesOrder
             .HasForeignKey(a => a.ShipToAddressId);
 
         builder.HasOne(a => a.ShipMethod)
-            .WithMany(b=> b.SalesOrderHeaders)
+            .WithMany(b => b.SalesOrderHeaders)
             .HasForeignKey(a => a.ShipMethodId);
 
         builder.HasOne(a => a.CreditCard)
-            .WithMany(b=>b.SalesOrderHeaders)
+            .WithMany(b => b.SalesOrderHeaders)
             .HasForeignKey(a => a.CreditCardId);
 
         builder.HasOne(a => a.CurrencyRate)
-            .WithMany(b=> b.SalesOrderHeaders)
+            .WithMany(b => b.SalesOrderHeaders)
             .HasForeignKey(a => a.CurrencyRateId);
 
     }

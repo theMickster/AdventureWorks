@@ -4,7 +4,7 @@ public static class AppLoggingConstants
 {
 
     public const string StatusOk = "Status200OK";
-    
+
     public const string StatusBadRequest = "Status400BadRequest";
 
     public const string StatusNotFound = "Status404NotFound";

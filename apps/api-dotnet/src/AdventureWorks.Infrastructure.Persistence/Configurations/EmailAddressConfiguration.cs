@@ -17,7 +17,7 @@ public class EmailAddressConfiguration : IEntityTypeConfiguration<EmailAddressEn
         builder.Property(x => x.EmailAddressName).HasColumnName("EmailAddress").HasMaxLength(50);
 
         builder.HasOne(a => a.BusinessEntity)
-            .WithMany(b=>b.EmailAddresses)
+            .WithMany(b => b.EmailAddresses)
             .HasForeignKey(a => a.BusinessEntityId);
     }
 }

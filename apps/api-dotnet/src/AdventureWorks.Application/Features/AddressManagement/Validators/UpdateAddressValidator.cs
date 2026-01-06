@@ -6,7 +6,7 @@ namespace AdventureWorks.Application.Features.AddressManagement.Validators;
 
 public sealed class UpdateAddressValidator : AddressBaseModelValidator<AddressUpdateModel>
 {
-    public UpdateAddressValidator(IStateProvinceRepository stateProvinceRepository):
+    public UpdateAddressValidator(IStateProvinceRepository stateProvinceRepository) :
         base(stateProvinceRepository)
     {
         RuleFor(x => x.Id)
@@ -19,5 +19,5 @@ public sealed class UpdateAddressValidator : AddressBaseModelValidator<AddressUp
     }
 
     public static string AddressIdValidInteger => "Address Id must be a positive integer.";
-        
+
 }

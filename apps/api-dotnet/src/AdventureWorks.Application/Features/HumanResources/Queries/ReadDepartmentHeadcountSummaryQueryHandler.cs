@@ -20,9 +20,9 @@ public sealed class ReadDepartmentHeadcountSummaryQueryHandler(
         return summaries
             .Select(x => new DepartmentHeadcountSummaryModel
             {
-                DepartmentId        = x.Dept.DepartmentId,
-                DepartmentName      = x.Dept.Name,
-                GroupName           = x.Dept.GroupName,
+                DepartmentId = x.Dept.DepartmentId,
+                DepartmentName = x.Dept.Name,
+                GroupName = x.Dept.GroupName,
                 ActiveEmployeeCount = x.Count
             })
             .ToList()

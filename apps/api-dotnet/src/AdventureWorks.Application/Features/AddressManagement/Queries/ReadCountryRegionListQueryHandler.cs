@@ -5,10 +5,10 @@ using MediatR;
 
 namespace AdventureWorks.Application.Features.AddressManagement.Queries;
 
-public sealed class ReadCountryRegionListQueryHandler (
-    IMapper mapper, 
-    ICountryRegionRepository repository) 
-        : IRequestHandler<ReadCountryRegionListQuery, List<CountryRegionModel>>   
+public sealed class ReadCountryRegionListQueryHandler(
+    IMapper mapper,
+    ICountryRegionRepository repository)
+        : IRequestHandler<ReadCountryRegionListQuery, List<CountryRegionModel>>
 {
     private readonly IMapper _mapper = mapper ?? throw new ArgumentNullException(nameof(mapper));
     private readonly ICountryRegionRepository _repository = repository ?? throw new ArgumentNullException(nameof(repository));

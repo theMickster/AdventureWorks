@@ -4,6 +4,7 @@ using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.DependencyInjection;
 
 namespace AdventureWorks.Testing.Console.Verifications;
+
 internal sealed class VerifyStoreRepository
 {
     private readonly IAdventureWorksDbContext _dbContext;

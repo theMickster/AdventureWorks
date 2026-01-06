@@ -6,11 +6,11 @@ using MediatR;
 
 namespace AdventureWorks.Application.Features.Sales.Queries;
 
-public sealed class ReadStoreQueryHandler (
+public sealed class ReadStoreQueryHandler(
     IMapper mapper,
     IStoreRepository storeRepository,
     IBusinessEntityContactEntityRepository beceRepository)
-        :IRequestHandler<ReadStoreQuery, StoreModel?>
+        : IRequestHandler<ReadStoreQuery, StoreModel?>
 {
     private readonly IMapper _mapper = mapper ?? throw new ArgumentNullException(nameof(mapper));
     private readonly IStoreRepository _storeRepository = storeRepository ?? throw new ArgumentNullException(nameof(storeRepository));

@@ -11,14 +11,14 @@ public class PersonCreditCardConfiguration : IEntityTypeConfiguration<PersonCred
     {
         builder.ToTable("PersonCreditCard", "Sales");
 
-        builder.HasKey(a => new { a.BusinessEntityId, a.CreditCardId});
+        builder.HasKey(a => new { a.BusinessEntityId, a.CreditCardId });
 
         builder.HasOne(a => a.BusinessEntity)
-            .WithMany(b=>b.PersonCreditCards)
+            .WithMany(b => b.PersonCreditCards)
             .HasForeignKey(a => a.BusinessEntityId);
 
         builder.HasOne(a => a.CreditCard)
-            .WithMany(b=>b.PersonCreditCards)
+            .WithMany(b => b.PersonCreditCards)
             .HasForeignKey(a => a.CreditCardId);
 
     }

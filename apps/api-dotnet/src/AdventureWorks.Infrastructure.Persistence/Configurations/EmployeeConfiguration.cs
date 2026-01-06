@@ -19,7 +19,7 @@ public class EmployeeConfiguration : IEntityTypeConfiguration<EmployeeEntity>
         builder.HasKey(a => a.BusinessEntityId);
 
         builder.HasOne(a => a.PersonBusinessEntity)
-            .WithMany(b=>b.Employees)
+            .WithMany(b => b.Employees)
             .HasForeignKey(a => a.BusinessEntityId);
 
         // OrganizationLevel is a computed column in the database

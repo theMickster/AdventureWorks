@@ -13,7 +13,7 @@ namespace AdventureWorks.API.libs.Middleware;
 /// </summary>
 [ExcludeFromCodeCoverage]
 public sealed class UserContextMiddleware(
-    RequestDelegate next, 
+    RequestDelegate next,
     ILogger<UserContextMiddleware> logger)
 {
     private readonly RequestDelegate _next = next ?? throw new ArgumentNullException(nameof(next));
@@ -24,7 +24,7 @@ public sealed class UserContextMiddleware(
     /// Uses CQRS query to validate and retrieve linked Person entity.
     /// </summary>
     public async Task InvokeAsync(
-        HttpContext context, 
+        HttpContext context,
         IUserContextAccessor userContextAccessor,
         IMediator mediator)
     {
@@ -34,7 +34,7 @@ public sealed class UserContextMiddleware(
 
         var user = context.User;
         var entraObjectId = GetEntraObjectId(user);
-        
+
         // Build initial context from JWT claims
         var userContext = new UserContext
         {
@@ -49,11 +49,11 @@ public sealed class UserContextMiddleware(
         {
             try
             {
-                var query = new ReadEntraLinkedPersonQuery 
-                { 
-                    EntraObjectId = entraObjectId.Value 
+                var query = new ReadEntraLinkedPersonQuery
+                {
+                    EntraObjectId = entraObjectId.Value
                 };
-                
+
                 var person = await mediator.Send(query, context.RequestAborted);
 
                 if (person != null)
@@ -63,7 +63,7 @@ public sealed class UserContextMiddleware(
                         BusinessEntityId = person.BusinessEntityId,
                         PersonFullName = $"{person.FirstName} {person.LastName}".Trim()
                     };
-                    
+
                     _logger.LogDebug(
                         "Resolved Entra user: {UserPrincipalName} -> BusinessEntityId {BusinessEntityId}",
                         userContext.UserPrincipalName,
@@ -79,8 +79,8 @@ public sealed class UserContextMiddleware(
             }
             catch (Exception ex)
             {
-                _logger.LogError(ex, 
-                    "Error resolving BusinessEntityId for EntraObjectId={EntraObjectId}", 
+                _logger.LogError(ex,
+                    "Error resolving BusinessEntityId for EntraObjectId={EntraObjectId}",
                     entraObjectId);
                 // Continue without BusinessEntityId rather than failing the request
             }

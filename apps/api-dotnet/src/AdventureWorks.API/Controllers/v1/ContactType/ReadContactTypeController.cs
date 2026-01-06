@@ -50,7 +50,7 @@ public class ReadContactTypeController : ControllerBase
             return BadRequest("A valid contact type id must be specified.");
         }
 
-        var model = await _mediator.Send(new ReadContactTypeQuery{ Id = id });
+        var model = await _mediator.Send(new ReadContactTypeQuery { Id = id });
 
         return model is null ? NotFound("Unable to locate the contact type.") : Ok(model);
     }

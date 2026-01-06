@@ -14,15 +14,15 @@ public class CustomerConfiguration : IEntityTypeConfiguration<CustomerEntity>
         builder.HasKey(a => a.CustomerId);
 
         builder.HasOne(a => a.Person)
-            .WithMany(b=>b.Customers)
+            .WithMany(b => b.Customers)
             .HasForeignKey(a => a.PersonId);
 
         builder.HasOne(a => a.TerritoryEntity)
-            .WithMany(b=>b.Customers)
+            .WithMany(b => b.Customers)
             .HasForeignKey(a => a.TerritoryId);
 
         builder.HasOne(a => a.StoreEntity)
-            .WithMany(b=>b.Customers)
+            .WithMany(b => b.Customers)
             .HasForeignKey(a => a.StoreId);
     }
 }

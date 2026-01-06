@@ -20,12 +20,21 @@ public sealed class ReleaseStockActivityTests
         const string instanceId = "sales-order-saga-71774";
         dbContext.ProductInventories.Add(new ProductInventory
         {
-            ProductId = 1, LocationId = 2, Shelf = "A", Bin = 1, Quantity = 7
+            ProductId = 1,
+            LocationId = 2,
+            Shelf = "A",
+            Bin = 1,
+            Quantity = 7
         });
         dbContext.InventoryAllocations.Add(new SalesOrderSagaInventoryAllocation
         {
-            SagaInstanceId = instanceId, SalesOrderId = 71774, LineNumber = 1,
-            ProductId = 1, LocationId = 2, Quantity = 3, ReservedAt = DateTime.UtcNow
+            SagaInstanceId = instanceId,
+            SalesOrderId = 71774,
+            LineNumber = 1,
+            ProductId = 1,
+            LocationId = 2,
+            Quantity = 3,
+            ReservedAt = DateTime.UtcNow
         });
         await dbContext.SaveChangesAsync(TestContext.Current.CancellationToken);
         var activity = new ReleaseStockActivityCore(dbContext);

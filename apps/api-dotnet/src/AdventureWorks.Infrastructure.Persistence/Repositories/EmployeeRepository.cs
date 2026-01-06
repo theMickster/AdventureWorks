@@ -60,7 +60,7 @@ public sealed class EmployeeRepository(AdventureWorksDbContext dbContext)
             var businessEntityId = businessEntity.BusinessEntityId;
 
             personEntity.BusinessEntityId = businessEntityId;
-            personEntity.PersonTypeId = 2; 
+            personEntity.PersonTypeId = 2;
             personEntity.NameStyle = false;
             personEntity.EmailPromotion = 0;
             personEntity.Rowguid = Guid.NewGuid();
@@ -84,7 +84,7 @@ public sealed class EmployeeRepository(AdventureWorksDbContext dbContext)
             personEntity.PersonPhones.Add(personPhone);
 
             await DbContext.SaveChangesAsync(cancellationToken);
-        
+
             emailAddress.BusinessEntityId = businessEntityId;
             emailAddress.Rowguid = Guid.NewGuid();
             emailAddress.ModifiedDate = modifiedDate;
@@ -93,7 +93,7 @@ public sealed class EmployeeRepository(AdventureWorksDbContext dbContext)
             personEntity.EmailAddresses.Add(emailAddress);
 
             await DbContext.SaveChangesAsync(cancellationToken);
-            
+
             address.Rowguid = Guid.NewGuid();
             address.ModifiedDate = modifiedDate;
 

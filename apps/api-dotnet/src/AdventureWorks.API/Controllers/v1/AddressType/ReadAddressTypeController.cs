@@ -40,7 +40,7 @@ public sealed class ReadAddressTypeController : ControllerBase
         _logger = logger;
         _mediator = mediator;
         _userContext = userContext;
-        
+
         if (!_userContext.IsLinkedToAdventureWorks)
         {
             _logger.LogInformation("User not linked to AdventureWorks system");
@@ -62,7 +62,7 @@ public sealed class ReadAddressTypeController : ControllerBase
             return BadRequest("A valid address type id must be specified.");
         }
 
-        var model = await _mediator.Send(new ReadAddressTypeQuery{ Id = id });
+        var model = await _mediator.Send(new ReadAddressTypeQuery { Id = id });
 
         return model is null ? NotFound("Unable to locate the address type.") : Ok(model);
     }

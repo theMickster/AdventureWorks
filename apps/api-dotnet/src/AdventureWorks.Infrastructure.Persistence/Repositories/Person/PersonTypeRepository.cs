@@ -10,6 +10,6 @@ public sealed class PersonTypeRepository : ReadOnlyEfRepository<PersonTypeEntity
 {
     public PersonTypeRepository(AdventureWorksDbContext dbContext) : base(dbContext)
     {
-        
+
     }
 }

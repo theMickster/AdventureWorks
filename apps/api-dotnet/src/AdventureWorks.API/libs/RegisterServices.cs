@@ -111,7 +111,7 @@ internal static class RegisterServices
             {
                 options.SerializerSettings.NullValueHandling = Newtonsoft.Json.NullValueHandling.Include;
             });
-        
+
         builder.Services.AddValidatorsFromAssemblyContaining<CreateAddressValidator>();
         builder.Services.AddApplicationServices(builder.Configuration);
         builder.Services.AddSignalR();
@@ -130,7 +130,7 @@ internal static class RegisterServices
             o.DatabaseConnectionStrings = connectionStrings;
         });
 
-        var currentConnectionString = GetSqlConnectionString(builder.Configuration, connectionStrings );
+        var currentConnectionString = GetSqlConnectionString(builder.Configuration, connectionStrings);
 
         builder.Services.AddDbContext<AdventureWorksDbContext>(options =>
             {
@@ -139,7 +139,7 @@ internal static class RegisterServices
         );
 
         builder.Services.AddScoped<IAdventureWorksDbContext>(
-            provider => provider.GetService<AdventureWorksDbContext>() ?? 
+            provider => provider.GetService<AdventureWorksDbContext>() ??
                         throw new ConfigurationException("The AdventureWorksDbContext is not properly registered in the correct order."));
 
         return builder;
@@ -213,7 +213,7 @@ internal static class RegisterServices
             Title = title,
             Version = version,
             Contact = new OpenApiContact
-                { Email = "bug.bashing.anonymous@outlook.com", Name = "Bug Bashing Anonymous" },
+            { Email = "bug.bashing.anonymous@outlook.com", Name = "Bug Bashing Anonymous" },
             Description = description
         };
 
@@ -224,13 +224,13 @@ internal static class RegisterServices
 
         return oai;
     }
-    
+
     private static List<DatabaseConnectionString> GetDatabaseConnectionStrings(IConfiguration configuration)
     {
-        var defaultConnectionString = 
+        var defaultConnectionString =
             configuration.GetConnectionString(ConfigurationConstants.SqlConnectionDefaultConnectionName);
 
-        var sqlAzureConnectionString = 
+        var sqlAzureConnectionString =
             configuration.GetConnectionString(ConfigurationConstants.SqlConnectionSqlAzureConnectionName);
 
         var loadTestingConnectionString =
@@ -252,7 +252,7 @@ internal static class RegisterServices
                 $"{ConfigurationConstants.SqlConnectionPlaywrightTestingConnectionName}. " +
                 "Please verify database configuration.");
         }
-        
+
         var connectionStrings = new List<DatabaseConnectionString>();
 
         if (!string.IsNullOrWhiteSpace(defaultConnectionString))
@@ -305,7 +305,7 @@ internal static class RegisterServices
                 "Please verify configuration.");
         }
 
-        var connectionStringName = settings[ConfigurationConstants.CurrentConnectionStringNameKey] ?? 
+        var connectionStringName = settings[ConfigurationConstants.CurrentConnectionStringNameKey] ??
                                    ConfigurationConstants.SqlConnectionDefaultConnectionName;
 
         var currentConnectionString = connectionStrings.FirstOrDefault(x =>

@@ -32,8 +32,8 @@ internal sealed class ResetHandler : IResetHandler
         ArgumentNullException.ThrowIfNull(restore);
         ArgumentNullException.ThrowIfNull(migrate);
         _verifyBaseline = verifyBaseline;
-        _restore        = restore;
-        _migrate        = migrate;
+        _restore = restore;
+        _migrate = migrate;
     }
 
     /// <inheritdoc />

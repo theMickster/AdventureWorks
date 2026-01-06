@@ -18,12 +18,12 @@ public sealed class ProductReviewParameter : QueryStringParamsBase
         get
         {
             return _orderBy switch
-                {
-                    IdField => SortedResultConstants.ProductReviewId,
-                    RatingField => SortedResultConstants.Rating,
-                    ReviewDateField => SortedResultConstants.ReviewDate,
-                    _ => SortedResultConstants.ProductReviewId
-                };
+            {
+                IdField => SortedResultConstants.ProductReviewId,
+                RatingField => SortedResultConstants.Rating,
+                ReviewDateField => SortedResultConstants.ReviewDate,
+                _ => SortedResultConstants.ProductReviewId
+            };
         }
         set =>
             _orderBy = value?.Trim().ToLower() == IdField ? IdField

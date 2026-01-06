@@ -16,8 +16,8 @@ public sealed class ResetHandlerTests
     public async Task RunAsync_AllStepsSucceed_ReturnsExitOkWithElapsedMessage()
     {
         var verifyBaseline = new Mock<IVerifyBaselineHandler>(MockBehavior.Strict);
-        var restore        = new Mock<IRestoreHandler>(MockBehavior.Strict);
-        var migrate        = new Mock<IMigrateHandler>(MockBehavior.Strict);
+        var restore = new Mock<IRestoreHandler>(MockBehavior.Strict);
+        var migrate = new Mock<IMigrateHandler>(MockBehavior.Strict);
 
         verifyBaseline
             .Setup(h => h.RunAsync(TargetName, It.IsAny<CancellationToken>()))
@@ -53,8 +53,8 @@ public sealed class ResetHandlerTests
     public async Task RunAsync_VerifyBaselineFails_AbortsAndReturnsVerifyResult()
     {
         var verifyBaseline = new Mock<IVerifyBaselineHandler>(MockBehavior.Strict);
-        var restore        = new Mock<IRestoreHandler>(MockBehavior.Strict);
-        var migrate        = new Mock<IMigrateHandler>(MockBehavior.Strict);
+        var restore = new Mock<IRestoreHandler>(MockBehavior.Strict);
+        var migrate = new Mock<IMigrateHandler>(MockBehavior.Strict);
 
         var expected = VerbResult.Fail(DbResetDefaults.ExitVerifyBaselineMissing, "baseline missing");
         verifyBaseline
@@ -82,8 +82,8 @@ public sealed class ResetHandlerTests
     public async Task RunAsync_RestoreFails_AbortsAndReturnsRestoreResult()
     {
         var verifyBaseline = new Mock<IVerifyBaselineHandler>(MockBehavior.Strict);
-        var restore        = new Mock<IRestoreHandler>(MockBehavior.Strict);
-        var migrate        = new Mock<IMigrateHandler>(MockBehavior.Strict);
+        var restore = new Mock<IRestoreHandler>(MockBehavior.Strict);
+        var migrate = new Mock<IMigrateHandler>(MockBehavior.Strict);
 
         verifyBaseline
             .Setup(h => h.RunAsync(TargetName, It.IsAny<CancellationToken>()))
@@ -113,8 +113,8 @@ public sealed class ResetHandlerTests
     public async Task RunAsync_MigrateFails_ReturnsMigrateResult()
     {
         var verifyBaseline = new Mock<IVerifyBaselineHandler>(MockBehavior.Strict);
-        var restore        = new Mock<IRestoreHandler>(MockBehavior.Strict);
-        var migrate        = new Mock<IMigrateHandler>(MockBehavior.Strict);
+        var restore = new Mock<IRestoreHandler>(MockBehavior.Strict);
+        var migrate = new Mock<IMigrateHandler>(MockBehavior.Strict);
 
         verifyBaseline
             .Setup(h => h.RunAsync(TargetName, It.IsAny<CancellationToken>()))
@@ -147,8 +147,8 @@ public sealed class ResetHandlerTests
     public async Task RunAsync_VerifyBaselineThrowsOperationCanceledException_Rethrows()
     {
         var verifyBaseline = new Mock<IVerifyBaselineHandler>(MockBehavior.Strict);
-        var restore        = new Mock<IRestoreHandler>(MockBehavior.Strict);
-        var migrate        = new Mock<IMigrateHandler>(MockBehavior.Strict);
+        var restore = new Mock<IRestoreHandler>(MockBehavior.Strict);
+        var migrate = new Mock<IMigrateHandler>(MockBehavior.Strict);
 
         verifyBaseline
             .Setup(h => h.RunAsync(TargetName, It.IsAny<CancellationToken>()))

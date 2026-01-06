@@ -18,5 +18,5 @@ public class SalesOrderDetail : BaseEntity
 
     public SalesOrderHeader SalesOrder { get; set; }
     public SpecialOfferProduct SpecialOfferProduct { get; set; }
-    public Product Product{ get; set; }
+    public Product Product { get; set; }
 }

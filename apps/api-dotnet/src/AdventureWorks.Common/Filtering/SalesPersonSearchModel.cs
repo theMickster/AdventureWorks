@@ -23,5 +23,5 @@ public sealed class SalesPersonSearchModel : SearchPersonModelBase
     /// The sales person's email address
     /// </summary>
     public string? EmailAddress { get; set; }
-    
+
 }

@@ -11,10 +11,10 @@ public class ProductVendorConfiguration : IEntityTypeConfiguration<ProductVendor
     {
         builder.ToTable("ProductVendor", "Purchasing");
 
-        builder.HasKey(a => new {a.ProductId, a.BusinessEntityId});
+        builder.HasKey(a => new { a.ProductId, a.BusinessEntityId });
 
         builder.HasOne(a => a.Product)
-            .WithMany(b=>b.ProductVendors)
+            .WithMany(b => b.ProductVendors)
             .HasForeignKey(a => a.ProductId);
 
         builder.HasOne(a => a.BusinessEntity)

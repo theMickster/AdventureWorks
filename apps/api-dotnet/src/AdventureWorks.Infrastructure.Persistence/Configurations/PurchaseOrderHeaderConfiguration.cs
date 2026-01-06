@@ -14,15 +14,15 @@ public class PurchaseOrderHeaderConfiguration : IEntityTypeConfiguration<Purchas
         builder.HasKey(a => a.PurchaseOrderId);
 
         builder.HasOne(a => a.EmployeeEntity)
-            .WithMany(b=>b.PurchaseOrderHeaders)
+            .WithMany(b => b.PurchaseOrderHeaders)
             .HasForeignKey(a => a.EmployeeId);
 
         builder.HasOne(a => a.Vendor)
-            .WithMany(b=>b.PurchaseOrderHeaders)
+            .WithMany(b => b.PurchaseOrderHeaders)
             .HasForeignKey(a => a.VendorId);
 
         builder.HasOne(a => a.ShipMethod)
-            .WithMany(b=>b.PurchaseOrderHeaders)
+            .WithMany(b => b.PurchaseOrderHeaders)
             .HasForeignKey(a => a.ShipMethodId);
     }
 }

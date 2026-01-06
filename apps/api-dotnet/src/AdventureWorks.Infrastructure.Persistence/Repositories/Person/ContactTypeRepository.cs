@@ -10,6 +10,6 @@ public sealed class ContactTypeRepository : ReadOnlyEfRepository<ContactTypeEnti
 {
     public ContactTypeRepository(AdventureWorksDbContext dbContext) : base(dbContext)
     {
-        
+
     }
 }
