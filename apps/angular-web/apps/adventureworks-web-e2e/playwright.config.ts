@@ -53,27 +53,33 @@ export default defineConfig({
       use: { ...devices['Desktop Chrome'] },
       testMatch: /auth-boundary\.spec\.ts/,
     },
+    {
+      name: 'chromium-route-smoke',
+      use: { ...devices['Desktop Chrome'], storageState: STORAGE_STATE_PATH, trace: 'off' },
+      testMatch: /route-smoke\.spec\.ts/,
+      dependencies: ['setup'],
+    },
     // trace: 'off' overrides the global 'on-first-retry' default — these projects run with a
     // real Entra storageState, and a captured trace would embed live access/ID/refresh tokens
     // (network Authorization headers, localStorage snapshot) into a CI artifact.
     {
       name: 'chromium',
       use: { ...devices['Desktop Chrome'], storageState: STORAGE_STATE_PATH, trace: 'off' },
-      testIgnore: [/auth-boundary\.spec\.ts/, /global-setup\.ts/],
+      testIgnore: [/auth-boundary\.spec\.ts/, /global-setup\.ts/, /route-smoke\.spec\.ts/],
       dependencies: ['setup'],
     },
 
     {
       name: 'firefox',
       use: { ...devices['Desktop Firefox'], storageState: STORAGE_STATE_PATH, trace: 'off' },
-      testIgnore: [/auth-boundary\.spec\.ts/, /global-setup\.ts/],
+      testIgnore: [/auth-boundary\.spec\.ts/, /global-setup\.ts/, /route-smoke\.spec\.ts/],
       dependencies: ['setup'],
     },
 
     {
       name: 'webkit',
       use: { ...devices['Desktop Safari'], storageState: STORAGE_STATE_PATH, trace: 'off' },
-      testIgnore: [/auth-boundary\.spec\.ts/, /global-setup\.ts/],
+      testIgnore: [/auth-boundary\.spec\.ts/, /global-setup\.ts/, /route-smoke\.spec\.ts/],
       dependencies: ['setup'],
     },
 

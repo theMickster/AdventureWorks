@@ -9,6 +9,7 @@
     "build": {
       "executor": "@angular/build:application",
       "outputs": ["{options.outputPath}"],
+      "defaultConfiguration": "production",
       "options": {
         "outputPath": "dist/apps/adventureworks-web",
         "browser": "apps/adventureworks-web/src/main.ts",
@@ -78,12 +79,12 @@
             }
           ]
         }
-      },
-      "defaultConfiguration": "production"
+      }
     },
     "serve": {
       "continuous": true,
       "executor": "@angular/build:dev-server",
+      "defaultConfiguration": "development",
       "options": {
         "port": 4200
       },
@@ -97,11 +98,7 @@
         "playwright": {
           "buildTarget": "adventureworks-web:build:playwright"
         }
-      },
-      "defaultConfiguration": "development"
-    },
-    "lint": {
-      "executor": "@nx/eslint:lint"
+      }
     },
     "test": {
       "executor": "@angular/build:unit-test",
@@ -122,6 +119,11 @@
         "port": 4200,
         "staticFilePath": "dist/apps/adventureworks-web/browser",
         "spa": true
+      }
+    },
+    "lint": {
+      "options": {
+        "max-warnings": 0
       }
     }
   }

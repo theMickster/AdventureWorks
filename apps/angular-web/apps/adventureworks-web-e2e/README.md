@@ -73,6 +73,9 @@ cd apps/angular-web
 # Full suite (spins up the `playwright`-configured dev server automatically)
 npx nx e2e adventureworks-web-e2e
 
+# Read-only Chromium route/API GET baseline
+npx playwright test --project=chromium-route-smoke --config=apps/adventureworks-web-e2e/playwright.config.ts
+
 # Only the tests that don't require a real Entra account
 npx playwright test --project=chromium-unauthenticated --config=apps/adventureworks-web-e2e/playwright.config.ts
 
@@ -131,6 +134,7 @@ Review the diff before committing regenerated baselines.
   anchored on `workspaceRoot` (not `__dirname`, which the Nx Playwright plugin evaluates in a
   context where it is undefined).
 - `src/app-shell.spec.ts` — load, navigation, and theme smoke tests (US-682).
+- `src/route-smoke.spec.ts` — Chromium-only, authenticated reachability checks for every user-facing route; follows list results to detail/edit pages and rejects page errors or failed API GETs.
 - `src/auth-boundary.spec.ts` — unauthenticated boundary smoke tests (US-683); runs under the
   `chromium-unauthenticated` project only.
 - `src/accessibility.spec.ts` — axe-core WCAG AA scans (US-684).
