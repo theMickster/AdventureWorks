@@ -92,7 +92,7 @@ stages:
                     connectionStrings: |
                       [
                         { "name": "DefaultConnection", "value": "$(adventureworks-sql-connection-string)", "type": "SQLAzure", "slotSetting": false },
-                        { "name": "SqlAzureConnection", "value": "$(adventureworks-sql-connection-string)", "type": "SQLAzure", "slotSetting": false }
+                        { "name": "AdventureWorks_Azure", "value": "$(adventureworks-sql-connection-string)", "type": "SQLAzure", "slotSetting": false }
                       ]
 
                 # --- 3. Angular Deployment ---

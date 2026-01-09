@@ -78,9 +78,9 @@ public sealed class MonotonicOrderIdAllocator
 public sealed class SqlFixtureStore(IConfiguration configuration, MonotonicOrderIdAllocator allocator) : IFixtureStore
 {
     public const string Marker = "AW-SAGA-HARNESS:";
-    private string ConnectionString => configuration.GetConnectionString("DefaultConnection")
+    private string ConnectionString => configuration.GetConnectionString("AdventureWorks")
         ?? configuration["SqlConnectionString"]
-        ?? throw new InvalidOperationException("ConnectionStrings:DefaultConnection is required.");
+        ?? throw new InvalidOperationException("ConnectionStrings:AdventureWorks is required.");
 
     public async Task<FixtureOrder> CreateAsync(CreateOrderRequest request, CancellationToken cancellationToken)
     {

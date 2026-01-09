@@ -98,7 +98,7 @@ steps:
     displayName: "Start API (PlaywrightTesting)"
     env:
       ASPNETCORE_ENVIRONMENT: PlaywrightTesting
-      ConnectionStrings__PlaywrightTestingConnection: $(adventureworks-sql-connection-string)
+      ConnectionStrings__AdventureWorks_E2E: $(adventureworks-sql-connection-string)
       AzureAdPlaywrightTesting__Instance: $(playwrightTestingEntraInstance)
       AzureAdPlaywrightTesting__TenantId: $(playwrightTestingEntraTenantId)
       AzureAdPlaywrightTesting__ClientId: $(playwrightTestingEntraClientId)

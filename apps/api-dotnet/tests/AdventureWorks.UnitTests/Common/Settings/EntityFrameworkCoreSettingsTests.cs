@@ -13,8 +13,7 @@ public sealed class EntityFrameworkCoreSettingsTests : UnitTestBase
         {
             CommandLogLevel = "Debug",
             CommandTimeout = 120,
-            CurrentConnectionStringName = "Azure",
-            DatabaseConnectionStrings = new List<DatabaseConnectionString> { new () }
+            CurrentConnectionStringName = "Azure"
         };
 
         using (new AssertionScope())
@@ -22,7 +21,6 @@ public sealed class EntityFrameworkCoreSettingsTests : UnitTestBase
             settings.CommandLogLevel.Should().Be("Debug");
             settings.CommandTimeout.Should().Be(120);
             settings.CurrentConnectionStringName.Should().Be("Azure");
-            settings.DatabaseConnectionStrings.Count.Should().Be(1);
         }
     }
 }

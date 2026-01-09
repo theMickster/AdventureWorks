@@ -6,7 +6,7 @@ services:
     container_name: aw-api
     environment:
       ASPNETCORE_ENVIRONMENT: "Docker"
-      ConnectionStrings__DefaultConnection: "${CONNECTION_STRING}"
+      ConnectionStrings__AdventureWorks: "${CONNECTION_STRING}"
     ports:
       - "5000:8080"
     healthcheck:

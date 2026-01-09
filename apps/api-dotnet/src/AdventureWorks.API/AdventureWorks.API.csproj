@@ -39,6 +39,7 @@
 	<ItemGroup>
 		<ProjectReference Include="..\AdventureWorks.Application\AdventureWorks.Application.csproj" />
 		<ProjectReference Include="..\AdventureWorks.Infrastructure.Persistence\AdventureWorks.Infrastructure.Persistence.csproj" />
+		<ProjectReference Include="..\..\..\..\libs\dotnet\AdventureWorks.Connections\AdventureWorks.Connections.csproj" />
 	</ItemGroup>
 
 	<ItemGroup>

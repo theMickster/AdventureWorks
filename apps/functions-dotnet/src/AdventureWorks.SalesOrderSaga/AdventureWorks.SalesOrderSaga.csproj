@@ -35,6 +35,7 @@
     <ProjectReference Include="../AdventureWorks.SalesOrderSaga.Contracts/AdventureWorks.SalesOrderSaga.Contracts.csproj" />
     <PackageReference Include="AdventureWorks.Domain" Version="$(AdventureWorksSharedPackageVersion)" />
     <PackageReference Include="AdventureWorks.Application" Version="$(AdventureWorksSharedPackageVersion)" />
+    <PackageReference Include="AdventureWorks.Connections" Version="$(AdventureWorksSharedPackageVersion)" />
   </ItemGroup>
 
   <ItemGroup>

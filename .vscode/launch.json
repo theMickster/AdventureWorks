@@ -59,7 +59,7 @@
       "stopAtEntry": false,
       "justMyCode": true,
       "env": {
-        // ConnectionStrings:LoadTestingConnection is blank in appsettings.LoadTesting.json —
+        // ConnectionStrings:AdventureWorks_Load is blank in appsettings.LoadTesting.json —
         // set it via `dotnet user-secrets` to point at a DB restored with
         // tools/console-apps/AdventureWorks.DbReset.Console, not your everyday dev DB.
         "ASPNETCORE_ENVIRONMENT": "LoadTesting"

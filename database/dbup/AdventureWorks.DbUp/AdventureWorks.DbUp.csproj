@@ -19,6 +19,10 @@
   </ItemGroup>
 
   <ItemGroup>
+    <ProjectReference Include="..\..\..\libs\dotnet\AdventureWorks.Connections\AdventureWorks.Connections.csproj" />
+  </ItemGroup>
+
+  <ItemGroup>
     <EmbeddedResource Include="Scripts\**\*.sql" />
     <EmbeddedResource Include="ProgrammableObjects\**\*.sql" />
   </ItemGroup>

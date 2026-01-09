@@ -9,7 +9,7 @@ Aspire is the canonical local experience. One AppHost starts the API, Angular ap
 - The AppHost database secret:
 
 ```bash
-dotnet user-secrets set "ConnectionStrings:DefaultConnection" "YOUR_CONNECTION_STRING" --project tools/aspire/AdventureWorks.AppHost
+dotnet user-secrets set "ConnectionStrings:AdventureWorks" "YOUR_CONNECTION_STRING" --project tools/aspire/AdventureWorks.AppHost
 ```
 
 DbUp keeps its separate `ConnectionStrings:AdventureWorks` user secret. If the external SQL container is not named `tosk-mssql`, set `SqlServer:ContainerName` in the AppHost configuration.
@@ -57,6 +57,6 @@ Cleanup requires both the dashboard confirmation and `confirm=true`. It selects 
 
 ## Standalone Functions fallback
 
-`local.settings.json` intentionally contains only `FUNCTIONS_WORKER_RUNTIME=dotnet-isolated`. Without Aspire, manually supply `AzureWebJobsStorage`, `ServiceBusConnection`, the three `ServiceBusSalesOrder...` topic/subscription settings, `ConnectionStrings__DefaultConnection` (or `SqlConnectionString`), and `PaymentAuthorization__BaseUrl`. Durable Functions shares `AzureWebJobsStorage`. Standalone mode does not start emulators or the payment simulator.
+`local.settings.json` intentionally contains only `FUNCTIONS_WORKER_RUNTIME=dotnet-isolated`. Without Aspire, manually supply `AzureWebJobsStorage`, `ServiceBusConnection` (trigger binding) and `ConnectionStrings__ServiceBus` (publisher client), the three `ServiceBusSalesOrder...` topic/subscription settings, `ConnectionStrings__AdventureWorks` (or `SqlConnectionString`), and `PaymentAuthorization__BaseUrl`. Durable Functions shares `AzureWebJobsStorage`. Standalone mode does not start emulators or the payment simulator.
 
 The separate containerized API/web workflow is documented in [`../../docker/README.md`](../../docker/README.md).

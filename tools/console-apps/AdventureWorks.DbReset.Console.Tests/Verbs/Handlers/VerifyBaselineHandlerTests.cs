@@ -17,7 +17,7 @@ public sealed class VerifyBaselineHandlerTests
 
     private static DbResetOptions BuildOptions(string baselinePath = UnreachablePath) => new()
     {
-        SnapshotSource = "AdventureWorksDev",
+        SnapshotSource = "AdventureWorks",
         DefaultTarget = TargetName,
         BaselinePath = baselinePath,
         TargetNamePattern = "^AdventureWorks_(E2E|Test)$",

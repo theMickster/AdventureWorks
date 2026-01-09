@@ -1,6 +1,8 @@
 using System.Text.RegularExpressions;
+using AdventureWorks.Connections;
 using AdventureWorks.DbReset.Console.Configuration;
 using Microsoft.Data.SqlClient;
+using Microsoft.Extensions.Configuration;
 
 namespace AdventureWorks.DbReset.Console.Safety;
 
@@ -83,8 +85,9 @@ internal sealed class DualRoleSafetyValidator
         }
 
         // Rule #3 — target key missing or empty. Run before Rule #2 so we can parse both strings.
-        if (!connectionStrings.TryGetValue(effectiveTargetName, out var targetCs)
-            || string.IsNullOrWhiteSpace(targetCs))
+        var catalog = BuildCatalog(connectionStrings);
+
+        if (!TryGetNonEmptyConnection(catalog, effectiveTargetName, out var targetCs))
         {
             return SafetyOutcome.Fail(
                 DualRoleSafetyMessages.Rule3_MissingTargetKey,
@@ -92,8 +95,7 @@ internal sealed class DualRoleSafetyValidator
         }
 
         // Source CS must also be resolvable to even consider Rule #2.
-        if (!connectionStrings.TryGetValue(options.SnapshotSource, out var sourceCs)
-            || string.IsNullOrWhiteSpace(sourceCs))
+        if (!TryGetNonEmptyConnection(catalog, options.SnapshotSource, out var sourceCs))
         {
             return SafetyOutcome.Fail(
                 DualRoleSafetyMessages.Rule3_MissingSourceKey,
@@ -139,5 +141,56 @@ internal sealed class DualRoleSafetyValidator
         }
 
         return SafetyOutcome.Success();
+    }
+
+    /// <summary>
+    /// Wraps the resolved <c>ConnectionStrings</c> snapshot in an <see cref="IConnectionCatalog"/>
+    /// so Rule #3's existence/non-empty check runs through the shared connection-catalog library
+    /// instead of a hand-rolled dictionary lookup.
+    /// </summary>
+    private static IConnectionCatalog BuildCatalog(IReadOnlyDictionary<string, string?> connectionStrings)
+    {
+        var configuration = new ConfigurationBuilder()
+            .AddInMemoryCollection(connectionStrings.Select(
+                pair => new KeyValuePair<string, string?>($"ConnectionStrings:{pair.Key}", pair.Value)))
+            .Build();
+
+        var builder = new ConnectionCatalogBuilder();
+        foreach (var name in connectionStrings.Keys)
+        {
+            builder.Add(name, ConnectionKind.Sql);
+        }
+
+        return builder.Build(configuration);
+    }
+
+    /// <summary>
+    /// Resolves <paramref name="name"/> via <paramref name="catalog"/> and validates it is
+    /// non-empty using <see cref="ConnectionValidation.EnsureNonEmpty"/>. Returns <c>false</c>
+    /// when the entry is missing or empty; <paramref name="value"/> is populated only on success.
+    /// </summary>
+    private static bool TryGetNonEmptyConnection(
+        IConnectionCatalog catalog,
+        string name,
+        out string value)
+    {
+        if (!catalog.TryGet(name, out var connection) || connection is null)
+        {
+            value = string.Empty;
+            return false;
+        }
+
+        try
+        {
+            ConnectionValidation.EnsureNonEmpty(connection);
+        }
+        catch (InvalidOperationException)
+        {
+            value = string.Empty;
+            return false;
+        }
+
+        value = connection.Value;
+        return true;
     }
 }

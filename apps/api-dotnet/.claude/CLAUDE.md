@@ -430,7 +430,7 @@ docker build -t adventureworks-api:latest . && docker run -p 8080:80 adventurewo
 
 - **VS Code breaks on `FluentValidation.ValidationException` / `KeyNotFoundException`**: These are caught by `ExceptionHandlerMiddleware` and translated to 400/404. See [guides/debugging-guide.md](guides/debugging-guide.md) to add them to the User-Unhandled exception ignore list.
 - **N+1 Queries**: Use `.Include()` or `.Select(x => new Model {...})`
-- **Connection String Not Found**: `dotnet user-secrets set "ConnectionStrings:DefaultConnection" "..."`
+- **Connection String Not Found**: `dotnet user-secrets set "ConnectionStrings:AdventureWorks" "..."`
 - **JWT 401 Errors**: Verify `AzureAd` config (Instance, TenantId, ClientId)
 - **AutoMapper Missing Map**: Add profile in `Features/{Domain}/Profiles/`
 

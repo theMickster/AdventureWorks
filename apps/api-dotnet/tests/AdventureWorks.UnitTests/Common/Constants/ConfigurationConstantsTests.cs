@@ -17,10 +17,6 @@ public sealed class ConfigurationConstantsTests
             ConfigurationConstants.AppInsightsConnectionString.Should().Be("ApplicationInsights:ConnectionString");
             ConfigurationConstants.ApplicationEnvironment01.Should().Be("ASPNETCORE_ENVIRONMENT");
             ConfigurationConstants.ApplicationEnvironment02.Should().Be("APPSETTING_ASPNETCORE_ENVIRONMENT");
-            ConfigurationConstants.SqlConnectionDefaultConnectionName.Should().Be("DefaultConnection");
-            ConfigurationConstants.SqlConnectionSqlAzureConnectionName.Should().Be("SqlAzureConnection");
-            ConfigurationConstants.SqlConnectionLoadTestingConnectionName.Should().Be("LoadTestingConnection");
-            ConfigurationConstants.SqlConnectionPlaywrightTestingConnectionName.Should().Be("PlaywrightTestingConnection");
             ConfigurationConstants.CurrentConnectionStringNameKey.Should().Be("CurrentConnectionStringName");
             ConfigurationConstants.AzureAdCurrentSectionNameKey.Should().Be("AzureAdSettings:CurrentSectionName");
             ConfigurationConstants.AzureAdDefaultSectionName.Should().Be("AzureAd");

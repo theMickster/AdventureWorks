@@ -22,15 +22,21 @@ storage account (Blob/Queue/Table Data Contributor), and reads nothing from Key 
 | ------------------------------------------ | ----------------------------------------- | ----------------------------------------------------------------------- |
 | `AzureWebJobsStorage`                       | `UseDevelopmentStorage=true` (Azurite)    | `AzureWebJobsStorage__accountName` + `__credential=managedidentity` (Bicep) |
 | `DurableStorage`                            | `UseDevelopmentStorage=true` (Azurite)    | `DurableStorage__accountName` + `__credential=managedidentity` (Bicep)     |
-| `ServiceBusConnection`                      | Service Bus emulator fixed dev connection string | `ServiceBusConnection__fullyQualifiedNamespace` (Bicep, MI)          |
+| `ConnectionStrings:AdventureWorks` (SQL)    | `dotnet user-secrets` (`ConnectionStrings:AdventureWorks`) | `Authentication=Active Directory Managed Identity` connection string, app setting |
+| `ConnectionStrings:ServiceBus`              | `local.settings.json` (`ConnectionStrings__ServiceBus`) — emulator fixed dev connection string | `ServiceBusConnection__fullyQualifiedNamespace` (Bicep, MI) — identity-based, no connection string |
 | `ServiceBusSalesOrderEventsTopicName`       | `local.settings.json`                     | Bicep app setting                                                       |
 | `ServiceBusSalesOrderSagaSubscriptionName`  | `local.settings.json`                     | Bicep app setting                                                       |
 
-**SQL/MI is not yet wired.** This scaffold makes no SQL calls. When a future story (807-810)
-adds a SQL-touching activity, confirm with the user whether an Entra admin is already configured
-on the target SQL Server before adding any `CREATE USER ... FROM EXTERNAL PROVIDER` DbUp script —
-there is no existing MI-to-SQL pattern in this repo today (the API itself uses the
-`adventureworks-sql-connection-string` Key Vault secret below, not MI).
+Both SQL and Service Bus are resolved through the shared `AdventureWorks.Connections` `IConnectionCatalog`
+(`ConnectionNames.AdventureWorks` / `ConnectionNames.ServiceBus`), read from the standard `ConnectionStrings:*`
+config section — same on-disk/env-var shape as `apps/api-dotnet`, just under the app-local key names above.
+
+**SQL access is wired** (`SalesOrderSagaDbContext`, used by `CheckInventoryActivity`, `ReserveStockActivity`,
+`ConfirmOrderActivity`, `ReleaseStockActivity`, `EnqueueSagaEventActivity`) — this table previously said
+otherwise; that was stale. **Entra admin configuration on the real Azure SQL Server is still an open infra
+follow-up** — confirm it's in place before relying on the managed-identity connection string in a real deploy
+(there is no existing MI-to-SQL pattern verified against a real deploy in this repo today; the API itself uses
+the `adventureworks-sql-connection-string` Key Vault secret below, not MI).
 
 ## Angular Configuration (Frontend)
 

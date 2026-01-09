@@ -125,17 +125,17 @@ public sealed class SqlIdentifierTests
     }
 
     [Fact]
-    public void ValidateAgainstPattern_ProdPattern_RejectsAdventureWorksDev()
+    public void ValidateAgainstPattern_ProdPattern_RejectsAdventureWorks()
     {
         // The default TargetNamePattern is ^AdventureWorks_E2E$ (or similar opt-in form). The prod
-        // database name 'AdventureWorksDev' must NOT match — the validator's job is to refuse to
+        // database name 'AdventureWorks' must NOT match — the validator's job is to refuse to
         // operate on names that don't carry the test-environment prefix/underscore convention.
         var pattern = new Regex("^AdventureWorks_(E2E|Test)$");
 
-        Action act = () => SqlIdentifier.ValidateAgainstPattern("AdventureWorksDev", pattern);
+        Action act = () => SqlIdentifier.ValidateAgainstPattern("AdventureWorks", pattern);
 
         act.Should().Throw<ArgumentException>()
-            .WithMessage("*AdventureWorksDev*");
+            .WithMessage("*AdventureWorks*");
     }
 
     [Fact]

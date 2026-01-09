@@ -20,7 +20,7 @@ var sqlContainerName = builder.Configuration["SqlServer:ContainerName"] ?? "tosk
 builder.AddResource(new ExternalContainerResource(sqlContainerName))
     .WithAnnotation(new HealthCheckAnnotation(SqlServerHealthCheckKey));
 
-var defaultConnection = builder.AddConnectionString("DefaultConnection");
+var adventureWorksConnection = builder.AddConnectionString("AdventureWorks");
 var storage = builder.AddAzureStorage("functions-storage").RunAsEmulator();
 var serviceBus = builder.AddAzureServiceBus("servicebus").RunAsEmulator();
 var events = serviceBus.AddServiceBusTopic(TopicName);
@@ -29,7 +29,7 @@ events.AddServiceBusSubscription(PaymentSubscription);
 
 var harness = builder.AddProject<Projects.AdventureWorks_SalesOrderSaga_TestHarness>("saga-test-harness")
     .WithHttpEndpoint(name: "http")
-    .WithReference(defaultConnection)
+    .WithReference(adventureWorksConnection)
     .WithReference(serviceBus)
     .WithEnvironment("ASPNETCORE_ENVIRONMENT", "Development")
     .WithEnvironment("ServiceBusSalesOrderEventsTopicName", TopicName)
@@ -38,7 +38,7 @@ var harness = builder.AddProject<Projects.AdventureWorks_SalesOrderSaga_TestHarn
 
 var functions = builder.AddAzureFunctionsProject<Projects.AdventureWorks_SalesOrderSaga>("sales-order-functions")
     .WithHostStorage(storage)
-    .WithReference(defaultConnection)
+    .WithReference(adventureWorksConnection)
     .WithReference(serviceBus)
     .WithEnvironment("ServiceBusConnection", serviceBus)
     .WithEnvironment("ServiceBusSalesOrderEventsTopicName", TopicName)
@@ -58,7 +58,7 @@ builder.AddProject<Projects.AdventureWorks_DbUp>("dbup")
     .WithExplicitStart();
 
 var api = builder.AddProject<Projects.AdventureWorks_API>("api")
-    .WithReference(defaultConnection)
+    .WithReference(adventureWorksConnection)
     .WithEnvironment("ASPNETCORE_ENVIRONMENT", "Development");
 
 builder.AddJavaScriptApp("angular-web", "../../../apps/angular-web", "start")

@@ -47,7 +47,7 @@ Real credentials live in user secrets, not in `appsettings.json`. The key values
 | -------------------------------------- | --------------------------------------------------- |
 | `DbReset:BaselinePath`                 | `/var/opt/mssql/backup/AdventureWorks_baseline.bak` |
 | `ConnectionStrings:AdventureWorks_E2E` | SQL Auth connection string for the target DB        |
-| `ConnectionStrings:AdventureWorksDev`  | SQL Auth connection string for the source DB        |
+| `ConnectionStrings:AdventureWorks`  | SQL Auth connection string for the source DB        |
 
 `BaselinePath` must be the **container-internal path** — SQL Server resolves it inside the container, not on the host. The host path for the same file is:
 `/Users/mickletofsky/OrbStack/docker/volumes/sql_tosk_mssql_2025_data/backup/AdventureWorks_baseline.bak`
@@ -82,7 +82,7 @@ Verify in SSMS / Azure Data Studio: `AdventureWorks_E2E` is online, `MULTI_USER`
 ### 🛑 TEST #2 — Safety Refusal
 
 ```bash
-dotnet run --project AdventureWorks.DbReset.Console -- restore --target AdventureWorksDev
+dotnet run --project AdventureWorks.DbReset.Console -- restore --target AdventureWorks
 ```
 
 **Expected**: Exit code 3. Stderr contains `Rule1_SameConnectionStringKey`. No SQL is sent.
@@ -142,7 +142,7 @@ Verify in SSMS / Azure Data Studio: `AdventureWorks_E2E.dbo.SchemaVersions` is p
 ### 🛑 TEST #6 — `migrate` Safety Refusal
 
 ```bash
-dotnet run --project AdventureWorks.DbReset.Console -- migrate --target AdventureWorksDev
+dotnet run --project AdventureWorks.DbReset.Console -- migrate --target AdventureWorks
 ```
 
 **Expected**: Exit code 3. Stderr contains `Rule1_SameConnectionStringKey`. No DbUp output (no child process spawned).

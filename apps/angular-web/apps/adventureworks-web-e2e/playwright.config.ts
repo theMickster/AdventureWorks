@@ -72,14 +72,14 @@ export default defineConfig({
     {
       name: 'firefox',
       use: { ...devices['Desktop Firefox'], storageState: STORAGE_STATE_PATH, trace: 'off' },
-      testIgnore: [/auth-boundary\.spec\.ts/, /global-setup\.ts/, /route-smoke\.spec\.ts/],
+      testIgnore: [/auth-boundary\.spec\.ts/, /global-setup\.ts/, /route-smoke\.spec\.ts/, /list-workflows\.spec\.ts/],
       dependencies: ['setup'],
     },
 
     {
       name: 'webkit',
       use: { ...devices['Desktop Safari'], storageState: STORAGE_STATE_PATH, trace: 'off' },
-      testIgnore: [/auth-boundary\.spec\.ts/, /global-setup\.ts/, /route-smoke\.spec\.ts/],
+      testIgnore: [/auth-boundary\.spec\.ts/, /global-setup\.ts/, /route-smoke\.spec\.ts/, /list-workflows\.spec\.ts/],
       dependencies: ['setup'],
     },
 

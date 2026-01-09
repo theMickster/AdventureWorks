@@ -15,7 +15,7 @@ public sealed class DualRoleSafetyValidatorOrderingTests
     private const string TestTargetPattern = "^AdventureWorks_(E2E|Test)$";
 
     private static DbResetOptions BuildOptions(
-        string snapshotSource = "AdventureWorksDev",
+        string snapshotSource = "AdventureWorks",
         string defaultTarget = "AdventureWorksE2E",
         string targetNamePattern = TestTargetPattern)
     {
@@ -78,12 +78,12 @@ public sealed class DualRoleSafetyValidatorOrderingTests
         // Target key missing (Rule #3) AND if it WERE present, name would not match pattern.
         // The implementation can't even check Rule #4 without a CS to parse, so Rule #3 must win.
         var options = BuildOptions(
-            snapshotSource: "AdventureWorksDev",
+            snapshotSource: "AdventureWorks",
             defaultTarget: "Missing",
             targetNamePattern: TestTargetPattern);
         var connectionStrings = new Dictionary<string, string?>
         {
-            ["AdventureWorksDev"] = "Server=localhost;Database=AdventureWorks;Trusted_Connection=True;TrustServerCertificate=True;",
+            ["AdventureWorks"] = "Server=localhost;Database=AdventureWorks;Trusted_Connection=True;TrustServerCertificate=True;",
         };
 
         var outcome = BuildValidator(options).Validate(options, "Missing", connectionStrings);
@@ -138,16 +138,16 @@ public sealed class DualRoleSafetyValidatorOrderingTests
     public void Validate_Rule1IsCaseInsensitive_FiresOnDifferentCasingOfSameKey()
     {
         // The Program.cs builds the dictionary with OrdinalIgnoreCase. Rule #1 itself uses
-        // OrdinalIgnoreCase. When SnapshotSource is "AdventureWorksDev" and the resolved
-        // target name is "adventureworksdev", they reference the same logical entry and
+        // OrdinalIgnoreCase. When SnapshotSource is "AdventureWorks" and the resolved
+        // target name is "adventureworks", they reference the same logical entry and
         // Rule #1 must fire.
-        var options = BuildOptions(snapshotSource: "AdventureWorksDev", defaultTarget: "adventureworksdev");
+        var options = BuildOptions(snapshotSource: "AdventureWorks", defaultTarget: "adventureworks");
         var connectionStrings = new Dictionary<string, string?>(StringComparer.OrdinalIgnoreCase)
         {
-            ["AdventureWorksDev"] = "Server=localhost;Database=AdventureWorks;Trusted_Connection=True;TrustServerCertificate=True;",
+            ["AdventureWorks"] = "Server=localhost;Database=AdventureWorks;Trusted_Connection=True;TrustServerCertificate=True;",
         };
 
-        var outcome = BuildValidator(options).Validate(options, "adventureworksdev", connectionStrings);
+        var outcome = BuildValidator(options).Validate(options, "adventureworks", connectionStrings);
 
         outcome.Ok.Should().BeFalse();
         outcome.FailedRule.Should().Be(DualRoleSafetyMessages.Rule1_SameKey);
@@ -255,7 +255,7 @@ public sealed class DualRoleSafetyValidatorOrderingTests
         // Verifies the probe is invoked with the target connection string and the
         // SourceMarker.Property/Value from options — not the source CS or hardcoded values.
         var options = BuildOptions(
-            snapshotSource: "AdventureWorksDev",
+            snapshotSource: "AdventureWorks",
             defaultTarget: "AdventureWorksE2E",
             targetNamePattern: TestTargetPattern);
         options.SourceMarker = new SourceMarkerOptions
@@ -266,7 +266,7 @@ public sealed class DualRoleSafetyValidatorOrderingTests
         const string targetCs = "Server=otherhost;Database=AdventureWorks_E2E;Trusted_Connection=True;TrustServerCertificate=True;";
         var connectionStrings = new Dictionary<string, string?>
         {
-            ["AdventureWorksDev"] = "Server=localhost;Database=AdventureWorks;Trusted_Connection=True;TrustServerCertificate=True;",
+            ["AdventureWorks"] = "Server=localhost;Database=AdventureWorks;Trusted_Connection=True;TrustServerCertificate=True;",
             ["AdventureWorksE2E"] = targetCs,
         };
 

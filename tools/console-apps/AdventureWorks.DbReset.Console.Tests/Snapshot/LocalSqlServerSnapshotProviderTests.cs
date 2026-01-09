@@ -36,7 +36,7 @@ public sealed class LocalSqlServerSnapshotProviderTests
 
     private static DbResetOptions BuildOptions() => new()
     {
-        SnapshotSource = "AdventureWorksDev",
+        SnapshotSource = "AdventureWorks",
         DefaultTarget = TargetName,
         BaselinePath = "/baselines/AdventureWorks_baseline.bak",
         TargetNamePattern = TargetPattern,
@@ -461,7 +461,7 @@ public sealed class LocalSqlServerSnapshotProviderTests
     {
         var configData = new Dictionary<string, string?>
         {
-            ["ConnectionStrings:AdventureWorksDev"] = TargetCs.Replace("AdventureWorks_E2E", "AdventureWorks", StringComparison.Ordinal),
+            ["ConnectionStrings:AdventureWorks"] = TargetCs.Replace("AdventureWorks_E2E", "AdventureWorks", StringComparison.Ordinal),
             ["ConnectionStrings:AdventureWorksE2E"] = TargetCs,
         };
         var configuration = new ConfigurationBuilder().AddInMemoryCollection(configData).Build();
@@ -503,7 +503,7 @@ public sealed class LocalSqlServerSnapshotProviderTests
     {
         var configData = new Dictionary<string, string?>
         {
-            ["ConnectionStrings:AdventureWorksDev"] = TargetCs.Replace("AdventureWorks_E2E", "AdventureWorks", StringComparison.Ordinal),
+            ["ConnectionStrings:AdventureWorks"] = TargetCs.Replace("AdventureWorks_E2E", "AdventureWorks", StringComparison.Ordinal),
             ["ConnectionStrings:AdventureWorksE2E"] = TargetCs,
         };
         var configuration = new ConfigurationBuilder().AddInMemoryCollection(configData).Build();
@@ -545,7 +545,7 @@ public sealed class LocalSqlServerSnapshotProviderTests
     {
         var configData = new Dictionary<string, string?>
         {
-            ["ConnectionStrings:AdventureWorksDev"] = TargetCs.Replace("AdventureWorks_E2E", "AdventureWorks", StringComparison.Ordinal),
+            ["ConnectionStrings:AdventureWorks"] = TargetCs.Replace("AdventureWorks_E2E", "AdventureWorks", StringComparison.Ordinal),
             ["ConnectionStrings:AdventureWorksE2E"] = TargetCs,
         };
         var configuration = new ConfigurationBuilder().AddInMemoryCollection(configData).Build();
@@ -598,7 +598,7 @@ public sealed class LocalSqlServerSnapshotProviderTests
     {
         var configData = new Dictionary<string, string?>
         {
-            ["ConnectionStrings:AdventureWorksDev"] = TargetCs.Replace("AdventureWorks_E2E", "AdventureWorks", StringComparison.Ordinal),
+            ["ConnectionStrings:AdventureWorks"] = TargetCs.Replace("AdventureWorks_E2E", "AdventureWorks", StringComparison.Ordinal),
             ["ConnectionStrings:AdventureWorksE2E"] = TargetCs,
         };
         if (extras is not null)
@@ -858,7 +858,7 @@ public sealed class LocalSqlServerSnapshotProviderTests
             c.Sql.Contains("sp_addextendedproperty") || c.Sql.Contains("sp_updateextendedproperty"));
 
         var csb = new SqlConnectionStringBuilder(stamp.Cs);
-        // The SnapshotSource is "AdventureWorksDev" → its CS InitialCatalog is "AdventureWorks".
+        // The SnapshotSource is "AdventureWorks" → its CS InitialCatalog is "AdventureWorks".
         csb.InitialCatalog.Should().Be("AdventureWorks");
         csb.InitialCatalog.Should().NotBe("master");
     }

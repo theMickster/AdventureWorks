@@ -8,14 +8,14 @@ namespace AdventureWorks.DbReset.Console.Configuration;
 /// <code>
 /// {
 ///   "ConnectionStrings": {
-///     "AdventureWorksDev": "...",
+///     "AdventureWorks": "...",
 ///     "AdventureWorksE2E": "..."
 ///   },
 ///   "DbReset": {
-///     "SnapshotSource": "AdventureWorksDev",
+///     "SnapshotSource": "AdventureWorks",
 ///     "DefaultTarget":  "AdventureWorksE2E",
 ///     "BaselinePath":   "tools/console-apps/AdventureWorks.DbReset.Console/baselines/AdventureWorks_baseline.bak",
-///     "TargetNamePattern": "^AdventureWorks_(E2E|Test|Load)([A-Za-z0-9_]*)?$",
+///     "TargetNamePattern": "^AdventureWorks_(E2E|Test|Load|Integration)([A-Za-z0-9_]*)?$",
 ///     "DbUpProjectPath": "database/dbup/AdventureWorks.DbUp",
 ///     "SourceMarker": { "Property": "dbreset.role", "Value": "source" }
 ///   }

@@ -122,7 +122,7 @@ Bicep creates the infrastructure. Runtime configuration is fully managed by the 
 
 The pipeline automatically configures:
 
-1. **API connection strings** — `DefaultConnection` and `SqlAzureConnection` set by `AzureAppServiceSettings@1` (values from Key Vault linked variable groups)
+1. **API connection strings** — `DefaultConnection` and `AdventureWorks_Azure` set by `AzureAppServiceSettings@1` (values from Key Vault linked variable groups)
 2. **API app settings** — `AutoMapperLicenseKey` set by `AzureAppServiceSettings@1` (value from Key Vault linked variable groups)
 3. **Web startup command** — `pm2 serve /home/site/wwwroot --no-daemon --spa` set by `AzureRmWebAppDeployment@4` `StartupCommand` input
 4. **Angular config** — Baked into the JS bundle via token replacement at pipeline deploy time

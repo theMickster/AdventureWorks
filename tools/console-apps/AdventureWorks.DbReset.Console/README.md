@@ -6,15 +6,15 @@ CLI that resets a _test-target_ SQL Server database to a known baseline and reap
 
 Run all commands from the **repository root**.
 
-**Step 1 — Set user secrets.** `BaselinePath` is the **container-internal** path — SQL Server resolves it inside `tosk-mssql`. See DOCKER.md for the host path and one-time permission setup.
+**Step 1 — Set user secrets.** `BaselinePath` is the **container-internal** path — SQL Server resolves it inside `tosk-mssql`. See TESTING.md's Prerequisites section for the host path and one-time permission setup.
 
 ```bash
-dotnet user-secrets set "ConnectionStrings:AdventureWorksDev" "Server=localhost,1433;Database=AdventureWorksDev;User Id=sa;Password=…;Encrypt=false" --project tools/console-apps/AdventureWorks.DbReset.Console
+dotnet user-secrets set "ConnectionStrings:AdventureWorks" "Server=localhost,1433;Database=AdventureWorks;User Id=sa;Password=…;Encrypt=false" --project tools/console-apps/AdventureWorks.DbReset.Console
 dotnet user-secrets set "ConnectionStrings:AdventureWorks_E2E" "Server=localhost,1433;Database=AdventureWorks_E2E;User Id=sa;Password=…;Encrypt=false" --project tools/console-apps/AdventureWorks.DbReset.Console
 dotnet user-secrets set "DbReset:BaselinePath" "/var/opt/mssql/backup/AdventureWorks_baseline.bak" --project tools/console-apps/AdventureWorks.DbReset.Console
 ```
 
-**Step 2 — Capture a baseline.** Reads `AdventureWorksDev`, writes the `.bak` to `BaselinePath`, and stamps the source-marker extended property on the source DB. Re-run whenever you want to refresh the baseline from your local dev data.
+**Step 2 — Capture a baseline.** Reads `AdventureWorks`, writes the `.bak` to `BaselinePath`, and stamps the source-marker extended property on the source DB. Re-run whenever you want to refresh the baseline from your local dev data.
 
 ```bash
 dotnet run --project tools/console-apps/AdventureWorks.DbReset.Console -- snapshot
@@ -26,7 +26,7 @@ dotnet run --project tools/console-apps/AdventureWorks.DbReset.Console -- snapsh
 dotnet run --project tools/console-apps/AdventureWorks.DbReset.Console -- verify-baseline
 ```
 
-**Step 4 — Reset the target database.** Orchestrates: verify-baseline → restore → migrate. `AdventureWorksDev` is never a valid target by design — see Dual-Role Safety Model below.
+**Step 4 — Reset the target database.** Orchestrates: verify-baseline → restore → migrate. `AdventureWorks` is never a valid target by design — see Dual-Role Safety Model below.
 
 ```bash
 dotnet run --project tools/console-apps/AdventureWorks.DbReset.Console -- reset
@@ -56,8 +56,8 @@ The tool refuses to run any destructive verb until five rules pass against the r
 5. The target does NOT carry the configured source-marker extended property (`dbreset.role = source`).
 
 - **Source-marker mechanism**: `snapshot` stamps `dbreset.role = source` as a SQL extended property on the source DB. `restore` drops it from the restored target — a restored DB cannot carry the marker even if the `.bak` came from a source DB. Rule #5 checks for this property before any destructive verb runs.
-- **TargetNamePattern** is matched against `InitialCatalog` (the actual database name from the connection string), not the configuration key. Default: `^AdventureWorks_(E2E|Test|Load)([A-Za-z0-9_]*)?$`.
-- **Dev DB safeguard**: `AdventureWorksDev` fails Rule #1 (same key as `SnapshotSource`) and carries the source-marker after first snapshot.
+- **TargetNamePattern** is matched against `InitialCatalog` (the actual database name from the connection string), not the configuration key. Default: `^AdventureWorks_(E2E|Test|Load|Integration)([A-Za-z0-9_]*)?$`.
+- **Dev DB safeguard**: `AdventureWorks` fails Rule #1 (same key as `SnapshotSource`) and carries the source-marker after first snapshot.
 - **Baseline drift**: `snapshot` reads from the local dev DB, so the baseline is whichever developer's seed data last ran `snapshot`. Treat it as the current baseline, not a fixed one.
 
 ## Configuration
@@ -67,14 +67,14 @@ The tool refuses to run any destructive verb until five rules pass against the r
 ```jsonc
 {
   "ConnectionStrings": {
-    "AdventureWorksDev": "...", // SnapshotSource — read-only
+    "AdventureWorks": "...", // SnapshotSource — read-only
     "AdventureWorks_E2E": "...", // a destructive target
   },
   "DbReset": {
-    "SnapshotSource": "AdventureWorksDev",
+    "SnapshotSource": "AdventureWorks",
     "DefaultTarget": "AdventureWorks_E2E",
-    "BaselinePath": "/var/opt/mssql/backup/AdventureWorks_baseline.bak", // container-internal path — set via user secrets (see DOCKER.md)
-    "TargetNamePattern": "^AdventureWorks_(E2E|Test|Load)([A-Za-z0-9_]*)?$",
+    "BaselinePath": "/var/opt/mssql/backup/AdventureWorks_baseline.bak", // container-internal path — set via user secrets (see TESTING.md Prerequisites)
+    "TargetNamePattern": "^AdventureWorks_(E2E|Test|Load|Integration)([A-Za-z0-9_]*)?$",
     "DbUpProjectPath": "database/dbup/AdventureWorks.DbUp",
     "SourceMarker": { "Property": "dbreset.role", "Value": "source" },
   },

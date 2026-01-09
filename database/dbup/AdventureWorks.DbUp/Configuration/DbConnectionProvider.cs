@@ -1,3 +1,4 @@
+using AdventureWorks.Connections;
 using Microsoft.Extensions.Configuration;
 
 namespace AdventureWorks.DbUp.Configuration;
@@ -13,14 +14,15 @@ internal sealed class DbConnectionProvider
 
     public string GetConnectionString()
     {
-        var connectionString = _configuration.GetConnectionString("AdventureWorks");
+        var catalog = new ConnectionCatalogBuilder()
+            .Add(ConnectionNames.AdventureWorks, ConnectionKind.Sql)
+            .Build(_configuration);
 
-        if (string.IsNullOrWhiteSpace(connectionString))
-        {
-            throw new InvalidOperationException("Connection string 'AdventureWorks' not found in configuration.");
-        }
+        var connection = catalog.Get(ConnectionNames.AdventureWorks, ConnectionKind.Sql);
 
-        return connectionString;
+        ConnectionValidation.EnsureNonEmpty(connection);
+
+        return connection.Value;
     }
 
     public static IConfiguration BuildConfiguration()

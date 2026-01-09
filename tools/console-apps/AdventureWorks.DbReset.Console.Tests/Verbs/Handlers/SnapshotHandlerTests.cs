@@ -9,7 +9,7 @@ namespace AdventureWorks.DbReset.Console.Tests.Verbs.Handlers;
 
 public sealed class SnapshotHandlerTests
 {
-    private const string SourceKey = "AdventureWorksDev";
+    private const string SourceKey = "AdventureWorks";
     private const string UnreachablePath = "/var/empty/does-not-exist/AdventureWorks_baseline.bak";
 
     private static DbResetOptions BuildOptions() => new()

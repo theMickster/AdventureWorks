@@ -9,7 +9,7 @@ You need .NET 10, Node.js/npm, a running Docker-compatible engine, and the exter
 Set the AppHost connection string:
 
 ```bash
-dotnet user-secrets set "ConnectionStrings:DefaultConnection" "YOUR_ADVENTUREWORKS_CONNECTION_STRING" \
+dotnet user-secrets set "ConnectionStrings:AdventureWorks" "YOUR_ADVENTUREWORKS_CONNECTION_STRING" \
   --project tools/aspire/AdventureWorks.AppHost
 ```
 

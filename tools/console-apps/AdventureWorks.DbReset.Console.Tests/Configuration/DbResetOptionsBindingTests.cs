@@ -19,7 +19,7 @@ public sealed class DbResetOptionsBindingTests
         var configuration = new ConfigurationBuilder()
             .AddInMemoryCollection(new Dictionary<string, string?>
             {
-                ["DbReset:SnapshotSource"] = "AdventureWorksDev",
+                ["DbReset:SnapshotSource"] = "AdventureWorks",
                 ["DbReset:DefaultTarget"] = "AdventureWorksE2E",
                 ["DbReset:BaselinePath"] = "baselines/baseline.bak",
                 ["DbReset:TargetNamePattern"] = "^AdventureWorks_(E2E|Test)$",
@@ -30,7 +30,7 @@ public sealed class DbResetOptionsBindingTests
         var options = new DbResetOptions();
         configuration.GetSection(DbResetOptions.SectionName).Bind(options);
 
-        options.SnapshotSource.Should().Be("AdventureWorksDev");
+        options.SnapshotSource.Should().Be("AdventureWorks");
         options.DefaultTarget.Should().Be("AdventureWorksE2E");
         options.BaselinePath.Should().Be("baselines/baseline.bak");
         options.TargetNamePattern.Should().Be("^AdventureWorks_(E2E|Test)$");
@@ -62,7 +62,7 @@ public sealed class DbResetOptionsBindingTests
         var configuration = new ConfigurationBuilder()
             .AddInMemoryCollection(new Dictionary<string, string?>
             {
-                ["DbReset:SnapshotSource"] = "AdventureWorksDev",
+                ["DbReset:SnapshotSource"] = "AdventureWorks",
             })
             .Build();
 

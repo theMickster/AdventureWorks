@@ -7,6 +7,7 @@ using AdventureWorks.Application.PersistenceContracts.Http;
 using AdventureWorks.Common.Attributes;
 using AdventureWorks.Common.Constants;
 using AdventureWorks.Common.Settings;
+using AdventureWorks.Connections;
 using AdventureWorks.Infrastructure.Persistence.DbContexts;
 using Asp.Versioning;
 using FluentValidation;
@@ -120,17 +121,12 @@ internal static class RegisterServices
 
     internal static WebApplicationBuilder RegisterAdventureWorksDbContexts(this WebApplicationBuilder builder)
     {
-        var connectionStrings = GetDatabaseConnectionStrings(builder.Configuration);
-
         builder.Services.AddOptions<EntityFrameworkCoreSettings>()
             .Bind(builder.Configuration.GetSection(EntityFrameworkCoreSettings.SettingsRootName));
 
-        builder.Services.PostConfigure<EntityFrameworkCoreSettings>(o =>
-        {
-            o.DatabaseConnectionStrings = connectionStrings;
-        });
+        builder.Services.AddConnectionCatalog(builder.Configuration, RegisterAdventureWorksConnections);
 
-        var currentConnectionString = GetSqlConnectionString(builder.Configuration, connectionStrings);
+        var currentConnectionString = GetActiveConnectionString(builder.Configuration);
 
         builder.Services.AddDbContext<AdventureWorksDbContext>(options =>
             {
@@ -225,76 +221,15 @@ internal static class RegisterServices
         return oai;
     }
 
-    private static List<DatabaseConnectionString> GetDatabaseConnectionStrings(IConfiguration configuration)
-    {
-        var defaultConnectionString =
-            configuration.GetConnectionString(ConfigurationConstants.SqlConnectionDefaultConnectionName);
+    private static void RegisterAdventureWorksConnections(ConnectionCatalogBuilder builder) =>
+        builder
+            .Add(ConnectionNames.AdventureWorks, ConnectionKind.Sql)
+            .Add(ConnectionNames.AdventureWorks_Azure, ConnectionKind.Sql)
+            .Add(ConnectionNames.AdventureWorks_Load, ConnectionKind.Sql)
+            .Add(ConnectionNames.AdventureWorks_E2E, ConnectionKind.Sql)
+            .Add(ConnectionNames.AdventureWorks_Integration, ConnectionKind.Sql);
 
-        var sqlAzureConnectionString =
-            configuration.GetConnectionString(ConfigurationConstants.SqlConnectionSqlAzureConnectionName);
-
-        var loadTestingConnectionString =
-            configuration.GetConnectionString(ConfigurationConstants.SqlConnectionLoadTestingConnectionName);
-
-        var playwrightTestingConnectionString =
-            configuration.GetConnectionString(ConfigurationConstants.SqlConnectionPlaywrightTestingConnectionName);
-
-        if (string.IsNullOrWhiteSpace(defaultConnectionString) &&
-            string.IsNullOrWhiteSpace(sqlAzureConnectionString) &&
-            string.IsNullOrWhiteSpace(loadTestingConnectionString) &&
-            string.IsNullOrWhiteSpace(playwrightTestingConnectionString))
-        {
-            throw new ConfigurationException(
-                "At least one database ConnectionStrings value must be configured. " +
-                $"Supported names: {ConfigurationConstants.SqlConnectionDefaultConnectionName}, " +
-                $"{ConfigurationConstants.SqlConnectionSqlAzureConnectionName}, " +
-                $"{ConfigurationConstants.SqlConnectionLoadTestingConnectionName}, " +
-                $"{ConfigurationConstants.SqlConnectionPlaywrightTestingConnectionName}. " +
-                "Please verify database configuration.");
-        }
-
-        var connectionStrings = new List<DatabaseConnectionString>();
-
-        if (!string.IsNullOrWhiteSpace(defaultConnectionString))
-        {
-            connectionStrings.Add(new DatabaseConnectionString
-            {
-                ConnectionStringName = ConfigurationConstants.SqlConnectionDefaultConnectionName,
-                ConnectionString = defaultConnectionString
-            });
-        }
-
-        if (!string.IsNullOrWhiteSpace(sqlAzureConnectionString))
-        {
-            connectionStrings.Add(new DatabaseConnectionString
-            {
-                ConnectionStringName = ConfigurationConstants.SqlConnectionSqlAzureConnectionName,
-                ConnectionString = sqlAzureConnectionString
-            });
-        }
-
-        if (!string.IsNullOrWhiteSpace(loadTestingConnectionString))
-        {
-            connectionStrings.Add(new DatabaseConnectionString
-            {
-                ConnectionStringName = ConfigurationConstants.SqlConnectionLoadTestingConnectionName,
-                ConnectionString = loadTestingConnectionString
-            });
-        }
-
-        if (!string.IsNullOrWhiteSpace(playwrightTestingConnectionString))
-        {
-            connectionStrings.Add(new DatabaseConnectionString
-            {
-                ConnectionStringName = ConfigurationConstants.SqlConnectionPlaywrightTestingConnectionName,
-                ConnectionString = playwrightTestingConnectionString
-            });
-        }
-
-        return connectionStrings;
-    }
-
-    private static string GetSqlConnectionString(ConfigurationManager configuration, IEnumerable<DatabaseConnectionString> connectionStrings)
+    private static string GetActiveConnectionString(IConfiguration configuration)
     {
         var settings = configuration.GetSection(EntityFrameworkCoreSettings.SettingsRootName);
 
@@ -306,19 +241,13 @@ internal static class RegisterServices
         }
 
         var connectionStringName = settings[ConfigurationConstants.CurrentConnectionStringNameKey] ??
-                                   ConfigurationConstants.SqlConnectionDefaultConnectionName;
+                                   ConnectionNames.AdventureWorks;
 
-        var currentConnectionString = connectionStrings.FirstOrDefault(x =>
-            x.ConnectionStringName == connectionStringName);
+        var connectionCatalogBuilder = new ConnectionCatalogBuilder();
+        RegisterAdventureWorksConnections(connectionCatalogBuilder);
+        var catalog = connectionCatalogBuilder.Build(configuration);
 
-        if (currentConnectionString == null)
-        {
-            throw new ConfigurationException(
-                $"The required Configuration settings keys for the Entity Framework Core Settings are missing." +
-                "Please verify configuration.");
-        }
-
-        return currentConnectionString.ConnectionString;
+        return catalog.Get(connectionStringName, ConnectionKind.Sql).Value;
     }
 
     #endregion Private Methods

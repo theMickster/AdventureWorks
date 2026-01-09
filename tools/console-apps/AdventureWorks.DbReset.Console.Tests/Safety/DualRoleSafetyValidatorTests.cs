@@ -12,7 +12,7 @@ public sealed class DualRoleSafetyValidatorTests
     private const string TestTargetPattern = "^AdventureWorks_(E2E|Test)$";
 
     private static DbResetOptions BuildOptions(
-        string snapshotSource = "AdventureWorksDev",
+        string snapshotSource = "AdventureWorks",
         string defaultTarget = "AdventureWorksE2E",
         string targetNamePattern = PermissivePattern)
     {
@@ -73,10 +73,10 @@ public sealed class DualRoleSafetyValidatorTests
     [Fact]
     public void Validate_WhenTargetKeyMissingFromConnectionStrings_ReturnsRule3Failure()
     {
-        var options = BuildOptions(snapshotSource: "AdventureWorksDev", defaultTarget: "NotInDict");
+        var options = BuildOptions(snapshotSource: "AdventureWorks", defaultTarget: "NotInDict");
         var connectionStrings = new Dictionary<string, string?>
         {
-            ["AdventureWorksDev"] = "Server=localhost;Database=AdventureWorks;Trusted_Connection=True;TrustServerCertificate=True;",
+            ["AdventureWorks"] = "Server=localhost;Database=AdventureWorks;Trusted_Connection=True;TrustServerCertificate=True;",
         };
 
         var outcome = BuildValidator(options).Validate(options, "NotInDict", connectionStrings);
@@ -106,12 +106,12 @@ public sealed class DualRoleSafetyValidatorTests
     public void Validate_WhenTargetDatabaseNameDoesNotMatchPattern_ReturnsRule4Failure()
     {
         var options = BuildOptions(
-            snapshotSource: "AdventureWorksDev",
+            snapshotSource: "AdventureWorks",
             defaultTarget: "AdventureWorksProd",
             targetNamePattern: TestTargetPattern);
         var connectionStrings = new Dictionary<string, string?>
         {
-            ["AdventureWorksDev"] = "Server=localhost;Database=AdventureWorks;Trusted_Connection=True;TrustServerCertificate=True;",
+            ["AdventureWorks"] = "Server=localhost;Database=AdventureWorks;Trusted_Connection=True;TrustServerCertificate=True;",
             ["AdventureWorksProd"] = "Server=otherhost;Database=AdventureWorks;Trusted_Connection=True;TrustServerCertificate=True;",
         };
 
@@ -125,12 +125,12 @@ public sealed class DualRoleSafetyValidatorTests
     public void Validate_WhenSourceMarkerProbeReportsTrueOnTarget_ReturnsRule5Failure()
     {
         var options = BuildOptions(
-            snapshotSource: "AdventureWorksDev",
+            snapshotSource: "AdventureWorks",
             defaultTarget: "AdventureWorksE2E",
             targetNamePattern: TestTargetPattern);
         var connectionStrings = new Dictionary<string, string?>
         {
-            ["AdventureWorksDev"] = "Server=localhost;Database=AdventureWorks;Trusted_Connection=True;TrustServerCertificate=True;",
+            ["AdventureWorks"] = "Server=localhost;Database=AdventureWorks;Trusted_Connection=True;TrustServerCertificate=True;",
             ["AdventureWorksE2E"] = "Server=otherhost;Database=AdventureWorks_E2E;Trusted_Connection=True;TrustServerCertificate=True;",
         };
 
@@ -145,12 +145,12 @@ public sealed class DualRoleSafetyValidatorTests
     public void Validate_WhenAllRulesPass_ReturnsSuccess()
     {
         var options = BuildOptions(
-            snapshotSource: "AdventureWorksDev",
+            snapshotSource: "AdventureWorks",
             defaultTarget: "AdventureWorksE2E",
             targetNamePattern: TestTargetPattern);
         var connectionStrings = new Dictionary<string, string?>
         {
-            ["AdventureWorksDev"] = "Server=localhost;Database=AdventureWorks;Trusted_Connection=True;TrustServerCertificate=True;",
+            ["AdventureWorks"] = "Server=localhost;Database=AdventureWorks;Trusted_Connection=True;TrustServerCertificate=True;",
             ["AdventureWorksE2E"] = "Server=otherhost;Database=AdventureWorks_E2E;Trusted_Connection=True;TrustServerCertificate=True;",
         };
 

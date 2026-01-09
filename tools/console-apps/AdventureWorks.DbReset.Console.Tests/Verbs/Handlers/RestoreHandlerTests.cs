@@ -14,7 +14,7 @@ public sealed class RestoreHandlerTests
 
     private static DbResetOptions BuildOptions() => new()
     {
-        SnapshotSource = "AdventureWorksDev",
+        SnapshotSource = "AdventureWorks",
         DefaultTarget = TargetName,
         BaselinePath = BaselinePath,
         TargetNamePattern = "^AdventureWorks_(E2E|Test)$",

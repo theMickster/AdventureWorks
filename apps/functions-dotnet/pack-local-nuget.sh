@@ -1,9 +1,10 @@
 #!/usr/bin/env bash
 # Packs AdventureWorks.Domain and AdventureWorks.Application — plus their ProjectReference
-# dependencies AdventureWorks.Common and AdventureWorks.Models, which `dotnet pack` turns into
-# NuGet package dependencies pinned to this same version — into the local NuGet feed consumed
+# dependencies AdventureWorks.Common and AdventureWorks.Models — and the shared
+# AdventureWorks.Connections library, which `dotnet pack` turns into NuGet package
+# dependencies pinned to this same version — into the local NuGet feed consumed
 # by AdventureWorks.SalesOrderSaga. Run this before every restore/build of the
-# Functions project after changing any of these four projects.
+# Functions project after changing any of these five projects.
 #
 # The packed version is a fresh timestamp on every run — never a static string — so
 # `dotnet restore` can never silently keep serving a stale cached package. The exact
@@ -25,6 +26,9 @@ for project in AdventureWorks.Common AdventureWorks.Models AdventureWorks.Domain
     -c Release -o "${FEED_DIR}" -p:Version="${VERSION}"
 done
 
+dotnet pack "${REPO_ROOT}/libs/dotnet/AdventureWorks.Connections/AdventureWorks.Connections.csproj" \
+  -c Release -o "${FEED_DIR}" -p:Version="${VERSION}"
+
 mkdir -p "${SCRIPT_DIR}/eng"
 cat > "${SCRIPT_DIR}/eng/local-nuget-version.props" <<EOF
 <Project>
@@ -35,5 +39,5 @@ cat > "${SCRIPT_DIR}/eng/local-nuget-version.props" <<EOF
 </Project>
 EOF
 
-echo "Packed AdventureWorks.Domain/AdventureWorks.Application @ ${VERSION} -> ${FEED_DIR}"
+echo "Packed AdventureWorks.Domain/AdventureWorks.Application/AdventureWorks.Connections @ ${VERSION} -> ${FEED_DIR}"
 echo "If dotnet restore still resolves an old version, run: dotnet nuget locals all --clear"

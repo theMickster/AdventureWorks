@@ -1,5 +1,6 @@
 using System.Text.Json;
 using System.Text.Json.Serialization;
+using AdventureWorks.Connections;
 using AdventureWorks.SalesOrderSaga.Infrastructure;
 using AdventureWorks.SalesOrderSaga.Persistence;
 using Azure.Core.Serialization;
@@ -16,17 +17,23 @@ var builder = FunctionsApplication.CreateBuilder(args);
 builder.ConfigureFunctionsWebApplication();
 builder.Configuration.AddUserSecrets<Program>(optional: true);
 
-var sqlConnectionString = builder.Configuration.GetConnectionString("DefaultConnection")
-    ?? builder.Configuration["SqlConnectionString"]
-    ?? throw new InvalidOperationException("Missing required SQL connection configuration.");
+var connectionCatalog = new ConnectionCatalogBuilder()
+    .Add(ConnectionNames.AdventureWorks, ConnectionKind.Sql)
+    .Add(ConnectionNames.ServiceBus, ConnectionKind.ServiceBus)
+    .Build(builder.Configuration);
+
+var sqlConnectionString = connectionCatalog.TryGet(ConnectionNames.AdventureWorks, out var sqlConnection)
+    ? sqlConnection!.Value
+    : throw new InvalidOperationException("Missing required SQL connection configuration.");
 builder.Services.AddDbContext<SalesOrderSagaDbContext>(options => options.UseSqlServer(sqlConnectionString));
 
 var paymentBaseUrl = builder.Configuration["PaymentAuthorization:BaseUrl"]
     ?? throw new InvalidOperationException("Missing required configuration value 'PaymentAuthorization:BaseUrl'.");
 builder.Services.AddHttpClient("PaymentAuthorization", client => client.BaseAddress = new Uri(paymentBaseUrl, UriKind.Absolute));
 
-var serviceBusConnection = builder.Configuration["ServiceBusConnection"]
-    ?? builder.Configuration.GetConnectionString("servicebus");
+var serviceBusConnection = connectionCatalog.TryGet(ConnectionNames.ServiceBus, out var serviceBusResolved)
+    ? serviceBusResolved!.Value
+    : null;
 var serviceBusClient = serviceBusConnection is not null
     ? new ServiceBusClient(serviceBusConnection)
     : new ServiceBusClient(

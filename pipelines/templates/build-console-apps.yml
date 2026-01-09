@@ -14,6 +14,9 @@ parameters:
   - name: aspireTestProject
     type: string
     default: "apps/functions-dotnet/tests/AdventureWorks.SalesOrderSaga.TestHarness.Tests/AdventureWorks.SalesOrderSaga.TestHarness.Tests.csproj"
+  - name: connectionsTestProject
+    type: string
+    default: "libs/dotnet/AdventureWorks.Connections.Tests/AdventureWorks.Connections.Tests.csproj"
   - name: buildConfiguration
     type: string
     default: "Release"
@@ -66,6 +69,15 @@ steps:
   - script: dotnet list "${{ parameters.aspireSolution }}" package --vulnerable --include-transitive
     displayName: "Security scan (Aspire vulnerable packages)"
     continueOnError: true
+
+  - task: DotNetCoreCLI@2
+    displayName: "Run AdventureWorks.Connections tests"
+    inputs:
+      command: test
+      projects: "${{ parameters.connectionsTestProject }}"
+      testRunTitle: "AdventureWorks.Connections - $(Build.BuildNumber)"
+      publishTestResults: true
+      arguments: '--configuration ${{ parameters.buildConfiguration }} --collect "XPlat Code Coverage" --verbosity $(dotnetVerbosity)'
 
   - task: DotNetCoreCLI@2
     displayName: "Run console-app tests"

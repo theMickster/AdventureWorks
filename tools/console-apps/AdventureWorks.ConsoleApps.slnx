@@ -11,4 +11,5 @@
     <Project Path="../../apps/api-dotnet/src/AdventureWorks.Domain/AdventureWorks.Domain.csproj" />
     <Project Path="../../apps/api-dotnet/src/AdventureWorks.Infrastructure.Persistence/AdventureWorks.Infrastructure.Persistence.csproj" />
   </Folder>
+  <Project Path="../../libs/dotnet/AdventureWorks.Connections/AdventureWorks.Connections.csproj" />
 </Solution>

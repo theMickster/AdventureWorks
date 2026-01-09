@@ -7,7 +7,7 @@ namespace AdventureWorks.DbReset.Console.Tests.Verbs.Handlers;
 
 public sealed class SnapshotErrorMapperTests
 {
-    private const string SourceKey = "AdventureWorksDev";
+    private const string SourceKey = "AdventureWorks";
     private const string BaselinePath = "/baselines/AdventureWorks.bak";
 
     [Theory]

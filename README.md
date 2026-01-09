@@ -36,7 +36,7 @@ cd apps/angular-web
 npm install
 cd ../..
 
-dotnet user-secrets set "ConnectionStrings:DefaultConnection" "YOUR_CONNECTION_STRING" --project tools/aspire/AdventureWorks.AppHost
+dotnet user-secrets set "ConnectionStrings:AdventureWorks" "YOUR_CONNECTION_STRING" --project tools/aspire/AdventureWorks.AppHost
 dotnet run --project tools/aspire/AdventureWorks.AppHost
 ```
 
