@@ -349,6 +349,8 @@ apps/api-dotnet/postman/environments/*.postman_environment.json
 !apps/api-dotnet/postman/environments/*.example.postman_environment.json
 apps/functions-dotnet/postman/environments/*.postman_environment.json
 !apps/functions-dotnet/postman/environments/*.example.postman_environment.json
+apps/functions-rust/postman/environments/*.postman_environment.json
+!apps/functions-rust/postman/environments/*.example.postman_environment.json
 
 # Playwright E2E: persisted authenticated storage state (cookies + localStorage)
 apps/angular-web/apps/adventureworks-web-e2e/playwright/.auth/
@@ -373,6 +375,11 @@ apps/api-dotnet/tests/AdventureWorks.LoadTests.k6/results/*
 apps/functions-dotnet/local-nuget-feed/
 apps/functions-dotnet/eng/local-nuget-version.props
 apps/functions-dotnet/src/**/local.settings.json
+
+# Rust functions app: cargo output, the handler symlink scripts/start-local.sh creates, and local host settings
+apps/functions-rust/target/
+apps/functions-rust/handler
+apps/functions-rust/local.settings.json
 
 # Playwright MCP
 .playwright-mcp/

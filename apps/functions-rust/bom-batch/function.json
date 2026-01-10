@@ -1,0 +1,11 @@
+{
+  "bindings": [
+    {
+      "type": "serviceBusTrigger",
+      "direction": "in",
+      "name": "message",
+      "queueName": "%BomBatchQueueName%",
+      "connection": "ServiceBusConnection"
+    }
+  ]
+}

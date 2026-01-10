@@ -6,17 +6,18 @@ AdventureWorks is a sample application built around Microsoft's AdventureWorks S
 
 ## Tech Stack
 
-| Area                    | Technology                              |
-| ----------------------- | --------------------------------------- |
-| **Backend**             | .NET 10                                 |
-| **Functions**           | .NET 10 Azure Functions                 |
-| **Frontend**            | Angular 21 and Nx 22                    |
-| **Design system**       | Tailwind CSS 4 and DaisyUI 5            |
-| **Database**            | SQL Server, Entity Framework Core, DbUp |
-| **Messaging**           | Azure Service Bus                       |
-| **Local orchestration** | .NET Aspire                             |
-| **Containers**          | Docker Compose                          |
-| **Testing**             | xUnit, Vitest, and Playwright           |
+| Area                    | Technology                                         |
+| ----------------------- | -------------------------------------------------- |
+| **Backend**             | .NET 10                                            |
+| **Functions**           | .NET 10 Azure Functions and a Rust custom handler  |
+| **Frontend**            | Angular 21 and Nx 22                               |
+| **Design system**       | Tailwind CSS 4 and DaisyUI 5                       |
+| **Database**            | SQL Server, Entity Framework Core, DbUp, Cosmos DB |
+| **Messaging**           | Azure Service Bus, RabbitMQ (integration tests)    |
+| **Caching**             | Redis                                              |
+| **Local orchestration** | .NET Aspire                                        |
+| **Containers**          | Docker Compose                                     |
+| **Testing**             | xUnit, Vitest, and Playwright                      |
 
 ## Prerequisites
 
@@ -51,9 +52,12 @@ AdventureWorks/
 │   ├── api-dotnet/ # .NET API
 │   │   ├── src/ # API source projects
 │   │   └── tests/ # API test projects
-│   └── functions-dotnet/ # Azure Functions workspace
-│       ├── src/ # Functions source projects
-│       └── tests/ # Functions test projects
+│   ├── functions-dotnet/ # Azure Functions workspace
+│   │   ├── src/ # Functions source projects
+│   │   └── tests/ # Functions test projects
+│   └── functions-rust/ # Rust Azure Functions custom handler (BOM cost engine)
+│       ├── src/ # Handler library and binary
+│       └── tests/ # Integration and live tests
 ├── database/ # Database projects and migration tooling
 ├── docker/ # Docker Compose configuration
 ├── docs/ # Repository documentation

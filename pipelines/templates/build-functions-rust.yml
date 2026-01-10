@@ -1,0 +1,42 @@
+# Build and validate the Rust Azure Functions custom handler: format check, clippy, tests, release build.
+# Called as a job template from the main pipeline. The live integration tests are #[ignore]d and need local
+# SQL Server, Redis and a real Cosmos DB account, so they do not run here.
+
+parameters:
+  - name: workingDirectory
+    type: string
+    default: "apps/functions-rust"
+  - name: rustToolchain
+    type: string
+    default: "stable"
+
+steps:
+  - script: |
+      rustup toolchain install ${{ parameters.rustToolchain }} --profile minimal --component clippy,rustfmt --no-self-update
+      rustup default ${{ parameters.rustToolchain }}
+      rustc --version
+      cargo --version
+    displayName: "Install Rust ${{ parameters.rustToolchain }} toolchain"
+
+  - task: Cache@2
+    displayName: "Cache Cargo registry"
+    inputs:
+      key: 'cargo | "$(Agent.OS)" | ${{ parameters.workingDirectory }}/Cargo.lock'
+      restoreKeys: 'cargo | "$(Agent.OS)"'
+      path: "$(HOME)/.cargo/registry"
+
+  - script: cargo fmt --check
+    displayName: "Check formatting"
+    workingDirectory: ${{ parameters.workingDirectory }}
+
+  - script: cargo clippy --locked --all-targets --all-features -- -D warnings
+    displayName: "Run clippy"
+    workingDirectory: ${{ parameters.workingDirectory }}
+
+  - script: cargo test --locked --all-targets
+    displayName: "Run tests"
+    workingDirectory: ${{ parameters.workingDirectory }}
+
+  - script: cargo build --locked --release
+    displayName: "Build release binary"
+    workingDirectory: ${{ parameters.workingDirectory }}

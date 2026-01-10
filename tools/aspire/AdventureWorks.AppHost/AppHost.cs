@@ -11,6 +11,7 @@ const int AngularDevServerPort = 4200;
 const string TopicName = "sales-order-events";
 const string SagaSubscription = "sales-order-saga";
 const string PaymentSubscription = "sales-order-payment-results";
+const string BomBatchQueue = "bom-batch-requests";
 
 var builder = DistributedApplication.CreateBuilder(args);
 builder.Services.AddSingleton<IDistributedApplicationLifecycleHook, ExternalContainerLifecycleHook>();
@@ -26,6 +27,7 @@ var serviceBus = builder.AddAzureServiceBus("servicebus").RunAsEmulator();
 var events = serviceBus.AddServiceBusTopic(TopicName);
 events.AddServiceBusSubscription(SagaSubscription);
 events.AddServiceBusSubscription(PaymentSubscription);
+serviceBus.AddServiceBusQueue(BomBatchQueue);
 
 var harness = builder.AddProject<Projects.AdventureWorks_SalesOrderSaga_TestHarness>("saga-test-harness")
     .WithHttpEndpoint(name: "http")

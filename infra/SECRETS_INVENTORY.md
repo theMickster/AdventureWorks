@@ -38,6 +38,22 @@ follow-up** — confirm it's in place before relying on the managed-identity con
 (there is no existing MI-to-SQL pattern verified against a real deploy in this repo today; the API itself uses
 the `adventureworks-sql-connection-string` Key Vault secret below, not MI).
 
+## BOM Cost Functions Configuration (`apps/functions-rust`)
+
+No Cosmos account key anywhere, and no Cosmos emulator: with `KeyVault__VaultUri` set, the Cosmos endpoint comes from Key Vault, and the handler authenticates to Key Vault and Cosmos with Microsoft Entra ID (managed identity in Azure, developer login locally). No Function App exists yet, so the Azure Runtime column is the intended setup and nothing in it has been deployed. Resource names per environment are in `infra/AZURE_FUNCTIONS_SETUP.md`.
+
+| Config Key                                      | Local Dev                                          | Azure Runtime (intended)                                       |
+| ----------------------------------------------- | -------------------------------------------------- | -------------------------------------------------------------- |
+| `KeyVault__VaultUri`                            | `local.settings.json`                              | App setting                                                    |
+| `Cosmos__Endpoint`                              | Key Vault secret `AzureCosmosDbAccountUri`         | Key Vault secret `AzureCosmosDbAccountUri`                     |
+| `Cosmos__Database`                              | `local.settings.json` (`PlatformDatabases`)        | App setting (`PlatformDatabases`)                              |
+| `Cosmos__Container`                             | `local.settings.json`                              | App setting (`bom-cost-results`, `-dev` or `-local`)           |
+| `Cosmos__PreferredRegion`                       | `local.settings.json`                              | App setting (`West US 3`, unverified)                          |
+| `ConnectionStrings__AdventureWorks` (SQL)       | `local.settings.json`                              | Not decided                                                    |
+| `ConnectionStrings__Redis`                      | `local.settings.json`                              | Not decided                                                    |
+| `ServiceBusConnection__fullyQualifiedNamespace` | `local.settings.json` (real namespace, `az login`) | App setting (identity-based, no connection string)             |
+| `BomBatchQueueName`                             | `local.settings.json` (`bom-batch-requests-dev`)   | App setting (`bom-batch-requests` or `bom-batch-requests-dev`) |
+
 ## Angular Configuration (Frontend)
 
 These values are baked into the Angular build as `__PLACEHOLDER__` tokens and replaced at deploy time by `infra/scripts/replace-tokens.sh`.
@@ -69,3 +85,5 @@ These values are baked into the Angular build as `__PLACEHOLDER__` tokens and re
 | `adventureworks-aplication-insights-connection-string`  | App Service `APPLICATIONINSIGHTS_CONNECTION_STRING` | Angular token replacement |
 | `adventureworks-entra-client-id`                        | Entra app registration client ID      | Angular token replacement       |
 | `automapper-license-key`                                | AutoMapper license key                | .NET unit tests (build-time)    |
+| `AzureCosmosDbAccountUri`                               | Cosmos account endpoint               | Beers API, BOM Cost Functions (`Cosmos__Endpoint`) |
+| `AzureCosmosDbDatabaseName`                             | Cosmos database name                  | Beers API                       |

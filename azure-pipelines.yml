@@ -63,6 +63,15 @@ stages:
               dotNetSdkVersion: $(dotNetSdkVersion)
               buildConfiguration: $(buildConfiguration)
 
+  - stage: BuildRustFunctions
+    displayName: 'Build Rust Functions'
+    dependsOn: []
+    jobs:
+      - job: BuildBomCostFunctions
+        displayName: 'Build BOM Cost Functions (Rust)'
+        steps:
+          - template: pipelines/templates/build-functions-rust.yml
+
   - stage: BuildTools
     displayName: 'Build Console Apps and Aspire'
     dependsOn: []

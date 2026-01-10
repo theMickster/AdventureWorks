@@ -15,6 +15,7 @@ Each application/service has its own CLAUDE.md with technology-specific instruct
 - **For .NET API work**: See `apps/api-dotnet/.claude/CLAUDE.md`
 - **For Angular work**: See `apps/angular-web/.claude/CLAUDE.md`
 - **For the Sales Order Saga Functions app**: See `apps/functions-dotnet/.claude/CLAUDE.md`
+- **For the Rust BOM Cost Functions app**: See `apps/functions-rust/.claude/CLAUDE.md`
   **When starting work in a specific application:**
 
 1. Navigate to that application's directory
@@ -145,6 +146,7 @@ When documentation is needed:
 | **Angular Web**                | Building a component, generating an Nx library, wiring an NgRx SignalStore, MSAL / Entra auth, Tailwind / DaisyUI / Alpine Circuit styling, anything signals-based              | [`apps/angular-web/.claude/CLAUDE.md`](../apps/angular-web/.claude/CLAUDE.md)           |
 | **Database Migrations**        | Schema change, new migration, creating or updating a stored procedure, making DDL/DML idempotent, ordering DbUp scripts                                                         | [`database/dbup/.claude/CLAUDE.md`](../database/dbup/.claude/CLAUDE.md)                 |
 | **Sales Order Saga Functions** | Service Bus trigger, Durable Functions orchestrator/activity, the local NuGet feed for Domain/Application, Azurite/Service Bus emulator local dev                               | [`apps/functions-dotnet/.claude/CLAUDE.md`](../apps/functions-dotnet/.claude/CLAUDE.md) |
+| **BOM Cost Functions (Rust)**  | Rust custom handler, tiberius/bb8 SQL access, BOM cost explosion, Redis result cache, Cosmos DB writer, `bom-batch-requests` Service Bus trigger, cargo fmt/clippy/test         | [`apps/functions-rust/.claude/CLAUDE.md`](../apps/functions-rust/.claude/CLAUDE.md)     |
 
 ## CI/CD and Infrastructure Rules
 
@@ -167,6 +169,10 @@ Read the actual service/component to get exact property names and `inject()` dep
 ### CI Cache Keys Must Hit
 
 Never put commit SHA or build ID in primary cache keys. For npm, cache `~/.npm`, not `node_modules` (`npm ci` deletes it).
+
+### GitHub Actions
+
+Every `uses:` in `.github/workflows/` MUST be pinned to the full commit SHA of the latest stable release (verified signed, with a `# vX.Y.Z` comment), never a tag or branch.
 
 ### Azure Pipelines
 

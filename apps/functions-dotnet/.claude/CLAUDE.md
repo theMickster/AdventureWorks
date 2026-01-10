@@ -4,16 +4,15 @@
 
 ## Architecture Decisions
 
-1. **Service Bus Topic + Subscription, not a Queue.** Feature 610's tech notes say "Queue", but this scaffold uses Topic + Subscription to match Feature 608's shared-backbone design (topics per domain event) — verified against the emulator's `Config.json` schema.
+1. **Service Bus Topic + Subscription, not a Queue.** Feature 610's tech notes say "Queue", but this scaffold uses Topic + Subscription to match Feature 608's shared-backbone design (topics per domain event) — verified against the Service Bus emulator's config schema.
 2. **Flex Consumption plan with system-assigned identity, not classic Consumption.** No connection strings anywhere — identity-based storage auth only. **Unverified against a real subscription** (only `az deployment group what-if` has run, not a real deploy + runtime check). Reported rough edges with Flex Consumption + identity storage auth are mostly for *user-assigned* identity; this uses system-assigned, the safer path — but don't assume it works until actually deployed and confirmed running.
 3. **Local NuGet feed** for `AdventureWorks.Domain`/`AdventureWorks.Application`/`AdventureWorks.Connections` (not `ProjectReference`) — keeps this app deployable independently of `apps/api-dotnet`. Run `./pack-local-nuget.sh` before first build and after any change to those projects; every run stamps a fresh version so restore never serves a stale cached package.
 4. **SQL access, introduced by US 807.** A minimal, independent `SalesOrderSagaDbContext` (`Persistence/`) maps only `Production.ProductInventory`/`Production.TransactionHistory` — columns verified against the live schema via the `querying-adventureworks-database` skill, not copied from `apps/api-dotnet`. Connection string is environment-specific config only, no code branching: SQL-auth via `dotnet user-secrets` locally, `Authentication=Active Directory Managed Identity` in Azure. **Entra admin configuration on the real Azure SQL Server is still an open infra follow-up** — the managed-identity path is wired but unverified against a real deploy. `Program.cs` resolves this via `AdventureWorks.Connections`' `IConnectionCatalog` under the canonical name `ConnectionNames.AdventureWorks` — set it locally with `dotnet user-secrets set "ConnectionStrings:AdventureWorks" "..."`, not the old `ConnectionStrings:DefaultConnection`/flat `SqlConnectionString`.
 5. **Local-dev Service Bus connection string** now goes through the same `IConnectionCatalog` under `ConnectionNames.ServiceBus` — set it in `local.settings.json`'s `Values` as `ConnectionStrings__ServiceBus` (the double-underscore hierarchical convention already used elsewhere in this repo), not the old flat `ServiceBusConnection`/`ConnectionStrings:servicebus`. The identity-based Azure path (`ServiceBusConnection:fullyQualifiedNamespace` + `DefaultAzureCredential`) and its Bicep binding are unchanged — do not rename that without separate, explicit confirmation (it requires a redeploy).
-6. **Local dev's Service Bus emulator uses the pre-existing `tosk-mssql` container (`host.docker.internal:1433`) as its SQL backend, not a disposable companion container.** This was an explicit user instruction, given with full knowledge that the emulator unconditionally drops/recreates `SbGatewayDatabase` and `SbMessageContainerDatabase00001` (fixed names, not configurable) on that server every startup. `tosk-mssql` must already be running before `docker compose up` — this compose file does not start it. **Do not reintroduce a disposable `mssql` companion service without checking with the user first.**
 
 ## Local Development
 
-See `local-dev/SMOKE_TEST.md` for the full manual walkthrough (pack local NuGet → bring up Azurite + Service Bus emulator → start the Functions host → publish a test message → confirm it fired). Requires `tosk-mssql` already running (Architecture Decision 5).
+Run it through Aspire: see [`tools/aspire/README.md`](../../../tools/aspire/README.md). Aspire starts Azurite, a session-scoped Service Bus emulator with its own isolated SQL, and this app; the AdventureWorks SQL stays in the external `tosk-mssql` container. Run `./pack-local-nuget.sh` first (Architecture Decision 3).
 
 ## Testing
 
@@ -37,7 +36,6 @@ dotnet test AdventureWorks.Functions.sln
 - Add SQL access code to a new table without first verifying its columns against the live schema (via the `querying-adventureworks-database` skill) — this app maps its own minimal, independently-verified subset rather than reusing `apps/api-dotnet`'s configurations.
 - Reference `AdventureWorks.Domain`/`AdventureWorks.Application` via `ProjectReference` — use the local NuGet feed.
 - Hardcode a static package version for the local feed — it must change on every pack.
-- Reintroduce a disposable SQL companion container for the local Service Bus emulator without checking with the user first — see Architecture Decision 5.
 
 ## References
 

@@ -1,0 +1,528 @@
+{
+	"info": {
+		"_postman_id": "580b6a63-53a7-4a81-83c8-0c2f0f9cb923",
+		"name": "AW BOM Cost",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
+		"description": "Postman collection for apps/functions-rust (Feature 609, Epic #569): BOM cost explosion and manufacturing feasibility. Authenticates with a Functions key (?code=), like apps/functions-dotnet; locally the key is not enforced. Run the requests in order: the cache-hit request relies on the baseline request before it."
+	},
+	"event": [
+		{
+			"listen": "prerequest",
+			"script": {
+				"type": "text/javascript",
+				"exec": [
+					""
+				]
+			}
+		},
+		{
+			"listen": "test",
+			"script": {
+				"type": "text/javascript",
+				"exec": [
+					""
+				]
+			}
+		}
+	],
+	"item": [
+		{
+			"name": "BOM Cost",
+			"item": [
+				{
+					"name": "Get BOM Cost (baseline)",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"type": "text/javascript",
+								"exec": [
+									"pm.test(\"Has X-Correlation-Id header\", () => pm.response.to.have.header(\"X-Correlation-Id\"));",
+									"pm.test(\"Status is 200 OK\", () => pm.response.to.have.status(200));",
+									"const body = pm.response.json();",
+									"pm.test(\"Correlation id in body matches header\", () => pm.expect(body.correlationId).to.eql(pm.response.headers.get(\"X-Correlation-Id\")));",
+									"pm.test(\"Cost breakdown adds up\", () => pm.expect(body.unitCost.total).to.be.closeTo(body.unitCost.material + body.unitCost.labor, 0.0001));",
+									"pm.test(\"Batch cost is unit cost times quantity\", () => pm.expect(body.batchCost.total).to.be.closeTo(body.unitCost.total * body.quantity, 0.001));",
+									"pm.test(\"Tree root is the requested product\", () => pm.expect(body.tree.productId).to.eql(Number(pm.collectionVariables.get(\"productId\"))));",
+									"pm.test(\"Feasibility reports a flag and shortages array\", () => { pm.expect(body.feasibility.feasible).to.be.a(\"boolean\"); pm.expect(body.feasibility.shortages).to.be.an(\"array\"); });",
+									"pm.test(\"No what-if block on a baseline request\", () => pm.expect(body.whatIf).to.be.undefined);"
+								]
+							}
+						}
+					],
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "Cache-Control",
+								"value": "max-age=60",
+								"description": "Postman adds Cache-Control: no-cache to every request by default, which would bypass the cache. Any value other than no-cache lets the cache serve the request."
+							}
+						],
+						"url": {
+							"raw": "{{functionsBaseUrl}}/bom-cost/{{productId}}?quantity={{quantity}}&code={{functionKey}}",
+							"host": [
+								"{{functionsBaseUrl}}"
+							],
+							"path": [
+								"bom-cost",
+								"{{productId}}"
+							],
+							"query": [
+								{
+									"key": "quantity",
+									"value": "{{quantity}}"
+								},
+								{
+									"key": "code",
+									"value": "{{functionKey}}"
+								}
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Get BOM Cost (served from cache)",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"type": "text/javascript",
+								"exec": [
+									"pm.test(\"Has X-Correlation-Id header\", () => pm.response.to.have.header(\"X-Correlation-Id\"));",
+									"// Run directly after 'Get BOM Cost (baseline)' with the same quantity.",
+									"pm.test(\"Status is 200 OK\", () => pm.response.to.have.status(200));",
+									"pm.test(\"X-Cache is hit\", () => pm.expect(pm.response.headers.get(\"X-Cache\")).to.eql(\"hit\"));"
+								]
+							}
+						}
+					],
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "Cache-Control",
+								"value": "max-age=60",
+								"description": "Postman adds Cache-Control: no-cache to every request by default, which would bypass the cache. Any value other than no-cache lets the cache serve the request."
+							}
+						],
+						"url": {
+							"raw": "{{functionsBaseUrl}}/bom-cost/{{productId}}?quantity={{quantity}}&code={{functionKey}}",
+							"host": [
+								"{{functionsBaseUrl}}"
+							],
+							"path": [
+								"bom-cost",
+								"{{productId}}"
+							],
+							"query": [
+								{
+									"key": "quantity",
+									"value": "{{quantity}}"
+								},
+								{
+									"key": "code",
+									"value": "{{functionKey}}"
+								}
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Get BOM Cost (no-cache refresh)",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"type": "text/javascript",
+								"exec": [
+									"pm.test(\"Has X-Correlation-Id header\", () => pm.response.to.have.header(\"X-Correlation-Id\"));",
+									"pm.test(\"Status is 200 OK\", () => pm.response.to.have.status(200));",
+									"pm.test(\"X-Cache is refresh\", () => pm.expect(pm.response.headers.get(\"X-Cache\")).to.eql(\"refresh\"));"
+								]
+							}
+						}
+					],
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "Cache-Control",
+								"value": "no-cache"
+							}
+						],
+						"url": {
+							"raw": "{{functionsBaseUrl}}/bom-cost/{{productId}}?quantity={{quantity}}&code={{functionKey}}",
+							"host": [
+								"{{functionsBaseUrl}}"
+							],
+							"path": [
+								"bom-cost",
+								"{{productId}}"
+							],
+							"query": [
+								{
+									"key": "quantity",
+									"value": "{{quantity}}"
+								},
+								{
+									"key": "code",
+									"value": "{{functionKey}}"
+								}
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Get BOM Cost (what-if price override)",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"type": "text/javascript",
+								"exec": [
+									"pm.test(\"Has X-Correlation-Id header\", () => pm.response.to.have.header(\"X-Correlation-Id\"));",
+									"pm.test(\"Status is 200 OK\", () => pm.response.to.have.status(200));",
+									"pm.test(\"X-Cache is skipped (what-if is never cached)\", () => pm.expect(pm.response.headers.get(\"X-Cache\")).to.eql(\"skipped\"));",
+									"const body = pm.response.json();",
+									"pm.test(\"What-if block has a delta from baseline\", () => { pm.expect(body.whatIf.baselineUnit.total).to.be.a(\"number\"); pm.expect(body.whatIf.deltaUnit.total).to.be.a(\"number\"); });",
+									"pm.test(\"Unit total equals baseline plus delta\", () => pm.expect(body.unitCost.total).to.be.closeTo(body.whatIf.baselineUnit.total + body.whatIf.deltaUnit.total, 0.001));",
+									"pm.test(\"Override was applied or explained\", () => pm.expect(body.whatIf.applied.length + body.whatIf.ignored.length).to.eql(1));"
+								]
+							}
+						}
+					],
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "Cache-Control",
+								"value": "max-age=60",
+								"description": "Postman adds Cache-Control: no-cache to every request by default, which would bypass the cache. Any value other than no-cache lets the cache serve the request."
+							}
+						],
+						"url": {
+							"raw": "{{functionsBaseUrl}}/bom-cost/{{productId}}?quantity={{quantity}}&override={{overrideComponentId}}:{{overridePrice}}&code={{functionKey}}",
+							"host": [
+								"{{functionsBaseUrl}}"
+							],
+							"path": [
+								"bom-cost",
+								"{{productId}}"
+							],
+							"query": [
+								{
+									"key": "quantity",
+									"value": "{{quantity}}"
+								},
+								{
+									"key": "override",
+									"value": "{{overrideComponentId}}:{{overridePrice}}"
+								},
+								{
+									"key": "code",
+									"value": "{{functionKey}}"
+								}
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Get BOM Cost (shortage)",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"type": "text/javascript",
+								"exec": [
+									"pm.test(\"Has X-Correlation-Id header\", () => pm.response.to.have.header(\"X-Correlation-Id\"));",
+									"// Default productId 771 and shortageQuantity 9 exceed the aggregate stock of Paint - Silver (65 on hand, 8 per bike).",
+									"pm.test(\"Status is 200 OK\", () => pm.response.to.have.status(200));",
+									"const feasibility = pm.response.json().feasibility;",
+									"pm.test(\"Not feasible and shortages are reported\", () => { pm.expect(feasibility.feasible).to.be.false; pm.expect(feasibility.shortages.length).to.be.above(0); });",
+									"pm.test(\"Shortage deficit is required minus available\", () => feasibility.shortages.forEach(s => pm.expect(s.deficit).to.be.closeTo(s.required - s.available, 0.0001)));"
+								]
+							}
+						}
+					],
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "Cache-Control",
+								"value": "no-cache"
+							}
+						],
+						"url": {
+							"raw": "{{functionsBaseUrl}}/bom-cost/{{productId}}?quantity={{shortageQuantity}}&code={{functionKey}}",
+							"host": [
+								"{{functionsBaseUrl}}"
+							],
+							"path": [
+								"bom-cost",
+								"{{productId}}"
+							],
+							"query": [
+								{
+									"key": "quantity",
+									"value": "{{shortageQuantity}}"
+								},
+								{
+									"key": "code",
+									"value": "{{functionKey}}"
+								}
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Echo Correlation Id",
+					"event": [
+						{
+							"listen": "prerequest",
+							"script": {
+								"type": "text/javascript",
+								"exec": [
+									"pm.collectionVariables.set(\"correlationId\", pm.variables.replaceIn(\"{{$guid}}\"));"
+								]
+							}
+						},
+						{
+							"listen": "test",
+							"script": {
+								"type": "text/javascript",
+								"exec": [
+									"pm.test(\"Status is 200 OK\", () => pm.response.to.have.status(200));",
+									"pm.test(\"Inbound correlation id is echoed in the header\", () => pm.expect(pm.response.headers.get(\"X-Correlation-Id\")).to.eql(pm.collectionVariables.get(\"correlationId\")));",
+									"pm.test(\"Inbound correlation id is echoed in the body\", () => pm.expect(pm.response.json().correlationId).to.eql(pm.collectionVariables.get(\"correlationId\")));"
+								]
+							}
+						}
+					],
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "Cache-Control",
+								"value": "max-age=60",
+								"description": "Postman adds Cache-Control: no-cache to every request by default, which would bypass the cache. Any value other than no-cache lets the cache serve the request."
+							},
+							{
+								"key": "X-Correlation-Id",
+								"value": "{{correlationId}}"
+							}
+						],
+						"url": {
+							"raw": "{{functionsBaseUrl}}/bom-cost/{{productId}}?quantity={{quantity}}&code={{functionKey}}",
+							"host": [
+								"{{functionsBaseUrl}}"
+							],
+							"path": [
+								"bom-cost",
+								"{{productId}}"
+							],
+							"query": [
+								{
+									"key": "quantity",
+									"value": "{{quantity}}"
+								},
+								{
+									"key": "code",
+									"value": "{{functionKey}}"
+								}
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Invalid productId",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"type": "text/javascript",
+								"exec": [
+									"pm.test(\"Has X-Correlation-Id header\", () => pm.response.to.have.header(\"X-Correlation-Id\"));",
+									"pm.test(\"Status is 400 Bad Request\", () => pm.response.to.have.status(400));",
+									"pm.test(\"Problem details carry the correlation id\", () => { const body = pm.response.json(); pm.expect(body.status).to.eql(400); pm.expect(body.correlationId).to.be.a(\"string\"); });"
+								]
+							}
+						}
+					],
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{functionsBaseUrl}}/bom-cost/0?quantity={{quantity}}&code={{functionKey}}",
+							"host": [
+								"{{functionsBaseUrl}}"
+							],
+							"path": [
+								"bom-cost",
+								"0"
+							],
+							"query": [
+								{
+									"key": "quantity",
+									"value": "{{quantity}}"
+								},
+								{
+									"key": "code",
+									"value": "{{functionKey}}"
+								}
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Invalid quantity",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"type": "text/javascript",
+								"exec": [
+									"pm.test(\"Has X-Correlation-Id header\", () => pm.response.to.have.header(\"X-Correlation-Id\"));",
+									"pm.test(\"Status is 400 Bad Request\", () => pm.response.to.have.status(400));"
+								]
+							}
+						}
+					],
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{functionsBaseUrl}}/bom-cost/{{productId}}?quantity=0&code={{functionKey}}",
+							"host": [
+								"{{functionsBaseUrl}}"
+							],
+							"path": [
+								"bom-cost",
+								"{{productId}}"
+							],
+							"query": [
+								{
+									"key": "quantity",
+									"value": "0"
+								},
+								{
+									"key": "code",
+									"value": "{{functionKey}}"
+								}
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Unknown product",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"type": "text/javascript",
+								"exec": [
+									"pm.test(\"Has X-Correlation-Id header\", () => pm.response.to.have.header(\"X-Correlation-Id\"));",
+									"pm.test(\"Status is 404 Not Found\", () => pm.response.to.have.status(404));"
+								]
+							}
+						}
+					],
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{functionsBaseUrl}}/bom-cost/999999?quantity=1&code={{functionKey}}",
+							"host": [
+								"{{functionsBaseUrl}}"
+							],
+							"path": [
+								"bom-cost",
+								"999999"
+							],
+							"query": [
+								{
+									"key": "quantity",
+									"value": "1"
+								},
+								{
+									"key": "code",
+									"value": "{{functionKey}}"
+								}
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "Platform",
+			"item": [
+				{
+					"name": "Health",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"type": "text/javascript",
+								"exec": [
+									"pm.test(\"Has X-Correlation-Id header\", () => pm.response.to.have.header(\"X-Correlation-Id\"));",
+									"pm.test(\"Status is 200 or 503\", () => pm.expect(pm.response.code).to.be.oneOf([200, 503]));",
+									"pm.test(\"Reports dependency state\", () => { const body = pm.response.json(); pm.expect(body.status).to.be.oneOf([\"healthy\", \"degraded\", \"unhealthy\"]); pm.expect(body.sql).to.be.a(\"boolean\"); pm.expect(body.cache).to.be.a(\"boolean\"); });"
+								]
+							}
+						}
+					],
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{functionsBaseUrl}}/health",
+							"host": [
+								"{{functionsBaseUrl}}"
+							],
+							"path": [
+								"health"
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		}
+	],
+	"variable": [
+		{
+			"key": "productId",
+			"value": "771"
+		},
+		{
+			"key": "quantity",
+			"value": "2"
+		},
+		{
+			"key": "overrideComponentId",
+			"value": "748"
+		},
+		{
+			"key": "overridePrice",
+			"value": "800"
+		},
+		{
+			"key": "shortageQuantity",
+			"value": "9"
+		},
+		{
+			"key": "correlationId",
+			"value": ""
+		}
+	]
+}

@@ -1,0 +1,51 @@
+# Local backing services for the BOM cost engine (Feature 609). Standalone: never part of docker/compose.yml.
+#
+# - redis:   result cache. Host port 6380 because bitwardenserver-redis-1 already owns 6379 on this machine.
+# - Cosmos DB is not emulated: local runs use the real account's bom-cost-results-local container with Entra ID.
+#
+# - azurite: AzureWebJobsStorage for the Functions host. Host ports 11000-11002 because another project's Azurite
+#            already owns the default 10000-10002 on this machine.
+#
+# - rabbitmq (opt-in profile): RabbitMQ for the messaging integration tests only (tests/rabbitmq_flow.rs). Service Bus stays the
+#            real transport (the real DEV queue, no emulator); RabbitMQ never serves the handler. Host AMQP port 5675 because
+#            5672 is taken by another project; management UI on 15672. The user is created here because the built-in 'guest'
+#            user cannot connect through a Docker port mapping. Local-only credentials, override with RABBITMQ_USER/RABBITMQ_PASSWORD.
+#
+# Usage: docker compose -f local-dev/docker-compose.yml up -d
+#        docker compose -f local-dev/docker-compose.yml --profile rabbitmq up -d
+name: adventureworks-bom
+services:
+  redis:
+    container_name: aw-bom-redis
+    image: redis:alpine
+    ports:
+      - "6380:6379"
+    healthcheck:
+      test: ["CMD", "redis-cli", "ping"]
+      interval: 5s
+      timeout: 3s
+      retries: 5
+
+  azurite:
+    container_name: aw-bom-azurite
+    image: mcr.microsoft.com/azure-storage/azurite:latest
+    ports:
+      - "11000:10000" # Blob
+      - "11001:10001" # Queue
+      - "11002:10002" # Table
+
+  rabbitmq:
+    profiles: ["rabbitmq"]
+    container_name: aw-bom-rabbitmq
+    image: rabbitmq:4-management
+    ports:
+      - "5675:5672"
+      - "15672:15672"
+    environment:
+      RABBITMQ_DEFAULT_USER: ${RABBITMQ_USER:-aw}
+      RABBITMQ_DEFAULT_PASS: ${RABBITMQ_PASSWORD:-aw-local-only}
+    healthcheck:
+      test: ["CMD", "rabbitmq-diagnostics", "-q", "ping"]
+      interval: 10s
+      timeout: 5s
+      retries: 6
