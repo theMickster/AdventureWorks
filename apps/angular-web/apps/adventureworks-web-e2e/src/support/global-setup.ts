@@ -90,8 +90,10 @@ setup('authenticate', async ({ page, baseURL }) => {
   for (const [key, value] of cacheEntries) {
     localStorageEntries[key] = JSON.stringify(value);
   }
-  localStorageEntries['msal.account.keys'] = JSON.stringify(accountKeys);
-  localStorageEntries[`msal.token.keys.${clientId}`] = JSON.stringify({
+  // @azure/msal-browser v5 stores its schema-versioned indexes under `msal.3.*`.
+  // The unversioned v0 names are ignored, causing MsalGuard to start an interactive login.
+  localStorageEntries['msal.3.account.keys'] = JSON.stringify(accountKeys);
+  localStorageEntries[`msal.3.token.keys.${clientId}`] = JSON.stringify({
     idToken: idTokenKeys,
     accessToken: accessTokenKeys,
     refreshToken: refreshTokenKeys,

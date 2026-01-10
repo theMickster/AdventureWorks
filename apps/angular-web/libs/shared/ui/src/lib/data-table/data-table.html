@@ -15,7 +15,7 @@
   } @else {
     <table [id]="fieldId() + '-table'" class="table">
       <thead>
-        <tr>
+        <tr class="text-secondary">
           @for (col of columns(); track col.key) {
             <th [id]="fieldId() + '-th-' + col.key" [class]="col.headerClass ?? ''">
               @if (col.sortable) {

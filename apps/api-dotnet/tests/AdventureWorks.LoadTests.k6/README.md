@@ -61,19 +61,19 @@ Every `smoke-*` profile targets one domain, threshold p95 < 300ms unless noted, 
 least one negative-path check (404/400/401) alongside the happy path — read the profile source in
 `profiles/` for exact endpoints and assertions.
 
-| Profile                  | Domain              | Auth                                    |
-| ------------------------ | -------------------- | ---------------------------------------- |
-| `load`                   | health, version, stores | required (p95 < 500ms / p99 < 1500ms) |
-| `stress`                 | same as `load`, higher VUs | required |
-| `smoke-human-resources`  | employees, departments, shifts | required |
-| `smoke-person`           | persons, country/state | persons required; country/state anonymous |
-| `smoke-production`      | products, product-models, categories | categories anonymous; rest required |
-| `smoke-product-review`  | product reviews + stats | required |
-| `smoke-sales-order`     | sales-orders, dashboard, sales-reasons, territories, ship-methods, special-offers | required |
-| `smoke-sales-person`    | salespersons, performance | required |
-| `smoke-store`           | stores, search, addresses, contacts | required |
-| `smoke-work-order`      | work-orders + filters | required |
-| `smoke-vendor`          | vendors + filters | required |
+| Profile                 | Domain                                                                            | Auth                                      |
+| ----------------------- | --------------------------------------------------------------------------------- | ----------------------------------------- |
+| `load`                  | health, version, stores                                                           | required (p95 < 500ms / p99 < 1500ms)     |
+| `stress`                | same as `load`, higher VUs                                                        | required                                  |
+| `smoke-human-resources` | employees, departments, shifts                                                    | required                                  |
+| `smoke-person`          | persons, country/state                                                            | persons required; country/state anonymous |
+| `smoke-production`      | products, product-models, categories                                              | categories anonymous; rest required       |
+| `smoke-product-review`  | product reviews + stats                                                           | required                                  |
+| `smoke-sales-order`     | sales-orders, dashboard, sales-reasons, territories, ship-methods, special-offers | required                                  |
+| `smoke-sales-person`    | salespersons, performance                                                         | required                                  |
+| `smoke-store`           | stores, search, addresses, contacts                                               | required                                  |
+| `smoke-work-order`      | work-orders + filters                                                             | required                                  |
+| `smoke-vendor`          | vendors + filters                                                                 | required                                  |
 
 "required" means `run-tests.sh` needs `LOADTEST_*` creds or a pre-set `K6_AUTH_TOKEN`/`AUTH_TOKEN` —
 no unauthenticated fallback. `smoke` (unqualified) is the exception: it runs anonymously by default
@@ -93,7 +93,7 @@ Example with auth token:
 K6_AUTH_TOKEN="<jwt-token>" BASE_URL="https://localhost:44369" ./run-tests.sh load
 ```
 
-### Automatic token acquisition (LOADTEST_\*)
+### Automatic token acquisition (LOADTEST\_\*)
 
 `run-tests.sh` can acquire `K6_AUTH_TOKEN` automatically via MSAL Node's ROPC (Resource Owner
 Password Credential) flow, so you no longer have to paste a JWT by hand before running `load` or

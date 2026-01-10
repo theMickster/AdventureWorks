@@ -3,8 +3,11 @@ import { nxE2EPreset } from '@nx/playwright/preset';
 import { workspaceRoot } from '@nx/devkit';
 import { STORAGE_STATE_PATH } from './src/support/storage-state-path';
 
+// Keep the E2E server distinct from the normal development server on :4200. This prevents a
+// running development bundle from being silently reused with the wrong Entra configuration.
+const LOCAL_E2E_ORIGIN = 'http://localhost:4201';
 // For CI, you may want to set BASE_URL to the deployed application.
-const baseURL = process.env['BASE_URL'] || 'http://localhost:4200';
+const baseURL = process.env['BASE_URL'] || LOCAL_E2E_ORIGIN;
 
 /**
  * Read environment variables from file.
@@ -24,13 +27,18 @@ export default defineConfig({
     baseURL,
     /* Collect trace when retrying the failed test. See https://playwright.dev/docs/trace-viewer */
     trace: 'on-first-retry',
+    /* The API's PlaywrightTesting launch profile forces an HTTP->HTTPS redirect to its local
+     * ASP.NET Core dev cert. The OS trusts that cert (`dotnet dev-certs https --trust`), but
+     * Playwright's bundled browsers don't, so the redirected request fails and Chromium
+     * misreports it as a CORS error. This scopes trust to the test browsers only. */
+    ignoreHTTPSErrors: true,
   },
   /* Run your local dev server before starting the tests. The `playwright` serve configuration
    * file-replaces environment.ts with the gitignored environment.playwright.ts (test tenant),
    * leaving environment.development.ts untouched for normal dev runs. */
   webServer: {
     command: 'npx nx run adventureworks-web:serve:playwright',
-    url: 'http://localhost:4200',
+    url: LOCAL_E2E_ORIGIN,
     reuseExistingServer: true,
     cwd: workspaceRoot,
   },

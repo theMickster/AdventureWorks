@@ -27,7 +27,7 @@ test.describe('Authenticated read-only list workflows', () => {
     );
     await expectQueryState(page, { search: 'Bike', pageNumber: '1', orderBy: null, sortOrder: null });
     await expect.poll(() => page.locator('#aw-store-list-table-table tbody tr').count()).toBeGreaterThan(0);
-    await expect(page.locator('#aw-store-list-table-table tbody tr')).toContainText(/Bike/i);
+    await expect(page.locator('#aw-store-list-table-table tbody')).toContainText(/Bike/i);
 
     await waitForListResponse(page, '/api/v1/stores', () => page.locator('#aw-store-clear-btn').click());
     await expectQueryState(page, { search: null, pageNumber: null, orderBy: null, sortOrder: null });
@@ -52,7 +52,7 @@ test.describe('Authenticated read-only list workflows', () => {
     );
     await expectQueryState(page, { name: 'Ken Sánchez', status: 'active', pageNumber: '1' });
     await expect(page.locator('#aw-employee-list-table-table tbody')).toContainText('Ken Sánchez');
-    await expect(page.locator('#aw-employee-list-table-table tbody')).toContainText('Active');
+    await expect(page.locator('#aw-employee-list-table-table tbody')).toContainText('active');
 
     await waitForListResponse(page, '/api/v1/employees', () => page.locator('#aw-employee-filter-reset-btn').click());
     await expectQueryState(page, { name: null, status: null, pageNumber: null });

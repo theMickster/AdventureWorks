@@ -37,7 +37,6 @@ export const appRoutes: Route[] = [
       },
       {
         path: 'manufacturing',
-        data: { breadcrumb: 'Manufacturing' },
         loadChildren: () => import('./routes/manufacturing.routes').then((m) => m.manufacturingRoutes),
       },
       {

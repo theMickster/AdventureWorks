@@ -4,14 +4,14 @@ Playwright end-to-end smoke tests for `adventureworks-web`. Page Objects live in
 
 ## Required environment variables
 
-| Variable             | Required for                                                                                                                                           |
-| -------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------ |
-| `E2E_TEST_TENANT_ID` | The `setup` project (ROPC token acquisition — dedicated test tenant)                                                                                   |
-| `E2E_TEST_CLIENT_ID` | The `setup` project (dedicated test app registration's client ID — separate from the production SPA client ID)                                         |
-| `E2E_TEST_API_SCOPE` | The `setup` project (API scope requested via ROPC)                                                                                                     |
-| `E2E_TEST_USERNAME`  | The `setup` project (ROPC token acquisition)                                                                                                           |
-| `E2E_TEST_PASSWORD`  | The `setup` project (ROPC token acquisition)                                                                                                           |
-| `BASE_URL`           | Optional. Overrides the target origin (defaults to `http://localhost:4200`). Point this at a deployed Dev environment instead of the local dev server. |
+| Variable             | Required for                                                                                                                                            |
+| -------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `E2E_TEST_TENANT_ID` | The `setup` project (ROPC token acquisition — dedicated test tenant)                                                                                    |
+| `E2E_TEST_CLIENT_ID` | The `setup` project (dedicated test app registration's client ID — separate from the production SPA client ID)                                          |
+| `E2E_TEST_API_SCOPE` | The `setup` project (API scope requested via ROPC)                                                                                                      |
+| `E2E_TEST_USERNAME`  | The `setup` project (ROPC token acquisition)                                                                                                            |
+| `E2E_TEST_PASSWORD`  | The `setup` project (ROPC token acquisition)                                                                                                            |
+| `BASE_URL`           | Optional. Overrides the target origin (defaults to `http://localhost:4201`). Point this at a deployed Dev environment instead of the local test server. |
 
 The `setup` project authenticates via the ROPC (Resource Owner Password Credential) flow — Microsoft's documented pattern for automating MSAL.js + Playwright testing (learn.microsoft.com/entra/identity-platform/test-automate-integration-testing) — against a **dedicated test tenant and app registration**, not the app's real production Entra config. That test app registration must have "Allow public client flows" enabled, and the test user/app must be excluded from any MFA-requiring Conditional Access policy in that tenant (ROPC cannot satisfy an MFA challenge).
 
@@ -21,7 +21,7 @@ Any run that needs the authenticated storage state (the `chromium`, `firefox`, `
 
 Real values are never committed. The committed config holds empty placeholders; each layer gets its values injected:
 
-**1. Angular dev server** — the E2E `webServer` boots the `playwright` serve configuration, which file-replaces `environment.ts` with the gitignored `environment.playwright.ts` (so your `environment.development.ts` stays on your normal dev tenant). Even the `chromium-unauthenticated`-only run boots the webServer, so this file must exist:
+**1. Angular dev server** — the E2E `webServer` boots the `playwright` serve configuration on `http://localhost:4201`, which file-replaces `environment.ts` with the gitignored `environment.playwright.ts`. This leaves the normal development server on `http://localhost:4200` and its development-tenant configuration untouched. Even the `chromium-unauthenticated`-only run boots the webServer, so this file must exist:
 
 ```bash
 cd apps/angular-web/apps/adventureworks-web/src/environments

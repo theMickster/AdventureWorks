@@ -34,6 +34,7 @@ var harness = builder.AddProject<Projects.AdventureWorks_SalesOrderSaga_TestHarn
     .WithEnvironment("ASPNETCORE_ENVIRONMENT", "Development")
     .WithEnvironment("ServiceBusSalesOrderEventsTopicName", TopicName)
     .WithHttpHealthCheck("/health")
+    .WithExplicitStart()
     .WaitFor(serviceBus);
 
 var functions = builder.AddAzureFunctionsProject<Projects.AdventureWorks_SalesOrderSaga>("sales-order-functions")
@@ -46,10 +47,12 @@ var functions = builder.AddAzureFunctionsProject<Projects.AdventureWorks_SalesOr
     .WithEnvironment("ServiceBusSalesOrderPaymentSubscriptionName", PaymentSubscription)
     .WithEnvironment("PaymentAuthorization__BaseUrl", harness.GetEndpoint("http"))
     .WithExternalHttpEndpoints()
+    .WithExplicitStart()
     .WaitFor(storage)
     .WaitFor(serviceBus);
 
 harness.WithEnvironment("Functions__BaseUrl", functions.GetEndpoint("http"))
+    .WithParentRelationship(functions)
     .WaitFor(functions);
 AddHarnessCommands(harness);
 
@@ -57,9 +60,9 @@ builder.AddProject<Projects.AdventureWorks_DbUp>("dbup")
     .WithEnvironment("ASPNETCORE_ENVIRONMENT", "Development")
     .WithExplicitStart();
 
-var api = builder.AddProject<Projects.AdventureWorks_API>("api")
-    .WithReference(adventureWorksConnection)
-    .WithEnvironment("ASPNETCORE_ENVIRONMENT", "Development");
+var apiLaunchProfileName = builder.Configuration["Api:LaunchProfile"] ?? "AdventureWorks.API";
+var api = builder.AddProject<Projects.AdventureWorks_API>("api", apiLaunchProfileName)
+    .WithReference(adventureWorksConnection);
 
 builder.AddJavaScriptApp("angular-web", "../../../apps/angular-web", "start")
     .WithHttpEndpoint(port: AngularDevServerPort, name: "http", isProxied: false)

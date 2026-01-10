@@ -96,7 +96,8 @@
           "buildTarget": "adventureworks-web:build:development"
         },
         "playwright": {
-          "buildTarget": "adventureworks-web:build:playwright"
+          "buildTarget": "adventureworks-web:build:playwright",
+          "port": 4201
         }
       }
     },
