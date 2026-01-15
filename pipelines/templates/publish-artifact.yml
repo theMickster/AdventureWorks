@@ -1,0 +1,44 @@
+# Reuse an artifact from an earlier attempt of the same build, if present.
+parameters:
+  - name: artifactName
+    type: string
+  - name: targetPath
+    type: string
+  - name: condition
+    type: string
+    default: succeeded()
+
+steps:
+  - bash: |
+      set -euo pipefail
+      status=$(curl --silent --show-error --output /dev/null --write-out '%{http_code}' \
+        --header "Authorization: Bearer $SYSTEM_ACCESSTOKEN" \
+        --get --data-urlencode "artifactName=$ARTIFACT_NAME" \
+        --data-urlencode 'api-version=7.1' \
+        "${SYSTEM_TEAMFOUNDATIONCOLLECTIONURI}${SYSTEM_TEAMPROJECTID}/_apis/build/builds/${BUILD_BUILDID}/artifacts")
+      case "$status" in
+        200)
+          echo "Artifact $ARTIFACT_NAME already exists for build $BUILD_BUILDID; reusing it."
+          echo '##vso[task.setvariable variable=artifactAlreadyExists]true'
+          ;;
+        404)
+          echo "Artifact $ARTIFACT_NAME does not exist yet; publishing it."
+          ;;
+        *)
+          echo "Artifact lookup failed with HTTP $status."
+          exit 1
+          ;;
+      esac
+      echo '##vso[task.setvariable variable=artifactLookupSucceeded]true'
+    displayName: "Check ${{ parameters.artifactName }} artifact"
+    condition: ${{ parameters.condition }}
+    env:
+      ARTIFACT_NAME: "${{ parameters.artifactName }}"
+      SYSTEM_ACCESSTOKEN: $(System.AccessToken)
+
+  - task: PublishPipelineArtifact@1
+    displayName: "Publish ${{ parameters.artifactName }} artifact"
+    condition: and(${{ parameters.condition }}, eq(variables['artifactLookupSucceeded'], 'true'), ne(variables['artifactAlreadyExists'], 'true'))
+    inputs:
+      targetPath: "${{ parameters.targetPath }}"
+      artifact: "${{ parameters.artifactName }}"

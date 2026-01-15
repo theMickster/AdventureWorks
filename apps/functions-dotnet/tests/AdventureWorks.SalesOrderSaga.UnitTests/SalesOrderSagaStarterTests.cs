@@ -1,5 +1,6 @@
 using System.Text.Json;
 using AdventureWorks.Application.Features.Sales.Saga.Models;
+using AdventureWorks.SalesOrderSaga.Contracts;
 using AdventureWorks.SalesOrderSaga.Functions;
 using Microsoft.DurableTask;
 using Microsoft.DurableTask.Client;
@@ -106,5 +107,51 @@ public class SalesOrderSagaStarterTests
                 It.IsAny<StartOrchestrationOptions>(),
                 It.IsAny<CancellationToken>()),
             Times.Never);
+    }
+
+    [Fact]
+    public async Task RunMessageAsync_StartsSaga_ForOrderCreatedSubject()
+    {
+        var input = SampleInput();
+        var instanceId = SalesOrderSagaStarter.BuildInstanceId(input.SalesOrderId);
+        var client = new Mock<DurableTaskClient>(MockBehavior.Strict, "test");
+        client.Setup(c => c.GetInstanceAsync(instanceId, false, It.IsAny<CancellationToken>())).ReturnsAsync((OrchestrationMetadata?)null);
+        client.Setup(c => c.ScheduleNewOrchestrationInstanceAsync(
+                It.IsAny<TaskName>(), It.IsAny<object>(), It.IsAny<StartOrchestrationOptions>(), It.IsAny<CancellationToken>()))
+            .ReturnsAsync(instanceId);
+        var message = Azure.Messaging.ServiceBus.ServiceBusModelFactory.ServiceBusReceivedMessage(
+            body: BinaryData.FromString(JsonSerializer.Serialize(new OrderCreatedEvent(
+                input.SalesOrderId, input.CustomerId, input.OrderDate, [new SagaOrderLine(776, 1, 2024.994m)]))),
+            subject: SagaEventNames.OrderCreated);
+
+        await new SalesOrderSagaStarter(NullLogger<SalesOrderSagaStarter>.Instance)
+            .RunMessageAsync(message, client.Object, CancellationToken.None);
+
+        client.Verify(c => c.ScheduleNewOrchestrationInstanceAsync(
+            It.IsAny<TaskName>(), It.IsAny<object>(), It.IsAny<StartOrchestrationOptions>(), It.IsAny<CancellationToken>()), Times.Once);
+    }
+
+    [Theory]
+    [InlineData(SagaEventNames.PaymentApproved)]
+    [InlineData(SagaEventNames.OrderApproved)]
+    [InlineData(null)]
+    public async Task RunMessageAsync_IgnoresOtherSubjects(string? subject)
+    {
+        var client = new Mock<DurableTaskClient>(MockBehavior.Strict, "test");
+        var message = Azure.Messaging.ServiceBus.ServiceBusModelFactory.ServiceBusReceivedMessage(body: BinaryData.FromString("{}"), subject: subject);
+
+        await new SalesOrderSagaStarter(NullLogger<SalesOrderSagaStarter>.Instance)
+            .RunMessageAsync(message, client.Object, CancellationToken.None);
+
+        client.VerifyNoOtherCalls();
+    }
+
+    [Fact]
+    public async Task RunAsync_WhenMessageIsJsonNull_Throws()
+    {
+        var client = new Mock<DurableTaskClient>(MockBehavior.Strict, "test");
+
+        await Assert.ThrowsAsync<InvalidOperationException>(() =>
+            new SalesOrderSagaStarter(NullLogger<SalesOrderSagaStarter>.Instance).RunAsync("null", client.Object, CancellationToken.None));
     }
 }

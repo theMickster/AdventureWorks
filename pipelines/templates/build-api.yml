@@ -112,8 +112,7 @@ steps:
       archiveType: zip
       archiveFile: "$(Build.ArtifactStagingDirectory)/api.zip"
 
-  - task: PublishPipelineArtifact@1
-    displayName: "Publish API artifact"
-    inputs:
+  - template: publish-artifact.yml
+    parameters:
+      artifactName: "${{ parameters.artifactName }}"
       targetPath: "$(Build.ArtifactStagingDirectory)/api.zip"
-      artifact: "${{ parameters.artifactName }}"

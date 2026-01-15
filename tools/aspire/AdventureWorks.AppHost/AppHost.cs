@@ -44,6 +44,7 @@ var functions = builder.AddAzureFunctionsProject<Projects.AdventureWorks_SalesOr
     .WithReference(adventureWorksConnection)
     .WithReference(serviceBus)
     .WithEnvironment("ServiceBusConnection", serviceBus)
+    .WithEnvironment("ConnectionStrings__ServiceBus", serviceBus)
     .WithEnvironment("ServiceBusSalesOrderEventsTopicName", TopicName)
     .WithEnvironment("ServiceBusSalesOrderSagaSubscriptionName", SagaSubscription)
     .WithEnvironment("ServiceBusSalesOrderPaymentSubscriptionName", PaymentSubscription)
@@ -112,10 +113,16 @@ static void AddHttpCommand(
             ?? throw new InvalidOperationException("The test harness HTTP endpoint is not allocated.");
         foreach (var argument in context.Arguments)
             requestPath = requestPath.Replace($"{{{argument.Name}}}", Uri.EscapeDataString(argument.Value ?? string.Empty), StringComparison.Ordinal);
-        var quantity = context.Arguments.GetString("quantity");
-        if (name == "start-order" && quantity is not null)
-            requestBody = $"{{\"quantity\":{quantity},\"unitPrice\":2024.994}}";
-        using var client = new HttpClient { BaseAddress = new Uri(url) };
+        if (name == "start-order")
+        {
+            var quantity = context.Arguments.GetString("quantity");
+            if (quantity is not null)
+            {
+                requestBody = $"{{\"quantity\":{quantity},\"unitPrice\":2024.994}}";
+            }
+        }
+        // The one-click scenarios run up to two minutes; HttpClient's default 100s timeout would cancel them first.
+        using var client = new HttpClient { BaseAddress = new Uri(url), Timeout = TimeSpan.FromMinutes(3) };
         using var request = new HttpRequestMessage(method, requestPath);
         if (requestBody is not null) request.Content = JsonContent.Create(System.Text.Json.JsonDocument.Parse(requestBody).RootElement);
         using var response = await client.SendAsync(request, context.CancellationToken);

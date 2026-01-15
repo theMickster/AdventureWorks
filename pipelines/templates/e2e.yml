@@ -116,9 +116,8 @@ steps:
       E2E_TEST_USERNAME: $(e2e-test-username)
       E2E_TEST_PASSWORD: $(e2e-test-password)
 
-  - task: PublishPipelineArtifact@1
-    displayName: "Publish Playwright report"
-    condition: always()
-    inputs:
+  - template: publish-artifact.yml
+    parameters:
+      artifactName: "playwright-report"
       targetPath: "${{ parameters.workingDirectory }}/dist/.playwright/apps/adventureworks-web-e2e/playwright-report"
-      artifact: "playwright-report"
+      condition: always()

@@ -84,8 +84,7 @@ steps:
       archiveType: zip
       archiveFile: "$(Build.ArtifactStagingDirectory)/angular.zip"
 
-  - task: PublishPipelineArtifact@1
-    displayName: "Publish Angular artifact"
-    inputs:
+  - template: publish-artifact.yml
+    parameters:
+      artifactName: "${{ parameters.artifactName }}"
       targetPath: "$(Build.ArtifactStagingDirectory)/angular.zip"
-      artifact: "${{ parameters.artifactName }}"

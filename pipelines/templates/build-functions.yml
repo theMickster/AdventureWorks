@@ -99,8 +99,7 @@ steps:
       archiveType: zip
       archiveFile: "$(Build.ArtifactStagingDirectory)/functions.zip"
 
-  - task: PublishPipelineArtifact@1
-    displayName: "Publish Functions artifact"
-    inputs:
+  - template: publish-artifact.yml
+    parameters:
+      artifactName: "${{ parameters.artifactName }}"
       targetPath: "$(Build.ArtifactStagingDirectory)/functions.zip"
-      artifact: "${{ parameters.artifactName }}"
