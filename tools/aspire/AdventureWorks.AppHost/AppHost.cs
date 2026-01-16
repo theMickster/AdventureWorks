@@ -14,7 +14,7 @@ const string PaymentSubscription = "sales-order-payment-results";
 const string BomBatchQueue = "bom-batch-requests";
 
 var builder = DistributedApplication.CreateBuilder(args);
-builder.Services.AddSingleton<IDistributedApplicationLifecycleHook, ExternalContainerLifecycleHook>();
+builder.Services.AddEventingSubscriber<ExternalContainerEventSubscriber>();
 builder.Services.AddHealthChecks().AddCheck(SqlServerHealthCheckKey, new TcpPortHealthCheck("localhost", SqlServerPort));
 
 var sqlContainerName = builder.Configuration["SqlServer:ContainerName"] ?? "tosk-mssql";

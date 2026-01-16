@@ -1,3 +1,4 @@
+using Aspire.Hosting.Eventing;
 using Aspire.Hosting.Lifecycle;
 using Microsoft.Extensions.Diagnostics.HealthChecks;
 
@@ -9,14 +10,21 @@ internal sealed class ExternalContainerResource(string name) : Resource(name);
 
 // On startup, transitions all ExternalContainerResource tiles to Running state so the
 // health check badge is displayed (Aspire only polls health for Running resources).
-internal sealed class ExternalContainerLifecycleHook(ResourceNotificationService notifications)
-    : IDistributedApplicationLifecycleHook
+internal sealed class ExternalContainerEventSubscriber(ResourceNotificationService notifications)
+    : IDistributedApplicationEventingSubscriber
 {
-    async Task IDistributedApplicationLifecycleHook.AfterResourcesCreatedAsync(
-        DistributedApplicationModel model,
+    Task IDistributedApplicationEventingSubscriber.SubscribeAsync(
+        IDistributedApplicationEventing eventing,
+        DistributedApplicationExecutionContext executionContext,
         CancellationToken cancellationToken)
     {
-        foreach (var resource in model.Resources.OfType<ExternalContainerResource>())
+        eventing.Subscribe<AfterResourcesCreatedEvent>(OnAfterResourcesCreatedAsync);
+        return Task.CompletedTask;
+    }
+
+    private async Task OnAfterResourcesCreatedAsync(AfterResourcesCreatedEvent @event, CancellationToken cancellationToken)
+    {
+        foreach (var resource in @event.Model.Resources.OfType<ExternalContainerResource>())
         {
             await notifications.PublishUpdateAsync(resource, state => state with
             {

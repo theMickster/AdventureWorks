@@ -65,7 +65,7 @@ internal static class AutofacBootstrapper
 
     private static void RegisterLoggers(ContainerBuilder builder, IConfiguration configuration)
     {
-        LogManager.LoadConfiguration("nlog.config");
+        LogManager.Setup().LoadConfigurationFromFile("nlog.config");
 
         var logger = LogManager.Setup()
             .LoadConfigurationFromSection(configuration)
@@ -122,7 +122,7 @@ internal static class AutofacBootstrapper
             "Critical" => Microsoft.Extensions.Logging.LogLevel.Critical,
             _ => Microsoft.Extensions.Logging.LogLevel.Error,
         };
-        LogManager.LoadConfiguration("nlog.config");
+        LogManager.Setup().LoadConfigurationFromFile("nlog.config");
 
         var loggerFactoryForDebugging = LoggerFactory.Create(factory =>
         {
