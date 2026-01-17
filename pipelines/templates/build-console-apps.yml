@@ -70,29 +70,25 @@ steps:
     displayName: "Security scan (Aspire vulnerable packages)"
     continueOnError: true
 
-  - task: DotNetCoreCLI@2
-    displayName: "Run AdventureWorks.Connections tests"
-    inputs:
-      command: test
-      projects: "${{ parameters.connectionsTestProject }}"
-      testRunTitle: "AdventureWorks.Connections - $(Build.BuildNumber)"
-      publishTestResults: true
-      arguments: '--configuration ${{ parameters.buildConfiguration }} --collect "XPlat Code Coverage" --verbosity $(dotnetVerbosity)'
+  - template: run-dotnet-test.yml
+    parameters:
+      testProject: "${{ parameters.connectionsTestProject }}"
+      testRunTitle: "AdventureWorks.Connections"
+      resultsDirectory: "connections"
+      buildConfiguration: "${{ parameters.buildConfiguration }}"
 
-  - task: DotNetCoreCLI@2
-    displayName: "Run console-app tests"
-    inputs:
-      command: test
-      projects: "${{ parameters.consoleTestProject }}"
-      testRunTitle: "AdventureWorks.DbReset.Console - $(Build.BuildNumber)"
-      publishTestResults: true
-      arguments: '--configuration ${{ parameters.buildConfiguration }} --no-build --collect "XPlat Code Coverage" --verbosity $(dotnetVerbosity)'
+  - template: run-dotnet-test.yml
+    parameters:
+      testProject: "${{ parameters.consoleTestProject }}"
+      testRunTitle: "AdventureWorks.DbReset.Console"
+      resultsDirectory: "console"
+      buildConfiguration: "${{ parameters.buildConfiguration }}"
+      testOptions: "--no-build"
 
-  - task: DotNetCoreCLI@2
-    displayName: "Run Aspire test-harness tests"
-    inputs:
-      command: test
-      projects: "${{ parameters.aspireTestProject }}"
-      testRunTitle: "AdventureWorks.SagaTestHarness - $(Build.BuildNumber)"
-      publishTestResults: true
-      arguments: '--configuration ${{ parameters.buildConfiguration }} --no-build --collect "XPlat Code Coverage" --verbosity $(dotnetVerbosity)'
+  - template: run-dotnet-test.yml
+    parameters:
+      testProject: "${{ parameters.aspireTestProject }}"
+      testRunTitle: "AdventureWorks.SagaTestHarness"
+      resultsDirectory: "aspire-harness"
+      buildConfiguration: "${{ parameters.buildConfiguration }}"
+      testOptions: "--no-build"

@@ -55,33 +55,30 @@ steps:
       projects: "${{ parameters.solution }}"
       arguments: "--configuration ${{ parameters.buildConfiguration }} --no-restore --verbosity $(dotnetVerbosity)"
 
-  - task: DotNetCoreCLI@2
-    displayName: "Run unit tests"
-    inputs:
-      command: test
-      projects: "${{ parameters.testProject }}"
-      testRunTitle: "AdventureWorks.Functions UnitTests - $(Build.BuildNumber)"
-      publishTestResults: true
-      arguments: '--configuration ${{ parameters.buildConfiguration }} --no-build --collect "XPlat Code Coverage" --verbosity $(dotnetVerbosity)'
+  - template: run-dotnet-test.yml
+    parameters:
+      testProject: "${{ parameters.testProject }}"
+      testRunTitle: "AdventureWorks.Functions UnitTests"
+      resultsDirectory: "functions-unit"
+      buildConfiguration: "${{ parameters.buildConfiguration }}"
+      testOptions: "--no-build"
 
-  - task: DotNetCoreCLI@2
-    displayName: "Run orchestration tests"
-    continueOnError: true
-    inputs:
-      command: test
-      projects: "${{ parameters.orchestrationTestProject }}"
-      testRunTitle: "AdventureWorks.Functions OrchestrationTests - $(Build.BuildNumber)"
-      publishTestResults: true
-      arguments: '--configuration ${{ parameters.buildConfiguration }} --no-build --collect "XPlat Code Coverage" --verbosity $(dotnetVerbosity)'
+  - template: run-dotnet-test.yml
+    parameters:
+      testProject: "${{ parameters.orchestrationTestProject }}"
+      testRunTitle: "AdventureWorks.Functions OrchestrationTests"
+      resultsDirectory: "functions-orchestration"
+      buildConfiguration: "${{ parameters.buildConfiguration }}"
+      testOptions: "--no-build"
+      continueOnError: true
 
-  - task: DotNetCoreCLI@2
-    displayName: "Run saga harness tests"
-    inputs:
-      command: test
-      projects: "${{ parameters.harnessTestProject }}"
-      testRunTitle: "AdventureWorks.SagaTestHarness - $(Build.BuildNumber)"
-      publishTestResults: true
-      arguments: '--configuration ${{ parameters.buildConfiguration }} --no-build --collect "XPlat Code Coverage" --verbosity $(dotnetVerbosity)'
+  - template: run-dotnet-test.yml
+    parameters:
+      testProject: "${{ parameters.harnessTestProject }}"
+      testRunTitle: "AdventureWorks.SagaTestHarness"
+      resultsDirectory: "functions-harness"
+      buildConfiguration: "${{ parameters.buildConfiguration }}"
+      testOptions: "--no-build"
 
   - task: DotNetCoreCLI@2
     displayName: "Publish Functions app"

@@ -1,0 +1,46 @@
+# Run an xUnit v3 test project with the .NET 10 Microsoft Testing Platform runner.
+# DotNetCoreCLI@2 appends VSTest options that are not supported by MTP, so results are
+# emitted by xUnit and published explicitly instead.
+
+parameters:
+  - name: testProject
+    type: string
+  - name: testRunTitle
+    type: string
+  - name: resultsDirectory
+    type: string
+  - name: buildConfiguration
+    type: string
+  - name: testOptions
+    type: string
+    default: ""
+  - name: environment
+    type: object
+    default: {}
+  - name: continueOnError
+    type: boolean
+    default: false
+
+steps:
+  - script: >-
+      dotnet test --project "${{ parameters.testProject }}"
+      --configuration "${{ parameters.buildConfiguration }}"
+      ${{ parameters.testOptions }}
+      --verbosity $(dotnetVerbosity)
+      --
+      --results-directory "$(Agent.TempDirectory)/test-results/${{ parameters.resultsDirectory }}"
+      --report-xunit-trx
+      --report-xunit-trx-filename "${{ parameters.resultsDirectory }}.trx"
+    displayName: "Run ${{ parameters.testRunTitle }}"
+    continueOnError: ${{ parameters.continueOnError }}
+    env: ${{ parameters.environment }}
+
+  - task: PublishTestResults@2
+    displayName: "Publish ${{ parameters.testRunTitle }} results"
+    condition: always()
+    inputs:
+      testResultsFormat: TRX
+      testResultsFiles: "*.trx"
+      searchFolder: "$(Agent.TempDirectory)/test-results/${{ parameters.resultsDirectory }}"
+      testRunTitle: "${{ parameters.testRunTitle }} - $(Build.BuildNumber)"
+      failTaskOnMissingResultsFile: true

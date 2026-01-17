@@ -29,6 +29,12 @@ steps:
     displayName: "Install dependencies"
     workingDirectory: "${{ parameters.workingDirectory }}"
 
+  # Cache@2 saves its path even when no Nx command ran. Initialize it so a first-run
+  # cache miss does not fail the job before Nx gets a chance to populate it.
+  - script: mkdir -p .nx/cache
+    displayName: "Initialize Nx cache directory"
+    workingDirectory: "${{ parameters.workingDirectory }}"
+
   - task: Cache@2
     displayName: "Cache Nx computation"
     inputs:

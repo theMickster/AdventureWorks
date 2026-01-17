@@ -59,42 +59,38 @@ steps:
     displayName: "Security scan (vulnerable packages)"
     continueOnError: true
 
-  - task: DotNetCoreCLI@2
-    displayName: "Run AdventureWorks.Connections tests"
-    inputs:
-      command: test
-      projects: "${{ parameters.connectionsTestProject }}"
-      testRunTitle: "AdventureWorks.Connections - $(Build.BuildNumber)"
-      publishTestResults: true
-      arguments: '--configuration ${{ parameters.buildConfiguration }} --collect "XPlat Code Coverage" --verbosity $(dotnetVerbosity)'
+  - template: run-dotnet-test.yml
+    parameters:
+      testProject: "${{ parameters.connectionsTestProject }}"
+      testRunTitle: "AdventureWorks.Connections"
+      resultsDirectory: "connections"
+      buildConfiguration: "${{ parameters.buildConfiguration }}"
 
-  - task: DotNetCoreCLI@2
-    displayName: "Run unit tests"
-    inputs:
-      command: test
-      projects: "${{ parameters.testProject }}"
-      testRunTitle: "AdventureWorks UnitTests - $(Build.BuildNumber)"
-      publishTestResults: true
-      arguments: '--configuration ${{ parameters.buildConfiguration }} --no-build --collect "XPlat Code Coverage" --verbosity $(dotnetVerbosity)'
-    env:
-      AutoMapperLicenseKey: $(AutoMapperLicenseKey)
-      MediatRLicenseKey: $(MediatRLicenseKey)
+  - template: run-dotnet-test.yml
+    parameters:
+      testProject: "${{ parameters.testProject }}"
+      testRunTitle: "AdventureWorks UnitTests"
+      resultsDirectory: "api-unit"
+      buildConfiguration: "${{ parameters.buildConfiguration }}"
+      testOptions: "--no-build"
+      environment:
+        AutoMapperLicenseKey: $(AutoMapperLicenseKey)
+        MediatRLicenseKey: $(MediatRLicenseKey)
 
-  - task: DotNetCoreCLI@2
-    displayName: "Run integration tests"
-    inputs:
-      command: test
-      projects: "${{ parameters.integrationTestProject }}"
-      testRunTitle: "AdventureWorks IntegrationTests - $(Build.BuildNumber)"
-      publishTestResults: true
-      arguments: '--configuration ${{ parameters.buildConfiguration }} --no-build --collect "XPlat Code Coverage" --verbosity $(dotnetVerbosity)'
-    env:
-      AutoMapperLicenseKey: $(AutoMapperLicenseKey)
-      MediatRLicenseKey: $(MediatRLicenseKey)
-      ASPNETCORE_ENVIRONMENT: Testing
-      APPSETTING_ASPNETCORE_ENVIRONMENT: Testing
-      DOTNET_ENVIRONMENT: Testing
-      ConnectionStrings__AdventureWorks: "Server=localhost;Database=AdventureWorks_Testing_Placeholder;Trusted_Connection=True;Application Name=AdventureWorks.IntegrationTests;"
+  - template: run-dotnet-test.yml
+    parameters:
+      testProject: "${{ parameters.integrationTestProject }}"
+      testRunTitle: "AdventureWorks IntegrationTests"
+      resultsDirectory: "api-integration"
+      buildConfiguration: "${{ parameters.buildConfiguration }}"
+      testOptions: "--no-build"
+      environment:
+        AutoMapperLicenseKey: $(AutoMapperLicenseKey)
+        MediatRLicenseKey: $(MediatRLicenseKey)
+        ASPNETCORE_ENVIRONMENT: Testing
+        APPSETTING_ASPNETCORE_ENVIRONMENT: Testing
+        DOTNET_ENVIRONMENT: Testing
+        ConnectionStrings__AdventureWorks: "Server=localhost;Database=AdventureWorks_Testing_Placeholder;Trusted_Connection=True;Application Name=AdventureWorks.IntegrationTests;"
 
   - task: DotNetCoreCLI@2
     displayName: "Publish API"
