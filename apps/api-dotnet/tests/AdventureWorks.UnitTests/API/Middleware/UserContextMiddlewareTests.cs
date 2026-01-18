@@ -190,7 +190,7 @@ public sealed class UserContextMiddlewareTests : UnitTestBase
             x => x.Log(
                 LogLevel.Debug,
                 It.IsAny<EventId>(),
-                It.Is<It.IsAnyType>((v, t) => v.ToString()!.Contains("Resolved Entra user")),
+                It.Is<It.IsAnyType>((v, t) => v != null && v.ToString()!.Contains("Resolved Entra user")),
                 It.IsAny<Exception>(),
                 It.IsAny<Func<It.IsAnyType, Exception?, string>>()),
             Times.Once,
@@ -216,7 +216,7 @@ public sealed class UserContextMiddlewareTests : UnitTestBase
             x => x.Log(
                 LogLevel.Warning,
                 It.IsAny<EventId>(),
-                It.Is<It.IsAnyType>((v, t) => v.ToString()!.Contains("not linked to AdventureWorks")),
+                It.Is<It.IsAnyType>((v, t) => v != null && v.ToString()!.Contains("not linked to AdventureWorks")),
                 It.IsAny<Exception>(),
                 It.IsAny<Func<It.IsAnyType, Exception?, string>>()),
             Times.Once,
@@ -291,7 +291,7 @@ public sealed class UserContextMiddlewareTests : UnitTestBase
             x => x.Log(
                 LogLevel.Error,
                 It.IsAny<EventId>(),
-                It.Is<It.IsAnyType>((v, t) => v.ToString()!.Contains("Error resolving BusinessEntityId")),
+                It.Is<It.IsAnyType>((v, t) => v != null && v.ToString()!.Contains("Error resolving BusinessEntityId")),
                 exception,
                 It.IsAny<Func<It.IsAnyType, Exception?, string>>()),
             Times.Once,

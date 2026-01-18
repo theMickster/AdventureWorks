@@ -107,7 +107,7 @@ public sealed class ReadEntraLinkedPersonQueryHandlerTests : UnitTestBase
             x => x.Log(
                 LogLevel.Warning,
                 It.IsAny<EventId>(),
-                It.Is<It.IsAnyType>((v, t) => v.ToString()!.Contains("not found or not linked")),
+                It.Is<It.IsAnyType>((v, t) => v != null && v.ToString()!.Contains("not found or not linked")),
                 It.IsAny<Exception>(),
                 It.IsAny<Func<It.IsAnyType, Exception?, string>>()),
             Times.Once,

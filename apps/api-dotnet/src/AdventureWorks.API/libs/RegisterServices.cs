@@ -36,7 +36,7 @@ internal static class RegisterServices
                 new QueryStringApiVersionReader("api-version"),
                 new HeaderApiVersionReader("x-api-version"),
                 new MediaTypeApiVersionReader("x-api-version"));
-        });
+        }).AddMvc();
 
         builder.Services.AddSwaggerGen(options =>
         {

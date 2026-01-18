@@ -196,7 +196,7 @@ public sealed class CreateEmployeeControllerTests : UnitTestBase
             x => x.Log(
                 LogLevel.Information,
                 It.IsAny<EventId>(),
-                It.Is<It.IsAnyType>((v, t) => v.ToString()!.Contains("Create new employee request received")),
+                It.Is<It.IsAnyType>((v, t) => v != null && v.ToString()!.Contains("Create new employee request received")),
                 null,
                 It.IsAny<Func<It.IsAnyType, Exception?, string>>()),
             Times.Once);
@@ -205,7 +205,7 @@ public sealed class CreateEmployeeControllerTests : UnitTestBase
             x => x.Log(
                 LogLevel.Information,
                 It.IsAny<EventId>(),
-                It.Is<It.IsAnyType>((v, t) => v.ToString()!.Contains("Employee created successfully")),
+                It.Is<It.IsAnyType>((v, t) => v != null && v.ToString()!.Contains("Employee created successfully")),
                 null,
                 It.IsAny<Func<It.IsAnyType, Exception?, string>>()),
             Times.Once);
@@ -260,7 +260,7 @@ public sealed class CreateEmployeeControllerTests : UnitTestBase
             x => x.Log(
                 LogLevel.Warning,
                 It.IsAny<EventId>(),
-                It.Is<It.IsAnyType>((v, t) => v.ToString()!.Contains("CreateEmployee called with null input model")),
+                It.Is<It.IsAnyType>((v, t) => v != null && v.ToString()!.Contains("CreateEmployee called with null input model")),
                 null,
                 It.IsAny<Func<It.IsAnyType, Exception?, string>>()),
             Times.Once);

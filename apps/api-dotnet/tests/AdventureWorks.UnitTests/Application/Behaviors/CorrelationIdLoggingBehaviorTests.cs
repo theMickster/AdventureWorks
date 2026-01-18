@@ -84,7 +84,7 @@ public sealed class CorrelationIdLoggingBehaviorTests
             x => x.Log(
                 LogLevel.Information,
                 It.IsAny<EventId>(),
-                It.Is<It.IsAnyType>((v, t) => v.ToString()!.Contains("Processing")),
+                It.Is<It.IsAnyType>((v, t) => v != null && v.ToString()!.Contains("Processing")),
                 null,
                 It.IsAny<Func<It.IsAnyType, Exception?, string>>()),
             Times.Once);
@@ -93,7 +93,7 @@ public sealed class CorrelationIdLoggingBehaviorTests
             x => x.Log(
                 LogLevel.Information,
                 It.IsAny<EventId>(),
-                It.Is<It.IsAnyType>((v, t) => v.ToString()!.Contains("Completed")),
+                It.Is<It.IsAnyType>((v, t) => v != null && v.ToString()!.Contains("Completed")),
                 null,
                 It.IsAny<Func<It.IsAnyType, Exception?, string>>()),
             Times.Once);
@@ -121,7 +121,7 @@ public sealed class CorrelationIdLoggingBehaviorTests
             x => x.Log(
                 LogLevel.Information,
                 It.IsAny<EventId>(),
-                It.Is<It.IsAnyType>((v, t) => v.ToString()!.Contains("N/A")),
+                It.Is<It.IsAnyType>((v, t) => v != null && v.ToString()!.Contains("N/A")),
                 null,
                 It.IsAny<Func<It.IsAnyType, Exception?, string>>()),
             Times.AtLeastOnce);
@@ -152,7 +152,7 @@ public sealed class CorrelationIdLoggingBehaviorTests
             x => x.Log(
                 LogLevel.Error,
                 It.IsAny<EventId>(),
-                It.Is<It.IsAnyType>((v, t) => v.ToString()!.Contains("Error processing")),
+                It.Is<It.IsAnyType>((v, t) => v != null && v.ToString()!.Contains("Error processing")),
                 expectedException,
                 It.IsAny<Func<It.IsAnyType, Exception?, string>>()),
             Times.Once);
@@ -181,7 +181,7 @@ public sealed class CorrelationIdLoggingBehaviorTests
             x => x.Log(
                 LogLevel.Information,
                 It.IsAny<EventId>(),
-                It.Is<It.IsAnyType>((v, t) => v.ToString()!.Contains("canceled")),
+                It.Is<It.IsAnyType>((v, t) => v != null && v.ToString()!.Contains("canceled")),
                 null,
                 It.IsAny<Func<It.IsAnyType, Exception?, string>>()),
             Times.Once);
