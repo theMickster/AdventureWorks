@@ -258,6 +258,12 @@ Deviations from the List Component Invariants above:
 - **Default sort `startDate` desc**: matches the API's own default (`WorkOrderParameter`), so AC1's "newest first" requires no client-side override — `loadFromUrl` only supplies `orderBy`/`sortOrder` explicitly when the URL specifies a valid sort column.
 - **No analytics panel and no dropdown lookups**: unlike `OrderListComponent`, there is no `OrderAnalyticsPanelComponent` equivalent and no `forkJoin` for reference data — the filter bar and error-toast `effect()` are the full extent of `ngOnInit`'s side-effects.
 
+**ManufacturingKpiDashboardComponent** — dashboard at `/manufacturing`: KPI tiles, then the quality scorecard (US-973/974/975). Deviations worth knowing:
+
+- **Scorecard loads through one `toSignal()` view state, KPIs do not**: `scorecardState` is a field-initializer `toSignal(getQualityScorecard().pipe(map → loaded, catchError → error, startWith(loading)), { requireSync: true })` holding `{ status: 'loading' | 'error' | 'loaded'; scorecard? }`. The product tables and the scrap breakdown read the same signal, so there is exactly one HTTP request, and a scorecard failure never touches the KPI error state. The KPI tiles still use the older `signal()` + `subscribe()` in `ngOnInit` (migrating them was out of scope). Because the request starts at construction, specs must configure their `getQualityScorecard` spy before `TestBed.createComponent`.
+- **Empty states mean "no scrap anywhere"**: the API returns all three lists empty when total scrap is 0, so `bottom5ByYield` is empty then too. Product sections show `aw-empty-state` "No data available"; the breakdown shows "No scrap data available". `scrapPct` in the breakdown is the share of all scrapped units, including scrap with no recorded reason, so the listed percentages can total under 100.
+- **Scrap-reason rows use whole-row click, product names use links**: the breakdown follows the `TerritoryBreakdownComponent` precedent (`<tr role="link" tabindex="0" (click) (keydown.enter)>` + `aria-label`, navigating with `Router.navigate(['/manufacturing/work-orders'], { queryParams: { scrapReasonId } })`) and has no nested `<a>`, which would be an axe `nested-interactive` violation. The product tables keep `routerLink` anchors with `productId`. The row hover is `hover:bg-base-300`, not the precedent's `bg-base-200`, because the breakdown sits inside an `aw-card` (`bg-base-200`) where `base-200` on hover is invisible.
+
 ## SignalR
 
 `SignalrService` lives in `libs/shared/util/src/lib/signalr/`.
