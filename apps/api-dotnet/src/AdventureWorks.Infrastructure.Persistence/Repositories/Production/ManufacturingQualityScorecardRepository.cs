@@ -26,6 +26,16 @@ public sealed class ManufacturingQualityScorecardRepository(AdventureWorksDbCont
     public async Task<ManufacturingQualityScorecardModel> GetQualityScorecardAsync(
         CancellationToken cancellationToken = default)
     {
+        var totalScrappedQty = await _dbContext.WorkOrders
+            .AsNoTracking()
+            .Where(workOrder => workOrder.ScrappedQty > 0)
+            .SumAsync(workOrder => (int)workOrder.ScrappedQty, cancellationToken);
+
+        if (totalScrappedQty == 0)
+        {
+            return new ManufacturingQualityScorecardModel();
+        }
+
         var topScrapped = await _dbContext.WorkOrders
             .AsNoTracking()
             .Where(workOrder => workOrder.ScrappedQty > 0)
@@ -85,7 +95,6 @@ public sealed class ManufacturingQualityScorecardRepository(AdventureWorksDbCont
             .Select(reason => reason.ScrapReasonId)
             .ToArray();
         var scrapReasonNames = await GetScrapReasonNamesAsync(scrapReasonIds, cancellationToken);
-        var categorizedScrapQty = scrapReasonAggregates.Sum(reason => reason.ScrappedQty);
 
         return new ManufacturingQualityScorecardModel
         {
@@ -101,7 +110,7 @@ public sealed class ManufacturingQualityScorecardRepository(AdventureWorksDbCont
                     ScrapReasonId = reason.ScrapReasonId,
                     ScrapReasonName = scrapReasonNames.GetValueOrDefault(reason.ScrapReasonId, string.Empty),
                     ScrappedQty = reason.ScrappedQty,
-                    ScrapPct = CalculatePercentage(reason.ScrappedQty, categorizedScrapQty)
+                    ScrapPct = CalculatePercentage(reason.ScrappedQty, totalScrappedQty)
                 })
                 .ToList()
         };

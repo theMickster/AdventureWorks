@@ -74,7 +74,7 @@ public sealed class ManufacturingQualityScorecardRepositoryTests : PersistenceUn
     }
 
     [Fact]
-    public async Task GetQualityScorecardAsync_with_no_scrap_returns_empty_scrap_collections_and_yield_data()
+    public async Task GetQualityScorecardAsync_with_work_orders_but_no_scrap_returns_all_empty_collections()
     {
         SeedProduct(2001, "Good Product");
         SeedWorkOrder(1, 2001, orderQty: 10, stockedQty: 10, scrappedQty: 0, scrapReasonId: null);
@@ -83,28 +83,55 @@ public sealed class ManufacturingQualityScorecardRepositoryTests : PersistenceUn
         var result = await _sut.GetQualityScorecardAsync(CancellationToken.None);
 
         result.Top5ByScrapped.Should().BeEmpty();
+        result.Bottom5ByYield.Should().BeEmpty();
         result.ScrapReasonBreakdown.Should().BeEmpty();
-        result.Bottom5ByYield.Should().ContainSingle().Which.YieldPct.Should().Be(100m);
     }
 
     [Fact]
-    public async Task GetQualityScorecardAsync_calculates_scrap_reason_percentages_from_categorized_scrap()
+    public async Task GetQualityScorecardAsync_when_every_scrapped_row_has_a_reason_percentages_sum_to_100()
     {
         SeedProduct(3001, "Product A");
         SeedProduct(3002, "Product B");
+        SeedProduct(3003, "Product C");
         SeedScrapReason(1, "Process issue");
         SeedScrapReason(2, "Handling damage");
+        SeedScrapReason(3, "Tooling wear");
         SeedWorkOrder(1, 3001, orderQty: 100, stockedQty: 90, scrappedQty: 10, scrapReasonId: 1);
         SeedWorkOrder(2, 3002, orderQty: 100, stockedQty: 70, scrappedQty: 30, scrapReasonId: 2);
+        SeedWorkOrder(3, 3003, orderQty: 100, stockedQty: 60, scrappedQty: 60, scrapReasonId: 3);
         await DbContext.SaveChangesAsync(TestContext.Current.CancellationToken);
 
         var result = await _sut.GetQualityScorecardAsync(CancellationToken.None);
 
-        result.ScrapReasonBreakdown.Should().HaveCount(2);
-        result.ScrapReasonBreakdown[0].ScrapReasonId.Should().Be(2);
-        result.ScrapReasonBreakdown[0].ScrapReasonName.Should().Be("Handling damage");
-        result.ScrapReasonBreakdown[0].ScrapPct.Should().Be(75m);
-        result.ScrapReasonBreakdown[1].ScrapPct.Should().Be(25m);
+        result.ScrapReasonBreakdown.Select(reason => reason.ScrapReasonId)
+            .Should().ContainInOrder((short)3, (short)2, (short)1);
+        result.ScrapReasonBreakdown[0].ScrapReasonName.Should().Be("Tooling wear");
+        result.ScrapReasonBreakdown.Select(reason => reason.ScrapPct)
+            .Should().Equal(60m, 30m, 10m);
+        result.ScrapReasonBreakdown.Sum(reason => reason.ScrapPct).Should().BeApproximately(100m, 0.05m);
+    }
+
+    [Fact]
+    public async Task GetQualityScorecardAsync_scrap_without_reason_counts_in_totals_and_denominator_but_not_in_breakdown()
+    {
+        SeedProduct(4001, "Reasoned Product");
+        SeedProduct(4002, "Unreasoned Product");
+        SeedScrapReason(1, "Process issue");
+        SeedWorkOrder(1, 4001, orderQty: 100, stockedQty: 70, scrappedQty: 30, scrapReasonId: 1);
+        SeedWorkOrder(2, 4002, orderQty: 100, stockedQty: 90, scrappedQty: 10, scrapReasonId: null);
+        await DbContext.SaveChangesAsync(TestContext.Current.CancellationToken);
+
+        var result = await _sut.GetQualityScorecardAsync(CancellationToken.None);
+
+        result.Top5ByScrapped.Select(product => product.ProductId)
+            .Should().ContainInOrder(4001, 4002);
+        result.Top5ByScrapped[1].ScrappedQty.Should().Be(10);
+
+        var reason = result.ScrapReasonBreakdown.Should().ContainSingle().Subject;
+        reason.ScrapReasonId.Should().Be(1);
+        reason.ScrappedQty.Should().Be(30);
+        reason.ScrapPct.Should().Be(75m);
+        result.ScrapReasonBreakdown.Sum(item => item.ScrapPct).Should().BeLessThan(100m);
     }
 
     private void SeedProduct(int productId, string name)

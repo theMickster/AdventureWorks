@@ -56,6 +56,6 @@ public sealed class QualityScorecardScrapReasonModel
     /// <summary>The aggregate quantity scrapped for this reason.</summary>
     public int ScrappedQty { get; set; }
 
-    /// <summary>This reason's share of scrap with a recorded reason.</summary>
+    /// <summary>This reason's share of all scrapped units, including scrap without a recorded reason.</summary>
     public decimal ScrapPct { get; set; }
 }
