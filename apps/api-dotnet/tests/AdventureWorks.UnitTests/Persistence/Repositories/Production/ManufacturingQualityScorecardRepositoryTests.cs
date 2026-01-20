@@ -134,6 +134,41 @@ public sealed class ManufacturingQualityScorecardRepositoryTests : PersistenceUn
         result.ScrapReasonBreakdown.Sum(item => item.ScrapPct).Should().BeLessThan(100m);
     }
 
+    [Fact]
+    public async Task GetQualityScorecardAsync_top_scrapped_metrics_include_the_products_clean_work_orders()
+    {
+        SeedProduct(6001, "Mixed Product");
+        SeedScrapReason(1, "Process issue");
+        SeedWorkOrder(1, 6001, orderQty: 100, stockedQty: 90, scrappedQty: 10, scrapReasonId: 1);
+        SeedWorkOrder(2, 6001, orderQty: 100, stockedQty: 100, scrappedQty: 0, scrapReasonId: null);
+        await DbContext.SaveChangesAsync(TestContext.Current.CancellationToken);
+
+        var result = await _sut.GetQualityScorecardAsync(CancellationToken.None);
+
+        var product = result.Top5ByScrapped.Should().ContainSingle().Subject;
+        product.OrderedQty.Should().Be(200);
+        product.StockedQty.Should().Be(190);
+        product.ScrappedQty.Should().Be(10);
+        product.YieldPct.Should().Be(95m);
+        product.ScrapPct.Should().Be(5m);
+    }
+
+    [Fact]
+    public async Task GetQualityScorecardAsync_bottom_yield_sorts_on_the_raw_ratio_not_the_rounded_percentage()
+    {
+        SeedProduct(5001, "Higher raw yield");
+        SeedProduct(5002, "Lower raw yield");
+        SeedScrapReason(1, "Process issue");
+        SeedWorkOrder(1, 5001, orderQty: 30000, stockedQty: 20001, scrappedQty: 9999, scrapReasonId: 1);
+        SeedWorkOrder(2, 5002, orderQty: 3, stockedQty: 2, scrappedQty: 1, scrapReasonId: 1);
+        await DbContext.SaveChangesAsync(TestContext.Current.CancellationToken);
+
+        var result = await _sut.GetQualityScorecardAsync(CancellationToken.None);
+
+        result.Bottom5ByYield.Select(product => product.YieldPct).Should().Equal(66.67m, 66.67m);
+        result.Bottom5ByYield.Select(product => product.ProductId).Should().ContainInOrder(5002, 5001);
+    }
+
     private void SeedProduct(int productId, string name)
     {
         DbContext.Products.Add(new Product

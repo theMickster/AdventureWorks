@@ -172,7 +172,7 @@
                   @for (reason of data.scrapReasonBreakdown; track reason.scrapReasonId) {
                     @let rowLabel = 'View work orders scrapped for ' + reason.scrapReasonName;
                     <tr
-                      class="cursor-pointer hover:bg-base-300"
+                      class="cursor-pointer hover:bg-base-300 focus-visible:outline focus-visible:outline-2 focus-visible:-outline-offset-2 focus-visible:outline-primary"
                       role="link"
                       tabindex="0"
                       [attr.aria-label]="rowLabel"

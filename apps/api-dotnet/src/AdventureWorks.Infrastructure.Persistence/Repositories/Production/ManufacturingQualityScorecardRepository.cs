@@ -38,8 +38,8 @@ public sealed class ManufacturingQualityScorecardRepository(AdventureWorksDbCont
 
         var topScrapped = await _dbContext.WorkOrders
             .AsNoTracking()
-            .Where(workOrder => workOrder.ScrappedQty > 0)
             .GroupBy(workOrder => workOrder.ProductId)
+            .Where(group => group.Sum(workOrder => (int)workOrder.ScrappedQty) > 0)
             .Select(group => new ProductAggregate
             {
                 ProductId = group.Key,
@@ -66,7 +66,7 @@ public sealed class ManufacturingQualityScorecardRepository(AdventureWorksDbCont
             .ToListAsync(cancellationToken);
 
         var bottomYieldRanked = bottomYield
-            .OrderBy(product => CalculatePercentage(product.StockedQty, product.OrderedQty))
+            .OrderBy(product => (decimal)product.StockedQty / product.OrderedQty)
             .ThenBy(product => product.ProductId)
             .Take(RankingLimit)
             .ToList();

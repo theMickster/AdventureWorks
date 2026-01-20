@@ -35,6 +35,53 @@ public sealed class WorkOrderEndpointTests(CustomWebApplicationFactory factory) 
     }
 
     [Fact]
+    public async Task GetAsync_WithScrapReasonIdFilter_ReturnsOnlyMatchingWorkOrders()
+    {
+        var productId = Random.Shared.Next(600000, 900000);
+        var scrapReasonId = (short)Random.Shared.Next(1000, 30000);
+        var otherScrapReasonId = (short)(scrapReasonId + 1);
+        var firstWorkOrderId = Random.Shared.Next(600000, 900000);
+        var now = DateTime.UtcNow;
+
+        await SeedAsync(async context =>
+        {
+            context.Products.Add(new Product { ProductId = productId, Name = $"Scrap Filter Product {productId}", ModifiedDate = now });
+            context.ScrapReasons.Add(new ScrapReason { ScrapReasonId = scrapReasonId, Name = "Scrap Filter Match", ModifiedDate = now });
+            context.ScrapReasons.Add(new ScrapReason { ScrapReasonId = otherScrapReasonId, Name = "Scrap Filter Other", ModifiedDate = now });
+
+            for (var i = 0; i < 3; i++)
+            {
+                context.WorkOrders.Add(new WorkOrder
+                {
+                    WorkOrderId = firstWorkOrderId + i,
+                    ProductId = productId,
+                    OrderQty = 10,
+                    StockedQty = 9,
+                    ScrappedQty = 1,
+                    ScrapReasonId = i < 2 ? scrapReasonId : otherScrapReasonId,
+                    StartDate = now.AddDays(-10),
+                    EndDate = now.AddDays(-2),
+                    DueDate = now.AddDays(-1),
+                    ModifiedDate = now
+                });
+            }
+
+            await Task.CompletedTask;
+        });
+
+        var response = await CreateAuthenticatedClient()
+            .GetAsync($"{ListUrl}?scrapReasonId={scrapReasonId}", TestContext.Current.CancellationToken);
+
+        response.StatusCode.Should().Be(HttpStatusCode.OK);
+
+        var result = await DeserializeAsync<WorkOrderSearchResultModel>(response);
+        result.Should().NotBeNull();
+        result!.TotalRecords.Should().Be(2);
+        result.Results.Should().HaveCount(2);
+        result.Results!.Select(x => x.WorkOrderId).Should().BeEquivalentTo([firstWorkOrderId, firstWorkOrderId + 1]);
+    }
+
+    [Fact]
     public async Task GetAsync_WithPageBeyondTotal_Returns200WithEmptyResultsAndCorrectTotal()
     {
         var productId = await SeedWorkOrdersAsync(count: 2);

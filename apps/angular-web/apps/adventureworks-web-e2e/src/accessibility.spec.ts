@@ -41,6 +41,7 @@ test.describe('Accessibility smoke tests (US-684)', () => {
   test('authenticated /manufacturing has zero WCAG AA violations', async ({ page }) => {
     await page.goto('/manufacturing');
     await expect(page.locator('#aw-manufacturing-kpi-dashboard-page')).toBeVisible();
+    await expect(page.locator('#aw-manufacturing-quality-scorecard-loading')).toHaveCount(0);
 
     const results = await new AxeBuilder({ page }).withTags(['wcag2a', 'wcag2aa', 'wcag21a', 'wcag21aa']).analyze();
 

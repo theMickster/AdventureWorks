@@ -145,6 +145,27 @@ describe('ManufacturingKpiDashboardComponent', () => {
     expect(query('#aw-manufacturing-scrap-breakdown #aw-manufacturing-quality-scorecard-scrap-reasons')).toBeTruthy();
   });
 
+  it('renders product name and formatted values in both product tables', () => {
+    vi.spyOn(workOrderApi, 'getQualityScorecard').mockReturnValue(
+      of({
+        ...mockScorecard,
+        top5ByScrapped: [{ ...mockScorecard.top5ByScrapped[0], scrappedQty: 12345 }],
+        bottom5ByYield: [{ ...mockScorecard.bottom5ByYield[0], yieldPct: 82.5 }],
+      }),
+    );
+
+    render();
+
+    const cells = (selector: string): (string | undefined)[][] =>
+      queryAll(`${selector} tbody tr`).map((row) =>
+        Array.from(row.querySelectorAll('td')).map((cell) => cell.textContent?.trim()),
+      );
+    expect(cells('#aw-manufacturing-quality-scorecard-top-scrapped')).toEqual([
+      ['HL Road Frame - Black, 58', '12,345'],
+    ]);
+    expect(cells('#aw-manufacturing-quality-scorecard-bottom-yield')).toEqual([['ML Road Seat Assembly', '82.5%']]);
+  });
+
   it('renders product links with existing work-order filters', () => {
     render();
 

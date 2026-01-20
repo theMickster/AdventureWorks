@@ -124,6 +124,26 @@ public sealed class ReadWorkOrderControllerTests
     }
 
     [Fact]
+    public async Task GetAsync_builds_search_model_when_scrap_reason_id_filter_provided()
+    {
+        // Arrange
+        var parameters = new WorkOrderParameter { PageNumber = 1, PageSize = 10, ScrapReasonId = 7 };
+        var searchResult = new WorkOrderSearchResultModel { PageNumber = 1, PageSize = 10 };
+
+        _mockMediator.Setup(x => x.Send(It.IsAny<ReadWorkOrderListQuery>(), It.IsAny<CancellationToken>()))
+            .ReturnsAsync(searchResult);
+
+        // Act
+        await _sut.GetAsync(parameters, cancellationToken: TestContext.Current.CancellationToken);
+
+        // Assert
+        _mockMediator.Verify(x => x.Send(
+            It.Is<ReadWorkOrderListQuery>(q => q.SearchModel != null && q.SearchModel.ScrapReasonId == 7),
+            It.IsAny<CancellationToken>()),
+            Times.Once);
+    }
+
+    [Fact]
     public async Task GetAsync_applies_parameters_to_query()
     {
         // Arrange

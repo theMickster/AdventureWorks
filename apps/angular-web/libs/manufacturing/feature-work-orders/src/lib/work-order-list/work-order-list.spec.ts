@@ -147,6 +147,30 @@ describe('WorkOrderListComponent', () => {
     });
   });
 
+  it('shows the restored productId and scrapReasonId values in the filter inputs', () => {
+    queryParamsSub.next({ productId: '747', scrapReasonId: '7' });
+
+    fixture.detectChanges();
+
+    const input = (id: string): HTMLInputElement => fixture.nativeElement.querySelector(`#${id}`);
+    expect(input('aw-work-order-filter-product-id').value).toBe('747');
+    expect(input('aw-work-order-filter-scrap-reason-id').value).toBe('7');
+  });
+
+  it('forwards a lone scrapReasonId from the URL without a productId', () => {
+    queryParamsSub.next({ scrapReasonId: '7' });
+
+    fixture.detectChanges();
+
+    expect(workOrderStore.applyFilters).toHaveBeenCalledWith({
+      pageNumber: 1,
+      pageSize: 25,
+      orderBy: 'startDate',
+      sortOrder: 'desc',
+      scrapReasonId: 7,
+    });
+  });
+
   it('restores startDate/endDate/hasScrapped filters from the URL and forwards them to applyFilters', () => {
     queryParamsSub.next({ startDate: '2011-01-01', endDate: '2011-12-31', hasScrapped: 'true' });
 
@@ -206,6 +230,16 @@ describe('WorkOrderListComponent', () => {
       unknown
     >;
     expect('productId' in lastCall).toBe(false);
+  });
+
+  it('drops a non-numeric scrapReasonId URL param instead of forwarding NaN', () => {
+    queryParamsSub.next({ scrapReasonId: 'abc' });
+    fixture.detectChanges();
+    const lastCall = (workOrderStore.applyFilters as ReturnType<typeof vi.spyOn>).mock.calls.at(-1)?.[0] as Record<
+      string,
+      unknown
+    >;
+    expect('scrapReasonId' in lastCall).toBe(false);
   });
 
   it('clamps junk pageNumber from the URL to 1', () => {
