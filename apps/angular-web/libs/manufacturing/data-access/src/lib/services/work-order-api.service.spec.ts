@@ -7,6 +7,7 @@ import type { WorkOrder } from '../models/work-order.model';
 import type { WorkOrderDetail } from '../models/work-order-detail.model';
 import type { ManufacturingKpisDto } from '../models/manufacturing-kpis.model';
 import type { ManufacturingQualityScorecard } from '../models/manufacturing-quality-scorecard.model';
+import type { ProductLookup } from '../models/product-lookup.model';
 import { WorkOrderApiService } from './work-order-api.service';
 
 const mockEnvironment = {
@@ -206,5 +207,50 @@ describe('WorkOrderApiService', () => {
     req.flush('Not Found', { status: 404, statusText: 'Not Found' });
 
     expect(capturedStatus).toBe(404);
+  });
+
+  it('should GET the scrap reason list', () => {
+    const reasons = [{ scrapReasonId: 7, name: 'Thermoform temperature too low' }];
+
+    service.getScrapReasons().subscribe((result) => {
+      expect(result).toEqual(reasons);
+    });
+
+    const req = httpTesting.expectOne(`${BASE_URL}/v1/scrap-reasons`);
+    expect(req.request.method).toBe('GET');
+    req.flush(reasons);
+  });
+
+  it('should POST a product name search with the name in the body and a short first page', () => {
+    const mockData: SearchResult<ProductLookup> = {
+      pageNumber: 1,
+      pageSize: 10,
+      totalPages: 1,
+      hasPreviousPage: false,
+      hasNextPage: false,
+      totalRecords: 1,
+      results: [{ id: 747, name: 'HL Road Frame - Black, 58' }],
+    };
+
+    service.searchProducts('frame').subscribe((result) => {
+      expect(result).toEqual(mockData);
+    });
+
+    const req = httpTesting.expectOne(`${BASE_URL}/v1/products/search?pageNumber=1&pageSize=10`);
+    expect(req.request.method).toBe('POST');
+    expect(req.request.body).toEqual({ name: 'frame' });
+    req.flush(mockData);
+  });
+
+  it('should GET a single product by id', () => {
+    const product: ProductLookup = { id: 747, name: 'HL Road Frame - Black, 58' };
+
+    service.getProduct(747).subscribe((result) => {
+      expect(result).toEqual(product);
+    });
+
+    const req = httpTesting.expectOne(`${BASE_URL}/v1/products/747`);
+    expect(req.request.method).toBe('GET');
+    req.flush(product);
   });
 });

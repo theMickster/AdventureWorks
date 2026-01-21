@@ -2,10 +2,16 @@ import { ChangeDetectionStrategy, Component, computed, DestroyRef, effect, injec
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { FormBuilder, ReactiveFormsModule } from '@angular/forms';
 import { ActivatedRoute, Router } from '@angular/router';
-import { WorkOrderStore } from '@adventureworks-web/manufacturing/data-access';
-import { ColumnDefDirective, DataTableComponent, StatusBadgeComponent } from '@adventureworks-web/shared/ui';
+import { WorkOrderApiService, WorkOrderStore } from '@adventureworks-web/manufacturing/data-access';
+import {
+  ColumnDefDirective,
+  DataTableComponent,
+  SelectFieldComponent,
+  StatusBadgeComponent,
+} from '@adventureworks-web/shared/ui';
 import type { ColumnConfig } from '@adventureworks-web/shared/ui';
 import { NotificationService } from '@adventureworks-web/shared/util';
+import { WorkOrderProductTypeaheadComponent } from '../work-order-product-typeahead/work-order-product-typeahead';
 import { WORK_ORDER_STATUS_BADGE_MAP } from '../work-order-status-badge';
 
 const PAGE_SIZE = 25;
@@ -27,7 +33,14 @@ interface WorkOrderFilters {
 @Component({
   selector: 'aw-work-order-list',
   standalone: true,
-  imports: [ReactiveFormsModule, DataTableComponent, ColumnDefDirective, StatusBadgeComponent],
+  imports: [
+    ReactiveFormsModule,
+    DataTableComponent,
+    ColumnDefDirective,
+    SelectFieldComponent,
+    StatusBadgeComponent,
+    WorkOrderProductTypeaheadComponent,
+  ],
   templateUrl: './work-order-list.html',
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
@@ -40,14 +53,15 @@ interface WorkOrderFilters {
  * `onResetFilters`, `onPageChange`, `onSortChange`) only write to the URL via `router.navigate`;
  * the subscription is the sole driver of data loading.
  *
- * `productId` and `scrapReasonId` are plain numeric filter inputs, not dropdowns — no lookup
- * endpoint exists for either. `startDate`/`endDate` are native `<input type="date">` range filters
+ * `productId` is a name typeahead and `scrapReasonId` a dropdown loaded from `GET /v1/scrap-reasons`;
+ * both hold the id as a string in the form. `startDate`/`endDate` are native `<input type="date">` range filters
  * and `hasScrapped` is an All / With Scrap / No Scrap `<select>` — both map directly onto
  * `WorkOrderParams`, which the API already supports. Default sort is `startDate` desc, matching
  * the API's own default, so "newest first" requires no extra client-side work.
  */
 export class WorkOrderListComponent implements OnInit {
   private readonly workOrderStore = inject(WorkOrderStore);
+  private readonly workOrderApi = inject(WorkOrderApiService);
   private readonly route = inject(ActivatedRoute);
   private readonly router = inject(Router);
   private readonly notificationService = inject(NotificationService);
@@ -63,10 +77,12 @@ export class WorkOrderListComponent implements OnInit {
   protected readonly totalPages = this.workOrderStore.totalPages;
   protected readonly totalRecords = this.workOrderStore.totalRecords;
 
+  protected readonly scrapReasonOptions = signal<{ value: number; label: string }[]>([]);
+
   /**
-   * Filter-bar form. `productId`/`scrapReasonId` are plain numeric inputs since no lookup endpoint
-   * exists for either field. `startDate`/`endDate` are `<input type="date">` (empty string when
-   * unset). `hasScrapped` is a tri-state select: `''` (All), `'true'` (With Scrap), `'false'` (No Scrap).
+   * Filter-bar form. `productId` (typeahead) and `scrapReasonId` (select) are CVAs that emit the id
+   * as a string. `startDate`/`endDate` are `<input type="date">` (empty string when unset).
+   * `hasScrapped` is a tri-state select: `''` (All), `'true'` (With Scrap), `'false'` (No Scrap).
    */
   protected readonly filterForm = this.fb.group({
     productId: [''],
@@ -127,6 +143,19 @@ export class WorkOrderListComponent implements OnInit {
       this.restoreFiltersFromUrl(params as Record<string, string>);
       this.loadFromUrl(params as Record<string, string>);
     });
+
+    // Loads independently of the grid — a slow or failed lookup must not block or break the list.
+    this.workOrderApi
+      .getScrapReasons()
+      .pipe(takeUntilDestroyed(this.destroyRef))
+      .subscribe({
+        next: (reasons) => {
+          this.scrapReasonOptions.set(reasons.map((reason) => ({ value: reason.scrapReasonId, label: reason.name })));
+        },
+        error: () => {
+          this.notificationService.error('Failed to load scrap reasons. Filtering by scrap reason may be unavailable.');
+        },
+      });
   }
 
   /** Writes the current filters plus pageNumber=1 to the URL (merge); the queryParams subscription reloads. */
@@ -238,12 +267,9 @@ export class WorkOrderListComponent implements OnInit {
   }
 
   /**
-   * Builds the filter accumulator from either URL params (always strings) or the filter form's raw
-   * value. The form source is NOT reliably `string`: Angular's `NumberValueAccessor` (bound via
-   * `input[type=number][formControlName]`) parses the DOM value and emits `number | null`, not the
-   * `string` its `FormControl<string | null>` generic implies — a known Reactive Forms/template
-   * type mismatch. `Number.isFinite` guards numeric fields so a junk URL value (or `NaN` from an
-   * already-numeric form value) fails the check and is silently dropped rather than forwarded.
+   * Builds the filter accumulator from either URL params or the filter form's raw value; both carry
+   * strings. `Number.isFinite` guards the numeric fields so a junk URL value fails the check and is
+   * silently dropped rather than forwarded to the API.
    */
   private parseFilterParams(src: Record<string, string | number | null | undefined>): WorkOrderFilters {
     const filters: WorkOrderFilters = {};

@@ -1,0 +1,47 @@
+<fieldset [id]="fieldId() + '-fieldset'" class="fieldset relative">
+  <legend class="fieldset-legend">
+    <label [for]="fieldId() + '-input'">{{ label() }}</label>
+  </legend>
+  <input
+    [id]="fieldId() + '-input'"
+    type="text"
+    role="combobox"
+    class="input input-bordered w-full"
+    autocomplete="off"
+    aria-autocomplete="list"
+    [attr.maxlength]="maxNameLength"
+    [attr.aria-expanded]="showList()"
+    [attr.aria-controls]="listboxId()"
+    [attr.aria-activedescendant]="activeDescendant()"
+    [disabled]="cva.disabled()"
+    [value]="inputText()"
+    (input)="onInput($event)"
+    (keydown)="onKeydown($event)"
+    (blur)="onBlur()"
+  />
+  <!-- Always rendered (hidden when closed) so aria-controls never points at a missing element. -->
+  <ul
+    [id]="listboxId()"
+    role="listbox"
+    class="absolute top-full z-10 mt-1 max-h-60 w-full overflow-y-auto rounded-box bg-base-100 shadow-lg"
+    [attr.aria-label]="label()"
+    [hidden]="!showList()"
+  >
+    @for (product of results(); track product.id; let i = $index) {
+      <li
+        [id]="optionId(i)"
+        role="option"
+        tabindex="-1"
+        class="cursor-pointer px-3 py-2 text-base-content hover:bg-base-200"
+        [class.bg-base-200]="i === activeIndex()"
+        [attr.aria-selected]="i === activeIndex()"
+        (mousedown)="$event.preventDefault()"
+        (click)="onSelect(product)"
+        (keydown.enter)="onSelect(product)"
+      >
+        {{ product.name }}
+      </li>
+    }
+  </ul>
+  <p [id]="fieldId() + '-status'" class="fieldset-label text-secondary" role="status">{{ statusMessage() }}</p>
+</fieldset>

@@ -1,7 +1,7 @@
 import { ComponentFixture, TestBed } from '@angular/core/testing';
 import { ActivatedRoute, Router, provideRouter } from '@angular/router';
 import { provideHttpClient } from '@angular/common/http';
-import { provideHttpClientTesting } from '@angular/common/http/testing';
+import { HttpTestingController, provideHttpClientTesting } from '@angular/common/http/testing';
 import { provideTranslateService } from '@ngx-translate/core';
 import { BehaviorSubject } from 'rxjs';
 import { patchState } from '@ngrx/signals';
@@ -20,6 +20,14 @@ const mockEnvironment = {
     primary: { baseUrl: 'https://api.test.com', name: 'Test API' },
   },
 };
+
+const PRODUCT_URL = 'https://api.test.com/v1/products/747';
+const SCRAP_REASONS_URL = 'https://api.test.com/v1/scrap-reasons';
+
+const scrapReasons = [
+  { scrapReasonId: 4, name: 'Gouge in metal' },
+  { scrapReasonId: 7, name: 'Thermoform temperature too low' },
+];
 
 let queryParamsSub: BehaviorSubject<Record<string, string>>;
 
@@ -61,6 +69,7 @@ describe('WorkOrderListComponent', () => {
   let notificationService: NotificationService;
   let router: Router;
   let route: ReturnType<typeof buildRoute>;
+  let httpTesting: HttpTestingController;
 
   beforeEach(async () => {
     route = buildRoute();
@@ -80,6 +89,7 @@ describe('WorkOrderListComponent', () => {
     workOrderStore = TestBed.inject(WorkOrderStore);
     notificationService = TestBed.inject(NotificationService);
     router = TestBed.inject(Router);
+    httpTesting = TestBed.inject(HttpTestingController);
 
     vi.spyOn(workOrderStore, 'loadPage');
     vi.spyOn(workOrderStore, 'applyFilters');
@@ -147,14 +157,63 @@ describe('WorkOrderListComponent', () => {
     });
   });
 
-  it('shows the restored productId and scrapReasonId values in the filter inputs', () => {
+  it('shows the restored product name and scrap reason in the filter controls', () => {
     queryParamsSub.next({ productId: '747', scrapReasonId: '7' });
 
     fixture.detectChanges();
+    httpTesting.expectOne(PRODUCT_URL).flush({ id: 747, name: 'HL Road Frame - Black, 58' });
+    httpTesting.expectOne(SCRAP_REASONS_URL).flush(scrapReasons);
+    fixture.detectChanges();
 
-    const input = (id: string): HTMLInputElement => fixture.nativeElement.querySelector(`#${id}`);
-    expect(input('aw-work-order-filter-product-id').value).toBe('747');
-    expect(input('aw-work-order-filter-scrap-reason-id').value).toBe('7');
+    const productInput = fixture.nativeElement.querySelector('#aw-work-order-filter-product-input') as HTMLInputElement;
+    const scrapSelect = fixture.nativeElement.querySelector(
+      '#aw-work-order-filter-scrap-reason-select',
+    ) as HTMLSelectElement;
+    expect(productInput.value).toBe('HL Road Frame - Black, 58');
+    expect(scrapSelect.value).toBe('7');
+  });
+
+  it('populates the scrap reason dropdown from GET /v1/scrap-reasons', () => {
+    fixture.detectChanges();
+    httpTesting.expectOne(SCRAP_REASONS_URL).flush(scrapReasons);
+    fixture.detectChanges();
+
+    const scrapSelect = fixture.nativeElement.querySelector(
+      '#aw-work-order-filter-scrap-reason-select',
+    ) as HTMLSelectElement;
+    const labels = Array.from(scrapSelect.options).map((option) => option.textContent?.trim());
+    expect(labels).toEqual(['All scrap reasons', 'Gouge in metal', 'Thermoform temperature too low']);
+  });
+
+  it('filters by the scrap reason chosen in the dropdown', () => {
+    fixture.detectChanges();
+    httpTesting.expectOne(SCRAP_REASONS_URL).flush(scrapReasons);
+    fixture.detectChanges();
+
+    const scrapSelect = fixture.nativeElement.querySelector(
+      '#aw-work-order-filter-scrap-reason-select',
+    ) as HTMLSelectElement;
+    scrapSelect.value = '7';
+    scrapSelect.dispatchEvent(new Event('change'));
+    component['onApplyFilters']();
+
+    expect(router.navigate).toHaveBeenCalledWith(
+      [],
+      expect.objectContaining({ queryParams: expect.objectContaining({ scrapReasonId: 7, pageNumber: 1 }) }),
+    );
+  });
+
+  it('still loads the list and warns when the scrap reason lookup fails', () => {
+    vi.spyOn(notificationService, 'error');
+    queryParamsSub.next({ scrapReasonId: '7' });
+
+    fixture.detectChanges();
+    httpTesting.expectOne(SCRAP_REASONS_URL).flush('boom', { status: 500, statusText: 'Server Error' });
+
+    expect(notificationService.error).toHaveBeenCalledWith(
+      'Failed to load scrap reasons. Filtering by scrap reason may be unavailable.',
+    );
+    expect(workOrderStore.applyFilters).toHaveBeenCalledWith(expect.objectContaining({ scrapReasonId: 7 }));
   });
 
   it('forwards a lone scrapReasonId from the URL without a productId', () => {

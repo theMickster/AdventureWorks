@@ -8,8 +8,13 @@ import type { WorkOrderDetail } from '../models/work-order-detail.model';
 import type { WorkOrderParams } from '../models/work-order-params.model';
 import type { ManufacturingKpisDto } from '../models/manufacturing-kpis.model';
 import type { ManufacturingQualityScorecard } from '../models/manufacturing-quality-scorecard.model';
+import type { ProductLookup } from '../models/product-lookup.model';
+import type { ScrapReason } from '../models/scrap-reason.model';
 
-/** HTTP client for Manufacturing domain endpoints (Work Orders and KPIs). */
+/** Rows requested per typeahead search; the dropdown only needs a short list of candidates. */
+const PRODUCT_SEARCH_PAGE_SIZE = 10;
+
+/** HTTP client for Manufacturing domain endpoints (Work Orders and KPIs) and the lookups its filters need. */
 @Injectable({ providedIn: 'root' })
 export class WorkOrderApiService {
   private readonly apiService = inject(ApiService);
@@ -33,5 +38,26 @@ export class WorkOrderApiService {
   /** Fetches the manufacturing quality scorecard from GET /v1/manufacturing/quality-scorecard. */
   getQualityScorecard(): Observable<ManufacturingQualityScorecard> {
     return this.apiService.get<ManufacturingQualityScorecard>('/v1/manufacturing/quality-scorecard');
+  }
+
+  /** Fetches every scrap reason from GET /v1/scrap-reasons. */
+  getScrapReasons(): Observable<ScrapReason[]> {
+    return this.apiService.get<ScrapReason[]>('/v1/scrap-reasons');
+  }
+
+  /**
+   * Searches products by name via POST /v1/products/search (a name LIKE match). The API exposes no
+   * `GET /v1/products?search=`; `name` is capped at 50 characters server-side.
+   */
+  searchProducts(name: string): Observable<SearchResult<ProductLookup>> {
+    return this.apiService.post<SearchResult<ProductLookup>>(
+      `/v1/products/search?pageNumber=1&pageSize=${PRODUCT_SEARCH_PAGE_SIZE}`,
+      { name },
+    );
+  }
+
+  /** Fetches a single product's id and name from GET /v1/products/:id, to label a `productId` restored from the URL. */
+  getProduct(id: number): Observable<ProductLookup> {
+    return this.apiService.get<ProductLookup>(`/v1/products/${id}`);
   }
 }

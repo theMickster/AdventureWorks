@@ -5,29 +5,19 @@
 
   <form id="aw-work-order-list-filters" [formGroup]="filterForm" class="mb-4" (ngSubmit)="onApplyFilters()">
     <div class="grid grid-cols-1 gap-3 sm:grid-cols-2 lg:grid-cols-3">
-      <fieldset class="fieldset">
-        <legend class="fieldset-legend">
-          <label for="aw-work-order-filter-product-id">Product ID</label>
-        </legend>
-        <input
-          id="aw-work-order-filter-product-id"
-          type="number"
-          class="input input-bordered w-full"
-          formControlName="productId"
-        />
-      </fieldset>
+      <aw-work-order-product-typeahead
+        fieldId="aw-work-order-filter-product"
+        formControlName="productId"
+        label="Product"
+      />
 
-      <fieldset class="fieldset">
-        <legend class="fieldset-legend">
-          <label for="aw-work-order-filter-scrap-reason-id">Scrap Reason ID</label>
-        </legend>
-        <input
-          id="aw-work-order-filter-scrap-reason-id"
-          type="number"
-          class="input input-bordered w-full"
-          formControlName="scrapReasonId"
-        />
-      </fieldset>
+      <aw-select-field
+        fieldId="aw-work-order-filter-scrap-reason"
+        formControlName="scrapReasonId"
+        label="Scrap Reason"
+        emptyOptionLabel="All scrap reasons"
+        [options]="scrapReasonOptions()"
+      />
 
       <fieldset class="fieldset">
         <legend class="fieldset-legend">
