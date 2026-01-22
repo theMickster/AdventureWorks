@@ -1,3 +1,4 @@
+import { PublicClientApplication } from '@azure/msal-node';
 import { describe, expect, it, vi } from 'vitest';
 import { acquireToken, validateEnvVars, type LoadTestCredentials } from './get-token';
 
@@ -71,5 +72,15 @@ describe('acquireToken', () => {
     const pcaFactory = stubPca(vi.fn().mockResolvedValue(null));
 
     await expect(acquireToken(CREDS, pcaFactory)).rejects.toThrow();
+  });
+});
+
+describe('MSAL contract', () => {
+  it('real PublicClientApplication still exposes acquireTokenByUsernamePassword', () => {
+    const pca = new PublicClientApplication({
+      auth: { clientId: 'client-id', authority: 'https://login.microsoftonline.com/tenant-id' },
+    });
+
+    expect(pca.acquireTokenByUsernamePassword).toBeTypeOf('function');
   });
 });
