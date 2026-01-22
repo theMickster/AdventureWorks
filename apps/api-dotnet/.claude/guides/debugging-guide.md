@@ -13,7 +13,7 @@ After cloning the repo, do this once:
 4. Click the pencil icon to edit its condition and paste:
 
    ```
-   !FluentValidation.ValidationException,System.Collections.Generic.KeyNotFoundException
+   !FluentValidation.ValidationException,System.Collections.Generic.KeyNotFoundException,AdventureWorks.Application.Exceptions.ConflictException
    ```
 
 5. Press Enter. The leading `!` turns the list into an _ignore_ list — these
@@ -59,7 +59,7 @@ intentionally catches:
    The leading `!` applies to the whole list:
 
    ```
-   !FluentValidation.ValidationException,System.Collections.Generic.KeyNotFoundException,AdventureWorks.Common.Exceptions.ConfigurationException
+   !FluentValidation.ValidationException,System.Collections.Generic.KeyNotFoundException,AdventureWorks.Application.Exceptions.ConflictException,{YourNewExceptionType}
    ```
 
 3. Update this guide so the next developer copies the right list.

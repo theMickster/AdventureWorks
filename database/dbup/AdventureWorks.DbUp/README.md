@@ -42,8 +42,8 @@ Database migration tool for AdventureWorks using DbUp.
 
 ### Creating a New Migration
 
-1. Generate timestamp: `YYYYMMDD_HHmmss`
-2. Create file in `Scripts/` folder: `20251127_120000_Description.sql`
+1. Generate timestamp: `YYYYMMDD_HHmm` (pick a time later than every script it must run after)
+2. Create file in `Scripts/` folder: `{YYYYMMDD}_{HHmm}_{ACTION}_{Description}.sql`, e.g. `20260510_1200_CREATE_StoreSalesPersonHistory_Table.sql`. Break a same-minute tie with a trailing letter (`20250702_1008a_...`), never a seconds suffix (ordinal sort puts `161130_` before `1611_`)
 3. Add migration header and SQL
 4. Build project (validates syntax)
 5. Test locally: `dotnet run`
@@ -71,11 +71,14 @@ AdventureWorks.DbUp/
 │   ├── MigrationDeployer.cs          # One-time migration executor
 │   └── ProgrammableObjectsDeployer.cs # Always-run object executor
 ├── Scripts/                          # One-time migrations (embedded)
-│   └── YYYYMMDD_HHMM_Description.sql
+│   └── YYYYMMDD_HHmm_ACTION_Description.sql
 ├── ProgrammableObjects/              # Always-run definitions (embedded)
+│   ├── Database Triggers/
 │   ├── dbo/
 │   ├── Person/
 │   ├── HumanResources/
+│   ├── Production/
+│   ├── Purchasing/
 │   └── Sales/
 ├── Program.cs                        # Thin orchestrator
 ├── appsettings.json
@@ -87,5 +90,4 @@ AdventureWorks.DbUp/
 
 - Target framework: .NET 10
 - All SQL scripts are embedded resources
-- Transactions enabled by default per script
-- Use `-- NoTransaction` header when needed
+- Each script runs in its own transaction; there is no per-script opt-out

@@ -62,6 +62,8 @@ AdventureWorks/
 ├── docker/ # Docker Compose configuration
 ├── docs/ # Repository documentation
 ├── infra/ # Infrastructure as code
+├── libs/ # Shared libraries
+│   └── dotnet/ # AdventureWorks.Connections (connection catalog used by the API, Functions, DbUp, and console tools)
 ├── pipelines/ # CI/CD definitions and templates
 └── tools/ # Local development and utility projects
     ├── aspire/ # Aspire AppHost and its documentation

@@ -11,6 +11,7 @@ Feature 609 (BOM cost and feasibility engine), an Azure Functions custom handler
 - **Cosmos:** `azure_data_cosmos` is a pinned beta. There is no Cosmos emulator and no key auth: local runs use the real container `bom-cost-results-local` with Entra ID (`az login`), and containers are never created by the handler. Set `Cosmos__PreferredRegion` to the account's region in Azure. With `KeyVault__VaultUri` set, the endpoint comes from Key Vault; database and container are required settings with no defaults. Azure setup: `infra/AZURE_FUNCTIONS_SETUP.md`.
 - **Ports** avoid other projects on this machine: Redis 6380, Azurite 11000-11002, RabbitMQ 5675 (5672 is taken).
 - **RabbitMQ tests** (`tests/rabbitmq_flow.rs`, opt-in compose profile) verify the handler's retry and dead-letter contract only, not the Service Bus trigger binding.
-- **Unverified:** managed-identity auth in Azure (developer-login auth to the real Cosmos, Key Vault and DEV queue works locally), Premium-plan behavior, and CI (never executed).
+- **CI:** `pipelines/templates/build-functions-rust.yml` (push to main) and the `functions-rust` job in `.github/workflows/pr-validation.yml` (PRs) run fmt, clippy, test, and a release build; live and RabbitMQ tests are `#[ignore]`. A passing Azure Pipelines run is unconfirmed.
+- **Unverified:** managed-identity auth in Azure (developer-login auth to the real Cosmos, Key Vault and DEV queue works locally) and Premium-plan behavior.
 - **Don't:** add `bb8-tiberius`, cache what-if results, log or `Debug`-print `Settings` (holds secrets), or commit `local.settings.json` or real Postman environments.
-- Every limit and fixed name goes in `limits.rs`; `domain/` stays free of I/O.
+- Limits and tunables go in `limits.rs`, env-var names in `config.rs`, routes in `http/mod.rs`; `domain/` does no I/O.

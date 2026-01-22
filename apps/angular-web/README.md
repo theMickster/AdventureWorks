@@ -30,18 +30,23 @@ libs/
     feature-dashboard/         # Sales KPI dashboard (type:feature, scope:sales)
     feature-orders/            # Sales order list/detail/analytics (type:feature, scope:sales)
     feature-sales-persons/     # Sales person list/detail/create/edit (type:feature, scope:sales)
+    feature-customers/         # Customer list/detail (type:feature, scope:sales)
     feature-stores/            # Store list/detail/create/edit (type:feature, scope:sales)
+    ui-trend-chart/            # Chart.js trend chart (type:ui, scope:sales)
   hr/
-    data-access/               # HR models, API service (type:data-access, scope:hr)
+    data-access/               # HR models, EmployeeStore, API service (type:data-access, scope:hr)
+    feature-dashboard/         # HR KPI dashboard, headcount and tenure charts (type:feature, scope:hr)
     feature-departments/       # Department list/detail/create/edit (type:feature, scope:hr)
     feature-employees/         # Employee create wizard, detail/edit, lifecycle modals (type:feature, scope:hr)
+    feature-history/           # Employee department and pay history timelines (type:feature, scope:hr)
     feature-org-chart/         # Interactive org chart (type:feature, scope:hr)
   manufacturing/
     data-access/               # WorkOrderStore, models, API service (type:data-access, scope:manufacturing)
-    feature-work-orders/       # Work order list (type:feature, scope:manufacturing)
+    feature-work-orders/       # Work order list/detail and manufacturing KPI dashboard (type:feature, scope:manufacturing)
   purchasing/
-    data-access/               # Purchasing SignalStores, models, API service (type:data-access, scope:purchasing)
-    feature-vendors/           # Vendor list (type:feature, scope:purchasing)
+    data-access/               # VendorStore, models, API service (type:data-access, scope:purchasing)
+    feature-vendors/           # Vendor list/detail, purchase order detail, purchasing analytics (type:feature, scope:purchasing)
+    ui-pareto-chart/           # Chart.js Pareto chart (type:ui, scope:purchasing)
   public/
     feature-landing/           # Public landing page (type:feature, scope:public)
 ```
@@ -57,7 +62,7 @@ data-access  -> data-access, util
 util         -> util only
 ```
 
-Domain scopes: `shared`, `sales`, `hr`, `manufacturing`, `purchasing`. A domain library can only depend on its own scope or `shared`.
+Domain scopes: `shared`, `sales`, `hr`, `manufacturing`, `purchasing`, `public`. A domain library can only depend on its own scope or `shared`.
 
 ### Import Paths
 
@@ -122,7 +127,8 @@ npx nx serve adventureworks-web        # Dev server on :4200
 npx nx build adventureworks-web        # Production build
 
 # Testing
-npx nx test adventureworks-web         # Unit tests (Vitest)
+npx nx test adventureworks-web         # App project unit tests only (Vitest)
+npx nx run-many -t test                # Unit tests for the app and every lib
 npx nx test adventureworks-web --coverage
 npx nx e2e adventureworks-web-e2e      # E2E tests (Playwright)
 

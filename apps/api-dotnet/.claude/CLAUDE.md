@@ -1,24 +1,19 @@
 # AdventureWorks Web API - Claude Code Configuration
 
-Enterprise-grade RESTful API built with .NET 10.0 implementing Clean Architecture with CQRS patterns for the AdventureWorks Cycling database.
+RESTful API built with .NET 10.0 implementing Clean Architecture with CQRS for the AdventureWorks Cycling database.
 
 ## Overview
 
-### What This Project Does
-
-- Exposes RESTful APIs for Sales, HumanResources, AddressManagement, and Purchasing domains using Clean Architecture
-- Implements CQRS pattern via MediatR with FluentValidation and AutoMapper
-- JWT-based authentication with Microsoft Identity and Azure Key Vault for secrets
+- Exposes REST endpoints for the Sales, HumanResources, Person, Production, ProductReview, Purchasing, Dashboard, and AddressManagement feature folders under `AdventureWorks.Application/Features/`
+- CQRS via MediatR with FluentValidation and AutoMapper; JWT auth via Microsoft Identity Web; secrets from Azure Key Vault
 
 ### Key Concepts
 
-- **Clean Architecture**: Dependency boundaries (Domain -> Application -> Infrastructure -> API)
-- **CQRS**: Commands handle writes (return IDs), Queries handle reads (return DTOs), via MediatR
-- **Entity Suffix Convention**: Domain objects use `*Entity` suffix to distinguish from DTOs
-- **Repository Pattern**: Interfaces in Application layer, implementations in Infrastructure
-- **Feature Folders**: Organized by domain (Sales, HumanResources) not technical layers
-
----
+- **Clean Architecture**: Project references point inward: API -> Infrastructure.Persistence -> Application -> Domain. Infrastructure is reached only through interfaces; a reverse reference would be circular and the build rejects it.
+- **CQRS**: Commands write and return the new ID, `Unit`, or a model; queries read with `AsNoTracking()` and return DTOs, never entities.
+- **Naming**: DTOs are `*Model`, `*CreateModel`, `*UpdateModel`. Domain entities carry no consistent suffix (older ones use `*Entity`, newer ones such as `WorkOrder` and `Vendor` do not); match the neighbouring entities in the same domain folder and do not rename.
+- **Repository Pattern**: New interfaces go in `Application/PersistenceContracts/Repositories/{Domain}/` and implementations in `Infrastructure.Persistence/Repositories/{Domain}/`. Older ones sit at the folder roots; leave them there.
+- **Feature Folders**: Organized by domain, not technical layer.
 
 ## Progressive Context Loading
 
@@ -28,14 +23,12 @@ Enterprise-grade RESTful API built with .NET 10.0 implementing Clean Architectur
 | Writing unit tests (handler / controller / validator)                                                                         | [`guides/testing-guide.md`](guides/testing-guide.md)                       |
 | Writing integration tests (HTTP pipeline, middleware, auth gate)                                                              | [`guides/testing-guide.md`](guides/testing-guide.md) — Integration section |
 | Editing Postman collections, environments, or scripts — **required reading before any edit under `apps/api-dotnet/postman/`** | [`guides/postman-guide.md`](guides/postman-guide.md)                       |
-| Configuring the VS Code debugger (FluentValidation / KeyNotFound exception filters)                                           | [`guides/debugging-guide.md`](guides/debugging-guide.md)                   |
+| Configuring the VS Code debugger (FluentValidation / KeyNotFound / Conflict exception filters)                                 | [`guides/debugging-guide.md`](guides/debugging-guide.md)                   |
 | Smoke-testing live endpoints with a dev token (curl)                                                                          | [`skills/smoke-testing-dotnet-api.md`](skills/smoke-testing-dotnet-api.md) |
 
----
+Handler structure is in the path-scoped rule `.claude/rules/dotnet-handlers.md`; repository query invariants are in `.claude/rules/dotnet-repository-queries.md`. Both load automatically from the repo root when you edit matching files.
 
-## Architecture & Patterns
-
-### System Architecture
+## Architecture
 
 ```
 HTTP Request (JWT Token) -> Controller -> [Authorize] -> MediatR.Send()
@@ -51,407 +44,86 @@ HTTP Request (JWT Token) -> Controller -> [Authorize] -> MediatR.Send()
                               Response (DTO/ID) + X-Correlation-Id
 ```
 
-### Code Organization
-
 ```
 apps/api-dotnet/src/
-+-- AdventureWorks.API/              # Controllers, middleware, Program.cs
-+-- AdventureWorks.Application/      # Features/{Domain}/Commands|Queries|Validators|Profiles
++-- AdventureWorks.API/              # Controllers, middleware, hubs, Program.cs
++-- AdventureWorks.Application/      # Features/{Domain}/Commands|Queries|Validators|Profiles, PersistenceContracts
 +-- AdventureWorks.Domain/           # Entities (no dependencies)
-+-- AdventureWorks.Infrastructure.Persistence/  # Repositories, DbContext
-+-- AdventureWorks.Models/           # DTOs (StoreModel, StoreCreateModel, etc.)
-+-- AdventureWorks.Common/           # Constants, utilities
++-- AdventureWorks.Infrastructure.Persistence/  # Repositories, DbContext, notification handlers
++-- AdventureWorks.Models/           # DTOs
++-- AdventureWorks.Common/           # Constants, filtering parameters, helpers
 
-tests/AdventureWorks.UnitTests/      # xUnit tests (handlers, controllers, repos)
+apps/api-dotnet/tests/
++-- AdventureWorks.UnitTests/        # xUnit, Moq, FluentAssertions, EF Core InMemory, UnitTestBase
++-- AdventureWorks.IntegrationTests/ # WebApplicationFactory<Program>, CustomWebApplicationFactory, TestAuthHandler
++-- AdventureWorks.Test.Common/      # Fixtures shared by both test projects
++-- AdventureWorks.LoadTests.k6/     # k6 TypeScript profiles; see its README and run-tests.sh
+
+libs/dotnet/AdventureWorks.Connections/  # IConnectionCatalog; the API reads ConnectionStrings:AdventureWorks through it
 ```
 
-### Key Principles
+## Core Patterns
 
-1. **Dependency Rule**: Dependencies point inward. Infrastructure accessed only via interfaces.
-2. **Async All The Way**: Every I/O uses async/await with `CancellationToken`. Never `.Result` or `.Wait()`.
+- **Controllers** are thin and delegate to MediatR: `[ApiController]`, `[ApiVersion("1.0")]`, explicit auth intent. Commands return `CreatedAtRoute()`, queries `Ok(model)`. Return DTOs, never entities.
+- **Validators** use `WithErrorCode("Rule-NN")` and static message properties; handlers call `ValidateAndThrowAsync()`. Delete commands have no validator; every other command does.
+- **AutoMapper** profiles: one per mapping direction. Ignore audit fields (`ModifiedDate`, `Rowguid`, `Id`); use `ForPath()` for nested members.
+- **Exception middleware** (`AdventureWorks.API/libs/Middleware/ExceptionHandlerMiddleware.cs`): `ValidationException` -> 400 with errors, `KeyNotFoundException` -> 404, `ConflictException` -> 409, anything else -> 500 with a generic message. Every response carries `X-Correlation-Id`.
 
-### Core Patterns
+### Composite-Key Rewrite
 
-#### CQRS via MediatR
+A column that is part of a composite primary key cannot be updated. Change it through a repository `Replace*Async` that deletes the row and inserts the replacement inside one `BeginTransactionAsync` so handlers stay storage-agnostic. See `PersonPhoneRepository.ReplacePhoneAsync`, `BusinessEntityContactEntityRepository.ReplaceContactTypeAsync`, and `BusinessEntityAddressRepository.ReplaceAddressTypeAsync`; the same transactional shape closes and opens temporal rows in `EmployeeRepository.TransferEmployeeDepartmentAsync`. The handler checks uniqueness against the target key before calling the repository, and the controller issues a follow-up read query for the response.
 
-**Command Pattern**: `IRequest<int>` with Model, ModifiedDate, RowGuid properties
-
-- Handler: IMapper, IRepository, IValidator -> Validate -> Map -> Persist -> Return ID
-
-**Query Pattern**: `IRequest<TModel>` with Id or filter properties
-
-- Handler: IMapper, IRepository -> Fetch (AsNoTracking) -> Map -> Return DTO
-
-**Controller Pattern**: Thin, delegates to MediatR
-
-- Attributes: `[ApiController]`, `[ApiVersion("1.0")]`, plus explicit auth intent (`[Authorize]` for protected endpoints, `[AllowAnonymous]` only for deliberate public exceptions)
-- Commands: `CreatedAtRoute()` | Queries: `Ok(model)`
-
-#### FluentValidation Pattern
-
-Base validator with inheritance for Create/Update variants:
-
-```csharp
-RuleFor(x => x.Name).NotEmpty().WithErrorCode("Rule-01").WithMessage(MessageStoreNameEmpty);
-```
-
-Use error codes, static message properties, `ValidateAndThrowAsync()` in handlers.
-
-#### AutoMapper Profile Pattern
-
-One profile per mapping direction:
-
-```csharp
-CreateMap<Source, Dest>().ForMember(x => x.Prop, o => o.Ignore());
-```
-
-Ignore audit fields (ModifiedDate, Rowguid, Id). Use `ForPath()` for nested mappings.
-
-#### Exception Handling Middleware
-
-ValidationException -> 400 with error details. ConflictException -> 409 Conflict. All responses include `X-Correlation-Id`.
-Unhandled exception types fall through to a 500 with a sanitized generic message; the original `exception.Message` is intentionally not echoed in the response body and is captured in structured logs only.
-Any new expected exception type used for normal API flows must be translated in middleware or handled explicitly in the controller in the same change.
-See: `AdventureWorks.API/libs/Middleware/ExceptionHandlerMiddleware.cs`
-
-#### Sales Dashboard Repository (`SalesDashboardRepository`)
-
-`GetDashboardAsync` runs 7 queries. Two are relevant to the widget data added in Feature 713:
-
-- **Query 3** (top performers): Joins `sp.SalesTerritory` to project `SalesTerritory.Name` as `TerritoryName` for each of the top-5 sales persons. The join is a separate query from Query 2's GroupBy aggregation — EF Core GroupBy behavior makes the join unsafe in a single query.
-- **Query 5** (territories): Selects `t.Group` from `SalesTerritories` in addition to `TerritoryId`, `Name`, and `CountryRegionCode`. `Group` drives the alphabetical region grouping in `TerritoryBreakdownComponent`.
-
-#### Sales Order Analytics Repository (`SalesOrderRepository.GetSalesOrderAnalyticsAsync`)
-
-Aggregate-only query — uses a bare `DbContext.SalesOrderHeaders.AsNoTracking()` base with **no `.Include()` chains**. Only scalar columns (`TotalDue`, `OrderDate`, filter predicate columns) are needed; joins cause EF Core `GroupBy` to evaluate client-side.
-
-Key invariants:
-
-- Applies the same nullable filter predicates as `SearchSalesOrdersAsync`.
-- Early-returns `new SalesOrderAnalyticsModel { MonthlyTrend = [] }` when `CountAsync == 0` — avoids three unnecessary aggregate queries.
-- Monthly trend is capped at 24 entries: the query orders months **descending** and `.Take(24)` keeps the 24 most-recent months (oldest months are dropped). The result list is then `.Reverse()`d to produce ascending (chronological) output.
-- `IsPartialMonth`: after materializing the trend list, a single `MaxAsync` on the filtered dataset resolves the latest order date. Only the entry whose Year/Month matches that date — and where `maxOrderDate.Day < DateTime.DaysInMonth(year, month)` — is flagged as partial.
-- When `filter == null`, `PercentageOfTotal` is always 100; the unfiltered `SumAsync` is skipped (`unfilteredTotal = totalRevenue`).
-
-#### Work Order List (`WorkOrderRepository`, `WorkOrderParameter`) — DbSet Registration Gap & Pagination Default Override
-
-`WorkOrder` (`Domain/Entities/Production/`) had a correct `IEntityTypeConfiguration<T>` class (`WorkOrderConfiguration`) long before it was queryable — it was not exposed as a `DbSet<T>` on `AdventureWorksDbContext` or `IAdventureWorksDbContext`. When adding a new read slice for an entity that already has EF configuration, check both DbContext files for a matching `DbSet<T>` before assuming the wiring is complete; add it additively (don't reorder existing `DbSet` declarations).
-
-`QueryStringParamsBase.PageSize` is now `virtual` (mirroring the pre-existing `virtual SortOrder`) so `WorkOrderParameter` can override the base's default of 10 with a default of 25, per its list endpoint's product requirements. Follow the same pattern (own backing field + override) for any future list feature that needs a non-default page size — don't change the base default itself.
-
-#### Vendor Repository (`VendorRepository.GetVendorsAsync`)
-
-Powers `GET /api/v1/vendors` (US-981) — a paginated, risk-ranked vendor list. Aggregate-only, join-free query pattern, same rationale as the Sales Order Analytics repository above: `PurchaseOrderHeaders.GroupBy(p => p.VendorId)` runs as one query with no `.Include()`/join; `Vendors.AsNoTracking().ToListAsync()` runs as a second, separate query; the two are joined **in memory**. The vendor table is small (104 rows), so materializing it and joining client-side is cheap and predictable — EF Core would otherwise evaluate the `GroupBy` client-side the moment a join is layered into the same query.
-
-**Critical invariant — rank is computed before filters, always:** Every vendor's spend-rank and `IsHighRisk` flag are computed against the **full** vendor population, before `creditRating`, `preferredVendorStatus`, or `activeFlag` filters are applied. Filters only narrow which already-ranked rows are returned in the final page — they never change what a vendor's rank or `IsHighRisk` value is. A future "optimization" that reorders this — e.g. filtering the vendor list first, then ranking only the filtered subset — would silently change `IsHighRisk` results whenever a filter is applied, and there is no test signal that would tell you it's wrong. `VendorRepositoryTests.GetVendorsAsync_RankIsComputedBeforeFilters_NotAfter` is a regression test guarding exactly this.
-
-**Rank semantics — true `RANK()`, not `ROW_NUMBER()`:** Rank is computed in C# as `1 + count of vendors with strictly greater total spend`, so tied vendors share a rank and the next distinct spend value skips ahead accordingly (e.g. two vendors tied at rank 52 push the next vendor to rank 54, not 53). `OrderByDescending().Select((x, i) => i + 1)` would be `ROW_NUMBER()` semantics and give tied vendors distinct, incorrect ranks — do not use that shape here.
-
-**IsHighRisk:** `true` only when `CreditRating >= 4` (Average/Below Average) **and** the vendor's pre-filter rank is `<= 52` (the top half of the 104-vendor population).
-
-**Zero-PO vendors:** Vendors with no purchase orders are still included in results, with `TotalSpend = 0` and `PoCount = 0` — they are never silently dropped by the join.
-
-**`VendorParameter.PageSize` default override:** `QueryStringParamsBase.PageSize` was made `virtual` specifically so `VendorParameter` could override the base class's default of 10 with 25 (the AC-specified default for this endpoint), following the same `virtual`/`override` pattern already used for `QueryStringParamsBase.SortOrder` (see `StoreCustomerParameter`). A `new` hide instead of `override` would silently break pagination — `QueryStringParamsBase.GetRecordsToSkip()` calls `PageSize` non-polymorphically from the base class, so only a true `override` is picked up by that call.
-
-#### Purchase Order Repository (`PurchaseOrderRepository.GetPurchaseOrderDetailAsync`)
-
-Powers `GET /api/v1/purchase-orders/{id}` (US-986) — a single purchase order's full detail, including line items.
-
-**Cross-domain join, resolved via explicit LEFT JOIN, not `Include`:** `ApprovingEmployeeFullName` is derived from `PurchaseOrderHeader.EmployeeId -> HumanResources.Employee.BusinessEntityId -> Person.Person.BusinessEntityId` (`FirstName + " " + LastName`). Both `PurchaseOrderHeader.EmployeeId` and `EmployeeEntity.BusinessEntityId` are non-nullable `int` columns, so EF Core treats `EmployeeEntity`/`PersonBusinessEntity` as *required* navigations by convention. `Include` on a required navigation whose principal row does not exist causes the EF Core InMemory test provider to drop the entire root row (inner-join-like behavior) rather than leaving the navigation null — which would make an unresolvable employee reference look like the purchase order itself does not exist. The repository instead resolves the employee/person name with an explicit `join ... into ... DefaultIfEmpty()` query, a true LEFT JOIN regardless of the navigation's required/optional status. **This null-safety is a functional acceptance criterion, not defensive-only code** — do not "clean up" by switching back to `Include` or by assuming the join always succeeds. When the employee or person cannot be resolved, `ApprovingEmployeeFullName` falls back to the constant `"Unknown employee"`, and the purchase order is still returned (not a 404). `PurchaseOrderRepositoryTests` has regression coverage for both an `EmployeeId` that does not resolve to any employee and an employee that exists but whose person join is broken; neither shape occurs naturally in the current AdventureWorks dataset (confirmed via direct query against `Purchasing.PurchaseOrderHeader`/`HumanResources.Employee`/`Person.Person`), so both are constructed test fixtures.
-
-**Status label:** Reuses `PurchaseOrderStatusLabels.GetLabel(byte)` — the same internal helper already shared with `VendorRepository` — rather than duplicating the status-code switch.
-
-**Include-materialize, not correlated-subquery projection:** Unlike `VendorRepository.GetVendorPurchaseOrdersAsync`'s per-row correlated subquery (`p.PurchaseOrderDetails.Min(d => (DateTime?)d.DueDate)`) used for a *paged list* of purchase orders, this method fetches the single purchase order with `.Include(p => p.PurchaseOrderDetails)` and computes derived fields (`DueDate`, line item mapping) in C# after materialization. For a single-record fetch this is simpler and no less efficient — the correlated-subquery style exists specifically to avoid pulling full related rows across many purchase orders at once in a paged query, which does not apply to a single detail fetch.
-
-**DueDate fallback:** `PurchaseOrderHeader` has no header-level `DueDate` column. It is derived as `MIN(PurchaseOrderDetails.DueDate)`, falling back to `OrderDate` when the purchase order has zero line items (a data-integrity edge case, not expected in practice, but must not throw or return null).
-
-#### Purchasing Analytics Repository (`PurchasingAnalyticsRepository`)
-
-Powers `GET /api/v1/purchasing/analytics` (US-988) — Pareto vendor-spend data plus a 4-status PO pipeline summary. Follows `VendorRepository.GetVendorsAsync`'s join-free, two-step aggregate pattern (all 104 vendors always appear, `TotalSpend` defaults to 0 for zero-PO vendors), but the running cumulative spend percent is computed in C# after ordering, with the last row forced to exactly `100` to avoid floating-point drift. Pipeline statuses are backfilled to zero when a status has no POs, reusing `PurchaseOrderStatusLabels.GetLabel(byte)`.
-
-#### Real-Time Infrastructure (SignalR + MediatR Notification Pipeline)
-
-- **Hub endpoint**: `/hubs/dashboard` — `DashboardHub`, requires JWT via `[Authorize(Policy = "DashboardAccess")]`. WebSocket auth passes the token as a query string (`access_token`); the middleware in `Program.cs` maps it to the `Authorization` header automatically.
-- **Notification pipeline**: After a successful repository call, command handlers call `await _publisher.Publish(new EntityChangedNotification { ... }, cancellationToken)`. MediatR fans the notification out to two handlers in parallel: `SignalRBroadcastHandler` (pushes to Dashboard group via `IHubContext`) and `ActivityLogNotificationHandler` (writes to the ActivityLog table).
-- **Failure isolation**: Both notification handlers catch and log exceptions without rethrowing — a failed broadcast or DB write never rolls back the originating command.
-- **Data access in handlers**: Notification handlers use `IActivityLogRepository` (Application layer interface), not `DbContext` directly — consistent with the repository pattern.
-- **Adding new notifications**: Any new command handler that mutates an entity should inject `IPublisher` and publish `EntityChangedNotification` after its repository call. No hub code changes are required.
-
-#### Composite-Key Rewrite Pattern (delete + insert in transaction)
-
-When a junction-table row needs to change a column that is part of its composite primary key, a true UPDATE is impossible. The handler must replace the row: open an EF transaction, delete the existing entity, insert a new entity with the new key values, and commit. The repository owns the transaction so handlers stay storage-agnostic.
-
-Reference implementations: `IBusinessEntityContactEntityRepository.ReplaceContactTypeAsync` (changes a store contact's `ContactTypeId`) and `IBusinessEntityAddressRepository.ReplaceAddressTypeAsync` (changes a store address's `AddressTypeId`). Both follow the same shape — the handler enforces uniqueness against the target composite key before calling the repository, and re-hydrates the row through `GetWithDetailsByCompositeKeyAsync` after the swap.
-
-**EF Core config for composite keys with an IDENTITY column**: When an IDENTITY column (e.g., `EmailAddressId`) is part of a composite primary key, you must call both `HasKey(composite)` AND `ValueGeneratedOnAdd()` on that column in `IEntityTypeConfiguration`. Without `ValueGeneratedOnAdd()`, EF Core does not recognise the column as database-generated and will try to insert the default value instead of letting SQL Server assign it. Reference: `EmailAddressConfiguration`.
-
-A close-and-insert variant of this pattern applies to temporal history tables: `IEmployeeRepository.TransferEmployeeDepartmentAsync` closes the active `EmployeeDepartmentHistory` record (sets `EndDate`) and inserts a new open record within a single transaction. Use a dedicated transactional repository method — not `UpdateAsync` + `AddAsync` separately — whenever atomicity across multiple history rows is required.
-
----
-
-## Development Guide
-
-### Adding New Feature
-
-See **[guides/adding-features.md](guides/adding-features.md)** for complete code examples.
-
-**Quick Checklist:**
-
-1. Entity (`Domain/Entities/{Domain}/`)
-2. DTOs (`Models/Features/{Domain}/`)
-3. Repository Interface (`Application/PersistenceContracts/`)
-4. Repository Implementation (`Infrastructure.Persistence/Repositories/`)
-5. Validator (`Application/Features/{Domain}/Validators/`)
-6. AutoMapper Profiles (`Application/Features/{Domain}/Profiles/`)
-7. Command + Handler (`Application/Features/{Domain}/Commands/`)
-8. Query + Handler (`Application/Features/{Domain}/Queries/`)
-9. Controller (`API/Controllers/v1/{Feature}/`)
-10. Unit Tests (`UnitTests/Application/Features/`)
-
-### Common Patterns
-
-- **Primary Constructors (C# 12)**: DI with field assignment and null checks
-- **Null Validation**: `ArgumentNullException.ThrowIfNull(request)` at method entry
-- **Sealed Classes**: All handlers must be `sealed`
-- **CancellationToken**: Required on all async methods
-
----
-
-## Data Models
-
-**Entity** (Domain layer): `*Entity` suffix, includes navigation properties, audit fields (ModifiedDate, Rowguid)
-
-**Model** (DTOs): `*Model`, `*CreateModel`, `*UpdateModel` - expose only API-relevant properties
-
-**Validation**: Error codes (`Rule-01`), static message properties, `ValidateAndThrowAsync()` in handlers
-
----
-
-## Security & Configuration
-
-### Security Rules (MANDATORY)
-
-1. **JWT Required**: Write endpoints (POST/PUT/PATCH/DELETE) MUST have `[Authorize]`
-2. **Never Expose Entities**: Return DTOs only
-3. **Validate All Input**: Every command needs FluentValidation
-4. **No Secrets in Code**: Use Key Vault (Prod) or User Secrets (Dev)
-5. **CorrelationId**: Middleware handles automatically
-6. **Public Endpoint Exceptions**: A semantically read-only public endpoint is allowed only when it is explicitly marked and justified (`[AllowAnonymous]` + short rationale)
-
-### Security Functions
-
-| Function                              | Purpose                                       |
-| ------------------------------------- | --------------------------------------------- |
-| `[Authorize]`                         | JWT Bearer authentication on write operations |
-| `ExceptionHandlerMiddleware`          | Sanitizes exceptions, adds correlation IDs    |
-| `ArgumentNullException.ThrowIfNull()` | Fast-fail null checks                         |
-| `ValidateAndThrowAsync()`             | FluentValidation in command handlers          |
-
-### Environment Configuration
-
-| Variable                                                  | Required   | Description                                                        |
-| --------------------------------------------------------- | ---------- | ------------------------------------------------------------------ |
-| `EntityFrameworkCoreSettings:CurrentConnectionStringName` | Yes        | Database connection name                                           |
-| `EntityFrameworkCoreSettings:CommandTimeout`              | Yes        | EF query timeout (seconds)                                         |
-| `KeyVault:VaultUri`                                       | Yes (Prod) | Azure Key Vault URL                                                |
-| `Cors:AllowedOrigins`                                     | Yes (Prod) | JSON array of allowed origins (e.g. `["https://app.example.com"]`) |
-
-**Config Files:** `appsettings.json`, `appsettings.{Environment}.json`, User Secrets
-
-### Authentication
-
-- JWT Bearer via Microsoft Identity Web (`.AddMicrosoftIdentityWebApi()`)
-- Protected endpoints use `[Authorize]`; intentionally public endpoints opt out explicitly with `[AllowAnonymous]`
-- CORS: Configure restrictively for Production
-
----
+Add `.ValueGeneratedOnAdd()` to any IDENTITY column inside a composite `HasKey`, or EF inserts 0 instead of letting SQL Server assign it. See `EmailAddressConfiguration`.
 
 ## Exception and Contract Policy
 
-- Documented HTTP responses must match actual runtime behavior.
-- Expected request failures are translated intentionally:
-  - missing resource -> `404`
-  - invalid input -> `400`
-  - auth failure -> framework auth response
-- If a controller advertises `404`, confirm the handler/controller/middleware path actually returns `404` and does not fall through to `500`.
-- Use one deliberate not-found strategy per flow:
-  - return `null` and translate to `NotFound(...)`, or
-  - throw a known exception type and map it intentionally
-- If you introduce a new expected exception type, update middleware/controller handling in the same change.
+- Every `[ProducesResponseType]` status a controller declares has a test that produces it.
+- Pick one not-found strategy per flow: return `null` and map to `NotFound()` in the controller, or throw `KeyNotFoundException`. Never both. Any other exception type becomes a 500.
+- Every new exception type thrown for a normal client failure gets a `case` in `ExceptionHandlerMiddleware.HandleException` in the same change.
 - Do not rely on a follow-up read after a command to correct an exception path that already failed.
-- Do not expose raw exception text for expected client-facing failures.
+- Echo only messages the app wrote (`KeyNotFoundException`, `ConflictException`). Never echo framework or database exception text.
 
 ## Validation Guardrails
 
-- Validate FK-backed or externally referenced IDs when practical before persistence.
-- Do not rely on database constraints or `DbUpdateException` as the primary way to reject bad client input.
-- Patch flows must validate the patched model before saving.
-- Validators should cover more than required-field checks when the model controls relationships or constrained values.
+- Check referenced IDs with `MustAsync` against the repository in the validator (see `StoreBaseModelValidator`), not by catching FK violations or `DbUpdateException`. The unique-constraint-to-409 translation in `EmployeeRepository` is a backstop, not the primary check.
+- Patch handlers validate the patched model before saving. See `PatchStoreCommandHandler`.
+- Validators cover constrained values and relationships, not just required fields. Put bounded code sets in a `private static readonly HashSet<string?>`, never an inline array inside `Must()`. See `ProductBaseModelValidator`.
 
 ## Async and Query Guardrails
 
-- `CancellationToken` must be threaded end-to-end: controller -> MediatR -> handler -> repository -> EF async call.
-- New repository methods should accept `CancellationToken cancellationToken = default` unless there is a clear reason they cannot.
-- Read flags such as include/exclude options must change query shape, not just clear mapped collections after loading.
-- Keep reads `AsNoTracking()` unless mutation requires tracking.
-- Never use `.Result` or `.Wait()`, even after `Task.WhenAll(...)`.
-- User input in `EF.Functions.Like(...)` patterns must have `%`, `_`, `[`, `]` escaped via `EscapeLikePattern(input)` before interpolation; unescaped wildcards bypass all filtering and are a DoS risk on public endpoints.
+- Every repository method takes `CancellationToken cancellationToken = default` and passes it to the EF call; controllers and handlers pass it through. `IAddressRepository.GetAddressByIdAsync` and `ICountryRegionRepository.GetByIdAsync` are known violations; do not copy them.
+- Include flags decide whether a query or `Include` runs; never load and then clear. See `ReadStoreQueryHandler`.
+- Wrap user text in `LikePatternHelper.EscapeLikePattern` before interpolating it into an `EF.Functions.Like` pattern, because unescaped `%` and `_` match everything and are a DoS vector on public endpoints. See `StoreRepository`.
 
 ## Auth Intent Guardrails
 
-- Write endpoints are protected by default.
-- If an endpoint is intentionally public, make that explicit in code with `[AllowAnonymous]` and add a short rationale.
-- If a read-only operation uses `POST`, do not leave its auth intent implicit.
-
-## Minimum Test Coverage for API Changes
-
-For new or changed API flows, cover the relevant combination of:
-
-- success path
-- bad request / validation failure
-- not-found read/update path
-- invalid referenced IDs
-- auth intent when an endpoint is protected or intentionally public
-- auth intent when an endpoint is read-only but uses POST (must be explicit, not inherited by assumption)
-- repository/query behavior when include flags change loaded data
-
----
+- Write endpoints are protected by default; `WriteEndpointAuthorizationTests` fails if one is not.
+- Mark an intentionally public endpoint with `[AllowAnonymous]` and a `<remarks>` saying why. See `ReadCountryRegionController`.
+- If a read-only operation uses `POST`, put the auth attribute on the action so the intent is visible at the call site.
 
 ## Testing
 
-See **[guides/testing-guide.md](guides/testing-guide.md)** for complete test templates.
-
 ```bash
-dotnet test                                    # Run all
-dotnet test --collect:"XPlat Code Coverage"   # With coverage
-dotnet test --filter "FullyQualifiedName~CreateStore"  # Filtered
+dotnet test                                            # Run all (from apps/api-dotnet)
+dotnet test --filter "FullyQualifiedName~CreateStore"  # Filtered; exit code 8 means a project matched zero tests, not a failure
 ```
 
-**Unit tests** — `AdventureWorks.UnitTests`: Moq, FluentAssertions, xUnit, EF Core In-Memory, `UnitTestBase` for fixtures
+Use integration tests to verify HTTP pipeline behavior (middleware, routing, auth gates, health/version endpoints) that unit tests cannot observe. See `guides/testing-guide.md` for templates.
 
-**Integration tests** — `AdventureWorks.IntegrationTests`: `WebApplicationFactory<Program>`, EF Core InMemory (per-factory-instance isolation), `IntegrationTestBase` + `CustomWebApplicationFactory`, xUnit collection fixture for shared factory lifecycle. Use integration tests to verify HTTP pipeline behavior (middleware, routing, auth gates, health/version endpoints) that unit tests cannot observe.
+For new or changed API flows, cover: success; validation failure; not-found read and update; invalid referenced IDs; auth intent when protected, public, or read-only-over-POST; and repository behavior when include flags change the loaded data.
 
-**Load/smoke tests (k6)** — `tests/AdventureWorks.LoadTests.k6/`: TypeScript profiles run natively by k6; see [that directory's README](../tests/AdventureWorks.LoadTests.k6/README.md) for available profiles and `run-tests.sh` usage.
+## Formatting and Tooling
 
----
-
-## Code Style & Standards
-
-### Naming Conventions
-
-- `PascalCase`: Classes, methods, properties | `camelCase`: parameters, locals | `_camelCase`: private fields
-- Suffixes: `*Entity`, `*Model`, `*Command`, `*Query`, `*Handler`, `*Validator`
-- Interfaces: `I*` prefix
-
-### Formatting
-
-- EditorConfig in solution root | 4 spaces, CRLF | File-scoped namespaces
-- Imports: System first, then third-party, then project (alphabetical)
-
-### Comments
-
-- XML docs for public APIs | Inline only when non-obvious | No TODOs (use issues)
-
----
+- `apps/api-dotnet/.editorconfig` carries analyzer severities only. Use 4-space indentation, file-scoped namespaces, and alphabetically sorted usings (`AdventureWorks.*` sorts before `Microsoft.*`). Line endings are mixed in the tree; keep whatever the file already uses.
+- VS Code breaks on `FluentValidation.ValidationException`, `KeyNotFoundException`, and `ConflictException` because the middleware catches them. `guides/debugging-guide.md` shows how to add them to the User-Unhandled ignore list.
 
 ## AI Done Gate
 
-Before finishing an API task, verify all of the following:
+Before finishing an API task, verify:
 
-- controller attributes, XML docs, and response behavior agree
-- expected exceptions are mapped intentionally in controller or middleware
+- controller attributes, XML docs, and response behavior agree, and every declared status has a test
+- expected exceptions are mapped intentionally in the controller or middleware
 - validators cover referenced IDs and update/patch edge cases
 - new async methods accept and forward `CancellationToken`
-- include/filter flags affect data access, not only final mapped output
-- tests cover both the main happy path and the important failure paths
-
----
-
-## Anti-Patterns
-
-### DO
-
-- async/await throughout (never `.Result`/`.Wait()`)
-- Return DTOs from controllers
-- Use repositories (not DbContext) in handlers
-- `.AsNoTracking()` for queries
-- `.Include()` or projection for related data
-- `ArgumentNullException.ThrowIfNull()` at method entry
-- `sealed` classes for handlers
-- `CancellationToken` on all async methods
-- `[Authorize]` on write endpoints
-- Feature folder organization
-
-### DON'T
-
-- Skip input validation
-- Expose `*Entity` from controllers
-- Inject `DbContext` into Application layer
-- Swallow exceptions silently
-- Track entities for read queries
-- Organize by technical layer
-- Reference Infrastructure from Application
-- Use inline `new[] { "A", "B" }` inside `Must(...)` validator predicates for bounded domain code sets — use `private static readonly HashSet<string?>`
-
----
-
-## Deployment
-
-### Building
-
-```bash
-cd apps/api-dotnet/src/AdventureWorks.API
-dotnet restore && dotnet build --configuration Release
-dotnet publish --configuration Release --output ./publish
-```
-
-### Versioning
-
-Semantic versioning: `MAJOR.MINOR.PATCH`
-API Version: `v1.0` via `Asp.Versioning` package
-
-### Publishing
-
-```bash
-# Azure App Service
-az webapp deploy --resource-group <rg> --name <app> --src-path ./publish --type zip
-
-# Docker
-docker build -t adventureworks-api:latest . && docker run -p 8080:80 adventureworks-api
-```
-
-**Database Migrations:** DbUp (`database/dbup/AdventureWorks.DbUp`)
-
----
-
-## Troubleshooting
-
-### Common Issues
-
-- **VS Code breaks on `FluentValidation.ValidationException` / `KeyNotFoundException`**: These are caught by `ExceptionHandlerMiddleware` and translated to 400/404. See [guides/debugging-guide.md](guides/debugging-guide.md) to add them to the User-Unhandled exception ignore list.
-- **N+1 Queries**: Use `.Include()` or `.Select(x => new Model {...})`
-- **Connection String Not Found**: `dotnet user-secrets set "ConnectionStrings:AdventureWorks" "..."`
-- **JWT 401 Errors**: Verify `AzureAd` config (Instance, TenantId, ClientId)
-- **AutoMapper Missing Map**: Add profile in `Features/{Domain}/Profiles/`
-
-### Debug Tips
-
-- Verbose logging: `Logging:LogLevel:Default` = `Debug`
-- EF queries: `Microsoft.EntityFrameworkCore.Database.Command` = `Information`
-- Swagger: `/swagger` | Health: `/health`
-
----
-
-## Angular Consumer Pattern Note
-
-Angular list components consuming this API's filter/pagination params subscribe to `route.queryParams` reactively (`takeUntilDestroyed`) — not via snapshot. When adding new filter query parameters to an endpoint, the Angular feature component's reactive subscription must include those new param keys to round-trip them through the URL correctly.
-
-## References
-
-- [Adding Features Guide](guides/adding-features.md) | [Testing Guide](guides/testing-guide.md) | [Postman Guide](guides/postman-guide.md) | [Debugging Guide](guides/debugging-guide.md)
-- [.NET 10.0](https://learn.microsoft.com/en-us/dotnet/core/whats-new/dotnet-10) | [ASP.NET Core](https://learn.microsoft.com/en-us/aspnet/core/) | [EF Core](https://learn.microsoft.com/en-us/ef/core/)
-- [MediatR](https://github.com/jbogard/MediatR/wiki) | [FluentValidation](https://docs.fluentvalidation.net/) | [AutoMapper](https://docs.automapper.org/)
-
----
-
-**Version**: .NET 10.0 | **Architecture**: Clean Architecture with CQRS
+- include/filter flags change data access, not only the mapped output
+- a new list filter query parameter is also added to the Angular list component's `queryParams` subscription, or it will not round-trip through the URL

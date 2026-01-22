@@ -13,7 +13,7 @@ Ordered steps — verify each before moving to the next.
 public sealed class {Name}Handler(
     IMapper mapper,
     IRepository repository,
-    IValidator<TModel> validator)  // validators on commands only
+    IValidator<TModel> validator)  // commands, and list/analytics queries that carry a filter model
         : IRequestHandler<TRequest, TResponse>
 {
     private readonly IMapper _mapper = mapper ?? throw new ArgumentNullException(nameof(mapper));
@@ -35,12 +35,13 @@ Execute these steps in order:
 4. Map to entity: `_mapper.Map<TEntity>(request.Model)`
 5. Set audit fields (ModifiedDate, Rowguid)
 6. Persist via repository
-7. Return the new ID
+7. If the entity is dashboard-visible, inject `IPublisher` and `await _publisher.Publish(new EntityChangedNotification { ... }, cancellationToken)` after the repository call. See `CreateStoreCommandHandler`. The two notification handlers (`SignalRBroadcastHandler`, `ActivityLogNotificationHandler`) run sequentially, catch and log their own failures, and never rethrow, so a failed broadcast cannot roll back the command.
+8. Return what the command contract declares: the new ID (`IRequest<int>`), `Unit`, or a model
 
 ## Handle Method — Query (Read)
 
 1. `ArgumentNullException.ThrowIfNull(request);`
-2. Fetch via repository (all reads use `.AsNoTracking()` in the repo)
+2. Fetch via repository (query invariants, including `.AsNoTracking()`, are in `.claude/rules/dotnet-repository-queries.md`)
 3. Map to DTO: `_mapper.Map<TModel>(entity)`
 4. Return DTO (never return an entity)
 
@@ -51,6 +52,5 @@ Execute these steps in order:
 
 ## Data Access
 
-- Inject repository interfaces only — never `DbContext`
-- Repository interfaces live in `Application/PersistenceContracts/`
-- Implementations live in `Infrastructure.Persistence/Repositories/`
+- Inject repository interfaces only, never `DbContext`. This includes notification handlers: `ActivityLogNotificationHandler` writes through `IActivityLogRepository`.
+- New repository interfaces go in `Application/PersistenceContracts/Repositories/{Domain}/` and implementations in `Infrastructure.Persistence/Repositories/{Domain}/`. Older ones (and the `EfRepository`/`ReadOnlyEfRepository` bases) sit at the folder roots; leave them there.

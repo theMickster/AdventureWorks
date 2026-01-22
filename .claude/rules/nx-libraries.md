@@ -5,7 +5,7 @@ paths:
 
 # Nx Library Guardrails
 
-Generator commands are documented in `.claude/CLAUDE.md`. This file covers **guardrails only**.
+Generator commands are documented in `apps/angular-web/README.md` (Commands section). This file covers **guardrails only**.
 
 ## Valid Tag Values
 

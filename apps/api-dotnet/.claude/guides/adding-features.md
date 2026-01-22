@@ -205,7 +205,7 @@ public sealed class ReadCustomerQueryHandler(
 
 ## 9. Create Controller
 
-**Location**: `src/AdventureWorks.API/Controllers/v1/Customers/CreateCustomerController.cs`
+**Location**: `src/AdventureWorks.API/Controllers/v1/{Feature}/Create{Feature}Controller.cs`. The Customer feature in this guide is illustrative; the real reference for this shape is `src/AdventureWorks.API/Controllers/v1/Stores/CreateStoreController.cs`.
 
 ```csharp
 [ApiController]
@@ -309,7 +309,7 @@ public sealed class CreateCustomerCommandHandlerTests : UnitTestBase
 | 8 | Query + Handler | `Application/Features/{Domain}/Queries/` |
 | 9 | Controller | `API/Controllers/v1/{Feature}/` |
 | 10 | Unit Tests | `UnitTests/Application/Features/{Domain}/` |
-| 11 | Documentation | Update CLAUDE.md |
+| 11 | Documentation | Put invariants in XML `<remarks>` at the call site plus a test whose name states the rule. Add a bullet to `.claude/rules/dotnet-repository-queries.md` or `dotnet-handlers.md` only for what code and tests cannot say. Do not add feature narratives to CLAUDE.md. |
 
 ---
 
