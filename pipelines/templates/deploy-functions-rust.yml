@@ -1,0 +1,79 @@
+# Deploy stage: the Rust BOM cost Function App (custom handler) zip built by build-functions-rust.yml.
+# Called as a stage template from the main pipeline. Separate from deploy-stage.yml so a failed Rust build
+# cannot block the API and Angular deploys, and so a stage exists only for environments that have the app.
+#
+# zipDeploy rather than runFromPackage: the infra sets WEBSITE_RUN_FROM_PACKAGE=1 and zip deploy mounts the
+# package under that setting. runFromPackage would overwrite the setting with a SAS URL that expires after a year,
+# and the next infra deployment would reset it.
+
+parameters:
+  - name: stageName
+    type: string
+  - name: displayName
+    type: string
+  - name: dependsOn
+    type: object
+  - name: condition
+    type: string
+    default: 'succeeded()'
+  - name: environmentName
+    type: string
+  - name: azureSubscription
+    type: string
+  - name: functionAppName
+    type: string
+  - name: artifactName
+    type: string
+    default: 'functions-rust-artifact'
+
+stages:
+  - stage: ${{ parameters.stageName }}
+    displayName: '${{ parameters.displayName }}'
+    dependsOn: ${{ parameters.dependsOn }}
+    condition: ${{ parameters.condition }}
+    jobs:
+      - deployment: Deploy
+        displayName: 'Deploy BOM Cost Function App to ${{ parameters.environmentName }}'
+        environment: '${{ parameters.environmentName }}'
+        strategy:
+          runOnce:
+            deploy:
+              steps:
+                - task: DownloadPipelineArtifact@2
+                  displayName: 'Download Rust Functions artifact'
+                  inputs:
+                    artifact: '${{ parameters.artifactName }}'
+                    path: '$(System.ArtifactsDirectory)/${{ parameters.artifactName }}'
+
+                - task: AzureFunctionApp@2
+                  name: deployBomCost
+                  displayName: 'Deploy BOM Cost Function App'
+                  inputs:
+                    azureSubscription: '${{ parameters.azureSubscription }}'
+                    appType: functionAppLinux
+                    appName: '${{ parameters.functionAppName }}'
+                    package: '$(System.ArtifactsDirectory)/${{ parameters.artifactName }}/functions-rust.zip'
+                    deploymentMethod: zipDeploy
+
+                # A custom handler that fails to start (wrong glibc, missing app setting, SQL or Key Vault access)
+                # still deploys successfully, so probe the anonymous health route. 200 means SQL answered; a Redis-less
+                # app reports its in-process cache as healthy. continueOnError reports a failed probe as a warning
+                # instead of failing a deploy that did reach the app.
+                - bash: |
+                    set -uo pipefail
+                    url="${APP_URL%/}/api/health"
+                    for attempt in $(seq 1 12); do
+                      if status=$(curl --silent --max-time 20 --output "$(Agent.TempDirectory)/health.json" --write-out '%{http_code}' "$url") && [ "$status" = "200" ]; then
+                        cat "$(Agent.TempDirectory)/health.json"
+                        echo
+                        exit 0
+                      fi
+                      echo "Attempt $attempt: $url not healthy yet (HTTP ${status:-no response}); retrying in 10 seconds"
+                      sleep 10
+                    done
+                    echo "Health check failed after 12 attempts: $url"
+                    exit 1
+                  displayName: 'Probe /api/health'
+                  continueOnError: true
+                  env:
+                    APP_URL: $(deployBomCost.AppServiceApplicationUrl)

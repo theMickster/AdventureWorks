@@ -30,6 +30,7 @@ Create these manually in Azure DevOps under **Pipelines → Library**.
 | `adventureworks-aplication-insights-connection-string`   |
 | `adventureworks-entra-client-id`                         |
 | `automapper-license-key`                                 |
+| `mediatr-license-key`                                    |
 
 ---
 
@@ -57,6 +58,7 @@ Create these manually in Azure DevOps under **Pipelines → Library**.
 | `adventureworks-aplication-insights-connection-string`   |
 | `adventureworks-entra-client-id`                         |
 | `automapper-license-key`                                 |
+| `mediatr-license-key`                                    |
 
 ---
 
@@ -71,7 +73,8 @@ The pipeline YAML references these secrets by their **exact Key Vault names** �
 | `adventureworks-sql-connection-string`                   | DbUp migrations, API connection strings |
 | `adventureworks-aplication-insights-connection-string`    | Angular token replacement |
 | `adventureworks-entra-client-id`                         | Angular token replacement |
-| `automapper-license-key`                                 | API app setting |
+| `automapper-license-key`                                 | `AutoMapperLicenseKey` API app setting and .NET unit tests |
+| `mediatr-license-key`                                    | `MediatRLicenseKey` API app setting and .NET unit tests |
 
 ## Key Vault Link Setup
 
@@ -79,7 +82,7 @@ For both `AdventureWorks-Dev-Secrets` and `AdventureWorks-Prod-Secrets`:
 
 1. Toggle **Link secrets from an Azure key vault as variables**
 2. Select the `MickKeyVaultWestUS` Key Vault
-3. Add the 4 secrets listed above — ADO creates variables with the Key Vault secret names
+3. Add the 5 secrets listed above — ADO creates variables with the Key Vault secret names
 4. No renaming needed — the pipeline YAML uses the Key Vault names directly
 5. The pipeline service connection needs **Key Vault Secrets User** role on the vault
 

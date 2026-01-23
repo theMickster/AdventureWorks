@@ -9,6 +9,8 @@
     "keyVaultName": { "value": "MickKeyVaultWestUS" },
     "keyVaultResourceGroup": { "value": "Mick-West-US-DotNetDevTest" },
     "deploySalesOrderSaga": { "value": true },
+    "deployBomCostFunction": { "value": true },
+    "provisionLocalMessaging": { "value": true },
     "paymentAuthorizationBaseUrl": { "value": "https://payment-authorization.dev.example.com/" }
   }
 }

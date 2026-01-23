@@ -86,19 +86,19 @@ scripts/test-live.sh
 
 Expected: `6 passed; 0 failed`, including `batch_message_upserts_each_pair_into_cosmos_with_deterministic_ids` and `batch_with_one_bad_pair_fails_the_message_after_storing_the_good_one`.
 
-The live Service Bus trigger runs against the real DEV queue `bom-batch-requests-dev` (no emulator), with your `az login`. It needs the roles Azure Service Bus Data Receiver and Data Sender on that queue. `local.settings.json` sets `ServiceBusConnection__fullyQualifiedNamespace` and `BomBatchQueueName=bom-batch-requests-dev`.
+The live Service Bus trigger runs against the real LOCAL queue `bom-batch-requests-local` (no emulator), with your `az login`, so local tests never touch the cloud DEV queue `bom-batch-requests-dev`. It needs the roles Azure Service Bus Data Receiver and Data Sender on that queue. `local.settings.json` sets `ServiceBusConnection__fullyQualifiedNamespace` and `BomBatchQueueName=bom-batch-requests-local`.
 
 ```bash
 scripts/start-local.sh      # no --functions filter, so the trigger is registered
 ```
 
-Expected: the host lists `bom-batch: serviceBusTrigger` and logs a receive link for `bom-batch-requests-dev`. Send a message:
+Expected: the host lists `bom-batch: serviceBusTrigger` and logs a receive link for `bom-batch-requests-local`. Send a message:
 
 ```bash
-az rest --method post --resource https://servicebus.azure.net --url "https://mick-adventureworks-events.servicebus.windows.net/bom-batch-requests-dev/messages?api-version=2017-04" --headers "Content-Type=application/json" --body '{"items":[{"productId":771,"quantity":3}]}'
+az rest --method post --resource https://servicebus.azure.net --url "https://mick-adventureworks-events.servicebus.windows.net/bom-batch-requests-local/messages?api-version=2017-04" --headers "Content-Type=application/json" --body '{"items":[{"productId":771,"quantity":3}]}'
 ```
 
-Expected: `201`, then `Executed 'Functions.bom-batch' (Succeeded ...)` and a `batch processed` log line, and the message is completed. A malformed body such as `{"items":"not-a-list"}` fails 3 times (queue max delivery 3) and lands in the dead-letter queue. Run on 2026-10-04: the good message succeeded in 5.5 s and the malformed one dead-lettered after 3 failed executions. Document `bom:771:5` was then read back from the real container over the Cosmos data plane (HTTP 200). The DEV queue is shared with any future DEV Function App, and a dead-lettered test message must be removed by hand.
+Expected: `201`, then `Executed 'Functions.bom-batch' (Succeeded ...)` and a `batch processed` log line, and the message is completed. A malformed body such as `{"items":"not-a-list"}` fails 3 times (queue max delivery 3) and lands in the dead-letter queue. Run on 2026-10-04 against the DEV queue, before `bom-batch-requests-local` existed: the good message succeeded in 5.5 s and the malformed one dead-lettered after 3 failed executions. Document `bom:771:5` was then read back from the real container over the Cosmos data plane (HTTP 200). A dead-lettered test message must be removed by hand. The LOCAL queue has not been run yet.
 
 ## 10. RabbitMQ messaging tests (optional)
 

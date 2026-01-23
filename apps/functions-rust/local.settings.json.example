@@ -10,7 +10,7 @@
     "Cosmos__Database": "PlatformDatabases",
     "Cosmos__Container": "bom-cost-results-local",
     "Cosmos__PreferredRegion": "West US 3",
-    "BomBatchQueueName": "bom-batch-requests-dev",
+    "BomBatchQueueName": "bom-batch-requests-local",
     "ServiceBusConnection__fullyQualifiedNamespace": "mick-adventureworks-events.servicebus.windows.net"
   }
 }

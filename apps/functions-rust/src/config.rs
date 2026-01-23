@@ -36,8 +36,8 @@ pub struct Settings {
     pub port: u16,
     /// ADO.NET connection string for AdventureWorks.
     pub sql_connection_string: String,
-    /// Redis URL, for example `redis://localhost:6380`.
-    pub redis_url: String,
+    /// Redis URL, for example `redis://localhost:6380`. `None` means no Redis: results are cached in process.
+    pub redis_url: Option<String>,
     /// Time-to-live of cached results.
     pub cache_ttl: Duration,
     /// Cosmos DB settings.
@@ -79,7 +79,7 @@ impl Settings {
         Ok(Self {
             port,
             sql_connection_string: required(ENV_SQL)?,
-            redis_url: required(ENV_REDIS)?,
+            redis_url: lookup(ENV_REDIS).filter(|url| !url.trim().is_empty()),
             cache_ttl,
             cosmos: CosmosSettings {
                 endpoint: required(ENV_COSMOS_ENDPOINT)?,
@@ -144,19 +144,25 @@ mod tests {
 
     #[test]
     fn missing_required_values_name_the_setting() {
-        for key in [
-            ENV_SQL,
-            ENV_REDIS,
-            ENV_COSMOS_ENDPOINT,
-            ENV_COSMOS_DATABASE,
-            ENV_COSMOS_CONTAINER,
-        ] {
+        for key in [ENV_SQL, ENV_COSMOS_ENDPOINT, ENV_COSMOS_DATABASE, ENV_COSMOS_CONTAINER] {
             let lookup = lookup(&[]);
             let error = Settings::from_lookup(|k| if k == key { None } else { lookup(k) })
                 .err()
                 .unwrap();
             assert!(error.to_string().contains(key), "{error}");
         }
+    }
+
+    #[test]
+    fn redis_is_optional_and_a_blank_value_counts_as_not_set() {
+        let base = lookup(&[]);
+        let absent = Settings::from_lookup(|k| if k == ENV_REDIS { None } else { base(k) }).unwrap();
+        let blank = Settings::from_lookup(lookup(&[(ENV_REDIS, "  ")])).unwrap();
+        let set = Settings::from_lookup(lookup(&[])).unwrap();
+
+        assert_eq!(absent.redis_url, None);
+        assert_eq!(blank.redis_url, None);
+        assert_eq!(set.redis_url.as_deref(), Some("redis://localhost:6380"));
     }
 
     #[test]

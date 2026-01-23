@@ -46,7 +46,10 @@ impl Live {
         let repository = SqlBomRepository::connect(&settings.sql_connection_string)
             .await
             .unwrap();
-        let cache = RedisCache::new(&settings.redis_url).unwrap();
+        let redis_url = settings
+            .redis_url
+            .expect("the live tests inspect Redis directly, so ConnectionStrings__Redis must be set");
+        let cache = RedisCache::new(&redis_url).unwrap();
         let store = CosmosResultStore::new(&settings.cosmos).unwrap();
         let state = Arc::new(AppState {
             service: BomService::new(repository, cache, settings.cache_ttl),
@@ -55,7 +58,7 @@ impl Live {
         Self {
             router: router(state),
             store,
-            redis: redis::Client::open(settings.redis_url).unwrap(),
+            redis: redis::Client::open(redis_url).unwrap(),
         }
     }
 

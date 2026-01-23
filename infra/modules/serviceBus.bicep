@@ -1,40 +1,34 @@
-// Provisions a Standard Service Bus namespace with the sales-order-events topic and
-// sales-order-saga subscription, plus RBAC role assignments for the publisher (API) and
-// consumer (Sales Order Saga Function App) identities. Standard tier is required for topics
-// (Basic tier supports queues only).
+// Provisions the Service Bus entities for ONE environment inside the shared, existing namespace
+// mick-adventureworks-events: the sales-order-events topic (with the sales-order-saga and
+// sales-order-payment-results subscriptions and their filter rules) and the bom-batch-requests queue.
+// The namespace is not created here. Prod, dev and local share it and are separated by entity name
+// suffix: '' (prod), '-dev', '-local'. Standard tier is required for topics.
 
-@description('Name of the Service Bus namespace')
-param name string
+@description('Name of the existing, shared Service Bus namespace')
+param namespaceName string
 
-@description('Azure region')
-param location string
+@description('Suffix appended to every entity name: empty for prod, -dev, -local')
+param entitySuffix string
 
-@description('Name of the sales order events topic')
-param topicName string = 'sales-order-events'
+@description('Duplicate detection cannot be changed on an existing topic and the live prod topic was created without it, so prod passes false.')
+param requiresDuplicateDetection bool = true
 
-@description('Name of the sales order saga subscription')
-param subscriptionName string = 'sales-order-saga'
+@description('Principal ID of the identity that publishes OrderCreated (granted Service Bus Data Sender). Empty skips the assignment.')
+param publisherPrincipalId string = ''
 
-@description('Name of the subscription receiving payment result events')
-param paymentSubscriptionName string = 'sales-order-payment-results'
+@description('Principal ID of the Sales Order Saga Function App (granted Service Bus Data Sender and Receiver on the topic). Empty skips the assignments.')
+param sagaPrincipalId string = ''
 
-@description('Principal ID of the identity that publishes OrderCreated (granted Service Bus Data Sender)')
-param publisherPrincipalId string
+@description('Principal ID of the BOM cost Function App (granted Service Bus Data Receiver on the queue). Empty skips the assignment.')
+param bomCostPrincipalId string = ''
 
-@description('Principal ID of the identity that consumes from the subscription (granted Service Bus Data Receiver)')
-param subscriberPrincipalId string
+var topicName = 'sales-order-events${entitySuffix}'
+var sagaSubscriptionName = 'sales-order-saga'
+var paymentSubscriptionName = 'sales-order-payment-results'
+var queueName = 'bom-batch-requests${entitySuffix}'
 
-@description('Resource tags')
-param tags object
-
-resource serviceBusNamespace 'Microsoft.ServiceBus/namespaces@2024-01-01' = {
-  name: name
-  location: location
-  tags: tags
-  sku: {
-    name: 'Standard'
-    tier: 'Standard'
-  }
+resource serviceBusNamespace 'Microsoft.ServiceBus/namespaces@2024-01-01' existing = {
+  name: namespaceName
 }
 
 resource topic 'Microsoft.ServiceBus/namespaces/topics@2024-01-01' = {
@@ -42,32 +36,34 @@ resource topic 'Microsoft.ServiceBus/namespaces/topics@2024-01-01' = {
   name: topicName
   properties: {
     defaultMessageTimeToLive: 'P1D'
-    requiresDuplicateDetection: true
+    requiresDuplicateDetection: requiresDuplicateDetection
     duplicateDetectionHistoryTimeWindow: 'PT10M'
   }
 }
 
-// Replace each subscription's default TrueFilter so a Function does not consume unrelated
-// topic messages before the intended trigger can receive them.
-resource orderCreatedRule 'Microsoft.ServiceBus/namespaces/topics/subscriptions/rules@2024-01-01' = {
-  parent: subscription
-  name: '$Default'
-  properties: {
-    filterType: 'SqlFilter'
-    sqlFilter: {
-      sqlExpression: 'sys.Label = ''OrderCreated'''
-      compatibilityLevel: 20
-    }
-  }
-}
-
-resource subscription 'Microsoft.ServiceBus/namespaces/topics/subscriptions@2024-01-01' = {
+resource sagaSubscription 'Microsoft.ServiceBus/namespaces/topics/subscriptions@2024-01-01' = {
   parent: topic
-  name: subscriptionName
+  name: sagaSubscriptionName
   properties: {
     defaultMessageTimeToLive: 'P1D'
     maxDeliveryCount: 10
     deadLetteringOnMessageExpiration: true
+  }
+}
+
+// Each subscription must filter on the message label so a Function does not consume unrelated topic
+// messages. The rules are NOT named '$Default': a rule with that name did not persist (verified
+// 2026-11-08 on the -local subscriptions, which ended up with no rules and so received nothing).
+// Verify the rules after the first deploy of a new suffix and confirm no TrueFilter '$Default' remains.
+resource orderCreatedRule 'Microsoft.ServiceBus/namespaces/topics/subscriptions/rules@2024-01-01' = {
+  parent: sagaSubscription
+  name: 'OrderCreatedOnly'
+  properties: {
+    filterType: 'SqlFilter'
+    sqlFilter: {
+      sqlExpression: 'sys.Label = \'OrderCreated\''
+      compatibilityLevel: 20
+    }
   }
 }
 
@@ -83,13 +79,24 @@ resource paymentSubscription 'Microsoft.ServiceBus/namespaces/topics/subscriptio
 
 resource paymentResultRule 'Microsoft.ServiceBus/namespaces/topics/subscriptions/rules@2024-01-01' = {
   parent: paymentSubscription
-  name: '$Default'
+  name: 'PaymentResultsOnly'
   properties: {
     filterType: 'SqlFilter'
     sqlFilter: {
-      sqlExpression: 'sys.Label IN (''PaymentApproved'', ''PaymentDeclined'')'
+      sqlExpression: 'sys.Label IN (\'PaymentApproved\', \'PaymentDeclined\')'
       compatibilityLevel: 20
     }
+  }
+}
+
+resource bomBatchQueue 'Microsoft.ServiceBus/namespaces/queues@2024-01-01' = {
+  parent: serviceBusNamespace
+  name: queueName
+  properties: {
+    lockDuration: 'PT1M'
+    maxDeliveryCount: 3
+    defaultMessageTimeToLive: 'P1D'
+    deadLetteringOnMessageExpiration: true
   }
 }
 
@@ -97,7 +104,7 @@ resource paymentResultRule 'Microsoft.ServiceBus/namespaces/topics/subscriptions
 var serviceBusDataSenderRoleId = '69a216fc-b8fb-44d8-bc22-1f3c2cd27a39'
 var serviceBusDataReceiverRoleId = '4f6d3b9b-027b-4f4c-9142-0e5a2a2247e0'
 
-resource publisherRoleAssignment 'Microsoft.Authorization/roleAssignments@2022-04-01' = {
+resource publisherRoleAssignment 'Microsoft.Authorization/roleAssignments@2022-04-01' = if (!empty(publisherPrincipalId)) {
   name: guid(topic.id, publisherPrincipalId, serviceBusDataSenderRoleId)
   scope: topic
   properties: {
@@ -109,29 +116,37 @@ resource publisherRoleAssignment 'Microsoft.Authorization/roleAssignments@2022-0
 
 // Azure RBAC for Service Bus does not support scoping to an individual subscription — topic is
 // the finest-grained scope available for a subscription consumer.
-resource subscriberRoleAssignment 'Microsoft.Authorization/roleAssignments@2022-04-01' = {
-  name: guid(subscription.id, subscriberPrincipalId, serviceBusDataReceiverRoleId)
+resource sagaReceiverRoleAssignment 'Microsoft.Authorization/roleAssignments@2022-04-01' = if (!empty(sagaPrincipalId)) {
+  name: guid(sagaSubscription.id, sagaPrincipalId, serviceBusDataReceiverRoleId)
   scope: topic
   properties: {
     roleDefinitionId: subscriptionResourceId('Microsoft.Authorization/roleDefinitions', serviceBusDataReceiverRoleId)
-    principalId: subscriberPrincipalId
+    principalId: sagaPrincipalId
     principalType: 'ServicePrincipal'
   }
 }
 
-// The Function publishes outbox messages as well as consuming its two subscriptions.
-resource functionPublisherRoleAssignment 'Microsoft.Authorization/roleAssignments@2022-04-01' = {
-  name: guid(topic.id, subscriberPrincipalId, serviceBusDataSenderRoleId)
+// The saga Function publishes outbox messages as well as consuming its two subscriptions.
+resource sagaSenderRoleAssignment 'Microsoft.Authorization/roleAssignments@2022-04-01' = if (!empty(sagaPrincipalId)) {
+  name: guid(topic.id, sagaPrincipalId, serviceBusDataSenderRoleId)
   scope: topic
   properties: {
     roleDefinitionId: subscriptionResourceId('Microsoft.Authorization/roleDefinitions', serviceBusDataSenderRoleId)
-    principalId: subscriberPrincipalId
+    principalId: sagaPrincipalId
     principalType: 'ServicePrincipal'
   }
 }
 
-output id string = serviceBusNamespace.id
-output name string = serviceBusNamespace.name
-output fullyQualifiedNamespace string = '${serviceBusNamespace.name}.servicebus.windows.net'
+resource bomCostReceiverRoleAssignment 'Microsoft.Authorization/roleAssignments@2022-04-01' = if (!empty(bomCostPrincipalId)) {
+  name: guid(bomBatchQueue.id, bomCostPrincipalId, serviceBusDataReceiverRoleId)
+  scope: bomBatchQueue
+  properties: {
+    roleDefinitionId: subscriptionResourceId('Microsoft.Authorization/roleDefinitions', serviceBusDataReceiverRoleId)
+    principalId: bomCostPrincipalId
+    principalType: 'ServicePrincipal'
+  }
+}
+
 output topicName string = topic.name
-output subscriptionName string = subscription.name
+output sagaSubscriptionName string = sagaSubscription.name
+output queueName string = bomBatchQueue.name

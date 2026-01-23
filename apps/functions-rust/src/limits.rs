@@ -30,6 +30,9 @@ pub const SQL_POOL_TIMEOUT: Duration = Duration::from_secs(5);
 pub const SQL_POOL_IDLE_TIMEOUT: Duration = Duration::from_secs(300);
 /// Cache time-to-live applied when `BomCache__TtlSeconds` is not set.
 pub const DEFAULT_CACHE_TTL: Duration = Duration::from_secs(300);
+/// Most entries the in-process cache holds when no Redis is configured. Keys are `(product, quantity)` pairs, so
+/// without a cap a caller could grow the cache without bound; the entry that expires soonest is evicted first.
+pub const MEMORY_CACHE_MAX_ENTRIES: usize = 1_000;
 /// Port used when `FUNCTIONS_CUSTOMHANDLER_PORT` is not set (standalone runs).
 pub const DEFAULT_PORT: u16 = 7071;
 

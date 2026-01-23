@@ -1,4 +1,5 @@
-# Build and validate the Rust Azure Functions custom handler: format check, clippy, tests, release build.
+# Build and validate the Rust Azure Functions custom handler: format check, clippy, tests, release build,
+# then package the handler and its host.json / function.json files into a zip artifact for deploy-functions-rust.yml.
 # Called as a job template from the main pipeline. The live integration tests are #[ignore]d and need local
 # SQL Server, Redis and a real Cosmos DB account, so they do not run here.
 
@@ -9,6 +10,9 @@ parameters:
   - name: rustToolchain
     type: string
     default: "stable"
+  - name: artifactName
+    type: string
+    default: "functions-rust-artifact"
 
 steps:
   - script: |
@@ -40,3 +44,35 @@ steps:
   - script: cargo build --locked --release
     displayName: "Build release binary"
     workingDirectory: ${{ parameters.workingDirectory }}
+
+  # The zip root is the Function App root: host.json, the handler binary named by host.json's
+  # defaultExecutablePath, and one folder per function (every folder holding a function.json).
+  # Info-ZIP records the Unix mode, so the binary stays executable on the Linux host; the check fails the build
+  # if it does not. local.settings.json is never copied.
+  - bash: |
+      set -euo pipefail
+      stage="$(Build.ArtifactStagingDirectory)/functions-rust"
+      rm -rf "$stage" "$(Build.ArtifactStagingDirectory)/functions-rust.zip"
+      mkdir -p "$stage"
+      cp target/release/handler host.json "$stage/"
+      for definition in */function.json; do
+        cp -R "$(dirname "$definition")" "$stage/"
+      done
+      (cd "$stage" && zip -qr ../functions-rust.zip .)
+      unzip -Z "$(Build.ArtifactStagingDirectory)/functions-rust.zip" handler | grep -q '^-rwx' \
+        || { echo "handler is not executable inside the zip"; exit 1; }
+      unzip -Z1 "$(Build.ArtifactStagingDirectory)/functions-rust.zip"
+    displayName: "Package Function App zip"
+    workingDirectory: ${{ parameters.workingDirectory }}
+
+  # Custom handlers fail at start-up if the binary needs a newer glibc than the Functions host image has,
+  # so the requirement is printed with the build for comparison when a deploy does not come up.
+  - bash: objdump -T target/release/handler | grep -o 'GLIBC_[0-9.]*' | sort -uV | tail -1
+    displayName: "Report required glibc version"
+    workingDirectory: ${{ parameters.workingDirectory }}
+    continueOnError: true
+
+  - template: publish-artifact.yml
+    parameters:
+      artifactName: "${{ parameters.artifactName }}"
+      targetPath: "$(Build.ArtifactStagingDirectory)/functions-rust.zip"

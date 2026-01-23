@@ -1,5 +1,7 @@
 // Deployment strategy: Creates App Service Plan + 4 App Services (dev + prod API and Web).
 // References existing App Insights (same RG) and Key Vault (cross-RG). SQL is not managed here.
+// The Service Bus namespace (mick-adventureworks-events) and Cosmos account (mickcosmos) already exist
+// and are shared by every environment; this file only manages entities and role assignments in them.
 targetScope = 'resourceGroup'
 
 @allowed(['dev', 'prod'])
@@ -36,19 +38,45 @@ param deploySalesOrderSaga bool = false
 @description('Required base URL for the payment authorization service.')
 param paymentAuthorizationBaseUrl string
 
+@description('Whether to deploy the BOM cost Rust Function App (Feature 609, Enabler Feature 1024) on the shared App Service plan.')
+param deployBomCostFunction bool = false
+
+@description('Whether to also create the -local topic and queue in the shared Service Bus namespace, for running the apps on a developer machine without touching the cloud dev entities.')
+param provisionLocalMessaging bool = false
+
+@description('Name of the existing Cosmos DB account')
+param cosmosAccountName string = 'mickcosmos'
+
+@description('Resource group containing the existing Cosmos DB account')
+param cosmosResourceGroup string = 'Mick-West-US-3-CosmosDb'
+
+@description('Name of the existing Key Vault secret that holds the AdventureWorks SQL connection string (ADO.NET format)')
+param sqlConnectionStringSecretName string = 'adventureworks-sql-connection-string'
+
+@description('Name of the Key Vault secret that holds the Redis connection string. Leave empty to run without Redis: the BOM cost app then caches results in process.')
+param redisConnectionStringSecretName string = ''
+
 // --- Naming ---
 var envSuffix = environment == 'prod' ? '' : '-${environment}'
 var apiAppName = '${namingPrefix}-api${envSuffix}'
 var webAppName = '${namingPrefix}-web${envSuffix}'
 var planName = '${namingPrefix}-plan'
-var serviceBusNamespaceName = '${namingPrefix}-sb${envSuffix}'
+// One namespace for every environment; entities are separated by envSuffix ('' prod, -dev, -local).
+var serviceBusNamespaceName = 'mick-adventureworks-events'
 var salesOrderSagaFunctionAppName = '${namingPrefix}-saga${envSuffix}'
 // Storage account names must be 3-24 lowercase alphanumeric characters — namingPrefix contains
 // hyphens and would exceed the limit, so this uses a dedicated short name instead.
 var salesOrderSagaStorageAccountName = toLower('awsagafn${environment}')
-var salesOrderSagaTopicName = 'sales-order-events'
+// Must match the topic and subscription names serviceBus.bicep creates for this envSuffix.
+var salesOrderSagaTopicName = 'sales-order-events${envSuffix}'
 var salesOrderSagaSubscriptionName = 'sales-order-saga'
 var salesOrderSagaPaymentSubscriptionName = 'sales-order-payment-results'
+var bomCostFunctionAppName = '${namingPrefix}-bomcost${envSuffix}'
+var bomCostStorageAccountName = toLower('awbomfn${environment}')
+var bomBatchQueueName = 'bom-batch-requests${envSuffix}'
+var bomCostContainerName = 'bom-cost-results${envSuffix}'
+var cosmosDatabaseName = 'PlatformDatabases'
+var keyVaultUri = 'https://${keyVaultName}${az.environment().suffixes.keyvaultDns}/'
 
 // --- Tags ---
 var tags = {
@@ -127,17 +155,28 @@ module salesOrderSagaStorage 'modules/storageAccount.bicep' = if (deploySalesOrd
   }
 }
 
-module salesOrderSagaServiceBus 'modules/serviceBus.bicep' = if (deploySalesOrderSaga) {
-  name: 'salesOrderSagaServiceBus-${environment}'
+// Topic, subscriptions, filter rules and queue for THIS environment's suffix in the shared namespace.
+module serviceBus 'modules/serviceBus.bicep' = if (deploySalesOrderSaga || deployBomCostFunction) {
+  name: 'serviceBus-${environment}'
   params: {
-    name: serviceBusNamespaceName
-    location: location
-    topicName: salesOrderSagaTopicName
-    subscriptionName: salesOrderSagaSubscriptionName
-    paymentSubscriptionName: salesOrderSagaPaymentSubscriptionName
+    namespaceName: serviceBusNamespaceName
+    entitySuffix: envSuffix
+    // The live prod topic was created without duplicate detection, which cannot be changed in place.
+    requiresDuplicateDetection: environment != 'prod'
     publisherPrincipalId: apiAppService.outputs.principalId
-    subscriberPrincipalId: salesOrderSagaFunctionApp.outputs.principalId
-    tags: tags
+    sagaPrincipalId: deploySalesOrderSaga ? salesOrderSagaFunctionApp!.outputs.principalId : ''
+    bomCostPrincipalId: deployBomCostFunction ? bomCostFunctionApp!.outputs.principalId : ''
+  }
+}
+
+// The -local entities exist only so a developer machine can run against real Service Bus without
+// touching the cloud dev topic and queue. No app runs in Azure for them, so no principals are granted
+// here; the developer's own login needs Service Bus Data Sender/Receiver on them.
+module serviceBusLocal 'modules/serviceBus.bicep' = if (provisionLocalMessaging) {
+  name: 'serviceBusLocal-${environment}'
+  params: {
+    namespaceName: serviceBusNamespaceName
+    entitySuffix: '-local'
   }
 }
 
@@ -188,6 +227,65 @@ resource salesOrderSagaStorageRoleAssignments 'Microsoft.Authorization/roleAssig
   }
 ]
 
+// --- BOM cost Rust Function App (Feature 609, Enabler Feature 1024) ---
+// Runs on the shared App Service plan (B1) with Always On, not on its own plan.
+
+module bomCostStorage 'modules/storageAccount.bicep' = if (deployBomCostFunction) {
+  name: 'bomCostStorage-${environment}'
+  params: {
+    name: bomCostStorageAccountName
+    location: location
+    tags: tags
+  }
+}
+
+module bomCostFunctionApp 'modules/functionAppRust.bicep' = if (deployBomCostFunction) {
+  name: 'bomCostFunctionApp-${environment}'
+  params: {
+    name: bomCostFunctionAppName
+    location: location
+    appServicePlanId: appServicePlan.outputs.id
+    storageAccountName: bomCostStorage!.outputs.name
+    appInsightsConnectionString: appInsights.properties.ConnectionString
+    serviceBusFullyQualifiedNamespace: '${serviceBusNamespaceName}.servicebus.windows.net'
+    bomBatchQueueName: bomBatchQueueName
+    keyVaultUri: keyVaultUri
+    cosmosEndpoint: 'https://${cosmosAccountName}.documents.azure.com:443/'
+    cosmosDatabase: cosmosDatabaseName
+    cosmosContainer: bomCostContainerName
+    cosmosPreferredRegion: location == 'westus3' ? 'West US 3' : location
+    sqlConnectionStringReference: '@Microsoft.KeyVault(SecretUri=${keyVaultUri}secrets/${sqlConnectionStringSecretName}/)'
+    redisConnectionStringReference: empty(redisConnectionStringSecretName)
+      ? ''
+      : '@Microsoft.KeyVault(SecretUri=${keyVaultUri}secrets/${redisConnectionStringSecretName}/)'
+    tags: tags
+  }
+}
+
+// The vault MickKeyVaultWestUS uses access policies, so keyVaultAccess.bicep (an RBAC role) would
+// have no effect here.
+module bomCostKeyVaultAccess 'modules/keyVaultAccessPolicy.bicep' = if (deployBomCostFunction) {
+  name: 'bomCostKeyVaultAccess-${environment}'
+  scope: resourceGroup(keyVaultResourceGroup)
+  params: {
+    keyVaultName: keyVaultName
+    principalIds: [
+      bomCostFunctionApp!.outputs.principalId
+    ]
+  }
+}
+
+module bomCostCosmosAccess 'modules/cosmosRoleAssignment.bicep' = if (deployBomCostFunction) {
+  name: 'bomCostCosmosAccess-${environment}'
+  scope: resourceGroup(cosmosResourceGroup)
+  params: {
+    accountName: cosmosAccountName
+    databaseName: cosmosDatabaseName
+    containerName: bomCostContainerName
+    principalId: bomCostFunctionApp!.outputs.principalId
+  }
+}
+
 // --- Outputs ---
 output apiAppServiceName string = apiAppService.outputs.name
 output apiAppServiceHostName string = apiAppService.outputs.defaultHostName
@@ -195,4 +293,5 @@ output webAppServiceName string = webAppService.outputs.name
 output webAppServiceHostName string = webAppService.outputs.defaultHostName
 output keyVaultUri string = 'https://${keyVaultName}${az.environment().suffixes.keyvaultDns}/'
 output salesOrderSagaFunctionAppName string = deploySalesOrderSaga ? salesOrderSagaFunctionApp.outputs.name : ''
-output salesOrderSagaServiceBusNamespace string = deploySalesOrderSaga ? salesOrderSagaServiceBus.outputs.fullyQualifiedNamespace : ''
+output salesOrderSagaServiceBusNamespace string = deploySalesOrderSaga ? '${serviceBusNamespaceName}.servicebus.windows.net' : ''
+output bomCostFunctionAppName string = deployBomCostFunction ? bomCostFunctionApp!.outputs.name : ''

@@ -74,8 +74,8 @@ steps:
       buildConfiguration: "${{ parameters.buildConfiguration }}"
       testOptions: "--no-build"
       environment:
-        AutoMapperLicenseKey: $(AutoMapperLicenseKey)
-        MediatRLicenseKey: $(MediatRLicenseKey)
+        AutoMapperLicenseKey: $(automapper-license-key)
+        MediatRLicenseKey: $(mediatr-license-key)
 
   - template: run-dotnet-test.yml
     parameters:
@@ -85,8 +85,8 @@ steps:
       buildConfiguration: "${{ parameters.buildConfiguration }}"
       testOptions: "--no-build"
       environment:
-        AutoMapperLicenseKey: $(AutoMapperLicenseKey)
-        MediatRLicenseKey: $(MediatRLicenseKey)
+        AutoMapperLicenseKey: $(automapper-license-key)
+        MediatRLicenseKey: $(mediatr-license-key)
         ASPNETCORE_ENVIRONMENT: Testing
         APPSETTING_ASPNETCORE_ENVIRONMENT: Testing
         DOTNET_ENVIRONMENT: Testing

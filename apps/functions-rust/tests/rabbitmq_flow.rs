@@ -189,7 +189,11 @@ async fn handler() -> (Router, CosmosResultStore) {
     let repository = SqlBomRepository::connect(&settings.sql_connection_string)
         .await
         .unwrap();
-    let cache = RedisCache::new(&settings.redis_url).unwrap();
+    let redis_url = settings
+        .redis_url
+        .as_deref()
+        .expect("ConnectionStrings__Redis must be set for the RabbitMQ tests");
+    let cache = RedisCache::new(redis_url).unwrap();
     let store = CosmosResultStore::new(&settings.cosmos).unwrap();
     let state = Arc::new(AppState {
         service: BomService::new(repository, cache, settings.cache_ttl),

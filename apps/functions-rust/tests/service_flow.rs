@@ -2,7 +2,7 @@
 
 mod common;
 
-use std::time::Duration;
+use std::{sync::atomic::Ordering, time::Duration};
 
 use aw_bom_cost::{
     config::CosmosSettings,
@@ -11,9 +11,9 @@ use aw_bom_cost::{
         model::{BomEdge, ProductId, ProductInfo},
     },
     error::ServiceError,
-    infra::cosmos::CosmosResultStore,
-    limits::MAX_BOM_DEPTH,
-    service::{BomService, CacheMode},
+    infra::{cosmos::CosmosResultStore, memory_cache::MemoryCache},
+    limits::{MAX_BOM_DEPTH, MEMORY_CACHE_MAX_ENTRIES},
+    service::{BomService, CacheMode, CacheStatus},
     validation::CostRequest,
 };
 use axum::http::StatusCode;
@@ -47,6 +47,23 @@ fn request(product_id: ProductId) -> CostRequest {
         quantity: 1,
         overrides: Default::default(),
     }
+}
+
+#[tokio::test]
+async fn in_process_cache_serves_a_repeat_request_without_querying_sql() {
+    let app = TestApp::with_repo(chain(2));
+    let cache = MemoryCache::new(MEMORY_CACHE_MAX_ENTRIES);
+    let service = BomService::new(app.repo.clone(), cache, TEST_TTL);
+
+    let (first, first_status) = service.cost(&request(0), CacheMode::Use).await.unwrap();
+    let queries_after_first = app.repo.component_queries.load(Ordering::SeqCst);
+    let (second, second_status) = service.cost(&request(0), CacheMode::Use).await.unwrap();
+
+    assert_eq!(first_status, CacheStatus::Miss);
+    assert_eq!(second_status, CacheStatus::Hit);
+    assert_eq!(second.unit_cost.material, first.unit_cost.material);
+    assert!(queries_after_first > 0, "the first request must have queried SQL");
+    assert_eq!(app.repo.component_queries.load(Ordering::SeqCst), queries_after_first);
 }
 
 #[tokio::test]

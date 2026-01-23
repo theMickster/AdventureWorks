@@ -40,7 +40,7 @@ the `adventureworks-sql-connection-string` Key Vault secret below, not MI).
 
 ## BOM Cost Functions Configuration (`apps/functions-rust`)
 
-No Cosmos account key anywhere, and no Cosmos emulator: with `KeyVault__VaultUri` set, the Cosmos endpoint comes from Key Vault, and the handler authenticates to Key Vault and Cosmos with Microsoft Entra ID (managed identity in Azure, developer login locally). No Function App exists yet, so the Azure Runtime column is the intended setup and nothing in it has been deployed. Resource names per environment are in `infra/AZURE_FUNCTIONS_SETUP.md`.
+No Cosmos account key anywhere, and no Cosmos emulator: with `KeyVault__VaultUri` set, the Cosmos endpoint comes from Key Vault, and the handler authenticates to Key Vault and Cosmos with Microsoft Entra ID (managed identity in Azure, developer login locally). The dev Function App `mick-adventureworks-bomcost-dev` exists (from `infra/modules/functionAppRust.bicep`) and no prod app does. The Azure Runtime column lists its settings; the app has not run with them yet, so identity-based access to Key Vault, Cosmos and Service Bus is unverified. Resource names per environment are in `infra/AZURE_FUNCTIONS_SETUP.md`.
 
 | Config Key                                      | Local Dev                                          | Azure Runtime (intended)                                       |
 | ----------------------------------------------- | -------------------------------------------------- | -------------------------------------------------------------- |
@@ -49,10 +49,10 @@ No Cosmos account key anywhere, and no Cosmos emulator: with `KeyVault__VaultUri
 | `Cosmos__Database`                              | `local.settings.json` (`PlatformDatabases`)        | App setting (`PlatformDatabases`)                              |
 | `Cosmos__Container`                             | `local.settings.json`                              | App setting (`bom-cost-results`, `-dev` or `-local`)           |
 | `Cosmos__PreferredRegion`                       | `local.settings.json`                              | App setting (`West US 3`, unverified)                          |
-| `ConnectionStrings__AdventureWorks` (SQL)       | `local.settings.json`                              | Not decided                                                    |
-| `ConnectionStrings__Redis`                      | `local.settings.json`                              | Not decided                                                    |
+| `ConnectionStrings__AdventureWorks` (SQL)       | `local.settings.json`                              | Key Vault reference to `adventureworks-sql-connection-string`  |
+| `ConnectionStrings__Redis`                      | `local.settings.json`                              | Optional; unset means in-process cache (no Redis in Azure)     |
 | `ServiceBusConnection__fullyQualifiedNamespace` | `local.settings.json` (real namespace, `az login`) | App setting (identity-based, no connection string)             |
-| `BomBatchQueueName`                             | `local.settings.json` (`bom-batch-requests-dev`)   | App setting (`bom-batch-requests` or `bom-batch-requests-dev`) |
+| `BomBatchQueueName`                             | `local.settings.json` (`bom-batch-requests-local`) | App setting (`bom-batch-requests` or `bom-batch-requests-dev`) |
 
 ## Angular Configuration (Frontend)
 
@@ -81,7 +81,7 @@ These values are baked into the Angular build as `__PLACEHOLDER__` tokens and re
 
 | Key Vault Secret Name                                  | Value Source                          | Consumed By                     |
 | ------------------------------------------------------- | ------------------------------------- | ------------------------------- |
-| `adventureworks-sql-connection-string`                  | Same as App Service `DefaultConnection` | DbUp migrations (pipeline)    |
+| `adventureworks-sql-connection-string`                  | Same as App Service `DefaultConnection` | DbUp migrations (pipeline), BOM Cost Functions (`ConnectionStrings__AdventureWorks`) |
 | `adventureworks-aplication-insights-connection-string`  | App Service `APPLICATIONINSIGHTS_CONNECTION_STRING` | Angular token replacement |
 | `adventureworks-entra-client-id`                        | Entra app registration client ID      | Angular token replacement       |
 | `automapper-license-key`                                | AutoMapper license key                | .NET unit tests (build-time)    |

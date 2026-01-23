@@ -33,6 +33,9 @@ stages:
   - stage: BuildAPI
     displayName: 'Build API'
     dependsOn: []
+    variables:
+      # License-dependent API tests run before either deployment stage.
+      - group: 'AdventureWorks-Dev-Secrets'
     jobs:
       - job: BuildDotNetAPI
         displayName: 'Build .NET API'
@@ -98,6 +101,18 @@ stages:
       secretsVariableGroup: 'AdventureWorks-Dev-Secrets'
       azureSubscription: $(azureSubscription)
       dotNetSdkVersion: $(dotNetSdkVersion)
+
+  # --- Deploy BOM Cost Rust Function App to Dev (no prod app is provisioned yet, so there is no prod stage) ---
+
+  - template: pipelines/templates/deploy-functions-rust.yml
+    parameters:
+      stageName: DeployDevBomCost
+      displayName: 'Deploy BOM Cost Functions to Development'
+      dependsOn:
+        - BuildRustFunctions
+      environmentName: 'AdventureWorks-Dev'
+      azureSubscription: $(azureSubscription)
+      functionAppName: 'mick-adventureworks-bomcost-dev'
 
   # --- Deploy Prod (requires approval gate) ---
 

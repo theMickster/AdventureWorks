@@ -3,8 +3,13 @@
 use std::{net::Ipv4Addr, sync::Arc};
 
 use aw_bom_cost::{
+    config::Settings,
     http::{AppState, router},
-    infra::{cosmos::CosmosResultStore, key_vault, redis_cache::RedisCache, sql::SqlBomRepository},
+    infra::{
+        cosmos::CosmosResultStore, key_vault, memory_cache::MemoryCache, redis_cache::RedisCache, sql::SqlBomRepository,
+    },
+    limits::MEMORY_CACHE_MAX_ENTRIES,
+    ports::ResultCache,
     service::BomService,
 };
 use tokio::{net::TcpListener, signal};
@@ -19,9 +24,27 @@ async fn main() -> Result<(), Box<dyn std::error::Error>> {
 
     let settings = key_vault::settings_from_env().await?;
     let repository = SqlBomRepository::connect(&settings.sql_connection_string).await?;
-    let cache = RedisCache::new(&settings.redis_url)?;
     let store = CosmosResultStore::new(&settings.cosmos)?;
 
+    match &settings.redis_url {
+        Some(url) => {
+            tracing::info!("caching results in Redis");
+            serve(repository, RedisCache::new(url)?, store, &settings).await
+        }
+        None => {
+            tracing::info!("no Redis configured; caching results in process");
+            serve(repository, MemoryCache::new(MEMORY_CACHE_MAX_ENTRIES), store, &settings).await
+        }
+    }
+}
+
+/// Serves the handler over `cache`, which is either Redis or the in-process cache.
+async fn serve<C: ResultCache + 'static>(
+    repository: SqlBomRepository,
+    cache: C,
+    store: CosmosResultStore,
+    settings: &Settings,
+) -> Result<(), Box<dyn std::error::Error>> {
     let state = Arc::new(AppState {
         service: BomService::new(repository, cache, settings.cache_ttl),
         store,
