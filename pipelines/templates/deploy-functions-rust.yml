@@ -57,8 +57,8 @@ stages:
 
                 # A custom handler that fails to start (wrong glibc, missing app setting, SQL or Key Vault access)
                 # still deploys successfully, so probe the anonymous health route. 200 means SQL answered; a Redis-less
-                # app reports its in-process cache as healthy. continueOnError reports a failed probe as a warning
-                # instead of failing a deploy that did reach the app.
+                # app reports its in-process cache as healthy. A failed probe fails the stage, because the deploy
+                # task reports success even when the app never comes up.
                 - bash: |
                     set -uo pipefail
                     url="${APP_URL%/}/api/health"
@@ -74,6 +74,5 @@ stages:
                     echo "Health check failed after 12 attempts: $url"
                     exit 1
                   displayName: 'Probe /api/health'
-                  continueOnError: true
                   env:
                     APP_URL: $(deployBomCost.AppServiceApplicationUrl)

@@ -1,5 +1,6 @@
-# Build and validate the Rust Azure Functions custom handler: format check, clippy, tests, release build,
-# then package the handler and its host.json / function.json files into a zip artifact for deploy-functions-rust.yml.
+# Build and validate the Rust Azure Functions custom handler: format check, clippy, tests, a release build inside
+# a Debian 11 container (matching the Functions host's glibc), then package the handler and its host.json and
+# function.json files into a zip artifact for deploy-functions-rust.yml.
 # Called as a job template from the main pipeline. The live integration tests are #[ignore]d and need local
 # SQL Server, Redis and a real Cosmos DB account, so they do not run here.
 
@@ -13,6 +14,12 @@ parameters:
   - name: artifactName
     type: string
     default: "functions-rust-artifact"
+  - name: buildImage
+    type: string
+    default: "rust:1-bullseye"
+  - name: maxGlibcVersion
+    type: string
+    default: "2.31"
 
 steps:
   - script: |
@@ -41,8 +48,39 @@ steps:
     displayName: "Run tests"
     workingDirectory: ${{ parameters.workingDirectory }}
 
-  - script: cargo build --locked --release
-    displayName: "Build release binary"
+  # The binary that ships is built inside a Debian 11 container because the Functions host image on App Service
+  # (azure-functions/bullseye/...) has glibc 2.31, and a binary built on ubuntu-latest needs glibc 2.39 and does not
+  # start there. The container writes to target/bullseye, apart from the host build that the tests use, because
+  # build scripts compiled against the newer glibc cannot run inside the container. It runs as the agent user so the
+  # workspace stays deletable, and shares the cached Cargo registry.
+  - bash: |
+      set -euo pipefail
+      mkdir -p "$HOME/.cargo/registry"
+      docker run --rm \
+        --user "$(id -u):$(id -g)" \
+        --volume "$HOME/.cargo:/cargo" \
+        --volume "$PWD:/src" \
+        --workdir /src \
+        --env CARGO_HOME=/cargo \
+        --env CARGO_TARGET_DIR=/src/target/bullseye \
+        ${{ parameters.buildImage }} \
+        cargo build --locked --release
+    displayName: "Build release binary (${{ parameters.buildImage }})"
+    workingDirectory: ${{ parameters.workingDirectory }}
+
+  # Fails the build before anything is packaged when the binary needs a newer glibc than the Functions host image.
+  # Raise maxGlibcVersion only after confirming the host image changed.
+  - bash: |
+      set -euo pipefail
+      required=$(objdump -T target/bullseye/release/handler | grep -o 'GLIBC_[0-9.]*' | sort -uV | tail -1 | cut -d_ -f2)
+      allowed="${{ parameters.maxGlibcVersion }}"
+      echo "handler needs glibc $required; the Functions host image provides $allowed"
+      newest=$(printf '%s\n%s\n' "$required" "$allowed" | sort -V | tail -1)
+      if [ "$newest" != "$allowed" ]; then
+        echo "##[error]handler needs glibc $required but the Functions host image only has $allowed"
+        exit 1
+      fi
+    displayName: "Check required glibc version"
     workingDirectory: ${{ parameters.workingDirectory }}
 
   # The zip root is the Function App root: host.json, the handler binary named by host.json's
@@ -54,7 +92,7 @@ steps:
       stage="$(Build.ArtifactStagingDirectory)/functions-rust"
       rm -rf "$stage" "$(Build.ArtifactStagingDirectory)/functions-rust.zip"
       mkdir -p "$stage"
-      cp target/release/handler host.json "$stage/"
+      cp target/bullseye/release/handler host.json "$stage/"
       for definition in */function.json; do
         cp -R "$(dirname "$definition")" "$stage/"
       done
@@ -64,13 +102,6 @@ steps:
       unzip -Z1 "$(Build.ArtifactStagingDirectory)/functions-rust.zip"
     displayName: "Package Function App zip"
     workingDirectory: ${{ parameters.workingDirectory }}
-
-  # Custom handlers fail at start-up if the binary needs a newer glibc than the Functions host image has,
-  # so the requirement is printed with the build for comparison when a deploy does not come up.
-  - bash: objdump -T target/release/handler | grep -o 'GLIBC_[0-9.]*' | sort -uV | tail -1
-    displayName: "Report required glibc version"
-    workingDirectory: ${{ parameters.workingDirectory }}
-    continueOnError: true
 
   - template: publish-artifact.yml
     parameters:
