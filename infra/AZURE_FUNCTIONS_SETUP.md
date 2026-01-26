@@ -57,6 +57,12 @@ The TTL alone can be updated in place as above; duplicate detection needs `az se
 az cosmosdb sql role assignment create -a mickcosmos -g Mick-West-US-3-CosmosDb --role-definition-id 00000000-0000-0000-0000-000000000002 --principal-id <principal-id> --scope "/"
 ```
 
+- [ ] A database user for each Function App's managed identity on the `AdventureWorks` database (server `mletofsky`). The app logs in with an Entra token, with no password (`Authentication=Active Directory Default` in `ConnectionStrings__AdventureWorks`), and Bicep cannot create the user. Run this in `AdventureWorks`, not `master`, as a member of the server's Entra admin group `SQLAdmins`; a SQL login cannot run `FROM EXTERNAL PROVIDER`. The user name is the Function App's name, and `db_datareader` is enough because the handler only reads. Confirmed for dev on 2026-11-11: the server accepts logins from `SQLAdmins` members through `az login` (`--authentication-method ActiveDirectoryAzCli`), and no user for `mick-adventureworks-bomcost-dev` existed before this step.
+
+```bash
+sqlcmd -S mletofsky.database.windows.net -d AdventureWorks --authentication-method ActiveDirectoryAzCli -Q "CREATE USER [mick-adventureworks-bomcost-dev] FROM EXTERNAL PROVIDER; ALTER ROLE db_datareader ADD MEMBER [mick-adventureworks-bomcost-dev];"
+```
+
 ## New items to create
 
 Cosmos containers (`bom-cost-results-local` too, for local development against the real account), no dedicated throughput (they use the shared pool). The partition key is a single-level `/productId`, version 2, because every access is a point read or upsert by `(productId, id)`. Hierarchical keys were rejected: the id already encodes the quantity, so a second key level gives one document per key and no benefit. Indexing excludes every path because only point reads and upserts are used; any future query must first add the paths it filters on.
@@ -109,6 +115,7 @@ az rest --method get --resource https://servicebus.azure.net --url "https://mick
 - That the rules listed under Filters and rules are still present after time has passed (checked once, right after creation).
 - The API publisher of `OrderCreated`: not found in `apps/api-dotnet/src`, so it is unconfirmed that it sets the label the saga filter matches.
 - The Service Bus trigger against the PROD queue and a managed identity. Locally, the host resolved `%BomBatchQueueName%` to `bom-batch-requests-dev` and ran a message end to end with your developer login (2026-10-04, see `apps/functions-rust/local-dev/SMOKE_TEST.md`).
+- Managed-identity auth against Azure SQL. The handler's token login is confirmed locally (`az login` against the real database, `/api/health` returned 200), but not with the app's own identity, and the redirect handling for Azure-internal logins has not run in Azure.
 - Managed-identity auth against real Cosmos and Key Vault. The dev app's role assignments exist (Key Vault `get` policy, Cosmos data role on `bom-cost-results-dev`, Service Bus Data Receiver on `bom-batch-requests-dev`), but as of 2026-11-10 no code has been deployed to it, so they have not been exercised. Your developer login has been confirmed locally: the host read the vault and the live tests wrote to and read back from `bom-cost-results-local`.
 - The `West US 3` value for `Cosmos__PreferredRegion`.
 - Container TTL with the index excluded (no TTL is set above).

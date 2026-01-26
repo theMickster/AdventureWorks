@@ -50,8 +50,11 @@ param cosmosAccountName string = 'mickcosmos'
 @description('Resource group containing the existing Cosmos DB account')
 param cosmosResourceGroup string = 'Mick-West-US-3-CosmosDb'
 
-@description('Name of the existing Key Vault secret that holds the AdventureWorks SQL connection string (ADO.NET format)')
-param sqlConnectionStringSecretName string = 'adventureworks-sql-connection-string'
+@description('Name of the existing Azure SQL server that the BOM cost app reads. The app logs in with its managed identity, so its database user must exist (see infra/AZURE_FUNCTIONS_SETUP.md).')
+param sqlServerName string = 'mletofsky'
+
+@description('Name of the AdventureWorks database on that server')
+param sqlDatabaseName string = 'AdventureWorks'
 
 @description('Name of the Key Vault secret that holds the Redis connection string. Leave empty to run without Redis: the BOM cost app then caches results in process.')
 param redisConnectionStringSecretName string = ''
@@ -254,7 +257,7 @@ module bomCostFunctionApp 'modules/functionAppRust.bicep' = if (deployBomCostFun
     cosmosDatabase: cosmosDatabaseName
     cosmosContainer: bomCostContainerName
     cosmosPreferredRegion: location == 'westus3' ? 'West US 3' : location
-    sqlConnectionStringReference: '@Microsoft.KeyVault(SecretUri=${keyVaultUri}secrets/${sqlConnectionStringSecretName}/)'
+    sqlConnectionString: 'Server=tcp:${sqlServerName}${az.environment().suffixes.sqlServerHostname},1433;Initial Catalog=${sqlDatabaseName};Authentication=Active Directory Default;Encrypt=True;Connection Timeout=45'
     redisConnectionStringReference: empty(redisConnectionStringSecretName)
       ? ''
       : '@Microsoft.KeyVault(SecretUri=${keyVaultUri}secrets/${redisConnectionStringSecretName}/)'

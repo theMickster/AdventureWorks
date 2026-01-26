@@ -34,7 +34,8 @@ pub struct CosmosSettings {
 pub struct Settings {
     /// Port the Functions host assigned to this handler.
     pub port: u16,
-    /// ADO.NET connection string for AdventureWorks.
+    /// ADO.NET connection string for AdventureWorks. With `Authentication=Active Directory Default` it holds no
+    /// credentials and the handler logs in with a Microsoft Entra token.
     pub sql_connection_string: String,
     /// Redis URL, for example `redis://localhost:6380`. `None` means no Redis: results are cached in process.
     pub redis_url: Option<String>,

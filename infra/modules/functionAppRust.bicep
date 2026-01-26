@@ -39,8 +39,8 @@ param cosmosContainer string
 @description('Region the Cosmos SDK prefers for routing; must be a region of the account')
 param cosmosPreferredRegion string
 
-@description('Key Vault reference value for the AdventureWorks SQL connection string, for example @Microsoft.KeyVault(SecretUri=...)')
-param sqlConnectionStringReference string
+@description('AdventureWorks SQL connection string. It holds no secret: Authentication=Active Directory Default makes the handler log in with its managed identity, which needs a database user (see infra/AZURE_FUNCTIONS_SETUP.md).')
+param sqlConnectionString string
 
 @description('Key Vault reference value for the Redis connection string. Empty omits the setting, and the handler then caches results in process instead of in Redis.')
 param redisConnectionStringReference string = ''
@@ -84,7 +84,7 @@ resource functionApp 'Microsoft.Web/sites@2024-04-01' = {
           { name: 'Cosmos__Database', value: cosmosDatabase }
           { name: 'Cosmos__Container', value: cosmosContainer }
           { name: 'Cosmos__PreferredRegion', value: cosmosPreferredRegion }
-          { name: 'ConnectionStrings__AdventureWorks', value: sqlConnectionStringReference }
+          { name: 'ConnectionStrings__AdventureWorks', value: sqlConnectionString }
         ],
         empty(redisConnectionStringReference)
           ? []
