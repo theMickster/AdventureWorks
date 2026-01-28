@@ -6,8 +6,8 @@
   </PropertyGroup>
   <ItemGroup>
     <PackageReference Include="Azure.Messaging.ServiceBus" Version="7.21.0" />
-    <PackageReference Include="Microsoft.Data.SqlClient" Version="7.1.1" />
-    <PackageReference Include="System.Security.Cryptography.Pkcs" Version="10.0.13" />
+    <PackageReference Include="Microsoft.Data.SqlClient" Version="7.1.2" />
+    <PackageReference Include="System.Security.Cryptography.Pkcs" Version="10.0.15" />
     <ProjectReference Include="../../src/AdventureWorks.SalesOrderSaga.Contracts/AdventureWorks.SalesOrderSaga.Contracts.csproj" />
   </ItemGroup>
 </Project>
