@@ -7,7 +7,9 @@ import { NotificationService } from '@adventureworks-web/shared/util';
 import { renderEmployeeComponent } from '../testing/render-employee-component';
 import { EmployeeRehireModalComponent } from './employee-rehire-modal';
 
-const mockDepartments: Department[] = [{ id: 1, name: 'Engineering', groupName: 'Research and Development', modifiedDate: '2020-01-01' }];
+const mockDepartments: Department[] = [
+  { id: 1, name: 'Engineering', groupName: 'Research and Development', modifiedDate: '2020-01-01' },
+];
 
 function daysFromToday(days: number): string {
   const date = new Date();
@@ -37,7 +39,9 @@ describe('EmployeeRehireModalComponent', () => {
       rehireEmployee: vi
         .fn()
         .mockReturnValue(
-          options.rehireError ? throwError(() => new Error('Network error')) : of({ businessEntityId: 2, message: 'ok' }),
+          options.rehireError
+            ? throwError(() => new Error('Network error'))
+            : of({ businessEntityId: 2, message: 'ok' }),
         ),
       getEmployee: vi.fn().mockReturnValue(of({ id: 2 })),
     };
@@ -176,7 +180,10 @@ describe('EmployeeRehireModalComponent', () => {
   });
 
   it('stays open and shows an error toast on failure', async () => {
-    const { fixture, component, mockNotificationService } = await setup({ daysSinceTermination: 90, rehireError: true });
+    const { fixture, component, mockNotificationService } = await setup({
+      daysSinceTermination: 90,
+      rehireError: true,
+    });
     fillValidForm(component);
     component['onNext']();
 

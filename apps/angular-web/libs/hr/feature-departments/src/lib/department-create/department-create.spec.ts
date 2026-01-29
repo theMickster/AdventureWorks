@@ -21,7 +21,11 @@ describe('DepartmentCreateComponent', () => {
   async function setup(options: { departments?: Department[] } = {}) {
     const mockHrApi = {
       getDepartments: vi.fn().mockReturnValue(of(options.departments ?? existingDepartments)),
-      createDepartment: vi.fn().mockReturnValue(of({ id: 17, name: 'Robotics', groupName: 'Research and Development', modifiedDate: '2026-01-01T00:00:00' })),
+      createDepartment: vi
+        .fn()
+        .mockReturnValue(
+          of({ id: 17, name: 'Robotics', groupName: 'Research and Development', modifiedDate: '2026-01-01T00:00:00' }),
+        ),
     };
     const mockNotificationService = { error: vi.fn(), success: vi.fn() };
     // Spying on the prototype (rather than overriding the Router provider) keeps RouterLink
@@ -65,7 +69,10 @@ describe('DepartmentCreateComponent', () => {
     component['form'].setValue({ name: 'Robotics', groupName: 'Research and Development' });
     component['onSubmit']();
 
-    expect(mockHrApi.createDepartment).toHaveBeenCalledWith({ name: 'Robotics', groupName: 'Research and Development' });
+    expect(mockHrApi.createDepartment).toHaveBeenCalledWith({
+      name: 'Robotics',
+      groupName: 'Research and Development',
+    });
     expect(mockNotificationService.success).toHaveBeenCalledWith('Department created successfully.');
     expect(router.navigate).toHaveBeenCalledWith(['/hr/departments', 17]);
   });
@@ -114,8 +121,6 @@ describe('DepartmentCreateComponent', () => {
     component['form'].setValue({ name: '  Robotics  ', groupName: 'Research and Development' });
     component['onSubmit']();
 
-    expect(mockHrApi.createDepartment).toHaveBeenCalledWith(
-      expect.objectContaining({ name: 'Robotics' }),
-    );
+    expect(mockHrApi.createDepartment).toHaveBeenCalledWith(expect.objectContaining({ name: 'Robotics' }));
   });
 });

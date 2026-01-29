@@ -93,9 +93,11 @@ describe('DepartmentDetailComponent', () => {
   ) {
     const route = buildRoute(options.id, options.queryParams);
     const mockHrApi = {
-      getDepartment: vi.fn().mockReturnValue(
-        options.error ? throwError(() => new Error('Network error')) : of(options.department ?? mockDepartment),
-      ),
+      getDepartment: vi
+        .fn()
+        .mockReturnValue(
+          options.error ? throwError(() => new Error('Network error')) : of(options.department ?? mockDepartment),
+        ),
       getDepartmentHeadcount: vi.fn().mockReturnValue(of(options.headcount ?? mockHeadcount)),
       getDepartmentEmployees: vi.fn().mockReturnValue(of(options.employees ?? mockEmployees)),
     };

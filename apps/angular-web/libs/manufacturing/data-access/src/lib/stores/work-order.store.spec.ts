@@ -99,9 +99,7 @@ describe('WorkOrderStore', () => {
 
     it('treats ApiEmptyResultError as an empty loaded result, not an error', () => {
       const workOrderApi = TestBed.inject(WorkOrderApiService);
-      vi.spyOn(workOrderApi, 'getWorkOrders').mockReturnValue(
-        throwError(() => new ApiEmptyResultError('No results')),
-      );
+      vi.spyOn(workOrderApi, 'getWorkOrders').mockReturnValue(throwError(() => new ApiEmptyResultError('No results')));
 
       store.loadPage({ pageNumber: 1, pageSize: 25 });
 
@@ -168,9 +166,7 @@ describe('WorkOrderStore', () => {
     // on first load).
     it('delegates to loadPage without overriding pageNumber', () => {
       const workOrderApi = TestBed.inject(WorkOrderApiService);
-      vi.spyOn(workOrderApi, 'getWorkOrders').mockReturnValue(
-        throwError(() => new ApiEmptyResultError('no results')),
-      );
+      vi.spyOn(workOrderApi, 'getWorkOrders').mockReturnValue(throwError(() => new ApiEmptyResultError('no results')));
 
       store.applyFilters({ pageNumber: 4, pageSize: 25, productId: 747 });
 

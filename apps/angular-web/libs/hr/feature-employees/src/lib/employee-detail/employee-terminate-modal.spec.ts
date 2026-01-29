@@ -71,7 +71,9 @@ describe('EmployeeTerminateModalComponent', () => {
     expect(dateInput.getAttribute('aria-invalid')).toBe('true');
     const describedBy = dateInput.getAttribute('aria-describedby');
     expect(describedBy).toContain('aw-employee-terminate-date-error-required');
-    expect(fixture.nativeElement.querySelector(`#${describedBy}`).textContent).toContain('Termination date is required.');
+    expect(fixture.nativeElement.querySelector(`#${describedBy}`).textContent).toContain(
+      'Termination date is required.',
+    );
   });
 
   it('hides the PTO payout toggle when vacationHoursBalance is 0', async () => {

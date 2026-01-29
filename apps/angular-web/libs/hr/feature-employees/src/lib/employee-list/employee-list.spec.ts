@@ -126,10 +126,7 @@ describe('EmployeeListComponent', () => {
 
   it('renders a dash for department when currentDepartment is null', () => {
     fixture.detectChanges();
-    patchState(
-      unprotected(employeeStore),
-      setAllEntities([makeEmployee({ currentDepartment: null })], { selectId }),
-    );
+    patchState(unprotected(employeeStore), setAllEntities([makeEmployee({ currentDepartment: null })], { selectId }));
     fixture.detectChanges();
 
     expect(component['rows']()[0]['department']).toBe('—');
@@ -137,10 +134,7 @@ describe('EmployeeListComponent', () => {
 
   it('maps a terminated employee to the terminated status key', () => {
     fixture.detectChanges();
-    patchState(
-      unprotected(employeeStore),
-      setAllEntities([makeEmployee({ currentFlag: false })], { selectId }),
-    );
+    patchState(unprotected(employeeStore), setAllEntities([makeEmployee({ currentFlag: false })], { selectId }));
     fixture.detectChanges();
 
     expect(component['rows']()[0]['status']).toBe('Terminated');

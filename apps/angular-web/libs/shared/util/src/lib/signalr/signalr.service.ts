@@ -39,9 +39,7 @@ export class SignalrService {
     } catch (error: unknown) {
       this.connection = null;
       this.status.set('disconnected');
-      this.appInsightsService.trackException(
-        error instanceof Error ? error : new Error(String(error)),
-      );
+      this.appInsightsService.trackException(error instanceof Error ? error : new Error(String(error)));
       // intentionally no re-throw — connectionStatus signal is the source of truth for callers
     }
   }
@@ -59,10 +57,7 @@ export class SignalrService {
     try {
       await connection.stop();
     } catch (error: unknown) {
-      throw new Error(
-        'Failed to stop SignalR connection cleanly.',
-        { cause: error instanceof Error ? error : new Error(String(error)) },
-      );
+      throw new Error('Failed to stop SignalR connection cleanly.', { cause: error });
     } finally {
       this.status.set('disconnected');
     }
@@ -177,7 +172,9 @@ export class SignalrService {
       return authScopes;
     }
 
-    throw new Error('SignalR auth scopes are missing. Configure signalr.scopes or auth.scopes in environment settings.');
+    throw new Error(
+      'SignalR auth scopes are missing. Configure signalr.scopes or auth.scopes in environment settings.',
+    );
   }
 
   private async acquireAccessToken(): Promise<string> {

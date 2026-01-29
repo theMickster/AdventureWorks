@@ -4,7 +4,13 @@ import { ApiService } from '@adventureworks-web/shared/util';
 import type { SearchResult } from '@adventureworks-web/shared/data-access';
 import { toQueryString } from '@adventureworks-web/shared/data-access';
 import type { Store, StoreCreate, StoreUpdate } from '../models/store.model';
-import type { SalesPerson, SalesPersonCreate, SalesPersonPerformance, SalesPersonSalesConfigUpdate, SalesPersonUpdate } from '../models/sales-person.model';
+import type {
+  SalesPerson,
+  SalesPersonCreate,
+  SalesPersonPerformance,
+  SalesPersonSalesConfigUpdate,
+  SalesPersonUpdate,
+} from '../models/sales-person.model';
 import type { SalesOrder, SalesOrderDetail } from '../models/sales-order.model';
 import type { SalesDashboard } from '../models/sales-dashboard.model';
 import type { SalesOrderAnalytics, SalesOrderAnalyticsFilter } from '../models/sales-order-analytics.model';

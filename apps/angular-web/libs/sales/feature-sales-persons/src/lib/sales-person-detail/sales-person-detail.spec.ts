@@ -51,9 +51,7 @@ const mockPerformance: SalesPersonPerformance = {
     { quotaDate: '2013-05-31T00:00:00', salesQuota: 300000 },
     { quotaDate: '2014-05-31T00:00:00', salesQuota: 250000 },
   ],
-  territoryHistory: [
-    { territoryId: 3, territoryName: 'Central', startDate: '2009-11-01T00:00:00', endDate: null },
-  ],
+  territoryHistory: [{ territoryId: 3, territoryName: 'Central', startDate: '2009-11-01T00:00:00', endDate: null }],
 };
 
 function buildRoute(id = '275', queryParams: Record<string, string> = {}) {
@@ -226,9 +224,9 @@ describe('SalesPersonDetailComponent', () => {
   });
 
   it('hasPerformanceError() resets to false when retry starts', () => {
-    const errorSpy = vi.spyOn(salesApiService, 'getSalesPersonPerformance').mockReturnValue(
-      throwError(() => new Error('fail')),
-    );
+    const errorSpy = vi
+      .spyOn(salesApiService, 'getSalesPersonPerformance')
+      .mockReturnValue(throwError(() => new Error('fail')));
     fixture.detectChanges();
     component['onTabChange']('performance');
     expect(component['hasPerformanceError']()).toBe(true);

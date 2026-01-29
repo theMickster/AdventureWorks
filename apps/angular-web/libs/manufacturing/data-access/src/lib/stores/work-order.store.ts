@@ -2,7 +2,7 @@ import { inject } from '@angular/core';
 import { patchState, signalStore, withMethods } from '@ngrx/signals';
 import { setAllEntities, withEntities } from '@ngrx/signals/entities';
 import { rxMethod } from '@ngrx/signals/rxjs-interop';
-import { withDevtools } from '@angular-architects/ngrx-toolkit';
+import { withDevtools } from '@ngrx-toolkit/core';
 import { catchError, EMPTY, pipe, switchMap, tap } from 'rxjs';
 import {
   ApiEmptyResultError,
@@ -46,11 +46,20 @@ export const WorkOrderStore = signalStore(
         switchMap((params) =>
           workOrderApi.getWorkOrders(params).pipe(
             tap((result) =>
-              patchState(store, setAllEntities(result.results ?? [], { selectId: (order) => order.workOrderId }), setPaginationFromResult(result), setLoaded()),
+              patchState(
+                store,
+                setAllEntities(result.results ?? [], { selectId: (order) => order.workOrderId }),
+                setPaginationFromResult(result),
+                setLoaded(),
+              ),
             ),
             catchError((err: unknown) => {
               if (err instanceof ApiEmptyResultError) {
-                patchState(store, setAllEntities([] as WorkOrder[], { selectId: (order) => order.workOrderId }), setLoaded());
+                patchState(
+                  store,
+                  setAllEntities([] as WorkOrder[], { selectId: (order) => order.workOrderId }),
+                  setLoaded(),
+                );
               } else {
                 patchState(store, setError('Failed to load work orders'));
               }

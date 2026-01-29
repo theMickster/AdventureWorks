@@ -1,5 +1,24 @@
-import { afterNextRender, ChangeDetectionStrategy, Component, ElementRef, input, OnDestroy, output, viewChild } from '@angular/core';
-import { type ActiveElement, type ChartEvent, Chart, CategoryScale, LinearScale, LineController, LineElement, PointElement, Tooltip } from 'chart.js';
+import {
+  afterNextRender,
+  ChangeDetectionStrategy,
+  Component,
+  ElementRef,
+  input,
+  OnDestroy,
+  output,
+  viewChild,
+} from '@angular/core';
+import {
+  type ActiveElement,
+  type ChartEvent,
+  Chart,
+  CategoryScale,
+  LinearScale,
+  LineController,
+  LineElement,
+  PointElement,
+  Tooltip,
+} from 'chart.js';
 
 Chart.register(LineController, LineElement, PointElement, LinearScale, CategoryScale, Tooltip);
 
@@ -49,11 +68,15 @@ export class TrendChartComponent implements OnDestroy {
      */
     afterNextRender(() => {
       const points = this.data();
-      const labels = points.map(
-        (p) => new Date(p.year, p.month - 1).toLocaleDateString('en-US', { month: 'short', year: 'numeric' })
+      const labels = points.map((p) =>
+        new Date(p.year, p.month - 1).toLocaleDateString('en-US', { month: 'short', year: 'numeric' }),
       );
       const revenues = points.map((p) => p.revenue);
-      const formatter = new Intl.NumberFormat('en-US', { style: 'currency', currency: 'USD', maximumFractionDigits: 0 });
+      const formatter = new Intl.NumberFormat('en-US', {
+        style: 'currency',
+        currency: 'USD',
+        maximumFractionDigits: 0,
+      });
 
       this.chart = new Chart(this.chartCanvas().nativeElement, {
         type: 'line',
@@ -73,7 +96,9 @@ export class TrendChartComponent implements OnDestroy {
           responsive: true,
           maintainAspectRatio: false,
           onClick: (_event: ChartEvent, elements: ActiveElement[]) => {
-            if (elements.length === 0) { return; }
+            if (elements.length === 0) {
+              return;
+            }
             const point = points[elements[0].index];
             this.dataPointClick.emit({ year: point.year, month: point.month });
           },

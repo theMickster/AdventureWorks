@@ -104,9 +104,9 @@ export class WorkOrderProductTypeaheadComponent implements ControlValueAccessor 
     this.resolveId$
       .pipe(
         switchMap((id) =>
-          this.workOrderApi.getProduct(id).pipe(
-            catchError(() => of<ProductLookup>({ id, name: this.fallbackLabel(id) })),
-          ),
+          this.workOrderApi
+            .getProduct(id)
+            .pipe(catchError(() => of<ProductLookup>({ id, name: this.fallbackLabel(id) }))),
         ),
         takeUntilDestroyed(),
       )

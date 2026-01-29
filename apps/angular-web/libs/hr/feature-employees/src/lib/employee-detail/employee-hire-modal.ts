@@ -1,11 +1,32 @@
-import { ChangeDetectionStrategy, Component, computed, effect, inject, input, model, OnInit, output, signal } from '@angular/core';
+import {
+  ChangeDetectionStrategy,
+  Component,
+  computed,
+  effect,
+  inject,
+  input,
+  model,
+  OnInit,
+  output,
+  signal,
+} from '@angular/core';
 import { FormBuilder, ReactiveFormsModule, Validators } from '@angular/forms';
 import { EmployeeStore, SHIFT_OPTIONS, PAY_FREQUENCY_OPTIONS } from '@adventureworks-web/hr/data-access';
 import type { EmployeeHire } from '@adventureworks-web/hr/data-access';
-import { InputFieldComponent, ModalComponent, SelectFieldComponent, TextareaFieldComponent } from '@adventureworks-web/shared/ui';
+import {
+  InputFieldComponent,
+  ModalComponent,
+  SelectFieldComponent,
+  TextareaFieldComponent,
+} from '@adventureworks-web/shared/ui';
 import { maxFutureDateValidator, NotificationService } from '@adventureworks-web/shared/util';
 import { createDepartmentOptionsLoader } from './department-options-loader';
-import { errorsToList as sharedErrorsToList, toOptionalNumber, watchLifecycleActionCompletion, WizardFormErrors } from './wizard-form-helpers';
+import {
+  errorsToList as sharedErrorsToList,
+  toOptionalNumber,
+  watchLifecycleActionCompletion,
+  WizardFormErrors,
+} from './wizard-form-helpers';
 
 type HireWizardStep = 1 | 2 | 3;
 
@@ -62,7 +83,9 @@ export class EmployeeHireModalComponent implements OnInit {
   protected readonly compensationValid = computed(() => this.formErrors.groupValid(this.form.controls.compensation));
 
   protected readonly departmentIdErrors = computed(() =>
-    this.formErrors.getErrors(this.form.controls.assignment.controls.departmentId, { required: 'Department is required.' }),
+    this.formErrors.getErrors(this.form.controls.assignment.controls.departmentId, {
+      required: 'Department is required.',
+    }),
   );
   protected readonly shiftIdErrors = computed(() =>
     this.formErrors.getErrors(this.form.controls.assignment.controls.shiftId, { required: 'Shift is required.' }),
@@ -82,7 +105,9 @@ export class EmployeeHireModalComponent implements OnInit {
     }),
   );
   protected readonly payFrequencyErrors = computed(() =>
-    this.formErrors.getErrors(this.form.controls.compensation.controls.payFrequency, { required: 'Pay frequency is required.' }),
+    this.formErrors.getErrors(this.form.controls.compensation.controls.payFrequency, {
+      required: 'Pay frequency is required.',
+    }),
   );
   protected readonly initialVacationHoursErrors = computed(() =>
     this.formErrors.getErrors(this.form.controls.compensation.controls.initialVacationHours, {
@@ -97,7 +122,9 @@ export class EmployeeHireModalComponent implements OnInit {
     }),
   );
   protected readonly notesErrors = computed(() =>
-    this.formErrors.getErrors(this.form.controls.compensation.controls.notes, { maxlength: 'Notes cannot exceed 500 characters.' }),
+    this.formErrors.getErrors(this.form.controls.compensation.controls.notes, {
+      maxlength: 'Notes cannot exceed 500 characters.',
+    }),
   );
 
   protected readonly errorsToList = sharedErrorsToList;
@@ -109,7 +136,11 @@ export class EmployeeHireModalComponent implements OnInit {
    */
   protected readonly hireDateAriaDescribedBy = computed(() => {
     const errors = this.hireDateErrors();
-    return errors ? Object.keys(errors).map((key) => `aw-employee-hire-date-error-${key}`).join(' ') : null;
+    return errors
+      ? Object.keys(errors)
+          .map((key) => `aw-employee-hire-date-error-${key}`)
+          .join(' ')
+      : null;
   });
 
   /** Resolves a select option's label for the read-only Confirm step (Angular templates can't inline arrow functions). */
@@ -146,7 +177,13 @@ export class EmployeeHireModalComponent implements OnInit {
     this.formErrors.submitted.set(false);
     this.form.reset({
       assignment: { departmentId: null, shiftId: null, hireDate: '', managerId: null },
-      compensation: { initialPayRate: null, payFrequency: null, initialVacationHours: 40, initialSickLeaveHours: 24, notes: null },
+      compensation: {
+        initialPayRate: null,
+        payFrequency: null,
+        initialVacationHours: 40,
+        initialSickLeaveHours: 24,
+        notes: null,
+      },
     });
   }
 

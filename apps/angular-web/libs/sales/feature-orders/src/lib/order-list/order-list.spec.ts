@@ -24,9 +24,19 @@ import { OrderListComponent } from './order-list';
  * shared bundle chunks.
  */
 vi.mock('chart.js', () => {
-  const Chart = vi.fn().mockImplementation(function () { return { destroy: vi.fn() }; });
+  const Chart = vi.fn().mockImplementation(function () {
+    return { destroy: vi.fn() };
+  });
   (Chart as unknown as { register: () => void }).register = vi.fn();
-  return { Chart, LineController: {}, LineElement: {}, PointElement: {}, LinearScale: {}, CategoryScale: {}, Tooltip: {} };
+  return {
+    Chart,
+    LineController: {},
+    LineElement: {},
+    PointElement: {},
+    LinearScale: {},
+    CategoryScale: {},
+    Tooltip: {},
+  };
 });
 
 const mockEnvironment = {
@@ -168,9 +178,7 @@ describe('OrderListComponent', () => {
 
     fixture.detectChanges();
 
-    expect(salesOrderStore.applyFilters).toHaveBeenCalledWith(
-      expect.objectContaining({ pageNumber: 1 }),
-    );
+    expect(salesOrderStore.applyFilters).toHaveBeenCalledWith(expect.objectContaining({ pageNumber: 1 }));
   });
 
   it('clamps zero pageNumber from the URL to 1', () => {
@@ -178,9 +186,7 @@ describe('OrderListComponent', () => {
 
     fixture.detectChanges();
 
-    expect(salesOrderStore.applyFilters).toHaveBeenCalledWith(
-      expect.objectContaining({ pageNumber: 1 }),
-    );
+    expect(salesOrderStore.applyFilters).toHaveBeenCalledWith(expect.objectContaining({ pageNumber: 1 }));
   });
 
   it('ignores an invalid orderBy from the URL and falls back to the default sort', () => {
@@ -191,9 +197,7 @@ describe('OrderListComponent', () => {
     expect(salesOrderStore.applyFilters).toHaveBeenCalledWith(
       expect.objectContaining({ orderBy: 'orderDate', sortOrder: 'desc' }),
     );
-    expect(salesOrderStore.applyFilters).not.toHaveBeenCalledWith(
-      expect.objectContaining({ orderBy: 'dropTable' }),
-    );
+    expect(salesOrderStore.applyFilters).not.toHaveBeenCalledWith(expect.objectContaining({ orderBy: 'dropTable' }));
   });
 
   it('restores a valid orderBy from the URL', () => {
@@ -402,7 +406,9 @@ describe('OrderListComponent', () => {
     );
     expect(router.navigate).toHaveBeenCalledWith(
       [],
-      expect.objectContaining({ queryParams: expect.objectContaining({ orderBy: 'totalDue', sortOrder: 'asc', pageNumber: 1 }) }),
+      expect.objectContaining({
+        queryParams: expect.objectContaining({ orderBy: 'totalDue', sortOrder: 'asc', pageNumber: 1 }),
+      }),
     );
   });
 
@@ -414,7 +420,9 @@ describe('OrderListComponent', () => {
     component['onSortChange']({ column: 'customerName', direction: 'asc' });
 
     expect((salesOrderStore.loadPage as ReturnType<typeof vi.spyOn>).mock.calls.length).toBe(loadPageCallsBefore);
-    expect((salesOrderStore.applyFilters as ReturnType<typeof vi.spyOn>).mock.calls.length).toBe(applyFiltersCallsBefore);
+    expect((salesOrderStore.applyFilters as ReturnType<typeof vi.spyOn>).mock.calls.length).toBe(
+      applyFiltersCallsBefore,
+    );
   });
 
   it('parses page, sort, and filter params from the URL on page change', () => {
@@ -434,10 +442,7 @@ describe('OrderListComponent', () => {
       sortOrder: 'asc',
       territoryId: 4,
     });
-    expect(router.navigate).toHaveBeenCalledWith(
-      [],
-      expect.objectContaining({ queryParams: { pageNumber: 3 } }),
-    );
+    expect(router.navigate).toHaveBeenCalledWith([], expect.objectContaining({ queryParams: { pageNumber: 3 } }));
   });
 
   it('navigates to the order detail on row click', () => {
@@ -464,9 +469,7 @@ describe('OrderListComponent', () => {
     queryParamsSub.next({ customerId: '29486' });
     fixture.detectChanges();
 
-    expect(salesOrderStore.applyFilters).toHaveBeenLastCalledWith(
-      expect.objectContaining({ customerId: 29486 }),
-    );
+    expect(salesOrderStore.applyFilters).toHaveBeenLastCalledWith(expect.objectContaining({ customerId: 29486 }));
   });
 
   it('shows an error toast when the store reports an error', async () => {
@@ -523,7 +526,10 @@ describe('OrderListComponent', () => {
     // cased `status` (for the column's nominal value) and the lowercased `statusKey`. The template
     // binds the badge to `statusKey`. This test feeds each value into the REAL StatusBadgeComponent
     // with the component's REAL statusBadgeMap to prove the case-sensitivity contract that the bug hinged on.
-    patchState(unprotected(salesOrderStore), setAllEntities([{ ...mockOrder, statusDescription: 'Shipped' }], { selectId }));
+    patchState(
+      unprotected(salesOrderStore),
+      setAllEntities([{ ...mockOrder, statusDescription: 'Shipped' }], { selectId }),
+    );
     const projectedRow = component['rows']()[0];
     const map = component['statusBadgeMap'];
 
@@ -588,7 +594,12 @@ describe('OrderListComponent', () => {
     await failFixture.whenStable();
 
     // The grid load fired with the default view despite the lookup failure (initial load uses applyFilters).
-    expect(store.applyFilters).toHaveBeenCalledWith({ pageNumber: 1, pageSize: 25, orderBy: 'orderDate', sortOrder: 'desc' });
+    expect(store.applyFilters).toHaveBeenCalledWith({
+      pageNumber: 1,
+      pageSize: 25,
+      orderBy: 'orderDate',
+      sortOrder: 'desc',
+    });
     // The failure surfaced as the filter-options message, NOT the grid-load error message.
     expect(notify.error).toHaveBeenCalledWith('Failed to load filter options. Filtering may be unavailable.');
     expect(notify.error).not.toHaveBeenCalledWith('Failed to load sales orders. Please try again.');

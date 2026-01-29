@@ -54,9 +54,11 @@ const allDepartments: Department[] = [
 describe('DepartmentListComponent', () => {
   async function setup(options: { departments?: Department[]; error?: boolean } = {}) {
     const mockHrApi = {
-      getDepartments: vi.fn().mockReturnValue(
-        options.error ? throwError(() => new Error('Network error')) : of(options.departments ?? allDepartments),
-      ),
+      getDepartments: vi
+        .fn()
+        .mockReturnValue(
+          options.error ? throwError(() => new Error('Network error')) : of(options.departments ?? allDepartments),
+        ),
     };
     const mockNotificationService = { error: vi.fn(), success: vi.fn() };
 

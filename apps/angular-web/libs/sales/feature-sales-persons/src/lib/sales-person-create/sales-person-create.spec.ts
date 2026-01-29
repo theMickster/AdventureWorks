@@ -9,7 +9,12 @@ import { ApiValidationError, ENVIRONMENT, NotificationService } from '@adventure
 import { SalesApiService } from '@adventureworks-web/sales/data-access';
 import type { SalesPerson } from '@adventureworks-web/sales/data-access';
 import { LookupApiService } from '@adventureworks-web/shared/data-access';
-import type { AddressType, PhoneNumberType, SalesTerritory, StateProvince } from '@adventureworks-web/shared/data-access';
+import type {
+  AddressType,
+  PhoneNumberType,
+  SalesTerritory,
+  StateProvince,
+} from '@adventureworks-web/shared/data-access';
 import { SalesPersonCreateComponent } from './sales-person-create';
 
 const mockEnvironment = {
@@ -192,9 +197,7 @@ describe('SalesPersonCreateComponent', () => {
     });
 
     it('sets isLoading to false and shows error toast when reference data fails', async () => {
-      vi.spyOn(lookupApiService, 'getTerritories').mockReturnValue(
-        throwError(() => new Error('Network error')),
-      );
+      vi.spyOn(lookupApiService, 'getTerritories').mockReturnValue(throwError(() => new Error('Network error')));
       vi.spyOn(notificationService, 'error');
 
       fixture = TestBed.createComponent(SalesPersonCreateComponent);
@@ -313,9 +316,7 @@ describe('SalesPersonCreateComponent', () => {
 
   describe('API failure on submission', () => {
     it('sets isSaving to false on API error', () => {
-      vi.spyOn(salesApiService, 'createSalesPerson').mockReturnValue(
-        throwError(() => new Error('Server error')),
-      );
+      vi.spyOn(salesApiService, 'createSalesPerson').mockReturnValue(throwError(() => new Error('Server error')));
       component['form'].setValue(buildValidFormValue());
       component['onSubmit']();
 
@@ -323,22 +324,16 @@ describe('SalesPersonCreateComponent', () => {
     });
 
     it('shows error toast on API failure', () => {
-      vi.spyOn(salesApiService, 'createSalesPerson').mockReturnValue(
-        throwError(() => new Error('Server error')),
-      );
+      vi.spyOn(salesApiService, 'createSalesPerson').mockReturnValue(throwError(() => new Error('Server error')));
       vi.spyOn(notificationService, 'error');
       component['form'].setValue(buildValidFormValue());
       component['onSubmit']();
 
-      expect(notificationService.error).toHaveBeenCalledWith(
-        'Failed to create sales person. Please try again.',
-      );
+      expect(notificationService.error).toHaveBeenCalledWith('Failed to create sales person. Please try again.');
     });
 
     it('does not navigate on API failure', () => {
-      vi.spyOn(salesApiService, 'createSalesPerson').mockReturnValue(
-        throwError(() => new Error('Server error')),
-      );
+      vi.spyOn(salesApiService, 'createSalesPerson').mockReturnValue(throwError(() => new Error('Server error')));
       component['form'].setValue(buildValidFormValue());
       component['onSubmit']();
 
@@ -485,10 +480,20 @@ describe('SalesPersonCreateComponent', () => {
   describe('API validation error mapping', () => {
     it('maps ApiValidationError top-level propertyName (BirthDate) to the correct form control', () => {
       vi.spyOn(salesApiService, 'createSalesPerson').mockReturnValue(
-        throwError(() => new ApiValidationError(
-          [{ propertyName: 'BirthDate', errorCode: 'Rule-22', errorMessage: 'Sales person must be at least 18 years old', correlationId: 'abc' }],
-          'abc',
-        )),
+        throwError(
+          () =>
+            new ApiValidationError(
+              [
+                {
+                  propertyName: 'BirthDate',
+                  errorCode: 'Rule-22',
+                  errorMessage: 'Sales person must be at least 18 years old',
+                  correlationId: 'abc',
+                },
+              ],
+              'abc',
+            ),
+        ),
       );
       component['form'].setValue(buildValidFormValue());
       component['onSubmit']();
@@ -500,10 +505,20 @@ describe('SalesPersonCreateComponent', () => {
 
     it('maps nested Phone.PhoneNumber propertyName to the correct form control', () => {
       vi.spyOn(salesApiService, 'createSalesPerson').mockReturnValue(
-        throwError(() => new ApiValidationError(
-          [{ propertyName: 'Phone.PhoneNumber', errorCode: 'Rule-30', errorMessage: 'Phone number cannot be greater than 25 characters', correlationId: 'abc' }],
-          'abc',
-        )),
+        throwError(
+          () =>
+            new ApiValidationError(
+              [
+                {
+                  propertyName: 'Phone.PhoneNumber',
+                  errorCode: 'Rule-30',
+                  errorMessage: 'Phone number cannot be greater than 25 characters',
+                  correlationId: 'abc',
+                },
+              ],
+              'abc',
+            ),
+        ),
       );
       component['form'].setValue(buildValidFormValue());
       component['onSubmit']();
@@ -515,10 +530,20 @@ describe('SalesPersonCreateComponent', () => {
 
     it('maps nested Address.City propertyName to the correct form control', () => {
       vi.spyOn(salesApiService, 'createSalesPerson').mockReturnValue(
-        throwError(() => new ApiValidationError(
-          [{ propertyName: 'Address.City', errorCode: 'Rule-04', errorMessage: 'City cannot be null, empty, or whitespace', correlationId: 'abc' }],
-          'abc',
-        )),
+        throwError(
+          () =>
+            new ApiValidationError(
+              [
+                {
+                  propertyName: 'Address.City',
+                  errorCode: 'Rule-04',
+                  errorMessage: 'City cannot be null, empty, or whitespace',
+                  correlationId: 'abc',
+                },
+              ],
+              'abc',
+            ),
+        ),
       );
       component['form'].setValue(buildValidFormValue());
       component['onSubmit']();
@@ -531,10 +556,20 @@ describe('SalesPersonCreateComponent', () => {
     it('does not show a generic toast when at least one property is mapped', () => {
       vi.spyOn(notificationService, 'error');
       vi.spyOn(salesApiService, 'createSalesPerson').mockReturnValue(
-        throwError(() => new ApiValidationError(
-          [{ propertyName: 'HireDate', errorCode: 'Rule-24', errorMessage: 'Hire date cannot be in the future', correlationId: 'abc' }],
-          'abc',
-        )),
+        throwError(
+          () =>
+            new ApiValidationError(
+              [
+                {
+                  propertyName: 'HireDate',
+                  errorCode: 'Rule-24',
+                  errorMessage: 'Hire date cannot be in the future',
+                  correlationId: 'abc',
+                },
+              ],
+              'abc',
+            ),
+        ),
       );
       component['form'].setValue(buildValidFormValue());
       component['onSubmit']();
@@ -545,10 +580,13 @@ describe('SalesPersonCreateComponent', () => {
     it('shows generic toast when no property in ApiValidationError maps to the form', () => {
       vi.spyOn(notificationService, 'error');
       vi.spyOn(salesApiService, 'createSalesPerson').mockReturnValue(
-        throwError(() => new ApiValidationError(
-          [{ propertyName: 'UnknownField', errorCode: 'Rule-99', errorMessage: 'Unknown', correlationId: 'abc' }],
-          'abc',
-        )),
+        throwError(
+          () =>
+            new ApiValidationError(
+              [{ propertyName: 'UnknownField', errorCode: 'Rule-99', errorMessage: 'Unknown', correlationId: 'abc' }],
+              'abc',
+            ),
+        ),
       );
       component['form'].setValue(buildValidFormValue());
       component['onSubmit']();
@@ -569,10 +607,20 @@ describe('SalesPersonCreateComponent', () => {
 
     it('server error is surfaced via getErrors in the field error computed after markAsTouched', () => {
       vi.spyOn(salesApiService, 'createSalesPerson').mockReturnValue(
-        throwError(() => new ApiValidationError(
-          [{ propertyName: 'FirstName', errorCode: 'Rule-10', errorMessage: 'First name cannot exceed 50 characters', correlationId: 'abc' }],
-          'abc',
-        )),
+        throwError(
+          () =>
+            new ApiValidationError(
+              [
+                {
+                  propertyName: 'FirstName',
+                  errorCode: 'Rule-10',
+                  errorMessage: 'First name cannot exceed 50 characters',
+                  correlationId: 'abc',
+                },
+              ],
+              'abc',
+            ),
+        ),
       );
       component['submitted'].set(true);
       component['form'].setValue(buildValidFormValue());

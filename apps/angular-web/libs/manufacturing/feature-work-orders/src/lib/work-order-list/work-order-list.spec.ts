@@ -256,9 +256,7 @@ describe('WorkOrderListComponent', () => {
 
     fixture.detectChanges();
 
-    expect(workOrderStore.applyFilters).toHaveBeenCalledWith(
-      expect.objectContaining({ hasScrapped: false }),
-    );
+    expect(workOrderStore.applyFilters).toHaveBeenCalledWith(expect.objectContaining({ hasScrapped: false }));
   });
 
   it('applies a date-range and scrap-status filter and writes them back to the URL with merge', () => {
@@ -432,7 +430,9 @@ describe('WorkOrderListComponent', () => {
     component['onSortChange']({ column: 'productName', direction: 'asc' });
 
     expect((workOrderStore.loadPage as ReturnType<typeof vi.spyOn>).mock.calls.length).toBe(loadPageCallsBefore);
-    expect((workOrderStore.applyFilters as ReturnType<typeof vi.spyOn>).mock.calls.length).toBe(applyFiltersCallsBefore);
+    expect((workOrderStore.applyFilters as ReturnType<typeof vi.spyOn>).mock.calls.length).toBe(
+      applyFiltersCallsBefore,
+    );
   });
 
   it('parses filters and a new page from the URL on page change (AC4 pagination)', () => {

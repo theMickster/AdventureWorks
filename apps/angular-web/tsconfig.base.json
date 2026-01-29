@@ -1,7 +1,6 @@
 {
   "compilerOptions": {
     "rootDir": ".",
-    "baseUrl": ".",
     "sourceMap": true,
     "moduleResolution": "bundler",
     "importHelpers": true,
@@ -26,17 +25,19 @@
       "@adventureworks-web/sales/feature-dashboard": ["./libs/sales/feature-dashboard/src/index.ts"],
       "@adventureworks-web/hr/feature-departments": ["./libs/hr/feature-departments/src/index.ts"],
       "@adventureworks-web/hr/feature-employees": ["./libs/hr/feature-employees/src/index.ts"],
-      "@adventureworks-web/public/feature-landing": ["libs/public/feature-landing/src/index.ts"],
-      "@adventureworks-web/sales/feature-customers": ["libs/sales/feature-customers/src/index.ts"],
-      "@adventureworks-web/sales/ui-trend-chart": ["libs/sales/ui-trend-chart/src/index.ts"],
-      "@adventureworks-web/hr/feature-org-chart": ["libs/hr/feature-org-chart/src/index.ts"],
-      "@adventureworks-web/manufacturing/data-access": ["libs/manufacturing/data-access/src/index.ts"],
-      "@adventureworks-web/manufacturing/feature-work-orders": ["libs/manufacturing/feature-work-orders/src/index.ts"],
-      "@adventureworks-web/purchasing/data-access": ["libs/purchasing/data-access/src/index.ts"],
-      "@adventureworks-web/purchasing/feature-vendors": ["libs/purchasing/feature-vendors/src/index.ts"],
-      "@adventureworks-web/hr/feature-dashboard": ["libs/hr/feature-dashboard/src/index.ts"],
-      "@adventureworks-web/hr/feature-history": ["libs/hr/feature-history/src/index.ts"],
-      "@adventureworks-web/purchasing/ui-pareto-chart": ["libs/purchasing/ui-pareto-chart/src/index.ts"]
+      "@adventureworks-web/public/feature-landing": ["./libs/public/feature-landing/src/index.ts"],
+      "@adventureworks-web/sales/feature-customers": ["./libs/sales/feature-customers/src/index.ts"],
+      "@adventureworks-web/sales/ui-trend-chart": ["./libs/sales/ui-trend-chart/src/index.ts"],
+      "@adventureworks-web/hr/feature-org-chart": ["./libs/hr/feature-org-chart/src/index.ts"],
+      "@adventureworks-web/manufacturing/data-access": ["./libs/manufacturing/data-access/src/index.ts"],
+      "@adventureworks-web/manufacturing/feature-work-orders": [
+        "./libs/manufacturing/feature-work-orders/src/index.ts"
+      ],
+      "@adventureworks-web/purchasing/data-access": ["./libs/purchasing/data-access/src/index.ts"],
+      "@adventureworks-web/purchasing/feature-vendors": ["./libs/purchasing/feature-vendors/src/index.ts"],
+      "@adventureworks-web/hr/feature-dashboard": ["./libs/hr/feature-dashboard/src/index.ts"],
+      "@adventureworks-web/hr/feature-history": ["./libs/hr/feature-history/src/index.ts"],
+      "@adventureworks-web/purchasing/ui-pareto-chart": ["./libs/purchasing/ui-pareto-chart/src/index.ts"]
     }
   },
   "exclude": ["node_modules", "tmp"]

@@ -21,7 +21,7 @@ Use this file together with `apps/angular-web/README.md`.
 
 ## Angular Style Defaults
 
-- Match the existing Angular 21 style:
+- Match the existing Angular 22 style:
   - standalone-first components
   - `ChangeDetectionStrategy.OnPush`
   - `inject(...)` for DI where that is the local pattern

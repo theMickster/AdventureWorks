@@ -58,7 +58,9 @@ export class AppLayoutComponent {
 
   protected readonly breadcrumbs = signal<Breadcrumb[]>([]);
   protected readonly userMenuOpen = signal(false);
-  protected readonly signalrStatusLabel = computed(() => this.getSignalrStatusLabel(this.signalrService.connectionStatus()));
+  protected readonly signalrStatusLabel = computed(() =>
+    this.getSignalrStatusLabel(this.signalrService.connectionStatus()),
+  );
 
   private readonly salesNav = viewChild<ElementRef<HTMLElement>>('salesNav');
   private readonly hrNav = viewChild<ElementRef<HTMLElement>>('hrNav');
@@ -147,5 +149,4 @@ export class AppLayoutComponent {
         return 'Disconnected';
     }
   }
-
 }

@@ -4,7 +4,13 @@ import { HttpTestingController, provideHttpClientTesting } from '@angular/common
 import { ENVIRONMENT } from '@adventureworks-web/shared/util';
 import { SalesApiService } from './sales-api.service';
 import type { Store, StoreCreate, StoreUpdate } from '../models/store.model';
-import type { SalesPerson, SalesPersonCreate, SalesPersonSalesConfigUpdate, SalesPersonUpdate, SalesPersonPerformance } from '../models/sales-person.model';
+import type {
+  SalesPerson,
+  SalesPersonCreate,
+  SalesPersonSalesConfigUpdate,
+  SalesPersonUpdate,
+  SalesPersonPerformance,
+} from '../models/sales-person.model';
 import type { SalesOrder } from '../models/sales-order.model';
 import type { StoreSearchBody } from '../models/store-search.model';
 import type { SalesPersonSearchBody } from '../models/sales-person-search.model';
@@ -281,7 +287,9 @@ describe('SalesApiService', () => {
         orderCount: 418,
         totalRevenue: 10065803.54,
         quotaHistory: [{ quotaDate: '2011-05-31T00:00:00', salesQuota: 300000 }],
-        territoryHistory: [{ territoryId: 3, territoryName: 'Central', startDate: '2005-07-01T00:00:00', endDate: null }],
+        territoryHistory: [
+          { territoryId: 3, territoryName: 'Central', startDate: '2005-07-01T00:00:00', endDate: null },
+        ],
       };
 
       let result: SalesPersonPerformance | undefined;
@@ -506,11 +514,15 @@ describe('SalesApiService', () => {
         results: [],
       };
 
-      service.getSalesOrders({ pageNumber: 2, pageSize: 25, orderBy: 'orderDate', sortOrder: 'desc' }).subscribe((result) => {
-        expect(result).toEqual(mockData);
-      });
+      service
+        .getSalesOrders({ pageNumber: 2, pageSize: 25, orderBy: 'orderDate', sortOrder: 'desc' })
+        .subscribe((result) => {
+          expect(result).toEqual(mockData);
+        });
 
-      const req = httpTesting.expectOne(`${BASE_URL}/v1/sales-orders?pageNumber=2&pageSize=25&orderBy=orderDate&sortOrder=desc`);
+      const req = httpTesting.expectOne(
+        `${BASE_URL}/v1/sales-orders?pageNumber=2&pageSize=25&orderBy=orderDate&sortOrder=desc`,
+      );
       expect(req.request.method).toBe('GET');
       req.flush(mockData);
     });

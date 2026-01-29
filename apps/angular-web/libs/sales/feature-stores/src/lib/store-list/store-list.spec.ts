@@ -154,10 +154,7 @@ describe('StoreListComponent', () => {
 
     component['onPageChange'](3);
 
-    expect(router.navigate).toHaveBeenCalledWith(
-      [],
-      expect.objectContaining({ queryParams: { pageNumber: 3 } }),
-    );
+    expect(router.navigate).toHaveBeenCalledWith([], expect.objectContaining({ queryParams: { pageNumber: 3 } }));
   });
 
   it('rows computed correctly from store entities', async () => {
@@ -255,7 +252,12 @@ describe('StoreListComponent', () => {
 
     fixture.detectChanges();
 
-    expect(storeStore.loadPage).toHaveBeenCalledWith({ pageNumber: 1, pageSize: 25, orderBy: 'name', sortOrder: 'desc' });
+    expect(storeStore.loadPage).toHaveBeenCalledWith({
+      pageNumber: 1,
+      pageSize: 25,
+      orderBy: 'name',
+      sortOrder: 'desc',
+    });
     expect(component['sortColumn']()).toBe('name');
     expect(component['sortDirection']()).toBe('desc');
   });
@@ -267,10 +269,7 @@ describe('StoreListComponent', () => {
 
     component['onPageChange'](2);
 
-    expect(router.navigate).toHaveBeenCalledWith(
-      [],
-      expect.objectContaining({ queryParams: { pageNumber: 2 } }),
-    );
+    expect(router.navigate).toHaveBeenCalledWith([], expect.objectContaining({ queryParams: { pageNumber: 2 } }));
   });
 
   it('onSearch with empty string reloads full list', () => {

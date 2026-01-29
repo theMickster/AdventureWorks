@@ -1,12 +1,4 @@
-import {
-  ChangeDetectionStrategy,
-  Component,
-  computed,
-  DestroyRef,
-  inject,
-  OnInit,
-  signal,
-} from '@angular/core';
+import { ChangeDetectionStrategy, Component, computed, DestroyRef, inject, OnInit, signal } from '@angular/core';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { FormBuilder, ReactiveFormsModule } from '@angular/forms';
 import { ActivatedRoute, Router, RouterLink } from '@angular/router';
@@ -57,13 +49,13 @@ export class SalesPersonEditComponent implements OnInit {
 
   protected readonly fullName = computed(() => {
     const p = this.salesPerson();
-    if (!p) { return ''; }
+    if (!p) {
+      return '';
+    }
     return [p.firstName, p.middleName, p.lastName].filter(Boolean).join(' ');
   });
 
-  protected readonly backQueryParams = computed(() =>
-    extractListNavParams(this.route.snapshot.queryParams),
-  );
+  protected readonly backQueryParams = computed(() => extractListNavParams(this.route.snapshot.queryParams));
 
   /** Reads the sales person ID from the route, then loads the sales person and territory list in parallel via `forkJoin` and patches the form. Navigates to the detail view on load failure. */
   ngOnInit(): void {

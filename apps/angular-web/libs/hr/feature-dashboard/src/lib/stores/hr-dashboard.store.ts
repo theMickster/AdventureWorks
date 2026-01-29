@@ -1,7 +1,7 @@
 import { inject } from '@angular/core';
 import { patchState, signalStore, withMethods, withState } from '@ngrx/signals';
 import { rxMethod } from '@ngrx/signals/rxjs-interop';
-import { withDevtools } from '@angular-architects/ngrx-toolkit';
+import { withDevtools } from '@ngrx-toolkit/core';
 import { catchError, EMPTY, pipe, switchMap, tap } from 'rxjs';
 import { setError, setLoaded, setLoading, withRequestStatus } from '@adventureworks-web/shared/data-access';
 import { HrApiService } from '@adventureworks-web/hr/data-access';

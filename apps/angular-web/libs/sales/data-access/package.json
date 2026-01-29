@@ -2,10 +2,10 @@
   "name": "@adventureworks-web/sales/data-access",
   "version": "0.0.1",
   "peerDependencies": {
-    "@angular/common": "^21.2.0",
-    "@angular/core": "^21.2.0",
-    "@ngrx/signals": "^21.0.0",
-    "@angular-architects/ngrx-toolkit": "^21.0.0"
+    "@angular/common": "^22.2.0",
+    "@angular/core": "^22.2.0",
+    "@ngrx/signals": "^22.0.0",
+    "@ngrx-toolkit/core": "^22.0.0"
   },
   "sideEffects": false
 }

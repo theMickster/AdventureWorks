@@ -2,7 +2,7 @@ import { inject } from '@angular/core';
 import { patchState, signalStore, withMethods } from '@ngrx/signals';
 import { addEntity, setAllEntities, updateEntity, withEntities } from '@ngrx/signals/entities';
 import { rxMethod } from '@ngrx/signals/rxjs-interop';
-import { withDevtools } from '@angular-architects/ngrx-toolkit';
+import { withDevtools } from '@ngrx-toolkit/core';
 import { catchError, EMPTY, exhaustMap, pipe, switchMap, tap } from 'rxjs';
 import {
   ApiEmptyResultError,
@@ -23,8 +23,7 @@ import type { JsonPatchOperation } from '../models/json-patch.model';
 import { HrApiService } from '../services/hr-api.service';
 
 type EmployeeListRequest =
-  | { kind: 'loadPage'; params: EmployeeParams }
-  | { kind: 'search'; params: EmployeeParams; body: EmployeeSearchBody };
+  { kind: 'loadPage'; params: EmployeeParams } | { kind: 'search'; params: EmployeeParams; body: EmployeeSearchBody };
 
 /** Entity store for HumanResources.Employee with CRUD, patch, and lifecycle operations. */
 export const EmployeeStore = signalStore(

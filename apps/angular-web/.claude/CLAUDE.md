@@ -1,6 +1,6 @@
 # AdventureWorks Angular Web — Claude Code Configuration
 
-Angular 21 Nx monorepo for the AdventureWorks capstone. Zoneless, signal-first, standalone components throughout.
+Angular 22 Nx monorepo for the AdventureWorks capstone. Zoneless, signal-first, standalone components throughout.
 
 For the tech stack, workspace structure, design system, authentication, and commands (including the library generator), read `apps/angular-web/README.md`. It is the single source of truth.
 

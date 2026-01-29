@@ -2,7 +2,7 @@ import { inject } from '@angular/core';
 import { patchState, signalStore, withMethods } from '@ngrx/signals';
 import { setAllEntities, withEntities } from '@ngrx/signals/entities';
 import { rxMethod } from '@ngrx/signals/rxjs-interop';
-import { withDevtools } from '@angular-architects/ngrx-toolkit';
+import { withDevtools } from '@ngrx-toolkit/core';
 import { catchError, EMPTY, pipe, switchMap, tap } from 'rxjs';
 import {
   ApiEmptyResultError,
@@ -40,7 +40,11 @@ export const CustomerStore = signalStore(
             ),
             catchError((err: unknown) => {
               if (err instanceof ApiEmptyResultError) {
-                patchState(store, setAllEntities([] as CustomerListItem[], { selectId: (customer) => customer.customerId }), setLoaded());
+                patchState(
+                  store,
+                  setAllEntities([] as CustomerListItem[], { selectId: (customer) => customer.customerId }),
+                  setLoaded(),
+                );
               } else {
                 patchState(store, setError('Failed to load customers'));
               }

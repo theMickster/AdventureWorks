@@ -3,8 +3,8 @@
   "version": "0.0.1",
   "peerDependencies": {
     "@adventureworks-web/shared/util": "0.0.1",
-    "@angular/cdk": "^21.2.0",
-    "@angular/core": "^21.2.0"
+    "@angular/cdk": "^22.2.0",
+    "@angular/core": "^22.2.0"
   },
   "sideEffects": false
 }

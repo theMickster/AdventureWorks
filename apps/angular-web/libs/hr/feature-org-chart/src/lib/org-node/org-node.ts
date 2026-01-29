@@ -1,4 +1,13 @@
-import { ChangeDetectionStrategy, Component, ElementRef, effect, forwardRef, inject, input, output } from '@angular/core';
+import {
+  ChangeDetectionStrategy,
+  Component,
+  ElementRef,
+  effect,
+  forwardRef,
+  inject,
+  input,
+  output,
+} from '@angular/core';
 import type { OrgChartTreeNode } from '../models/org-chart-tree-node.model';
 
 // CSS grid-row/width expand transition (org-node.css) takes 200ms; scrolling before it settles

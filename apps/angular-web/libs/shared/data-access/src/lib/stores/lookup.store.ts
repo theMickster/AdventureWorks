@@ -1,7 +1,7 @@
 import { Signal, inject } from '@angular/core';
 import { patchState, signalStore, withMethods, withState } from '@ngrx/signals';
 import { rxMethod } from '@ngrx/signals/rxjs-interop';
-import { withDevtools } from '@angular-architects/ngrx-toolkit';
+import { withDevtools } from '@ngrx-toolkit/core';
 import { Observable, catchError, EMPTY, exhaustMap, pipe, tap } from 'rxjs';
 import { withRequestStatus, setLoading, setLoaded, setError } from '../store-features/with-request-status';
 import { LookupApiService } from '../services/lookup-api.service';

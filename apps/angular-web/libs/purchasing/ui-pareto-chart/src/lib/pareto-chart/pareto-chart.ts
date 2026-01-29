@@ -67,7 +67,16 @@ const paretoReferenceLinesPlugin: Plugin<ParetoChartType> = {
   },
 };
 
-Chart.register(BarController, BarElement, LineController, LineElement, PointElement, LinearScale, CategoryScale, Tooltip);
+Chart.register(
+  BarController,
+  BarElement,
+  LineController,
+  LineElement,
+  PointElement,
+  LinearScale,
+  CategoryScale,
+  Tooltip,
+);
 
 /** Structurally identical to `VendorSpendDto` (purchasing/data-access) — duplicated here so this `type:ui` library doesn't depend on `type:data-access`. */
 export interface ParetoChartDataPoint {

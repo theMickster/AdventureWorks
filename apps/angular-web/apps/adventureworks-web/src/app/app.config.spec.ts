@@ -45,7 +45,6 @@ describe('runSignalrLifecycleStep', () => {
     expect(signalrService.connect).toHaveBeenCalledTimes(2);
     vi.useRealTimers();
   });
-
 });
 
 describe('runStoreRefreshOnReconnectStep', () => {
@@ -124,7 +123,13 @@ describe('runSignalrEventSubscriptionStep', () => {
 
     // Simulate the server pushing an EntityChanged event for a Store entity.
     const registeredHandler = signalrService.on.mock.calls[0][1] as (payload: unknown) => void;
-    registeredHandler({ entityType: 'Store', entityId: 42, action: 'Updated', userName: 'test', timestamp: '2026-06-07T00:00:00Z' });
+    registeredHandler({
+      entityType: 'Store',
+      entityId: 42,
+      action: 'Updated',
+      userName: 'test',
+      timestamp: '2026-06-07T00:00:00Z',
+    });
 
     expect(stores.storeStore.refresh).toHaveBeenCalledOnce();
     expect(stores.employeeStore.handleSignalrEmployeeLifecycleEvent).not.toHaveBeenCalled();
@@ -141,7 +146,13 @@ describe('runSignalrEventSubscriptionStep', () => {
     runSignalrEventSubscriptionStep(false, 'connected', signalrService, stores, appInsightsService);
 
     const registeredHandler = signalrService.on.mock.calls[0][1] as (payload: unknown) => void;
-    registeredHandler({ entityType: 'Employee', entityId: 7, action: 'Created', userName: 'test', timestamp: '2026-06-07T00:00:00Z' });
+    registeredHandler({
+      entityType: 'Employee',
+      entityId: 7,
+      action: 'Created',
+      userName: 'test',
+      timestamp: '2026-06-07T00:00:00Z',
+    });
 
     expect(stores.employeeStore.handleSignalrEmployeeLifecycleEvent).toHaveBeenCalledOnce();
     expect(stores.storeStore.refresh).not.toHaveBeenCalled();
@@ -155,7 +166,13 @@ describe('runSignalrEventSubscriptionStep', () => {
     };
     const appInsightsService = { trackException: vi.fn() };
 
-    const handlersRegistered = runSignalrEventSubscriptionStep(true, 'disconnected', signalrService, stores, appInsightsService);
+    const handlersRegistered = runSignalrEventSubscriptionStep(
+      true,
+      'disconnected',
+      signalrService,
+      stores,
+      appInsightsService,
+    );
 
     expect(handlersRegistered).toBe(false);
     expect(signalrService.on).not.toHaveBeenCalled();

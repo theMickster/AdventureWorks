@@ -2,7 +2,7 @@ import { inject } from '@angular/core';
 import { patchState, signalStore, withMethods } from '@ngrx/signals';
 import { addEntity, setAllEntities, updateEntity, withEntities } from '@ngrx/signals/entities';
 import { rxMethod } from '@ngrx/signals/rxjs-interop';
-import { withDevtools } from '@angular-architects/ngrx-toolkit';
+import { withDevtools } from '@ngrx-toolkit/core';
 import { catchError, EMPTY, exhaustMap, pipe, switchMap, tap } from 'rxjs';
 import {
   ApiEmptyResultError,
@@ -19,8 +19,7 @@ import type { Store, StoreCreate, StoreUpdate } from '../models/store.model';
 import { SalesApiService } from '../services/sales-api.service';
 
 type StoreListRequest =
-  | { kind: 'loadPage'; params: StoreParams }
-  | { kind: 'search'; params: StoreParams; body: StoreSearchBody };
+  { kind: 'loadPage'; params: StoreParams } | { kind: 'search'; params: StoreParams; body: StoreSearchBody };
 
 /** Entity store for Sales.Store with paginated list, search, and CRUD operations. */
 export const StoreStore = signalStore(

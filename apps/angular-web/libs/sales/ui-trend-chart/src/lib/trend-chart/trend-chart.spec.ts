@@ -3,9 +3,19 @@ import { Chart } from 'chart.js';
 import { TrendChartComponent } from './trend-chart';
 
 vi.mock('chart.js', () => {
-  const Chart = vi.fn().mockImplementation(function() { return { destroy: vi.fn() }; });
+  const Chart = vi.fn().mockImplementation(function () {
+    return { destroy: vi.fn() };
+  });
   (Chart as unknown as { register: () => void }).register = vi.fn();
-  return { Chart, LineController: {}, LineElement: {}, PointElement: {}, LinearScale: {}, CategoryScale: {}, Tooltip: {} };
+  return {
+    Chart,
+    LineController: {},
+    LineElement: {},
+    PointElement: {},
+    LinearScale: {},
+    CategoryScale: {},
+    Tooltip: {},
+  };
 });
 
 const mockTrend = [

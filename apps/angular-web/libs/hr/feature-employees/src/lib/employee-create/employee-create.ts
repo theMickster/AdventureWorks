@@ -8,7 +8,12 @@ import type { EmployeeCreate } from '@adventureworks-web/hr/data-access';
 import { LookupApiService } from '@adventureworks-web/shared/data-access';
 import type { AddressType, PhoneNumberType, StateProvince } from '@adventureworks-web/shared/data-access';
 import { InputFieldComponent, SelectFieldComponent, SkeletonComponent } from '@adventureworks-web/shared/ui';
-import { ApiValidationError, ConflictError, minAgeValidator, NotificationService } from '@adventureworks-web/shared/util';
+import {
+  ApiValidationError,
+  ConflictError,
+  minAgeValidator,
+  NotificationService,
+} from '@adventureworks-web/shared/util';
 
 /** Sequential wizard step. 4 is the read-only review/submit step — it owns no `FormGroup` of its own. */
 type WizardStep = 1 | 2 | 3 | 4;
@@ -18,26 +23,26 @@ type WizardStep = 1 | 2 | 3 | 4;
 // jump the user back to the step where the offending field lives (wizard steps aren't all
 // visible at once, unlike the freely-clickable tabs in `sales-person-create.ts`).
 const API_PROPERTY_TO_FORM_PATH: Record<string, { path: string[]; step: WizardStep }> = {
-  FirstName:                 { path: ['personalInfo', 'firstName'], step: 1 },
-  LastName:                  { path: ['personalInfo', 'lastName'], step: 1 },
-  MiddleName:                { path: ['personalInfo', 'middleName'], step: 1 },
-  Title:                     { path: ['personalInfo', 'title'], step: 1 },
-  Suffix:                    { path: ['personalInfo', 'suffix'], step: 1 },
-  JobTitle:                  { path: ['personalInfo', 'jobTitle'], step: 1 },
-  NationalIdNumber:          { path: ['personalInfo', 'nationalIdNumber'], step: 1 },
-  LoginId:                   { path: ['personalInfo', 'loginId'], step: 1 },
-  BirthDate:                 { path: ['personalInfo', 'birthDate'], step: 1 },
-  MaritalStatus:             { path: ['personalInfo', 'maritalStatus'], step: 1 },
-  Gender:                    { path: ['personalInfo', 'gender'], step: 1 },
-  EmailAddress:              { path: ['contact', 'emailAddress'], step: 2 },
-  'Phone.PhoneNumber':       { path: ['contact', 'phone', 'phoneNumber'], step: 2 },
+  FirstName: { path: ['personalInfo', 'firstName'], step: 1 },
+  LastName: { path: ['personalInfo', 'lastName'], step: 1 },
+  MiddleName: { path: ['personalInfo', 'middleName'], step: 1 },
+  Title: { path: ['personalInfo', 'title'], step: 1 },
+  Suffix: { path: ['personalInfo', 'suffix'], step: 1 },
+  JobTitle: { path: ['personalInfo', 'jobTitle'], step: 1 },
+  NationalIdNumber: { path: ['personalInfo', 'nationalIdNumber'], step: 1 },
+  LoginId: { path: ['personalInfo', 'loginId'], step: 1 },
+  BirthDate: { path: ['personalInfo', 'birthDate'], step: 1 },
+  MaritalStatus: { path: ['personalInfo', 'maritalStatus'], step: 1 },
+  Gender: { path: ['personalInfo', 'gender'], step: 1 },
+  EmailAddress: { path: ['contact', 'emailAddress'], step: 2 },
+  'Phone.PhoneNumber': { path: ['contact', 'phone', 'phoneNumber'], step: 2 },
   'Phone.PhoneNumberTypeId': { path: ['contact', 'phone', 'phoneNumberTypeId'], step: 2 },
-  AddressTypeId:             { path: ['address', 'addressTypeId'], step: 3 },
-  'Address.AddressLine1':    { path: ['address', 'addressLine1'], step: 3 },
-  'Address.AddressLine2':    { path: ['address', 'addressLine2'], step: 3 },
-  'Address.City':            { path: ['address', 'city'], step: 3 },
-  'Address.PostalCode':      { path: ['address', 'postalCode'], step: 3 },
-  'Address.StateProvince':   { path: ['address', 'stateProvinceId'], step: 3 },
+  AddressTypeId: { path: ['address', 'addressTypeId'], step: 3 },
+  'Address.AddressLine1': { path: ['address', 'addressLine1'], step: 3 },
+  'Address.AddressLine2': { path: ['address', 'addressLine2'], step: 3 },
+  'Address.City': { path: ['address', 'city'], step: 3 },
+  'Address.PostalCode': { path: ['address', 'postalCode'], step: 3 },
+  'Address.StateProvince': { path: ['address', 'stateProvinceId'], step: 3 },
 };
 
 @Component({
@@ -90,32 +95,32 @@ export class EmployeeCreateComponent implements OnInit {
 
   protected readonly form = this.fb.group({
     personalInfo: this.fb.group({
-      firstName:        ['', [Validators.required, Validators.maxLength(50)]],
-      lastName:         ['', [Validators.required, Validators.maxLength(50)]],
-      middleName:       [null as string | null, Validators.maxLength(50)],
-      title:            [null as string | null, Validators.maxLength(8)],
-      suffix:           [null as string | null, Validators.maxLength(10)],
-      jobTitle:         ['', [Validators.required, Validators.maxLength(50)]],
+      firstName: ['', [Validators.required, Validators.maxLength(50)]],
+      lastName: ['', [Validators.required, Validators.maxLength(50)]],
+      middleName: [null as string | null, Validators.maxLength(50)],
+      title: [null as string | null, Validators.maxLength(8)],
+      suffix: [null as string | null, Validators.maxLength(10)],
+      jobTitle: ['', [Validators.required, Validators.maxLength(50)]],
       nationalIdNumber: ['', [Validators.required, Validators.maxLength(15)]],
-      loginId:          ['', [Validators.required, Validators.maxLength(256)]],
-      birthDate:        ['', [Validators.required, minAgeValidator(18)]],
-      maritalStatus:    ['' as 'M' | 'S' | '', Validators.required],
-      gender:           ['' as 'M' | 'F' | '', Validators.required],
+      loginId: ['', [Validators.required, Validators.maxLength(256)]],
+      birthDate: ['', [Validators.required, minAgeValidator(18)]],
+      maritalStatus: ['' as 'M' | 'S' | '', Validators.required],
+      gender: ['' as 'M' | 'F' | '', Validators.required],
     }),
     contact: this.fb.group({
       emailAddress: ['', [Validators.required, Validators.email, Validators.maxLength(50)]],
       phone: this.fb.group({
-        phoneNumber:       ['', [Validators.required, Validators.maxLength(25)]],
+        phoneNumber: ['', [Validators.required, Validators.maxLength(25)]],
         phoneNumberTypeId: [null as number | null, Validators.required],
       }),
     }),
     address: this.fb.group({
-      addressLine1:    ['', [Validators.required, Validators.maxLength(60)]],
-      addressLine2:    [null as string | null, Validators.maxLength(60)],
-      city:            ['', [Validators.required, Validators.maxLength(30)]],
+      addressLine1: ['', [Validators.required, Validators.maxLength(60)]],
+      addressLine2: [null as string | null, Validators.maxLength(60)],
+      city: ['', [Validators.required, Validators.maxLength(30)]],
       stateProvinceId: [null as number | null, Validators.required],
-      postalCode:      ['', [Validators.required, Validators.maxLength(15)]],
-      addressTypeId:   [null as number | null, Validators.required],
+      postalCode: ['', [Validators.required, Validators.maxLength(15)]],
+      addressTypeId: [null as number | null, Validators.required],
     }),
   });
 
@@ -204,7 +209,7 @@ export class EmployeeCreateComponent implements OnInit {
   protected readonly birthDateErrors = computed(() =>
     this.getErrors(this.form.controls.personalInfo.controls.birthDate, {
       required: 'Birth date is required.',
-      minAge:   'Must be at least 18',
+      minAge: 'Must be at least 18',
     }),
   );
   protected readonly maritalStatusErrors = computed(() =>
@@ -222,14 +227,14 @@ export class EmployeeCreateComponent implements OnInit {
 
   protected readonly emailAddressErrors = computed(() =>
     this.getErrors(this.form.controls.contact.controls.emailAddress, {
-      required:  'Email address is required.',
-      email:     'Enter a valid email address.',
+      required: 'Email address is required.',
+      email: 'Enter a valid email address.',
       maxlength: 'Cannot exceed 50 characters.',
     }),
   );
   protected readonly phoneNumberErrors = computed(() =>
     this.getErrors(this.form.controls.contact.controls.phone.controls.phoneNumber, {
-      required:  'Phone number is required.',
+      required: 'Phone number is required.',
       maxlength: 'Cannot exceed 25 characters.',
     }),
   );
@@ -243,7 +248,7 @@ export class EmployeeCreateComponent implements OnInit {
 
   protected readonly addressLine1Errors = computed(() =>
     this.getErrors(this.form.controls.address.controls.addressLine1, {
-      required:  'Address line 1 is required.',
+      required: 'Address line 1 is required.',
       maxlength: 'Cannot exceed 60 characters.',
     }),
   );
@@ -254,7 +259,7 @@ export class EmployeeCreateComponent implements OnInit {
   );
   protected readonly cityErrors = computed(() =>
     this.getErrors(this.form.controls.address.controls.city, {
-      required:  'City is required.',
+      required: 'City is required.',
       maxlength: 'Cannot exceed 30 characters.',
     }),
   );
@@ -265,7 +270,7 @@ export class EmployeeCreateComponent implements OnInit {
   );
   protected readonly postalCodeErrors = computed(() =>
     this.getErrors(this.form.controls.address.controls.postalCode, {
-      required:  'Postal code is required.',
+      required: 'Postal code is required.',
       maxlength: 'Cannot exceed 15 characters.',
     }),
   );
@@ -304,8 +309,8 @@ export class EmployeeCreateComponent implements OnInit {
 
   ngOnInit(): void {
     forkJoin({
-      addressTypes:     this.lookupApi.getAddressTypes(),
-      stateProvinces:   this.lookupApi.getStateProvinces(),
+      addressTypes: this.lookupApi.getAddressTypes(),
+      stateProvinces: this.lookupApi.getStateProvinces(),
       phoneNumberTypes: this.lookupApi.getPhoneNumberTypes(),
     })
       .pipe(takeUntilDestroyed(this.destroyRef))
@@ -393,7 +398,9 @@ export class EmployeeCreateComponent implements OnInit {
     const addressTypeId = addressTypeIdRaw ? Number(addressTypeIdRaw) : null;
     const selectedAddressType = this.addressTypes().find((a) => a.id === addressTypeId);
     if (!selectedAddressType) {
-      this.notificationService.error('Selected address type is invalid. Please select a valid address type and try again.');
+      this.notificationService.error(
+        'Selected address type is invalid. Please select a valid address type and try again.',
+      );
       return;
     }
 
@@ -406,30 +413,30 @@ export class EmployeeCreateComponent implements OnInit {
     }
 
     const model: EmployeeCreate = {
-      firstName:         personalInfo.firstName ?? '',
-      lastName:          personalInfo.lastName ?? '',
-      middleName:        personalInfo.middleName ?? null,
-      title:             personalInfo.title ?? null,
-      suffix:            personalInfo.suffix ?? null,
-      jobTitle:          personalInfo.jobTitle ?? '',
-      maritalStatus:     personalInfo.maritalStatus as 'M' | 'S',
-      gender:            personalInfo.gender as 'M' | 'F',
-      salariedFlag:      false,
+      firstName: personalInfo.firstName ?? '',
+      lastName: personalInfo.lastName ?? '',
+      middleName: personalInfo.middleName ?? null,
+      title: personalInfo.title ?? null,
+      suffix: personalInfo.suffix ?? null,
+      jobTitle: personalInfo.jobTitle ?? '',
+      maritalStatus: personalInfo.maritalStatus as 'M' | 'S',
+      gender: personalInfo.gender as 'M' | 'F',
+      salariedFlag: false,
       organizationLevel: null,
-      nationalIdNumber:  personalInfo.nationalIdNumber ?? '',
-      loginId:           personalInfo.loginId ?? '',
-      birthDate:         personalInfo.birthDate ?? '',
+      nationalIdNumber: personalInfo.nationalIdNumber ?? '',
+      loginId: personalInfo.loginId ?? '',
+      birthDate: personalInfo.birthDate ?? '',
       phone: {
-        phoneNumber:       contact.phone?.phoneNumber ?? '',
+        phoneNumber: contact.phone?.phoneNumber ?? '',
         phoneNumberTypeId: selectedPhoneType.id,
       },
       emailAddress: contact.emailAddress ?? '',
       address: {
         addressLine1: address.addressLine1 ?? '',
         addressLine2: address.addressLine2 ?? null,
-        city:         address.city ?? '',
+        city: address.city ?? '',
         stateProvince: {
-          id:   selectedState.id,
+          id: selectedState.id,
           name: selectedState.name,
           code: selectedState.code,
         },

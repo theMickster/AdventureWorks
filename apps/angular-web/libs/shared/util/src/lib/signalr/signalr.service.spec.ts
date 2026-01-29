@@ -162,9 +162,7 @@ describe('SignalrService', () => {
       options: { accessTokenFactory?: () => string | Promise<string> },
     ): HubConnectionBuilder {
       lastHubUrl = url;
-      currentTokenFactory = options.accessTokenFactory
-        ? async () => await options.accessTokenFactory?.()
-        : undefined;
+      currentTokenFactory = options.accessTokenFactory ? async () => await options.accessTokenFactory?.() : undefined;
       return this;
     });
 
@@ -393,11 +391,23 @@ describe('SignalrService', () => {
     const handler = vi.fn();
     const teardown = service.on('EntityChanged', handler);
 
-    currentConnection?.emit('EntityChanged', { entityType: 'Order', entityId: 1, action: 'Created', userName: 'test', timestamp: '2024-01-01T00:00:00Z' });
+    currentConnection?.emit('EntityChanged', {
+      entityType: 'Order',
+      entityId: 1,
+      action: 'Created',
+      userName: 'test',
+      timestamp: '2024-01-01T00:00:00Z',
+    });
     expect(handler).toHaveBeenCalledOnce();
 
     teardown();
-    currentConnection?.emit('EntityChanged', { entityType: 'Order', entityId: 1, action: 'Created', userName: 'test', timestamp: '2024-01-01T00:00:00Z' });
+    currentConnection?.emit('EntityChanged', {
+      entityType: 'Order',
+      entityId: 1,
+      action: 'Created',
+      userName: 'test',
+      timestamp: '2024-01-01T00:00:00Z',
+    });
     expect(handler).toHaveBeenCalledOnce();
   });
 
@@ -434,7 +444,13 @@ describe('SignalrService', () => {
     service.on('EntityChanged', handler, mockDestroyRef as unknown as DestroyRef);
 
     mockDestroyRef.onDestroy.mock.calls[0][0]();
-    currentConnection?.emit('EntityChanged', { entityType: 'Order', entityId: 1, action: 'Created', userName: 'test', timestamp: '2024-01-01T00:00:00Z' });
+    currentConnection?.emit('EntityChanged', {
+      entityType: 'Order',
+      entityId: 1,
+      action: 'Created',
+      userName: 'test',
+      timestamp: '2024-01-01T00:00:00Z',
+    });
 
     expect(handler).not.toHaveBeenCalled();
   });

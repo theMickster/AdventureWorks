@@ -1,12 +1,4 @@
-import {
-  ChangeDetectionStrategy,
-  Component,
-  computed,
-  DestroyRef,
-  inject,
-  OnInit,
-  signal,
-} from '@angular/core';
+import { ChangeDetectionStrategy, Component, computed, DestroyRef, inject, OnInit, signal } from '@angular/core';
 import { takeUntilDestroyed, toSignal } from '@angular/core/rxjs-interop';
 import {
   AbstractControl,
@@ -22,8 +14,18 @@ import { forkJoin } from 'rxjs';
 import { SalesApiService } from '@adventureworks-web/sales/data-access';
 import type { SalesPersonCreate } from '@adventureworks-web/sales/data-access';
 import { LookupApiService } from '@adventureworks-web/shared/data-access';
-import type { AddressType, PhoneNumberType, SalesTerritory, StateProvince } from '@adventureworks-web/shared/data-access';
-import { InputFieldComponent, SelectFieldComponent, SkeletonComponent, ToggleFieldComponent } from '@adventureworks-web/shared/ui';
+import type {
+  AddressType,
+  PhoneNumberType,
+  SalesTerritory,
+  StateProvince,
+} from '@adventureworks-web/shared/data-access';
+import {
+  InputFieldComponent,
+  SelectFieldComponent,
+  SkeletonComponent,
+  ToggleFieldComponent,
+} from '@adventureworks-web/shared/ui';
 import { ApiValidationError, minAgeValidator, NotificationService } from '@adventureworks-web/shared/util';
 
 // ── Module-level validators ────────────────────────────────────────────────
@@ -49,32 +51,32 @@ function hireDateAfterBirthDateValidator(group: AbstractControl): ValidationErro
 // Nested validators via SetValidator get a parent prefix (e.g. "Phone.PhoneNumber",
 // "Address.AddressLine1") — confirmed from SalesPersonPhoneValidator and AddressBaseModelValidator.
 const API_PROPERTY_TO_FORM_PATH: Record<string, string[]> = {
-  FirstName:                ['personalInfo', 'firstName'],
-  LastName:                 ['personalInfo', 'lastName'],
-  MiddleName:               ['personalInfo', 'middleName'],
-  Title:                    ['personalInfo', 'title'],
-  Suffix:                   ['personalInfo', 'suffix'],
-  NationalIdNumber:         ['employment', 'nationalIdNumber'],
-  LoginId:                  ['employment', 'loginId'],
-  JobTitle:                 ['employment', 'jobTitle'],
-  BirthDate:                ['employment', 'birthDate'],
-  HireDate:                 ['employment', 'hireDate'],
-  MaritalStatus:            ['employment', 'maritalStatus'],
-  Gender:                   ['employment', 'gender'],
-  OrganizationLevel:        ['employment', 'organizationLevel'],
-  EmailAddress:             ['contact', 'emailAddress'],
-  'Phone.PhoneNumber':      ['contact', 'phone', 'phoneNumber'],
-  'Phone.PhoneNumberTypeId':['contact', 'phone', 'phoneNumberTypeId'],
-  AddressTypeId:            ['contact', 'addressTypeId'],
-  'Address.AddressLine1':   ['contact', 'address', 'addressLine1'],
-  'Address.AddressLine2':   ['contact', 'address', 'addressLine2'],
-  'Address.City':           ['contact', 'address', 'city'],
-  'Address.PostalCode':     ['contact', 'address', 'postalCode'],
-  'Address.StateProvince':  ['contact', 'address', 'stateProvinceId'],
-  TerritoryId:              ['salesConfig', 'territoryId'],
-  SalesQuota:               ['salesConfig', 'salesQuota'],
-  Bonus:                    ['salesConfig', 'bonus'],
-  CommissionPct:            ['salesConfig', 'commissionPct'],
+  FirstName: ['personalInfo', 'firstName'],
+  LastName: ['personalInfo', 'lastName'],
+  MiddleName: ['personalInfo', 'middleName'],
+  Title: ['personalInfo', 'title'],
+  Suffix: ['personalInfo', 'suffix'],
+  NationalIdNumber: ['employment', 'nationalIdNumber'],
+  LoginId: ['employment', 'loginId'],
+  JobTitle: ['employment', 'jobTitle'],
+  BirthDate: ['employment', 'birthDate'],
+  HireDate: ['employment', 'hireDate'],
+  MaritalStatus: ['employment', 'maritalStatus'],
+  Gender: ['employment', 'gender'],
+  OrganizationLevel: ['employment', 'organizationLevel'],
+  EmailAddress: ['contact', 'emailAddress'],
+  'Phone.PhoneNumber': ['contact', 'phone', 'phoneNumber'],
+  'Phone.PhoneNumberTypeId': ['contact', 'phone', 'phoneNumberTypeId'],
+  AddressTypeId: ['contact', 'addressTypeId'],
+  'Address.AddressLine1': ['contact', 'address', 'addressLine1'],
+  'Address.AddressLine2': ['contact', 'address', 'addressLine2'],
+  'Address.City': ['contact', 'address', 'city'],
+  'Address.PostalCode': ['contact', 'address', 'postalCode'],
+  'Address.StateProvince': ['contact', 'address', 'stateProvinceId'],
+  TerritoryId: ['salesConfig', 'territoryId'],
+  SalesQuota: ['salesConfig', 'salesQuota'],
+  Bonus: ['salesConfig', 'bonus'],
+  CommissionPct: ['salesConfig', 'commissionPct'],
 };
 
 // ── Component ──────────────────────────────────────────────────────────────
@@ -84,7 +86,14 @@ type ActiveTab = 'personalInfo' | 'employment' | 'contact' | 'salesConfig';
 @Component({
   selector: 'aw-sales-person-create',
   standalone: true,
-  imports: [ReactiveFormsModule, RouterLink, InputFieldComponent, SelectFieldComponent, SkeletonComponent, ToggleFieldComponent],
+  imports: [
+    ReactiveFormsModule,
+    RouterLink,
+    InputFieldComponent,
+    SelectFieldComponent,
+    SkeletonComponent,
+    ToggleFieldComponent,
+  ],
   templateUrl: './sales-person-create.html',
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
@@ -133,45 +142,45 @@ export class SalesPersonCreateComponent implements OnInit {
 
   protected readonly form = this.fb.group({
     personalInfo: this.fb.group({
-      firstName:  ['', [Validators.required, Validators.maxLength(50)]],
-      lastName:   ['', [Validators.required, Validators.maxLength(50)]],
+      firstName: ['', [Validators.required, Validators.maxLength(50)]],
+      lastName: ['', [Validators.required, Validators.maxLength(50)]],
       middleName: [null as string | null],
-      title:      [null as string | null, Validators.maxLength(8)],
-      suffix:     [null as string | null, Validators.maxLength(10)],
+      title: [null as string | null, Validators.maxLength(8)],
+      suffix: [null as string | null, Validators.maxLength(10)],
     }),
     employment: this.fb.group(
       {
         nationalIdNumber: ['', [Validators.required, Validators.maxLength(15)]],
-        loginId:          ['', [Validators.required, Validators.maxLength(256)]],
-        jobTitle:         ['', [Validators.required, Validators.maxLength(50)]],
-        birthDate:        ['', [Validators.required, minAgeValidator(18)]],
-        hireDate:         ['', [Validators.required, notFutureDateValidator()]],
-        maritalStatus:    ['' as 'M' | 'S' | '', Validators.required],
-        gender:           ['' as 'M' | 'F' | '', Validators.required],
-        salariedFlag:     [false],
-        organizationLevel:[null as number | null],
+        loginId: ['', [Validators.required, Validators.maxLength(256)]],
+        jobTitle: ['', [Validators.required, Validators.maxLength(50)]],
+        birthDate: ['', [Validators.required, minAgeValidator(18)]],
+        hireDate: ['', [Validators.required, notFutureDateValidator()]],
+        maritalStatus: ['' as 'M' | 'S' | '', Validators.required],
+        gender: ['' as 'M' | 'F' | '', Validators.required],
+        salariedFlag: [false],
+        organizationLevel: [null as number | null],
       },
       { validators: hireDateAfterBirthDateValidator },
     ),
     contact: this.fb.group({
       emailAddress: ['', [Validators.required, Validators.email, Validators.maxLength(50)]],
       phone: this.fb.group({
-        phoneNumber:      ['', [Validators.required, Validators.maxLength(25)]],
-        phoneNumberTypeId:[null as number | null, Validators.required],
+        phoneNumber: ['', [Validators.required, Validators.maxLength(25)]],
+        phoneNumberTypeId: [null as number | null, Validators.required],
       }),
       address: this.fb.group({
-        addressLine1:    ['', [Validators.required, Validators.maxLength(60)]],
-        addressLine2:    [null as string | null],
-        city:            ['', [Validators.required, Validators.maxLength(30)]],
+        addressLine1: ['', [Validators.required, Validators.maxLength(60)]],
+        addressLine2: [null as string | null],
+        city: ['', [Validators.required, Validators.maxLength(30)]],
         stateProvinceId: [null as number | null, Validators.required],
-        postalCode:      ['', [Validators.required, Validators.maxLength(15)]],
+        postalCode: ['', [Validators.required, Validators.maxLength(15)]],
       }),
       addressTypeId: [null as number | null, Validators.required],
     }),
     salesConfig: this.fb.group({
-      territoryId:   [null as number | null],
-      salesQuota:    [null as number | null],
-      bonus:         [0, Validators.required],
+      territoryId: [null as number | null],
+      salesQuota: [null as number | null],
+      bonus: [0, Validators.required],
       commissionPct: [0, Validators.required],
     }),
   });
@@ -179,9 +188,7 @@ export class SalesPersonCreateComponent implements OnInit {
   // Bridge form value changes into the signal graph so computed() re-evaluates whenever any field changes
   private readonly _formStatus = toSignal(this.form.valueChanges, { initialValue: this.form.value });
 
-  protected readonly territoryOptions = computed(() =>
-    this.territories().map((t) => ({ value: t.id, label: t.name })),
-  );
+  protected readonly territoryOptions = computed(() => this.territories().map((t) => ({ value: t.id, label: t.name })));
   protected readonly addressTypeOptions = computed(() =>
     this.addressTypes().map((a) => ({ value: a.id, label: a.name })),
   );
@@ -261,7 +268,7 @@ export class SalesPersonCreateComponent implements OnInit {
   protected readonly birthDateErrors = computed(() =>
     this.getErrors(this.form.controls.employment.controls.birthDate, {
       required: 'Birth date is required.',
-      minAge:   'Sales person must be at least 18 years old.',
+      minAge: 'Sales person must be at least 18 years old.',
     }),
   );
   /** Hire date errors include both control-level and cross-field group-level validation. */
@@ -272,10 +279,10 @@ export class SalesPersonCreateComponent implements OnInit {
     if (!ctrl.errors && !groupErrors) return null;
     if (!this.submitted() && !ctrl.touched) return null;
     const msgs: Record<string, string> = {};
-    if (ctrl.errors?.['required'])      msgs['required']      = 'Hire date is required.';
+    if (ctrl.errors?.['required']) msgs['required'] = 'Hire date is required.';
     if (ctrl.errors?.['notFutureDate']) msgs['notFutureDate'] = 'Hire date cannot be more than 10 days in the future.';
     if (groupErrors?.['hireAfterBirth']) msgs['hireAfterBirth'] = 'Hire date must be after birth date.';
-    if (ctrl.errors?.['server'])        msgs['server']        = ctrl.errors['server'] as string;
+    if (ctrl.errors?.['server']) msgs['server'] = ctrl.errors['server'] as string;
     return Object.keys(msgs).length ? msgs : null;
   });
   protected readonly maritalStatusErrors = computed(() =>
@@ -294,7 +301,7 @@ export class SalesPersonCreateComponent implements OnInit {
   protected readonly emailAddressErrors = computed(() =>
     this.getErrors(this.form.controls.contact.controls.emailAddress, {
       required: 'Email address is required.',
-      email:    'Enter a valid email address.',
+      email: 'Enter a valid email address.',
       maxlength: 'Cannot exceed 50 characters.',
     }),
   );
@@ -360,9 +367,9 @@ export class SalesPersonCreateComponent implements OnInit {
 
   ngOnInit(): void {
     forkJoin({
-      territories:     this.lookupApi.getTerritories(),
-      addressTypes:    this.lookupApi.getAddressTypes(),
-      stateProvinces:  this.lookupApi.getStateProvinces(),
+      territories: this.lookupApi.getTerritories(),
+      addressTypes: this.lookupApi.getAddressTypes(),
+      stateProvinces: this.lookupApi.getStateProvinces(),
       phoneNumberTypes: this.lookupApi.getPhoneNumberTypes(),
     })
       .pipe(takeUntilDestroyed(this.destroyRef))
@@ -413,49 +420,49 @@ export class SalesPersonCreateComponent implements OnInit {
     }
 
     const personalInfo = this.form.controls.personalInfo.value;
-    const employment   = this.form.controls.employment.value;
-    const contact      = this.form.controls.contact.value;
-    const salesConfig  = this.form.controls.salesConfig.value;
+    const employment = this.form.controls.employment.value;
+    const contact = this.form.controls.contact.value;
+    const salesConfig = this.form.controls.salesConfig.value;
 
     const phoneNumberTypeIdRaw = contact.phone?.phoneNumberTypeId;
-    const addressTypeIdRaw     = contact.addressTypeId;
-    const territoryIdRaw       = salesConfig.territoryId;
+    const addressTypeIdRaw = contact.addressTypeId;
+    const territoryIdRaw = salesConfig.territoryId;
 
     const model: SalesPersonCreate = {
-      firstName:        personalInfo.firstName ?? '',
-      lastName:         personalInfo.lastName ?? '',
-      middleName:       personalInfo.middleName ?? null,
-      title:            personalInfo.title ?? null,
-      suffix:           personalInfo.suffix ?? null,
+      firstName: personalInfo.firstName ?? '',
+      lastName: personalInfo.lastName ?? '',
+      middleName: personalInfo.middleName ?? null,
+      title: personalInfo.title ?? null,
+      suffix: personalInfo.suffix ?? null,
       nationalIdNumber: employment.nationalIdNumber ?? '',
-      loginId:          employment.loginId ?? '',
-      jobTitle:         employment.jobTitle ?? '',
-      birthDate:        employment.birthDate ?? '',
-      hireDate:         employment.hireDate ?? '',
-      maritalStatus:    employment.maritalStatus as 'M' | 'S',
-      gender:           employment.gender as 'M' | 'F',
-      salariedFlag:     employment.salariedFlag ?? false,
+      loginId: employment.loginId ?? '',
+      jobTitle: employment.jobTitle ?? '',
+      birthDate: employment.birthDate ?? '',
+      hireDate: employment.hireDate ?? '',
+      maritalStatus: employment.maritalStatus as 'M' | 'S',
+      gender: employment.gender as 'M' | 'F',
+      salariedFlag: employment.salariedFlag ?? false,
       organizationLevel: employment.organizationLevel ?? null,
-      emailAddress:     contact.emailAddress ?? '',
+      emailAddress: contact.emailAddress ?? '',
       phone: {
-        phoneNumber:      contact.phone?.phoneNumber ?? '',
+        phoneNumber: contact.phone?.phoneNumber ?? '',
         phoneNumberTypeId: phoneNumberTypeIdRaw ? Number(phoneNumberTypeIdRaw) : null,
       },
       address: {
         addressLine1: addressValue.addressLine1 ?? '',
         addressLine2: addressValue.addressLine2 ?? null,
-        city:         addressValue.city ?? '',
+        city: addressValue.city ?? '',
         stateProvince: {
-          id:   selectedState.id,
+          id: selectedState.id,
           name: selectedState.name,
           code: selectedState.code,
         },
         postalCode: addressValue.postalCode ?? '',
       },
       addressTypeId: addressTypeIdRaw ? Number(addressTypeIdRaw) : null,
-      territoryId:   territoryIdRaw ? Number(territoryIdRaw) : null,
-      salesQuota:    salesConfig.salesQuota ?? null,
-      bonus:         salesConfig.bonus ?? 0,
+      territoryId: territoryIdRaw ? Number(territoryIdRaw) : null,
+      salesQuota: salesConfig.salesQuota ?? null,
+      bonus: salesConfig.bonus ?? 0,
       commissionPct: salesConfig.commissionPct ?? 0,
     };
 

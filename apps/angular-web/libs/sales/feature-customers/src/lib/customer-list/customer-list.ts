@@ -1,4 +1,13 @@
-import { ChangeDetectionStrategy, Component, computed, DestroyRef, effect, inject, OnInit, signal } from '@angular/core';
+import {
+  ChangeDetectionStrategy,
+  Component,
+  computed,
+  DestroyRef,
+  effect,
+  inject,
+  OnInit,
+  signal,
+} from '@angular/core';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { ActivatedRoute, Router } from '@angular/router';
 import { CustomerStore } from '@adventureworks-web/sales/data-access';
@@ -63,16 +72,14 @@ export class CustomerListComponent implements OnInit {
   }
 
   ngOnInit(): void {
-    this.route.queryParams
-      .pipe(takeUntilDestroyed(this.destroyRef))
-      .subscribe((params) => {
-        const search = params['search'] as string | undefined;
-        const pageNumber = Math.max(1, Math.trunc(Number(params['pageNumber'])) || 1);
+    this.route.queryParams.pipe(takeUntilDestroyed(this.destroyRef)).subscribe((params) => {
+      const search = params['search'] as string | undefined;
+      const pageNumber = Math.max(1, Math.trunc(Number(params['pageNumber'])) || 1);
 
-        this.searchTerm.set(search ?? '');
+      this.searchTerm.set(search ?? '');
 
-        this.customerStore.loadPage({ pageNumber, pageSize: PAGE_SIZE, ...(search ? { search } : {}) });
-      });
+      this.customerStore.loadPage({ pageNumber, pageSize: PAGE_SIZE, ...(search ? { search } : {}) });
+    });
   }
 
   protected onSearch(term: string): void {

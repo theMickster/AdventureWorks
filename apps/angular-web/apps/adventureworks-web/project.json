@@ -85,6 +85,9 @@
       "continuous": true,
       "executor": "@angular/build:dev-server",
       "defaultConfiguration": "development",
+      "readyWhen": {
+        "signal": true
+      },
       "options": {
         "port": 4200
       },
@@ -120,7 +123,11 @@
         "port": 4200,
         "staticFilePath": "dist/apps/adventureworks-web/browser",
         "spa": true
-      }
+      },
+      "readyWhen": {
+        "signal": true
+      },
+      "dependsOn": ["build"]
     },
     "lint": {
       "options": {

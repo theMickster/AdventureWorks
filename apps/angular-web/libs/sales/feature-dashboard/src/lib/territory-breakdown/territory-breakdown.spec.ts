@@ -35,10 +35,7 @@ describe('TerritoryBreakdownComponent', () => {
   it('navigates to orders filtered by territory on row click', () => {
     const rows = fixture.nativeElement.querySelectorAll('tr.cursor-pointer');
     rows[0].click();
-    expect(router.navigate).toHaveBeenCalledWith(
-      ['/sales/orders'],
-      { queryParams: { territoryId: 6 } }
-    );
+    expect(router.navigate).toHaveBeenCalledWith(['/sales/orders'], { queryParams: { territoryId: 6 } });
   });
 
   it('navigates to orders filtered by territory on Enter keydown', () => {
@@ -48,10 +45,7 @@ describe('TerritoryBreakdownComponent', () => {
     const event = new KeyboardEvent('keydown', { key: 'Enter', bubbles: true });
     rows[0].dispatchEvent(event);
 
-    expect(router.navigate).toHaveBeenCalledWith(
-      ['/sales/orders'],
-      { queryParams: { territoryId: 6 } }
-    );
+    expect(router.navigate).toHaveBeenCalledWith(['/sales/orders'], { queryParams: { territoryId: 6 } });
   });
 
   it('drillable row has title attribute "View orders for Southwest"', () => {

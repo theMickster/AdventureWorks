@@ -1,7 +1,7 @@
 import { signal, WritableSignal } from '@angular/core';
 import { ComponentFixture, TestBed } from '@angular/core/testing';
 import { provideRouter } from '@angular/router';
-import { TranslateModule } from '@ngx-translate/core';
+import { provideTranslateService } from '@ngx-translate/core';
 import {
   AppInsightsService,
   AuthService,
@@ -22,8 +22,9 @@ describe('AppLayoutComponent', () => {
     connectionStatus = signal<SignalRConnectionStatus>('connected');
 
     await TestBed.configureTestingModule({
-      imports: [AppLayoutComponent, TranslateModule.forRoot()],
+      imports: [AppLayoutComponent],
       providers: [
+        provideTranslateService(),
         provideRouter([]),
         {
           provide: AuthService,

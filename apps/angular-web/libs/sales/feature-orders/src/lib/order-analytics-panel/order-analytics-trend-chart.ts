@@ -1,4 +1,13 @@
-import { afterNextRender, ChangeDetectionStrategy, Component, effect, ElementRef, input, OnDestroy, viewChild } from '@angular/core';
+import {
+  afterNextRender,
+  ChangeDetectionStrategy,
+  Component,
+  effect,
+  ElementRef,
+  input,
+  OnDestroy,
+  viewChild,
+} from '@angular/core';
 import { Chart, CategoryScale, LinearScale, LineController, LineElement, PointElement, Tooltip } from 'chart.js';
 import type { SalesOrderMonthlyTrend } from '@adventureworks-web/sales/data-access';
 
@@ -32,7 +41,11 @@ export class OrderAnalyticsTrendChartComponent implements OnDestroy {
   private chart: Chart<'line', number[], string> | null = null;
   private isRendered = false;
 
-  private readonly formatter = new Intl.NumberFormat('en-US', { style: 'currency', currency: 'USD', maximumFractionDigits: 0 });
+  private readonly formatter = new Intl.NumberFormat('en-US', {
+    style: 'currency',
+    currency: 'USD',
+    maximumFractionDigits: 0,
+  });
 
   constructor() {
     afterNextRender(() => {
@@ -58,8 +71,8 @@ export class OrderAnalyticsTrendChartComponent implements OnDestroy {
     this.chart?.destroy();
     this.chart = null;
 
-    const labels = points.map(
-      (p) => new Date(p.year, p.month - 1).toLocaleDateString('en-US', { month: 'short', year: 'numeric' }),
+    const labels = points.map((p) =>
+      new Date(p.year, p.month - 1).toLocaleDateString('en-US', { month: 'short', year: 'numeric' }),
     );
     const revenues = points.map((p) => p.revenue);
     const pointColors = points.map((p) => (p.isPartialMonth ? 'rgba(8,145,178,0.4)' : '#0891b2'));

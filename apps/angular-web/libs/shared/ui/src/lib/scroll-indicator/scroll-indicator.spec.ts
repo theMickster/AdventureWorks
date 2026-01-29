@@ -2,7 +2,10 @@ import { ComponentFixture, TestBed } from '@angular/core/testing';
 import { By } from '@angular/platform-browser';
 import { ScrollIndicatorComponent } from './scroll-indicator';
 
-function setDimensions(el: HTMLElement, { scrollLeft, clientWidth, scrollWidth }: { scrollLeft: number; clientWidth: number; scrollWidth: number }): void {
+function setDimensions(
+  el: HTMLElement,
+  { scrollLeft, clientWidth, scrollWidth }: { scrollLeft: number; clientWidth: number; scrollWidth: number },
+): void {
   Object.defineProperty(el, 'scrollLeft', { value: scrollLeft, configurable: true });
   Object.defineProperty(el, 'clientWidth', { value: clientWidth, configurable: true });
   Object.defineProperty(el, 'scrollWidth', { value: scrollWidth, configurable: true });

@@ -111,7 +111,9 @@ describe('OrgChartStore', () => {
 
     it('sets an error and does not crash the tree/stats computed signals on failure', () => {
       store.load();
-      httpTesting.expectOne('https://api.test.com/v1/employees/org-tree').flush('fail', { status: 500, statusText: 'Server Error' });
+      httpTesting
+        .expectOne('https://api.test.com/v1/employees/org-tree')
+        .flush('fail', { status: 500, statusText: 'Server Error' });
       // forkJoin unsubscribes the sibling request as soon as one errors — it's cancelled, not
       // open, so flushing it would throw. Only flush if it's still actually pending.
       const departmentsRequests = httpTesting.match('https://api.test.com/v1/departments');

@@ -42,9 +42,7 @@ describe('EmployeeHireModalComponent', () => {
       hireEmployee: vi
         .fn()
         .mockReturnValue(
-          options.hireError
-            ? throwError(() => new Error('Network error'))
-            : of({ businessEntityId: 2, message: 'ok' }),
+          options.hireError ? throwError(() => new Error('Network error')) : of({ businessEntityId: 2, message: 'ok' }),
         ),
       getEmployee: vi.fn().mockReturnValue(of({ id: 2 })),
     };
@@ -70,7 +68,13 @@ describe('EmployeeHireModalComponent', () => {
   function fillValidForm(component: EmployeeHireModalComponent) {
     component['form'].patchValue({
       assignment: { departmentId: 1, shiftId: 1, hireDate: daysFromToday(5), managerId: null },
-      compensation: { initialPayRate: 25, payFrequency: 1, initialVacationHours: 40, initialSickLeaveHours: 24, notes: null },
+      compensation: {
+        initialPayRate: 25,
+        payFrequency: 1,
+        initialVacationHours: 40,
+        initialSickLeaveHours: 24,
+        notes: null,
+      },
     });
   }
 

@@ -19,8 +19,22 @@ const mockEnvironment = {
 };
 
 const mockItems: EmployeeOrgTreeItem[] = [
-  { employeeId: 1, fullName: 'Ken Sánchez', jobTitle: 'Chief Executive Officer', departmentName: 'Executive', organizationLevel: null, parentEmployeeId: null },
-  { employeeId: 273, fullName: 'Brian Welcker', jobTitle: 'Vice President of Sales', departmentName: 'Sales', organizationLevel: 1, parentEmployeeId: null },
+  {
+    employeeId: 1,
+    fullName: 'Ken Sánchez',
+    jobTitle: 'Chief Executive Officer',
+    departmentName: 'Executive',
+    organizationLevel: null,
+    parentEmployeeId: null,
+  },
+  {
+    employeeId: 273,
+    fullName: 'Brian Welcker',
+    jobTitle: 'Vice President of Sales',
+    departmentName: 'Sales',
+    organizationLevel: 1,
+    parentEmployeeId: null,
+  },
 ];
 
 describe('OrgChartComponent', () => {
@@ -47,7 +61,11 @@ describe('OrgChartComponent', () => {
   });
 
   function loadWithItems(): void {
-    patchState(unprotected(store), { items: mockItems, departmentColorClasses: { Executive: 'primary', Sales: 'accent' } }, setLoaded());
+    patchState(
+      unprotected(store),
+      { items: mockItems, departmentColorClasses: { Executive: 'primary', Sales: 'accent' } },
+      setLoaded(),
+    );
   }
 
   it('calls store.load() once on ngOnInit', () => {

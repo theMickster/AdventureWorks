@@ -4,7 +4,12 @@ import { FormBuilder, ReactiveFormsModule } from '@angular/forms';
 import { ActivatedRoute, Router, RouterLink } from '@angular/router';
 import { EmployeeStore } from '@adventureworks-web/hr/data-access';
 import type { EmployeeSearchBody } from '@adventureworks-web/hr/data-access';
-import { ColumnDefDirective, DataTableComponent, SelectFieldComponent, StatusBadgeComponent } from '@adventureworks-web/shared/ui';
+import {
+  ColumnDefDirective,
+  DataTableComponent,
+  SelectFieldComponent,
+  StatusBadgeComponent,
+} from '@adventureworks-web/shared/ui';
 import type { ColumnConfig } from '@adventureworks-web/shared/ui';
 import { NotificationService } from '@adventureworks-web/shared/util';
 import { EMPLOYEE_STATUS_BADGE_MAP } from '../employee-status-badge';
@@ -29,7 +34,14 @@ interface EmployeeFilters {
 @Component({
   selector: 'aw-employee-list',
   standalone: true,
-  imports: [ReactiveFormsModule, RouterLink, DataTableComponent, ColumnDefDirective, SelectFieldComponent, StatusBadgeComponent],
+  imports: [
+    ReactiveFormsModule,
+    RouterLink,
+    DataTableComponent,
+    ColumnDefDirective,
+    SelectFieldComponent,
+    StatusBadgeComponent,
+  ],
   templateUrl: './employee-list.html',
   changeDetection: ChangeDetectionStrategy.OnPush,
 })

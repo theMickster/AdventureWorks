@@ -1,10 +1,29 @@
-import { ChangeDetectionStrategy, Component, computed, effect, inject, input, model, output, signal } from '@angular/core';
+import {
+  ChangeDetectionStrategy,
+  Component,
+  computed,
+  effect,
+  inject,
+  input,
+  model,
+  output,
+  signal,
+} from '@angular/core';
 import { FormBuilder, ReactiveFormsModule, Validators } from '@angular/forms';
 import { EmployeeStore, TERMINATION_TYPE_OPTIONS } from '@adventureworks-web/hr/data-access';
 import type { EmployeeTerminate } from '@adventureworks-web/hr/data-access';
-import { ModalComponent, SelectFieldComponent, TextareaFieldComponent, ToggleFieldComponent } from '@adventureworks-web/shared/ui';
+import {
+  ModalComponent,
+  SelectFieldComponent,
+  TextareaFieldComponent,
+  ToggleFieldComponent,
+} from '@adventureworks-web/shared/ui';
 import { maxFutureDateValidator, NotificationService } from '@adventureworks-web/shared/util';
-import { errorsToList as sharedErrorsToList, watchLifecycleActionCompletion, WizardFormErrors } from './wizard-form-helpers';
+import {
+  errorsToList as sharedErrorsToList,
+  watchLifecycleActionCompletion,
+  WizardFormErrors,
+} from './wizard-form-helpers';
 
 type TerminateWizardStep = 1 | 2 | 3;
 
@@ -57,7 +76,9 @@ export class EmployeeTerminateModalComponent {
     }),
   );
   protected readonly terminationTypeErrors = computed(() =>
-    this.formErrors.getErrors(this.form.controls.details.controls.terminationType, { required: 'Termination type is required.' }),
+    this.formErrors.getErrors(this.form.controls.details.controls.terminationType, {
+      required: 'Termination type is required.',
+    }),
   );
   protected readonly reasonErrors = computed(() =>
     this.formErrors.getErrors(this.form.controls.details.controls.reason, {
@@ -66,7 +87,9 @@ export class EmployeeTerminateModalComponent {
     }),
   );
   protected readonly notesErrors = computed(() =>
-    this.formErrors.getErrors(this.form.controls.options.controls.notes, { maxlength: 'Notes cannot exceed 1000 characters.' }),
+    this.formErrors.getErrors(this.form.controls.options.controls.notes, {
+      maxlength: 'Notes cannot exceed 1000 characters.',
+    }),
   );
 
   protected readonly errorsToList = sharedErrorsToList;
@@ -78,7 +101,11 @@ export class EmployeeTerminateModalComponent {
    */
   protected readonly terminationDateAriaDescribedBy = computed(() => {
     const errors = this.terminationDateErrors();
-    return errors ? Object.keys(errors).map((key) => `aw-employee-terminate-date-error-${key}`).join(' ') : null;
+    return errors
+      ? Object.keys(errors)
+          .map((key) => `aw-employee-terminate-date-error-${key}`)
+          .join(' ')
+      : null;
   });
 
   constructor() {

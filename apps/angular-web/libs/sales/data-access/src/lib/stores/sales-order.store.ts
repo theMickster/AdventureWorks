@@ -2,7 +2,7 @@ import { computed, inject } from '@angular/core';
 import { patchState, signalStore, withComputed, withMethods, withState } from '@ngrx/signals';
 import { setAllEntities, withEntities } from '@ngrx/signals/entities';
 import { rxMethod } from '@ngrx/signals/rxjs-interop';
-import { withDevtools } from '@angular-architects/ngrx-toolkit';
+import { withDevtools } from '@ngrx-toolkit/core';
 import { catchError, EMPTY, pipe, switchMap, tap } from 'rxjs';
 import {
   ApiEmptyResultError,
@@ -59,11 +59,20 @@ export const SalesOrderStore = signalStore(
         switchMap((params) =>
           salesApi.getSalesOrders(params).pipe(
             tap((result) =>
-              patchState(store, setAllEntities(result.results ?? [], { selectId: (order) => order.salesOrderId }), setPaginationFromResult(result), setLoaded()),
+              patchState(
+                store,
+                setAllEntities(result.results ?? [], { selectId: (order) => order.salesOrderId }),
+                setPaginationFromResult(result),
+                setLoaded(),
+              ),
             ),
             catchError((err: unknown) => {
               if (err instanceof ApiEmptyResultError) {
-                patchState(store, setAllEntities([] as SalesOrder[], { selectId: (order) => order.salesOrderId }), setLoaded());
+                patchState(
+                  store,
+                  setAllEntities([] as SalesOrder[], { selectId: (order) => order.salesOrderId }),
+                  setLoaded(),
+                );
               } else {
                 patchState(store, setError('Failed to load sales orders'));
               }

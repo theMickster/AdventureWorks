@@ -1,4 +1,13 @@
-import { ChangeDetectionStrategy, Component, computed, DestroyRef, effect, inject, OnInit, signal } from '@angular/core';
+import {
+  ChangeDetectionStrategy,
+  Component,
+  computed,
+  DestroyRef,
+  effect,
+  inject,
+  OnInit,
+  signal,
+} from '@angular/core';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { ActivatedRoute, Router, RouterLink } from '@angular/router';
 import { StoreStore } from '@adventureworks-web/sales/data-access';
@@ -69,26 +78,24 @@ export class StoreListComponent implements OnInit {
   }
 
   ngOnInit(): void {
-    this.route.queryParams
-      .pipe(takeUntilDestroyed(this.destroyRef))
-      .subscribe((params) => {
-        const search = params['search'] as string | undefined;
-        const pageNumber = Math.max(1, Math.trunc(Number(params['pageNumber'])) || 1);
-        const rawOrderBy = params['orderBy'] as string | undefined;
-        const orderBy = rawOrderBy === 'name' ? ('name' as const) : undefined;
-        const sortOrder = (params['sortOrder'] === 'desc' ? 'desc' : 'asc') as 'asc' | 'desc';
+    this.route.queryParams.pipe(takeUntilDestroyed(this.destroyRef)).subscribe((params) => {
+      const search = params['search'] as string | undefined;
+      const pageNumber = Math.max(1, Math.trunc(Number(params['pageNumber'])) || 1);
+      const rawOrderBy = params['orderBy'] as string | undefined;
+      const orderBy = rawOrderBy === 'name' ? ('name' as const) : undefined;
+      const sortOrder = (params['sortOrder'] === 'desc' ? 'desc' : 'asc') as 'asc' | 'desc';
 
-        this.sortColumn.set(orderBy ?? '');
-        this.sortDirection.set(orderBy ? sortOrder : 'asc');
-        this.searchTerm.set(search ?? '');
+      this.sortColumn.set(orderBy ?? '');
+      this.sortDirection.set(orderBy ? sortOrder : 'asc');
+      this.searchTerm.set(search ?? '');
 
-        const sortParams = orderBy ? { orderBy, sortOrder } : {};
-        if (search) {
-          this.storeStore.search({ params: { pageNumber, pageSize: PAGE_SIZE, ...sortParams }, body: { name: search } });
-        } else {
-          this.storeStore.loadPage({ pageNumber, pageSize: PAGE_SIZE, ...sortParams });
-        }
-      });
+      const sortParams = orderBy ? { orderBy, sortOrder } : {};
+      if (search) {
+        this.storeStore.search({ params: { pageNumber, pageSize: PAGE_SIZE, ...sortParams }, body: { name: search } });
+      } else {
+        this.storeStore.loadPage({ pageNumber, pageSize: PAGE_SIZE, ...sortParams });
+      }
+    });
   }
 
   protected onSearch(term: string): void {
@@ -121,7 +128,9 @@ export class StoreListComponent implements OnInit {
   }
 
   protected onSortChange(event: { column: string; direction: 'asc' | 'desc' }): void {
-    if (!(VALID_SORT_COLUMNS as readonly string[]).includes(event.column)) { return; }
+    if (!(VALID_SORT_COLUMNS as readonly string[]).includes(event.column)) {
+      return;
+    }
     void this.router.navigate([], {
       relativeTo: this.route,
       queryParams: { orderBy: event.column, sortOrder: event.direction },

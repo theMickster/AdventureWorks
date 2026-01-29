@@ -1,4 +1,13 @@
-import { ChangeDetectionStrategy, Component, computed, DestroyRef, effect, inject, OnInit, signal } from '@angular/core';
+import {
+  ChangeDetectionStrategy,
+  Component,
+  computed,
+  DestroyRef,
+  effect,
+  inject,
+  OnInit,
+  signal,
+} from '@angular/core';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { ActivatedRoute, Router, RouterLink } from '@angular/router';
 import { SalesPersonStore } from '@adventureworks-web/sales/data-access';
@@ -18,19 +27,30 @@ type SortColumn = (typeof VALID_SORT_COLUMNS)[number];
  */
 function getRowValue(p: SalesPerson, col: string): string | number {
   switch (col) {
-    case 'name': return `${p.firstName} ${p.lastName}`.toLowerCase();
-    case 'jobTitle': return p.jobTitle.toLowerCase();
-    case 'territory': return (p.territoryName ?? '').toLowerCase();
-    case 'salesYtd': return p.salesYtd;
-    case 'bonus': return p.bonus;
-    case 'commissionPct': return p.commissionPct;
-    default: return '';
+    case 'name':
+      return `${p.firstName} ${p.lastName}`.toLowerCase();
+    case 'jobTitle':
+      return p.jobTitle.toLowerCase();
+    case 'territory':
+      return (p.territoryName ?? '').toLowerCase();
+    case 'salesYtd':
+      return p.salesYtd;
+    case 'bonus':
+      return p.bonus;
+    case 'commissionPct':
+      return p.commissionPct;
+    default:
+      return '';
   }
 }
 
 function compare(a: string | number, b: string | number): number {
-  if (a < b) { return -1; }
-  if (a > b) { return 1; }
+  if (a < b) {
+    return -1;
+  }
+  if (a > b) {
+    return 1;
+  }
   return 0;
 }
 
@@ -83,9 +103,7 @@ export class SalesPersonListComponent implements OnInit {
 
     if (term) {
       items = items.filter(
-        (p) =>
-          `${p.firstName} ${p.lastName}`.toLowerCase().includes(term) ||
-          p.jobTitle.toLowerCase().includes(term),
+        (p) => `${p.firstName} ${p.lastName}`.toLowerCase().includes(term) || p.jobTitle.toLowerCase().includes(term),
       );
     }
 
@@ -109,22 +127,20 @@ export class SalesPersonListComponent implements OnInit {
   });
 
   ngOnInit(): void {
-    this.route.queryParams
-      .pipe(takeUntilDestroyed(this.destroyRef))
-      .subscribe((params) => {
-        const search = params['search'] as string | undefined;
-        const rawOrderBy = params['orderBy'] as string | undefined;
-        const sortOrder: 'asc' | 'desc' = params['sortOrder'] === 'desc' ? 'desc' : 'asc';
+    this.route.queryParams.pipe(takeUntilDestroyed(this.destroyRef)).subscribe((params) => {
+      const search = params['search'] as string | undefined;
+      const rawOrderBy = params['orderBy'] as string | undefined;
+      const sortOrder: 'asc' | 'desc' = params['sortOrder'] === 'desc' ? 'desc' : 'asc';
 
-        this.searchTerm.set(search ?? '');
+      this.searchTerm.set(search ?? '');
 
-        const orderBy = (VALID_SORT_COLUMNS as readonly string[]).includes(rawOrderBy ?? '')
-          ? (rawOrderBy as SortColumn)
-          : undefined;
+      const orderBy = (VALID_SORT_COLUMNS as readonly string[]).includes(rawOrderBy ?? '')
+        ? (rawOrderBy as SortColumn)
+        : undefined;
 
-        this.sortColumn.set(orderBy ?? '');
-        this.sortDirection.set(orderBy ? sortOrder : 'asc');
-      });
+      this.sortColumn.set(orderBy ?? '');
+      this.sortDirection.set(orderBy ? sortOrder : 'asc');
+    });
 
     this.salesPersonStore.loadPage({ pageNumber: 1, pageSize: PAGE_SIZE });
   }

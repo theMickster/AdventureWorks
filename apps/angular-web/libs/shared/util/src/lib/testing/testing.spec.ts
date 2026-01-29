@@ -1,6 +1,6 @@
-import { Component, signal, WritableSignal } from '@angular/core';
+import { Component, NgModule, signal, WritableSignal } from '@angular/core';
 import { TestBed } from '@angular/core/testing';
-import { TranslateModule, TranslateService } from '@ngx-translate/core';
+import { provideTranslateService, TranslateService } from '@ngx-translate/core';
 import { AuthService } from '../auth/auth.service';
 import { AuthUser } from '../auth/auth.model';
 import { LoadingService } from '../loading/loading.service';
@@ -254,6 +254,9 @@ describe('mockSearchResult', () => {
 @Component({ selector: 'aw-test-render-component', template: '<p>test</p>' })
 class TestRenderComponent {}
 
+@NgModule({ providers: [provideTranslateService()] })
+class TranslateTestModule {}
+
 describe('renderComponent', () => {
   it('returns fixture, component, and element', async () => {
     const { fixture, component, element } = await renderComponent(TestRenderComponent);
@@ -282,10 +285,10 @@ describe('renderComponent', () => {
   });
 
   it('options.imports is threaded through to TestBed, not silently dropped', async () => {
-    // TranslateModule.forRoot() registers TranslateService; if renderComponent dropped
+    // TranslateTestModule registers TranslateService; if renderComponent dropped
     // options.imports, TestBed.inject(TranslateService) below would throw NullInjectorError.
     await renderComponent(TestRenderComponent, {
-      imports: [TranslateModule.forRoot()],
+      imports: [TranslateTestModule],
     });
 
     expect(() => TestBed.inject(TranslateService)).not.toThrow();

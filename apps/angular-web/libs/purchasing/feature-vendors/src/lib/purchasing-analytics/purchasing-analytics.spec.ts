@@ -134,9 +134,7 @@ describe('PurchasingAnalyticsComponent', () => {
     );
     const tileIds = Array.from(tileElements).map((el) => el.id);
 
-    expect(tileIds).toEqual(
-      reversed.map((item) => `aw-purchasing-analytics-${item.statusLabel.toLowerCase()}-tile`),
-    );
+    expect(tileIds).toEqual(reversed.map((item) => `aw-purchasing-analytics-${item.statusLabel.toLowerCase()}-tile`));
   });
 
   it('shows an error empty-state when the API fails', () => {

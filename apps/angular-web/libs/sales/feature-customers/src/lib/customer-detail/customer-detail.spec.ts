@@ -238,7 +238,9 @@ describe('CustomerDetailComponent', () => {
   it('renders recent order detail links and customer-scoped View Orders navigation', async () => {
     await setup();
     vi.spyOn(salesApiService, 'getCustomerDetail').mockReturnValue(of(mockStoreCustomer));
-    vi.spyOn(salesApiService, 'getSalesOrders').mockReturnValue(of({ ...emptyOrderResult, results: [mockRecentOrder] }));
+    vi.spyOn(salesApiService, 'getSalesOrders').mockReturnValue(
+      of({ ...emptyOrderResult, results: [mockRecentOrder] }),
+    );
 
     fixture.detectChanges();
 
@@ -247,7 +249,9 @@ describe('CustomerDetailComponent', () => {
     const orderLink = fixture.nativeElement.querySelector('#aw-customer-detail-order-43659') as HTMLAnchorElement;
     expect(viewOrders.getAttribute('href')).toBe('/sales/orders?customerId=29486');
     expect(viewAll.getAttribute('href')).toBe('/sales/orders?customerId=29486');
-    expect(orderLink.getAttribute('href')).toBe('/sales/orders/43659?customerId=29486&orderBy=orderDate&sortOrder=desc');
+    expect(orderLink.getAttribute('href')).toBe(
+      '/sales/orders/43659?customerId=29486&orderBy=orderDate&sortOrder=desc',
+    );
   });
 
   it('shows a recent-orders loading state until the orders request resolves', async () => {
@@ -264,7 +268,9 @@ describe('CustomerDetailComponent', () => {
   it('shows a recent-orders error state when the order request fails', async () => {
     await setup();
     vi.spyOn(salesApiService, 'getCustomerDetail').mockReturnValue(of(mockStoreCustomer));
-    vi.spyOn(salesApiService, 'getSalesOrders').mockReturnValue(throwError(() => new HttpErrorResponse({ status: 500 })));
+    vi.spyOn(salesApiService, 'getSalesOrders').mockReturnValue(
+      throwError(() => new HttpErrorResponse({ status: 500 })),
+    );
 
     fixture.detectChanges();
 

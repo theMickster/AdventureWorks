@@ -1,5 +1,14 @@
 import { CurrencyPipe } from '@angular/common';
-import { ChangeDetectionStrategy, Component, computed, DestroyRef, effect, inject, OnInit, signal } from '@angular/core';
+import {
+  ChangeDetectionStrategy,
+  Component,
+  computed,
+  DestroyRef,
+  effect,
+  inject,
+  OnInit,
+  signal,
+} from '@angular/core';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { FormBuilder, ReactiveFormsModule } from '@angular/forms';
 import { ActivatedRoute, Router } from '@angular/router';
@@ -7,7 +16,12 @@ import { forkJoin } from 'rxjs';
 import { SalesApiService, SalesOrderStore, SALES_ORDER_STATUSES } from '@adventureworks-web/sales/data-access';
 import { STATUS_BADGE_MAP } from '../order-status-badge';
 import { LookupApiService } from '@adventureworks-web/shared/data-access';
-import { ColumnDefDirective, DataTableComponent, SelectFieldComponent, StatusBadgeComponent } from '@adventureworks-web/shared/ui';
+import {
+  ColumnDefDirective,
+  DataTableComponent,
+  SelectFieldComponent,
+  StatusBadgeComponent,
+} from '@adventureworks-web/shared/ui';
 import type { ColumnConfig } from '@adventureworks-web/shared/ui';
 import { NotificationService } from '@adventureworks-web/shared/util';
 import { OrderAnalyticsPanelComponent } from '../order-analytics-panel/order-analytics-panel';
@@ -32,7 +46,15 @@ interface SalesOrderFilters {
 @Component({
   selector: 'aw-order-list',
   standalone: true,
-  imports: [CurrencyPipe, ReactiveFormsModule, DataTableComponent, ColumnDefDirective, SelectFieldComponent, StatusBadgeComponent, OrderAnalyticsPanelComponent],
+  imports: [
+    CurrencyPipe,
+    ReactiveFormsModule,
+    DataTableComponent,
+    ColumnDefDirective,
+    SelectFieldComponent,
+    StatusBadgeComponent,
+    OrderAnalyticsPanelComponent,
+  ],
   templateUrl: './order-list.html',
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
@@ -141,9 +163,7 @@ export class OrderListComponent implements OnInit {
   ngOnInit(): void {
     // Dropdown reference data loads independently of the grid — a slow/failed lookup must not
     // block or break the list. The list load is kicked off first.
-    this.route.queryParams.pipe(
-      takeUntilDestroyed(this.destroyRef)
-    ).subscribe(params => {
+    this.route.queryParams.pipe(takeUntilDestroyed(this.destroyRef)).subscribe((params) => {
       this.restoreFiltersFromUrl(params as Record<string, string>);
       this.loadFromUrl(params as Record<string, string>);
     });
@@ -156,7 +176,10 @@ export class OrderListComponent implements OnInit {
       .subscribe({
         next: (result) => {
           this.salesPersonOptions.set(
-            (result.salesPersons.results ?? []).map((sp) => ({ value: sp.id, label: `${sp.firstName} ${sp.lastName}` })),
+            (result.salesPersons.results ?? []).map((sp) => ({
+              value: sp.id,
+              label: `${sp.firstName} ${sp.lastName}`,
+            })),
           );
           this.territoryOptions.set(result.territories.map((t) => ({ value: t.id, label: t.name })));
         },
@@ -181,7 +204,14 @@ export class OrderListComponent implements OnInit {
    * params are nulled so the merge strips them; the list reloads at page 1 with only the default sort.
    */
   protected onResetFilters(): void {
-    this.filterForm.reset({ orderDateFrom: '', orderDateTo: '', status: '', salesPersonId: '', territoryId: '', customerId: '' });
+    this.filterForm.reset({
+      orderDateFrom: '',
+      orderDateTo: '',
+      status: '',
+      salesPersonId: '',
+      territoryId: '',
+      customerId: '',
+    });
     this.sortColumn.set('');
     this.sortDirection.set(DEFAULT_SORT_ORDER);
     void this.router.navigate([], {
@@ -291,11 +321,21 @@ export class OrderListComponent implements OnInit {
    */
   private parseFilterParams(src: Record<string, string>): SalesOrderFilters {
     const filters: SalesOrderFilters = {};
-    if (src['orderDateFrom']) { filters.orderDateFrom = src['orderDateFrom']; }
-    if (src['orderDateTo'])   { filters.orderDateTo   = src['orderDateTo']; }
-    if (src['status'] && Number.isFinite(Number(src['status'])))               { filters.status        = Number(src['status']); }
-    if (src['salesPersonId'] && Number.isFinite(Number(src['salesPersonId']))) { filters.salesPersonId = Number(src['salesPersonId']); }
-    if (src['territoryId'] && Number.isFinite(Number(src['territoryId'])))     { filters.territoryId   = Number(src['territoryId']); }
+    if (src['orderDateFrom']) {
+      filters.orderDateFrom = src['orderDateFrom'];
+    }
+    if (src['orderDateTo']) {
+      filters.orderDateTo = src['orderDateTo'];
+    }
+    if (src['status'] && Number.isFinite(Number(src['status']))) {
+      filters.status = Number(src['status']);
+    }
+    if (src['salesPersonId'] && Number.isFinite(Number(src['salesPersonId']))) {
+      filters.salesPersonId = Number(src['salesPersonId']);
+    }
+    if (src['territoryId'] && Number.isFinite(Number(src['territoryId']))) {
+      filters.territoryId = Number(src['territoryId']);
+    }
     if (src['customerId'] && Number.isInteger(Number(src['customerId'])) && Number(src['customerId']) > 0) {
       filters.customerId = Number(src['customerId']);
     }

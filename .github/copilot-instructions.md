@@ -24,7 +24,7 @@ When guidance overlaps, prefer the more specific file.
 This monorepo contains:
 
 - `apps/api-dotnet/` — .NET 10 API
-- `apps/angular-web/` — Angular 21 + Nx frontend
+- `apps/angular-web/` — Angular 22 + Nx frontend
 - `apps/functions-dotnet/` — .NET 10 isolated-worker Azure Functions (Sales Order Saga)
 - `apps/functions-rust/` — Rust Azure Functions custom handler (BOM cost explosion)
 - `database/dbup/` — DbUp migration tooling
@@ -39,6 +39,10 @@ This monorepo contains:
 - Never introduce secrets, credentials, or environment-specific values into committed files.
 - Prefer explicit, user-visible behavior over implicit assumptions.
 - Add or update tests when behavior changes, especially for failure paths and regressions.
+
+## Dependency Security
+
+**Dependency security: 7-day cool-off (MANDATORY).** Never add, upgrade, pin, or recommend any package version (npm, NuGet, Cargo, container image, GitHub Action, or anything else from a public registry) published fewer than 7 days (168 hours) ago, even if it is the `latest` tag and even for a security fix; if the only fix is younger than 7 days, stop and ask the user. Before proposing a version, build candidates from the registry's `versions` list plus dist-tags (the `time` field also lists unpublished versions), then confirm the publish date. npm projects enforce this with `min-release-age=7` in their `.npmrc`; never remove it, override it, or install with `@latest`, `ng update`, or `nx migrate` defaults without pinning explicit eligible versions. After any lockfile change run `npm audit` and `npm audit signatures` and report the results.
 
 ## Cross-Cutting Quality Guardrails
 

@@ -34,7 +34,10 @@ if (typeof window.ResizeObserver !== 'function') {
 const originalGetContext = HTMLCanvasElement.prototype.getContext as (...args: unknown[]) => unknown;
 HTMLCanvasElement.prototype.getContext = function (this: HTMLCanvasElement, contextId: string, ...args: unknown[]) {
   if (contextId === '2d') {
-    return new Proxy({ canvas: this }, { get: (target, prop) => target[prop as keyof typeof target] ?? (() => undefined) });
+    return new Proxy(
+      { canvas: this },
+      { get: (target, prop) => target[prop as keyof typeof target] ?? (() => undefined) },
+    );
   }
   return originalGetContext.apply(this, [contextId, ...args]);
 } as typeof HTMLCanvasElement.prototype.getContext;

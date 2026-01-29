@@ -440,7 +440,12 @@ describe('HrApiService', () => {
       terminatedEmployeeCount: 0,
       departmentCount: 16,
       departmentHeadcounts: [
-        { departmentId: 1, departmentName: 'Engineering', groupName: 'Research and Development', activeEmployeeCount: 6 },
+        {
+          departmentId: 1,
+          departmentName: 'Engineering',
+          groupName: 'Research and Development',
+          activeEmployeeCount: 6,
+        },
       ],
       tenureDistribution: {
         underOneYear: 32,
@@ -449,7 +454,9 @@ describe('HrApiService', () => {
         fiveToTenYears: 89,
         tenPlusYears: 40,
       },
-      payBandSummary: [{ departmentGroup: 'Research and Development', averageRate: 32.65, minRate: 8.62, maxRate: 50.48 }],
+      payBandSummary: [
+        { departmentGroup: 'Research and Development', averageRate: 32.65, minRate: 8.62, maxRate: 50.48 },
+      ],
     };
 
     it('should GET employee aggregates', () => {

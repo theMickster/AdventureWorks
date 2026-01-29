@@ -14,7 +14,7 @@ export default [
             '@angular/common',
             '@adventureworks-web/shared/util',
             '@ngrx/store',
-            '@angular-architects/ngrx-toolkit',
+            '@ngrx-toolkit/core',
             'rxjs',
           ],
         },

@@ -49,9 +49,7 @@ export class DepartmentCreateComponent implements OnInit {
   // Bridge form status changes into the signal graph so computed() re-evaluates on validation state changes
   private readonly _formStatus = toSignal(this.form.statusChanges, { initialValue: this.form.status });
 
-  protected readonly groupNameOptions = computed(() =>
-    this.groupNames().map((name) => ({ value: name, label: name })),
-  );
+  protected readonly groupNameOptions = computed(() => this.groupNames().map((name) => ({ value: name, label: name })));
 
   protected readonly nameErrors = computed((): Record<string, string> | null => {
     this._formStatus();

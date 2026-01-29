@@ -1,4 +1,13 @@
-import { AfterViewInit, ChangeDetectionStrategy, Component, ElementRef, OnDestroy, input, signal, viewChild } from '@angular/core';
+import {
+  AfterViewInit,
+  ChangeDetectionStrategy,
+  Component,
+  ElementRef,
+  OnDestroy,
+  input,
+  signal,
+  viewChild,
+} from '@angular/core';
 
 /** Gradient-fade edge affordance for a horizontally-scrollable container, projected via `<ng-content>`. */
 @Component({

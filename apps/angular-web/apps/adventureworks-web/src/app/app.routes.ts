@@ -22,8 +22,7 @@ export const appRoutes: Route[] = [
         path: 'dashboard',
         title: 'Dashboard',
         data: { breadcrumb: 'Dashboard' },
-        loadComponent: () =>
-          import('@adventureworks-web/sales/feature-dashboard').then((m) => m.DashboardComponent),
+        loadComponent: () => import('@adventureworks-web/sales/feature-dashboard').then((m) => m.DashboardComponent),
       },
       {
         path: 'sales',

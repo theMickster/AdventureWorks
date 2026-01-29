@@ -17,10 +17,24 @@ export type {
   SalesPersonQuotaHistory,
   SalesPersonTerritoryHistory,
 } from './lib/models/sales-person.model';
-export type { SalesOrder, SalesOrderDetail, SalesOrderAddress, SalesOrderLineItem } from './lib/models/sales-order.model';
-export type { SalesOrderAnalytics, SalesOrderMonthlyTrend, SalesOrderAnalyticsFilter } from './lib/models/sales-order-analytics.model';
+export type {
+  SalesOrder,
+  SalesOrderDetail,
+  SalesOrderAddress,
+  SalesOrderLineItem,
+} from './lib/models/sales-order.model';
+export type {
+  SalesOrderAnalytics,
+  SalesOrderMonthlyTrend,
+  SalesOrderAnalyticsFilter,
+} from './lib/models/sales-order-analytics.model';
 export { SALES_ORDER_STATUSES } from './lib/models/sales-order.model';
-export type { SalesDashboard, DashboardTopPerformer, DashboardTerritory, DashboardMonthlySalesTrend } from './lib/models/sales-dashboard.model';
+export type {
+  SalesDashboard,
+  DashboardTopPerformer,
+  DashboardTerritory,
+  DashboardMonthlySalesTrend,
+} from './lib/models/sales-dashboard.model';
 export type { StoreParams } from './lib/models/store-params.model';
 export type { SalesPersonParams } from './lib/models/sales-person-params.model';
 export type { SalesOrderParams } from './lib/models/sales-order-params.model';

@@ -120,15 +120,11 @@ describe('SalesPersonEditComponent', () => {
   });
 
   it('load error shows error toast and navigates to sales person detail', () => {
-    vi.spyOn(salesApiService, 'getSalesPerson').mockReturnValue(
-      throwError(() => new Error('load failed')),
-    );
+    vi.spyOn(salesApiService, 'getSalesPerson').mockReturnValue(throwError(() => new Error('load failed')));
     vi.spyOn(notificationService, 'error');
     fixture.detectChanges();
 
-    expect(notificationService.error).toHaveBeenCalledWith(
-      'Failed to load sales person. Please try again.',
-    );
+    expect(notificationService.error).toHaveBeenCalledWith('Failed to load sales person. Please try again.');
     expect(router.navigate).toHaveBeenCalledWith(['/sales/persons', 275]);
   });
 
@@ -184,17 +180,13 @@ describe('SalesPersonEditComponent', () => {
   });
 
   it('on save error, resets isSaving and shows error toast', () => {
-    vi.spyOn(salesApiService, 'updateSalesPersonSalesConfig').mockReturnValue(
-      throwError(() => new Error('fail')),
-    );
+    vi.spyOn(salesApiService, 'updateSalesPersonSalesConfig').mockReturnValue(throwError(() => new Error('fail')));
     vi.spyOn(notificationService, 'error');
     fixture.detectChanges();
     component['onSubmit']();
 
     expect(component['isSaving']()).toBe(false);
-    expect(notificationService.error).toHaveBeenCalledWith(
-      'Failed to update sales configuration. Please try again.',
-    );
+    expect(notificationService.error).toHaveBeenCalledWith('Failed to update sales configuration. Please try again.');
   });
 
   it('onCancel navigates without calling the service', () => {

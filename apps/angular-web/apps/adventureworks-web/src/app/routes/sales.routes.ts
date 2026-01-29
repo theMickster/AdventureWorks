@@ -6,44 +6,38 @@ export const salesRoutes: Route[] = [
     path: 'stores',
     title: 'Stores',
     data: { breadcrumb: 'Stores' },
-    loadComponent: () =>
-      import('@adventureworks-web/sales/feature-stores').then((m) => m.StoreListComponent),
+    loadComponent: () => import('@adventureworks-web/sales/feature-stores').then((m) => m.StoreListComponent),
   },
   // stores/new MUST come before stores/:id — Angular matches top-to-bottom and "new" would otherwise be treated as an id param
   {
     path: 'stores/new',
     title: 'New Store',
     data: { breadcrumb: 'New Store' },
-    loadComponent: () =>
-      import('@adventureworks-web/sales/feature-stores').then((m) => m.StoreCreateComponent),
+    loadComponent: () => import('@adventureworks-web/sales/feature-stores').then((m) => m.StoreCreateComponent),
   },
   {
     path: 'stores/:id',
     title: 'Store Detail',
     data: { breadcrumb: 'Store Detail' },
-    loadComponent: () =>
-      import('@adventureworks-web/sales/feature-stores').then((m) => m.StoreDetailComponent),
+    loadComponent: () => import('@adventureworks-web/sales/feature-stores').then((m) => m.StoreDetailComponent),
   },
   {
     path: 'stores/:id/edit',
     title: 'Edit Store',
     data: { breadcrumb: 'Edit Store' },
-    loadComponent: () =>
-      import('@adventureworks-web/sales/feature-stores').then((m) => m.StoreEditComponent),
+    loadComponent: () => import('@adventureworks-web/sales/feature-stores').then((m) => m.StoreEditComponent),
   },
   {
     path: 'orders',
     title: 'Sales Orders',
     data: { breadcrumb: 'Sales Orders' },
-    loadComponent: () =>
-      import('@adventureworks-web/sales/feature-orders').then((m) => m.OrderListComponent),
+    loadComponent: () => import('@adventureworks-web/sales/feature-orders').then((m) => m.OrderListComponent),
   },
   {
     path: 'orders/:id',
     title: 'Sales Order Detail',
     data: { breadcrumb: 'Sales Order Detail' },
-    loadComponent: () =>
-      import('@adventureworks-web/sales/feature-orders').then((m) => m.OrderDetailComponent),
+    loadComponent: () => import('@adventureworks-web/sales/feature-orders').then((m) => m.OrderDetailComponent),
   },
   {
     path: 'persons',
@@ -58,8 +52,7 @@ export const salesRoutes: Route[] = [
     title: 'New Sales Person',
     data: { breadcrumb: 'New Sales Person' },
     loadComponent: () =>
-      import('@adventureworks-web/sales/feature-sales-persons')
-        .then((m) => m.SalesPersonCreateComponent),
+      import('@adventureworks-web/sales/feature-sales-persons').then((m) => m.SalesPersonCreateComponent),
   },
   {
     path: 'persons/:id',
@@ -73,21 +66,18 @@ export const salesRoutes: Route[] = [
     title: 'Edit Sales Person',
     data: { breadcrumb: 'Edit Sales Person' },
     loadComponent: () =>
-      import('@adventureworks-web/sales/feature-sales-persons')
-        .then((m) => m.SalesPersonEditComponent),
+      import('@adventureworks-web/sales/feature-sales-persons').then((m) => m.SalesPersonEditComponent),
   },
   {
     path: 'customers',
     title: 'Customers',
     data: { breadcrumb: 'Customers' },
-    loadComponent: () =>
-      import('@adventureworks-web/sales/feature-customers').then((m) => m.CustomerListComponent),
+    loadComponent: () => import('@adventureworks-web/sales/feature-customers').then((m) => m.CustomerListComponent),
   },
   {
     path: 'customers/:id',
     title: 'Customer Detail',
     data: { breadcrumb: 'Customer Detail' },
-    loadComponent: () =>
-      import('@adventureworks-web/sales/feature-customers').then((m) => m.CustomerDetailComponent),
+    loadComponent: () => import('@adventureworks-web/sales/feature-customers').then((m) => m.CustomerDetailComponent),
   },
 ];

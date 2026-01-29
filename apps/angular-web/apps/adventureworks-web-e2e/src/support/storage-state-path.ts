@@ -7,7 +7,4 @@ import { join } from 'node:path';
  * `workspaceRoot` rather than `__dirname` — the Nx Playwright plugin evaluates this module
  * in a context where `__dirname` is not defined.
  */
-export const STORAGE_STATE_PATH = join(
-  workspaceRoot,
-  'apps/adventureworks-web-e2e/playwright/.auth/user.json',
-);
+export const STORAGE_STATE_PATH = join(workspaceRoot, 'apps/adventureworks-web-e2e/playwright/.auth/user.json');

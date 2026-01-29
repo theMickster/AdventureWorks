@@ -5,7 +5,12 @@ import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { ActivatedRoute, Router, RouterLink } from '@angular/router';
 import { WorkOrderApiService } from '@adventureworks-web/manufacturing/data-access';
 import type { WorkOrderDetail } from '@adventureworks-web/manufacturing/data-access';
-import { CardComponent, EmptyStateComponent, SkeletonComponent, StatusBadgeComponent } from '@adventureworks-web/shared/ui';
+import {
+  CardComponent,
+  EmptyStateComponent,
+  SkeletonComponent,
+  StatusBadgeComponent,
+} from '@adventureworks-web/shared/ui';
 import { NotificationService } from '@adventureworks-web/shared/util';
 import { WORK_ORDER_DETAIL_STATUS_BADGE_MAP } from '../work-order-status-badge';
 

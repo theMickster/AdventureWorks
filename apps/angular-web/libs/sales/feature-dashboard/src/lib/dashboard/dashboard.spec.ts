@@ -21,9 +21,19 @@ import { DashboardComponent } from './dashboard';
  * below.
  */
 vi.mock('chart.js', () => {
-  const Chart = vi.fn().mockImplementation(function() { return { destroy: vi.fn() }; });
+  const Chart = vi.fn().mockImplementation(function () {
+    return { destroy: vi.fn() };
+  });
   (Chart as unknown as { register: () => void }).register = vi.fn();
-  return { Chart, LineController: {}, LineElement: {}, PointElement: {}, LinearScale: {}, CategoryScale: {}, Tooltip: {} };
+  return {
+    Chart,
+    LineController: {},
+    LineElement: {},
+    PointElement: {},
+    LinearScale: {},
+    CategoryScale: {},
+    Tooltip: {},
+  };
 });
 
 /**
@@ -58,7 +68,14 @@ const mockDashboard = {
     { salesPersonId: 276, name: 'Linda Mitchell', territory: 'Southwest', revenue: 8845979, orderCount: 418 },
   ],
   territoryBreakdown: [
-    { territoryId: 4, name: 'Southwest', group: 'North America', countryCode: 'US', revenue: 22000000, orderCount: 3421 },
+    {
+      territoryId: 4,
+      name: 'Southwest',
+      group: 'North America',
+      countryCode: 'US',
+      revenue: 22000000,
+      orderCount: 3421,
+    },
     { territoryId: 6, name: 'France', group: 'Europe', countryCode: 'FR', revenue: 5000000, orderCount: 800 },
   ],
   monthlySalesTrend: [
@@ -194,10 +211,9 @@ describe('DashboardComponent', () => {
     const trendChartDe = fixture.debugElement.query(By.directive(StubTrendChartComponent));
     trendChartDe.componentInstance.dataPointClick.emit({ year: 2014, month: 3 });
 
-    expect(router.navigate).toHaveBeenCalledWith(
-      ['/sales/orders'],
-      { queryParams: { orderDateFrom: '2014-03-01', orderDateTo: '2014-03-31' } }
-    );
+    expect(router.navigate).toHaveBeenCalledWith(['/sales/orders'], {
+      queryParams: { orderDateFrom: '2014-03-01', orderDateTo: '2014-03-31' },
+    });
   });
 
   it('KPI stat tiles have no cursor-pointer class (non-interactive)', async () => {
@@ -229,9 +245,8 @@ describe('DashboardComponent', () => {
     const trendChartDe = fixture.debugElement.query(By.directive(StubTrendChartComponent));
     trendChartDe.componentInstance.dataPointClick.emit({ year: 2012, month: 2 });
 
-    expect(router.navigate).toHaveBeenCalledWith(
-      ['/sales/orders'],
-      { queryParams: { orderDateFrom: '2012-02-01', orderDateTo: '2012-02-29' } }
-    );
+    expect(router.navigate).toHaveBeenCalledWith(['/sales/orders'], {
+      queryParams: { orderDateFrom: '2012-02-01', orderDateTo: '2012-02-29' },
+    });
   });
 });

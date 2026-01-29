@@ -3,7 +3,9 @@ import { TenureChartComponent } from './tenure-chart';
 import type { TenureDistribution } from '@adventureworks-web/hr/data-access';
 
 vi.mock('chart.js', () => {
-  const Chart = vi.fn().mockImplementation(function () { return { destroy: vi.fn() }; });
+  const Chart = vi.fn().mockImplementation(function () {
+    return { destroy: vi.fn() };
+  });
   (Chart as unknown as { register: () => void }).register = vi.fn();
   return { Chart, BarController: {}, BarElement: {}, LinearScale: {}, CategoryScale: {}, Tooltip: {} };
 });
@@ -85,7 +87,8 @@ describe('TenureChartComponent', () => {
     const legendItems = fixture.nativeElement.querySelectorAll('ul[aria-label="Tenure bucket legend"] li');
     expect(legendItems.length).toBe(5);
 
-    const text = (fixture.nativeElement.querySelector('ul[aria-label="Tenure bucket legend"]') as HTMLElement).textContent;
+    const text = (fixture.nativeElement.querySelector('ul[aria-label="Tenure bucket legend"]') as HTMLElement)
+      .textContent;
     expect(text).toContain('0-1 yr (32)');
     expect(text).toContain('10+ yrs (40)');
   });

@@ -9,7 +9,7 @@ Enterprise application built on the Microsoft AdventureWorks sample database, de
 | Component     | Tech                                           | Location              |
 | ------------- | ---------------------------------------------- | --------------------- |
 | REST API      | .NET 10.0, Clean Architecture, CQRS (MediatR)  | `apps/api-dotnet/`    |
-| Web App       | Angular 21, Nx 22, Tailwind + DaisyUI, Signals | `apps/angular-web/`   |
+| Web App       | Angular 22, Nx 24, Tailwind + DaisyUI, Signals | `apps/angular-web/`   |
 | Database      | SQL Server, AdventureWorks OLTP schema         | `database/`           |
 | Microservices | Azure Functions (planned)                      | `apps/microservices/` |
 

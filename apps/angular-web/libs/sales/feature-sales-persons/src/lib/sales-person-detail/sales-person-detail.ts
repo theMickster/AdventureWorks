@@ -43,7 +43,9 @@ export class SalesPersonDetailComponent implements OnInit {
 
   protected readonly fullName = computed(() => {
     const p = this.person();
-    if (!p) { return ''; }
+    if (!p) {
+      return '';
+    }
     return [p.firstName, p.middleName, p.lastName].filter(Boolean).join(' ');
   });
 

@@ -4,7 +4,13 @@ import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { FormBuilder, ReactiveFormsModule } from '@angular/forms';
 import { ActivatedRoute, Router } from '@angular/router';
 import { VendorStore } from '@adventureworks-web/purchasing/data-access';
-import { ColumnDefDirective, DataTableComponent, SelectFieldComponent, StatusBadgeComponent, ToggleFieldComponent } from '@adventureworks-web/shared/ui';
+import {
+  ColumnDefDirective,
+  DataTableComponent,
+  SelectFieldComponent,
+  StatusBadgeComponent,
+  ToggleFieldComponent,
+} from '@adventureworks-web/shared/ui';
 import type { ColumnConfig } from '@adventureworks-web/shared/ui';
 import { NotificationService } from '@adventureworks-web/shared/util';
 
@@ -31,7 +37,15 @@ interface VendorFilters {
 @Component({
   selector: 'aw-vendor-list',
   standalone: true,
-  imports: [CurrencyPipe, ReactiveFormsModule, DataTableComponent, ColumnDefDirective, SelectFieldComponent, ToggleFieldComponent, StatusBadgeComponent],
+  imports: [
+    CurrencyPipe,
+    ReactiveFormsModule,
+    DataTableComponent,
+    ColumnDefDirective,
+    SelectFieldComponent,
+    ToggleFieldComponent,
+    StatusBadgeComponent,
+  ],
   templateUrl: './vendor-list.html',
   changeDetection: ChangeDetectionStrategy.OnPush,
 })

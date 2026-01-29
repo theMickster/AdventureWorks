@@ -91,7 +91,11 @@ describe('errorInterceptor', () => {
 
   it('should throw ConflictError for 409, not ApiValidationError or ApiEmptyResultError', () => {
     const toastSpy = vi.spyOn(notificationService, 'error');
-    const body = { error: 'An employee with this National ID Number already exists.', correlationId: 'c-409', timestamp: '2026-07-02T00:00:00Z' };
+    const body = {
+      error: 'An employee with this National ID Number already exists.',
+      correlationId: 'c-409',
+      timestamp: '2026-07-02T00:00:00Z',
+    };
 
     httpClient.get('/api/test').subscribe({
       error: (err: unknown) => {

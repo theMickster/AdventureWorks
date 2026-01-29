@@ -212,7 +212,9 @@ describe('VendorDetailComponent', () => {
   it('renders PO history rows', () => {
     fixture.detectChanges();
 
-    const rows = fixture.nativeElement.querySelectorAll('#aw-vendor-detail-po-table tbody tr') as NodeListOf<HTMLElement>;
+    const rows = fixture.nativeElement.querySelectorAll(
+      '#aw-vendor-detail-po-table tbody tr',
+    ) as NodeListOf<HTMLElement>;
     expect(rows.length).toBeGreaterThan(0);
   });
 
@@ -249,7 +251,9 @@ describe('VendorDetailComponent', () => {
     expect(totalSpend.textContent).toContain('0.00');
     expect(avgPoValue.textContent).toContain('0.00');
 
-    const rows = fixture.nativeElement.querySelectorAll('#aw-vendor-detail-po-table tbody tr') as NodeListOf<HTMLElement>;
+    const rows = fixture.nativeElement.querySelectorAll(
+      '#aw-vendor-detail-po-table tbody tr',
+    ) as NodeListOf<HTMLElement>;
     expect(rows.length).toBe(0);
     const empty = fixture.nativeElement.querySelector('#aw-vendor-detail-po-table-empty');
     expect(empty).toBeTruthy();

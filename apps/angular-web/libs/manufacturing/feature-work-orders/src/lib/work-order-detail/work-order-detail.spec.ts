@@ -184,7 +184,9 @@ describe('WorkOrderDetailComponent', () => {
   });
 
   it('shows not-found state on 404 response from API', () => {
-    vi.spyOn(workOrderApiService, 'getWorkOrder').mockReturnValue(throwError(() => new HttpErrorResponse({ status: 404 })));
+    vi.spyOn(workOrderApiService, 'getWorkOrder').mockReturnValue(
+      throwError(() => new HttpErrorResponse({ status: 404 })),
+    );
     fixture.detectChanges();
 
     expect(component['notFound']()).toBe(true);
@@ -195,7 +197,9 @@ describe('WorkOrderDetailComponent', () => {
   it('shows error state and notifies on non-404 error response from API', () => {
     const notificationService = TestBed.inject(NotificationService);
     const errorSpy = vi.spyOn(notificationService, 'error');
-    vi.spyOn(workOrderApiService, 'getWorkOrder').mockReturnValue(throwError(() => new HttpErrorResponse({ status: 500 })));
+    vi.spyOn(workOrderApiService, 'getWorkOrder').mockReturnValue(
+      throwError(() => new HttpErrorResponse({ status: 500 })),
+    );
 
     fixture.detectChanges();
 

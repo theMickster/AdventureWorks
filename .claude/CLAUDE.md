@@ -67,6 +67,10 @@ Path-scoped rules live in `.claude/rules/`. Each file declares `paths:` globs in
 4. **Principle of Least Privilege** - Request minimum permissions needed
 5. **Correlation IDs** - Include request tracing IDs in all responses
 
+### Dependency Security
+
+**Dependency security: 7-day cool-off (MANDATORY).** Never add, upgrade, pin, or recommend any package version (npm, NuGet, Cargo, container image, GitHub Action, or anything else from a public registry) published fewer than 7 days (168 hours) ago, even if it is the `latest` tag and even for a security fix; if the only fix is younger than 7 days, stop and ask the user. Before proposing a version, build candidates from the registry's `versions` list plus dist-tags (the `time` field also lists unpublished versions), then confirm the publish date. npm projects enforce this with `min-release-age=7` in their `.npmrc`; never remove it, override it, or install with `@latest`, `ng update`, or `nx migrate` defaults without pinning explicit eligible versions. After any lockfile change run `npm audit` and `npm audit signatures` and report the results.
+
 ### Documentation Standards
 
 **NEVER proactively create documentation files (\*.md, README, etc.) unless explicitly requested.**

@@ -25,6 +25,10 @@ For CI, infrastructure, database projects other than DbUp, and tools, start with
 - Add or update meaningful tests when behavior changes, including important failure paths and regressions. Run validation appropriate to the changed area and report what ran and any limits.
 - Do not create documentation files unless the user asks for them; update existing docs when a change requires it.
 
+## Dependency security
+
+**Dependency security: 7-day cool-off (MANDATORY).** Never add, upgrade, pin, or recommend any package version (npm, NuGet, Cargo, container image, GitHub Action, or anything else from a public registry) published fewer than 7 days (168 hours) ago, even if it is the `latest` tag and even for a security fix; if the only fix is younger than 7 days, stop and ask the user. Before proposing a version, build candidates from the registry's `versions` list plus dist-tags (the `time` field also lists unpublished versions), then confirm the publish date. npm projects enforce this with `min-release-age=7` in their `.npmrc`; never remove it, override it, or install with `@latest`, `ng update`, or `nx migrate` defaults without pinning explicit eligible versions. After any lockfile change run `npm audit` and `npm audit signatures` and report the results.
+
 ## Git ownership
 
 Work on the current checkout. Do not create a branch or worktree, commit, or open a pull request unless the user explicitly asks. Humans own those Git steps by default.

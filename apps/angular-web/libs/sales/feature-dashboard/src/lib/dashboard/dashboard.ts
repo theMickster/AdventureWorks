@@ -11,7 +11,14 @@ import { TerritoryBreakdownComponent } from '../territory-breakdown/territory-br
 @Component({
   selector: 'aw-dashboard',
   standalone: true,
-  imports: [CurrencyPipe, DecimalPipe, SkeletonComponent, TrendChartComponent, TopPerformersComponent, TerritoryBreakdownComponent],
+  imports: [
+    CurrencyPipe,
+    DecimalPipe,
+    SkeletonComponent,
+    TrendChartComponent,
+    TopPerformersComponent,
+    TerritoryBreakdownComponent,
+  ],
   templateUrl: './dashboard.html',
   changeDetection: ChangeDetectionStrategy.OnPush,
 })

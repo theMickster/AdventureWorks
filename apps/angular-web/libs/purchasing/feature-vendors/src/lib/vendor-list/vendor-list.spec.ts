@@ -119,7 +119,10 @@ describe('VendorListComponent', () => {
     queryParamsSub.next({ creditRating: 'abc' });
     fixture.detectChanges();
 
-    const lastCall = (vendorStore.loadPage as ReturnType<typeof vi.spyOn>).mock.calls.at(-1)?.[0] as Record<string, unknown>;
+    const lastCall = (vendorStore.loadPage as ReturnType<typeof vi.spyOn>).mock.calls.at(-1)?.[0] as Record<
+      string,
+      unknown
+    >;
     expect('creditRating' in lastCall).toBe(false);
   });
 
@@ -127,7 +130,10 @@ describe('VendorListComponent', () => {
     queryParamsSub.next({ creditRating: '9' });
     fixture.detectChanges();
 
-    const lastCall = (vendorStore.loadPage as ReturnType<typeof vi.spyOn>).mock.calls.at(-1)?.[0] as Record<string, unknown>;
+    const lastCall = (vendorStore.loadPage as ReturnType<typeof vi.spyOn>).mock.calls.at(-1)?.[0] as Record<
+      string,
+      unknown
+    >;
     expect('creditRating' in lastCall).toBe(false);
   });
 
@@ -135,7 +141,10 @@ describe('VendorListComponent', () => {
     queryParamsSub.next({ creditRating: '0' });
     fixture.detectChanges();
 
-    const lastCall = (vendorStore.loadPage as ReturnType<typeof vi.spyOn>).mock.calls.at(-1)?.[0] as Record<string, unknown>;
+    const lastCall = (vendorStore.loadPage as ReturnType<typeof vi.spyOn>).mock.calls.at(-1)?.[0] as Record<
+      string,
+      unknown
+    >;
     expect('creditRating' in lastCall).toBe(false);
   });
 
@@ -182,7 +191,10 @@ describe('VendorListComponent', () => {
     queryParamsSub.next({ pageNumber: '1' });
     fixture.detectChanges();
 
-    const lastCall = (vendorStore.loadPage as ReturnType<typeof vi.spyOn>).mock.calls.at(-1)?.[0] as Record<string, unknown>;
+    const lastCall = (vendorStore.loadPage as ReturnType<typeof vi.spyOn>).mock.calls.at(-1)?.[0] as Record<
+      string,
+      unknown
+    >;
     expect('preferredVendorStatus' in lastCall).toBe(false);
 
     expect(router.navigate).toHaveBeenLastCalledWith(

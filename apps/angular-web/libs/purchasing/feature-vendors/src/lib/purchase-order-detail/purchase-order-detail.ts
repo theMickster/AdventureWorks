@@ -5,13 +5,26 @@ import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { ActivatedRoute, Router, RouterLink } from '@angular/router';
 import { PurchasingApiService } from '@adventureworks-web/purchasing/data-access';
 import type { PurchaseOrderDetail as PurchaseOrderDetailModel } from '@adventureworks-web/purchasing/data-access';
-import { CardComponent, EmptyStateComponent, SkeletonComponent, StatusBadgeComponent } from '@adventureworks-web/shared/ui';
+import {
+  CardComponent,
+  EmptyStateComponent,
+  SkeletonComponent,
+  StatusBadgeComponent,
+} from '@adventureworks-web/shared/ui';
 import { PURCHASE_ORDER_STATUS_BADGE_MAP } from '../purchase-order-status-badge';
 
 @Component({
   selector: 'aw-purchase-order-detail',
   standalone: true,
-  imports: [CurrencyPipe, DatePipe, RouterLink, CardComponent, SkeletonComponent, EmptyStateComponent, StatusBadgeComponent],
+  imports: [
+    CurrencyPipe,
+    DatePipe,
+    RouterLink,
+    CardComponent,
+    SkeletonComponent,
+    EmptyStateComponent,
+    StatusBadgeComponent,
+  ],
   templateUrl: './purchase-order-detail.html',
   changeDetection: ChangeDetectionStrategy.OnPush,
 })

@@ -5,12 +5,26 @@ import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { ActivatedRoute, Router, RouterLink } from '@angular/router';
 import { SalesApiService } from '@adventureworks-web/sales/data-access';
 import type { CustomerDetail as CustomerDetailModel, SalesOrder } from '@adventureworks-web/sales/data-access';
-import { CardComponent, EmptyStateComponent, SkeletonComponent, StatusBadgeComponent } from '@adventureworks-web/shared/ui';
+import {
+  CardComponent,
+  EmptyStateComponent,
+  SkeletonComponent,
+  StatusBadgeComponent,
+} from '@adventureworks-web/shared/ui';
 
 @Component({
   selector: 'aw-customer-detail',
   standalone: true,
-  imports: [CurrencyPipe, DatePipe, DecimalPipe, RouterLink, CardComponent, SkeletonComponent, EmptyStateComponent, StatusBadgeComponent],
+  imports: [
+    CurrencyPipe,
+    DatePipe,
+    DecimalPipe,
+    RouterLink,
+    CardComponent,
+    SkeletonComponent,
+    EmptyStateComponent,
+    StatusBadgeComponent,
+  ],
   templateUrl: './customer-detail.html',
   changeDetection: ChangeDetectionStrategy.OnPush,
 })

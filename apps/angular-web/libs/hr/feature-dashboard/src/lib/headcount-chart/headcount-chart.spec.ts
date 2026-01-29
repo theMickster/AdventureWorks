@@ -3,7 +3,9 @@ import { HeadcountChartComponent } from './headcount-chart';
 import type { DepartmentHeadcountSummary } from '@adventureworks-web/hr/data-access';
 
 vi.mock('chart.js', () => {
-  const Chart = vi.fn().mockImplementation(function () { return { destroy: vi.fn() }; });
+  const Chart = vi.fn().mockImplementation(function () {
+    return { destroy: vi.fn() };
+  });
   (Chart as unknown as { register: () => void }).register = vi.fn();
   return { Chart, BarController: {}, BarElement: {}, LinearScale: {}, CategoryScale: {}, Tooltip: {} };
 });

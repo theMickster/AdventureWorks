@@ -131,10 +131,7 @@ describe('CustomerListComponent', () => {
 
     component['onPageChange'](3);
 
-    expect(router.navigate).toHaveBeenCalledWith(
-      [],
-      expect.objectContaining({ queryParams: { pageNumber: 3 } }),
-    );
+    expect(router.navigate).toHaveBeenCalledWith([], expect.objectContaining({ queryParams: { pageNumber: 3 } }));
   });
 
   it('rows computed correctly from store entities, including derived statusKey', async () => {

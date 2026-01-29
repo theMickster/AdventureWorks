@@ -1,7 +1,7 @@
 import { computed, inject } from '@angular/core';
 import { patchState, signalStore, withComputed, withMethods, withState } from '@ngrx/signals';
 import { rxMethod } from '@ngrx/signals/rxjs-interop';
-import { withDevtools } from '@angular-architects/ngrx-toolkit';
+import { withDevtools } from '@ngrx-toolkit/core';
 import { catchError, EMPTY, forkJoin, pipe, switchMap, tap } from 'rxjs';
 import { setError, setLoaded, setLoading, withRequestStatus } from '@adventureworks-web/shared/data-access';
 import { HrApiService } from '@adventureworks-web/hr/data-access';
@@ -55,7 +55,10 @@ export const OrgChartStore = signalStore(
                 departmentColorClasses[department.name] = resolveGroupColorClass(department.groupName);
               }
 
-              const root = buildOrgTree(items, (departmentName) => departmentColorClasses[departmentName] ?? resolveGroupColorClass(undefined));
+              const root = buildOrgTree(
+                items,
+                (departmentName) => departmentColorClasses[departmentName] ?? resolveGroupColorClass(undefined),
+              );
 
               const expandedIds = new Set<number>();
               if (root) {
@@ -115,7 +118,7 @@ export const OrgChartStore = signalStore(
         }
 
         const parentItem = byId.get(parentId);
-        parentId = parentItem ? parentItem.parentEmployeeId ?? rootId : null;
+        parentId = parentItem ? (parentItem.parentEmployeeId ?? rootId) : null;
       }
 
       patchState(store, { expandedIds: next, highlightedId: match.employeeId });

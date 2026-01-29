@@ -28,10 +28,7 @@ describe('OrgNodeComponent', () => {
 
   it('emits toggle (not navigate) when the chevron is clicked, and stops propagation', async () => {
     const { fixture, component } = await renderOrgChartComponent(OrgNodeComponent);
-    fixture.componentRef.setInput(
-      'node',
-      node({ employeeId: 1, children: [node({ employeeId: 2 })] }),
-    );
+    fixture.componentRef.setInput('node', node({ employeeId: 1, children: [node({ employeeId: 2 })] }));
     fixture.componentRef.setInput('expandedIds', new Set<number>());
     fixture.detectChanges();
 

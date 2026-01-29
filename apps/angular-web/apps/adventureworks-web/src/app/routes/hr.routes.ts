@@ -6,23 +6,20 @@ export const hrRoutes: Route[] = [
     path: 'employees',
     title: 'Employees',
     data: { breadcrumb: 'Employees' },
-    loadComponent: () =>
-      import('@adventureworks-web/hr/feature-employees').then((m) => m.EmployeeListComponent),
+    loadComponent: () => import('@adventureworks-web/hr/feature-employees').then((m) => m.EmployeeListComponent),
   },
   // employees/new MUST come before employees/:id — Angular matches top-to-bottom and "new" would otherwise be treated as an id param
   {
     path: 'employees/new',
     title: 'New Employee',
     data: { breadcrumb: 'New Employee' },
-    loadComponent: () =>
-      import('@adventureworks-web/hr/feature-employees').then((m) => m.EmployeeCreateComponent),
+    loadComponent: () => import('@adventureworks-web/hr/feature-employees').then((m) => m.EmployeeCreateComponent),
   },
   {
     path: 'employees/:id',
     title: 'Employee Detail',
     data: { breadcrumb: 'Employee Detail' },
-    loadComponent: () =>
-      import('@adventureworks-web/hr/feature-employees').then((m) => m.EmployeeDetailComponent),
+    loadComponent: () => import('@adventureworks-web/hr/feature-employees').then((m) => m.EmployeeDetailComponent),
   },
   {
     path: 'org-chart',
@@ -40,29 +37,25 @@ export const hrRoutes: Route[] = [
     path: 'departments',
     title: 'Departments',
     data: { breadcrumb: 'Departments' },
-    loadComponent: () =>
-      import('@adventureworks-web/hr/feature-departments').then((m) => m.DepartmentListComponent),
+    loadComponent: () => import('@adventureworks-web/hr/feature-departments').then((m) => m.DepartmentListComponent),
   },
   // departments/new MUST come before departments/:id — Angular matches top-to-bottom and "new" would otherwise be treated as an id param
   {
     path: 'departments/new',
     title: 'New Department',
     data: { breadcrumb: 'New Department' },
-    loadComponent: () =>
-      import('@adventureworks-web/hr/feature-departments').then((m) => m.DepartmentCreateComponent),
+    loadComponent: () => import('@adventureworks-web/hr/feature-departments').then((m) => m.DepartmentCreateComponent),
   },
   {
     path: 'departments/:id',
     title: 'Department Detail',
     data: { breadcrumb: 'Department Detail' },
-    loadComponent: () =>
-      import('@adventureworks-web/hr/feature-departments').then((m) => m.DepartmentDetailComponent),
+    loadComponent: () => import('@adventureworks-web/hr/feature-departments').then((m) => m.DepartmentDetailComponent),
   },
   {
     path: 'departments/:id/edit',
     title: 'Edit Department',
     data: { breadcrumb: 'Edit Department' },
-    loadComponent: () =>
-      import('@adventureworks-web/hr/feature-departments').then((m) => m.DepartmentEditComponent),
+    loadComponent: () => import('@adventureworks-web/hr/feature-departments').then((m) => m.DepartmentEditComponent),
   },
 ];

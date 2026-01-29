@@ -91,9 +91,7 @@ describe('SalesOrderStore', () => {
 
     it('treats ApiEmptyResultError as an empty loaded result, not an error', () => {
       const salesApi = TestBed.inject(SalesApiService);
-      vi.spyOn(salesApi, 'getSalesOrders').mockReturnValue(
-        throwError(() => new ApiEmptyResultError('No results')),
-      );
+      vi.spyOn(salesApi, 'getSalesOrders').mockReturnValue(throwError(() => new ApiEmptyResultError('No results')));
 
       store.loadPage({ pageNumber: 1, pageSize: 25 });
 
@@ -150,9 +148,7 @@ describe('SalesOrderStore', () => {
 
     it('transitions to error and keeps analytics null on 500', () => {
       const salesApi = TestBed.inject(SalesApiService);
-      vi.spyOn(salesApi, 'getOrderAnalytics').mockReturnValue(
-        throwError(() => new Error('Internal Server Error')),
-      );
+      vi.spyOn(salesApi, 'getOrderAnalytics').mockReturnValue(throwError(() => new Error('Internal Server Error')));
 
       store.loadAnalytics({});
 
@@ -168,7 +164,12 @@ describe('SalesOrderStore', () => {
       const salesApi = TestBed.inject(SalesApiService);
 
       const firstSubject = new Subject<SalesOrderAnalytics>();
-      const secondAnalytics: SalesOrderAnalytics = { totalRevenue: 2, orderCount: 2, percentageOfTotal: 2, monthlyTrend: [] };
+      const secondAnalytics: SalesOrderAnalytics = {
+        totalRevenue: 2,
+        orderCount: 2,
+        percentageOfTotal: 2,
+        monthlyTrend: [],
+      };
 
       let callCount = 0;
       vi.spyOn(salesApi, 'getOrderAnalytics').mockImplementation(() => {
@@ -194,13 +195,25 @@ describe('SalesOrderStore', () => {
   describe('applyFilters', () => {
     it('calls both getSalesOrders and getOrderAnalytics when applyFilters is called', () => {
       const salesApi = TestBed.inject(SalesApiService);
-      const getSalesOrdersSpy = vi.spyOn(salesApi, 'getSalesOrders').mockReturnValue(of({
-        pageNumber: 1, pageSize: 25, totalPages: 1, totalRecords: 1,
-        hasPreviousPage: false, hasNextPage: false, results: [mockOrder],
-      }));
-      const getOrderAnalyticsSpy = vi.spyOn(salesApi, 'getOrderAnalytics').mockReturnValue(of({
-        totalRevenue: 100, orderCount: 1, percentageOfTotal: 5, monthlyTrend: [],
-      }));
+      const getSalesOrdersSpy = vi.spyOn(salesApi, 'getSalesOrders').mockReturnValue(
+        of({
+          pageNumber: 1,
+          pageSize: 25,
+          totalPages: 1,
+          totalRecords: 1,
+          hasPreviousPage: false,
+          hasNextPage: false,
+          results: [mockOrder],
+        }),
+      );
+      const getOrderAnalyticsSpy = vi.spyOn(salesApi, 'getOrderAnalytics').mockReturnValue(
+        of({
+          totalRevenue: 100,
+          orderCount: 1,
+          percentageOfTotal: 5,
+          monthlyTrend: [],
+        }),
+      );
 
       store.applyFilters({
         pageNumber: 1,
@@ -222,10 +235,17 @@ describe('SalesOrderStore', () => {
 
     it('loadPage directly does NOT trigger getOrderAnalytics', () => {
       const salesApi = TestBed.inject(SalesApiService);
-      vi.spyOn(salesApi, 'getSalesOrders').mockReturnValue(of({
-        pageNumber: 1, pageSize: 25, totalPages: 1, totalRecords: 1,
-        hasPreviousPage: false, hasNextPage: false, results: [mockOrder],
-      }));
+      vi.spyOn(salesApi, 'getSalesOrders').mockReturnValue(
+        of({
+          pageNumber: 1,
+          pageSize: 25,
+          totalPages: 1,
+          totalRecords: 1,
+          hasPreviousPage: false,
+          hasNextPage: false,
+          results: [mockOrder],
+        }),
+      );
       const getOrderAnalyticsSpy = vi.spyOn(salesApi, 'getOrderAnalytics');
 
       store.loadPage({ pageNumber: 1, pageSize: 25 });

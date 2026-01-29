@@ -4,8 +4,7 @@ import { Router } from '@angular/router';
 import { ENVIRONMENT } from '../environment/environment.token';
 
 type PendingCall =
-  | { type: 'event'; name: string; properties?: Record<string, string> }
-  | { type: 'exception'; error: Error };
+  { type: 'event'; name: string; properties?: Record<string, string> } | { type: 'exception'; error: Error };
 
 /** Initializes Azure Application Insights with the Angular plugin for page view tracking and exception logging. */
 @Injectable({ providedIn: 'root' })

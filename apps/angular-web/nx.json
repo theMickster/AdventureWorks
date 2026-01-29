@@ -18,13 +18,6 @@
       "dependsOn": ["^build"],
       "inputs": ["production", "^production"]
     },
-    "@nx/eslint:lint": {
-      "cache": true,
-      "inputs": ["default", "^default", "{workspaceRoot}/eslint.config.mjs", "{workspaceRoot}/tools/eslint-rules/**/*"],
-      "options": {
-        "maxWarnings": 0
-      }
-    },
     "@nx/vitest:test": {
       "cache": true,
       "inputs": ["default", "^production"]
@@ -75,5 +68,8 @@
       "style": "scss"
     }
   },
-  "analytics": false
+  "analytics": false,
+  "affected": {
+    "legacy": true
+  }
 }

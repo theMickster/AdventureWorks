@@ -168,9 +168,7 @@ describe('EmployeeCreateComponent', () => {
     });
 
     it('sets isLoading to false and shows error toast when reference data fails', async () => {
-      vi.spyOn(lookupApiService, 'getAddressTypes').mockReturnValue(
-        throwError(() => new Error('Network error')),
-      );
+      vi.spyOn(lookupApiService, 'getAddressTypes').mockReturnValue(throwError(() => new Error('Network error')));
       vi.spyOn(notificationService, 'error');
 
       fixture = TestBed.createComponent(EmployeeCreateComponent);
@@ -450,9 +448,7 @@ describe('EmployeeCreateComponent', () => {
 
   describe('API failure on submission', () => {
     it('sets isSaving to false on API error', () => {
-      vi.spyOn(hrApiService, 'createEmployee').mockReturnValue(
-        throwError(() => new Error('Server error')),
-      );
+      vi.spyOn(hrApiService, 'createEmployee').mockReturnValue(throwError(() => new Error('Server error')));
       component['form'].setValue(buildValidFormValue());
       component['onSubmit']();
 
@@ -460,9 +456,7 @@ describe('EmployeeCreateComponent', () => {
     });
 
     it('shows generic error toast for non-validation errors', () => {
-      vi.spyOn(hrApiService, 'createEmployee').mockReturnValue(
-        throwError(() => new Error('Server error')),
-      );
+      vi.spyOn(hrApiService, 'createEmployee').mockReturnValue(throwError(() => new Error('Server error')));
       vi.spyOn(notificationService, 'error');
       component['form'].setValue(buildValidFormValue());
       component['onSubmit']();
@@ -471,9 +465,7 @@ describe('EmployeeCreateComponent', () => {
     });
 
     it('does not navigate on API failure', () => {
-      vi.spyOn(hrApiService, 'createEmployee').mockReturnValue(
-        throwError(() => new Error('Server error')),
-      );
+      vi.spyOn(hrApiService, 'createEmployee').mockReturnValue(throwError(() => new Error('Server error')));
       component['form'].setValue(buildValidFormValue());
       component['onSubmit']();
 
@@ -485,10 +477,20 @@ describe('EmployeeCreateComponent', () => {
     it('maps a step-1 propertyName to its control and jumps currentStep to 1', () => {
       component['currentStep'].set(4);
       vi.spyOn(hrApiService, 'createEmployee').mockReturnValue(
-        throwError(() => new ApiValidationError(
-          [{ propertyName: 'BirthDate', errorCode: 'Rule-20', errorMessage: 'Employee must be at least 18 years old', correlationId: 'abc' }],
-          'abc',
-        )),
+        throwError(
+          () =>
+            new ApiValidationError(
+              [
+                {
+                  propertyName: 'BirthDate',
+                  errorCode: 'Rule-20',
+                  errorMessage: 'Employee must be at least 18 years old',
+                  correlationId: 'abc',
+                },
+              ],
+              'abc',
+            ),
+        ),
       );
       component['form'].setValue(buildValidFormValue());
       component['onSubmit']();
@@ -503,10 +505,20 @@ describe('EmployeeCreateComponent', () => {
     it('maps a step-2 nested propertyName (Phone.PhoneNumber) and jumps currentStep to 2', () => {
       component['currentStep'].set(4);
       vi.spyOn(hrApiService, 'createEmployee').mockReturnValue(
-        throwError(() => new ApiValidationError(
-          [{ propertyName: 'Phone.PhoneNumber', errorCode: 'Rule-30', errorMessage: 'Phone number cannot be greater than 25 characters', correlationId: 'abc' }],
-          'abc',
-        )),
+        throwError(
+          () =>
+            new ApiValidationError(
+              [
+                {
+                  propertyName: 'Phone.PhoneNumber',
+                  errorCode: 'Rule-30',
+                  errorMessage: 'Phone number cannot be greater than 25 characters',
+                  correlationId: 'abc',
+                },
+              ],
+              'abc',
+            ),
+        ),
       );
       component['form'].setValue(buildValidFormValue());
       component['onSubmit']();
@@ -519,10 +531,20 @@ describe('EmployeeCreateComponent', () => {
     it('maps a step-3 nested propertyName (Address.City) and jumps currentStep to 3', () => {
       component['currentStep'].set(4);
       vi.spyOn(hrApiService, 'createEmployee').mockReturnValue(
-        throwError(() => new ApiValidationError(
-          [{ propertyName: 'Address.City', errorCode: 'Rule-04', errorMessage: 'City cannot be null, empty, or whitespace', correlationId: 'abc' }],
-          'abc',
-        )),
+        throwError(
+          () =>
+            new ApiValidationError(
+              [
+                {
+                  propertyName: 'Address.City',
+                  errorCode: 'Rule-04',
+                  errorMessage: 'City cannot be null, empty, or whitespace',
+                  correlationId: 'abc',
+                },
+              ],
+              'abc',
+            ),
+        ),
       );
       component['form'].setValue(buildValidFormValue());
       component['onSubmit']();
@@ -535,10 +557,20 @@ describe('EmployeeCreateComponent', () => {
     it('does not show a generic toast when at least one property is mapped', () => {
       vi.spyOn(notificationService, 'error');
       vi.spyOn(hrApiService, 'createEmployee').mockReturnValue(
-        throwError(() => new ApiValidationError(
-          [{ propertyName: 'EmailAddress', errorCode: 'Rule-24', errorMessage: 'Enter a valid email address', correlationId: 'abc' }],
-          'abc',
-        )),
+        throwError(
+          () =>
+            new ApiValidationError(
+              [
+                {
+                  propertyName: 'EmailAddress',
+                  errorCode: 'Rule-24',
+                  errorMessage: 'Enter a valid email address',
+                  correlationId: 'abc',
+                },
+              ],
+              'abc',
+            ),
+        ),
       );
       component['form'].setValue(buildValidFormValue());
       component['onSubmit']();
@@ -549,10 +581,20 @@ describe('EmployeeCreateComponent', () => {
     it('maps a duplicate NationalIdNumber (Rule-31) to its control and jumps currentStep to 1', () => {
       component['currentStep'].set(4);
       vi.spyOn(hrApiService, 'createEmployee').mockReturnValue(
-        throwError(() => new ApiValidationError(
-          [{ propertyName: 'NationalIdNumber', errorCode: 'Rule-31', errorMessage: 'An employee with this National ID number already exists', correlationId: 'abc' }],
-          'abc',
-        )),
+        throwError(
+          () =>
+            new ApiValidationError(
+              [
+                {
+                  propertyName: 'NationalIdNumber',
+                  errorCode: 'Rule-31',
+                  errorMessage: 'An employee with this National ID number already exists',
+                  correlationId: 'abc',
+                },
+              ],
+              'abc',
+            ),
+        ),
       );
       component['form'].setValue(buildValidFormValue());
       component['onSubmit']();
@@ -565,10 +607,20 @@ describe('EmployeeCreateComponent', () => {
     it('maps a duplicate LoginId (Rule-32) to its control and jumps currentStep to 1', () => {
       component['currentStep'].set(4);
       vi.spyOn(hrApiService, 'createEmployee').mockReturnValue(
-        throwError(() => new ApiValidationError(
-          [{ propertyName: 'LoginId', errorCode: 'Rule-32', errorMessage: 'An employee with this Login ID already exists', correlationId: 'abc' }],
-          'abc',
-        )),
+        throwError(
+          () =>
+            new ApiValidationError(
+              [
+                {
+                  propertyName: 'LoginId',
+                  errorCode: 'Rule-32',
+                  errorMessage: 'An employee with this Login ID already exists',
+                  correlationId: 'abc',
+                },
+              ],
+              'abc',
+            ),
+        ),
       );
       component['form'].setValue(buildValidFormValue());
       component['onSubmit']();
@@ -581,10 +633,13 @@ describe('EmployeeCreateComponent', () => {
     it('shows generic toast when no property in ApiValidationError maps to the form', () => {
       vi.spyOn(notificationService, 'error');
       vi.spyOn(hrApiService, 'createEmployee').mockReturnValue(
-        throwError(() => new ApiValidationError(
-          [{ propertyName: 'UnknownField', errorCode: 'Rule-99', errorMessage: 'Unknown', correlationId: 'abc' }],
-          'abc',
-        )),
+        throwError(
+          () =>
+            new ApiValidationError(
+              [{ propertyName: 'UnknownField', errorCode: 'Rule-99', errorMessage: 'Unknown', correlationId: 'abc' }],
+              'abc',
+            ),
+        ),
       );
       component['form'].setValue(buildValidFormValue());
       component['onSubmit']();

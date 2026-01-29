@@ -1,4 +1,13 @@
-import { ChangeDetectionStrategy, Component, computed, DestroyRef, effect, inject, OnInit, signal } from '@angular/core';
+import {
+  ChangeDetectionStrategy,
+  Component,
+  computed,
+  DestroyRef,
+  effect,
+  inject,
+  OnInit,
+  signal,
+} from '@angular/core';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { FormBuilder, ReactiveFormsModule } from '@angular/forms';
 import { ActivatedRoute, Router } from '@angular/router';
@@ -273,12 +282,24 @@ export class WorkOrderListComponent implements OnInit {
    */
   private parseFilterParams(src: Record<string, string | number | null | undefined>): WorkOrderFilters {
     const filters: WorkOrderFilters = {};
-    if (src['productId'] && Number.isFinite(Number(src['productId']))) { filters.productId = Number(src['productId']); }
-    if (src['scrapReasonId'] && Number.isFinite(Number(src['scrapReasonId']))) { filters.scrapReasonId = Number(src['scrapReasonId']); }
-    if (src['startDate']) { filters.startDate = String(src['startDate']); }
-    if (src['endDate']) { filters.endDate = String(src['endDate']); }
-    if (src['hasScrapped'] === 'true') { filters.hasScrapped = true; }
-    if (src['hasScrapped'] === 'false') { filters.hasScrapped = false; }
+    if (src['productId'] && Number.isFinite(Number(src['productId']))) {
+      filters.productId = Number(src['productId']);
+    }
+    if (src['scrapReasonId'] && Number.isFinite(Number(src['scrapReasonId']))) {
+      filters.scrapReasonId = Number(src['scrapReasonId']);
+    }
+    if (src['startDate']) {
+      filters.startDate = String(src['startDate']);
+    }
+    if (src['endDate']) {
+      filters.endDate = String(src['endDate']);
+    }
+    if (src['hasScrapped'] === 'true') {
+      filters.hasScrapped = true;
+    }
+    if (src['hasScrapped'] === 'false') {
+      filters.hasScrapped = false;
+    }
     return filters;
   }
 

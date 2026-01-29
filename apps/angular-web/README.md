@@ -1,6 +1,6 @@
 # AdventureWorks Cycling - Angular Web Application
 
-Angular 21 frontend for AdventureWorks Cycling, built with Nx 22.x monorepo architecture.
+Angular 22 frontend for AdventureWorks Cycling, built with Nx 24.x monorepo architecture.
 
 ## Quick Start
 
@@ -77,15 +77,15 @@ import { someUtil } from '@adventureworks-web/shared/util';
 
 | Technology | Version | Purpose                                 |
 | ---------- | ------- | --------------------------------------- |
-| Angular    | 21.1.1  | UI framework (zoneless, Signals-based)  |
-| Nx         | 22+     | Monorepo tooling, caching, generators   |
-| TypeScript | 5.9.2   | Language (strict mode, all 6 flags)     |
+| Angular    | 22.2    | UI framework (zoneless, Signals-based)  |
+| Nx         | 24.0    | Monorepo tooling, caching, generators   |
+| TypeScript | 6.0     | Language (strict mode, all 6 flags)     |
 | esbuild    | -       | Build bundler (via @angular/build)      |
 | Vitest     | -       | Unit testing (@angular/build:unit-test) |
 | Playwright | -       | E2E testing                             |
-| Tailwind   | 4.2     | Utility-first CSS framework             |
-| DaisyUI    | 5.5     | Tailwind component library              |
-| MSAL       | 5.x     | Microsoft Entra ID authentication       |
+| Tailwind   | 4.3     | Utility-first CSS framework             |
+| DaisyUI    | 5.7     | Tailwind component library              |
+| MSAL       | 6.x     | Microsoft Entra ID authentication       |
 
 ## Design System
 
@@ -103,7 +103,7 @@ import { someUtil } from '@adventureworks-web/shared/util';
 
 ## Authentication
 
-Microsoft Entra ID authentication via `@azure/msal-angular` v5 (redirect flow).
+Microsoft Entra ID authentication via `@azure/msal-angular` v6 (redirect flow).
 
 - **Config**: `libs/shared/util/src/lib/auth/msal-config.ts` — factory functions for MSAL instance, interceptor, and guard
 - **Service**: `libs/shared/util/src/lib/auth/auth.service.ts` — signal-based `AuthService` wrapping MSAL

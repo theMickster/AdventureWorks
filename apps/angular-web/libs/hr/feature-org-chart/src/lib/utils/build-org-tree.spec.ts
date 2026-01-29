@@ -21,7 +21,13 @@ describe('buildOrgTree', () => {
 
   it('nests children correctly under their parent', () => {
     const items: EmployeeOrgTreeItem[] = [
-      item({ employeeId: 1, fullName: 'Ken Sánchez', jobTitle: 'CEO', organizationLevel: null, parentEmployeeId: null }),
+      item({
+        employeeId: 1,
+        fullName: 'Ken Sánchez',
+        jobTitle: 'CEO',
+        organizationLevel: null,
+        parentEmployeeId: null,
+      }),
       item({
         employeeId: 273,
         fullName: 'Brian Welcker',

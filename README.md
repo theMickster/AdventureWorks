@@ -10,7 +10,7 @@ AdventureWorks is a sample application built around Microsoft's AdventureWorks S
 | ----------------------- | -------------------------------------------------- |
 | **Backend**             | .NET 10                                            |
 | **Functions**           | .NET 10 Azure Functions and a Rust custom handler  |
-| **Frontend**            | Angular 21 and Nx 22                               |
+| **Frontend**            | Angular 22 and Nx 24                               |
 | **Design system**       | Tailwind CSS 4 and DaisyUI 5                       |
 | **Database**            | SQL Server, Entity Framework Core, DbUp, Cosmos DB |
 | **Messaging**           | Azure Service Bus, RabbitMQ (integration tests)    |

@@ -200,17 +200,17 @@ describe('EmployeeStore', () => {
       httpTesting.expectNone((request) => request.url.includes('/v1/employees'));
     });
 
-   it('still works after a search request', () => {
-     store.search({ params: { pageNumber: 2, pageSize: 5 }, body: { firstName: 'Jane' } });
-     const searchReq = httpTesting.expectOne('https://api.test.com/v1/employees/search?pageNumber=2&pageSize=5');
-     searchReq.flush({ ...mockSearchResult, pageNumber: 2, pageSize: 5 });
+    it('still works after a search request', () => {
+      store.search({ params: { pageNumber: 2, pageSize: 5 }, body: { firstName: 'Jane' } });
+      const searchReq = httpTesting.expectOne('https://api.test.com/v1/employees/search?pageNumber=2&pageSize=5');
+      searchReq.flush({ ...mockSearchResult, pageNumber: 2, pageSize: 5 });
 
-     store.handleSignalrEmployeeLifecycleEvent();
-     const refreshReq = httpTesting.expectOne('https://api.test.com/v1/employees/search?pageNumber=2&pageSize=5');
-     expect(refreshReq.request.method).toBe('POST');
-     expect(refreshReq.request.body).toEqual({ firstName: 'Jane' });
-     refreshReq.flush({ ...mockSearchResult, pageNumber: 2, pageSize: 5 });
-   });
+      store.handleSignalrEmployeeLifecycleEvent();
+      const refreshReq = httpTesting.expectOne('https://api.test.com/v1/employees/search?pageNumber=2&pageSize=5');
+      expect(refreshReq.request.method).toBe('POST');
+      expect(refreshReq.request.body).toEqual({ firstName: 'Jane' });
+      refreshReq.flush({ ...mockSearchResult, pageNumber: 2, pageSize: 5 });
+    });
   });
 
   describe('loadById', () => {

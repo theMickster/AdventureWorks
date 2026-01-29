@@ -6,7 +6,11 @@ import { patchState } from '@ngrx/signals';
 import { unprotected } from '@ngrx/signals/testing';
 import { ENVIRONMENT } from '@adventureworks-web/shared/util';
 import { setError, setLoaded, setLoading } from '@adventureworks-web/shared/data-access';
-import type { DepartmentHeadcountSummary, EmployeeAggregates, TenureDistribution } from '@adventureworks-web/hr/data-access';
+import type {
+  DepartmentHeadcountSummary,
+  EmployeeAggregates,
+  TenureDistribution,
+} from '@adventureworks-web/hr/data-access';
 import { HrDashboardStore } from '../stores/hr-dashboard.store';
 import { HeadcountChartComponent } from '../headcount-chart/headcount-chart';
 import { TenureChartComponent } from '../tenure-chart/tenure-chart';
@@ -18,7 +22,9 @@ import { HrDashboardComponent } from './dashboard';
  * dashboard.spec.ts mocking rationale.
  */
 vi.mock('chart.js', () => {
-  const Chart = vi.fn().mockImplementation(function () { return { destroy: vi.fn() }; });
+  const Chart = vi.fn().mockImplementation(function () {
+    return { destroy: vi.fn() };
+  });
   (Chart as unknown as { register: () => void }).register = vi.fn();
   return {
     Chart,

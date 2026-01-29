@@ -108,7 +108,10 @@ describe('StoreCreateComponent', () => {
         provideRouter([]),
         provideTranslateService(),
         { provide: ENVIRONMENT, useValue: mockEnvironment },
-        { provide: ActivatedRoute, useValue: { snapshot: { queryParams: {}, paramMap: { get: vi.fn().mockReturnValue(null) } } } },
+        {
+          provide: ActivatedRoute,
+          useValue: { snapshot: { queryParams: {}, paramMap: { get: vi.fn().mockReturnValue(null) } } },
+        },
       ],
     }).compileComponents();
 
