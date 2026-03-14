@@ -76,6 +76,7 @@
 	</ItemGroup>
 
 	<ItemGroup>
+  	<PackageReference Include="AutoMapper" Version="16.1.1" />
 		<ProjectReference Include="..\AdventureWorks.Application\AdventureWorks.Application.csproj" />
 	</ItemGroup>
 
